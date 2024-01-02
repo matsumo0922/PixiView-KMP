@@ -69,6 +69,8 @@ kotlin {
         val commonMain by getting {
             dependencies {
                 api(libs.bundles.infra.api)
+                api(libs.bundles.ui.common.api)
+                implementation(libs.bundles.ktor)
 
                 implementation(compose.runtime)
                 implementation(compose.runtimeSaveable)
@@ -91,7 +93,6 @@ kotlin {
             dependsOn(commonMain)
             dependencies {
                 implementation(libs.bundles.ui.android.implementation)
-                implementation(libs.bundles.ktor)
 
                 implementation(libs.androidx.core.splashscreen)
                 // implementation(libs.play.review)
