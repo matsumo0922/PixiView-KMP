@@ -30,12 +30,17 @@ class KmpAndroidApplication : Plugin<Project> {
                 setupAndroid()
 
                 compileSdk = libs.version("compileSdk").toInt()
-                defaultConfig.targetSdk = libs.version("targetSdk").toInt()
 
-                buildFeatures.viewBinding = true
-                buildFeatures.compose = true
+                defaultConfig {
+                    applicationId = "me.matsumo.fanbox"
 
-                composeOptions.kotlinCompilerExtensionVersion = libs.version("kotlinCompiler")
+                    versionName = libs.version("versionName")
+                    versionCode = libs.version("versionCode").toInt()
+                }
+
+                buildFeatures {
+                    viewBinding = true
+                }
 
                 packaging {
                     resources.excludes.addAll(
@@ -48,12 +53,6 @@ class KmpAndroidApplication : Plugin<Project> {
                             "mozilla/public-suffix-list.txt",
                         )
                     )
-                }
-
-                dependencies {
-                    implementation(libs.library("androidx-compose-ui-tooling-preview"))
-                    debugImplementation(libs.library("androidx-compose-ui-tooling"))
-                    androidTestImplementation(project.dependencies.platform(libs.library("androidx-compose-bom")))
                 }
             }
         }

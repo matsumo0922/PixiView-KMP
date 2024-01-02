@@ -4,8 +4,10 @@ import org.jetbrains.kotlin.konan.properties.Properties
 plugins {
     id("pixiview.kmp")
     id("pixiview.kmp.android.application")
+    id("pixiview.kmp.android.compose")
     id("pixiview.kmp.android")
     id("pixiview.kmp.ios")
+    id("pixiview.kmp.resources")
     id("pixiview.detekt")
 }
 
@@ -64,31 +66,60 @@ android {
 
 kotlin {
     sourceSets {
-        androidMain.dependencies {
-            implementation(libs.bundles.ui.android.implementation)
-            implementation(libs.bundles.ui.compose.implementation)
-            implementation(libs.bundles.ktor)
+        val commonMain by getting {
+            dependencies {
+                api(libs.bundles.infra.api)
 
-            implementation(libs.androidx.core.splashscreen)
-            // implementation(libs.play.review)
-            // implementation(libs.play.update)
-            // implementation(libs.play.service.oss)
-            // implementation(libs.play.service.ads)
-            implementation(libs.google.material)
-            implementation(libs.ktor.okhttp)
+                implementation(compose.runtime)
+                implementation(compose.runtimeSaveable)
+                implementation(compose.foundation)
+                implementation(compose.animation)
+                implementation(compose.animationGraphics)
+                implementation(compose.material)
+                implementation(compose.material3)
+                implementation(compose.ui)
+                implementation(compose.materialIconsExtended)
+                @OptIn(ExperimentalComposeLibrary::class)
+                implementation(compose.components.resources)
+
+                api(libs.moko.resources)
+                api(libs.moko.resources.compose)
+            }
         }
-        commonMain.dependencies {
-            implementation(compose.runtime)
-            implementation(compose.runtimeSaveable)
-            implementation(compose.foundation)
-            implementation(compose.animation)
-            implementation(compose.animationGraphics)
-            implementation(compose.material)
-            implementation(compose.material3)
-            implementation(compose.ui)
-            implementation(compose.materialIconsExtended)
-            @OptIn(ExperimentalComposeLibrary::class)
-            implementation(compose.components.resources)
+
+        val androidMain by getting {
+            dependsOn(commonMain)
+            dependencies {
+                implementation(libs.bundles.ui.android.implementation)
+                implementation(libs.bundles.ktor)
+
+                implementation(libs.androidx.core.splashscreen)
+                // implementation(libs.play.review)
+                // implementation(libs.play.update)
+                // implementation(libs.play.service.oss)
+                // implementation(libs.play.service.ads)
+                implementation(libs.google.material)
+                implementation(libs.ktor.okhttp)
+            }
+        }
+
+        val iosX64Main by getting
+        val iosArm64Main by getting
+        val iosSimulatorArm64Main by getting
+        val iosMain by getting {
+            dependsOn(commonMain)
+            iosX64Main.dependsOn(this)
+            iosArm64Main.dependsOn(this)
+            iosSimulatorArm64Main.dependsOn(this)
+
+            dependencies {
+                implementation(libs.bundles.ktor)
+                implementation(libs.ktor.darwin)
+            }
         }
     }
+}
+
+multiplatformResources {
+    multiplatformResourcesPackage = "me.matsumo.fanbox"
 }

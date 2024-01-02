@@ -13,6 +13,8 @@ class KmpIosPlugin : Plugin<Project> {
             }
 
             kotlin {
+                applyDefaultHierarchyTemplate()
+
                 listOf(
                     iosX64(),
                     iosArm64(),

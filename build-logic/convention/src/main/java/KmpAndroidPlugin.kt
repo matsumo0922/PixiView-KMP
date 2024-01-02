@@ -1,6 +1,7 @@
 
 import me.matsumo.fanbox.android
 import me.matsumo.fanbox.setupAndroid
+import org.gradle.api.JavaVersion
 import org.gradle.api.Plugin
 import org.gradle.api.Project
 import org.gradle.kotlin.dsl.get
@@ -13,7 +14,7 @@ class KmpAndroidPlugin : Plugin<Project> {
                 androidTarget {
                     compilations.all {
                         kotlinOptions {
-                            jvmTarget = "17"
+                            jvmTarget = JavaVersion.VERSION_17.toString()
                         }
                     }
                 }

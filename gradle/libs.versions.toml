@@ -23,6 +23,7 @@ kotlinxImmutable = "0.3.7"
 
 # KMP
 kmpCompose = "1.5.11"
+mokoResource = "0.23.0"
 
 # AndroidX
 androidxCore = "1.12.0"
@@ -69,6 +70,9 @@ protobufPlugin = "0.9.4"
 
 # Billing
 billing = "6.1.0"
+
+# Navigation
+precompose = "1.5.10"
 
 # Log
 puree = "1.4.0"
@@ -124,6 +128,7 @@ android-gradlePlugin = { group = "com.android.tools.build", name = "gradle", ver
 kotlin-gradlePlugin = { group = "org.jetbrains.kotlin", name = "kotlin-gradle-plugin", version.ref = "kotlin" }
 gms-services = { group = "com.google.gms", name = "google-services", version = "4.4.0" }
 gms-oss = { group = "com.google.android.gms", name = "oss-licenses-plugin", version = "0.10.6" }
+moko-resources-gradlePlugin = { group = "dev.icerock.moko", name = "resources-generator", version.ref = "mokoResource" }
 secret-gradlePlugin = { group = "com.google.android.libraries.mapsplatform.secrets-gradle-plugin", name = "secrets-gradle-plugin", version = "2.0.1" }
 detekt-gradlePlugin = { group = "io.gitlab.arturbosch.detekt", name = "detekt-gradle-plugin", version.ref = "detekt" }
 detekt-formatting = { group = "io.gitlab.arturbosch.detekt", name = "detekt-formatting", version.ref = "detekt" }
@@ -184,7 +189,6 @@ androidx-glance-wear = { module = "androidx.glance:glance-wear-tiles", version.r
 androidx-compose-bom = { module = "androidx.compose:compose-bom", version.ref = "androidxCompose" }
 androidx-compose-runtime = { module = "androidx.compose.runtime:runtime" }
 androidx-compose-ui = { module = "androidx.compose.ui:ui" }
-androidx-compose-ui2 = { module = "androidx.compose.ui:ui", version = "1.5.4" }
 androidx-compose-ui-util = { module = "androidx.compose.ui:ui-util" }
 androidx-compose-ui-binding = { module = "androidx.compose.ui:ui-viewbinding" }
 androidx-compose-ui-tooling = { module = "androidx.compose.ui:ui-tooling" }
@@ -201,6 +205,16 @@ androidx-compose-ui-test-junit4 = { module = "androidx.compose.ui:ui-test-junit4
 # Billing
 billing = { module = "com.android.billingclient:billing", version.ref = "billing" }
 billing-ktx = { module = "com.android.billingclient:billing-ktx", version.ref = "billing" }
+
+# Navigation
+precompose = { module = "moe.tlaster:precompose", version.ref = "precompose" }
+precompose-molecule = { module = "moe.tlaster:precompose-molecule", version.ref = "precompose" }
+precompose-viewmodel = { module = "moe.tlaster:precompose-viewmodel", version.ref = "precompose" }
+precompose-koin = { module = "moe.tlaster:precompose-koin", version.ref = "precompose" }
+
+# Resource
+moko-resources = { module = "dev.icerock.moko:resources", version.ref = "mokoResource" }
+moko-resources-compose = { module = "dev.icerock.moko:resources-compose", version.ref = "mokoResource" }
 
 # Google
 play-review = { module = "com.google.android.play:review-ktx", version.ref = "playReview" }
@@ -281,7 +295,6 @@ androidx-test-espresso-espresso-core = { group = "androidx.test.espresso", name 
 infra-api = [
     "kotlin-stdlib",
     "kotlin-reflect",
-    "kotlinx-coroutines-android",
     "kotlinx-datetime",
     "kotlinx-serialization-json",
     "kotlinx-collections-immutable",
@@ -299,30 +312,39 @@ ui-android-implementation = [
     "androidx-transition",
     "androidx-recyclerview",
     "androidx-constraintlayout",
+    "androidx-constraintlayout-compose",
     "androidx-paging",
+    "androidx-paging-compose",
+    "androidx-foundation-compose",
     "androidx-cardview",
     "androidx-viewpager2",
-    "accompanist-systemuicontroller",
-    "accompanist-compose-theme-adapter",
-    "accompanist-compose-theme-adapter3",
-    "accompanist-navigation",
-    "accompanist-permissions",
-    "accompanist-webview",
-    "accompanist-placeholder-material",
-    "google-material",
-    "coil-compose",
-    "coil-gif",
-]
-
-ui-compose-implementation = [
-    "androidx-constraintlayout-compose",
-    "androidx-foundation-compose",
     "androidx-compose-runtime",
     "androidx-compose-ui",
+    "androidx-compose-ui-util",
     "androidx-compose-animation",
     "androidx-compose-animation-graphics",
     "androidx-compose-material",
+    "androidx-compose-material3",
+    "androidx-compose-material3-window",
     "androidx-compose-material-icons-extended",
+    "accompanist-systemuicontroller",
+    "accompanist-compose-theme-adapter",
+    "accompanist-compose-theme-adapter3",
+    "accompanist-permissions",
+    "accompanist-placeholder-material",
+    "google-material",
+]
+
+ui-common-api = [
+    "precompose",
+    "precompose-molecule",
+    "precompose-viewmodel",
+    "precompose-koin",
+]
+
+resources = [
+    "moko-resources",
+    "moko-resources-compose",
 ]
 
 billing = [

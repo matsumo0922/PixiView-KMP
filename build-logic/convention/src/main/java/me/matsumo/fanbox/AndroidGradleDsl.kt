@@ -24,11 +24,8 @@ fun Project.android(action: TestedExtension.() -> Unit) {
 fun Project.setupAndroid() {
     android {
         defaultConfig {
-            applicationId = "me.matsumo.fanbox"
-
-            versionName = libs.version("versionName")
-            versionCode = libs.version("versionCode").toInt()
-            minSdk = libs.findVersion("minSdk").get().toString().toInt()
+            targetSdk = libs.version("targetSdk").toInt()
+            minSdk = libs.version("minSdk").toInt()
 
             javaCompileOptions {
                 annotationProcessorOptions {
