@@ -72,6 +72,7 @@ kotlin {
                 api(libs.bundles.ui.common.api)
                 implementation(libs.bundles.ktor)
 
+                // Compose
                 implementation(compose.runtime)
                 implementation(compose.runtimeSaveable)
                 implementation(compose.foundation)
@@ -84,8 +85,13 @@ kotlin {
                 @OptIn(ExperimentalComposeLibrary::class)
                 implementation(compose.components.resources)
 
-                api(libs.moko.resources)
-                api(libs.moko.resources.compose)
+                // Resources
+                implementation(libs.moko.resources)
+                implementation(libs.moko.resources.compose)
+
+                // Settings
+                implementation(libs.kstore)
+                implementation(libs.kstore.file)
             }
         }
 
@@ -114,7 +120,6 @@ kotlin {
             iosSimulatorArm64Main.dependsOn(this)
 
             dependencies {
-                implementation(libs.bundles.ktor)
                 implementation(libs.ktor.darwin)
             }
         }

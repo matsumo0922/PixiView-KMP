@@ -74,6 +74,9 @@ billing = "6.1.0"
 # Navigation
 precompose = "1.5.10"
 
+# Settings
+kstore = "0.7.1"
+
 # Log
 puree = "1.4.0"
 
@@ -216,6 +219,11 @@ precompose-koin = { module = "moe.tlaster:precompose-koin", version.ref = "preco
 moko-resources = { module = "dev.icerock.moko:resources", version.ref = "mokoResource" }
 moko-resources-compose = { module = "dev.icerock.moko:resources-compose", version.ref = "mokoResource" }
 
+# Settings
+kstore = { module = "io.github.xxfast:kstore", version.ref = "kstore" }
+kstore-file = { module = "io.github.xxfast:kstore-file", version.ref = "kstore" }
+kstore-storage = { module = "io.github.xxfast:kstore-storage", version.ref = "kstore" }
+
 # Google
 play-review = { module = "com.google.android.play:review-ktx", version.ref = "playReview" }
 play-update = { module = "com.google.android.play:app-update-ktx", version.ref = "playUpdate" }
@@ -337,7 +345,6 @@ ui-android-implementation = [
 
 ui-common-api = [
     "precompose",
-    "precompose-molecule",
     "precompose-viewmodel",
     "precompose-koin",
 ]
