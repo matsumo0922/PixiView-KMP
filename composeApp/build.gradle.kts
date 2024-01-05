@@ -7,7 +7,6 @@ plugins {
     id("pixiview.kmp.android.compose")
     id("pixiview.kmp.android")
     id("pixiview.kmp.ios")
-    id("pixiview.kmp.resources")
     id("pixiview.detekt")
 }
 
@@ -68,8 +67,12 @@ kotlin {
     sourceSets {
         val commonMain by getting {
             dependencies {
-                api(libs.bundles.infra.api)
-                api(libs.bundles.ui.common.api)
+                implementation(project(":core:common"))
+                implementation(project(":core:model"))
+                implementation(project(":core:datastore"))
+                implementation(project(":core:repository"))
+                implementation(project(":core:ui"))
+
                 implementation(libs.bundles.ktor)
 
                 // Compose
@@ -84,14 +87,6 @@ kotlin {
                 implementation(compose.materialIconsExtended)
                 @OptIn(ExperimentalComposeLibrary::class)
                 implementation(compose.components.resources)
-
-                // Resources
-                implementation(libs.moko.resources)
-                implementation(libs.moko.resources.compose)
-
-                // Settings
-                implementation(libs.kstore)
-                implementation(libs.kstore.file)
             }
         }
 
@@ -124,8 +119,4 @@ kotlin {
             }
         }
     }
-}
-
-multiplatformResources {
-    multiplatformResourcesPackage = "me.matsumo.fanbox"
 }

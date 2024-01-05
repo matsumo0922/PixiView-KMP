@@ -1,5 +1,23 @@
 @file:Suppress("UnstableApiUsage")
 
+include(":core:repository")
+
+
+include(":core:ui")
+
+
+include(":core:common")
+
+
+include(":core:model")
+
+
+include(":core:datastore")
+
+
+include(":core")
+
+
 rootProject.name = "PixiView-KMP"
 enableFeaturePreview("TYPESAFE_PROJECT_ACCESSORS")
 

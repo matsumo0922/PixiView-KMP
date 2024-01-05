@@ -13,7 +13,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import dev.icerock.moko.resources.compose.painterResource
-import me.matsumo.fanbox.MR
+import me.matsumo.fanbox.core.ui.MR
 import org.jetbrains.compose.resources.ExperimentalResourceApi
 
 @OptIn(ExperimentalResourceApi::class)
@@ -35,7 +35,6 @@ fun App() {
                     Modifier.fillMaxWidth(),
                     horizontalAlignment = Alignment.CenterHorizontally
                 ) {
-                    Image(painterResource(MR.images.sample), null)
                     Text("Compose: $greeting")
                 }
             }
