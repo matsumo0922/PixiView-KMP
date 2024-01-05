@@ -7,8 +7,8 @@ import androidx.activity.compose.setContent
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.core.view.WindowCompat
-import core.helper.appCacheDir
-import core.helper.appFileDir
+import me.matsumo.fanbox.core.datastore.appCacheDir
+import me.matsumo.fanbox.core.datastore.appFileDir
 
 class MainActivity : ComponentActivity() {
 

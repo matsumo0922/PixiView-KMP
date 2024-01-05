@@ -36,6 +36,12 @@ fun App() {
                     horizontalAlignment = Alignment.CenterHorizontally
                 ) {
                     Text("Compose: $greeting")
+
+                    Image(
+                        modifier = Modifier.fillMaxWidth(),
+                        painter = painterResource(MR.images.sample),
+                        contentDescription = null
+                    )
                 }
             }
         }

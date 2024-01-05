@@ -72,29 +72,12 @@ kotlin {
                 implementation(project(":core:datastore"))
                 implementation(project(":core:repository"))
                 implementation(project(":core:ui"))
-
-                implementation(libs.bundles.ktor)
-
-                // Compose
-                implementation(compose.runtime)
-                implementation(compose.runtimeSaveable)
-                implementation(compose.foundation)
-                implementation(compose.animation)
-                implementation(compose.animationGraphics)
-                implementation(compose.material)
-                implementation(compose.material3)
-                implementation(compose.ui)
-                implementation(compose.materialIconsExtended)
-                @OptIn(ExperimentalComposeLibrary::class)
-                implementation(compose.components.resources)
             }
         }
 
         val androidMain by getting {
             dependsOn(commonMain)
             dependencies {
-                implementation(libs.bundles.ui.android.implementation)
-
                 implementation(libs.androidx.core.splashscreen)
                 // implementation(libs.play.review)
                 // implementation(libs.play.update)

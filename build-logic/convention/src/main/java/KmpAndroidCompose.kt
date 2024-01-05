@@ -13,15 +13,22 @@ import org.gradle.kotlin.dsl.dependencies
 class KmpAndroidCompose : Plugin<Project> {
     override fun apply(target: Project) {
         with(target) {
+            with(pluginManager) {
+                apply("org.jetbrains.compose")
+            }
+
             android {
                 buildFeatures.compose = true
                 composeOptions.kotlinCompilerExtensionVersion = libs.version("kotlinCompiler")
             }
 
             dependencies {
+                val bom = libs.library("androidx-compose-bom")
+
+                implementation(project.dependencies.platform(bom))
                 implementation(libs.library("androidx-compose-ui-tooling-preview"))
                 debugImplementation(libs.library("androidx-compose-ui-tooling"))
-                androidTestImplementation(project.dependencies.platform(libs.library("androidx-compose-bom")))
+                androidTestImplementation(project.dependencies.platform(bom))
             }
         }
     }

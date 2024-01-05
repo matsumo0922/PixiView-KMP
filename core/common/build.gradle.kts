@@ -15,7 +15,6 @@ kotlin {
         val commonMain by getting {
             dependencies {
                 api(libs.bundles.infra.api)
-                api(libs.bundles.ui.common.api)
             }
         }
     }
