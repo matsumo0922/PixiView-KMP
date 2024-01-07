@@ -1,3 +1,5 @@
+package me.matsumo.fanbox
+
 class Greeting {
     private val platform = getPlatform()
 

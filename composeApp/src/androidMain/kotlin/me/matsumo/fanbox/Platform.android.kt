@@ -1,3 +1,5 @@
+package me.matsumo.fanbox
+
 import android.os.Build
 
 class AndroidPlatform : Platform {

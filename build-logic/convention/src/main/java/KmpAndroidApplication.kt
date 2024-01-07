@@ -20,6 +20,7 @@ class KmpAndroidApplication : Plugin<Project> {
                 apply("kotlinx-serialization")
                 apply("project-report")
                 apply("com.mikepenz.aboutlibraries.plugin")
+                apply("com.codingfeline.buildkonfig")
                 apply("com.google.devtools.ksp")
                 // apply("com.google.gms.google-services")
                 // apply("com.google.android.gms.oss-licenses-plugin")

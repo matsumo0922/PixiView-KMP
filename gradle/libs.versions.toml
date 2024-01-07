@@ -23,6 +23,7 @@ kotlinxImmutable = "0.3.7"
 
 # KMP
 kmpCompose = "1.5.11"
+kmpComplete = "1.1.0"
 mokoResource = "0.23.0"
 
 # AndroidX
@@ -38,14 +39,14 @@ androidxCardView = "1.0.0"
 androidxViewPager2 = "1.1.0-beta02"
 androidxBiomtrics = "1.2.0-alpha05"
 androidxPreference = "1.2.1"
-androidxDataStore = "1.0.0"
+androidxDataStore = "1.1.0-dev01"
 androidxPalette = "1.0.0"
 androidxLifecycle = "2.6.2"
 androidxRoom = "2.6.1"
 androidxMedia = "1.7.0"
 androidxAnnotation = "1.7.1"
 androidxNavigation = "2.7.6"
-androidxPaging = "3.2.1"
+androidxPaging = "3.3.0-alpha02"
 androidxCompose = "2023.10.01"
 androidxComposeMaterial3 = "1.1.2"
 androidxComposeConstraintLayout = "1.1.0-alpha13"
@@ -82,9 +83,11 @@ puree = "1.4.0"
 
 # Others
 dagger = "2.49"
+koin = "3.5.1"
 ktor = "2.3.7"
 coil = "2.5.0"
 jsoup = "1.16.1"
+ksoup = "0.1.2"
 detekt = "1.23.4"
 balloon = "1.5.3"
 zoomable = "1.5.2"
@@ -93,6 +96,7 @@ orbital = "0.2.4"
 chaquopy = "15.0.0"
 libraries = "10.9.1"
 ffmpeg = "5.1"
+buildKonfig = "0.15.1"
 twitterComposeRule = "0.0.26"
 
 # Debugs
@@ -124,6 +128,7 @@ chaquopy = { id = "com.chaquo.python", version.ref = "chaquopy" }
 module-graph = { id = "dev.iurysouza.modulegraph", version = "0.4.0" }
 kmp = { id = "org.jetbrains.kotlin.multiplatform", version.ref = "kotlin" }
 kmpCompose = { id = "org.jetbrains.compose", version.ref = "kmpCompose" }
+kmpComplete = { id = "com.louiscad.complete-kotlin", version.ref = "kmpComplete" }
 
 [libraries]
 ## Dependency of the include build-logic
@@ -132,6 +137,7 @@ kotlin-gradlePlugin = { group = "org.jetbrains.kotlin", name = "kotlin-gradle-pl
 gms-services = { group = "com.google.gms", name = "google-services", version = "4.4.0" }
 gms-oss = { group = "com.google.android.gms", name = "oss-licenses-plugin", version = "0.10.6" }
 moko-resources-gradlePlugin = { group = "dev.icerock.moko", name = "resources-generator", version.ref = "mokoResource" }
+build-konfig-gradlePlugin = { group = "com.codingfeline.buildkonfig", name = "buildkonfig-gradle-plugin", version.ref = "buildKonfig" }
 secret-gradlePlugin = { group = "com.google.android.libraries.mapsplatform.secrets-gradle-plugin", name = "secrets-gradle-plugin", version = "2.0.1" }
 detekt-gradlePlugin = { group = "io.gitlab.arturbosch.detekt", name = "detekt-gradle-plugin", version.ref = "detekt" }
 detekt-formatting = { group = "io.gitlab.arturbosch.detekt", name = "detekt-formatting", version.ref = "detekt" }
@@ -176,7 +182,10 @@ androidx-biomtrics = { module = "androidx.biometric:biometric", version.ref = "a
 androidx-biomtrics-ktx = { module = "androidx.biometric:biometric-ktx", version.ref = "androidxBiomtrics" }
 androidx-preference = { module = "androidx.preference:preference-ktx", version.ref = "androidxPreference" }
 androidx-datastore = { module = "androidx.datastore:datastore", version.ref = "androidxDataStore" }
-androidx-paging = { module = "androidx.paging:paging-runtime", version.ref = "androidxPaging" }
+androidx-datastore-proto = { module = "androidx.datastore:datastore-core", version.ref = "androidxDataStore" }
+androidx-datastore-preferences = { module = "androidx.datastore:datastore-preferences-core", version.ref = "androidxDataStore" }
+androidx-paging-runtime = { module = "androidx.paging:paging-runtime", version.ref = "androidxPaging" }
+androidx-paging-common = { module = "androidx.paging:paging-common", version.ref = "androidxPaging" }
 androidx-paging-compose = { module = "androidx.paging:paging-compose", version.ref = "androidxPaging" }
 androidx-foundation-compose = { module = "androidx.compose.foundation:foundation-android", version = "1.6.0-alpha07" }
 androidx-navigation-ui = { module = "androidx.navigation:navigation-ui", version.ref = "androidxNavigation" }
@@ -248,6 +257,13 @@ firebase-appindexing = { module = "com.google.firebase:firebase-appindexing" }
 firebase-config = { module = "com.google.firebase:firebase-config-ktx" }
 firebase-dynamiclinks = { module = "com.google.firebase:firebase-dynamic-links-ktx" }
 
+# Koin
+koin-bom = { module = "io.insert-koin:koin-bom", version.ref = "koin" }
+koin-core = { module = "io.insert-koin:koin-core"  }
+koin-android = { module = "io.insert-koin:koin-android" }
+koin-compose = { module = "io.insert-koin:koin-compose" }
+koin-annotation = { module = "io.insert-koin:koin-annotation" }
+
 # Ktor
 ktor-core = { module = "io.ktor:ktor-client-core", version.ref = "ktor" }
 ktor-cio = { module = "io.ktor:ktor-client-cio", version.ref = "ktor" }
@@ -270,6 +286,7 @@ dagger-hilt-compiler = { module = "com.google.dagger:hilt-compiler", version.ref
 coil-compose = { module = "io.coil-kt:coil-compose", version.ref = "coil" }
 coil-gif = { module = "io.coil-kt:coil-gif", version.ref = "coil" }
 jsoup = { module = "org.jsoup:jsoup", version.ref = "jsoup" }
+ksoup = { module = "com.fleeksoft.ksoup:ksoup", version.ref = "ksoup" }
 desugar = { module = "com.android.tools:desugar_jdk_libs", version = "2.0.4" }
 balloon = { module = "com.github.skydoves:balloon", version.ref = "balloon" }
 balloon-compose = { module = "com.github.skydoves:balloon-compose", version.ref = "balloon" }
@@ -321,8 +338,6 @@ ui-android-implementation = [
     "androidx-recyclerview",
     "androidx-constraintlayout",
     "androidx-constraintlayout-compose",
-    "androidx-paging",
-    "androidx-paging-compose",
     "androidx-foundation-compose",
     "androidx-cardview",
     "androidx-viewpager2",
@@ -365,4 +380,9 @@ ktor = [
     "ktor-content-negotiation",
     "ktor-serialization-json",
     "ktot-logging",
+]
+
+koin = [
+    "koin-core",
+    "koin-compose",
 ]

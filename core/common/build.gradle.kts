@@ -12,10 +12,15 @@ android {
 
 kotlin {
     sourceSets {
-        val commonMain by getting {
-            dependencies {
-                api(libs.bundles.infra.api)
-            }
+        commonMain.dependencies {
+            api(project.dependencies.platform(libs.koin.bom))
+
+            api(libs.bundles.infra.api)
+            api(libs.bundles.koin)
+        }
+
+        androidMain.dependencies {
+            api(libs.koin.android)
         }
     }
 }

@@ -1,3 +1,5 @@
+package me.matsumo.fanbox
+
 import platform.UIKit.UIDevice
 
 class IOSPlatform: Platform {

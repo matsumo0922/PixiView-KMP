@@ -1,4 +1,5 @@
 
+import org.gradle.api.JavaVersion
 import org.gradle.api.Plugin
 import org.gradle.api.Project
 import org.gradle.kotlin.dsl.configure
@@ -12,7 +13,7 @@ class KmpPlugin : Plugin<Project> {
                 apply("org.jetbrains.kotlin.multiplatform")
             }
             tasks.withType(org.jetbrains.kotlin.gradle.tasks.KotlinCompile::class.java) {
-                kotlinOptions.jvmTarget = "17"
+                kotlinOptions.jvmTarget = JavaVersion.VERSION_17.toString()
             }
             tasks.withType<org.jetbrains.kotlin.gradle.tasks.KotlinNativeLink>().configureEach {
                 notCompatibleWithConfigurationCache("Configuration chache not supported for a system property read at configuration time")

@@ -12,12 +12,10 @@ android {
 
 kotlin {
     sourceSets {
-        val commonMain by getting {
-            dependencies {
-                implementation(project(":core:common"))
+        commonMain.dependencies {
+            implementation(project(":core:common"))
 
-                implementation(libs.ktor.core)
-            }
+            implementation(libs.ktor.core)
         }
     }
 }

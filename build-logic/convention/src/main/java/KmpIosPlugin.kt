@@ -9,7 +9,7 @@ class KmpIosPlugin : Plugin<Project> {
     override fun apply(target: Project) {
         with(target) {
             with(pluginManager) {
-                // apply("com.louiscad.complete-kotlin")
+                apply("com.louiscad.complete-kotlin")
             }
 
             kotlin {

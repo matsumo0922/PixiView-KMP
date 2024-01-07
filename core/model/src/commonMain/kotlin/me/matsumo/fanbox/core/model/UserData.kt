@@ -1,5 +1,8 @@
 package me.matsumo.fanbox.core.model
 
+import kotlinx.serialization.Serializable
+
+@Serializable
 data class UserData(
     val pixiViewId: String,
     val themeConfig: ThemeConfig,

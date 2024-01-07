@@ -12,14 +12,13 @@ android {
 
 kotlin {
     sourceSets {
-        val commonMain by getting {
-            dependencies {
-                implementation(project(":core:common"))
-                implementation(project(":core:model"))
+        commonMain.dependencies {
+            implementation(project(":core:common"))
+            implementation(project(":core:model"))
 
-                api(libs.kstore)
-                api(libs.kstore.file)
-            }
+            implementation(libs.androidx.datastore)
+            implementation(libs.androidx.datastore.proto)
+            implementation(libs.androidx.datastore.preferences)
         }
     }
 }

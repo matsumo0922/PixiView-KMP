@@ -1,3 +1,5 @@
+package me.matsumo.fanbox
+
 import kotlinx.cinterop.BetaInteropApi
 import kotlinx.cinterop.ExperimentalForeignApi
 import platform.UIKit.UIApplication

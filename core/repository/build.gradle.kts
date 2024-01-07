@@ -12,14 +12,19 @@ android {
 
 kotlin {
     sourceSets {
-        val commonMain by getting {
-            dependencies {
-                implementation(project(":core:model"))
-                implementation(project(":core:common"))
-                implementation(project(":core:datastore"))
+        commonMain.dependencies {
+            implementation(project(":core:model"))
+            implementation(project(":core:common"))
+            implementation(project(":core:datastore"))
 
-                implementation(libs.bundles.ktor)
-            }
+            implementation(libs.bundles.ktor)
+            implementation(libs.ksoup)
+
+            api(libs.androidx.paging.common)
+        }
+        androidMain.dependencies {
+            api(libs.androidx.paging.runtime)
+            api(libs.androidx.paging.compose)
         }
     }
 }

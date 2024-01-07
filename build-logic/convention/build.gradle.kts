@@ -17,6 +17,7 @@ dependencies {
     implementation(libs.secret.gradlePlugin)
     implementation(libs.detekt.gradlePlugin)
     implementation(libs.moko.resources.gradlePlugin)
+    implementation(libs.build.konfig.gradlePlugin)
     implementation(libs.gms.services)
     implementation(libs.gms.oss)
 }
