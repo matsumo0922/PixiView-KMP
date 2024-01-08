@@ -1,11 +1,13 @@
 package me.matsumo.fanbox.core.model
 
+import dev.icerock.moko.resources.StringResource
+
 sealed class ScreenState<out T> {
     data object Loading : ScreenState<Nothing>()
 
     data class Error(
-        val message: Int,
-        val retryTitle: Int? = null,
+        val message: StringResource,
+        val retryTitle: StringResource? = null,
     ) : ScreenState<Nothing>()
 
     data class Idle<T>(

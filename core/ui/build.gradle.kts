@@ -45,6 +45,8 @@ kotlin {
                 // Resources
                 api(libs.moko.resources)
                 api(libs.moko.resources.compose)
+
+                api(libs.androidx.paging.compose)
             }
         }
 

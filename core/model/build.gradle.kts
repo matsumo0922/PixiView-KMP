@@ -16,6 +16,7 @@ kotlin {
             implementation(project(":core:common"))
 
             implementation(libs.ktor.core)
+            implementation(libs.moko.resources)
         }
     }
 }

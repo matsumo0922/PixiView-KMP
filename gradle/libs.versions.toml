@@ -46,7 +46,7 @@ androidxRoom = "2.6.1"
 androidxMedia = "1.7.0"
 androidxAnnotation = "1.7.1"
 androidxNavigation = "2.7.6"
-androidxPaging = "3.3.0-alpha02"
+androidxPaging = "3.3.0-alpha02-0.4.0"
 androidxCompose = "2023.10.01"
 androidxComposeMaterial3 = "1.1.2"
 androidxComposeConstraintLayout = "1.1.0-alpha13"
@@ -86,8 +86,10 @@ dagger = "2.49"
 koin = "3.5.1"
 ktor = "2.3.7"
 coil = "2.5.0"
+coil3 = "3.0.0-alpha01"
 jsoup = "1.16.1"
 ksoup = "0.1.2"
+composeWebView = "1.8.2"
 detekt = "1.23.4"
 balloon = "1.5.3"
 zoomable = "1.5.2"
@@ -185,8 +187,8 @@ androidx-datastore = { module = "androidx.datastore:datastore", version.ref = "a
 androidx-datastore-proto = { module = "androidx.datastore:datastore-core", version.ref = "androidxDataStore" }
 androidx-datastore-preferences = { module = "androidx.datastore:datastore-preferences-core", version.ref = "androidxDataStore" }
 androidx-paging-runtime = { module = "androidx.paging:paging-runtime", version.ref = "androidxPaging" }
-androidx-paging-common = { module = "androidx.paging:paging-common", version.ref = "androidxPaging" }
-androidx-paging-compose = { module = "androidx.paging:paging-compose", version.ref = "androidxPaging" }
+androidx-paging-common = { module = "app.cash.paging:paging-common", version.ref = "androidxPaging" }
+androidx-paging-compose = { module = "app.cash.paging:paging-compose-common", version.ref = "androidxPaging" }
 androidx-foundation-compose = { module = "androidx.compose.foundation:foundation-android", version = "1.6.0-alpha07" }
 androidx-navigation-ui = { module = "androidx.navigation:navigation-ui", version.ref = "androidxNavigation" }
 androidx-navigation-fragment = { module = "androidx.navigation:navigation-fragment", version.ref = "androidxNavigation" }
@@ -285,8 +287,12 @@ dagger-hilt = { module = "com.google.dagger:hilt-android", version.ref = "dagger
 dagger-hilt-compiler = { module = "com.google.dagger:hilt-compiler", version.ref = "dagger" }
 coil-compose = { module = "io.coil-kt:coil-compose", version.ref = "coil" }
 coil-gif = { module = "io.coil-kt:coil-gif", version.ref = "coil" }
+coil3-compose = { module = "io.coil-kt.coil3:coil-compose", version.ref = "coil3" }
+coil3-network = { module = "io.coil-kt.coil3:coil-network", version.ref = "coil3" }
+coil3-gif = { module = "io.coil-kt.coil3:coil-gif", version.ref = "coil3" }
 jsoup = { module = "org.jsoup:jsoup", version.ref = "jsoup" }
 ksoup = { module = "com.fleeksoft.ksoup:ksoup", version.ref = "ksoup" }
+webview-compose = { module = "io.github.kevinnzou:compose-webview-multiplatform", version.ref = "composeWebView" }
 desugar = { module = "com.android.tools:desugar_jdk_libs", version = "2.0.4" }
 balloon = { module = "com.github.skydoves:balloon", version.ref = "balloon" }
 balloon-compose = { module = "com.github.skydoves:balloon-compose", version.ref = "balloon" }
@@ -362,6 +368,8 @@ ui-common-api = [
     "precompose",
     "precompose-viewmodel",
     "precompose-koin",
+    "coil3-compose",
+    "coil3-network",
 ]
 
 resources = [

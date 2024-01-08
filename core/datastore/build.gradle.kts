@@ -18,7 +18,7 @@ kotlin {
 
             implementation(libs.androidx.datastore)
             implementation(libs.androidx.datastore.proto)
-            implementation(libs.androidx.datastore.preferences)
+            api(libs.androidx.datastore.preferences)
         }
     }
 }
