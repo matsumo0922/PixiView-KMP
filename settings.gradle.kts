@@ -30,3 +30,5 @@ include(":core:repository")
 include(":core:datastore")
 include(":core:model")
 include(":core:common")
+
+include(":feature:welcome")

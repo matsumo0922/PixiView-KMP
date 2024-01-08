@@ -16,7 +16,7 @@ class BookmarkDataStore(
     private val preferenceHelper: PreferenceHelper,
     private val ioDispatcher: CoroutineDispatcher,
 ) {
-    private val cookiePreference = preferenceHelper.create(PreferencesName.FANBOX_COOKIE)
+    private val cookiePreference = preferenceHelper.create(PreferencesName.FANBOX_BOOKMARK)
     private val scope = CoroutineScope(ioDispatcher)
 
     private val _data = MutableSharedFlow<List<PostId>>(replay = 1)

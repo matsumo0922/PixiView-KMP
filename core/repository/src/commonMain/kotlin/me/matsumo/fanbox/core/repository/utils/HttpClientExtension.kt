@@ -1,5 +1,6 @@
 package me.matsumo.fanbox.core.repository.utils
 
+import io.github.aakira.napier.Napier
 import io.ktor.client.call.body
 import io.ktor.client.statement.HttpResponse
 import io.ktor.client.statement.bodyAsText
@@ -12,12 +13,12 @@ suspend inline fun <reified T> HttpResponse.parse(
     val requestUrl = request.url
     val isOK = this.status.value in allowRange
 
-    /*if (isOK) {
-        Timber.d("[SUCCESS] Ktor Request: $requestUrl")
+    if (isOK) {
+        Napier.d("[SUCCESS] Ktor Request: $requestUrl")
     } else {
-        Timber.d("[FAILED] Ktor Request: $requestUrl")
-        Timber.d("[RESPONSE] ${this.bodyAsText().replace("\n", "")}")
-    }*/
+        Napier.d("[FAILED] Ktor Request: $requestUrl")
+        Napier.d("[RESPONSE] ${this.bodyAsText().replace("\n", "")}")
+    }
 
     return (if (isOK) this.body<T>() else null).also(f)
 }

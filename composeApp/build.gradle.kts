@@ -106,6 +106,11 @@ kotlin {
                 implementation(project(":core:datastore"))
                 implementation(project(":core:repository"))
                 implementation(project(":core:ui"))
+
+                implementation(project(":feature:welcome"))
+
+                implementation(libs.moko.permissions)
+                implementation(libs.moko.permissions.compose)
             }
         }
 
@@ -118,7 +123,6 @@ kotlin {
                 // implementation(libs.play.service.oss)
                 // implementation(libs.play.service.ads)
                 implementation(libs.google.material)
-                implementation(libs.ktor.okhttp)
             }
         }
 
@@ -130,10 +134,6 @@ kotlin {
             iosX64Main.dependsOn(this)
             iosArm64Main.dependsOn(this)
             iosSimulatorArm64Main.dependsOn(this)
-
-            dependencies {
-                implementation(libs.ktor.darwin)
-            }
         }
     }
 }

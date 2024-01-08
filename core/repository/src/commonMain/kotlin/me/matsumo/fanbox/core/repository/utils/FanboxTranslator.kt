@@ -1,5 +1,6 @@
 package me.matsumo.fanbox.core.repository.utils
 
+import io.github.aakira.napier.Napier
 import io.ktor.http.Url
 import io.ktor.http.parseUrlEncodedParameters
 import kotlinx.datetime.LocalDateTime
@@ -181,7 +182,7 @@ internal fun FanboxPostDetailEntity.translate(bookmarkedPosts: List<PostId>): Fa
                         }
 
                         else -> {
-                            // Timber.w("FanboxPostDetailEntity translate error: Unknown block type. $it")
+                            Napier.w { "FanboxPostDetailEntity translate error: Unknown block type. $it" }
                             null
                         }
                     }
@@ -438,7 +439,7 @@ internal fun FanboxBellItemsEntity.translate(): PageNumberInfo<FanboxBell> {
                 }
 
                 else -> {
-                    // Timber.w("FanboxBellItemsEntity translate error: Unknown bell type. $it")
+                    Napier.w { "FanboxBellItemsEntity translate error: Unknown bell type. $it" }
                     null
                 }
             }

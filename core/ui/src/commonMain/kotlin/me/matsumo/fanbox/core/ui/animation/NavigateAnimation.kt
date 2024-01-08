@@ -9,6 +9,7 @@ import androidx.compose.animation.slideIn
 import androidx.compose.animation.slideOut
 import androidx.compose.ui.graphics.TransformOrigin
 import androidx.compose.ui.unit.IntOffset
+import moe.tlaster.precompose.navigation.transition.NavTransition
 
 object NavigateAnimation {
     val decelerateEasing = CubicBezierEasing(0.0f, 0.0f, 0.0f, 1.0f)
@@ -30,6 +31,13 @@ object NavigateAnimation {
         val popExit = fadeOut(tween(DURATION_FADE))
         val popEnter = fadeIn(tween(DURATION_FADE))
         val exit = fadeOut(tween(DURATION_FADE))
+
+        val transition = NavTransition(
+            createTransition = Horizontal.enter,
+            destroyTransition = Horizontal.exit,
+            resumeTransition = Horizontal.popEnter,
+            pauseTransition = Horizontal.popExit,
+        )
     }
 
     object Vertical {
@@ -55,6 +63,13 @@ object NavigateAnimation {
             animationSpec = tween(DURATION_SLIDE, 0, decelerateEasing),
             targetOffset = { IntOffset(0, (it.height * 0.1).toInt()) },
         )
+
+        val transition = NavTransition(
+            createTransition = Horizontal.enter,
+            destroyTransition = Horizontal.exit,
+            resumeTransition = Horizontal.popEnter,
+            pauseTransition = Horizontal.popExit,
+        )
     }
 
     object Horizontal {
@@ -79,6 +94,13 @@ object NavigateAnimation {
         val exit = fadeOut(tween(DURATION_FADE)) + slideOut(
             animationSpec = tween(DURATION_SLIDE, 0, decelerateEasing),
             targetOffset = { IntOffset((-it.width * 0.1).toInt(), 0) },
+        )
+
+        val transition = NavTransition(
+            createTransition = enter,
+            destroyTransition = exit,
+            resumeTransition = popEnter,
+            pauseTransition = popExit,
         )
     }
 }

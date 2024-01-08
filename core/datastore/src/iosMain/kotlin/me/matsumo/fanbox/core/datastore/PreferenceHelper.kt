@@ -29,7 +29,7 @@ class PreferenceHelperImpl(
             corruptionHandler = null,
             migrations = emptyList(),
             scope = CoroutineScope(ioDispatcher),
-            produceFile = { "${documentDir!!.path}/$name".toPath() }
+            produceFile = { "${documentDir!!.path}/$name.preferences_pb".toPath() }
         )
     }
 

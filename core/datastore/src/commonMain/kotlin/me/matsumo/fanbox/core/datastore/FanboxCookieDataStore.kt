@@ -2,23 +2,22 @@ package me.matsumo.fanbox.core.datastore
 
 import androidx.datastore.preferences.core.edit
 import androidx.datastore.preferences.core.stringPreferencesKey
+import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.firstOrNull
+import kotlinx.coroutines.flow.map
 
 class FanboxCookieDataStore(
     private val preferenceHelper: PreferenceHelper,
 ) {
     private val cookiePreference = preferenceHelper.create(PreferencesName.FANBOX_COOKIE)
 
-    private val _data = MutableSharedFlow<String>(replay = 1)
 
-    val data: SharedFlow<String> = _data.asSharedFlow()
+    val data: Flow<String> = cookiePreference.data.map { it[stringPreferencesKey(KEY_COOKIE)] ?: "" }
 
     suspend fun save(cookie: String) {
-        _data.tryEmit(cookie)
-
         cookiePreference.edit {
             it[stringPreferencesKey(KEY_COOKIE)] = cookie
         }

@@ -3,7 +3,9 @@ package me.matsumo.fanbox.core.repository.di
 import io.ktor.client.HttpClient
 import kotlinx.serialization.ExperimentalSerializationApi
 import kotlinx.serialization.json.Json
+import me.matsumo.fanbox.core.repository.FanboxRepository
 import me.matsumo.fanbox.core.repository.FanboxRepositoryImpl
+import me.matsumo.fanbox.core.repository.UserDataRepository
 import me.matsumo.fanbox.core.repository.UserDataRepositoryImpl
 import org.koin.dsl.module
 
@@ -28,13 +30,13 @@ val repositoryModule = module {
         ).client
     }
 
-    single {
+    single<UserDataRepository> {
         UserDataRepositoryImpl(
             pixiViewDataStore = get(),
         )
     }
 
-    single {
+    single<FanboxRepository> {
         FanboxRepositoryImpl(
             client = get(),
             formatter = get(),

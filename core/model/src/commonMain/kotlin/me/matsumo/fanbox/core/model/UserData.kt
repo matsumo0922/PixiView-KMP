@@ -25,18 +25,18 @@ data class UserData(
     val isAllowedShowAdultContents get() = !isTestUser && isOverrideAdultContents
 
     companion object {
-        fun dummy(): UserData {
+        fun default(): UserData {
             return UserData(
-                pixiViewId = "",
+                pixiViewId = "default pixiview id",
                 themeConfig = ThemeConfig.System,
                 themeColorConfig = ThemeColorConfig.Red,
                 isAgreedPrivacyPolicy = false,
                 isAgreedTermsOfService = false,
                 isAppLock = false,
                 isFollowTabDefaultHome = false,
-                isHideAdultContents = false,
+                isHideAdultContents = true,
                 isOverrideAdultContents = false,
-                isDynamicColor = true,
+                isDynamicColor = false,
                 isHideRestricted = false,
                 isGridMode = false,
                 isTestUser = false,

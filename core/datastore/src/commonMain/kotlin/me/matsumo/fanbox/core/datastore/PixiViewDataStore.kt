@@ -19,7 +19,7 @@ class PixiViewDataStore(
     private val userPreference = preferenceHelper.create(PreferencesName.APP_SETTINGS)
 
     val userData = userPreference.data.map {
-        it.deserialize(formatter, UserData.serializer())
+        it.deserialize(formatter, UserData.serializer(), UserData.default())
     }
 
     suspend fun setPixiViewId(id: String) = withContext(ioDispatcher) {

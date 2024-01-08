@@ -1,5 +1,6 @@
 package me.matsumo.fanbox.core.common.util
 
+import io.github.aakira.napier.Napier
 import kotlin.coroutines.cancellation.CancellationException
 
 suspend fun <T> suspendRunCatching(block: suspend () -> T): Result<T> = try {
@@ -7,6 +8,6 @@ suspend fun <T> suspendRunCatching(block: suspend () -> T): Result<T> = try {
 } catch (cancellationException: CancellationException) {
     throw cancellationException
 } catch (exception: Exception) {
-    // Timber.i(exception, "Failed to evaluate a suspendRunCatchingBlock. Returning failure Result")
+    Napier.i(exception) { "Failed to evaluate a suspendRunCatchingBlock. Returning failure Result" }
     Result.failure(exception)
 }

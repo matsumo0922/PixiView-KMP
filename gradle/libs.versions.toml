@@ -25,6 +25,7 @@ kotlinxImmutable = "0.3.7"
 kmpCompose = "1.5.11"
 kmpComplete = "1.1.0"
 mokoResource = "0.23.0"
+mokoPermissions = "0.17.0"
 
 # AndroidX
 androidxCore = "1.12.0"
@@ -89,7 +90,9 @@ coil = "2.5.0"
 coil3 = "3.0.0-alpha01"
 jsoup = "1.16.1"
 ksoup = "0.1.2"
+uuid = "0.8.2"
 composeWebView = "1.8.2"
+windowSize = "0.3.2"
 detekt = "1.23.4"
 balloon = "1.5.3"
 zoomable = "1.5.2"
@@ -106,6 +109,7 @@ firebase = "32.7.0"
 leakCanary = "2.12"
 flipper = "0.240.0"
 timber = "5.0.1"
+napier = "2.7.1"
 junit = "4.13.2"
 runner = "1.0.2"
 espresso-core = "3.0.2"
@@ -226,9 +230,11 @@ precompose-molecule = { module = "moe.tlaster:precompose-molecule", version.ref 
 precompose-viewmodel = { module = "moe.tlaster:precompose-viewmodel", version.ref = "precompose" }
 precompose-koin = { module = "moe.tlaster:precompose-koin", version.ref = "precompose" }
 
-# Resource
+# MOKO
 moko-resources = { module = "dev.icerock.moko:resources", version.ref = "mokoResource" }
 moko-resources-compose = { module = "dev.icerock.moko:resources-compose", version.ref = "mokoResource" }
+moko-permissions = { module = "dev.icerock.moko:permissions", version.ref = "mokoPermissions" }
+moko-permissions-compose = { module = "dev.icerock.moko:permissions-compose", version.ref = "mokoPermissions" }
 
 # Settings
 kstore = { module = "io.github.xxfast:kstore", version.ref = "kstore" }
@@ -292,7 +298,9 @@ coil3-network = { module = "io.coil-kt.coil3:coil-network", version.ref = "coil3
 coil3-gif = { module = "io.coil-kt.coil3:coil-gif", version.ref = "coil3" }
 jsoup = { module = "org.jsoup:jsoup", version.ref = "jsoup" }
 ksoup = { module = "com.fleeksoft.ksoup:ksoup", version.ref = "ksoup" }
+uuid = { module = "com.benasher44:uuid", version.ref = "uuid" }
 webview-compose = { module = "io.github.kevinnzou:compose-webview-multiplatform", version.ref = "composeWebView" }
+window-size = { module = "dev.chrisbanes.material3:material3-window-size-class-multiplatform", version.ref = "windowSize" }
 desugar = { module = "com.android.tools:desugar_jdk_libs", version = "2.0.4" }
 balloon = { module = "com.github.skydoves:balloon", version.ref = "balloon" }
 balloon-compose = { module = "com.github.skydoves:balloon-compose", version.ref = "balloon" }
@@ -315,6 +323,7 @@ facebook-soloader = { module = "com.facebook.soloader:soloader", version = "0.10
 facebook-noop = { module = "com.facebook.flipper:flipper-noop", version.ref = "flipper" }
 leakcanary = { module = "com.squareup.leakcanary:leakcanary-android", version.ref = "leakCanary" }
 timber = { module = "com.jakewharton.timber:timber", version.ref = "timber" }
+napier = { module = "io.github.aakira:napier", version.ref = "napier" }
 junit = { group = "junit", name = "junit", version.ref = "junit" }
 runner = { group = "com.android.support.test", name = "runner", version.ref = "runner" }
 espresso-core = { group = "com.android.support.test.espresso", name = "espresso-core", version.ref = "espresso-core" }
@@ -329,8 +338,9 @@ infra-api = [
     "kotlinx-datetime",
     "kotlinx-serialization-json",
     "kotlinx-collections-immutable",
+    "uuid",
     "puree",
-    "timber",
+    "napier",
 ]
 
 ui-android-implementation = [
@@ -354,7 +364,6 @@ ui-android-implementation = [
     "androidx-compose-animation-graphics",
     "androidx-compose-material",
     "androidx-compose-material3",
-    "androidx-compose-material3-window",
     "androidx-compose-material-icons-extended",
     "accompanist-systemuicontroller",
     "accompanist-compose-theme-adapter",
@@ -370,6 +379,7 @@ ui-common-api = [
     "precompose-koin",
     "coil3-compose",
     "coil3-network",
+    "window-size",
 ]
 
 resources = [

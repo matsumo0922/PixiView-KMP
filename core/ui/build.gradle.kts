@@ -21,6 +21,8 @@ multiplatformResources {
 kotlin {
     sourceSets {
         val commonMain by getting {
+            resources.srcDir("src/commonMain/resources")
+
             dependencies {
                 implementation(project(":core:model"))
                 implementation(project(":core:common"))

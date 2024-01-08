@@ -22,8 +22,14 @@ kotlin {
 
             api(libs.androidx.paging.common)
         }
+
         androidMain.dependencies {
             api(libs.androidx.paging.runtime)
+            api(libs.ktor.okhttp)
+        }
+
+        iosMain.dependencies {
+            api(libs.ktor.darwin)
         }
     }
 }

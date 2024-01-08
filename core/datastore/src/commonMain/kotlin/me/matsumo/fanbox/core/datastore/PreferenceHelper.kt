@@ -2,6 +2,7 @@ package me.matsumo.fanbox.core.datastore
 
 import androidx.datastore.core.DataStore
 import androidx.datastore.preferences.core.Preferences
+import io.github.aakira.napier.Napier
 import kotlinx.serialization.ExperimentalSerializationApi
 import kotlinx.serialization.KSerializer
 import kotlinx.serialization.Serializer
@@ -19,9 +20,15 @@ interface PreferenceHelper {
 fun <T> Preferences.deserialize(
     formatter: Json,
     serializer: KSerializer<T>,
+    defaultValue: T,
 ): T {
-    val map = this.asMap().map { it.key.name to JsonUnquotedLiteral(it.value.toString()) }.toMap()
-    val data = JsonObject(map)
+    return try {
+        val map = this.asMap().map { it.key.name to JsonUnquotedLiteral(it.value.toString()) }.toMap()
+        val data = JsonObject(map)
 
-    return formatter.decodeFromJsonElement(serializer, data)
+        formatter.decodeFromJsonElement(serializer, data)
+    } catch (e: Exception) {
+        Napier.e("Failed to deserialize.")
+        defaultValue
+    }
 }

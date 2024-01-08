@@ -5,6 +5,7 @@ import androidx.paging.PagingConfig
 import androidx.paging.PagingData
 import androidx.paging.cachedIn
 import com.fleeksoft.ksoup.Ksoup
+import io.github.aakira.napier.Napier
 import io.ktor.client.HttpClient
 import io.ktor.client.request.get
 import io.ktor.client.request.header
@@ -25,6 +26,7 @@ import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.flow.firstOrNull
 import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.withContext
 import kotlinx.serialization.json.Json
@@ -76,13 +78,14 @@ import me.matsumo.fanbox.core.repository.utils.requireSuccess
 import me.matsumo.fanbox.core.repository.utils.translate
 
 interface FanboxRepository {
-    val cookie: SharedFlow<String>
     val metaData: StateFlow<FanboxMetaData>
     val bookmarkedPosts: SharedFlow<List<PostId>>
+    val cookie: Flow<String>
     val logoutTrigger: Flow<String>
 
     suspend fun logout()
 
+    suspend fun isCookieValid(): Boolean
     suspend fun updateCookie(cookie: String)
     suspend fun updateCsrfToken()
 
@@ -159,8 +162,8 @@ class FanboxRepositoryImpl(
     private val _metaData = MutableStateFlow(FanboxMetaData.dummy())
     private val _logoutTrigger = Channel<String>()
 
-    override val cookie: SharedFlow<String> = fanboxCookieDataStore.data
     override val metaData: StateFlow<FanboxMetaData> = _metaData.asStateFlow()
+    override val cookie: Flow<String> = fanboxCookieDataStore.data
     override val logoutTrigger: Flow<String> = _logoutTrigger.receiveAsFlow()
 
     override val bookmarkedPosts: SharedFlow<List<PostId>> = bookmarkDataStore.data
@@ -177,6 +180,10 @@ class FanboxRepositoryImpl(
                 error("Logout failed")
             }
         }*/
+    }
+
+    override suspend fun isCookieValid(): Boolean {
+        return !fanboxCookieDataStore.data.firstOrNull().isNullOrBlank()
     }
 
     override suspend fun updateCookie(cookie: String) {
@@ -397,6 +404,8 @@ class FanboxRepositoryImpl(
     }
 
     override suspend fun getNewsLetters(): List<FanboxNewsLetter> = withContext(ioDispatcher) {
+        val data = get("newsletter.list")
+        Napier.d { "Hello" }
         get("newsletter.list").parse<FanboxNewsLettersEntity>()!!.translate()
     }
 

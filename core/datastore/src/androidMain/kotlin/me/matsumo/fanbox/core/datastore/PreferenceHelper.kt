@@ -14,7 +14,7 @@ class PreferenceHelperImpl(
 ) : PreferenceHelper {
 
     override fun create(name: String): DataStore<Preferences> {
-        val file = context.filesDir.resolve(name)
+        val file = context.filesDir.resolve("$name.preferences_pb")
 
         return PreferenceDataStoreFactory.createWithPath(
             corruptionHandler = null,
