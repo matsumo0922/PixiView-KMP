@@ -10,6 +10,7 @@ import dev.icerock.moko.permissions.compose.BindEffect
 import dev.icerock.moko.permissions.compose.PermissionsControllerFactory
 import dev.icerock.moko.permissions.compose.rememberPermissionsControllerFactory
 import kotlinx.coroutines.launch
+import me.matsumo.fanbox.core.ui.extensition.rememberNavigator
 import me.matsumo.fanbox.feature.welcome.login.WelcomeLoginRoute
 import me.matsumo.fanbox.feature.welcome.login.navigateToWelcomeLogin
 import me.matsumo.fanbox.feature.welcome.login.welcomeLoginScreen
@@ -21,7 +22,6 @@ import me.matsumo.fanbox.feature.welcome.top.welcomeTopScreen
 import me.matsumo.fanbox.feature.welcome.web.navigateToWelcomeWeb
 import me.matsumo.fanbox.feature.welcome.web.welcomeWebScreen
 import moe.tlaster.precompose.navigation.NavHost
-import moe.tlaster.precompose.navigation.rememberNavigator
 
 @Composable
 fun WelcomeNavHost(
@@ -32,7 +32,7 @@ fun WelcomeNavHost(
     modifier: Modifier = Modifier,
 ) {
     val scope = rememberCoroutineScope()
-    val navigator = rememberNavigator()
+    val navigator = rememberNavigator("Welcome")
 
     val factory: PermissionsControllerFactory = rememberPermissionsControllerFactory()
     val controller: PermissionsController = remember(factory) { factory.createPermissionsController() }

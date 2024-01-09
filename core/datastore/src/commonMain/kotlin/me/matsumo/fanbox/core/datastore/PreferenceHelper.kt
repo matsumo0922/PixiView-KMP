@@ -5,11 +5,11 @@ import androidx.datastore.preferences.core.Preferences
 import io.github.aakira.napier.Napier
 import kotlinx.serialization.ExperimentalSerializationApi
 import kotlinx.serialization.KSerializer
-import kotlinx.serialization.Serializer
 import kotlinx.serialization.json.Json
-import kotlinx.serialization.json.JsonElement
 import kotlinx.serialization.json.JsonObject
 import kotlinx.serialization.json.JsonUnquotedLiteral
+import kotlinx.serialization.json.buildJsonObject
+import kotlinx.serialization.json.jsonObject
 
 interface PreferenceHelper {
     fun create(name: String): DataStore<Preferences>
@@ -24,7 +24,18 @@ fun <T> Preferences.deserialize(
 ): T {
     return try {
         val map = this.asMap().map { it.key.name to JsonUnquotedLiteral(it.value.toString()) }.toMap()
-        val data = JsonObject(map)
+        val defaultData = formatter.encodeToJsonElement(serializer, defaultValue)
+        val preferenceData = JsonObject(map)
+
+        val data = buildJsonObject {
+            for (value in defaultData.jsonObject) {
+                put(value.key, value.value)
+            }
+
+            for (value in preferenceData.jsonObject) {
+                put(value.key, value.value)
+            }
+        }
 
         formatter.decodeFromJsonElement(serializer, data)
     } catch (e: Exception) {

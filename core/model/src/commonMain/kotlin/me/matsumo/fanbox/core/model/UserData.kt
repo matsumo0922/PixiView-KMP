@@ -27,9 +27,9 @@ data class UserData(
     companion object {
         fun default(): UserData {
             return UserData(
-                pixiViewId = "default pixiview id",
+                pixiViewId = "",
                 themeConfig = ThemeConfig.System,
-                themeColorConfig = ThemeColorConfig.Red,
+                themeColorConfig = ThemeColorConfig.Blue,
                 isAgreedPrivacyPolicy = false,
                 isAgreedTermsOfService = false,
                 isAppLock = false,

@@ -10,6 +10,7 @@ interface UserDataRepository {
 
     val userData: Flow<UserData>
 
+    suspend fun setDefault()
     suspend fun setPixiViewId(id: String)
     suspend fun setAgreedPrivacyPolicy(isAgreed: Boolean)
     suspend fun setAgreedTermsOfService(isAgreed: Boolean)
@@ -32,6 +33,10 @@ class UserDataRepositoryImpl(
 ) : UserDataRepository {
 
     override val userData: Flow<UserData> = pixiViewDataStore.userData
+
+    override suspend fun setDefault() {
+        pixiViewDataStore.setDefault()
+    }
 
     override suspend fun setPixiViewId(id: String) {
         pixiViewDataStore.setPixiViewId(id)

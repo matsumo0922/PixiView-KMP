@@ -5,10 +5,7 @@ import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.animation.togetherWith
 import androidx.compose.foundation.isSystemInDarkTheme
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.material3.Text
 import androidx.compose.material3.windowsizeclass.WindowWidthSizeClass
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
@@ -17,8 +14,8 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import io.github.aakira.napier.Napier
 import me.matsumo.fanbox.core.model.ScreenState
 import me.matsumo.fanbox.core.model.ThemeConfig
 import me.matsumo.fanbox.core.ui.AsyncLoadContents
@@ -50,13 +47,19 @@ fun PixiViewApp(
     }
 
     CompositionLocalProvider(LocalNavigationType provides NavigationType(navigationType)) {
-        PixiViewTheme {
-            PixiViewBackground(modifier) {
-                AsyncLoadContents(
-                    modifier = Modifier.fillMaxSize(),
-                    screenState = screenState,
-                    containerColor = if (shouldUseDarkTheme) DarkDefaultColorScheme.surface else LightDefaultColorScheme.surface,
-                ) {
+        AsyncLoadContents(
+            modifier = Modifier.fillMaxSize(),
+            screenState = screenState,
+            containerColor = if (shouldUseDarkTheme) DarkDefaultColorScheme.surface else LightDefaultColorScheme.surface,
+        ) {
+            PixiViewTheme(
+                fanboxCookie = it.fanboxCookie,
+                fanboxMetadata = it.fanboxMetadata,
+                themeColorConfig = it.userData.themeColorConfig,
+                shouldUseDarkTheme = shouldUseDarkTheme,
+                enableDynamicTheme = shouldUseDynamicColor(screenState),
+            ) {
+                PixiViewBackground(modifier) {
                     PixiViewScreen(
                         modifier = Modifier.fillMaxSize(),
                         uiState = it,
@@ -84,6 +87,8 @@ private fun PixiViewScreen(
             onRequestInitPixiViewId.invoke()
         }
     }
+
+    Napier.d { "isShowWelcomeScreen: ${uiState.isLoggedIn}, $isAgreedTeams, $isAllowedPermission" }
 
     AnimatedContent(
         modifier = modifier,
@@ -117,14 +122,10 @@ private fun IdleScreen(
     navigationType: PixiViewNavigationType,
     modifier: Modifier = Modifier,
 ) {
-    Box(modifier) {
-        Text(
-            modifier = Modifier
-                .align(Alignment.Center)
-                .fillMaxWidth(),
-            text = "Hello, World!",
-        )
-    }
+    PixiViewNavHost(
+        modifier = modifier,
+        navigationType = navigationType,
+    )
 }
 
 @Composable

@@ -22,6 +22,26 @@ class PixiViewDataStore(
         it.deserialize(formatter, UserData.serializer(), UserData.default())
     }
 
+    suspend fun setDefault() = withContext(ioDispatcher) {
+        UserData.default().also { data ->
+            setPixiViewId(data.pixiViewId)
+            setAgreedPrivacyPolicy(data.isAgreedPrivacyPolicy)
+            setAgreedTermsOfService(data.isAgreedTermsOfService)
+            setThemeConfig(data.themeConfig)
+            setThemeColorConfig(data.themeColorConfig)
+            setUseDynamicColor(data.isDynamicColor)
+            setAppLock(data.isAppLock)
+            setFollowTabDefaultHome(data.isFollowTabDefaultHome)
+            setHideAdultContents(data.isHideAdultContents)
+            setOverrideAdultContents(data.isOverrideAdultContents)
+            setTestUser(data.isTestUser)
+            setHideRestricted(data.isHideRestricted)
+            setGridMode(data.isGridMode)
+            setDeveloperMode(data.isDeveloperMode)
+            setPlusMode(data.isPlusMode)
+        }
+    }
+
     suspend fun setPixiViewId(id: String) = withContext(ioDispatcher) {
         userPreference.edit {
             it[stringPreferencesKey(UserData::pixiViewId.name)] = id

@@ -2,6 +2,7 @@ package me.matsumo.fanbox
 
 import androidx.compose.runtime.Stable
 import com.benasher44.uuid.uuid4
+import io.github.aakira.napier.Napier
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.SharingStarted
@@ -79,6 +80,7 @@ class PixiViewViewModel(
                     userDataRepository.setTestUser(it.context.user.userId == "100912340")
                 }
             }.isSuccess.also {
+                Napier.d { "update home state. isLoggedIn: $it" }
                 _isLoggedInFlow.emit(it)
             }
         }

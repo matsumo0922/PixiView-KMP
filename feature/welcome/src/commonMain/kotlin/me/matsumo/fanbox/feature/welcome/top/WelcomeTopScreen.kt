@@ -187,9 +187,9 @@ private fun SecondSection(
             shape = CircleShape,
             enabled = isAgreedPrivacyPolicy && isAgreedTermsOfService,
             onClick = {
-                navigateToWelcomePlus.invoke()
                 setAgreedPrivacyPolicy.invoke()
                 setAgreedTermsOfService.invoke()
+                navigateToWelcomePlus.invoke()
             },
         ) {
             Text(

@@ -44,13 +44,13 @@ import coil3.compose.LocalPlatformContext
 import coil3.compose.SubcomposeAsyncImage
 import coil3.request.ImageRequest
 import dev.icerock.moko.resources.compose.stringResource
+import io.github.aakira.napier.Napier
 import me.matsumo.fanbox.core.common.util.format
 import me.matsumo.fanbox.core.model.fanbox.FanboxPost
 import me.matsumo.fanbox.core.model.fanbox.id.CreatorId
 import me.matsumo.fanbox.core.model.fanbox.id.PostId
 import me.matsumo.fanbox.core.ui.MR
 import me.matsumo.fanbox.core.ui.extensition.FadePlaceHolder
-import me.matsumo.fanbox.core.ui.extensition.SimmerPlaceHolder
 import me.matsumo.fanbox.core.ui.extensition.asCoilImage
 import me.matsumo.fanbox.core.ui.extensition.fanboxHeader
 import me.matsumo.fanbox.core.ui.theme.bold
@@ -123,8 +123,8 @@ fun PostItem(
                             .fanboxHeader()
                             .data(post.cover?.url)
                             .build(),
-                        loading = {
-                            SimmerPlaceHolder()
+                        onError = {
+                            Napier.e("error: ${it.result.throwable}")
                         },
                         contentScale = ContentScale.Crop,
                         contentDescription = null,

@@ -1,17 +1,24 @@
+import UIKit
 import SwiftUI
 import ComposeApp
 
 @main
 struct iOSApp: App {
-
-    init() {
-        InitHelperKt.doInitKoin()
-        InitHelperKt.doInitNapier()
-    }
-
 	var body: some Scene {
 		WindowGroup {
-			ContentView()
+            GeometryReader { geo in
+                ComposeViewController(
+                    topSafeArea: Float(geo.safeAreaInsets.top),
+                    bottomSafeArea: Float(geo.safeAreaInsets.bottom)
+                )
+                .edgesIgnoringSafeArea(.all)
+                .onTapGesture {
+                    UIApplication.shared.sendAction(
+                        #selector(UIResponder.resignFirstResponder),
+                        to: nil, from: nil, for: nil
+                    )
+                }
+            }
 		}
-	}
+    }
 }

@@ -22,6 +22,13 @@ object NavigateAnimation {
         )
 
         val exit = fadeOut(tween(240))
+
+        val transition = NavTransition(
+            createTransition = enter,
+            destroyTransition = exit,
+            resumeTransition = enter,
+            pauseTransition = exit,
+        )
     }
 
     object Fade {

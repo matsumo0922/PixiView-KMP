@@ -1,11 +1,8 @@
-import com.android.build.api.variant.BuildConfigField
+
 import com.android.build.api.variant.ResValue
 import com.codingfeline.buildkonfig.compiler.FieldSpec
-import com.codingfeline.buildkonfig.compiler.TargetConfig
 import com.codingfeline.buildkonfig.gradle.TargetConfigDsl
-import org.jetbrains.compose.ExperimentalComposeLibrary
 import org.jetbrains.kotlin.konan.properties.Properties
-import java.io.Serializable
 
 plugins {
     id("pixiview.kmp")
@@ -108,6 +105,7 @@ kotlin {
                 implementation(project(":core:ui"))
 
                 implementation(project(":feature:welcome"))
+                implementation(project(":feature:library"))
 
                 implementation(libs.moko.permissions)
                 implementation(libs.moko.permissions.compose)

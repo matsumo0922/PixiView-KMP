@@ -1,10 +1,8 @@
 package me.matsumo.fanbox.core.repository.utils
 
 import io.github.aakira.napier.Napier
-import io.ktor.http.Url
 import io.ktor.http.parseUrlEncodedParameters
 import kotlinx.datetime.Instant
-import kotlinx.datetime.LocalDateTime
 import me.matsumo.fanbox.core.model.FanboxTag
 import me.matsumo.fanbox.core.model.PageCursorInfo
 import me.matsumo.fanbox.core.model.PageNumberInfo
@@ -514,7 +512,12 @@ internal fun FanboxTagsEntity.translate(): List<FanboxTag> {
 }
 
 private fun String.translateToCursor(): FanboxCursor {
-    val parameters = parseUrlEncodedParameters()
+    val parameters = this.substringAfter("?")
+        .split("&")
+        .associate {
+            val (key, value) = it.split("=")
+            key to value
+        }
 
     return FanboxCursor(
         maxPublishedDatetime = parameters["maxPublishedDatetime"]!!,

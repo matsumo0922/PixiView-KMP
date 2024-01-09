@@ -1,7 +1,6 @@
 package me.matsumo.fanbox.feature.welcome.web
 
 import androidx.compose.animation.AnimatedContent
-import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.animation.togetherWith
@@ -26,15 +25,12 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import com.multiplatform.webview.web.LoadingState
 import com.multiplatform.webview.web.WebView
-import com.multiplatform.webview.web.rememberWebViewNavigator
 import com.multiplatform.webview.web.rememberWebViewState
 import dev.icerock.moko.resources.compose.stringResource
-import kotlinx.coroutines.delay
 import me.matsumo.fanbox.core.ui.MR
 import me.matsumo.fanbox.core.ui.component.PixiViewTopBar
 import me.matsumo.fanbox.core.ui.view.LoadingView
 import moe.tlaster.precompose.koin.koinViewModel
-import kotlin.time.Duration.Companion.seconds
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -67,10 +63,11 @@ internal fun WelcomeWebScreen(
             val cookieString = cookies.joinToString(";") { "${it.name}=${it.value}" }
 
             viewModel.saveCookie(cookieString)
-            snackbarHostState.showSnackbar(snackbarSuccessMessage)
 
             isLoggedIn = true
             terminate.invoke()
+
+            snackbarHostState.showSnackbar(snackbarSuccessMessage)
         }
     }
 

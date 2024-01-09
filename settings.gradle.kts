@@ -9,7 +9,7 @@ pluginManagement {
         google()
         mavenCentral()
         gradlePluginPortal()
-        maven(url = "https://www.jitpack.io")
+        maven("https://www.jitpack.io")
         maven("https://maven.pkg.jetbrains.space/public/p/compose/dev")
     }
 }
@@ -19,8 +19,8 @@ dependencyResolutionManagement {
     repositories {
         google()
         mavenCentral()
+        maven("https://www.jitpack.io")
         maven("https://maven.pkg.jetbrains.space/public/p/compose/dev")
-        maven(url = "https://www.jitpack.io")
     }
 }
 
@@ -32,3 +32,4 @@ include(":core:model")
 include(":core:common")
 
 include(":feature:welcome")
+include(":feature:library")
