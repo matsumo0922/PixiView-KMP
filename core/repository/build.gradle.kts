@@ -19,6 +19,7 @@ kotlin {
 
             implementation(libs.bundles.ktor)
             implementation(libs.ksoup)
+            implementation(libs.webview.compose)
 
             api(libs.androidx.paging.common)
         }

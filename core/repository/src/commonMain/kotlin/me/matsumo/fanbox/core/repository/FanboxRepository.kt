@@ -33,8 +33,8 @@ import kotlinx.coroutines.withContext
 import kotlinx.serialization.json.Json
 import kotlinx.serialization.json.buildJsonObject
 import kotlinx.serialization.json.put
-import me.matsumo.fanbox.core.datastore.FanboxCookieDataStore
 import me.matsumo.fanbox.core.datastore.BookmarkDataStore
+import me.matsumo.fanbox.core.datastore.FanboxCookieDataStore
 import me.matsumo.fanbox.core.model.FanboxTag
 import me.matsumo.fanbox.core.model.PageCursorInfo
 import me.matsumo.fanbox.core.model.PageNumberInfo
@@ -187,11 +187,15 @@ class FanboxRepositoryImpl(
     }
 
     override suspend fun updateCsrfToken() = withContext(ioDispatcher) {
-        val html = html("https://www.fanbox.cc/")
+        val response = client.get("https://www.fanbox.cc/")
+        val html = response.bodyAsText()
         val doc = Ksoup.parse(html)
         val meta = doc.select("meta[name=metadata]").first()?.attr("content")
+        val data = formatter.decodeFromString(FanboxMetaDataEntity.serializer(), meta!!).translate()
 
-        _metaData.emit(formatter.decodeFromString(FanboxMetaDataEntity.serializer(), meta!!).translate())
+        Napier.d { "updateCsrfToken: ${data.csrfToken}" }
+
+        _metaData.emit(data)
     }
 
     override suspend fun getHomePosts(cursor: FanboxCursor?, loadSize: Int): PageCursorInfo<FanboxPost> = withContext(ioDispatcher) {
