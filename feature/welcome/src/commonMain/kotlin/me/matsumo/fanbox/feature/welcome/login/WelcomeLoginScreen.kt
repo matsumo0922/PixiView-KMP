@@ -1,0 +1,166 @@
+package me.matsumo.fanbox.feature.welcome.login
+
+import androidx.compose.foundation.Image
+import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.material3.Button
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Text
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.unit.dp
+import dev.icerock.moko.resources.compose.painterResource
+import dev.icerock.moko.resources.compose.stringResource
+import me.matsumo.fanbox.core.ui.MR
+import me.matsumo.fanbox.core.ui.extensition.LocalNavigationType
+import me.matsumo.fanbox.core.ui.extensition.PixiViewNavigationType
+import me.matsumo.fanbox.core.ui.theme.bold
+import me.matsumo.fanbox.core.ui.theme.center
+import me.matsumo.fanbox.feature.welcome.WelcomeIndicatorItem
+import moe.tlaster.precompose.flow.collectAsStateWithLifecycle
+import moe.tlaster.precompose.koin.koinViewModel
+
+@Composable
+internal fun WelcomeLoginScreen(
+    navigateToWelcomePermission: () -> Unit,
+    navigateToLoginScreen: () -> Unit,
+    modifier: Modifier = Modifier,
+    viewModel: WelcomeLoginViewModel = koinViewModel(WelcomeLoginViewModel::class),
+) {
+    val navigationType = LocalNavigationType.current.type
+    val isLoggedIn by viewModel.isLoggedInFlow.collectAsStateWithLifecycle(initial = false)
+
+    LaunchedEffect(true) {
+        viewModel.fetchLoggedIn()
+    }
+
+    if (navigationType != PixiViewNavigationType.PermanentNavigationDrawer) {
+        Column(
+            modifier = modifier
+                .background(MaterialTheme.colorScheme.surface)
+                .padding(24.dp),
+            horizontalAlignment = Alignment.CenterHorizontally,
+        ) {
+            FirstSection()
+
+            SecondSection(
+                modifier = Modifier.weight(1f),
+                isLoggedIn = isLoggedIn,
+                navigateToLoginScreen = navigateToLoginScreen,
+                navigateToWelcomePermission = navigateToWelcomePermission,
+            )
+        }
+    } else {
+        Row(
+            modifier = modifier
+                .background(MaterialTheme.colorScheme.surface)
+                .padding(24.dp),
+            verticalAlignment = Alignment.CenterVertically,
+        ) {
+            FirstSection(
+                modifier = Modifier.weight(1f),
+            )
+
+            Spacer(modifier = Modifier.width(24.dp))
+
+            Column(Modifier.weight(1f)) {
+                Box(Modifier.weight(2f))
+
+                SecondSection(
+                    modifier = Modifier.weight(3f),
+                    isLoggedIn = isLoggedIn,
+                    navigateToLoginScreen = navigateToLoginScreen,
+                    navigateToWelcomePermission = navigateToWelcomePermission,
+                )
+            }
+        }
+    }
+}
+
+@Composable
+private fun FirstSection(
+    modifier: Modifier = Modifier,
+) {
+    Image(
+        modifier = modifier.padding(
+            top = 8.dp,
+            start = 8.dp,
+            end = 8.dp,
+        ),
+        painter = painterResource(MR.images.vec_welcome_plus),
+        contentDescription = null,
+    )
+}
+
+@Composable
+private fun SecondSection(
+    isLoggedIn: Boolean,
+    navigateToLoginScreen: () -> Unit,
+    navigateToWelcomePermission: () -> Unit,
+    modifier: Modifier = Modifier,
+) {
+    Column(
+        modifier = modifier,
+        horizontalAlignment = Alignment.CenterHorizontally,
+    ) {
+        Text(
+            modifier = Modifier.padding(top = 32.dp),
+            text = stringResource(if (isLoggedIn) MR.strings.welcome_login_ready_title else MR.strings.welcome_login_title),
+            style = MaterialTheme.typography.displaySmall.bold(),
+            color = MaterialTheme.colorScheme.primary,
+        )
+
+        Text(
+            modifier = Modifier.padding(top = 12.dp),
+            text = stringResource(if (isLoggedIn) MR.strings.welcome_login_ready_message else MR.strings.welcome_login_message),
+            style = MaterialTheme.typography.bodySmall.center(),
+            color = MaterialTheme.colorScheme.onSurfaceVariant,
+        )
+
+        Spacer(modifier = Modifier.weight(1f))
+
+        WelcomeIndicatorItem(
+            modifier = Modifier.padding(bottom = 24.dp),
+            max = 3,
+            step = 2,
+        )
+
+        if (isLoggedIn) {
+            Button(
+                modifier = Modifier
+                    .padding(bottom = 24.dp)
+                    .fillMaxWidth(),
+                shape = CircleShape,
+                onClick = { navigateToWelcomePermission.invoke() },
+            ) {
+                Text(
+                    modifier = Modifier.padding(8.dp),
+                    text = stringResource(MR.strings.welcome_login_button_next),
+                )
+            }
+        } else {
+            Button(
+                modifier = Modifier
+                    .padding(bottom = 24.dp)
+                    .fillMaxWidth(),
+                shape = CircleShape,
+                onClick = { navigateToLoginScreen.invoke() },
+            ) {
+                Text(
+                    modifier = Modifier.padding(8.dp),
+                    text = stringResource(MR.strings.welcome_login_button_login),
+                )
+            }
+        }
+    }
+}

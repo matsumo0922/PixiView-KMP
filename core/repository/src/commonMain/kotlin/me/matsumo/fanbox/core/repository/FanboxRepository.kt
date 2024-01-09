@@ -28,6 +28,7 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.firstOrNull
 import kotlinx.coroutines.flow.receiveAsFlow
+import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import kotlinx.serialization.json.Json
 import kotlinx.serialization.json.buildJsonObject
@@ -76,12 +77,13 @@ import me.matsumo.fanbox.core.repository.paging.SupportedPostsPagingSource
 import me.matsumo.fanbox.core.repository.utils.parse
 import me.matsumo.fanbox.core.repository.utils.requireSuccess
 import me.matsumo.fanbox.core.repository.utils.translate
+import kotlin.random.Random
 
 interface FanboxRepository {
     val metaData: StateFlow<FanboxMetaData>
     val bookmarkedPosts: SharedFlow<List<PostId>>
     val cookie: Flow<String>
-    val logoutTrigger: Flow<String>
+    val logoutTrigger: Flow<Long>
 
     suspend fun logout()
 
@@ -160,26 +162,20 @@ class FanboxRepositoryImpl(
     private var searchPostsPager: Flow<PagingData<FanboxPost>>? = null
 
     private val _metaData = MutableStateFlow(FanboxMetaData.dummy())
-    private val _logoutTrigger = Channel<String>()
+    private val _logoutTrigger = Channel<Long>()
 
     override val metaData: StateFlow<FanboxMetaData> = _metaData.asStateFlow()
     override val cookie: Flow<String> = fanboxCookieDataStore.data
-    override val logoutTrigger: Flow<String> = _logoutTrigger.receiveAsFlow()
+    override val logoutTrigger: Flow<Long> = _logoutTrigger.receiveAsFlow()
 
     override val bookmarkedPosts: SharedFlow<List<PostId>> = bookmarkDataStore.data
 
     override suspend fun logout() {
-        /*CookieManager.getInstance().removeAllCookies {
-            if (it) {
-                CoroutineScope(ioDispatcher).launch {
-                    fanboxCookiePreference.save("")
-                    bookmarkedPostsPreference.clear()
-                    _logoutTrigger.send(OffsetDateTime.now())
-                }
-            } else {
-                error("Logout failed")
-            }
-        }*/
+        CoroutineScope(ioDispatcher).launch {
+            fanboxCookieDataStore.save("")
+            bookmarkDataStore.clear()
+            _logoutTrigger.send(Random.nextLong())
+        }
     }
 
     override suspend fun isCookieValid(): Boolean {
@@ -405,8 +401,7 @@ class FanboxRepositoryImpl(
 
     override suspend fun getNewsLetters(): List<FanboxNewsLetter> = withContext(ioDispatcher) {
         val data = get("newsletter.list")
-        Napier.d { "Hello" }
-        get("newsletter.list").parse<FanboxNewsLettersEntity>()!!.translate()
+        data.parse<FanboxNewsLettersEntity>()!!.translate()
     }
 
     override suspend fun getBells(page: Int): PageNumberInfo<FanboxBell> = withContext(ioDispatcher) {

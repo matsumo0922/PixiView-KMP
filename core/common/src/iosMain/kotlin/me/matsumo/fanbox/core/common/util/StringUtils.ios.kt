@@ -9,9 +9,9 @@ import platform.Foundation.NSCalendar
 import platform.Foundation.NSDateFormatter
 import platform.Foundation.timeIntervalSince1970
 
-actual fun LocalDateTime.format(pattern: String): String {
+actual fun Instant.format(pattern: String): String {
     val dateFormatter = NSDateFormatter()
     dateFormatter.dateFormat = pattern
 
-    return dateFormatter.stringFromDate(toNSDateComponents().date!!)
+    return dateFormatter.stringFromDate(toNSDate())
 }

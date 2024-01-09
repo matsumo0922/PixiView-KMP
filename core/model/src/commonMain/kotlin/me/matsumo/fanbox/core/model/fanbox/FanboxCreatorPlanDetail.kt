@@ -1,5 +1,6 @@
 package me.matsumo.fanbox.core.model.fanbox
 
+import kotlinx.datetime.Instant
 import kotlinx.datetime.LocalDateTime
 
 data class FanboxCreatorPlanDetail(
@@ -11,7 +12,7 @@ data class FanboxCreatorPlanDetail(
     data class SupportTransaction(
         val id: String,
         val paidAmount: Int,
-        val transactionDatetime: LocalDateTime,
+        val transactionDatetime: Instant,
         val targetMonth: String,
         val user: FanboxUser,
     )
@@ -24,7 +25,7 @@ data class FanboxCreatorPlanDetail(
                 SupportTransaction(
                     id = "",
                     paidAmount = 0,
-                    transactionDatetime = LocalDateTime.parse("2024-01-01T00:00:00"),
+                    transactionDatetime = Instant.DISTANT_PAST,
                     targetMonth = "",
                     user = FanboxUser.dummy(),
                 ),

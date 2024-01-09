@@ -1,5 +1,6 @@
 package me.matsumo.fanbox.core.model.fanbox
 
+import kotlinx.datetime.Instant
 import me.matsumo.fanbox.core.model.PageOffsetInfo
 import me.matsumo.fanbox.core.model.fanbox.id.CommentId
 import me.matsumo.fanbox.core.model.fanbox.id.PostId
@@ -21,8 +22,8 @@ data class FanboxPostDetail(
     val isRestricted: Boolean,
     val likeCount: Int,
     val tags: List<String>,
-    val updatedDatetime: LocalDateTime,
-    val publishedDatetime: LocalDateTime,
+    val updatedDatetime: Instant,
+    val publishedDatetime: Instant,
     val nextPost: OtherPost?,
     val prevPost: OtherPost?,
     val user: FanboxUser,
@@ -103,7 +104,7 @@ data class FanboxPostDetail(
     ) {
         data class CommentItem(
             val body: String,
-            val createdDatetime: LocalDateTime,
+            val createdDatetime: Instant,
             val id: CommentId,
             val isLiked: Boolean,
             val isOwn: Boolean,
@@ -118,7 +119,7 @@ data class FanboxPostDetail(
     data class OtherPost(
         val id: PostId,
         val title: String,
-        val publishedDatetime: LocalDateTime,
+        val publishedDatetime: Instant,
     )
 
     data class ImageItem(
@@ -150,7 +151,7 @@ data class FanboxPostDetail(
                 contents = listOf(
                     Comment.CommentItem(
                         body = "かわいい～！",
-                        createdDatetime = LocalDateTime.parse("2024-01-01T00:00:00"),
+                        createdDatetime = Instant.parse("2024-01-01T00:00:00"),
                         id = CommentId("123"),
                         isLiked = false,
                         isOwn = false,
@@ -162,7 +163,7 @@ data class FanboxPostDetail(
                     ),
                     Comment.CommentItem(
                         body = "なるほどこれが天才か...",
-                        createdDatetime = LocalDateTime.parse("2024-01-01T00:00:00"),
+                        createdDatetime = Instant.parse("2024-01-01T00:00:00"),
                         id = CommentId("124"),
                         isLiked = false,
                         isOwn = false,
@@ -184,17 +185,17 @@ data class FanboxPostDetail(
             isRestricted = false,
             likeCount = 879,
             tags = listOf("オリキャラ", "Skeb絵"),
-            updatedDatetime = LocalDateTime.parse("2024-01-01T00:00:00"),
-            publishedDatetime = LocalDateTime.parse("2024-01-01T00:00:00"),
+            updatedDatetime = Instant.parse("2024-01-01T00:00:00"),
+            publishedDatetime = Instant.parse("2024-01-01T00:00:00"),
             nextPost = OtherPost(
                 id = PostId("456"),
                 title = "ゆんゆん",
-                publishedDatetime = LocalDateTime.parse("2024-01-01T00:00:00"),
+                publishedDatetime = Instant.parse("2024-01-01T00:00:00"),
             ),
             prevPost = OtherPost(
                 id = PostId("789"),
                 title = "ポニテこころん",
-                publishedDatetime = LocalDateTime.parse("2024-01-01T00:00:00"),
+                publishedDatetime = Instant.parse("2024-01-01T00:00:00"),
             ),
             user = FanboxUser.dummy(),
         )

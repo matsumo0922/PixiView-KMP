@@ -28,7 +28,7 @@ fun <T> Preferences.deserialize(
 
         formatter.decodeFromJsonElement(serializer, data)
     } catch (e: Exception) {
-        Napier.e("Failed to deserialize.")
+        Napier.e("Failed to deserialize.", e)
         defaultValue
     }
 }

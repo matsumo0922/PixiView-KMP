@@ -1,10 +1,10 @@
 package me.matsumo.fanbox.core.common.util
 
-import kotlinx.datetime.LocalDateTime
-import kotlinx.datetime.toJavaLocalDateTime
+import kotlinx.datetime.Instant
+import kotlinx.datetime.toJavaInstant
 import java.time.format.DateTimeFormatter
 
 
-actual fun LocalDateTime.format(pattern: String): String {
-    return DateTimeFormatter.ofPattern(pattern).format(this.toJavaLocalDateTime())
+actual fun Instant.format(pattern: String): String {
+    return DateTimeFormatter.ofPattern(pattern).format(this.toJavaInstant())
 }

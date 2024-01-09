@@ -34,9 +34,9 @@ object NavigateAnimation {
 
         val transition = NavTransition(
             createTransition = Horizontal.enter,
-            destroyTransition = Horizontal.exit,
+            destroyTransition = Horizontal.popExit,
             resumeTransition = Horizontal.popEnter,
-            pauseTransition = Horizontal.popExit,
+            pauseTransition = Horizontal.exit,
         )
     }
 
@@ -66,9 +66,9 @@ object NavigateAnimation {
 
         val transition = NavTransition(
             createTransition = Horizontal.enter,
-            destroyTransition = Horizontal.exit,
+            destroyTransition = Horizontal.popExit,
             resumeTransition = Horizontal.popEnter,
-            pauseTransition = Horizontal.popExit,
+            pauseTransition = Horizontal.exit,
         )
     }
 
@@ -98,9 +98,9 @@ object NavigateAnimation {
 
         val transition = NavTransition(
             createTransition = enter,
-            destroyTransition = exit,
+            destroyTransition = popExit,
             resumeTransition = popEnter,
-            pauseTransition = popExit,
+            pauseTransition = exit,
         )
     }
 }

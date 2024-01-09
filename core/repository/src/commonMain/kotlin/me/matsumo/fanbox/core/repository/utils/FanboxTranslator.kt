@@ -3,6 +3,7 @@ package me.matsumo.fanbox.core.repository.utils
 import io.github.aakira.napier.Napier
 import io.ktor.http.Url
 import io.ktor.http.parseUrlEncodedParameters
+import kotlinx.datetime.Instant
 import kotlinx.datetime.LocalDateTime
 import me.matsumo.fanbox.core.model.FanboxTag
 import me.matsumo.fanbox.core.model.PageCursorInfo
@@ -57,8 +58,8 @@ internal fun FanboxPostItemsEntity.Body.Item.translate(bookmarkedPosts: List<Pos
         id = PostId(id),
         title = title,
         excerpt = excerpt,
-        publishedDatetime = LocalDateTime.parse(publishedDatetime),
-        updatedDatetime = LocalDateTime.parse(updatedDatetime),
+        publishedDatetime = Instant.parse(publishedDatetime),
+        updatedDatetime = Instant.parse(updatedDatetime),
         isLiked = isLiked,
         isBookmarked = bookmarkedPosts.contains(PostId(id)),
         likeCount = likeCount,
@@ -234,8 +235,8 @@ internal fun FanboxPostDetailEntity.translate(bookmarkedPosts: List<PostId>): Fa
     return FanboxPostDetail(
         id = PostId(body.id),
         title = body.title,
-        publishedDatetime = LocalDateTime.parse(body.publishedDatetime),
-        updatedDatetime = LocalDateTime.parse(body.updatedDatetime),
+        publishedDatetime = Instant.parse(body.publishedDatetime),
+        updatedDatetime = Instant.parse(body.updatedDatetime),
         isLiked = body.isLiked,
         isBookmarked = bookmarkedPosts.contains(PostId(body.id)),
         likeCount = body.likeCount,
@@ -261,14 +262,14 @@ internal fun FanboxPostDetailEntity.translate(bookmarkedPosts: List<PostId>): Fa
             FanboxPostDetail.OtherPost(
                 id = PostId(it.id),
                 title = it.title,
-                publishedDatetime = LocalDateTime.parse(it.publishedDatetime),
+                publishedDatetime = Instant.parse(it.publishedDatetime),
             )
         },
         prevPost = body.prevPost?.let {
             FanboxPostDetail.OtherPost(
                 id = PostId(it.id),
                 title = it.title,
-                publishedDatetime = LocalDateTime.parse(it.publishedDatetime),
+                publishedDatetime = Instant.parse(it.publishedDatetime),
             )
         },
         imageForShare = body.imageForShare,
@@ -278,7 +279,7 @@ internal fun FanboxPostDetailEntity.translate(bookmarkedPosts: List<PostId>): Fa
 internal fun FanboxPostDetailEntity.Body.CommentList.Item.translate(): FanboxPostDetail.Comment.CommentItem {
     return FanboxPostDetail.Comment.CommentItem(
         body = body,
-        createdDatetime = LocalDateTime.parse(createdDatetime),
+        createdDatetime = Instant.parse(createdDatetime),
         id = CommentId(id),
         isLiked = isLiked,
         isOwn = isOwn,
@@ -347,7 +348,7 @@ internal fun FanboxCreatorPlanEntity.translate(): FanboxCreatorPlanDetail {
             FanboxCreatorPlanDetail.SupportTransaction(
                 id = it.id,
                 paidAmount = it.paidAmount,
-                transactionDatetime = LocalDateTime.parse(it.transactionDatetime),
+                transactionDatetime = Instant.parse(it.transactionDatetime),
                 targetMonth = it.targetMonth,
                 user = FanboxUser(
                     userId = it.supporter.userId,
@@ -366,7 +367,7 @@ internal fun FanboxPaidRecordEntity.translate(): List<FanboxPaidRecord> {
         FanboxPaidRecord(
             id = it.id,
             paidAmount = it.paidAmount,
-            paymentDateTime = LocalDateTime.parse(it.paymentDatetime),
+            paymentDateTime = Instant.parse(it.paymentDatetime),
             paymentMethod = PaymentMethod.fromString(it.paymentMethod),
             creator = FanboxCreator(
                 creatorId = it.creator.creatorId?.let { id -> CreatorId(id) },
@@ -385,7 +386,7 @@ internal fun FanboxNewsLettersEntity.translate(): List<FanboxNewsLetter> {
     return body.map {
         FanboxNewsLetter(
             body = it.body,
-            createdAt = LocalDateTime.parse(it.createdAt),
+            createdAt = Instant.parse(it.createdAt),
             creator = FanboxCreator(
                 creatorId = CreatorId(it.creator.creatorId),
                 user = FanboxUser(
@@ -408,7 +409,7 @@ internal fun FanboxBellItemsEntity.translate(): PageNumberInfo<FanboxBell> {
                 "on_post_published" -> {
                     FanboxBell.PostPublished(
                         id = PostId(it.post!!.id),
-                        notifiedDatetime = LocalDateTime.parse(it.notifiedDatetime),
+                        notifiedDatetime = Instant.parse(it.notifiedDatetime),
                         post = it.post!!.translate(emptyList()),
                     )
                 }
@@ -416,7 +417,7 @@ internal fun FanboxBellItemsEntity.translate(): PageNumberInfo<FanboxBell> {
                 "post_comment" -> {
                     FanboxBell.Comment(
                         id = CommentId(it.id),
-                        notifiedDatetime = LocalDateTime.parse(it.notifiedDatetime),
+                        notifiedDatetime = Instant.parse(it.notifiedDatetime),
                         comment = it.postCommentBody!!,
                         isRootComment = it.isRootComment!!,
                         creatorId = CreatorId(it.creatorId!!),
@@ -430,7 +431,7 @@ internal fun FanboxBellItemsEntity.translate(): PageNumberInfo<FanboxBell> {
                 "post_comment_like" -> {
                     FanboxBell.Like(
                         id = it.id,
-                        notifiedDatetime = LocalDateTime.parse(it.notifiedDatetime),
+                        notifiedDatetime = Instant.parse(it.notifiedDatetime),
                         comment = it.postCommentBody!!,
                         creatorId = CreatorId(it.creatorId!!),
                         postId = PostId(it.postId!!),

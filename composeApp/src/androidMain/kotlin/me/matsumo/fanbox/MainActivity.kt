@@ -1,7 +1,6 @@
 package me.matsumo.fanbox
 
 import android.os.Bundle
-import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.fillMaxSize
@@ -12,10 +11,9 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import androidx.core.view.WindowCompat
+import androidx.fragment.app.FragmentActivity
 import com.google.accompanist.systemuicontroller.rememberSystemUiController
-import me.matsumo.fanbox.core.model.ScreenState
 import me.matsumo.fanbox.core.model.ThemeConfig
-import me.matsumo.fanbox.core.model.UserData
 import me.matsumo.fanbox.core.repository.UserDataRepository
 import moe.tlaster.precompose.PreComposeApp
 import moe.tlaster.precompose.flow.collectAsStateWithLifecycle
@@ -23,7 +21,7 @@ import org.koin.compose.KoinContext
 import org.koin.core.component.KoinComponent
 import org.koin.core.component.inject
 
-class MainActivity : ComponentActivity(), KoinComponent {
+class MainActivity : FragmentActivity(), KoinComponent {
 
     private val userDataRepository: UserDataRepository by inject()
 

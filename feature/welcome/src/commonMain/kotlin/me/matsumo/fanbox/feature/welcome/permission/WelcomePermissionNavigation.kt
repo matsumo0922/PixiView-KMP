@@ -1,4 +1,4 @@
-package me.matsumo.fanbox.feature.welcome.top
+package me.matsumo.fanbox.feature.welcome.permission
 
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.ui.Modifier
@@ -6,22 +6,22 @@ import me.matsumo.fanbox.core.ui.animation.NavigateAnimation
 import moe.tlaster.precompose.navigation.Navigator
 import moe.tlaster.precompose.navigation.RouteBuilder
 
-const val WelcomeTopRoute = "welcomeTop"
+const val WelcomePermissionRoute = "welcomePermission"
 
-fun Navigator.navigateToWelcomeTop() {
-    this.navigate(WelcomeTopRoute)
+fun Navigator.navigateToWelcomePermission() {
+    this.navigate(WelcomePermissionRoute)
 }
 
-fun RouteBuilder.welcomeTopScreen(
-    navigateToWelcomeLogin: () -> Unit,
+fun RouteBuilder.welcomePermissionScreen(
+    navigateToHome: () -> Unit,
 ) {
     scene(
-        route = WelcomeTopRoute,
+        route = WelcomePermissionRoute,
         navTransition = NavigateAnimation.Horizontal.transition,
     ) {
-        WelcomeTopScreen(
+        WelcomePermissionScreen(
             modifier = Modifier.fillMaxSize(),
-            navigateToWelcomePlus = navigateToWelcomeLogin,
+            navigateToHome = navigateToHome,
         )
     }
 }

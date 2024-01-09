@@ -7,9 +7,11 @@ import io.ktor.client.engine.HttpClientEngineFactory
 import io.ktor.client.plugins.contentnegotiation.ContentNegotiation
 import io.ktor.client.plugins.cookies.CookiesStorage
 import io.ktor.client.plugins.cookies.HttpCookies
+import io.ktor.client.plugins.cookies.cookies
 import io.ktor.client.plugins.logging.LogLevel
 import io.ktor.client.plugins.logging.Logger
 import io.ktor.client.plugins.logging.Logging
+import io.ktor.client.plugins.pluginOrNull
 import io.ktor.http.Cookie
 import io.ktor.http.Url
 import io.ktor.http.parseServerSetCookieHeader
@@ -23,45 +25,11 @@ class ApiClient(
     private val cookieDataStore: FanboxCookieDataStore,
 ) {
     val client = HttpClient {
-        val cachedCookies = mutableMapOf<String, Cookie>()
-
         install(Logging) {
             level = LogLevel.INFO
             logger = object : Logger {
                 override fun log(message: String) {
                     Napier.d(message)
-                }
-            }
-        }
-
-        install(HttpCookies) {
-            storage = object : CookiesStorage {
-                override suspend fun addCookie(requestUrl: Url, cookie: Cookie) {
-                    cachedCookies[requestUrl.toString()] = cookie
-                }
-
-                override suspend fun get(requestUrl: Url): List<Cookie> {
-                    val url = requestUrl.toString()
-                    val cookiesString = cachedCookies[url]?.let { renderSetCookieHeader(it) }
-
-                    if (url.contains("https://www.fanbox.cc/") && !cookiesString.isNullOrBlank()) {
-                        val cookieHeaders = cookiesString.split(";")
-                        val cookies = mutableListOf<Cookie?>()
-
-                        for (header in cookieHeaders) {
-                            cookies.add(parseServerSetCookieHeader(header))
-                        }
-
-                        cookieDataStore.save(cookiesString)
-
-                        return cookies.filterNotNull()
-                    }
-
-                    return emptyList()
-                }
-
-                override fun close() {
-                    /* do nothing */
                 }
             }
         }

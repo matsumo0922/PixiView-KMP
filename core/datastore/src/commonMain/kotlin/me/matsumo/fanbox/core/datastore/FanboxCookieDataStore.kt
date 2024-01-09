@@ -14,7 +14,6 @@ class FanboxCookieDataStore(
 ) {
     private val cookiePreference = preferenceHelper.create(PreferencesName.FANBOX_COOKIE)
 
-
     val data: Flow<String> = cookiePreference.data.map { it[stringPreferencesKey(KEY_COOKIE)] ?: "" }
 
     suspend fun save(cookie: String) {
