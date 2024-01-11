@@ -12,6 +12,7 @@ import io.ktor.client.plugins.logging.Logging
 import io.ktor.http.Cookie
 import io.ktor.http.Url
 import io.ktor.http.parseServerSetCookieHeader
+import io.ktor.http.renderSetCookieHeader
 import io.ktor.serialization.kotlinx.json.json
 import kotlinx.serialization.json.Json
 import me.matsumo.fanbox.core.datastore.FanboxCookieDataStore
@@ -36,26 +37,17 @@ class ApiClient(
         install(HttpCookies) {
             storage = object : CookiesStorage {
                 override suspend fun addCookie(requestUrl: Url, cookie: Cookie) {
-                    cookieManager.setCookie(requestUrl.toString(), cookie.toWebViewCookie())
+                    if (requestUrl.toString() == "https://www.fanbox.cc/") {
+                        cookieDataStore.addCookies(renderSetCookieHeader(cookie).split(";"))
+                    }
                 }
 
                 override suspend fun get(requestUrl: Url): List<Cookie> {
-                    val url = requestUrl.toString()
-                    val cookieHeaders = cookieManager.getCookies(url)
-
-                    if (cookieHeaders.isNotEmpty()) {
-                        val cookies = mutableListOf<Cookie?>()
-
-                        for (header in cookieHeaders) {
-                            cookies.add(parseServerSetCookieHeader(header.toString()))
-                        }
-
-                        cookieDataStore.save(cookies.joinToString(";"))
-
-                        return cookies.filterNotNull()
+                    return if (requestUrl.toString().contains("(https://www.fanbox.cc/|https://api.fanbox.cc/)".toRegex())) {
+                        listOf(parseServerSetCookieHeader(cookieDataStore.get().orEmpty()))
+                    } else {
+                        emptyList()
                     }
-
-                    return emptyList()
                 }
 
                 override fun close() {

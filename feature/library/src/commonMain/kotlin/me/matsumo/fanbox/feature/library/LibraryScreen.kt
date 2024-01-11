@@ -15,7 +15,9 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
 import caios.android.fanbox.feature.library.home.LibraryHomeRoute
 import caios.android.fanbox.feature.library.home.navigateToLibraryHome
+import io.github.aakira.napier.Napier
 import kotlinx.collections.immutable.toImmutableList
+import kotlinx.coroutines.isActive
 import kotlinx.coroutines.launch
 import me.matsumo.fanbox.core.model.fanbox.id.CreatorId
 import me.matsumo.fanbox.core.model.fanbox.id.PostId
@@ -104,7 +106,9 @@ fun LibraryScreen(
                         modifier = Modifier.weight(1f),
                         navController = navigator,
                         openDrawer = {
+                            Napier.d("openDrawer ${scope.isActive}")
                             scope.launch {
+                                Napier.d("openDrawer scope.launch")
                                 drawerState.open()
                             }
                         },

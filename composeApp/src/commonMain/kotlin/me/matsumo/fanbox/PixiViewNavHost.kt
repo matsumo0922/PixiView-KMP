@@ -15,6 +15,14 @@ import me.matsumo.fanbox.feature.library.LibraryRoute
 import me.matsumo.fanbox.feature.library.component.LibraryPermanentDrawer
 import me.matsumo.fanbox.feature.library.libraryScreen
 import me.matsumo.fanbox.feature.library.navigateToLibraryDestination
+import me.matsumo.fanbox.feature.setting.developer.navigateToSettingDeveloper
+import me.matsumo.fanbox.feature.setting.developer.settingDeveloperDialog
+import me.matsumo.fanbox.feature.setting.oss.navigateToSettingLicense
+import me.matsumo.fanbox.feature.setting.oss.settingLicenseScreen
+import me.matsumo.fanbox.feature.setting.theme.navigateToSettingTheme
+import me.matsumo.fanbox.feature.setting.theme.settingThemeScreen
+import me.matsumo.fanbox.feature.setting.top.navigateToSettingTop
+import me.matsumo.fanbox.feature.setting.top.settingTopScreen
 import moe.tlaster.precompose.flow.collectAsStateWithLifecycle
 import moe.tlaster.precompose.navigation.NavHost
 import moe.tlaster.precompose.navigation.Navigator
@@ -165,7 +173,7 @@ private fun RouteBuilder.applyNavGraph(
         navigateToFollowerCreators = { /*mainNavController.navigateToFollowingCreators()*/ },
         navigateToSupportingCreators = { /*mainNavController.navigateToSupportingCreators()*/ },
         navigateToPayments = { /*subNavController.navigateToPayments()*/ },
-        navigateToSettingTop = { /*subNavController.navigateToSettingTop()*/ },
+        navigateToSettingTop = { subNavController.navigateToSettingTop() },
         navigateToAbout = { /*subNavController.navigateToAbout()*/ },
         navigateToBillingPlus = { /*mainNavController.navigateToBillingPlus()*/ },
         navigateToCancelPlus = { /*mainNavController.navigateToSimpleAlertDialog(it)*/ },
@@ -233,11 +241,11 @@ private fun RouteBuilder.applyNavGraph(
         navigateToVersionHistory = { mainNavController.navigateToVersionHistory() },
         navigateToDonate = { mainNavController.navigateToBillingPlus() },
         terminate = { subNavController.popBackStack() },
-    )
+    )*/
 
     settingTopScreen(
         navigateToThemeSetting = { mainNavController.navigateToSettingTheme() },
-        navigateToBillingPlus = { mainNavController.navigateToBillingPlus() },
+        navigateToBillingPlus = { /*mainNavController.navigateToBillingPlus()*/ },
         navigateToSettingDeveloper = { mainNavController.navigateToSettingDeveloper() },
         navigateToLogoutDialog = { contents, onResult -> mainNavController.navigateToSimpleAlertDialog(contents, onResult) },
         navigateToOpenSourceLicense = { mainNavController.navigateToSettingLicense() },
@@ -245,7 +253,7 @@ private fun RouteBuilder.applyNavGraph(
     )
 
     settingThemeScreen(
-        navigateToBillingPlus = { mainNavController.navigateToBillingPlus() },
+        navigateToBillingPlus = { /*mainNavController.navigateToBillingPlus()*/ },
         terminate = { mainNavController.popBackStack() },
     )
 
@@ -259,7 +267,7 @@ private fun RouteBuilder.applyNavGraph(
 
     // dialog
 
-    simpleAlertDialogDialog(
+    /*simpleAlertDialogDialog(
         terminateWithResult = { mainNavController.popBackStackWithResult(it) },
     )
 

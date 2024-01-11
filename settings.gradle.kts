@@ -33,3 +33,4 @@ include(":core:common")
 
 include(":feature:welcome")
 include(":feature:library")
+include(":feature:setting")

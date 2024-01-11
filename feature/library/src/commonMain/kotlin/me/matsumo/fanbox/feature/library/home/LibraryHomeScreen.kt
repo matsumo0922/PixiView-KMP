@@ -1,4 +1,4 @@
-package caios.android.fanbox.feature.library.home
+package me.matsumo.fanbox.feature.library.home
 
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.layout.Column
@@ -40,7 +40,6 @@ import me.matsumo.fanbox.core.ui.MR
 import me.matsumo.fanbox.core.ui.extensition.LocalNavigationType
 import me.matsumo.fanbox.core.ui.extensition.PixiViewNavigationType
 import me.matsumo.fanbox.core.ui.view.SimpleAlertContents
-import me.matsumo.fanbox.feature.library.home.LibraryHomeViewModel
 import me.matsumo.fanbox.feature.library.home.items.LibraryHomeIdleSection
 import me.matsumo.fanbox.feature.library.home.items.LibrarySupportedIdleSection
 import moe.tlaster.precompose.flow.collectAsStateWithLifecycle
