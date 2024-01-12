@@ -32,7 +32,6 @@ import coil3.request.ImageRequest
 import dev.icerock.moko.resources.compose.stringResource
 import kotlinx.datetime.Clock
 import kotlinx.datetime.Instant
-import kotlinx.datetime.toDateTimePeriod
 import me.matsumo.fanbox.core.model.fanbox.FanboxBell
 import me.matsumo.fanbox.core.model.fanbox.id.PostId
 import me.matsumo.fanbox.core.ui.MR
@@ -273,12 +272,12 @@ private fun LikeItem(
 @Composable
 private fun Instant.toRelativeTimeString(): String {
     val now = Clock.System.now()
-    val period = (this - now).toDateTimePeriod()
+    val duration = now - this
 
     return when {
-        period.days > 0 -> stringResource(MR.strings.unit_day_before, period.days)
-        period.hours > 0 -> stringResource(MR.strings.unit_hour_before, period.hours)
-        period.minutes > 0 -> stringResource(MR.strings.unit_minute_before, period.minutes)
-        else -> stringResource(MR.strings.unit_second_before, period.seconds)
+        duration.inWholeDays > 0 -> stringResource(MR.strings.unit_day_before, duration.inWholeDays)
+        duration.inWholeHours > 0 -> stringResource(MR.strings.unit_hour_before, duration.inWholeHours)
+        duration.inWholeMinutes > 0 -> stringResource(MR.strings.unit_minute_before, duration.inWholeMinutes)
+        else -> stringResource(MR.strings.unit_second_before, duration.inWholeSeconds)
     }
 }

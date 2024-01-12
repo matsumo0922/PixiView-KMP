@@ -22,6 +22,15 @@ import me.matsumo.fanbox.feature.library.LibraryRoute
 import me.matsumo.fanbox.feature.library.component.LibraryPermanentDrawer
 import me.matsumo.fanbox.feature.library.libraryScreen
 import me.matsumo.fanbox.feature.library.navigateToLibraryDestination
+import me.matsumo.fanbox.feature.post.bookmark.bookmarkedPostsScreen
+import me.matsumo.fanbox.feature.post.bookmark.navigateToBookmarkedPosts
+import me.matsumo.fanbox.feature.post.detail.PostDetailPagingType
+import me.matsumo.fanbox.feature.post.detail.navigateToPostDetail
+import me.matsumo.fanbox.feature.post.detail.postDetailScreen
+import me.matsumo.fanbox.feature.post.image.navigateToPostImage
+import me.matsumo.fanbox.feature.post.image.postImageScreen
+import me.matsumo.fanbox.feature.post.search.navigateToPostSearch
+import me.matsumo.fanbox.feature.post.search.postSearchScreen
 import me.matsumo.fanbox.feature.setting.developer.navigateToSettingDeveloper
 import me.matsumo.fanbox.feature.setting.developer.settingDeveloperDialog
 import me.matsumo.fanbox.feature.setting.oss.navigateToSettingLicense
@@ -117,12 +126,12 @@ private fun ExpandedNavHost(
             LibraryPermanentDrawer(
                 currentDestination = backStackEntry?.route?.route,
                 onClickLibrary = mainNavigator::navigateToLibraryDestination,
-                navigateToBookmarkedPosts = { /*mainNavController.navigateToBookmarkedPosts()*/ },
+                navigateToBookmarkedPosts = { mainNavigator.navigateToBookmarkedPosts() },
                 navigateToFollowingCreators = { /*mainNavController.navigateToFollowingCreators()*/ },
                 navigateToSupportingCreators = { /*mainNavController.navigateToSupportingCreators()*/ },
                 navigateToPayments = { /*subNavigator.navigateToPayments()*/ },
-                navigateToSetting = { /*mainNavController.navigateToSettingTop()*/ },
-                navigateToAbout = { /*subNavigator.navigateToAbout()*/ },
+                navigateToSetting = { mainNavigator.navigateToSettingTop() },
+                navigateToAbout = { subNavigator.navigateToAbout() },
                 navigateToBillingPlus = { mainNavigator.navigateToBillingPlus() },
             )
         },
@@ -132,9 +141,9 @@ private fun ExpandedNavHost(
                 modifier = Modifier.weight(1f),
                 navController = mainNavigator,
                 openDrawer = { /* do nothing */ },
-                navigateToPostSearch = { /*mainNavController.navigateToPostSearch()*/ },
-                navigateToPostDetailFromHome = { /*subNavigator.navigateToPostDetail(it, PostDetailPagingType.Home)*/ },
-                navigateToPostDetailFromSupported = {/* subNavigator.navigateToPostDetail(it, PostDetailPagingType.Supported)*/ },
+                navigateToPostSearch = { mainNavigator.navigateToPostSearch() },
+                navigateToPostDetailFromHome = { subNavigator.navigateToPostDetail(it, PostDetailPagingType.Home) },
+                navigateToPostDetailFromSupported = { subNavigator.navigateToPostDetail(it, PostDetailPagingType.Supported) },
                 navigateToCreatorPosts = { /*mainNavController.navigateToCreatorTop(it, isPosts = true)*/ },
                 navigateToCreatorPlans = { /*mainNavController.navigateToCreatorTop(it)*/ },
                 navigateToCancelPlus = { mainNavigator.navigateToSimpleAlertDialog(it) },
@@ -171,12 +180,12 @@ private fun RouteBuilder.applyNavGraph(
     // composable
 
     libraryScreen(
-        navigateToPostSearch = { /*mainNavController.navigateToPostSearch()*/ },
-        navigateToPostDetailFromHome = { /*subNavController.navigateToPostDetail(it, PostDetailPagingType.Home)*/ },
-        navigateToPostDetailFromSupported = { /*subNavController.navigateToPostDetail(it, PostDetailPagingType.Supported)*/ },
+        navigateToPostSearch = { mainNavController.navigateToPostSearch() },
+        navigateToPostDetailFromHome = { subNavController.navigateToPostDetail(it, PostDetailPagingType.Home) },
+        navigateToPostDetailFromSupported = { subNavController.navigateToPostDetail(it, PostDetailPagingType.Supported) },
         navigateToCreatorPosts = { /*mainNavController.navigateToCreatorTop(it, isPosts = true)*/ },
         navigateToCreatorPlans = { /*mainNavController.navigateToCreatorTop(it)*/ },
-        navigateToBookmarkedPosts = { /*mainNavController.navigateToBookmarkedPosts()*/ },
+        navigateToBookmarkedPosts = { mainNavController.navigateToBookmarkedPosts() },
         navigateToFollowerCreators = { /*mainNavController.navigateToFollowingCreators()*/ },
         navigateToSupportingCreators = { /*mainNavController.navigateToSupportingCreators()*/ },
         navigateToPayments = { /*subNavController.navigateToPayments()*/ },
@@ -186,12 +195,12 @@ private fun RouteBuilder.applyNavGraph(
         navigateToCancelPlus = { /*mainNavController.navigateToSimpleAlertDialog(it)*/ },
     )
 
-    /*postDetailScreen(
+    postDetailScreen(
         navigateToPostSearch = { query, creatorId -> mainNavController.navigateToPostSearch(tag = query, creatorId = creatorId) },
         navigateToPostDetail = { subNavController.navigateToPostDetail(it, PostDetailPagingType.Unknown) },
         navigateToPostImage = { postId, index -> subNavController.navigateToPostImage(postId, index) },
-        navigateToCreatorPosts = { mainNavController.navigateToCreatorTop(it, isPosts = true) },
-        navigateToCreatorPlans = { mainNavController.navigateToCreatorTop(it) },
+        navigateToCreatorPosts = { /*mainNavController.navigateToCreatorTop(it, isPosts = true)*/ },
+        navigateToCreatorPlans = { /*mainNavController.navigateToCreatorTop(it) */},
         navigateToCommentDeleteDialog = { contents, onResult -> mainNavController.navigateToSimpleAlertDialog(contents, onResult) },
         terminate = { subNavController.popBackStack() },
     )
@@ -203,18 +212,19 @@ private fun RouteBuilder.applyNavGraph(
     postSearchScreen(
         navigateToPostSearch = { creatorId, creatorQuery, tag -> mainNavController.navigateToPostSearch(creatorId, creatorQuery, tag) },
         navigateToPostDetail = { subNavController.navigateToPostDetail(it, PostDetailPagingType.Search) },
-        navigateToCreatorPosts = { mainNavController.navigateToCreatorTop(it, isPosts = true) },
-        navigateToCreatorPlans = { mainNavController.navigateToCreatorTop(it) },
+        navigateToCreatorPosts = { /*mainNavController.navigateToCreatorTop(it, isPosts = true)*/ },
+        navigateToCreatorPlans = { /*mainNavController.navigateToCreatorTop(it)*/ },
         terminate = { mainNavController.popBackStack() },
     )
 
     bookmarkedPostsScreen(
         navigateToPostDetail = { subNavController.navigateToPostDetail(it, PostDetailPagingType.Unknown) },
-        navigateToCreatorPosts = { mainNavController.navigateToCreatorTop(it, isPosts = true) },
-        navigateToCreatorPlans = { mainNavController.navigateToCreatorTop(it) },
+        navigateToCreatorPosts = { /*mainNavController.navigateToCreatorTop(it, isPosts = true)*/ },
+        navigateToCreatorPlans = { /*mainNavController.navigateToCreatorTop(it) */},
         terminate = { mainNavController.popBackStack() },
     )
 
+    /*
     creatorTopScreen(
         navigateToPostDetail = { subNavController.navigateToPostDetail(it, PostDetailPagingType.Creator) },
         navigateToPostSearch = { query, creatorId -> mainNavController.navigateToPostSearch(tag = query, creatorId = creatorId) },

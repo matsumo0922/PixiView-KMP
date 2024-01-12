@@ -16,3 +16,7 @@ actual fun Instant.format(pattern: String): String {
 actual fun LocalDate.format(pattern: String): String {
     return toJavaLocalDate().format(DateTimeFormatter.ofPattern(pattern))
 }
+
+actual fun String.format(vararg args: Any?): String {
+    return java.lang.String.format(this, *args)
+}
