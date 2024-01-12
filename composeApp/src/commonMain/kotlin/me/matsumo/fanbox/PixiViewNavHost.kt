@@ -7,9 +7,16 @@ import androidx.compose.material3.PermanentNavigationDrawer
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
+import me.matsumo.fanbox.core.ui.component.emptyDetailScreen
 import me.matsumo.fanbox.core.ui.extensition.PixiViewNavigationType
 import me.matsumo.fanbox.core.ui.extensition.rememberNavigator
 import me.matsumo.fanbox.core.ui.view.navigateToSimpleAlertDialog
+import me.matsumo.fanbox.feature.about.about.aboutScreen
+import me.matsumo.fanbox.feature.about.about.navigateToAbout
+import me.matsumo.fanbox.feature.about.billing.billingPlusBottomSheet
+import me.matsumo.fanbox.feature.about.billing.navigateToBillingPlus
+import me.matsumo.fanbox.feature.about.versions.navigateToVersionHistory
+import me.matsumo.fanbox.feature.about.versions.versionHistoryBottomSheet
 import me.matsumo.fanbox.feature.library.LibraryNavHost
 import me.matsumo.fanbox.feature.library.LibraryRoute
 import me.matsumo.fanbox.feature.library.component.LibraryPermanentDrawer
@@ -116,7 +123,7 @@ private fun ExpandedNavHost(
                 navigateToPayments = { /*subNavigator.navigateToPayments()*/ },
                 navigateToSetting = { /*mainNavController.navigateToSettingTop()*/ },
                 navigateToAbout = { /*subNavigator.navigateToAbout()*/ },
-                navigateToBillingPlus = { /*mainNavController.navigateToBillingPlus()*/ },
+                navigateToBillingPlus = { mainNavigator.navigateToBillingPlus() },
             )
         },
     ) {
@@ -174,8 +181,8 @@ private fun RouteBuilder.applyNavGraph(
         navigateToSupportingCreators = { /*mainNavController.navigateToSupportingCreators()*/ },
         navigateToPayments = { /*subNavController.navigateToPayments()*/ },
         navigateToSettingTop = { subNavController.navigateToSettingTop() },
-        navigateToAbout = { /*subNavController.navigateToAbout()*/ },
-        navigateToBillingPlus = { /*mainNavController.navigateToBillingPlus()*/ },
+        navigateToAbout = { subNavController.navigateToAbout() },
+        navigateToBillingPlus = { mainNavController.navigateToBillingPlus() },
         navigateToCancelPlus = { /*mainNavController.navigateToSimpleAlertDialog(it)*/ },
     )
 
@@ -235,17 +242,17 @@ private fun RouteBuilder.applyNavGraph(
 
     fanCardScreen(
         terminate = { subNavController.popBackStack() },
-    )
+    )*/
 
     aboutScreen(
         navigateToVersionHistory = { mainNavController.navigateToVersionHistory() },
         navigateToDonate = { mainNavController.navigateToBillingPlus() },
         terminate = { subNavController.popBackStack() },
-    )*/
+    )
 
     settingTopScreen(
         navigateToThemeSetting = { mainNavController.navigateToSettingTheme() },
-        navigateToBillingPlus = { /*mainNavController.navigateToBillingPlus()*/ },
+        navigateToBillingPlus = { mainNavController.navigateToBillingPlus() },
         navigateToSettingDeveloper = { mainNavController.navigateToSettingDeveloper() },
         navigateToLogoutDialog = { contents, onResult -> mainNavController.navigateToSimpleAlertDialog(contents, onResult) },
         navigateToOpenSourceLicense = { mainNavController.navigateToSettingLicense() },
@@ -253,7 +260,7 @@ private fun RouteBuilder.applyNavGraph(
     )
 
     settingThemeScreen(
-        navigateToBillingPlus = { /*mainNavController.navigateToBillingPlus()*/ },
+        navigateToBillingPlus = { mainNavController.navigateToBillingPlus() },
         terminate = { mainNavController.popBackStack() },
     )
 
@@ -273,7 +280,7 @@ private fun RouteBuilder.applyNavGraph(
 
     creatorPostsDownloadDialog(
         terminate = { mainNavController.popBackStack() },
-    )
+    )*/
 
     // bottom sheet
 
@@ -287,5 +294,5 @@ private fun RouteBuilder.applyNavGraph(
 
     // empty for start destination
 
-    emptyDetailScreen()*/
+    emptyDetailScreen()
 }

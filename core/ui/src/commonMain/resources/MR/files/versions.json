@@ -1,0 +1,79 @@
+[
+  {
+    "versionName": "0.1.0",
+    "versionCode": 1,
+    "date": "2023/10/21",
+    "logJp": "・アプリの開発を開始",
+    "logEn": "・Start developing this app"
+  },
+  {
+    "versionName": "0.2.0",
+    "versionCode": 2,
+    "date": "2023/11/18",
+    "logJp": "・PlayStoreにてアルファ版の公開を開始",
+    "logEn": "・Alpha version now available on Play Store"
+  },
+  {
+    "versionName": "1.0.0",
+    "versionCode": 4,
+    "date": "2023/11/24",
+    "logJp": "・正式版の公開を開始",
+    "logEn": "・Official version released in Google Play Store"
+  },
+  {
+    "versionName": "1.0.1",
+    "versionCode": 5,
+    "date": "2023/11/27",
+    "logJp": "・英語に対応\n・投稿のいいね機能を搭載\n・アプリのロック機能を搭載\n・決済履歴の確認機能を搭載",
+    "logEn": "・Supports English\n・Equipped with post like function\n・Equipped with app lock function\n・Equipped with payment history confirmation function"
+  },
+  {
+    "versionName": "1.0.2",
+    "versionCode": 6,
+    "date": "2023/12/01",
+    "logJp": "・GooglePlayにリジェクトされ、ポリシー違反を修正してパッケージ名を変えて再提出せよと指示があったため、パッケージ名を caios.android.fanbox に変更",
+    "logEn": "・The package name was changed to caios.android.fanbox because it was rejected by Google Play and instructed to correct the policy violation, change the package name, and resubmit."
+  },
+  {
+    "versionName": "1.0.3",
+    "versionCode": 7,
+    "date": "2023/12/01",
+    "logJp": "・FANBOXでのコンテンツ表示設定をオーバーライドする設定を追加\n・ドロワーメニューにユーザー名とユーザーアイコンを表示",
+    "logEn": "・Added settings to override content display settings in FANBOX\n・Display user name and user icon in drawer menu"
+  },
+  {
+    "versionName": "1.0.4",
+    "versionCode": 8,
+    "date": "2023/12/09",
+    "logJp": "・スラッシュが入った文字列を検索するとクラッシュする不具合を修正\n・表示する内容がなかった場合のメッセージを改善",
+    "logEn": "・Fixed a bug that caused a crash when searching for a string containing a slash.\n・Improved the message when there was no content to display."
+  },
+  {
+    "versionName": "1.1.0",
+    "versionCode": 9,
+    "date": "2023/12/15",
+    "logJp": "・タブレットや Fold などの大画面端末に対応\n・支援プラン外の投稿などの表示制限コンテンツを省く設定を追加\n・投稿を一覧表示できるグリッドモードを追加\n・投稿詳細画面を左右にスワイプすることで、前後の投稿を次々に確認できるように修正\n・ウェルカム画面から先に進めない不具合を修正",
+    "logEn": "・Support for large screen devices such as tablets and Fold.\n・Added a setting to omit display-restricted content, such as posts not covered by a support plan.\n・Grid mode has been added to display a list of posts.\n・Fixed a bug that prevented the user from proceeding to the welcome screen.\n・Fixed a bug that prevented users from proceeding from the welcome screen."
+  },
+  {
+    "versionName": "1.1.1",
+    "versionCode": 10,
+    "date": "2023/12/15",
+    "logJp": "・支援中タブが表示できない問題を修正",
+    "logEn": "・Fixed an issue where the support tab could not be displayed."
+  },
+  {
+    "versionName": "1.1.2",
+    "versionCode": 11,
+    "date": "2023/12/16",
+    "logJp": "・FANBOX Viewer+ の購入画面に定期購入契約における注意点を追記",
+    "logEn": "・Added notes on the subscription contract to the purchase screen of FANBOX Viewer+."
+  },
+  {
+    "versionName": "1.1.3",
+    "versionCode": 12,
+    "date": "2023/12/20",
+    "logJp": "・ログインが出来ない問題を修正",
+    "logEn": "・Fixed the issue of not being able to login."
+  }
+]

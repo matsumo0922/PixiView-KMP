@@ -107,6 +107,7 @@ kotlin {
                 implementation(project(":feature:welcome"))
                 implementation(project(":feature:library"))
                 implementation(project(":feature:setting"))
+                implementation(project(":feature:about"))
 
                 implementation(libs.moko.permissions)
                 implementation(libs.moko.permissions.compose)

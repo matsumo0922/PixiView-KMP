@@ -1,6 +1,7 @@
 package me.matsumo.fanbox
 
 import android.app.Application
+import android.os.StrictMode
 import coil3.ImageLoader
 import coil3.SingletonImageLoader
 import coil3.annotation.ExperimentalCoilApi
@@ -28,6 +29,7 @@ class PixiViewApplication : Application() {
         }
 
         if (BuildConfig.DEBUG) {
+            StrictMode.enableDefaults()
             Napier.base(DebugAntilog())
         }
 

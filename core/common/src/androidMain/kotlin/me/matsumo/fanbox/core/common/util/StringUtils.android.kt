@@ -1,15 +1,18 @@
 package me.matsumo.fanbox.core.common.util
 
 import kotlinx.datetime.Instant
-import kotlinx.datetime.toJavaInstant
-import java.time.ZoneId
+import kotlinx.datetime.LocalDate
+import kotlinx.datetime.TimeZone
+import kotlinx.datetime.toJavaLocalDate
+import kotlinx.datetime.toJavaLocalDateTime
+import kotlinx.datetime.toLocalDateTime
 import java.time.format.DateTimeFormatter
-import java.util.Locale
 
 
 actual fun Instant.format(pattern: String): String {
-    return DateTimeFormatter.ofPattern(pattern)
-        .withLocale(Locale.getDefault())
-        .withZone(ZoneId.systemDefault())
-        .format(this.toJavaInstant())
+    return toLocalDateTime(TimeZone.currentSystemDefault()).toJavaLocalDateTime().format(DateTimeFormatter.ofPattern(pattern))
+}
+
+actual fun LocalDate.format(pattern: String): String {
+    return toJavaLocalDate().format(DateTimeFormatter.ofPattern(pattern))
 }
