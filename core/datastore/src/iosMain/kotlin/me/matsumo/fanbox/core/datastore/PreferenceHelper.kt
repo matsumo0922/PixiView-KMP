@@ -1,3 +1,5 @@
+@file:Suppress("MatchingDeclarationName", "Filename")
+
 package me.matsumo.fanbox.core.datastore
 
 import androidx.datastore.core.DataStore
@@ -34,6 +36,6 @@ class PreferenceHelperImpl(
     }
 
     override fun delete(name: String) {
-
+        // do nothing
     }
 }

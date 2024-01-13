@@ -1,3 +1,5 @@
+@file:Suppress("MatchingDeclarationName", "Filename")
+
 package me.matsumo.fanbox.core.datastore
 
 import android.content.Context
@@ -20,11 +22,11 @@ class PreferenceHelperImpl(
             corruptionHandler = null,
             migrations = emptyList(),
             scope = CoroutineScope(ioDispatcher),
-            produceFile = { file.absolutePath.toPath() }
+            produceFile = { file.absolutePath.toPath() },
         )
     }
 
     override fun delete(name: String) {
-
+        // do nothing
     }
 }

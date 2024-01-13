@@ -39,6 +39,10 @@ internal fun Project.configureDetekt(extension: DetektExtension) {
             reportMerge.configure {
                 input.from(this@detekt.xmlReportFile) // or .sarifReportFile
             }
+
+            exclude {
+                it.file.relativeTo(projectDir).startsWith("build")
+            }
         }
     }
 }
