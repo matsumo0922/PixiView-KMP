@@ -58,21 +58,18 @@ enum class SimpleAlertContents(
 const val SimpleAlertDialogContent = "simpleAlertDialogSongs"
 const val SimpleAlertDialog = "simpleAlertDialog/{$SimpleAlertDialogContent}"
 
-fun Navigator.navigateToSimpleAlertDialog(
+suspend fun Navigator.navigateToSimpleAlertDialog(
     content: SimpleAlertContents,
     onClickPositive: (() -> Unit)? = null,
     onClickNegative: (() -> Unit)? = null,
 ) {
-    /*navigateForResult<Boolean>(
-        route = "simpleAlertDialog/$content",
-        navResultCallback = {
-            if (it) {
-                onClickPositive?.invoke()
-            } else {
-                onClickNegative?.invoke()
-            }
-        },
-    )*/
+    val result = navigateForResult("simpleAlertDialog/$content") as? Boolean ?: return
+
+    if (result) {
+        onClickPositive?.invoke()
+    } else {
+        onClickNegative?.invoke()
+    }
 }
 
 fun RouteBuilder.simpleAlertDialogDialog(

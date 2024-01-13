@@ -1,5 +1,8 @@
 @file:Suppress("UnstableApiUsage")
 
+include(":feature:creator")
+
+
 rootProject.name = "PixiView-KMP"
 enableFeaturePreview("TYPESAFE_PROJECT_ACCESSORS")
 

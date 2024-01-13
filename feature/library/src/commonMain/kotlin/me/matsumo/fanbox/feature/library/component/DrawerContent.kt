@@ -86,11 +86,12 @@ fun DrawerContent(
         NavigationDrawerHeader(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(top = 24.dp),
+                .padding(top = 24.dp)
+                .statusBarsPadding(),
         )
 
         NavigationDrawerItem(
-            modifier = Modifier.statusBarsPadding(),
+            modifier = Modifier.padding(top = 8.dp),
             state = state,
             isSelected = currentDestination?.contains(LibraryDestination.Home.name, true) ?: false,
             label = stringResource(MR.strings.library_navigation_home),

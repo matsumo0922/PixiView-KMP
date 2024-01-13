@@ -6,17 +6,33 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.PermanentNavigationDrawer
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.launch
 import me.matsumo.fanbox.core.ui.component.emptyDetailScreen
 import me.matsumo.fanbox.core.ui.extensition.PixiViewNavigationType
 import me.matsumo.fanbox.core.ui.extensition.rememberNavigator
 import me.matsumo.fanbox.core.ui.view.navigateToSimpleAlertDialog
+import me.matsumo.fanbox.core.ui.view.simpleAlertDialogDialog
 import me.matsumo.fanbox.feature.about.about.aboutScreen
 import me.matsumo.fanbox.feature.about.about.navigateToAbout
 import me.matsumo.fanbox.feature.about.billing.billingPlusBottomSheet
 import me.matsumo.fanbox.feature.about.billing.navigateToBillingPlus
 import me.matsumo.fanbox.feature.about.versions.navigateToVersionHistory
 import me.matsumo.fanbox.feature.about.versions.versionHistoryBottomSheet
+import me.matsumo.fanbox.feature.creator.download.creatorPostsDownloadDialog
+import me.matsumo.fanbox.feature.creator.download.navigateToCreatorPostsDownload
+import me.matsumo.fanbox.feature.creator.fancard.fanCardScreen
+import me.matsumo.fanbox.feature.creator.fancard.navigateToFanCard
+import me.matsumo.fanbox.feature.creator.follow.followingCreatorsScreen
+import me.matsumo.fanbox.feature.creator.follow.navigateToFollowingCreators
+import me.matsumo.fanbox.feature.creator.payment.navigateToPayments
+import me.matsumo.fanbox.feature.creator.payment.paymentsScreen
+import me.matsumo.fanbox.feature.creator.support.navigateToSupportingCreators
+import me.matsumo.fanbox.feature.creator.support.supportingCreatorsScreen
+import me.matsumo.fanbox.feature.creator.top.creatorTopScreen
+import me.matsumo.fanbox.feature.creator.top.navigateToCreatorTop
 import me.matsumo.fanbox.feature.library.LibraryNavHost
 import me.matsumo.fanbox.feature.library.LibraryRoute
 import me.matsumo.fanbox.feature.library.component.LibraryPermanentDrawer
@@ -52,6 +68,7 @@ internal fun PixiViewNavHost(
 ) {
     val mainNavigator = rememberNavigator("Main")
     val subNavigator = rememberNavigator("Sub")
+    val scope = rememberCoroutineScope()
 
     Box(modifier) {
         when (navigationType) {
@@ -60,6 +77,7 @@ internal fun PixiViewNavHost(
                     modifier = Modifier.fillMaxSize(),
                     mainNavigator = mainNavigator,
                     subNavigator = subNavigator,
+                    scope = scope,
                 )
             }
 
@@ -67,6 +85,7 @@ internal fun PixiViewNavHost(
                 MediumNavHost(
                     modifier = Modifier.fillMaxSize(),
                     navigator = mainNavigator,
+                    scope = scope,
                     startDestination = startDestination,
                 )
             }
@@ -75,6 +94,7 @@ internal fun PixiViewNavHost(
                 CompactNavHost(
                     modifier = Modifier.fillMaxSize(),
                     navigator = mainNavigator,
+                    scope = scope,
                     startDestination = startDestination,
                 )
             }
@@ -85,6 +105,7 @@ internal fun PixiViewNavHost(
 @Composable
 private fun CompactNavHost(
     navigator: Navigator,
+    scope: CoroutineScope,
     modifier: Modifier = Modifier,
     startDestination: String = LibraryRoute,
 ) {
@@ -93,13 +114,14 @@ private fun CompactNavHost(
         navigator = navigator,
         initialRoute = startDestination,
     ) {
-        applyNavGraph(navigator)
+        applyNavGraph(scope, navigator)
     }
 }
 
 @Composable
 private fun MediumNavHost(
     navigator: Navigator,
+    scope: CoroutineScope,
     modifier: Modifier = Modifier,
     startDestination: String = LibraryRoute,
 ) {
@@ -108,7 +130,7 @@ private fun MediumNavHost(
         navigator = navigator,
         initialRoute = startDestination,
     ) {
-        applyNavGraph(navigator)
+        applyNavGraph(scope, navigator)
     }
 }
 
@@ -116,6 +138,7 @@ private fun MediumNavHost(
 private fun ExpandedNavHost(
     mainNavigator: Navigator,
     subNavigator: Navigator,
+    scope: CoroutineScope,
     modifier: Modifier = Modifier,
 ) {
     val backStackEntry by mainNavigator.currentEntry.collectAsStateWithLifecycle(null)
@@ -127,9 +150,9 @@ private fun ExpandedNavHost(
                 currentDestination = backStackEntry?.route?.route,
                 onClickLibrary = mainNavigator::navigateToLibraryDestination,
                 navigateToBookmarkedPosts = { mainNavigator.navigateToBookmarkedPosts() },
-                navigateToFollowingCreators = { /*mainNavController.navigateToFollowingCreators()*/ },
-                navigateToSupportingCreators = { /*mainNavController.navigateToSupportingCreators()*/ },
-                navigateToPayments = { /*subNavigator.navigateToPayments()*/ },
+                navigateToFollowingCreators = { mainNavigator.navigateToFollowingCreators() },
+                navigateToSupportingCreators = { mainNavigator.navigateToSupportingCreators() },
+                navigateToPayments = { subNavigator.navigateToPayments() },
                 navigateToSetting = { mainNavigator.navigateToSettingTop() },
                 navigateToAbout = { subNavigator.navigateToAbout() },
                 navigateToBillingPlus = { mainNavigator.navigateToBillingPlus() },
@@ -144,11 +167,11 @@ private fun ExpandedNavHost(
                 navigateToPostSearch = { mainNavigator.navigateToPostSearch() },
                 navigateToPostDetailFromHome = { subNavigator.navigateToPostDetail(it, PostDetailPagingType.Home) },
                 navigateToPostDetailFromSupported = { subNavigator.navigateToPostDetail(it, PostDetailPagingType.Supported) },
-                navigateToCreatorPosts = { /*mainNavController.navigateToCreatorTop(it, isPosts = true)*/ },
-                navigateToCreatorPlans = { /*mainNavController.navigateToCreatorTop(it)*/ },
-                navigateToCancelPlus = { mainNavigator.navigateToSimpleAlertDialog(it) },
+                navigateToCreatorPosts = { mainNavigator.navigateToCreatorTop(it, isPosts = true) },
+                navigateToCreatorPlans = { mainNavigator.navigateToCreatorTop(it) },
+                navigateToCancelPlus = { scope.launch { mainNavigator.navigateToSimpleAlertDialog(it) } },
             ) {
-                applyNavGraph(mainNavigator, subNavigator)
+                applyNavGraph(scope, mainNavigator, subNavigator)
             }
 
             NavHost(
@@ -156,7 +179,7 @@ private fun ExpandedNavHost(
                 navigator = subNavigator,
                 initialRoute = "",
             ) {
-                applyNavGraph(mainNavigator, subNavigator)
+                applyNavGraph(scope, mainNavigator, subNavigator)
             }
         }
     }
@@ -174,6 +197,7 @@ private fun ExpandedNavHost(
  *   - Dialogs*
  */
 private fun RouteBuilder.applyNavGraph(
+    scope: CoroutineScope,
     mainNavController: Navigator,
     subNavController: Navigator = mainNavController,
 ) {
@@ -183,25 +207,25 @@ private fun RouteBuilder.applyNavGraph(
         navigateToPostSearch = { mainNavController.navigateToPostSearch() },
         navigateToPostDetailFromHome = { subNavController.navigateToPostDetail(it, PostDetailPagingType.Home) },
         navigateToPostDetailFromSupported = { subNavController.navigateToPostDetail(it, PostDetailPagingType.Supported) },
-        navigateToCreatorPosts = { /*mainNavController.navigateToCreatorTop(it, isPosts = true)*/ },
-        navigateToCreatorPlans = { /*mainNavController.navigateToCreatorTop(it)*/ },
+        navigateToCreatorPosts = { mainNavController.navigateToCreatorTop(it, isPosts = true) },
+        navigateToCreatorPlans = { mainNavController.navigateToCreatorTop(it) },
         navigateToBookmarkedPosts = { mainNavController.navigateToBookmarkedPosts() },
-        navigateToFollowerCreators = { /*mainNavController.navigateToFollowingCreators()*/ },
-        navigateToSupportingCreators = { /*mainNavController.navigateToSupportingCreators()*/ },
-        navigateToPayments = { /*subNavController.navigateToPayments()*/ },
+        navigateToFollowerCreators = { mainNavController.navigateToFollowingCreators() },
+        navigateToSupportingCreators = { mainNavController.navigateToSupportingCreators() },
+        navigateToPayments = { subNavController.navigateToPayments() },
         navigateToSettingTop = { subNavController.navigateToSettingTop() },
         navigateToAbout = { subNavController.navigateToAbout() },
         navigateToBillingPlus = { mainNavController.navigateToBillingPlus() },
-        navigateToCancelPlus = { /*mainNavController.navigateToSimpleAlertDialog(it)*/ },
+        navigateToCancelPlus = { scope.launch { mainNavController.navigateToSimpleAlertDialog(it) } },
     )
 
     postDetailScreen(
         navigateToPostSearch = { query, creatorId -> mainNavController.navigateToPostSearch(tag = query, creatorId = creatorId) },
         navigateToPostDetail = { subNavController.navigateToPostDetail(it, PostDetailPagingType.Unknown) },
         navigateToPostImage = { postId, index -> subNavController.navigateToPostImage(postId, index) },
-        navigateToCreatorPosts = { /*mainNavController.navigateToCreatorTop(it, isPosts = true)*/ },
-        navigateToCreatorPlans = { /*mainNavController.navigateToCreatorTop(it) */},
-        navigateToCommentDeleteDialog = { contents, onResult -> mainNavController.navigateToSimpleAlertDialog(contents, onResult) },
+        navigateToCreatorPosts = { mainNavController.navigateToCreatorTop(it, isPosts = true) },
+        navigateToCreatorPlans = { mainNavController.navigateToCreatorTop(it) },
+        navigateToCommentDeleteDialog = { contents, onResult -> scope.launch { mainNavController.navigateToSimpleAlertDialog(contents, onResult) } },
         terminate = { subNavController.popBackStack() },
     )
 
@@ -212,19 +236,18 @@ private fun RouteBuilder.applyNavGraph(
     postSearchScreen(
         navigateToPostSearch = { creatorId, creatorQuery, tag -> mainNavController.navigateToPostSearch(creatorId, creatorQuery, tag) },
         navigateToPostDetail = { subNavController.navigateToPostDetail(it, PostDetailPagingType.Search) },
-        navigateToCreatorPosts = { /*mainNavController.navigateToCreatorTop(it, isPosts = true)*/ },
-        navigateToCreatorPlans = { /*mainNavController.navigateToCreatorTop(it)*/ },
+        navigateToCreatorPosts = { mainNavController.navigateToCreatorTop(it, isPosts = true) },
+        navigateToCreatorPlans = { mainNavController.navigateToCreatorTop(it) },
         terminate = { mainNavController.popBackStack() },
     )
 
     bookmarkedPostsScreen(
         navigateToPostDetail = { subNavController.navigateToPostDetail(it, PostDetailPagingType.Unknown) },
-        navigateToCreatorPosts = { /*mainNavController.navigateToCreatorTop(it, isPosts = true)*/ },
-        navigateToCreatorPlans = { /*mainNavController.navigateToCreatorTop(it) */},
+        navigateToCreatorPosts = { mainNavController.navigateToCreatorTop(it, isPosts = true) },
+        navigateToCreatorPlans = { mainNavController.navigateToCreatorTop(it) },
         terminate = { mainNavController.popBackStack() },
     )
 
-    /*
     creatorTopScreen(
         navigateToPostDetail = { subNavController.navigateToPostDetail(it, PostDetailPagingType.Creator) },
         navigateToPostSearch = { query, creatorId -> mainNavController.navigateToPostSearch(tag = query, creatorId = creatorId) },
@@ -252,7 +275,7 @@ private fun RouteBuilder.applyNavGraph(
 
     fanCardScreen(
         terminate = { subNavController.popBackStack() },
-    )*/
+    )
 
     aboutScreen(
         navigateToVersionHistory = { mainNavController.navigateToVersionHistory() },
@@ -264,7 +287,7 @@ private fun RouteBuilder.applyNavGraph(
         navigateToThemeSetting = { mainNavController.navigateToSettingTheme() },
         navigateToBillingPlus = { mainNavController.navigateToBillingPlus() },
         navigateToSettingDeveloper = { mainNavController.navigateToSettingDeveloper() },
-        navigateToLogoutDialog = { contents, onResult -> mainNavController.navigateToSimpleAlertDialog(contents, onResult) },
+        navigateToLogoutDialog = { contents, onResult -> scope.launch { mainNavController.navigateToSimpleAlertDialog(contents, onResult) } },
         navigateToOpenSourceLicense = { mainNavController.navigateToSettingLicense() },
         terminate = { mainNavController.popBackStack() },
     )
@@ -284,13 +307,13 @@ private fun RouteBuilder.applyNavGraph(
 
     // dialog
 
-    /*simpleAlertDialogDialog(
-        terminateWithResult = { mainNavController.popBackStackWithResult(it) },
+    simpleAlertDialogDialog(
+        terminateWithResult = { mainNavController.goBackWith(it) },
     )
 
     creatorPostsDownloadDialog(
         terminate = { mainNavController.popBackStack() },
-    )*/
+    )
 
     // bottom sheet
 
