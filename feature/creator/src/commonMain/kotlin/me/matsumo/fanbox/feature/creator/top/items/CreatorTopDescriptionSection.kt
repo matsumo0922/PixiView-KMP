@@ -16,6 +16,7 @@ import me.matsumo.fanbox.core.ui.component.AutoLinkText
 @Composable
 internal fun CreatorTopDescriptionSection(
     creatorDetail: FanboxCreatorDetail,
+    onLinkClick: (String) -> Unit,
     modifier: Modifier = Modifier,
 ) {
     val descriptionFontSize = MaterialTheme.typography.bodyMedium.fontSize
@@ -33,6 +34,7 @@ internal fun CreatorTopDescriptionSection(
             text = creatorDetail.description,
             style = MaterialTheme.typography.bodyMedium,
             color = MaterialTheme.colorScheme.onSurface,
+            onClickLink = onLinkClick,
         )
     }
 }

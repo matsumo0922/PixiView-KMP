@@ -27,6 +27,7 @@ import me.matsumo.fanbox.core.model.UserData
 import me.matsumo.fanbox.core.model.fanbox.FanboxMetaData
 import me.matsumo.fanbox.core.ui.AsyncLoadContents
 import me.matsumo.fanbox.core.ui.MR
+import me.matsumo.fanbox.core.ui.extensition.NavigatorExtension
 import me.matsumo.fanbox.core.ui.view.SimpleAlertContents
 import me.matsumo.fanbox.feature.setting.SettingTheme
 import me.matsumo.fanbox.feature.setting.top.items.SettingTopAccountSection
@@ -36,6 +37,7 @@ import me.matsumo.fanbox.feature.setting.top.items.SettingTopOthersSection
 import me.matsumo.fanbox.feature.setting.top.items.SettingTopThemeSection
 import moe.tlaster.precompose.flow.collectAsStateWithLifecycle
 import moe.tlaster.precompose.koin.koinViewModel
+import org.koin.compose.koinInject
 
 @Composable
 internal fun SettingTopRoute(
@@ -47,6 +49,7 @@ internal fun SettingTopRoute(
     terminate: () -> Unit,
     modifier: Modifier = Modifier,
     viewModel: SettingTopViewModel = koinViewModel(SettingTopViewModel::class),
+    navigatorExtension: NavigatorExtension = koinInject(),
 ) {
     val scope = rememberCoroutineScope()
     val screenState by viewModel.screenState.collectAsStateWithLifecycle()
@@ -62,18 +65,10 @@ internal fun SettingTopRoute(
             fanboxSessionId = uiState.fanboxSessionId,
             config = uiState.config,
             onClickThemeSetting = navigateToThemeSetting,
-            onClickAccountSetting = {
-                // context.startActivity(Intent(Intent.ACTION_VIEW, "https://www.fanbox.cc/user/settings".toUri()))
-            },
-            onClickNotifySetting = {
-                // context.startActivity(Intent(Intent.ACTION_VIEW, "https://www.fanbox.cc/notifications/settings#email".toUri()))
-            },
-            onClickTeamsOfService = {
-                // context.startActivity(Intent(Intent.ACTION_VIEW, "https://www.matsumo.me/application/pixiview/team_of_service".toUri()))
-            },
-            onClickPrivacyPolicy = {
-                // context.startActivity(Intent(Intent.ACTION_VIEW, "https://www.matsumo.me/application/pixiview/privacy_policy".toUri()))
-            },
+            onClickAccountSetting = { navigatorExtension.navigateToWebPage("https://www.fanbox.cc/user/settings") },
+            onClickNotifySetting = { navigatorExtension.navigateToWebPage("https://www.fanbox.cc/notifications/settings") },
+            onClickTeamsOfService = { navigatorExtension.navigateToWebPage("https://www.matsumo.me/application/pixiview/team_of_service") },
+            onClickPrivacyPolicy = { navigatorExtension.navigateToWebPage("https://www.matsumo.me/application/pixiview/privacy_policy") },
             onClickOpenSourceLicense = navigateToOpenSourceLicense,
             onClickFollowTabDefaultHome = viewModel::setFollowTabDefaultHome,
             onClickHideAdultContents = viewModel::setHideAdultContents,

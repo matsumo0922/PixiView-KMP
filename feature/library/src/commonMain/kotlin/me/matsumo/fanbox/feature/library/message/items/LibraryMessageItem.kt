@@ -39,6 +39,7 @@ import me.matsumo.fanbox.core.ui.theme.bold
 internal fun LibraryMessageItem(
     message: FanboxNewsLetter,
     onClickCreator: (CreatorId) -> Unit,
+    onClickLink: (String) -> Unit,
     modifier: Modifier = Modifier,
 ) {
     var isShowBigBody by rememberSaveable { mutableStateOf(false) }
@@ -98,6 +99,7 @@ internal fun LibraryMessageItem(
                 text = message.body,
                 style = MaterialTheme.typography.bodyMedium,
                 color = MaterialTheme.colorScheme.onSurface,
+                onClickLink = onClickLink,
             )
         } else {
             Text(

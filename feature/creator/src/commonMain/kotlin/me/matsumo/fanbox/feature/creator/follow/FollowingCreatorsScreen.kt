@@ -34,10 +34,12 @@ import me.matsumo.fanbox.core.ui.AsyncLoadContents
 import me.matsumo.fanbox.core.ui.MR
 import me.matsumo.fanbox.core.ui.component.CreatorItem
 import me.matsumo.fanbox.core.ui.component.PixiViewTopBar
+import me.matsumo.fanbox.core.ui.extensition.NavigatorExtension
 import me.matsumo.fanbox.core.ui.extensition.drawVerticalScrollbar
 import me.matsumo.fanbox.core.ui.view.EmptyView
 import moe.tlaster.precompose.flow.collectAsStateWithLifecycle
 import moe.tlaster.precompose.koin.koinViewModel
+import org.koin.compose.koinInject
 
 @Composable
 internal fun FollowingCreatorsRoute(
@@ -45,6 +47,7 @@ internal fun FollowingCreatorsRoute(
     terminate: () -> Unit,
     modifier: Modifier = Modifier,
     viewModel: FollowingCreatorsViewModel = koinViewModel(FollowingCreatorsViewModel::class),
+    navigatorExtension: NavigatorExtension = koinInject(),
 ) {
     val screenState by viewModel.screenState.collectAsStateWithLifecycle()
 
@@ -59,7 +62,7 @@ internal fun FollowingCreatorsRoute(
             onClickCreator = navigateToCreatorPlans,
             onClickFollow = viewModel::follow,
             onClickUnfollow = viewModel::unfollow,
-            onClickSupporting = { /*context.startActivity(Intent(Intent.ACTION_VIEW, it))*/ },
+            onClickSupporting = navigatorExtension::navigateToWebPage,
             terminate = terminate,
         )
     }

@@ -28,11 +28,13 @@ import me.matsumo.fanbox.core.model.fanbox.id.CreatorId
 import me.matsumo.fanbox.core.ui.AsyncLoadContents
 import me.matsumo.fanbox.core.ui.MR
 import me.matsumo.fanbox.core.ui.component.PixiViewTopBar
+import me.matsumo.fanbox.core.ui.extensition.NavigatorExtension
 import me.matsumo.fanbox.core.ui.extensition.drawVerticalScrollbar
 import me.matsumo.fanbox.core.ui.view.EmptyView
 import me.matsumo.fanbox.feature.creator.support.item.SupportingCreatorItem
 import moe.tlaster.precompose.flow.collectAsStateWithLifecycle
 import moe.tlaster.precompose.koin.koinViewModel
+import org.koin.compose.koinInject
 
 @Composable
 internal fun SupportingCreatorsRoute(
@@ -42,6 +44,7 @@ internal fun SupportingCreatorsRoute(
     terminate: () -> Unit,
     modifier: Modifier = Modifier,
     viewModel: SupportingCreatorsViewModel = koinViewModel(SupportingCreatorsViewModel::class),
+    navigatorExtension: NavigatorExtension = koinInject(),
 ) {
     val screenState by viewModel.screenState.collectAsStateWithLifecycle()
 
@@ -53,7 +56,7 @@ internal fun SupportingCreatorsRoute(
         SupportingCreatorsScreen(
             modifier = Modifier.fillMaxSize(),
             supportedCreators = uiState.supportedPlans.toImmutableList(),
-            onClickPlanDetail = { /*context.startActivity(Intent(Intent.ACTION_VIEW, it))*/ },
+            onClickPlanDetail = navigatorExtension::navigateToWebPage,
             onClickFanCard = navigateToFanCard,
             onClickCreatorPlans = navigateToCreatorPlans,
             onClickCreatorPosts = navigateToCreatorPosts,

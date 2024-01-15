@@ -35,14 +35,6 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import app.cash.paging.compose.collectAsLazyPagingItems
-import me.matsumo.fanbox.feature.post.detail.items.PostDetailArticleHeader
-import me.matsumo.fanbox.feature.post.detail.items.PostDetailCommentLikeButton
-import me.matsumo.fanbox.feature.post.detail.items.PostDetailCommentSection
-import me.matsumo.fanbox.feature.post.detail.items.PostDetailCreatorSection
-import me.matsumo.fanbox.feature.post.detail.items.PostDetailDownloadSection
-import me.matsumo.fanbox.feature.post.detail.items.PostDetailFileHeader
-import me.matsumo.fanbox.feature.post.detail.items.PostDetailImageHeader
-import me.matsumo.fanbox.feature.post.detail.items.PostDetailMenuDialog
 import coil3.compose.LocalPlatformContext
 import coil3.compose.SubcomposeAsyncImage
 import coil3.request.ImageRequest
@@ -64,6 +56,7 @@ import me.matsumo.fanbox.core.ui.component.CoordinatorScaffold
 import me.matsumo.fanbox.core.ui.component.RestrictCardItem
 import me.matsumo.fanbox.core.ui.component.TagItems
 import me.matsumo.fanbox.core.ui.extensition.FadePlaceHolder
+import me.matsumo.fanbox.core.ui.extensition.NavigatorExtension
 import me.matsumo.fanbox.core.ui.extensition.fanboxHeader
 import me.matsumo.fanbox.core.ui.extensition.isNullOrEmpty
 import me.matsumo.fanbox.core.ui.extensition.marquee
@@ -71,8 +64,17 @@ import me.matsumo.fanbox.core.ui.theme.bold
 import me.matsumo.fanbox.core.ui.theme.center
 import me.matsumo.fanbox.core.ui.view.ErrorView
 import me.matsumo.fanbox.core.ui.view.SimpleAlertContents
+import me.matsumo.fanbox.feature.post.detail.items.PostDetailArticleHeader
+import me.matsumo.fanbox.feature.post.detail.items.PostDetailCommentLikeButton
+import me.matsumo.fanbox.feature.post.detail.items.PostDetailCommentSection
+import me.matsumo.fanbox.feature.post.detail.items.PostDetailCreatorSection
+import me.matsumo.fanbox.feature.post.detail.items.PostDetailDownloadSection
+import me.matsumo.fanbox.feature.post.detail.items.PostDetailFileHeader
+import me.matsumo.fanbox.feature.post.detail.items.PostDetailImageHeader
+import me.matsumo.fanbox.feature.post.detail.items.PostDetailMenuDialog
 import moe.tlaster.precompose.flow.collectAsStateWithLifecycle
 import moe.tlaster.precompose.koin.koinViewModel
+import org.koin.compose.koinInject
 
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
@@ -164,6 +166,7 @@ private fun PostDetailView(
     terminate: () -> Unit,
     modifier: Modifier = Modifier,
     viewModel: PostDetailViewModel = koinViewModel(PostDetailViewModel::class, key = postId.value),
+    navigatorExtension: NavigatorExtension = koinInject(),
 ) {
     // val postDownloader = context as PostDownloader
     val screenState by viewModel.screenState.collectAsStateWithLifecycle()
@@ -211,7 +214,7 @@ private fun PostDetailView(
             onClickCreatorPlans = navigateToCreatorPlans,
             onClickFollow = viewModel::follow,
             onClickUnfollow = viewModel::unfollow,
-            onClickOpenBrowser = { /*context.startActivity(Intent(Intent.ACTION_VIEW, it))*/ },
+            onClickOpenBrowser = navigatorExtension::navigateToWebPage,
             onTerminate = terminate,
         )
 

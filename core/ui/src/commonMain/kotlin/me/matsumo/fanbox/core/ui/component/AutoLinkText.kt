@@ -23,6 +23,7 @@ import androidx.compose.ui.text.style.TextOverflow
 @Composable
 fun AutoLinkText(
     text: String,
+    onClickLink: (String) -> Unit,
     modifier: Modifier = Modifier,
     color: Color = Color.Unspecified,
     overflow: TextOverflow = TextOverflow.Clip,
@@ -42,7 +43,7 @@ fun AutoLinkText(
         text = linkString,
         onClick = {
             linkString.getUrlAnnotations(start = it, end = it).firstOrNull()?.let { range ->
-                // context.startActivity(Intent(Intent.ACTION_VIEW, range.item.url.toUri()))
+                onClickLink.invoke(range.item.url)
             }
         },
         modifier = modifier,

@@ -42,11 +42,13 @@ import me.matsumo.fanbox.core.ui.MR
 import me.matsumo.fanbox.core.ui.component.CreatorItem
 import me.matsumo.fanbox.core.ui.component.PixiViewTopBar
 import me.matsumo.fanbox.core.ui.extensition.LocalNavigationType
+import me.matsumo.fanbox.core.ui.extensition.NavigatorExtension
 import me.matsumo.fanbox.core.ui.extensition.PixiViewNavigationType
 import me.matsumo.fanbox.core.ui.extensition.drawVerticalScrollbar
 import me.matsumo.fanbox.core.ui.theme.bold
 import moe.tlaster.precompose.flow.collectAsStateWithLifecycle
 import moe.tlaster.precompose.koin.koinViewModel
+import org.koin.compose.koinInject
 
 @Composable
 internal fun LibraryDiscoveryRoute(
@@ -55,6 +57,7 @@ internal fun LibraryDiscoveryRoute(
     navigateToCreatorPosts: (CreatorId) -> Unit,
     modifier: Modifier = Modifier,
     viewModel: LibraryDiscoveryViewModel = koinViewModel(LibraryDiscoveryViewModel::class),
+    navigatorExtension: NavigatorExtension = koinInject(),
 ) {
     val screenState by viewModel.screenState.collectAsStateWithLifecycle()
 
@@ -78,7 +81,7 @@ internal fun LibraryDiscoveryRoute(
             onClickCreator = navigateToCreatorPosts,
             onClickFollow = viewModel::follow,
             onClickUnfollow = viewModel::unfollow,
-            onClickSupporting = { /*context.startActivity(Intent(Intent.ACTION_VIEW, it))*/ },
+            onClickSupporting = navigatorExtension::navigateToWebPage,
         )
     }
 }

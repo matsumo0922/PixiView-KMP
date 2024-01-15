@@ -27,12 +27,14 @@ import me.matsumo.fanbox.core.ui.AsyncLoadContents
 import me.matsumo.fanbox.core.ui.MR
 import me.matsumo.fanbox.core.ui.component.PixiViewTopBar
 import me.matsumo.fanbox.core.ui.extensition.LocalNavigationType
+import me.matsumo.fanbox.core.ui.extensition.NavigatorExtension
 import me.matsumo.fanbox.core.ui.extensition.PixiViewNavigationType
 import me.matsumo.fanbox.core.ui.extensition.drawVerticalScrollbar
 import me.matsumo.fanbox.core.ui.view.EmptyView
 import me.matsumo.fanbox.feature.library.message.items.LibraryMessageItem
 import moe.tlaster.precompose.flow.collectAsStateWithLifecycle
 import moe.tlaster.precompose.koin.koinViewModel
+import org.koin.compose.koinInject
 
 @Composable
 internal fun LibraryMessageRoute(
@@ -40,6 +42,7 @@ internal fun LibraryMessageRoute(
     navigateToCreatorPosts: (CreatorId) -> Unit,
     modifier: Modifier = Modifier,
     viewModel: LibraryMessageViewModel = koinViewModel(LibraryMessageViewModel::class),
+    navigatorExtension: NavigatorExtension = koinInject(),
 ) {
     val screenState by viewModel.screenState.collectAsStateWithLifecycle()
 
@@ -53,6 +56,7 @@ internal fun LibraryMessageRoute(
             messages = uiState.messages.toImmutableList(),
             openDrawer = openDrawer,
             onClickCreator = navigateToCreatorPosts,
+            onClickLink = navigatorExtension::navigateToWebPage,
         )
     }
 }
@@ -63,6 +67,7 @@ private fun LibraryMessageScreen(
     messages: ImmutableList<FanboxNewsLetter>,
     openDrawer: () -> Unit,
     onClickCreator: (CreatorId) -> Unit,
+    onClickLink: (String) -> Unit,
     modifier: Modifier = Modifier,
 ) {
     val navigationType = LocalNavigationType.current.type
@@ -103,6 +108,7 @@ private fun LibraryMessageScreen(
                             modifier = Modifier.fillMaxWidth(),
                             message = it,
                             onClickCreator = onClickCreator,
+                            onClickLink = onClickLink,
                         )
 
                         Divider()

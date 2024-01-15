@@ -18,6 +18,7 @@ import me.matsumo.fanbox.core.ui.component.AutoLinkText
 @Composable
 internal fun CreatorTopDescriptionDialog(
     description: String,
+    onLinkClick: (String) -> Unit,
     onDismissRequest: () -> Unit,
 ) {
     Dialog(onDismissRequest = onDismissRequest) {
@@ -35,6 +36,7 @@ internal fun CreatorTopDescriptionDialog(
                 text = description,
                 style = MaterialTheme.typography.bodyMedium,
                 color = MaterialTheme.colorScheme.onSurface,
+                onClickLink = onLinkClick,
             )
         }
     }

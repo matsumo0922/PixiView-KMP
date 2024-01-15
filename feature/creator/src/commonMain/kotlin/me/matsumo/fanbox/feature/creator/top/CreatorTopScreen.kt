@@ -62,11 +62,13 @@ import me.matsumo.fanbox.core.ui.MR
 import me.matsumo.fanbox.core.ui.component.CollapsingToolbarScaffold
 import me.matsumo.fanbox.core.ui.component.ScrollStrategy
 import me.matsumo.fanbox.core.ui.component.rememberCollapsingToolbarScaffoldState
+import me.matsumo.fanbox.core.ui.extensition.NavigatorExtension
 import me.matsumo.fanbox.feature.creator.top.items.CreatorTopDescriptionDialog
 import me.matsumo.fanbox.feature.creator.top.items.CreatorTopHeader
 import me.matsumo.fanbox.feature.creator.top.items.CreatorTopPlansScreen
 import moe.tlaster.precompose.flow.collectAsStateWithLifecycle
 import moe.tlaster.precompose.koin.koinViewModel
+import org.koin.compose.koinInject
 
 @Composable
 internal fun CreatorTopRoute(
@@ -78,7 +80,8 @@ internal fun CreatorTopRoute(
     navigateToBillingPlus: () -> Unit,
     terminate: () -> Unit,
     modifier: Modifier = Modifier,
-    viewModel: CreatorTopViewModel = koinViewModel(CreatorTopViewModel::class)
+    viewModel: CreatorTopViewModel = koinViewModel(CreatorTopViewModel::class),
+    navigatorExtension: NavigatorExtension = koinInject(),
 ) {
     val screenState by viewModel.screenState.collectAsStateWithLifecycle()
 
@@ -107,13 +110,13 @@ internal fun CreatorTopRoute(
             onClickAllDownload = navigateToDownloadAll,
             onClickBillingPlus = navigateToBillingPlus,
             onClickPost = navigateToPostDetail,
-            onClickPlan = { /*context.startActivity(Intent(Intent.ACTION_VIEW, it.planBrowserUri))*/ },
+            onClickPlan = { navigatorExtension.navigateToWebPage(it.planBrowserUrl) },
             onClickTag = { navigateToPostSearch.invoke(it.name, uiState.creatorDetail.creatorId) },
             onTerminate = terminate,
-            onClickLink = { /*context.startActivity(Intent(Intent.ACTION_VIEW, it.toUri()))*/ },
+            onClickLink = navigatorExtension::navigateToWebPage,
             onClickFollow = viewModel::follow,
             onClickUnfollow = viewModel::unfollow,
-            onClickSupporting = { /*context.startActivity(Intent(Intent.ACTION_VIEW, it))*/ },
+            onClickSupporting = navigatorExtension::navigateToWebPage,
             onClickPostBookmark = viewModel::postBookmark,
             onClickPostLike = viewModel::postLike,
         )
@@ -310,6 +313,7 @@ private fun CreatorTopScreen(
     if (isShowDescriptionDialog) {
         CreatorTopDescriptionDialog(
             description = creatorDetail.description,
+            onLinkClick = onClickLink,
             onDismissRequest = { isShowDescriptionDialog = false },
         )
     }

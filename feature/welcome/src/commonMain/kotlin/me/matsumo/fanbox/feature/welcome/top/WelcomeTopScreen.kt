@@ -39,17 +39,20 @@ import dev.icerock.moko.resources.compose.painterResource
 import dev.icerock.moko.resources.compose.stringResource
 import me.matsumo.fanbox.core.ui.MR
 import me.matsumo.fanbox.core.ui.extensition.LocalNavigationType
+import me.matsumo.fanbox.core.ui.extensition.NavigatorExtension
 import me.matsumo.fanbox.core.ui.extensition.PixiViewNavigationType
 import me.matsumo.fanbox.core.ui.theme.bold
 import me.matsumo.fanbox.core.ui.theme.center
 import me.matsumo.fanbox.feature.welcome.WelcomeIndicatorItem
 import moe.tlaster.precompose.koin.koinViewModel
+import org.koin.compose.koinInject
 
 @Composable
 internal fun WelcomeTopScreen(
     navigateToWelcomePlus: () -> Unit,
     modifier: Modifier = Modifier,
-    viewModel: WelcomeTopViewModel = koinViewModel(WelcomeTopViewModel::class)
+    viewModel: WelcomeTopViewModel = koinViewModel(WelcomeTopViewModel::class),
+    navigatorExtension: NavigatorExtension = koinInject(),
 ) {
     val navigationType = LocalNavigationType.current.type
 
@@ -69,6 +72,7 @@ internal fun WelcomeTopScreen(
                 navigateToWelcomePlus = navigateToWelcomePlus,
                 setAgreedPrivacyPolicy = viewModel::setAgreedPrivacyPolicy,
                 setAgreedTermsOfService = viewModel::setAgreedTermsOfService,
+                navigateToWebPage = navigatorExtension::navigateToWebPage,
             )
         }
     } else {
@@ -92,6 +96,7 @@ internal fun WelcomeTopScreen(
                     navigateToWelcomePlus = navigateToWelcomePlus,
                     setAgreedPrivacyPolicy = viewModel::setAgreedPrivacyPolicy,
                     setAgreedTermsOfService = viewModel::setAgreedTermsOfService,
+                    navigateToWebPage = navigatorExtension::navigateToWebPage,
                 )
             }
         }
@@ -118,6 +123,7 @@ private fun FirstSection(
 @Composable
 private fun SecondSection(
     navigateToWelcomePlus: () -> Unit,
+    navigateToWebPage: (String) -> Unit,
     setAgreedPrivacyPolicy: () -> Unit,
     setAgreedTermsOfService: () -> Unit,
     modifier: Modifier = Modifier,
@@ -160,7 +166,7 @@ private fun SecondSection(
                 link = stringResource(MR.strings.welcome_team_of_service),
                 body = stringResource(MR.strings.welcome_agree, stringResource(MR.strings.welcome_team_of_service)),
                 onChecked = { isAgreedTermsOfService = it },
-                onLinkClick = { /*context.startActivity(Intent(Intent.ACTION_VIEW, teamOfServiceUri))*/ },
+                onClickLink = { navigateToWebPage.invoke(teamOfServiceUri) },
             )
 
             CheckBoxLinkButton(
@@ -168,7 +174,7 @@ private fun SecondSection(
                 link = stringResource(MR.strings.welcome_privacy_policy),
                 body = stringResource(MR.strings.welcome_agree, stringResource(MR.strings.welcome_privacy_policy)),
                 onChecked = { isAgreedPrivacyPolicy = it },
-                onLinkClick = { /*context.startActivity(Intent(Intent.ACTION_VIEW, privacyPolicyUri))*/ },
+                onClickLink = { navigateToWebPage.invoke(privacyPolicyUri) },
             )
         }
 
@@ -207,7 +213,7 @@ private fun CheckBoxLinkButton(
     link: String,
     body: String,
     onChecked: (Boolean) -> Unit,
-    onLinkClick: () -> Unit,
+    onClickLink: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
     val startIndex = body.indexOf(link)
@@ -245,7 +251,7 @@ private fun CheckBoxLinkButton(
             style = MaterialTheme.typography.bodyMedium,
             onClick = {
                 annotatedString.getStringAnnotations("url", it, it).firstOrNull()?.let { _ ->
-                    onLinkClick.invoke()
+                    onClickLink.invoke()
                 }
             },
         )

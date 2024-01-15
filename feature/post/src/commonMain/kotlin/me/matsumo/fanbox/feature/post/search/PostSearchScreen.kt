@@ -21,11 +21,13 @@ import me.matsumo.fanbox.core.model.fanbox.FanboxCreatorDetail
 import me.matsumo.fanbox.core.model.fanbox.FanboxPost
 import me.matsumo.fanbox.core.model.fanbox.id.CreatorId
 import me.matsumo.fanbox.core.model.fanbox.id.PostId
+import me.matsumo.fanbox.core.ui.extensition.NavigatorExtension
 import me.matsumo.fanbox.feature.post.search.items.PostSearchCreatorScreen
 import me.matsumo.fanbox.feature.post.search.items.PostSearchTagScreen
 import me.matsumo.fanbox.feature.post.search.items.PostSearchTopBar
 import moe.tlaster.precompose.flow.collectAsStateWithLifecycle
 import moe.tlaster.precompose.koin.koinViewModel
+import org.koin.compose.koinInject
 
 @Composable
 internal fun PostSearchRoute(
@@ -37,6 +39,7 @@ internal fun PostSearchRoute(
     terminate: () -> Unit,
     modifier: Modifier = Modifier,
     viewModel: PostSearchViewModel = koinViewModel(PostSearchViewModel::class),
+    navigatorExtension: NavigatorExtension = koinInject(),
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
     val creatorPaging = uiState.creatorPaging.collectAsLazyPagingItems()
@@ -65,7 +68,7 @@ internal fun PostSearchRoute(
         onClickCreatorPlans = navigateToCreatorPlans,
         onClickFollow = viewModel::follow,
         onClickUnfollow = viewModel::unfollow,
-        onClickSupporting = { /*context.startActivity(Intent(Intent.ACTION_VIEW, it))*/ },
+        onClickSupporting = navigatorExtension::navigateToWebPage,
         onSearch = {
             if (uiState.query.isNotBlank()) {
                 navigateToPostSearch.invoke(it.creatorId, it.creatorQuery, it.tag)

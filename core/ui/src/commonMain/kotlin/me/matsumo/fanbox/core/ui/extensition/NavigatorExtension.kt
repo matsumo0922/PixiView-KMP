@@ -9,11 +9,9 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.RectangleShape
 import moe.tlaster.precompose.navigation.BackStackEntry
-import moe.tlaster.precompose.navigation.NavOptions
 import moe.tlaster.precompose.navigation.Navigator
 import moe.tlaster.precompose.navigation.RouteBuilder
 import moe.tlaster.precompose.stateholder.LocalStateHolder
-import moe.tlaster.precompose.stateholder.StateHolder
 
 @Composable
 fun rememberNavigator(key: String): Navigator {
@@ -47,21 +45,6 @@ fun RouteBuilder.bottomSheet(
     }
 }
 
-private typealias NavResultCallback<T> = (T) -> Unit
-private const val NavResultCallbackKey = "NavResultCallbackKey"
-
-fun <T> Navigator.navigateForResult(
-    route: String,
-    stateHolder: StateHolder,
-    navResultCallback: NavResultCallback<T>,
-    navOptions: NavOptions? = null,
-) {
-    stateHolder.set(NavResultCallbackKey, navResultCallback)
-    navigate(route, navOptions)
-}
-
-fun <T> Navigator.popBackStackWithResult(result: T, stateHolder: StateHolder) {
-    stateHolder.get<NavResultCallback<T>>(NavResultCallbackKey)?.invoke(result)
-    stateHolder.remove(NavResultCallbackKey)
-    popBackStack()
+interface NavigatorExtension {
+    fun navigateToWebPage(url: String)
 }
