@@ -20,22 +20,28 @@ import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.material3.rememberTopAppBarState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.unit.dp
+import dev.icerock.moko.resources.StringResource
 import dev.icerock.moko.resources.compose.stringResource
+import kotlinx.coroutines.launch
 import me.matsumo.fanbox.core.model.ThemeColorConfig
 import me.matsumo.fanbox.core.model.ThemeConfig
 import me.matsumo.fanbox.core.model.UserData
 import me.matsumo.fanbox.core.ui.AsyncLoadContents
 import me.matsumo.fanbox.core.ui.MR
+import me.matsumo.fanbox.core.ui.extensition.LocalSnackbarHostState
+import me.matsumo.fanbox.core.ui.extensition.SnackbarExtension
 import me.matsumo.fanbox.feature.setting.SettingSwitchItem
 import me.matsumo.fanbox.feature.setting.SettingTheme
 import me.matsumo.fanbox.feature.setting.theme.items.SettingThemeColorSection
 import me.matsumo.fanbox.feature.setting.theme.items.SettingThemeTabsSection
 import moe.tlaster.precompose.flow.collectAsStateWithLifecycle
 import moe.tlaster.precompose.koin.koinViewModel
+import org.koin.compose.koinInject
 
 @Composable
 internal fun SettingThemeRoute(
@@ -43,8 +49,11 @@ internal fun SettingThemeRoute(
     terminate: () -> Unit,
     modifier: Modifier = Modifier,
     viewModel: SettingThemeViewModel = koinViewModel(SettingThemeViewModel::class),
+    snackbarExtension: SnackbarExtension = koinInject(),
 ) {
     val screenState by viewModel.screenState.collectAsStateWithLifecycle()
+    val snackbarHostState = LocalSnackbarHostState.current
+    val scope = rememberCoroutineScope()
 
     AsyncLoadContents(
         modifier = modifier,
@@ -57,6 +66,7 @@ internal fun SettingThemeRoute(
             onSelectTheme = viewModel::setThemeConfig,
             onSelectThemeColor = viewModel::setThemeColorConfig,
             onClickDynamicColor = viewModel::setUseDynamicColor,
+            onShowSnackbar = { scope.launch { snackbarExtension.showSnackbar(snackbarHostState, it) } },
             onTerminate = terminate,
         )
     }
@@ -70,6 +80,7 @@ private fun SettingThemeDialog(
     onSelectTheme: (ThemeConfig) -> Unit,
     onSelectThemeColor: (ThemeColorConfig) -> Unit,
     onClickDynamicColor: (Boolean) -> Unit,
+    onShowSnackbar: (StringResource) -> Unit,
     onTerminate: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
@@ -128,7 +139,7 @@ private fun SettingThemeDialog(
                         if (userData.hasPrivilege) {
                             onClickDynamicColor.invoke(it)
                         } else {
-                            // ToastUtil.show(context, MR.strings.billing_plus_toast_require_plus)
+                            onShowSnackbar.invoke(MR.strings.billing_plus_toast_require_plus)
                             onClickBillingPlus.invoke()
                         }
                     },

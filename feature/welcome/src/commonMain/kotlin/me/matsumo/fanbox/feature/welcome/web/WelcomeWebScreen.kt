@@ -1,9 +1,5 @@
 package me.matsumo.fanbox.feature.welcome.web
 
-import androidx.compose.animation.AnimatedContent
-import androidx.compose.animation.fadeIn
-import androidx.compose.animation.fadeOut
-import androidx.compose.animation.togetherWith
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
@@ -13,40 +9,37 @@ import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.LinearProgressIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
-import androidx.compose.material3.SnackbarHost
-import androidx.compose.material3.SnackbarHostState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import com.multiplatform.webview.web.LoadingState
 import com.multiplatform.webview.web.WebView
 import com.multiplatform.webview.web.rememberWebViewState
 import dev.icerock.moko.resources.compose.stringResource
+import kotlinx.coroutines.launch
 import me.matsumo.fanbox.core.ui.MR
 import me.matsumo.fanbox.core.ui.component.PixiViewTopBar
-import me.matsumo.fanbox.core.ui.view.LoadingView
+import me.matsumo.fanbox.core.ui.extensition.LocalSnackbarHostState
+import me.matsumo.fanbox.core.ui.extensition.SnackbarExtension
 import moe.tlaster.precompose.koin.koinViewModel
+import org.koin.compose.koinInject
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 internal fun WelcomeWebScreen(
     terminate: () -> Unit,
     modifier: Modifier = Modifier,
-    viewModel: WelcomeWebViewModel = koinViewModel(WelcomeWebViewModel::class)
+    viewModel: WelcomeWebViewModel = koinViewModel(WelcomeWebViewModel::class),
+    snackbarExtension: SnackbarExtension = koinInject(),
 ) {
-    val snackbarHostState = remember { SnackbarHostState() }
-    val snackbarSuccessMessage = stringResource(MR.strings.welcome_login_toast_success)
-
     val fanboxUrl = "https://www.fanbox.cc/login"
     val fanboxRedirectUrl = "https://www.fanbox.cc/creators/find"
 
-    var isLoggedIn by remember { mutableStateOf(false) }
     val webViewState = rememberWebViewState("$fanboxUrl?return_to=$fanboxRedirectUrl")
+    val snackbarHostState = LocalSnackbarHostState.current
+    val scope = rememberCoroutineScope()
 
     webViewState.webSettings.apply {
         isJavaScriptEnabled = true
@@ -62,12 +55,12 @@ internal fun WelcomeWebScreen(
             val cookies = webViewState.cookieManager.getCookies(fanboxRedirectUrl)
             val cookieString = cookies.joinToString(";") { "${it.name}=${it.value}" }
 
+            scope.launch {
+                snackbarExtension.showSnackbar(snackbarHostState, MR.strings.welcome_login_toast_success)
+            }
+
             viewModel.saveCookie(cookieString)
-
-            isLoggedIn = true
             terminate.invoke()
-
-            snackbarHostState.showSnackbar(snackbarSuccessMessage)
         }
     }
 
@@ -80,28 +73,16 @@ internal fun WelcomeWebScreen(
                 onClickNavigation = { terminate.invoke() },
             )
         },
-        snackbarHost = { SnackbarHost(snackbarHostState) }
     ) { padding ->
         Box(
             modifier = Modifier
                 .padding(padding)
                 .fillMaxSize(),
         ) {
-            AnimatedContent(
-                targetState = isLoggedIn,
-                transitionSpec = { fadeIn().togetherWith(fadeOut()) },
-            ) {
-                if (!it) {
-                    WebView(
-                        modifier = Modifier.fillMaxSize(),
-                        state = webViewState,
-                    )
-                } else {
-                    LoadingView(
-                        modifier = Modifier.fillMaxSize(),
-                    )
-                }
-            }
+            WebView(
+                modifier = Modifier.fillMaxSize(),
+                state = webViewState,
+            )
 
             (webViewState.loadingState as? LoadingState.Loading)?.also {
                 LinearProgressIndicator(

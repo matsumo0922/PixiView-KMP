@@ -27,7 +27,9 @@ import me.matsumo.fanbox.core.model.UserData
 import me.matsumo.fanbox.core.model.fanbox.FanboxMetaData
 import me.matsumo.fanbox.core.ui.AsyncLoadContents
 import me.matsumo.fanbox.core.ui.MR
+import me.matsumo.fanbox.core.ui.extensition.LocalSnackbarHostState
 import me.matsumo.fanbox.core.ui.extensition.NavigatorExtension
+import me.matsumo.fanbox.core.ui.extensition.SnackbarExtension
 import me.matsumo.fanbox.core.ui.view.SimpleAlertContents
 import me.matsumo.fanbox.feature.setting.SettingTheme
 import me.matsumo.fanbox.feature.setting.top.items.SettingTopAccountSection
@@ -50,9 +52,11 @@ internal fun SettingTopRoute(
     modifier: Modifier = Modifier,
     viewModel: SettingTopViewModel = koinViewModel(SettingTopViewModel::class),
     navigatorExtension: NavigatorExtension = koinInject(),
+    snackbarExtension: SnackbarExtension = koinInject(),
 ) {
     val scope = rememberCoroutineScope()
     val screenState by viewModel.screenState.collectAsStateWithLifecycle()
+    val snackbarHostState = LocalSnackbarHostState.current
 
     AsyncLoadContents(
         modifier = modifier,
@@ -78,7 +82,7 @@ internal fun SettingTopRoute(
                     if (uiState.userData.hasPrivilege) {
                         viewModel.setGridMode(true)
                     } else {
-                        // ToastUtil.show(context, R.string.billing_plus_toast_require_plus)
+                        scope.launch { snackbarExtension.showSnackbar(snackbarHostState, MR.strings.billing_plus_toast_require_plus) }
                         navigateToBillingPlus.invoke()
                     }
                 } else {
@@ -90,7 +94,7 @@ internal fun SettingTopRoute(
                     if (uiState.userData.hasPrivilege) {
                         viewModel.setHideRestricted(true)
                     } else {
-                        // ToastUtil.show(context, R.string.billing_plus_toast_require_plus)
+                        scope.launch { snackbarExtension.showSnackbar(snackbarHostState, MR.strings.billing_plus_toast_require_plus) }
                         navigateToBillingPlus.invoke()
                     }
                 } else {
@@ -105,11 +109,11 @@ internal fun SettingTopRoute(
                     scope.launch {
                         viewModel.logout().fold(
                             onSuccess = {
-                                // ToastUtil.show(context, R.string.setting_top_others_logout_dialog_success)
+                                scope.launch { snackbarExtension.showSnackbar(snackbarHostState, MR.strings.setting_top_others_logout_dialog_success) }
                                 terminate.invoke()
                             },
                             onFailure = {
-                                // ToastUtil.show(context, R.string.setting_top_others_logout_dialog_failed)
+                                scope.launch { snackbarExtension.showSnackbar(snackbarHostState, MR.strings.setting_top_others_logout_dialog_failed) }
                             },
                         )
                     }

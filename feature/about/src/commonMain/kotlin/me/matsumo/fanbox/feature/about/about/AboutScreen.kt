@@ -12,20 +12,26 @@ import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.material3.rememberTopAppBarState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.unit.dp
 import dev.icerock.moko.resources.compose.stringResource
+import kotlinx.coroutines.launch
 import me.matsumo.fanbox.core.common.PixiViewConfig
 import me.matsumo.fanbox.core.model.UserData
 import me.matsumo.fanbox.core.ui.AsyncLoadContents
 import me.matsumo.fanbox.core.ui.MR
 import me.matsumo.fanbox.core.ui.component.PixiViewTopBar
+import me.matsumo.fanbox.core.ui.extensition.LocalSnackbarHostState
+import me.matsumo.fanbox.core.ui.extensition.NavigatorExtension
+import me.matsumo.fanbox.core.ui.extensition.SnackbarExtension
 import me.matsumo.fanbox.feature.about.about.items.AboutAppSection
 import me.matsumo.fanbox.feature.about.about.items.AboutDeveloperSection
 import me.matsumo.fanbox.feature.about.about.items.AboutSupportSection
 import moe.tlaster.precompose.flow.collectAsStateWithLifecycle
 import moe.tlaster.precompose.koin.koinViewModel
+import org.koin.compose.koinInject
 
 @Composable
 internal fun AboutRoute(
@@ -34,12 +40,12 @@ internal fun AboutRoute(
     terminate: () -> Unit,
     modifier: Modifier = Modifier,
     viewModel: AboutViewModel = koinViewModel(AboutViewModel::class),
+    navigatorExtension: NavigatorExtension = koinInject(),
+    snackbarExtension: SnackbarExtension = koinInject(),
 ) {
     val screenState by viewModel.screenState.collectAsStateWithLifecycle()
-
-    fun openLink(url: String) {
-        // TODO
-    }
+    val snackHostState = LocalSnackbarHostState.current
+    val scope = rememberCoroutineScope()
 
     AsyncLoadContents(
         modifier = modifier,
@@ -49,14 +55,14 @@ internal fun AboutRoute(
             modifier = Modifier.background(MaterialTheme.colorScheme.surface),
             userData = uiState.userData,
             config = uiState.config,
-            onClickGithub = { openLink("https://github.com/matsumo0922/PixiView") },
-            onClickGithubProfile = { openLink("https://github.com/matsumo0922") },
-            onClickGithubIssue = { openLink("https://github.com/matsumo0922/PixiView/issues/new") },
-            onClickGitHubContributor = { openLink("https://github.com/matsumo0922/PixiView/graphs/contributors") },
-            onClickDiscord = { /*ToastUtil.show(context, R.string.error_developing_feature)*/ },
-            onClickGooglePlay = { openLink("https://play.google.com/store/apps/details?id=caios.android.fanbox") },
-            onClickGooglePlayDeveloper = { openLink("https://play.google.com/store/apps/developer?id=CAIOS") },
-            onClickTwitter = { openLink("https://twitter.com/matsumo0922") },
+            onClickGithub = { navigatorExtension.navigateToWebPage("https://github.com/matsumo0922/PixiView") },
+            onClickGithubProfile = { navigatorExtension.navigateToWebPage("https://github.com/matsumo0922") },
+            onClickGithubIssue = { navigatorExtension.navigateToWebPage("https://github.com/matsumo0922/PixiView/issues/new") },
+            onClickGitHubContributor = { navigatorExtension.navigateToWebPage("https://github.com/matsumo0922/PixiView/graphs/contributors") },
+            onClickDiscord = { scope.launch { snackbarExtension.showSnackbar(snackHostState, MR.strings.error_developing_feature) } },
+            onClickGooglePlay = { navigatorExtension.navigateToWebPage("https://play.google.com/store/apps/details?id=caios.android.fanbox") },
+            onClickGooglePlayDeveloper = { navigatorExtension.navigateToWebPage("https://play.google.com/store/apps/developer?id=CAIOS") },
+            onClickTwitter = { navigatorExtension.navigateToWebPage("https://twitter.com/matsumo0922") },
             onClickVersionHistory = { navigateToVersionHistory.invoke() },
             onClickDonate = { navigateToDonate.invoke() },
             onTerminate = terminate,

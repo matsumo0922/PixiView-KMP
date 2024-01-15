@@ -25,6 +25,7 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
@@ -39,6 +40,7 @@ import coil3.compose.LocalPlatformContext
 import coil3.compose.SubcomposeAsyncImage
 import coil3.request.ImageRequest
 import kotlinx.collections.immutable.toImmutableList
+import kotlinx.coroutines.launch
 import me.matsumo.fanbox.core.common.util.format
 import me.matsumo.fanbox.core.model.ScreenState
 import me.matsumo.fanbox.core.model.UserData
@@ -56,7 +58,9 @@ import me.matsumo.fanbox.core.ui.component.CoordinatorScaffold
 import me.matsumo.fanbox.core.ui.component.RestrictCardItem
 import me.matsumo.fanbox.core.ui.component.TagItems
 import me.matsumo.fanbox.core.ui.extensition.FadePlaceHolder
+import me.matsumo.fanbox.core.ui.extensition.LocalSnackbarHostState
 import me.matsumo.fanbox.core.ui.extensition.NavigatorExtension
+import me.matsumo.fanbox.core.ui.extensition.SnackbarExtension
 import me.matsumo.fanbox.core.ui.extensition.fanboxHeader
 import me.matsumo.fanbox.core.ui.extensition.isNullOrEmpty
 import me.matsumo.fanbox.core.ui.extensition.marquee
@@ -167,9 +171,12 @@ private fun PostDetailView(
     modifier: Modifier = Modifier,
     viewModel: PostDetailViewModel = koinViewModel(PostDetailViewModel::class, key = postId.value),
     navigatorExtension: NavigatorExtension = koinInject(),
+    snackExtension: SnackbarExtension = koinInject(),
 ) {
     // val postDownloader = context as PostDownloader
     val screenState by viewModel.screenState.collectAsStateWithLifecycle()
+    val snackbarHostState = LocalSnackbarHostState.current
+    val scope = rememberCoroutineScope()
 
     LaunchedEffect(postId) {
         if (screenState !is ScreenState.Idle) {
@@ -219,7 +226,7 @@ private fun PostDetailView(
         )
 
         LaunchedEffect(uiState.messageToast) {
-            uiState.messageToast?.let { /*ToastUtil.show(context, it) */}
+            uiState.messageToast?.let { scope.launch { snackExtension.showSnackbar(snackbarHostState, it) }}
             viewModel.consumeToast()
         }
     }

@@ -18,18 +18,23 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import dev.icerock.moko.resources.StringResource
 import dev.icerock.moko.resources.compose.stringResource
+import kotlinx.coroutines.launch
 import me.matsumo.fanbox.core.model.fanbox.id.CreatorId
 import me.matsumo.fanbox.core.ui.MR
+import me.matsumo.fanbox.core.ui.extensition.LocalSnackbarHostState
+import me.matsumo.fanbox.core.ui.extensition.SnackbarExtension
 import me.matsumo.fanbox.core.ui.theme.bold
 import me.matsumo.fanbox.core.ui.theme.center
 import moe.tlaster.precompose.flow.collectAsStateWithLifecycle
 import moe.tlaster.precompose.koin.koinViewModel
+import org.koin.compose.koinInject
 
 @Composable
 internal fun CreatorPostsDownloadRoute(
@@ -37,9 +42,12 @@ internal fun CreatorPostsDownloadRoute(
     terminate: () -> Unit,
     modifier: Modifier = Modifier,
     viewModel: CreatorPostsDownloadViewModel = koinViewModel(CreatorPostsDownloadViewModel::class),
+    snackbarExtension: SnackbarExtension = koinInject(),
 ) {
     // val activity = context.getActivity() as PostDownloader
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
+    val snackbarHostState = LocalSnackbarHostState.current
+    val scope = rememberCoroutineScope()
 
     LaunchedEffect(creatorId) {
         if (!uiState.isReady) {
@@ -51,9 +59,8 @@ internal fun CreatorPostsDownloadRoute(
         modifier = modifier,
         isReady = uiState.isReady,
         onClickDownload = { isIgnoreFree, isIgnoreFile ->
-            /*activity.onDownloadPosts(uiState.posts, isIgnoreFree, isIgnoreFile)
-            ToastUtil.show(context, R.string.creator_posts_download_start)*/
-
+            /*activity.onDownloadPosts(uiState.posts, isIgnoreFree, isIgnoreFile)*/
+            scope.launch { snackbarExtension.showSnackbar(snackbarHostState, MR.strings.creator_posts_download_start) }
             terminate.invoke()
         },
         onTerminate = terminate,

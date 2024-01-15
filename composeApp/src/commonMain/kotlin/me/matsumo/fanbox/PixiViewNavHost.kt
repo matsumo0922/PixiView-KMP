@@ -1,16 +1,22 @@
 package me.matsumo.fanbox
 
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.navigationBarsPadding
+import androidx.compose.material.Scaffold
 import androidx.compose.material3.PermanentNavigationDrawer
+import androidx.compose.material3.SnackbarHost
+import androidx.compose.material3.SnackbarHostState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 import me.matsumo.fanbox.core.ui.component.emptyDetailScreen
+import me.matsumo.fanbox.core.ui.extensition.LocalSnackbarHostState
 import me.matsumo.fanbox.core.ui.extensition.PixiViewNavigationType
 import me.matsumo.fanbox.core.ui.extensition.rememberNavigator
 import me.matsumo.fanbox.core.ui.view.navigateToSimpleAlertDialog
@@ -68,35 +74,47 @@ internal fun PixiViewNavHost(
 ) {
     val mainNavigator = rememberNavigator("Main")
     val subNavigator = rememberNavigator("Sub")
+
+    val snackbarHostState = remember { SnackbarHostState() }
     val scope = rememberCoroutineScope()
 
-    Box(modifier) {
-        when (navigationType) {
-            PixiViewNavigationType.PermanentNavigationDrawer -> {
-                ExpandedNavHost(
-                    modifier = Modifier.fillMaxSize(),
-                    mainNavigator = mainNavigator,
-                    subNavigator = subNavigator,
-                    scope = scope,
+    CompositionLocalProvider(LocalSnackbarHostState provides snackbarHostState) {
+        Scaffold(
+            modifier = modifier,
+            snackbarHost = {
+                SnackbarHost(
+                    modifier = Modifier.navigationBarsPadding(),
+                    hostState = snackbarHostState,
                 )
-            }
+            },
+        ) {
+            when (navigationType) {
+                PixiViewNavigationType.PermanentNavigationDrawer -> {
+                    ExpandedNavHost(
+                        modifier = Modifier.fillMaxSize(),
+                        mainNavigator = mainNavigator,
+                        subNavigator = subNavigator,
+                        scope = scope,
+                    )
+                }
 
-            PixiViewNavigationType.NavigationRail -> {
-                MediumNavHost(
-                    modifier = Modifier.fillMaxSize(),
-                    navigator = mainNavigator,
-                    scope = scope,
-                    startDestination = startDestination,
-                )
-            }
+                PixiViewNavigationType.NavigationRail -> {
+                    MediumNavHost(
+                        modifier = Modifier.fillMaxSize(),
+                        navigator = mainNavigator,
+                        scope = scope,
+                        startDestination = startDestination,
+                    )
+                }
 
-            PixiViewNavigationType.BottomNavigation -> {
-                CompactNavHost(
-                    modifier = Modifier.fillMaxSize(),
-                    navigator = mainNavigator,
-                    scope = scope,
-                    startDestination = startDestination,
-                )
+                PixiViewNavigationType.BottomNavigation -> {
+                    CompactNavHost(
+                        modifier = Modifier.fillMaxSize(),
+                        navigator = mainNavigator,
+                        scope = scope,
+                        startDestination = startDestination,
+                    )
+                }
             }
         }
     }

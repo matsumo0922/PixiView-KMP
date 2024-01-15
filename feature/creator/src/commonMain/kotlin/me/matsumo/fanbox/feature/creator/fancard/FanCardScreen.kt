@@ -20,10 +20,14 @@ import me.matsumo.fanbox.core.model.ScreenState
 import me.matsumo.fanbox.core.model.fanbox.FanboxCreatorPlanDetail
 import me.matsumo.fanbox.core.model.fanbox.id.CreatorId
 import me.matsumo.fanbox.core.ui.AsyncLoadContents
+import me.matsumo.fanbox.core.ui.MR
 import me.matsumo.fanbox.core.ui.component.PixiViewTopBar
+import me.matsumo.fanbox.core.ui.extensition.LocalSnackbarHostState
+import me.matsumo.fanbox.core.ui.extensition.SnackbarExtension
 import me.matsumo.fanbox.feature.creator.fancard.items.FanCardItem
 import moe.tlaster.precompose.flow.collectAsStateWithLifecycle
 import moe.tlaster.precompose.koin.koinViewModel
+import org.koin.compose.koinInject
 
 @Composable
 internal fun FanCardRoute(
@@ -31,8 +35,10 @@ internal fun FanCardRoute(
     terminate: () -> Unit,
     modifier: Modifier = Modifier,
     viewModel: FanCardViewModel = koinViewModel(FanCardViewModel::class),
+    snackbarExtension: SnackbarExtension = koinInject(),
 ) {
     val screenState by viewModel.screenState.collectAsStateWithLifecycle()
+    val snackHostState = LocalSnackbarHostState.current
 
     LaunchedEffect(creatorId) {
         if (screenState !is ScreenState.Idle) {
@@ -42,7 +48,7 @@ internal fun FanCardRoute(
 
     LaunchedEffect(true) {
         viewModel.downloadedEvent.collectLatest {
-            // ToastUtil.show(context, if (it) R.string.common_downloaded else R.string.error_network)
+            snackbarExtension.showSnackbar(snackHostState, if (it) MR.strings.common_downloaded else MR.strings.error_network)
         }
     }
 

@@ -1,6 +1,11 @@
 package me.matsumo.fanbox.feature.welcome
 
+import androidx.compose.foundation.layout.navigationBarsPadding
+import androidx.compose.material3.Scaffold
+import androidx.compose.material3.SnackbarHost
+import androidx.compose.material3.SnackbarHostState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
@@ -10,6 +15,7 @@ import dev.icerock.moko.permissions.compose.BindEffect
 import dev.icerock.moko.permissions.compose.PermissionsControllerFactory
 import dev.icerock.moko.permissions.compose.rememberPermissionsControllerFactory
 import kotlinx.coroutines.launch
+import me.matsumo.fanbox.core.ui.extensition.LocalSnackbarHostState
 import me.matsumo.fanbox.core.ui.extensition.rememberNavigator
 import me.matsumo.fanbox.feature.welcome.login.WelcomeLoginRoute
 import me.matsumo.fanbox.feature.welcome.login.navigateToWelcomeLogin
@@ -37,6 +43,8 @@ fun WelcomeNavHost(
     val factory: PermissionsControllerFactory = rememberPermissionsControllerFactory()
     val controller: PermissionsController = remember(factory) { factory.createPermissionsController() }
 
+    val snackbarHostState = remember { SnackbarHostState() }
+
     val startDestination = when {
         !isAgreedTeams -> WelcomeTopRoute
         !isLoggedIn -> WelcomeLoginRoute
@@ -44,36 +52,48 @@ fun WelcomeNavHost(
         else -> WelcomeTopRoute
     }
 
-    NavHost(
-        modifier = modifier,
-        navigator = navigator,
-        initialRoute = startDestination,
-    ) {
-        welcomeTopScreen(
-            navigateToWelcomeLogin = { navigator.navigateToWelcomeLogin() },
-        )
-
-        welcomeLoginScreen(
-            navigateToLoginScreen = { navigator.navigateToWelcomeWeb() },
-            navigateToWelcomePermission = {
-                scope.launch {
-                    if (controller.isPermissionGranted(Permission.STORAGE)) {
-                        onComplete.invoke()
-                    } else {
-                        navigator.navigateToWelcomePermission()
-                    }
-                }
+    CompositionLocalProvider(LocalSnackbarHostState provides snackbarHostState) {
+        Scaffold(
+            modifier = modifier,
+            snackbarHost = {
+                SnackbarHost(
+                    modifier = Modifier.navigationBarsPadding(),
+                    hostState = snackbarHostState,
+                )
             },
-        )
+        ) {
+            NavHost(
+                modifier = modifier,
+                navigator = navigator,
+                initialRoute = startDestination,
+            ) {
+                welcomeTopScreen(
+                    navigateToWelcomeLogin = { navigator.navigateToWelcomeLogin() },
+                )
 
-        welcomeWebScreen(
-            terminate = { navigator.goBack() }
-        )
+                welcomeLoginScreen(
+                    navigateToLoginScreen = { navigator.navigateToWelcomeWeb() },
+                    navigateToWelcomePermission = {
+                        scope.launch {
+                            if (controller.isPermissionGranted(Permission.STORAGE)) {
+                                onComplete.invoke()
+                            } else {
+                                navigator.navigateToWelcomePermission()
+                            }
+                        }
+                    },
+                )
 
-        welcomePermissionScreen(
-            navigateToHome = { onComplete.invoke() },
-        )
+                welcomeWebScreen(
+                    terminate = { navigator.goBack() }
+                )
+
+                welcomePermissionScreen(
+                    navigateToHome = { onComplete.invoke() },
+                )
+            }
+        }
+
+        BindEffect(controller)
     }
-
-    BindEffect(controller)
 }

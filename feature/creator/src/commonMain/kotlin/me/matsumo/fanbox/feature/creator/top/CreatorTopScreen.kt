@@ -62,7 +62,9 @@ import me.matsumo.fanbox.core.ui.MR
 import me.matsumo.fanbox.core.ui.component.CollapsingToolbarScaffold
 import me.matsumo.fanbox.core.ui.component.ScrollStrategy
 import me.matsumo.fanbox.core.ui.component.rememberCollapsingToolbarScaffoldState
+import me.matsumo.fanbox.core.ui.extensition.LocalSnackbarHostState
 import me.matsumo.fanbox.core.ui.extensition.NavigatorExtension
+import me.matsumo.fanbox.core.ui.extensition.SnackbarExtension
 import me.matsumo.fanbox.feature.creator.top.items.CreatorTopDescriptionDialog
 import me.matsumo.fanbox.feature.creator.top.items.CreatorTopHeader
 import me.matsumo.fanbox.feature.creator.top.items.CreatorTopPlansScreen
@@ -82,8 +84,11 @@ internal fun CreatorTopRoute(
     modifier: Modifier = Modifier,
     viewModel: CreatorTopViewModel = koinViewModel(CreatorTopViewModel::class),
     navigatorExtension: NavigatorExtension = koinInject(),
+    snackbarExtension: SnackbarExtension = koinInject(),
 ) {
     val screenState by viewModel.screenState.collectAsStateWithLifecycle()
+    val snackbarHostState = LocalSnackbarHostState.current
+    val scope = rememberCoroutineScope()
 
     LaunchedEffect(creatorId) {
         if (screenState !is ScreenState.Idle) {
@@ -118,6 +123,7 @@ internal fun CreatorTopRoute(
             onClickUnfollow = viewModel::unfollow,
             onClickSupporting = navigatorExtension::navigateToWebPage,
             onClickPostBookmark = viewModel::postBookmark,
+            onShowSnackBar = { scope.launch { snackbarExtension.showSnackbar(snackbarHostState, it) }},
             onClickPostLike = viewModel::postLike,
         )
     }
@@ -146,6 +152,7 @@ private fun CreatorTopScreen(
     onClickFollow: suspend (String) -> Result<Unit>,
     onClickUnfollow: suspend (String) -> Result<Unit>,
     onClickSupporting: (String) -> Unit,
+    onShowSnackBar: (StringResource) -> Unit,
     onTerminate: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
@@ -297,7 +304,7 @@ private fun CreatorTopScreen(
                     if (userData.hasPrivilege) {
                         onClickAllDownload.invoke(creatorDetail.creatorId)
                     } else {
-                        // ToastUtil.show(context, R.string.creator_download_all_error)
+                        onShowSnackBar.invoke(MR.strings.creator_download_all_error)
                         onClickBillingPlus.invoke()
                     }
                 },
