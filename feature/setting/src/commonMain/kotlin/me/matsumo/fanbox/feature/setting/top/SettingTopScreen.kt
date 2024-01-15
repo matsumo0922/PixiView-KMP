@@ -20,6 +20,8 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.nestedscroll.nestedScroll
+import dev.icerock.moko.biometry.compose.BindBiometryAuthenticatorEffect
+import dev.icerock.moko.biometry.compose.rememberBiometryAuthenticatorFactory
 import dev.icerock.moko.resources.compose.stringResource
 import kotlinx.coroutines.launch
 import me.matsumo.fanbox.core.common.PixiViewConfig
@@ -55,6 +57,10 @@ internal fun SettingTopRoute(
     snackbarExtension: SnackbarExtension = koinInject(),
 ) {
     val scope = rememberCoroutineScope()
+
+    val biometryAuthenticatorFactory = rememberBiometryAuthenticatorFactory()
+    val biometryAuthenticator = biometryAuthenticatorFactory.createBiometryAuthenticator()
+
     val screenState by viewModel.screenState.collectAsStateWithLifecycle()
     val snackbarHostState = LocalSnackbarHostState.current
 
@@ -102,7 +108,19 @@ internal fun SettingTopRoute(
                 }
             },
             onClickAppLock = {
-
+                if (it) {
+                    if (uiState.userData.hasPrivilege) {
+                        scope.launch {
+                            if (viewModel.tryToAuthenticate(biometryAuthenticator)) {
+                                viewModel.setAppLock(true)
+                            }
+                        }
+                    } else {
+                        navigateToBillingPlus.invoke()
+                    }
+                } else {
+                    viewModel.setAppLock(false)
+                }
             },
             onClickLogout = {
                 navigateToLogoutDialog(SimpleAlertContents.Logout) {
@@ -129,6 +147,8 @@ internal fun SettingTopRoute(
             onTerminate = terminate,
         )
     }
+
+    BindBiometryAuthenticatorEffect(biometryAuthenticator)
 }
 
 @OptIn(ExperimentalMaterial3Api::class)

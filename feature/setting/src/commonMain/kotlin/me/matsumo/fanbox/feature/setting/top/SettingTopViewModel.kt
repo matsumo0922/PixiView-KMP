@@ -1,6 +1,8 @@
 package me.matsumo.fanbox.feature.setting.top
 
 import androidx.compose.runtime.Stable
+import dev.icerock.moko.biometry.BiometryAuthenticator
+import dev.icerock.moko.resources.desc.desc
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.map
@@ -13,6 +15,7 @@ import me.matsumo.fanbox.core.model.UserData
 import me.matsumo.fanbox.core.model.fanbox.FanboxMetaData
 import me.matsumo.fanbox.core.repository.FanboxRepository
 import me.matsumo.fanbox.core.repository.UserDataRepository
+import me.matsumo.fanbox.core.ui.MR
 import moe.tlaster.precompose.viewmodel.ViewModel
 import moe.tlaster.precompose.viewmodel.viewModelScope
 
@@ -89,6 +92,18 @@ class SettingTopViewModel(
             userDataRepository.setDeveloperMode(isDeveloperMode)
         }
     }
+
+    suspend fun tryToAuthenticate(biometryAuthenticator: BiometryAuthenticator): Boolean = suspendRunCatching {
+        biometryAuthenticator.checkBiometryAuthentication(
+            requestTitle = MR.strings.home_app_lock_title.desc(),
+            requestReason = MR.strings.home_app_lock_message.desc(),
+            failureButtonText = MR.strings.error_no_data.desc(),
+            allowDeviceCredentials = true
+        )
+    }.fold(
+        onSuccess = { it },
+        onFailure = { false },
+    )
 }
 
 @Stable

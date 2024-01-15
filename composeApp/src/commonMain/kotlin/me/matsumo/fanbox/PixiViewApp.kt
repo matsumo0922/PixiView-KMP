@@ -1,44 +1,64 @@
 package me.matsumo.fanbox
 
 import androidx.compose.animation.AnimatedContent
+import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.animation.togetherWith
+import androidx.compose.foundation.background
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.windowsizeclass.WindowWidthSizeClass
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
+import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import dev.icerock.moko.biometry.compose.BindBiometryAuthenticatorEffect
+import dev.icerock.moko.biometry.compose.rememberBiometryAuthenticatorFactory
 import io.github.aakira.napier.Napier
+import kotlinx.coroutines.launch
 import me.matsumo.fanbox.core.model.ScreenState
 import me.matsumo.fanbox.core.model.ThemeConfig
 import me.matsumo.fanbox.core.ui.AsyncLoadContents
 import me.matsumo.fanbox.core.ui.component.PixiViewBackground
 import me.matsumo.fanbox.core.ui.extensition.LocalNavigationType
 import me.matsumo.fanbox.core.ui.extensition.NavigationType
+import me.matsumo.fanbox.core.ui.extensition.NavigatorExtension
 import me.matsumo.fanbox.core.ui.extensition.PixiViewNavigationType
 import me.matsumo.fanbox.core.ui.theme.DarkDefaultColorScheme
 import me.matsumo.fanbox.core.ui.theme.LightDefaultColorScheme
 import me.matsumo.fanbox.core.ui.theme.PixiViewTheme
+import me.matsumo.fanbox.core.ui.view.LoadingView
 import me.matsumo.fanbox.feature.welcome.WelcomeNavHost
 import moe.tlaster.precompose.flow.collectAsStateWithLifecycle
 import moe.tlaster.precompose.koin.koinViewModel
+import moe.tlaster.precompose.lifecycle.Lifecycle
+import moe.tlaster.precompose.lifecycle.LifecycleObserver
+import moe.tlaster.precompose.lifecycle.LocalLifecycleOwner
+import org.koin.compose.koinInject
 
 @Composable
 fun PixiViewApp(
     windowSize: WindowWidthSizeClass,
     modifier: Modifier = Modifier,
-    viewModel: PixiViewViewModel = koinViewModel(PixiViewViewModel::class)
+    viewModel: PixiViewViewModel = koinViewModel(PixiViewViewModel::class),
+    navigatorExtension: NavigatorExtension = koinInject(),
 ) {
+    val scope = rememberCoroutineScope()
     val screenState by viewModel.screenState.collectAsStateWithLifecycle()
+    val lifecycleOwner = LocalLifecycleOwner.current
     val shouldUseDarkTheme = shouldUseDarkTheme(screenState)
     val shouldUseDynamicColor = shouldUseDynamicColor(screenState)
+
+    val biometryAuthenticatorFactory = rememberBiometryAuthenticatorFactory()
+    val biometryAuthenticator = biometryAuthenticatorFactory.createBiometryAuthenticator()
 
     val navigationType = when (windowSize) {
         WindowWidthSizeClass.Medium -> PixiViewNavigationType.NavigationRail
@@ -66,10 +86,48 @@ fun PixiViewApp(
                         onRequestInitPixiViewId = viewModel::initPixiViewId,
                         onRequestUpdateState = viewModel::updateState,
                     )
+
+                    AnimatedVisibility(
+                        visible = it.isAppLocked,
+                        enter = fadeIn(),
+                        exit = fadeOut(),
+                    ) {
+                        LoadingView(
+                            modifier = Modifier
+                                .fillMaxSize()
+                                .background(MaterialTheme.colorScheme.surface),
+                        )
+                    }
+
+                    if (it.isAppLocked) {
+                        scope.launch {
+                            if (viewModel.tryToAuthenticate(biometryAuthenticator)) {
+                                viewModel.setAppLock(false)
+                            } else {
+                                navigatorExtension.killApp()
+                            }
+                        }
+                    }
                 }
             }
         }
     }
+
+    DisposableEffect(lifecycleOwner) {
+        val observer = object : LifecycleObserver {
+            override fun onStateChanged(state: Lifecycle.State) {
+                if (state == Lifecycle.State.Active) {
+                    viewModel.setAppLock(true)
+                }
+            }
+        }
+
+        lifecycleOwner.lifecycle.addObserver(observer)
+
+        onDispose { lifecycleOwner.lifecycle.removeObserver(observer) }
+    }
+
+    BindBiometryAuthenticatorEffect(biometryAuthenticator)
 }
 
 @Composable

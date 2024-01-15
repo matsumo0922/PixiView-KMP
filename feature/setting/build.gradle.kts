@@ -21,6 +21,8 @@ kotlin {
             implementation(project(":core:ui"))
 
             implementation(libs.libraries.ui)
+            implementation(libs.moko.biometry)
+            implementation(libs.moko.biometry.compose)
         }
     }
 }

@@ -2,6 +2,7 @@ package me.matsumo.fanbox.core.ui.extensition
 
 import android.content.Context
 import android.content.Intent
+import android.os.Process
 import androidx.core.net.toUri
 
 class NavigatorExtensionImpl(
@@ -14,5 +15,9 @@ class NavigatorExtensionImpl(
                 addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
             }
         )
+    }
+
+    override fun killApp() {
+        Process.killProcess(Process.myPid())
     }
 }

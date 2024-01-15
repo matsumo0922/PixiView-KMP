@@ -113,6 +113,8 @@ kotlin {
 
                 implementation(libs.moko.permissions)
                 implementation(libs.moko.permissions.compose)
+                implementation(libs.moko.biometry)
+                implementation(libs.moko.biometry.compose)
             }
         }
 
@@ -120,8 +122,8 @@ kotlin {
             dependsOn(commonMain)
             dependencies {
                 implementation(libs.androidx.core.splashscreen)
-                // implementation(libs.play.review)
-                // implementation(libs.play.update)
+                implementation(libs.play.review)
+                implementation(libs.play.update)
                 // implementation(libs.play.service.oss)
                 // implementation(libs.play.service.ads)
                 implementation(libs.google.material)

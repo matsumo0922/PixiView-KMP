@@ -47,4 +47,5 @@ fun RouteBuilder.bottomSheet(
 
 interface NavigatorExtension {
     fun navigateToWebPage(url: String)
+    fun killApp()
 }
