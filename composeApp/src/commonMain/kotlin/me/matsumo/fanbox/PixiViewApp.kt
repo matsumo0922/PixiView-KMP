@@ -23,6 +23,7 @@ import androidx.compose.ui.Modifier
 import dev.icerock.moko.biometry.compose.BindBiometryAuthenticatorEffect
 import dev.icerock.moko.biometry.compose.rememberBiometryAuthenticatorFactory
 import io.github.aakira.napier.Napier
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import me.matsumo.fanbox.core.model.ScreenState
 import me.matsumo.fanbox.core.model.ThemeConfig
@@ -32,6 +33,8 @@ import me.matsumo.fanbox.core.ui.extensition.LocalNavigationType
 import me.matsumo.fanbox.core.ui.extensition.NavigationType
 import me.matsumo.fanbox.core.ui.extensition.NavigatorExtension
 import me.matsumo.fanbox.core.ui.extensition.PixiViewNavigationType
+import me.matsumo.fanbox.core.ui.extensition.Platform
+import me.matsumo.fanbox.core.ui.extensition.currentPlatform
 import me.matsumo.fanbox.core.ui.theme.DarkDefaultColorScheme
 import me.matsumo.fanbox.core.ui.theme.LightDefaultColorScheme
 import me.matsumo.fanbox.core.ui.theme.PixiViewTheme
@@ -65,6 +68,8 @@ fun PixiViewApp(
         WindowWidthSizeClass.Expanded -> PixiViewNavigationType.PermanentNavigationDrawer
         else -> PixiViewNavigationType.BottomNavigation
     }
+
+    BindBiometryAuthenticatorEffect(biometryAuthenticator)
 
     CompositionLocalProvider(LocalNavigationType provides NavigationType(navigationType)) {
         AsyncLoadContents(
@@ -101,6 +106,11 @@ fun PixiViewApp(
 
                     if (it.isAppLocked) {
                         scope.launch {
+                            if (currentPlatform == Platform.Android) {
+                                // Wait for the bind fragment manager.
+                                delay(1000)
+                            }
+
                             if (viewModel.tryToAuthenticate(biometryAuthenticator)) {
                                 viewModel.setAppLock(false)
                             } else {
@@ -109,25 +119,23 @@ fun PixiViewApp(
                         }
                     }
                 }
-            }
-        }
-    }
 
-    DisposableEffect(lifecycleOwner) {
-        val observer = object : LifecycleObserver {
-            override fun onStateChanged(state: Lifecycle.State) {
-                if (state == Lifecycle.State.Active) {
-                    viewModel.setAppLock(true)
+                DisposableEffect(lifecycleOwner) {
+                    val observer = object : LifecycleObserver {
+                        override fun onStateChanged(state: Lifecycle.State) {
+                            if (state == Lifecycle.State.Active) {
+                                viewModel.setAppLock(true)
+                            }
+                        }
+                    }
+
+                    lifecycleOwner.lifecycle.addObserver(observer)
+
+                    onDispose { lifecycleOwner.lifecycle.removeObserver(observer) }
                 }
             }
         }
-
-        lifecycleOwner.lifecycle.addObserver(observer)
-
-        onDispose { lifecycleOwner.lifecycle.removeObserver(observer) }
     }
-
-    BindBiometryAuthenticatorEffect(biometryAuthenticator)
 }
 
 @Composable

@@ -3,8 +3,8 @@ package me.matsumo.fanbox
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.navigationBarsPadding
-import androidx.compose.material.Scaffold
 import androidx.compose.material3.PermanentNavigationDrawer
+import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.runtime.Composable
@@ -319,10 +319,6 @@ private fun RouteBuilder.applyNavGraph(
         terminate = { mainNavController.popBackStack() },
     )
 
-    settingDeveloperDialog(
-        terminate = { mainNavController.popBackStack() },
-    )
-
     // dialog
 
     simpleAlertDialogDialog(
@@ -330,6 +326,10 @@ private fun RouteBuilder.applyNavGraph(
     )
 
     creatorPostsDownloadDialog(
+        terminate = { mainNavController.popBackStack() },
+    )
+
+    settingDeveloperDialog(
         terminate = { mainNavController.popBackStack() },
     )
 

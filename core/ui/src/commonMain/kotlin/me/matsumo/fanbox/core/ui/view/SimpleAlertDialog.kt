@@ -20,6 +20,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.window.Dialog
 import dev.icerock.moko.resources.StringResource
 import dev.icerock.moko.resources.compose.stringResource
 import me.matsumo.fanbox.core.ui.MR
@@ -105,51 +106,55 @@ private fun SimpleAlertDialog(
     isCaution: Boolean,
     modifier: Modifier = Modifier,
 ) {
-    Column(
-        modifier = modifier
-            .background(MaterialTheme.colorScheme.surface)
-            .padding(24.dp),
-        verticalArrangement = Arrangement.spacedBy(16.dp),
+    Dialog(
+        onDismissRequest = onClickNegative,
     ) {
-        Text(
-            modifier = Modifier.fillMaxWidth(),
-            text = title,
-            style = MaterialTheme.typography.titleMedium.bold(),
-            color = MaterialTheme.colorScheme.onSurface,
-        )
-
-        Text(
-            modifier = Modifier.fillMaxWidth(),
-            text = description,
-            style = MaterialTheme.typography.bodyMedium,
-            color = MaterialTheme.colorScheme.onSurfaceVariant,
-        )
-
-        Row(
-            modifier = Modifier
-                .padding(top = 8.dp)
-                .fillMaxWidth(),
-            horizontalArrangement = Arrangement.spacedBy(16.dp),
-            verticalAlignment = Alignment.CenterVertically,
+        Column(
+            modifier = modifier
+                .background(MaterialTheme.colorScheme.surface)
+                .padding(24.dp),
+            verticalArrangement = Arrangement.spacedBy(16.dp),
         ) {
-            if (negativeText != null) {
-                OutlinedButton(
-                    modifier = Modifier.weight(1f),
-                    shape = RoundedCornerShape(4.dp),
-                    onClick = { onClickNegative.invoke() },
-                ) {
-                    Text(text = negativeText)
-                }
-            }
+            Text(
+                modifier = Modifier.fillMaxWidth(),
+                text = title,
+                style = MaterialTheme.typography.titleMedium.bold(),
+                color = MaterialTheme.colorScheme.onSurface,
+            )
 
-            if (positiveText != null) {
-                Button(
-                    modifier = Modifier.weight(1f),
-                    shape = RoundedCornerShape(4.dp),
-                    colors = ButtonDefaults.buttonColors(if (isCaution) MaterialTheme.colorScheme.error else MaterialTheme.colorScheme.primary),
-                    onClick = { onClickPositive.invoke() },
-                ) {
-                    Text(text = positiveText)
+            Text(
+                modifier = Modifier.fillMaxWidth(),
+                text = description,
+                style = MaterialTheme.typography.bodyMedium,
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
+            )
+
+            Row(
+                modifier = Modifier
+                    .padding(top = 8.dp)
+                    .fillMaxWidth(),
+                horizontalArrangement = Arrangement.spacedBy(16.dp),
+                verticalAlignment = Alignment.CenterVertically,
+            ) {
+                if (negativeText != null) {
+                    OutlinedButton(
+                        modifier = Modifier.weight(1f),
+                        shape = RoundedCornerShape(4.dp),
+                        onClick = { onClickNegative.invoke() },
+                    ) {
+                        Text(text = negativeText)
+                    }
+                }
+
+                if (positiveText != null) {
+                    Button(
+                        modifier = Modifier.weight(1f),
+                        shape = RoundedCornerShape(4.dp),
+                        colors = ButtonDefaults.buttonColors(if (isCaution) MaterialTheme.colorScheme.error else MaterialTheme.colorScheme.primary),
+                        onClick = { onClickPositive.invoke() },
+                    ) {
+                        Text(text = positiveText)
+                    }
                 }
             }
         }

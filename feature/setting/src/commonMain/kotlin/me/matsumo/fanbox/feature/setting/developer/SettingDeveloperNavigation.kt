@@ -6,6 +6,7 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.window.Dialog
 import moe.tlaster.precompose.navigation.Navigator
 import moe.tlaster.precompose.navigation.RouteBuilder
 
@@ -21,12 +22,16 @@ fun RouteBuilder.settingDeveloperDialog(
     dialog(
         route = SettingDeveloperRoute,
     ) {
-        SettingDeveloperDialog(
-            modifier = Modifier
-                .fillMaxWidth()
-                .wrapContentHeight()
-                .clip(RoundedCornerShape(16.dp)),
-            terminate = terminate,
-        )
+        Dialog(
+            onDismissRequest = terminate,
+        ) {
+            SettingDeveloperDialog(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .wrapContentHeight()
+                    .clip(RoundedCornerShape(16.dp)),
+                terminate = terminate,
+            )
+        }
     }
 }

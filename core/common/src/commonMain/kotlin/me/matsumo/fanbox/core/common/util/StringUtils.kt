@@ -14,8 +14,8 @@ fun Float.toFileSizeString(): String {
     val giga = mega * 1024f
 
     return when {
-        this > giga -> "%.2f GB".format()
-        this > mega -> "%.2f MB".format()
-        else -> "%.2f KB".format()
+        this > giga -> "%.2f GB".format(this / giga)
+        this > mega -> "%.2f MB".format(this / mega)
+        else -> "%.2f KB".format(this / 1024f)
     }
 }
