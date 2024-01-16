@@ -18,10 +18,7 @@ fun RouteBuilder.paymentsScreen(
     navigateToCreatorPosts: (CreatorId) -> Unit,
     terminate: () -> Unit,
 ) {
-    scene(
-        route = PaymentsRoute,
-        navTransition = NavigateAnimation.Horizontal.transition,
-    ) {
+    scene(PaymentsRoute) {
         PaymentsRoute(
             modifier = Modifier.fillMaxSize(),
             navigateToCreatorPosts = navigateToCreatorPosts,

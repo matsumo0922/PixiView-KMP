@@ -21,10 +21,7 @@ fun RouteBuilder.settingTopScreen(
     navigateToSettingDeveloper: () -> Unit,
     terminate: () -> Unit,
 ) {
-    scene(
-        route = SettingTopRoute,
-        navTransition = NavigateAnimation.Horizontal.transition,
-    ) {
+    scene(SettingTopRoute) {
         SettingTopRoute(
             modifier = Modifier.fillMaxSize(),
             navigateToThemeSetting = navigateToThemeSetting,

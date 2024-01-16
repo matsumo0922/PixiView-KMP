@@ -215,8 +215,18 @@ private fun PostDetailView(
                     navigateToPostImage.invoke(postId, index)
                 }
             },
-            onClickFile = { /*postDownloader::onDownloadFile*/ },
-            onClickDownloadImages = { /*postDownloader::onDownloadImages*/ },
+            onClickFile = {
+                scope.launch {
+                    val result = if (viewModel.downloadFiles(listOf(it))) MR.strings.common_downloaded else MR.strings.error_download
+                    snackExtension.showSnackbar(snackbarHostState, result)
+                }
+            },
+            onClickDownloadImages = {
+                scope.launch {
+                    val result = if (viewModel.downloadImages(it)) MR.strings.common_downloaded else MR.strings.error_download
+                    snackExtension.showSnackbar(snackbarHostState, result)
+                }
+            },
             onClickCreatorPosts = navigateToCreatorPosts,
             onClickCreatorPlans = navigateToCreatorPlans,
             onClickFollow = viewModel::follow,
@@ -226,7 +236,7 @@ private fun PostDetailView(
         )
 
         LaunchedEffect(uiState.messageToast) {
-            uiState.messageToast?.let { scope.launch { snackExtension.showSnackbar(snackbarHostState, it) }}
+            uiState.messageToast?.let { scope.launch { snackExtension.showSnackbar(snackbarHostState, it) } }
             viewModel.consumeToast()
         }
     }

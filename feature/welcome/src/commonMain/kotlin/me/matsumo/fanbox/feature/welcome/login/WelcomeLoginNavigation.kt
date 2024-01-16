@@ -16,10 +16,7 @@ fun RouteBuilder.welcomeLoginScreen(
     navigateToLoginScreen: () -> Unit,
     navigateToWelcomePermission: () -> Unit,
 ) {
-    scene(
-        route = WelcomeLoginRoute,
-        navTransition = NavigateAnimation.Horizontal.transition,
-    ) {
+    scene(WelcomeLoginRoute) {
         WelcomeLoginScreen(
             modifier = Modifier.fillMaxSize(),
             navigateToLoginScreen = navigateToLoginScreen,

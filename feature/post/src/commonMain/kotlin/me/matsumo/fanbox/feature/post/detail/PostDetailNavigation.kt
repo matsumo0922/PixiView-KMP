@@ -29,10 +29,7 @@ fun RouteBuilder.postDetailScreen(
     navigateToCommentDeleteDialog: (SimpleAlertContents, () -> Unit) -> Unit,
     terminate: () -> Unit,
 ) {
-    scene(
-        route = PostDetailRoute,
-        navTransition = NavigateAnimation.Horizontal.transition
-    ) {
+    scene(PostDetailRoute) {
         PostDetailRoute(
             modifier = Modifier.fillMaxSize(),
             postId = PostId(it.path<String>(PostDetailId).orEmpty()),

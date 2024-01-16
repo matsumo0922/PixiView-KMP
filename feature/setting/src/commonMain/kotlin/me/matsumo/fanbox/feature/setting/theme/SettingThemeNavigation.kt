@@ -16,10 +16,7 @@ fun RouteBuilder.settingThemeScreen(
     navigateToBillingPlus: () -> Unit,
     terminate: () -> Unit,
 ) {
-    scene(
-        route = SettingThemeDialogRoute,
-        navTransition = NavigateAnimation.Horizontal.transition,
-    ) {
+    scene(SettingThemeDialogRoute) {
         SettingThemeRoute(
             modifier = Modifier.fillMaxSize(),
             navigateToBillingPlus = navigateToBillingPlus,

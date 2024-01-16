@@ -18,10 +18,7 @@ fun RouteBuilder.followingCreatorsScreen(
     navigateToCreatorPlans: (CreatorId) -> Unit,
     terminate: () -> Unit,
 ) {
-    scene(
-        route = FollowingCreatorsRoute,
-        navTransition = NavigateAnimation.Horizontal.transition,
-    ) {
+    scene(FollowingCreatorsRoute) {
         FollowingCreatorsRoute(
             modifier = Modifier.fillMaxSize(),
             navigateToCreatorPlans = navigateToCreatorPlans,

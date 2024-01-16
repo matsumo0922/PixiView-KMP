@@ -15,10 +15,7 @@ fun Navigator.navigateToWelcomeTop() {
 fun RouteBuilder.welcomeTopScreen(
     navigateToWelcomeLogin: () -> Unit,
 ) {
-    scene(
-        route = WelcomeTopRoute,
-        navTransition = NavigateAnimation.Horizontal.transition,
-    ) {
+    scene(WelcomeTopRoute) {
         WelcomeTopScreen(
             modifier = Modifier.fillMaxSize(),
             navigateToWelcomePlus = navigateToWelcomeLogin,

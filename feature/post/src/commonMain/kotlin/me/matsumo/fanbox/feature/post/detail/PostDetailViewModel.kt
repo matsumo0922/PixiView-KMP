@@ -21,12 +21,14 @@ import me.matsumo.fanbox.core.model.fanbox.id.PostId
 import me.matsumo.fanbox.core.repository.FanboxRepository
 import me.matsumo.fanbox.core.repository.UserDataRepository
 import me.matsumo.fanbox.core.ui.MR
+import me.matsumo.fanbox.core.ui.extensition.ImageDownloader
 import moe.tlaster.precompose.viewmodel.ViewModel
 import moe.tlaster.precompose.viewmodel.viewModelScope
 
 class PostDetailViewModel(
     private val userDataRepository: UserDataRepository,
     private val fanboxRepository: FanboxRepository,
+    private val imageDownloader: ImageDownloader,
 ) : ViewModel() {
 
     private val _screenState = MutableStateFlow<ScreenState<PostDetailUiState>>(ScreenState.Loading)
@@ -212,6 +214,14 @@ class PostDetailViewModel(
                 _screenState.value = ScreenState.Idle(data.data.copy(messageToast = null))
             }
         }
+    }
+
+    suspend fun downloadImages(imageItems: List<FanboxPostDetail.ImageItem>): Boolean {
+        return imageItems.map { imageDownloader.downloadImage(it) }.all { it }
+    }
+
+    suspend fun downloadFiles(fileItems: List<FanboxPostDetail.FileItem>): Boolean {
+        return fileItems.map { imageDownloader.downloadFile(it) }.all { it }
     }
 }
 

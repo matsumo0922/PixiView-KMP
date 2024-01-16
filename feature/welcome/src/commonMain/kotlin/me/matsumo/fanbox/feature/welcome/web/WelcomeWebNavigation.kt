@@ -16,10 +16,7 @@ fun Navigator.navigateToWelcomeWeb() {
 fun RouteBuilder.welcomeWebScreen(
     terminate: () -> Unit,
 ) {
-    scene(
-        route = WelcomeWebRoute,
-        navTransition = NavigateAnimation.Horizontal.transition,
-    ) {
+    scene(WelcomeWebRoute) {
         WelcomeWebScreen(
             modifier = Modifier.fillMaxSize(),
             terminate = terminate,

@@ -18,6 +18,7 @@ fun RouteBuilder.billingPlusBottomSheet(
     bottomSheet(
         route = BillingPlusRoute,
         onDismissRequest = terminate,
+        skipPartiallyExpanded = true,
     ) {
         BillingPlusRoute(
             modifier = Modifier.fillMaxSize(),

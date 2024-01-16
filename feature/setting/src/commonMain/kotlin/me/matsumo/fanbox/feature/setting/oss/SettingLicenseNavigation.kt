@@ -15,10 +15,7 @@ fun Navigator.navigateToSettingLicense() {
 fun RouteBuilder.settingLicenseScreen(
     terminate: () -> Unit,
 ) {
-    scene(
-        route = SettingLicenseRoute,
-        navTransition = NavigateAnimation.Horizontal.transition,
-    ) {
+    scene(SettingLicenseRoute) {
         SettingLicenseScreen(
             modifier = Modifier.fillMaxSize(),
             terminate = terminate,

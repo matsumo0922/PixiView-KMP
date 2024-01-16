@@ -17,10 +17,7 @@ fun RouteBuilder.aboutScreen(
     navigateToDonate: () -> Unit,
     terminate: () -> Unit,
 ) {
-    scene(
-        route = AboutRoute,
-        navTransition = NavigateAnimation.Horizontal.transition,
-    ) {
+    scene(AboutRoute) {
         AboutRoute(
             modifier = Modifier.fillMaxSize(),
             navigateToVersionHistory = navigateToVersionHistory,

@@ -21,9 +21,12 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
+import com.mohamedrejeb.calf.ui.dialog.AdaptiveAlertDialog
 import dev.icerock.moko.resources.StringResource
 import dev.icerock.moko.resources.compose.stringResource
 import me.matsumo.fanbox.core.ui.MR
+import me.matsumo.fanbox.core.ui.extensition.Platform
+import me.matsumo.fanbox.core.ui.extensition.currentPlatform
 import me.matsumo.fanbox.core.ui.theme.bold
 import moe.tlaster.precompose.navigation.Navigator
 import moe.tlaster.precompose.navigation.RouteBuilder
@@ -79,19 +82,30 @@ fun RouteBuilder.simpleAlertDialogDialog(
     dialog(SimpleAlertDialog) { entry ->
         val content = SimpleAlertContents.valueOf(entry.path<String>(SimpleAlertDialogContent).orEmpty())
 
-        SimpleAlertDialog(
-            modifier = Modifier
-                .fillMaxWidth()
-                .wrapContentHeight()
-                .clip(RoundedCornerShape(16.dp)),
-            title = stringResource(content.titleRes),
-            description = stringResource(content.descriptionRes),
-            positiveText = content.positiveTextRes?.let { stringResource(it) },
-            negativeText = content.negativeTextRes?.let { stringResource(it) },
-            onClickPositive = { terminateWithResult.invoke(true) },
-            onClickNegative = { terminateWithResult.invoke(false) },
-            isCaution = content.isCaution,
-        )
+        if (currentPlatform != Platform.IOS) {
+            SimpleAlertDialog(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .wrapContentHeight()
+                    .clip(RoundedCornerShape(16.dp)),
+                title = stringResource(content.titleRes),
+                description = stringResource(content.descriptionRes),
+                positiveText = content.positiveTextRes?.let { stringResource(it) },
+                negativeText = content.negativeTextRes?.let { stringResource(it) },
+                onClickPositive = { terminateWithResult.invoke(true) },
+                onClickNegative = { terminateWithResult.invoke(false) },
+                isCaution = content.isCaution,
+            )
+        } else {
+            AdaptiveAlertDialog(
+                title = stringResource(content.titleRes),
+                text = stringResource(content.descriptionRes),
+                confirmText = stringResource(content.positiveTextRes ?: MR.strings.common_ok),
+                dismissText = stringResource(content.negativeTextRes ?: MR.strings.common_cancel),
+                onConfirm = { terminateWithResult.invoke(true) },
+                onDismiss = { terminateWithResult.invoke(false) },
+            )
+        }
     }
 }
 

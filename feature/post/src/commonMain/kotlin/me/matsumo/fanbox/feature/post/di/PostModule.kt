@@ -20,6 +20,7 @@ val postModule = module {
         PostDetailViewModel(
             fanboxRepository = get(),
             userDataRepository = get(),
+            imageDownloader = get(),
         )
     }
 

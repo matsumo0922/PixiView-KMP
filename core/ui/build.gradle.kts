@@ -48,6 +48,7 @@ kotlin {
                 api(libs.moko.resources)
                 api(libs.moko.resources.compose)
 
+                api(libs.calf.ui)
                 api(libs.androidx.paging.compose)
             }
         }

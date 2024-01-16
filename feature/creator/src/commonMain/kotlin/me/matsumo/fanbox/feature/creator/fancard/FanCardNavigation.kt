@@ -18,10 +18,7 @@ fun Navigator.navigateToFanCard(creatorId: CreatorId) {
 fun RouteBuilder.fanCardScreen(
     terminate: () -> Unit,
 ) {
-    scene(
-        route = FanCardRoute,
-        navTransition = NavigateAnimation.Horizontal.transition,
-    ) {
+    scene(FanCardRoute) {
         FanCardRoute(
             modifier = Modifier.fillMaxSize(),
             creatorId = CreatorId(it.path<String>(FanCardId).orEmpty()),

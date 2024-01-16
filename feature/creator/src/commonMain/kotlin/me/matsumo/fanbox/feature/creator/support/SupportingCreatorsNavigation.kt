@@ -20,10 +20,7 @@ fun RouteBuilder.supportingCreatorsScreen(
     navigateToFanCard: (CreatorId) -> Unit,
     terminate: () -> Unit,
 ) {
-    scene(
-        route = SupportingCreatorsRoute,
-        navTransition = NavigateAnimation.Horizontal.transition,
-    ) {
+    scene(SupportingCreatorsRoute) {
         SupportingCreatorsRoute(
             modifier = Modifier.fillMaxSize(),
             navigateToCreatorPlans = navigateToCreatorPlans,

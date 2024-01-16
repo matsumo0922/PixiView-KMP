@@ -27,10 +27,7 @@ fun RouteBuilder.postSearchScreen(
     navigateToCreatorPlans: (CreatorId) -> Unit,
     terminate: () -> Unit,
 ) {
-    scene(
-        route = PostSearchRoute,
-        navTransition = NavigateAnimation.Horizontal.transition
-    ) {
+    scene(PostSearchRoute) {
         var query = it.path<String>(PostSearchQueryStr)?.decodeURLPart().orEmpty()
 
         if (query == "pixiViewUnknown") {

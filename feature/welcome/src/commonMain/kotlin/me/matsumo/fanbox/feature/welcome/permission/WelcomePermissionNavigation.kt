@@ -15,10 +15,7 @@ fun Navigator.navigateToWelcomePermission() {
 fun RouteBuilder.welcomePermissionScreen(
     navigateToHome: () -> Unit,
 ) {
-    scene(
-        route = WelcomePermissionRoute,
-        navTransition = NavigateAnimation.Horizontal.transition,
-    ) {
+    scene(WelcomePermissionRoute) {
         WelcomePermissionScreen(
             modifier = Modifier.fillMaxSize(),
             navigateToHome = navigateToHome,

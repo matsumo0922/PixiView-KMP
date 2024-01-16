@@ -4,7 +4,6 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.ui.Modifier
 import me.matsumo.fanbox.core.model.fanbox.id.CreatorId
 import me.matsumo.fanbox.core.model.fanbox.id.PostId
-import me.matsumo.fanbox.core.ui.animation.NavigateAnimation
 import moe.tlaster.precompose.navigation.Navigator
 import moe.tlaster.precompose.navigation.RouteBuilder
 import moe.tlaster.precompose.navigation.path
@@ -26,7 +25,6 @@ fun RouteBuilder.creatorTopScreen(
 ) {
     scene(
         route = CreatorTopRoute,
-        navTransition = NavigateAnimation.Horizontal.transition,
     ) {
         CreatorTopRoute(
             modifier = Modifier.fillMaxSize(),

@@ -19,10 +19,7 @@ fun Navigator.navigateToPostImage(postId: PostId, index: Int) {
 fun RouteBuilder.postImageScreen(
     terminate: () -> Unit,
 ) {
-    scene(
-        route = PostImageRoute,
-        navTransition = NavigateAnimation.Horizontal.transition
-    ) {
+    scene(PostImageRoute) {
         PostImageRoute(
             modifier = Modifier.fillMaxSize(),
             postId = PostId(it.path<String>(PostImageId).orEmpty()),

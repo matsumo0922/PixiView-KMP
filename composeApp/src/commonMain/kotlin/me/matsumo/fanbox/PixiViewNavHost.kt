@@ -1,5 +1,7 @@
 package me.matsumo.fanbox
 
+import androidx.compose.animation.slideInHorizontally
+import androidx.compose.animation.slideOutHorizontally
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.navigationBarsPadding
@@ -13,8 +15,11 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.unit.dp
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
+import me.matsumo.fanbox.core.ui.animation.NavigateAnimation
+import me.matsumo.fanbox.core.ui.component.EmptyDetailRoute
 import me.matsumo.fanbox.core.ui.component.emptyDetailScreen
 import me.matsumo.fanbox.core.ui.extensition.LocalSnackbarHostState
 import me.matsumo.fanbox.core.ui.extensition.PixiViewNavigationType
@@ -65,6 +70,8 @@ import moe.tlaster.precompose.flow.collectAsStateWithLifecycle
 import moe.tlaster.precompose.navigation.NavHost
 import moe.tlaster.precompose.navigation.Navigator
 import moe.tlaster.precompose.navigation.RouteBuilder
+import moe.tlaster.precompose.navigation.SwipeProperties
+import moe.tlaster.precompose.navigation.transition.NavTransition
 
 @Composable
 internal fun PixiViewNavHost(
@@ -131,6 +138,20 @@ private fun CompactNavHost(
         modifier = modifier,
         navigator = navigator,
         initialRoute = startDestination,
+        swipeProperties = remember {
+            SwipeProperties(
+                spaceToSwipe = 16.dp,
+            )
+        },
+        navTransition = remember {
+            NavTransition(
+                createTransition = slideInHorizontally { it },
+                destroyTransition = slideOutHorizontally { it },
+                pauseTransition = slideOutHorizontally { -it / 4 },
+                resumeTransition = slideInHorizontally { -it / 4 },
+                exitTargetContentZIndex = 1f
+            )
+        }
     ) {
         applyNavGraph(scope, navigator)
     }
@@ -147,6 +168,20 @@ private fun MediumNavHost(
         modifier = modifier,
         navigator = navigator,
         initialRoute = startDestination,
+        swipeProperties = remember {
+            SwipeProperties(
+                spaceToSwipe = 16.dp,
+            )
+        },
+        navTransition = remember {
+            NavTransition(
+                createTransition = slideInHorizontally { it },
+                destroyTransition = slideOutHorizontally { it },
+                pauseTransition = slideOutHorizontally { -it / 4 },
+                resumeTransition = slideInHorizontally { -it / 4 },
+                exitTargetContentZIndex = 1f
+            )
+        }
     ) {
         applyNavGraph(scope, navigator)
     }
@@ -195,7 +230,8 @@ private fun ExpandedNavHost(
             NavHost(
                 modifier = Modifier.weight(1f),
                 navigator = subNavigator,
-                initialRoute = "",
+                initialRoute = EmptyDetailRoute,
+                navTransition = NavigateAnimation.Horizontal.transition
             ) {
                 applyNavGraph(scope, mainNavigator, subNavigator)
             }

@@ -1,5 +1,7 @@
 package me.matsumo.fanbox.core.ui.di
 
+import me.matsumo.fanbox.core.ui.extensition.ImageDownloader
+import me.matsumo.fanbox.core.ui.extensition.ImageDownloaderImpl
 import me.matsumo.fanbox.core.ui.extensition.NavigatorExtension
 import me.matsumo.fanbox.core.ui.extensition.NavigatorExtensionImpl
 import me.matsumo.fanbox.core.ui.extensition.SnackbarExtension
@@ -18,6 +20,13 @@ actual val uiSubModule: Module = module {
     single<SnackbarExtension> {
         SnackbarExtensionImpl(
             context = get(),
+        )
+    }
+
+    single<ImageDownloader> {
+        ImageDownloaderImpl(
+            context = get(),
+            fanboxRepository = get(),
         )
     }
 }

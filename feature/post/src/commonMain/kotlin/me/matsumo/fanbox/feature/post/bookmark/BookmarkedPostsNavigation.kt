@@ -20,10 +20,7 @@ fun RouteBuilder.bookmarkedPostsScreen(
     navigateToCreatorPlans: (CreatorId) -> Unit,
     terminate: () -> Unit,
 ) {
-    scene(
-        route = BookmarkedPostsRoute,
-        navTransition = NavigateAnimation.Horizontal.transition
-    ) {
+    scene(BookmarkedPostsRoute) {
         BookmarkedPostsRoute(
             modifier = Modifier.fillMaxSize(),
             navigateToPostDetail = navigateToPostDetail,

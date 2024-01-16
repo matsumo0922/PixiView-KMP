@@ -142,6 +142,8 @@ interface FanboxRepository {
     suspend fun getBookmarkedPosts(): List<FanboxPost>
     suspend fun bookmarkPost(post: FanboxPost)
     suspend fun unbookmarkPost(post: FanboxPost)
+
+    suspend fun download(url: String): HttpResponse
 }
 
 class FanboxRepositoryImpl(
@@ -489,6 +491,13 @@ class FanboxRepositoryImpl(
                     put(key, value)
                 }
             }.toString()
+        }
+    }
+
+    override suspend fun download(url: String): HttpResponse {
+        return client.get {
+            url(url)
+            fanboxHeader()
         }
     }
 
