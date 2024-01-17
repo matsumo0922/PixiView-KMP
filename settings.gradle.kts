@@ -1,8 +1,5 @@
 @file:Suppress("UnstableApiUsage")
 
-include(":feature:creator")
-
-
 rootProject.name = "PixiView-KMP"
 enableFeaturePreview("TYPESAFE_PROJECT_ACCESSORS")
 
@@ -18,7 +15,7 @@ pluginManagement {
 }
 
 dependencyResolutionManagement {
-    repositoriesMode.set(RepositoriesMode.FAIL_ON_PROJECT_REPOS)
+    repositoriesMode.set(RepositoriesMode.PREFER_PROJECT)
     repositories {
         google()
         mavenCentral()
@@ -30,6 +27,7 @@ dependencyResolutionManagement {
 include(":composeApp")
 
 include(":core:ui")
+include(":core:billing")
 include(":core:repository")
 include(":core:datastore")
 include(":core:model")
@@ -40,3 +38,4 @@ include(":feature:library")
 include(":feature:setting")
 include(":feature:about")
 include(":feature:post")
+include(":feature:creator")

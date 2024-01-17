@@ -18,6 +18,7 @@ kotlin {
             implementation(project(":core:model"))
             implementation(project(":core:repository"))
             implementation(project(":core:datastore"))
+            implementation(project(":core:billing"))
             implementation(project(":core:ui"))
         }
     }

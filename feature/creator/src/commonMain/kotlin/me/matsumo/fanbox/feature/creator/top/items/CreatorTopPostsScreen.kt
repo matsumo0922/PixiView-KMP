@@ -1,4 +1,4 @@
-package caios.android.fanbox.feature.creator.top.items
+package me.matsumo.fanbox.feature.creator.top.items
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable

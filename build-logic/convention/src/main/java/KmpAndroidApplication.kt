@@ -33,7 +33,7 @@ class KmpAndroidApplication : Plugin<Project> {
                 compileSdk = libs.version("compileSdk").toInt()
 
                 defaultConfig {
-                    applicationId = "me.matsumo.fanbox"
+                    applicationId = "caios.android.fanbox"
 
                     versionName = libs.version("versionName")
                     versionCode = libs.version("versionCode").toInt()

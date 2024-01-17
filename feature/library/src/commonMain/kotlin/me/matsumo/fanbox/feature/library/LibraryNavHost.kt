@@ -2,8 +2,8 @@ package me.matsumo.fanbox.feature.library
 
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import caios.android.fanbox.feature.library.home.LibraryHomeRoute
-import caios.android.fanbox.feature.library.home.libraryHomeScreen
+import me.matsumo.fanbox.feature.library.home.LibraryHomeRoute
+import me.matsumo.fanbox.feature.library.home.libraryHomeScreen
 import me.matsumo.fanbox.core.model.fanbox.id.CreatorId
 import me.matsumo.fanbox.core.model.fanbox.id.PostId
 import me.matsumo.fanbox.core.ui.animation.NavigateAnimation

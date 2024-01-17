@@ -1,5 +1,7 @@
 package me.matsumo.fanbox.feature.welcome
 
+import androidx.compose.animation.slideInHorizontally
+import androidx.compose.animation.slideOutHorizontally
 import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SnackbarHost
@@ -28,6 +30,7 @@ import me.matsumo.fanbox.feature.welcome.top.welcomeTopScreen
 import me.matsumo.fanbox.feature.welcome.web.navigateToWelcomeWeb
 import me.matsumo.fanbox.feature.welcome.web.welcomeWebScreen
 import moe.tlaster.precompose.navigation.NavHost
+import moe.tlaster.precompose.navigation.transition.NavTransition
 
 @Composable
 fun WelcomeNavHost(
@@ -66,6 +69,15 @@ fun WelcomeNavHost(
                 modifier = modifier,
                 navigator = navigator,
                 initialRoute = startDestination,
+                navTransition = remember {
+                    NavTransition(
+                        createTransition = slideInHorizontally { it },
+                        destroyTransition = slideOutHorizontally { it },
+                        pauseTransition = slideOutHorizontally { -it / 4 },
+                        resumeTransition = slideInHorizontally { -it / 4 },
+                        exitTargetContentZIndex = 1f
+                    )
+                }
             ) {
                 welcomeTopScreen(
                     navigateToWelcomeLogin = { navigator.navigateToWelcomeLogin() },

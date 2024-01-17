@@ -1,4 +1,4 @@
-package caios.android.fanbox.feature.library.home
+package me.matsumo.fanbox.feature.library.home
 
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.ui.Modifier
@@ -6,7 +6,6 @@ import me.matsumo.fanbox.core.model.fanbox.id.CreatorId
 import me.matsumo.fanbox.core.model.fanbox.id.PostId
 import me.matsumo.fanbox.core.ui.animation.NavigateAnimation
 import me.matsumo.fanbox.core.ui.view.SimpleAlertContents
-import me.matsumo.fanbox.feature.library.home.LibraryHomeScreen
 import moe.tlaster.precompose.navigation.NavOptions
 import moe.tlaster.precompose.navigation.Navigator
 import moe.tlaster.precompose.navigation.RouteBuilder

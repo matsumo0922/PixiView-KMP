@@ -7,6 +7,7 @@ import me.matsumo.fanbox.core.repository.FanboxRepository
 import me.matsumo.fanbox.core.repository.FanboxRepositoryImpl
 import me.matsumo.fanbox.core.repository.UserDataRepository
 import me.matsumo.fanbox.core.repository.UserDataRepositoryImpl
+import me.matsumo.fanbox.core.repository.client.ApiClient
 import org.koin.dsl.module
 
 @OptIn(ExperimentalSerializationApi::class)

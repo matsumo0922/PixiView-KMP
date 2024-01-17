@@ -42,22 +42,30 @@ import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import coil3.compose.LocalPlatformContext
 import dev.icerock.moko.resources.StringResource
 import dev.icerock.moko.resources.compose.stringResource
+import kotlinx.coroutines.launch
 import me.matsumo.fanbox.core.ui.AsyncLoadContents
 import me.matsumo.fanbox.core.ui.MR
+import me.matsumo.fanbox.core.ui.extensition.LocalSnackbarHostState
+import me.matsumo.fanbox.core.ui.extensition.SnackbarExtension
 import me.matsumo.fanbox.core.ui.theme.bold
 import moe.tlaster.precompose.flow.collectAsStateWithLifecycle
 import moe.tlaster.precompose.koin.koinViewModel
 import moe.tlaster.precompose.navigation.BackHandler
+import org.koin.compose.koinInject
 
 @Composable
 internal fun BillingPlusRoute(
     terminate: () -> Unit,
     modifier: Modifier = Modifier,
     viewModel: BillingPlusViewModel = koinViewModel(BillingPlusViewModel::class),
+    snackbarExtension: SnackbarExtension = koinInject()
 ) {
-    // val activity = LocalContext.current as Activity
+    val context = LocalPlatformContext.current
+    val snackbarHostState = LocalSnackbarHostState.current
+
     val scope = rememberCoroutineScope()
     val screenState by viewModel.screenState.collectAsStateWithLifecycle()
 
@@ -72,40 +80,48 @@ internal fun BillingPlusRoute(
     ) { uiState ->
         BillingPlusDialog(
             modifier = Modifier.fillMaxSize(),
-            // purchase = uiState.purchase,
             formattedPrice = uiState.formattedPrice,
             isDeveloperMode = uiState.isDeveloperMode,
             onClickPurchase = {
-                /*scope.launch {
-                    if (viewModel.purchase(activity)) {
+                scope.launch {
+                    if (viewModel.purchase(context)) {
+                        snackbarExtension.showSnackbar(snackbarHostState, MR.strings.billing_plus_toast_purchased)
                         terminate.invoke()
+                    } else {
+                        snackbarExtension.showSnackbar(snackbarHostState, MR.strings.billing_plus_toast_purchased_error)
                     }
-                }*/
+                }
             },
             onClickVerify = {
-                /*scope.launch {
-                    if (viewModel.verify(activity)) {
-                        terminate.invoke()
-                    }
-                }*/
-            },
-            /*onClickConsume = {
                 scope.launch {
-                    viewModel.consume(activity, it)
+                    if (viewModel.verify(context)) {
+                        snackbarExtension.showSnackbar(snackbarHostState, MR.strings.billing_plus_toast_verify)
+                        terminate.invoke()
+                    } else {
+                        snackbarExtension.showSnackbar(snackbarHostState, MR.strings.billing_plus_toast_verify_error)
+                    }
                 }
-            },*/
+            },
+            onClickConsume = {
+                scope.launch {
+                    if (viewModel.consume(context)) {
+                        snackbarExtension.showSnackbar(snackbarHostState, MR.strings.billing_plus_toast_consumed)
+                    } else {
+                        snackbarExtension.showSnackbar(snackbarHostState, MR.strings.billing_plus_toast_consumed_error)
+                    }
+                }
+            },
         )
     }
 }
 
 @Composable
 private fun BillingPlusDialog(
-    // purchase: Purchase?,
     formattedPrice: String?,
     isDeveloperMode: Boolean,
     onClickPurchase: () -> Unit,
     onClickVerify: () -> Unit,
-    // onClickConsume: (Purchase) -> Unit,
+    onClickConsume: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
     Column(
@@ -147,16 +163,16 @@ private fun BillingPlusDialog(
             Text(stringResource(MR.strings.billing_plus_verify_button))
         }
 
-        /*if (purchase != null && isDeveloperMode) {
+        if (isDeveloperMode) {
             OutlinedButton(
                 modifier = Modifier
                     .padding(top = 8.dp)
                     .fillMaxWidth(),
-                onClick = { onClickConsume.invoke(purchase) },
+                onClick = { onClickConsume.invoke() },
             ) {
                 Text(stringResource(MR.strings.billing_plus_consume_button))
             }
-        }*/
+        }
 
         Box(modifier = Modifier.weight(1f)) {
             Column(

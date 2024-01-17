@@ -1,7 +1,7 @@
 package me.matsumo.fanbox.feature.about.di
 
 import me.matsumo.fanbox.feature.about.about.AboutViewModel
-import me.matsumo.fanbox.feature.about.billing.BillingPlusViewModel
+import org.koin.core.module.Module
 import org.koin.dsl.module
 
 val aboutModule = module {
@@ -13,10 +13,7 @@ val aboutModule = module {
         )
     }
 
-    factory {
-        BillingPlusViewModel(
-            userDataRepository = get(),
-            ioDispatcher = get(),
-        )
-    }
+    includes(aboutSubModule)
 }
+
+expect val aboutSubModule: Module

@@ -15,13 +15,16 @@ class FanboxCookieDataStore(
     val data: Flow<String> = cookiePreference.data.map { it[stringPreferencesKey(KEY_COOKIE)] ?: "" }
 
     suspend fun save(cookie: String) {
+        Napier.d("CookieDataStore save: $cookie")
         cookiePreference.edit {
             it[stringPreferencesKey(KEY_COOKIE)] = cookie
         }
     }
 
     suspend fun get(): String? {
-        return cookiePreference.data.firstOrNull()?.get(stringPreferencesKey(KEY_COOKIE))
+        return cookiePreference.data.firstOrNull()?.get(stringPreferencesKey(KEY_COOKIE)).also {
+            Napier.d("CookieDataStore get: $it")
+        }
     }
 
     suspend fun addCookies(cookies: List<String>) {

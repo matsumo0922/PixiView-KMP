@@ -19,8 +19,8 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
-import caios.android.fanbox.feature.library.home.LibraryHomeRoute
-import caios.android.fanbox.feature.library.home.navigateToLibraryHome
+import me.matsumo.fanbox.feature.library.home.LibraryHomeRoute
+import me.matsumo.fanbox.feature.library.home.navigateToLibraryHome
 import kotlinx.collections.immutable.toImmutableList
 import kotlinx.coroutines.launch
 import me.matsumo.fanbox.core.model.fanbox.id.CreatorId
