@@ -4,12 +4,11 @@ import me.matsumo.fanbox.core.billing.BillingClient
 import me.matsumo.fanbox.core.billing.models.ProductItem
 import me.matsumo.fanbox.core.billing.models.ProductType
 import com.android.billingclient.api.Purchase
-import javax.inject.Inject
 
 class VerifyPlusUseCase(
     private val billingClient: BillingClient,
 ) {
-    suspend fun execute(): Purchase? {
+    suspend operator fun invoke(): Purchase? {
         return verifyInAppPurchase() ?: verifySubscriptionPurchase()
     }
 

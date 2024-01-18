@@ -8,6 +8,11 @@ import org.koin.dsl.module
 actual val aboutSubModule: Module = module {
 
     factory<BillingPlusViewModel> {
-        BillingPlusViewModelImpl()
+        BillingPlusViewModelImpl(
+            billingClient = get(),
+            purchasePlusSubscriptionUseCase = get(),
+            userDataRepository = get(),
+            ioDispatcher = get()
+        )
     }
 }

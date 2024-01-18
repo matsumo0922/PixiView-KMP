@@ -9,16 +9,14 @@ import me.matsumo.fanbox.core.billing.models.ProductType
 import me.matsumo.fanbox.core.billing.purchaseSingle
 import com.android.billingclient.api.Purchase
 import kotlinx.coroutines.CoroutineDispatcher
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
-import javax.inject.Inject
 
 class PurchasePlusSubscriptionUseCase(
     private val billingClient: BillingClient,
     private val mainDispatcher: CoroutineDispatcher,
 ) {
 
-    suspend fun execute(activity: Activity): PurchaseConsumableResult {
+    suspend operator fun invoke(activity: Activity): PurchaseConsumableResult {
         val productDetails = billingClient.queryProductDetails(ProductItem.plusSubscription, ProductType.SUBS)
         val purchaseResult = purchase(activity, productDetails)
 

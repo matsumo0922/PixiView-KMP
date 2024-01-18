@@ -17,7 +17,7 @@ class PurchaseDonateUseCase(
     private val mainDispatcher: CoroutineDispatcher,
 ) {
 
-    suspend fun execute(activity: Activity, productType: ProductType): PurchaseConsumableResult {
+    suspend operator fun invoke(activity: Activity, productType: ProductType): PurchaseConsumableResult {
         val productDetails = billingClient.queryProductDetails(ProductItem.plus, productType)
         val purchaseResult = purchase(activity, productDetails)
 

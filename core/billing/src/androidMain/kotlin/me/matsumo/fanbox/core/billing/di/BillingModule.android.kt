@@ -5,6 +5,7 @@ import me.matsumo.fanbox.core.billing.BillingClient
 import me.matsumo.fanbox.core.billing.BillingClientImpl
 import me.matsumo.fanbox.core.billing.BillingClientProvider
 import me.matsumo.fanbox.core.billing.BillingClientProviderImpl
+import me.matsumo.fanbox.core.billing.BillingInitialize
 import me.matsumo.fanbox.core.billing.BillingInitializeImpl
 import me.matsumo.fanbox.core.billing.usecase.ConsumePlusUseCase
 import me.matsumo.fanbox.core.billing.usecase.PurchaseDonateUseCase

@@ -45,7 +45,7 @@ class BillingPlusViewModelImpl(
                 val plusSubscription = productDetail.rawProductDetails.subscriptionOfferDetails?.firstOrNull()
                 val basePlanPricing = plusSubscription?.pricingPhases?.pricingPhaseList?.firstOrNull()
 
-                lastPurchase = verifyPlusUseCase.execute()
+                lastPurchase = verifyPlusUseCase.invoke()
 
                 BillingPlusUiState(
                     isPlusMode = userData?.isPlusMode ?: false,
@@ -68,7 +68,7 @@ class BillingPlusViewModelImpl(
     override suspend fun purchase(context: PlatformContext): Boolean {
         return runCatching {
             withContext(ioDispatcher) {
-                purchasePlusSubscriptionUseCase.execute(context as Activity)
+                purchasePlusSubscriptionUseCase.invoke(context as Activity)
             }
         }.onSuccess {
             userDataRepository.setPlusMode(true)
@@ -78,7 +78,7 @@ class BillingPlusViewModelImpl(
     override suspend fun verify(context: PlatformContext): Boolean {
         return runCatching {
             withContext(ioDispatcher) {
-                verifyPlusUseCase.execute()!!
+                verifyPlusUseCase.invoke()!!
             }
         }.onSuccess {
             userDataRepository.setPlusMode(true)
@@ -88,7 +88,7 @@ class BillingPlusViewModelImpl(
     override suspend fun consume(context: PlatformContext): Boolean {
         return runCatching {
             withContext(ioDispatcher) {
-                consumePlusUseCase.execute(lastPurchase!!)
+                consumePlusUseCase.invoke(lastPurchase!!)
             }
         }.onSuccess {
             userDataRepository.setPlusMode(false)
