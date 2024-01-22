@@ -1,9 +1,7 @@
 package me.matsumo.fanbox.core.billing
 
 import io.github.aakira.napier.Napier
-import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.suspendCancellableCoroutine
-import platform.Foundation.NSBundle
 import platform.StoreKit.SKProduct
 import platform.StoreKit.SKProductsRequest
 import platform.StoreKit.SKProductsRequestDelegateProtocol
@@ -24,7 +22,6 @@ class BillingClientImpl : BillingClient {
                 didReceiveResponse: SKProductsResponse
             ) {
                 if (didReceiveResponse.invalidProductIdentifiers.isNotEmpty()) {
-                    Napier.d { NSBundle.mainBundle.bundleIdentifier.toString() }
                     Napier.e("invalid product identifiers: ${didReceiveResponse.invalidProductIdentifiers}")
                     it.resume(emptyList())
                     return

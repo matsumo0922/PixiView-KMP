@@ -10,7 +10,12 @@ import org.koin.dsl.module
 
 actual val billingModule: Module = module {
 
-    single<BillingInitialize> { BillingInitializeImpl() }
+    single<BillingInitialize> {
+        BillingInitializeImpl(
+            userDataRepository = get(),
+            ioDispatcher = get()
+        )
+    }
 
     single<BillingClient> { BillingClientImpl() }
 

@@ -123,8 +123,17 @@ fun PixiViewApp(
                 DisposableEffect(lifecycleOwner) {
                     val observer = object : LifecycleObserver {
                         override fun onStateChanged(state: Lifecycle.State) {
-                            if (state == Lifecycle.State.Active) {
-                                viewModel.setAppLock(true)
+                            Napier.d { "onStateChanged: $state" }
+                            when (state) {
+                                Lifecycle.State.Active -> {
+                                    viewModel.setAppLock(true)
+                                }
+                                Lifecycle.State.Destroyed -> {
+                                    viewModel.billingClientFinish()
+                                }
+                                else -> {
+                                    // do nothing
+                                }
                             }
                         }
                     }

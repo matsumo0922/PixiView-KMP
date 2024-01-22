@@ -1,13 +1,10 @@
 package me.matsumo.fanbox.feature.about.billing
 
 import coil3.PlatformContext
-import io.github.aakira.napier.Napier
 import kotlinx.coroutines.CoroutineDispatcher
-import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.asStateFlow
-import kotlinx.coroutines.flow.firstOrNull
-import kotlinx.coroutines.launch
+import kotlinx.coroutines.flow.SharingStarted
+import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.withContext
 import me.matsumo.fanbox.core.billing.BillingClient
 import me.matsumo.fanbox.core.billing.usecase.PurchasePlusSubscriptionUseCase
@@ -26,47 +23,42 @@ class BillingPlusViewModelImpl(
     private val ioDispatcher: CoroutineDispatcher,
 ): BillingPlusViewModel() {
 
-    private var _screenState = MutableStateFlow<ScreenState<BillingPlusUiState>>(ScreenState.Loading)
+    override val screenState = userDataRepository.userData.map {
+        suspendRunCatching {
+            val product = billingClient.queryProductDetails(setOf("plus")).first()
+            val numberFormat = NSNumberFormatter().apply {
+                numberStyle = NSNumberFormatterCurrencyStyle
+                locale = product.priceLocale
+            }
 
-    override val screenState = _screenState.asStateFlow()
-
-    init {
-        viewModelScope.launch {
-            _screenState.value = suspendRunCatching {
-                val userData =  userDataRepository.userData.firstOrNull()
-                val product = billingClient.queryProductDetails(setOf("plus")).first()
-
-                val numberFormat = NSNumberFormatter().apply {
-                    numberStyle = NSNumberFormatterCurrencyStyle
-                    locale = product.priceLocale
-                }
-
-                BillingPlusUiState(
-                    isPlusMode = userData?.isPlusMode ?: false,
-                    isDeveloperMode = userData?.isDeveloperMode ?: false,
-                    formattedPrice = numberFormat.stringFromNumber(product.price) ?: "",
-                )
-            }.fold(
-                onSuccess = { ScreenState.Idle(it) },
-                onFailure = {
-                    Napier.w(it) { "BillingPlusViewModelImpl" }
-                    ScreenState.Error(
-                        message = MR.strings.error_billing,
-                        retryTitle = MR.strings.common_close,
-                    )
-                },
+            BillingPlusUiState(
+                isPlusMode = it.isPlusMode,
+                isDeveloperMode = it.isDeveloperMode,
+                formattedPrice = numberFormat.stringFromNumber(product.price) ?: "",
             )
-        }
-    }
+        }.fold(
+            onSuccess = { ScreenState.Idle(it) },
+            onFailure = {
+                ScreenState.Error(
+                    message = MR.strings.error_billing,
+                    retryTitle = MR.strings.common_close,
+                )
+            },
+        )
+    }.stateIn(
+        scope = viewModelScope,
+        started = SharingStarted.WhileSubscribed(5_000),
+        initialValue = ScreenState.Loading,
+    )
 
     override suspend fun purchase(context: PlatformContext): Boolean {
-        return runCatching {
+        runCatching {
             withContext(ioDispatcher) {
                 purchasePlusSubscriptionUseCase.invoke()
             }
-        }.onSuccess {
-            userDataRepository.setPlusMode(true)
-        }.isSuccess
+        }
+
+        return false
     }
 
     override suspend fun consume(context: PlatformContext): Boolean {

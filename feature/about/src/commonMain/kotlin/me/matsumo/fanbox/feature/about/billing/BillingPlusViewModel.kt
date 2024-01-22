@@ -12,6 +12,8 @@ abstract class BillingPlusViewModel: ViewModel() {
     abstract suspend fun purchase(context: PlatformContext): Boolean
     abstract suspend fun verify(context: PlatformContext): Boolean
     abstract suspend fun consume(context: PlatformContext): Boolean
+
+    open fun cleanUp() {}
 }
 
 @Stable

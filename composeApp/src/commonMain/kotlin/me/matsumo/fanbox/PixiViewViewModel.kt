@@ -60,7 +60,7 @@ class PixiViewViewModel(
     )
 
     init {
-        billingInitialize.init()
+        billingClientInit()
 
         viewModelScope.launch {
             fanboxRepository.logoutTrigger.collectLatest {
@@ -74,6 +74,14 @@ class PixiViewViewModel(
                 delay(10.minutes)
             }
         }
+    }
+
+    fun billingClientInit() {
+        billingInitialize.init()
+    }
+
+    fun billingClientFinish() {
+        billingInitialize.finish()
     }
 
     fun initPixiViewId() {

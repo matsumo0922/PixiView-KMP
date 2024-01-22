@@ -17,7 +17,7 @@ class ApiClient(
 ) {
     val client = HttpClient {
         install(Logging) {
-            level = LogLevel.HEADERS
+            level = LogLevel.INFO
             logger = object : Logger {
                 override fun log(message: String) {
                     Napier.d(message)
