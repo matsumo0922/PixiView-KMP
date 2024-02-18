@@ -2,6 +2,7 @@ package me.matsumo.fanbox.core.repository
 
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.receiveAsFlow
 import me.matsumo.fanbox.core.datastore.PixiViewDataStore
 import me.matsumo.fanbox.core.model.ThemeColorConfig
@@ -102,7 +103,9 @@ class UserDataRepositoryImpl(
     }
 
     override suspend fun setPlusMode(isPlusMode: Boolean) {
-        pixiViewDataStore.setPlusMode(isPlusMode)
-        _updatePlusMode.send(isPlusMode)
+        if (userData.first().isPlusMode != isPlusMode) {
+            pixiViewDataStore.setPlusMode(isPlusMode)
+            _updatePlusMode.send(isPlusMode)
+        }
     }
 }

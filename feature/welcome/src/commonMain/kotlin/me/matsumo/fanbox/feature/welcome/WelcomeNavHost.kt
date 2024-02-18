@@ -16,6 +16,8 @@ import dev.icerock.moko.permissions.PermissionsController
 import dev.icerock.moko.permissions.compose.BindEffect
 import dev.icerock.moko.permissions.compose.PermissionsControllerFactory
 import dev.icerock.moko.permissions.compose.rememberPermissionsControllerFactory
+import io.github.aakira.napier.Napier
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
 import me.matsumo.fanbox.core.ui.extensition.LocalSnackbarHostState
 import me.matsumo.fanbox.core.ui.extensition.rememberNavigator
@@ -41,7 +43,6 @@ fun WelcomeNavHost(
     modifier: Modifier = Modifier,
 ) {
     val scope = rememberCoroutineScope()
-    val navigator = rememberNavigator("Welcome")
 
     val factory: PermissionsControllerFactory = rememberPermissionsControllerFactory()
     val controller: PermissionsController = remember(factory) { factory.createPermissionsController() }
@@ -65,6 +66,8 @@ fun WelcomeNavHost(
                 )
             },
         ) {
+            val navigator = rememberNavigator("Welcome")
+
             NavHost(
                 modifier = modifier,
                 navigator = navigator,
@@ -77,19 +80,32 @@ fun WelcomeNavHost(
                         resumeTransition = slideInHorizontally { -it / 4 },
                         exitTargetContentZIndex = 1f
                     )
-                }
+                },
             ) {
                 welcomeTopScreen(
-                    navigateToWelcomeLogin = { navigator.navigateToWelcomeLogin() },
+                    navigateToWelcomeLogin = {
+                        scope.launch {
+                            navigator.canNavigate.first { it }
+                            navigator.navigateToWelcomeLogin()
+                        }
+                    },
                 )
 
                 welcomeLoginScreen(
-                    navigateToLoginScreen = { navigator.navigateToWelcomeWeb() },
+                    navigateToLoginScreen = {
+                        scope.launch {
+                            Napier.d { "navigateToLoginScreen ${navigator.canNavigate}" }
+                            navigator.canNavigate.first { it }
+                            Napier.d { "navigateToLoginScreen2 ${navigator.canNavigate}" }
+                            navigator.navigateToWelcomeWeb()
+                        }
+                    },
                     navigateToWelcomePermission = {
                         scope.launch {
                             if (controller.isPermissionGranted(Permission.STORAGE)) {
                                 onComplete.invoke()
                             } else {
+                                navigator.canNavigate.first { it }
                                 navigator.navigateToWelcomePermission()
                             }
                         }

@@ -12,7 +12,7 @@ compileSdk = "34"
 gradle = "8.2.0"
 
 # Kotlin
-kotlin = "1.9.21"
+kotlin = "1.9.22"
 kotlinCompiler = "1.5.3"
 
 # KotlinX
@@ -22,14 +22,13 @@ kotlinxSerializationJson = "1.6.2"
 kotlinxImmutable = "0.3.7"
 
 # KMP
-kmpCompose = "1.5.11"
+kmpCompose = "1.6.0-rc01"
 kmpComplete = "1.1.0"
 kmpSwiftKlib = "0.5.1"
 mokoResource = "0.23.0"
 mokoPermissions = "0.17.0"
 mokoBiometry = "0.4.0"
-calf = "0.3.0"
-
+calf = "0.3.1"
 
 # AndroidX
 androidxCore = "1.12.0"
@@ -44,16 +43,16 @@ androidxCardView = "1.0.0"
 androidxViewPager2 = "1.1.0-beta02"
 androidxBiomtrics = "1.2.0-alpha05"
 androidxPreference = "1.2.1"
-androidxDataStore = "1.1.0-dev01"
+androidxDataStore = "1.1.0-beta01"
 androidxPalette = "1.0.0"
-androidxLifecycle = "2.6.2"
+androidxLifecycle = "2.7.0"
 androidxRoom = "2.6.1"
 androidxMedia = "1.7.0"
 androidxAnnotation = "1.7.1"
 androidxNavigation = "2.7.6"
 androidxPaging = "3.3.0-alpha02-0.4.0"
-androidxCompose = "2023.10.01"
-androidxComposeMaterial3 = "1.1.2"
+androidxCompose = "2024.02.00"
+androidxComposeMaterial3 = "1.2.0"
 androidxComposeConstraintLayout = "1.1.0-alpha13"
 androidxHiltNavigationCompose = "1.1.0"
 androidxGlance = "1.0.0"
@@ -67,8 +66,8 @@ playServiceOss = "17.0.1"
 material = "1.11.0"
 exoPlayer = "2.19.1"
 accompanist = "0.33.2-alpha"
-ksp = "1.9.21-1.0.16"
-gms = "4.4.0"
+ksp = "1.9.22-1.0.17"
+gms = "4.4.1"
 
 # Protobuf
 protobuf = "3.23.0"
@@ -78,7 +77,8 @@ protobufPlugin = "0.9.4"
 billing = "6.1.0"
 
 # Navigation
-precompose = "1.5.10"
+precompose = "1.6.0-beta01"
+stately = "2.0.6"
 
 # Settings
 kstore = "0.7.1"
@@ -89,7 +89,7 @@ puree = "1.4.0"
 # Others
 dagger = "2.49"
 koin = "3.5.1"
-ktor = "2.3.4"
+ktor = "2.3.7"
 coil = "2.5.0"
 coil3 = "3.0.0-alpha01"
 jsoup = "1.16.1"
@@ -109,7 +109,7 @@ buildKonfig = "0.15.1"
 twitterComposeRule = "0.0.26"
 
 # Debugs
-firebase = "32.7.0"
+firebase = "32.7.2"
 leakCanary = "2.12"
 flipper = "0.240.0"
 timber = "5.0.1"
@@ -229,11 +229,12 @@ androidx-compose-ui-test-junit4 = { module = "androidx.compose.ui:ui-test-junit4
 billing = { module = "com.android.billingclient:billing", version.ref = "billing" }
 billing-ktx = { module = "com.android.billingclient:billing-ktx", version.ref = "billing" }
 
-# Navigation
+# Navigation (stately: https://github.com/Tlaster/PreCompose/issues/125#issuecomment-1878834800)
 precompose = { module = "moe.tlaster:precompose", version.ref = "precompose" }
 precompose-molecule = { module = "moe.tlaster:precompose-molecule", version.ref = "precompose" }
 precompose-viewmodel = { module = "moe.tlaster:precompose-viewmodel", version.ref = "precompose" }
 precompose-koin = { module = "moe.tlaster:precompose-koin", version.ref = "precompose" }
+stately-common = { module = "co.touchlab:stately-common", version.ref = "stately" }
 
 # MOKO
 moko-resources = { module = "dev.icerock.moko:resources", version.ref = "mokoResource" }
@@ -378,12 +379,10 @@ ui-android-implementation = [
 ]
 
 ui-common-api = [
-    "precompose",
-    "precompose-viewmodel",
-    "precompose-koin",
     "coil3-compose",
     "coil3-network",
     "window-size",
+    "stately-common",
 ]
 
 resources = [

@@ -15,8 +15,8 @@ kotlin {
         commonMain.dependencies {
             implementation(project(":core:common"))
 
-            implementation(libs.ktor.core)
-            implementation(libs.moko.resources)
+            implementation(libsMain.ktor.core)
+            implementation(libsMain.moko.resources)
         }
     }
 }

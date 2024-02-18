@@ -144,7 +144,7 @@ private fun CompactNavHost(
                 resumeTransition = slideInHorizontally { -it / 4 },
                 exitTargetContentZIndex = 1f
             )
-        }
+        },
     ) {
         applyNavGraph(scope, navigator)
     }

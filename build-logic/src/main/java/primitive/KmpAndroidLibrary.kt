@@ -1,7 +1,7 @@
 package primitive
 import com.android.build.gradle.LibraryExtension
 import me.matsumo.fanbox.androidLibrary
-import me.matsumo.fanbox.libs
+import me.matsumo.fanbox.libsMain
 import me.matsumo.fanbox.setupAndroid
 import me.matsumo.fanbox.version
 import org.gradle.api.Plugin
@@ -24,8 +24,8 @@ class KmpAndroidLibrary: Plugin<Project> {
             }
 
             extensions.configure<LibraryExtension> {
-                compileSdk = libs.version("compileSdk").toInt()
-                defaultConfig.targetSdk = libs.findVersion("targetSdk").get().toString().toInt()
+                compileSdk = libsMain.version("compileSdk").toInt()
+                defaultConfig.targetSdk = libsMain.findVersion("targetSdk").get().toString().toInt()
                 buildFeatures.viewBinding = true
             }
         }

@@ -9,7 +9,7 @@ import org.gradle.kotlin.dsl.withType
 
 internal fun Project.configureDetekt(extension: DetektExtension) {
     extension.apply {
-        toolVersion = libs.findVersion("detekt").get().toString()
+        toolVersion = libsMain.findVersion("detekt").get().toString()
         // 並列処理
         parallel = true
         // Detektの設定ファイル

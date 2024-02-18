@@ -1,0 +1,3 @@
+[submodule "precompose"]
+	path = precompose
+	url = git@github.com:Tlaster/PreCompose.git

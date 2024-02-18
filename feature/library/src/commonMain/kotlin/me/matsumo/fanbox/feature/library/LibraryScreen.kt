@@ -19,8 +19,6 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
-import me.matsumo.fanbox.feature.library.home.LibraryHomeRoute
-import me.matsumo.fanbox.feature.library.home.navigateToLibraryHome
 import kotlinx.collections.immutable.toImmutableList
 import kotlinx.coroutines.launch
 import me.matsumo.fanbox.core.model.fanbox.id.CreatorId
@@ -36,6 +34,8 @@ import me.matsumo.fanbox.feature.library.component.LibraryDestination
 import me.matsumo.fanbox.feature.library.component.LibraryDrawer
 import me.matsumo.fanbox.feature.library.component.LibraryNavigationRail
 import me.matsumo.fanbox.feature.library.discovery.navigateToLibraryDiscovery
+import me.matsumo.fanbox.feature.library.home.LibraryHomeRoute
+import me.matsumo.fanbox.feature.library.home.navigateToLibraryHome
 import me.matsumo.fanbox.feature.library.message.navigateToLibraryMessage
 import me.matsumo.fanbox.feature.library.notify.navigateToLibraryNotify
 import moe.tlaster.precompose.flow.collectAsStateWithLifecycle

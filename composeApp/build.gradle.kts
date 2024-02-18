@@ -86,11 +86,11 @@ android {
     }
 
     dependencies {
-        debugImplementation(libs.facebook.flipper)
-        debugImplementation(libs.facebook.flipper.network)
-        debugImplementation(libs.facebook.flipper.leakcanary)
-        debugImplementation(libs.facebook.soloader)
-        // debugImplementation(libs.leakcanary)
+        debugImplementation(libsMain.facebook.flipper)
+        debugImplementation(libsMain.facebook.flipper.network)
+        debugImplementation(libsMain.facebook.flipper.leakcanary)
+        debugImplementation(libsMain.facebook.soloader)
+        // debugImplementation(libsMain.leakcanary)
     }
 }
 
@@ -112,22 +112,22 @@ kotlin {
                 implementation(project(":feature:post"))
                 implementation(project(":feature:creator"))
 
-                implementation(libs.moko.permissions)
-                implementation(libs.moko.permissions.compose)
-                implementation(libs.moko.biometry)
-                implementation(libs.moko.biometry.compose)
+                implementation(libsMain.moko.permissions)
+                implementation(libsMain.moko.permissions.compose)
+                implementation(libsMain.moko.biometry)
+                implementation(libsMain.moko.biometry.compose)
             }
         }
 
         val androidMain by getting {
             dependsOn(commonMain)
             dependencies {
-                implementation(libs.androidx.core.splashscreen)
-                implementation(libs.play.review)
-                implementation(libs.play.update)
-                // implementation(libs.play.service.oss)
-                // implementation(libs.play.service.ads)
-                implementation(libs.google.material)
+                implementation(libsMain.androidx.core.splashscreen)
+                implementation(libsMain.play.review)
+                implementation(libsMain.play.update)
+                // implementation(libsMain.play.service.oss)
+                // implementation(libsMain.play.service.ads)
+                implementation(libsMain.google.material)
             }
         }
 
@@ -151,8 +151,8 @@ buildkonfig {
     packageName = "me.matsumo.fanbox"
 
     defaultConfigs {
-        putBuildConfig(localProperties, "VERSION_NAME", libs.versions.versionName.get())
-        putBuildConfig(localProperties, "VERSION_CODE", libs.versions.versionCode.get())
+        putBuildConfig(localProperties, "VERSION_NAME", libsMain.versions.versionName.get())
+        putBuildConfig(localProperties, "VERSION_CODE", libsMain.versions.versionCode.get())
         putBuildConfig(localProperties, "DEVELOPER_PASSWORD")
         putBuildConfig(localProperties, "PIXIV_CLIENT_ID")
         putBuildConfig(localProperties, "PIXIV_CLIENT_SECRET")

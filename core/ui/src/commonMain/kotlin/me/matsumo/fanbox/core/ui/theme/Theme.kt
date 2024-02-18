@@ -6,6 +6,7 @@ import androidx.compose.material3.darkColorScheme
 import androidx.compose.material3.lightColorScheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
+import androidx.compose.runtime.staticCompositionLocalOf
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import me.matsumo.fanbox.core.model.ThemeColorConfig
@@ -80,6 +81,8 @@ val DarkDefaultColorScheme = darkColorScheme(
     outline = PurpleGray60,
 )
 
+val LocalColorScheme = staticCompositionLocalOf { LightDefaultColorScheme }
+
 @Composable
 fun PixiViewTheme(
     fanboxCookie: String = "",
@@ -106,6 +109,7 @@ fun PixiViewTheme(
     val tintTheme = TintTheme()
 
     CompositionLocalProvider(
+        LocalColorScheme provides colorScheme,
         LocalFanboxCookie provides FanboxCookie(fanboxCookie),
         LocalFanboxMetadata provides fanboxMetadata,
         LocalBackgroundTheme provides backgroundTheme,

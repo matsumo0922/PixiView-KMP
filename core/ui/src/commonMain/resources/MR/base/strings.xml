@@ -263,7 +263,7 @@
     <string name="billing_plus_purchase_title">支援完了</string>
     <string name="billing_plus_purchase_message">FANBOX Viewer+ の購入が完了しました。\n支援ありがとうございます！</string>
     <string name="billing_plus_cancel_title">プランの解約</string>
-    <string name="billing_plus_cancel_message">FANBOX Viewer+ のプランが解約されたため、通常ユーザーに戻りました。\n\n意図していない場合は支払いに失敗している可能性があります。Playストアより、プランの状況をご確認ください。</string>
+    <string name="billing_plus_cancel_message">FANBOX Viewer+ のプランが解約されたため、通常ユーザーに戻りました。\n\n意図していない場合は支払いに失敗している可能性があります。ストアアプリより、プランの状況をご確認ください。</string>
 
     <!-- Report -->
     <string name="report_crush_title">Oops! Something went wrong</string>

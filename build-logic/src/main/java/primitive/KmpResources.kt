@@ -1,7 +1,7 @@
 package primitive
 import me.matsumo.fanbox.bundle
 import me.matsumo.fanbox.implementation
-import me.matsumo.fanbox.libs
+import me.matsumo.fanbox.libsMain
 import org.gradle.api.Plugin
 import org.gradle.api.Project
 import org.gradle.kotlin.dsl.dependencies
@@ -14,7 +14,7 @@ class KmpResources : Plugin<Project> {
             }
 
             dependencies {
-                implementation(libs.bundle("resources"))
+                implementation(libsMain.bundle("resources"))
             }
         }
     }

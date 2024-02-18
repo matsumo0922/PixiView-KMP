@@ -20,9 +20,9 @@ kotlin {
             implementation(project(":core:datastore"))
             implementation(project(":core:ui"))
 
-            implementation(libs.libraries.ui)
-            implementation(libs.moko.biometry)
-            implementation(libs.moko.biometry.compose)
+            implementation(libsMain.libraries.ui)
+            implementation(libsMain.moko.biometry)
+            implementation(libsMain.moko.biometry.compose)
         }
     }
 }

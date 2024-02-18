@@ -12,14 +12,14 @@ kotlin {
 }
 
 dependencies {
-    implementation(libs.android.gradlePlugin)
-    implementation(libs.kotlin.gradlePlugin)
-    implementation(libs.secret.gradlePlugin)
-    implementation(libs.detekt.gradlePlugin)
-    implementation(libs.moko.resources.gradlePlugin)
-    implementation(libs.build.konfig.gradlePlugin)
-    implementation(libs.gms.services)
-    implementation(libs.gms.oss)
+    implementation(libsMain.android.gradlePlugin)
+    implementation(libsMain.kotlin.gradlePlugin)
+    implementation(libsMain.secret.gradlePlugin)
+    implementation(libsMain.detekt.gradlePlugin)
+    implementation(libsMain.moko.resources.gradlePlugin)
+    implementation(libsMain.build.konfig.gradlePlugin)
+    implementation(libsMain.gms.services)
+    implementation(libsMain.gms.oss)
 }
 
 gradlePlugin {

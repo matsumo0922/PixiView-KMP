@@ -26,12 +26,10 @@ import androidx.compose.material.icons.filled.Download
 import androidx.compose.material.icons.filled.Lock
 import androidx.compose.material.icons.filled.MoreHoriz
 import androidx.compose.material.icons.filled.Widgets
-import androidx.compose.material.icons.outlined.Close
 import androidx.compose.material.icons.outlined.HelpOutline
 import androidx.compose.material.icons.outlined.HideImage
 import androidx.compose.material3.Button
 import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Text
@@ -97,7 +95,6 @@ internal fun BillingPlusRoute(
             formattedPrice = uiState.formattedPrice,
             isDeveloperMode = uiState.isDeveloperMode,
             isLoading = isLoading,
-            onClickClose = { terminate.invoke() },
             onClickPurchase = {
                 scope.launch {
                     isLoading = true
@@ -153,7 +150,6 @@ private fun BillingPlusDialog(
     onClickPurchase: () -> Unit,
     onClickVerify: () -> Unit,
     onClickConsume: () -> Unit,
-    onClickClose: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
     Box(modifier) {
@@ -165,7 +161,6 @@ private fun BillingPlusDialog(
         ) {
             TitleItem(
                 modifier = Modifier.fillMaxWidth(),
-                onClickClose = onClickClose,
             )
 
             Column(
@@ -338,7 +333,6 @@ private fun BillingPlusDialog(
 
 @Composable
 private fun TitleItem(
-    onClickClose: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
     val titleStyle = MaterialTheme.typography.headlineLarge.bold()
@@ -350,30 +344,17 @@ private fun TitleItem(
         }
     }
 
-    Row(
-        modifier = modifier.padding(top = 16.dp),
-        horizontalArrangement = Arrangement.spacedBy(16.dp),
-    ) {
-        Text(
-            modifier = Modifier
-                .padding(start = 24.dp)
-                .weight(1f),
-            text = annotatedString,
-            style = titleStyle,
-            color = MaterialTheme.colorScheme.onSurface,
-        )
-
-        IconButton(
-            modifier = Modifier.padding(end = 8.dp),
-            onClick = { onClickClose.invoke() },
-        ) {
-            Icon(
-                imageVector = Icons.Outlined.Close,
-                tint = MaterialTheme.colorScheme.onSurface,
-                contentDescription = null,
-            )
-        }
-    }
+    Text(
+        modifier = modifier
+            .padding(
+                top = 16.dp,
+                start = 24.dp,
+                end = 24.dp,
+            ),
+        text = annotatedString,
+        style = titleStyle,
+        color = MaterialTheme.colorScheme.onSurface,
+    )
 }
 
 @Composable
@@ -391,6 +372,7 @@ private fun PlusItem(
             modifier = Modifier.size(24.dp),
             imageVector = icon,
             contentDescription = null,
+            tint = MaterialTheme.colorScheme.onSurface,
         )
 
         Column(

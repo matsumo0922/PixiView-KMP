@@ -12,6 +12,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.windowsizeclass.WindowWidthSizeClass
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
+import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -41,6 +42,8 @@ import me.matsumo.fanbox.core.ui.view.LoadingView
 import me.matsumo.fanbox.feature.welcome.WelcomeNavHost
 import moe.tlaster.precompose.flow.collectAsStateWithLifecycle
 import moe.tlaster.precompose.koin.koinViewModel
+import moe.tlaster.precompose.lifecycle.Lifecycle
+import moe.tlaster.precompose.lifecycle.LifecycleObserver
 import moe.tlaster.precompose.lifecycle.LocalLifecycleOwner
 import org.koin.compose.koinInject
 
@@ -116,6 +119,30 @@ fun PixiViewApp(
                         }
                     }
                 }
+            }
+
+            DisposableEffect(lifecycleOwner) {
+                val observer = object : LifecycleObserver {
+                    override fun onStateChanged(state: Lifecycle.State) {
+                        Napier.d { "onStateChanged: $state" }
+                        when (state) {
+                            Lifecycle.State.Initialized -> {
+                                viewModel.billingClientInitialize()
+                            }
+                            Lifecycle.State.Active -> {
+                                viewModel.setAppLock(true)
+                                viewModel.billingClientUpdate()
+                            }
+                            else -> {
+                                // do nothing
+                            }
+                        }
+                    }
+                }
+
+                lifecycleOwner.lifecycle.addObserver(observer)
+
+                onDispose { lifecycleOwner.lifecycle.removeObserver(observer) }
             }
         }
     }

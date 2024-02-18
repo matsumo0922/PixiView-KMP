@@ -20,7 +20,7 @@ kotlin {
             implementation(project(":core:datastore"))
             implementation(project(":core:ui"))
 
-            implementation(libs.zoomable)
+            implementation(libsMain.zoomable)
         }
     }
 }

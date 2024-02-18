@@ -1,6 +1,6 @@
 package primitive
 import me.matsumo.fanbox.androidApplication
-import me.matsumo.fanbox.libs
+import me.matsumo.fanbox.libsMain
 import me.matsumo.fanbox.setupAndroid
 import me.matsumo.fanbox.version
 import org.gradle.api.Plugin
@@ -25,13 +25,13 @@ class KmpAndroidApplication : Plugin<Project> {
             androidApplication {
                 setupAndroid()
 
-                compileSdk = libs.version("compileSdk").toInt()
+                compileSdk = libsMain.version("compileSdk").toInt()
 
                 defaultConfig {
                     applicationId = "caios.android.fanbox"
 
-                    versionName = libs.version("versionName")
-                    versionCode = libs.version("versionCode").toInt()
+                    versionName = libsMain.version("versionName")
+                    versionCode = libsMain.version("versionCode").toInt()
                 }
 
                 buildFeatures {

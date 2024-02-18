@@ -84,7 +84,19 @@ class BillingPlusViewModelImpl @OptIn(ExperimentalForeignApi::class) constructor
         return false
     }
 
-    override suspend fun verify(context: PlatformContext): Boolean {
-        return false
+    override suspend fun verify(context: PlatformContext): Boolean = suspendCancellableCoroutine { continuation ->
+        BillingController.refreshOnResult(
+            onResult = {
+                viewModelScope.launch {
+                    Napier.d { "isPurchased: $it" }
+
+                    userDataRepository.setPlusMode(it)
+                    continuation.resume(it)
+                }
+            },
+            completionHandler = {
+                // do nothing
+            }
+        )
     }
 }

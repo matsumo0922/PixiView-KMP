@@ -25,6 +25,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -37,6 +38,7 @@ import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.dp
 import dev.icerock.moko.resources.compose.painterResource
 import dev.icerock.moko.resources.compose.stringResource
+import kotlinx.coroutines.launch
 import me.matsumo.fanbox.core.ui.MR
 import me.matsumo.fanbox.core.ui.extensition.LocalNavigationType
 import me.matsumo.fanbox.core.ui.extensition.NavigatorExtension
@@ -49,7 +51,7 @@ import org.koin.compose.koinInject
 
 @Composable
 internal fun WelcomeTopScreen(
-    navigateToWelcomePlus: () -> Unit,
+    navigateToWelcomeLogin: () -> Unit,
     modifier: Modifier = Modifier,
     viewModel: WelcomeTopViewModel = koinViewModel(WelcomeTopViewModel::class),
     navigatorExtension: NavigatorExtension = koinInject(),
@@ -69,7 +71,7 @@ internal fun WelcomeTopScreen(
 
             SecondSection(
                 modifier = Modifier.weight(1f),
-                navigateToWelcomePlus = navigateToWelcomePlus,
+                navigateToWelcomeLogin = navigateToWelcomeLogin,
                 setAgreedPrivacyPolicy = viewModel::setAgreedPrivacyPolicy,
                 setAgreedTermsOfService = viewModel::setAgreedTermsOfService,
                 navigateToWebPage = navigatorExtension::navigateToWebPage,
@@ -93,7 +95,7 @@ internal fun WelcomeTopScreen(
 
                 SecondSection(
                     modifier = Modifier.weight(3f),
-                    navigateToWelcomePlus = navigateToWelcomePlus,
+                    navigateToWelcomeLogin = navigateToWelcomeLogin,
                     setAgreedPrivacyPolicy = viewModel::setAgreedPrivacyPolicy,
                     setAgreedTermsOfService = viewModel::setAgreedTermsOfService,
                     navigateToWebPage = navigatorExtension::navigateToWebPage,
@@ -122,12 +124,14 @@ private fun FirstSection(
 
 @Composable
 private fun SecondSection(
-    navigateToWelcomePlus: () -> Unit,
+    navigateToWelcomeLogin: () -> Unit,
     navigateToWebPage: (String) -> Unit,
-    setAgreedPrivacyPolicy: () -> Unit,
-    setAgreedTermsOfService: () -> Unit,
+    setAgreedPrivacyPolicy: suspend () -> Unit,
+    setAgreedTermsOfService: suspend () -> Unit,
     modifier: Modifier = Modifier,
 ) {
+    val scope = rememberCoroutineScope()
+
     var isAgreedPrivacyPolicy by remember { mutableStateOf(false) }
     var isAgreedTermsOfService by remember { mutableStateOf(false) }
 
@@ -193,9 +197,11 @@ private fun SecondSection(
             shape = CircleShape,
             enabled = isAgreedPrivacyPolicy && isAgreedTermsOfService,
             onClick = {
-                setAgreedPrivacyPolicy.invoke()
-                setAgreedTermsOfService.invoke()
-                navigateToWelcomePlus.invoke()
+                scope.launch {
+                    setAgreedPrivacyPolicy.invoke()
+                    setAgreedTermsOfService.invoke()
+                    navigateToWelcomeLogin.invoke()
+                }
             },
         ) {
             Text(

@@ -4,7 +4,7 @@ import me.matsumo.fanbox.androidTestImplementation
 import me.matsumo.fanbox.debugImplementation
 import me.matsumo.fanbox.implementation
 import me.matsumo.fanbox.library
-import me.matsumo.fanbox.libs
+import me.matsumo.fanbox.libsMain
 import me.matsumo.fanbox.version
 import org.gradle.api.Plugin
 import org.gradle.api.Project
@@ -19,15 +19,15 @@ class KmpAndroidCompose : Plugin<Project> {
 
             android {
                 buildFeatures.compose = true
-                composeOptions.kotlinCompilerExtensionVersion = libs.version("kotlinCompiler")
+                composeOptions.kotlinCompilerExtensionVersion = libsMain.version("kotlinCompiler")
             }
 
             dependencies {
-                val bom = libs.library("androidx-compose-bom")
+                val bom = libsMain.library("androidx-compose-bom")
 
                 implementation(project.dependencies.platform(bom))
-                implementation(libs.library("androidx-compose-ui-tooling-preview"))
-                debugImplementation(libs.library("androidx-compose-ui-tooling"))
+                implementation(libsMain.library("androidx-compose-ui-tooling-preview"))
+                debugImplementation(libsMain.library("androidx-compose-ui-tooling"))
                 androidTestImplementation(project.dependencies.platform(bom))
             }
         }
