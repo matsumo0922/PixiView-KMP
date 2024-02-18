@@ -22,7 +22,7 @@ kotlinxSerializationJson = "1.6.2"
 kotlinxImmutable = "0.3.7"
 
 # KMP
-kmpCompose = "1.6.0-rc01"
+kmpCompose = "1.5.12"
 kmpComplete = "1.1.0"
 kmpSwiftKlib = "0.5.1"
 mokoResource = "0.23.0"

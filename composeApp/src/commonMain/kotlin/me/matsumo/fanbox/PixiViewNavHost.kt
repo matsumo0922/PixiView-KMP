@@ -15,6 +15,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.unit.dp
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 import me.matsumo.fanbox.core.ui.animation.NavigateAnimation
@@ -69,6 +70,7 @@ import moe.tlaster.precompose.flow.collectAsStateWithLifecycle
 import moe.tlaster.precompose.navigation.NavHost
 import moe.tlaster.precompose.navigation.Navigator
 import moe.tlaster.precompose.navigation.RouteBuilder
+import moe.tlaster.precompose.navigation.SwipeProperties
 import moe.tlaster.precompose.navigation.transition.NavTransition
 
 @Composable
@@ -136,6 +138,10 @@ private fun CompactNavHost(
         modifier = modifier,
         navigator = navigator,
         initialRoute = startDestination,
+        swipeProperties = SwipeProperties(
+            spaceToSwipe = 16.dp,
+            positionalThreshold = { it * 0.3f },
+        ),
         navTransition = remember {
             NavTransition(
                 createTransition = slideInHorizontally { it },
@@ -161,6 +167,10 @@ private fun MediumNavHost(
         modifier = modifier,
         navigator = navigator,
         initialRoute = startDestination,
+        swipeProperties = SwipeProperties(
+            spaceToSwipe = 16.dp,
+            positionalThreshold = { it * 0.3f },
+        ),
         navTransition = remember {
             NavTransition(
                 createTransition = slideInHorizontally { it },
