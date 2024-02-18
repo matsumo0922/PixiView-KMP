@@ -2,12 +2,10 @@ package me.matsumo.fanbox.feature.library.home
 
 import androidx.compose.runtime.Stable
 import androidx.paging.PagingData
-import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.collectLatest
-import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.launch
 import me.matsumo.fanbox.core.common.PixiViewConfig
 import me.matsumo.fanbox.core.common.util.suspendRunCatching
@@ -38,11 +36,8 @@ class LibraryHomeViewModel(
         ),
     )
 
-    private val _cancelPlusTrigger = Channel<Unit>()
-
     val uiState = _uiState.asStateFlow()
-
-    val cancelPlusTrigger = _cancelPlusTrigger.receiveAsFlow()
+    val updatePlusTrigger = userDataRepository.updatePlusMode
 
     // val adsPreLoader = nativeAdsPreLoader
 
@@ -66,18 +61,6 @@ class LibraryHomeViewModel(
                 _uiState.value = uiState.value.copy(bookmarkedPosts = it)
             }
         }
-
-        /*viewModelScope.launch {
-            runCatching {
-                val userData = userDataRepository.userData.first()
-                val plusPurchase = verifiedPlusUseCase.execute()
-
-                if (userData.isPlusMode && plusPurchase == null) {
-                    userDataRepository.setPlusMode(false)
-                    _cancelPlusTrigger.send(Unit)
-                }
-            }
-        }*/
 
         /*viewModelScope.launch {
             adsPreLoader.preloadAd()

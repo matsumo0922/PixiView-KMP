@@ -53,7 +53,7 @@ internal fun LibraryHomeScreen(
     navigateToPostDetailFromSupported: (PostId) -> Unit,
     navigateToCreatorPlans: (CreatorId) -> Unit,
     navigateToCreatorPosts: (CreatorId) -> Unit,
-    navigateToCancelPlus: (SimpleAlertContents) -> Unit,
+    navigateToSimpleAlert: (SimpleAlertContents) -> Unit,
     modifier: Modifier = Modifier,
     viewModel: LibraryHomeViewModel = koinViewModel(LibraryHomeViewModel::class),
 ) {
@@ -73,8 +73,8 @@ internal fun LibraryHomeScreen(
     )
 
     LaunchedEffect(true) {
-        viewModel.cancelPlusTrigger.collectLatest {
-            navigateToCancelPlus.invoke(SimpleAlertContents.CancelPlus)
+        viewModel.updatePlusTrigger.collectLatest {
+            navigateToSimpleAlert.invoke(if (it) SimpleAlertContents.PurchasePlus else SimpleAlertContents.CancelPlus)
         }
     }
 

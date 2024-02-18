@@ -52,6 +52,11 @@ enum class SimpleAlertContents(
         negativeTextRes = MR.strings.common_cancel,
         isCaution = true,
     ),
+    PurchasePlus(
+        titleRes = MR.strings.billing_plus_purchase_title,
+        descriptionRes = MR.strings.billing_plus_purchase_message,
+        positiveTextRes = MR.strings.common_ok,
+    ),
     CancelPlus(
         titleRes = MR.strings.billing_plus_cancel_title,
         descriptionRes = MR.strings.billing_plus_cancel_message,

@@ -22,7 +22,7 @@ fun RouteBuilder.libraryHomeScreen(
     navigateToPostDetailFromSupported: (PostId) -> Unit,
     navigateToCreatorPosts: (CreatorId) -> Unit,
     navigateToCreatorPlans: (CreatorId) -> Unit,
-    navigateToCancelPlus: (SimpleAlertContents) -> Unit,
+    navigateToSimpleAlert: (SimpleAlertContents) -> Unit,
 ) {
     scene(
         route = LibraryHomeRoute,
@@ -35,7 +35,7 @@ fun RouteBuilder.libraryHomeScreen(
             navigateToPostDetailFromSupported = navigateToPostDetailFromSupported,
             navigateToCreatorPosts = navigateToCreatorPosts,
             navigateToCreatorPlans = navigateToCreatorPlans,
-            navigateToCancelPlus = navigateToCancelPlus,
+            navigateToSimpleAlert = navigateToSimpleAlert,
         )
     }
 }

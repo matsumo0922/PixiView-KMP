@@ -24,6 +24,7 @@ kotlinxImmutable = "0.3.7"
 # KMP
 kmpCompose = "1.5.11"
 kmpComplete = "1.1.0"
+kmpSwiftKlib = "0.5.1"
 mokoResource = "0.23.0"
 mokoPermissions = "0.17.0"
 mokoBiometry = "0.4.0"
@@ -138,6 +139,7 @@ module-graph = { id = "dev.iurysouza.modulegraph", version = "0.4.0" }
 kmp = { id = "org.jetbrains.kotlin.multiplatform", version.ref = "kotlin" }
 kmpCompose = { id = "org.jetbrains.compose", version.ref = "kmpCompose" }
 kmpComplete = { id = "com.louiscad.complete-kotlin", version.ref = "kmpComplete" }
+kmpSwiftKlib = { id = "io.github.ttypic.swiftklib", version.ref = "kmpSwiftKlib" }
 
 [libraries]
 ## Dependency of the include build-logic
@@ -291,9 +293,6 @@ ktot-logging = { module = "io.ktor:ktor-client-logging", version.ref = "ktor" }
 protobuf-kotlin-lite = { group = "com.google.protobuf", name = "protobuf-kotlin-lite", version.ref = "protobuf" }
 protobuf-protoc = { group = "com.google.protobuf", name = "protoc", version.ref = "protobuf" }
 
-# Log
-puree = { module = "com.cookpad.puree-kotlin:puree-kotlin", version.ref = "puree" }
-
 # Others
 dagger-hilt = { module = "com.google.dagger:hilt-android", version.ref = "dagger" }
 dagger-hilt-compiler = { module = "com.google.dagger:hilt-compiler", version.ref = "dagger" }
@@ -345,7 +344,6 @@ infra-api = [
     "kotlinx-serialization-json",
     "kotlinx-collections-immutable",
     "uuid",
-    "puree",
     "napier",
 ]
 

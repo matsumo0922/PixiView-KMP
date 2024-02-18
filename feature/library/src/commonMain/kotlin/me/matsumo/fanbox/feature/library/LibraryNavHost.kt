@@ -2,14 +2,14 @@ package me.matsumo.fanbox.feature.library
 
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import me.matsumo.fanbox.feature.library.home.LibraryHomeRoute
-import me.matsumo.fanbox.feature.library.home.libraryHomeScreen
 import me.matsumo.fanbox.core.model.fanbox.id.CreatorId
 import me.matsumo.fanbox.core.model.fanbox.id.PostId
 import me.matsumo.fanbox.core.ui.animation.NavigateAnimation
 import me.matsumo.fanbox.core.ui.view.SimpleAlertContents
 import me.matsumo.fanbox.feature.library.discovery.LibraryDiscoveryRoute
 import me.matsumo.fanbox.feature.library.discovery.libraryDiscoveryScreen
+import me.matsumo.fanbox.feature.library.home.LibraryHomeRoute
+import me.matsumo.fanbox.feature.library.home.libraryHomeScreen
 import me.matsumo.fanbox.feature.library.message.LibraryMessageRoute
 import me.matsumo.fanbox.feature.library.message.libraryMessageScreen
 import me.matsumo.fanbox.feature.library.notify.LibraryNotifyRoute
@@ -27,7 +27,7 @@ fun LibraryNavHost(
     navigateToPostDetailFromSupported: (postId: PostId) -> Unit,
     navigateToCreatorPosts: (creatorId: CreatorId) -> Unit,
     navigateToCreatorPlans: (creatorId: CreatorId) -> Unit,
-    navigateToCancelPlus: (SimpleAlertContents) -> Unit,
+    navigateToSimpleAlert: (SimpleAlertContents) -> Unit,
     modifier: Modifier = Modifier,
     startDestination: String = LibraryHomeRoute,
     applyOtherRoutes: RouteBuilder.() -> Unit = {},
@@ -44,7 +44,7 @@ fun LibraryNavHost(
             navigateToPostDetailFromSupported = navigateToPostDetailFromSupported,
             navigateToCreatorPosts = navigateToCreatorPosts,
             navigateToCreatorPlans = navigateToCreatorPlans,
-            navigateToCancelPlus = navigateToCancelPlus,
+            navigateToSimpleAlert = navigateToSimpleAlert,
         )
 
         libraryDiscoveryScreen(

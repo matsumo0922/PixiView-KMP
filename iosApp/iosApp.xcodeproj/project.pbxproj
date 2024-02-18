@@ -11,6 +11,8 @@
 		058557D9273AAEEB004C7B11 /* Preview Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 058557D8273AAEEB004C7B11 /* Preview Assets.xcassets */; };
 		2152FB042600AC8F00CF470E /* iOSApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2152FB032600AC8F00CF470E /* iOSApp.swift */; };
 		AD14F5952B55A31600B367F8 /* StoreKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = AD14F5942B55A31600B367F8 /* StoreKit.framework */; };
+		AD310C742B80D2F500D91635 /* BillingClient.swift in Sources */ = {isa = PBXBuildFile; fileRef = AD310C732B80D2F500D91635 /* BillingClient.swift */; };
+		AD310C762B80FF6C00D91635 /* BillingController.swift in Sources */ = {isa = PBXBuildFile; fileRef = AD310C752B80FF6C00D91635 /* BillingController.swift */; };
 		AD5F8B822B4D50A3004888F6 /* ComposeViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = AD5F8B812B4D50A3004888F6 /* ComposeViewController.swift */; };
 /* End PBXBuildFile section */
 
@@ -22,6 +24,8 @@
 		7555FF8C242A565B00829871 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		AB3632DC29227652001CCB65 /* Config.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = Config.xcconfig; sourceTree = "<group>"; };
 		AD14F5942B55A31600B367F8 /* StoreKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = StoreKit.framework; path = System/Library/Frameworks/StoreKit.framework; sourceTree = SDKROOT; };
+		AD310C732B80D2F500D91635 /* BillingClient.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BillingClient.swift; sourceTree = "<group>"; };
+		AD310C752B80FF6C00D91635 /* BillingController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BillingController.swift; sourceTree = "<group>"; };
 		AD5F8B812B4D50A3004888F6 /* ComposeViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ComposeViewController.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -74,6 +78,7 @@
 		7555FF7D242A565900829871 /* iosApp */ = {
 			isa = PBXGroup;
 			children = (
+				AD310C6D2B80AB7000D91635 /* Billing */,
 				058557BA273AAA24004C7B11 /* Assets.xcassets */,
 				7555FF8C242A565B00829871 /* Info.plist */,
 				2152FB032600AC8F00CF470E /* iOSApp.swift */,
@@ -89,6 +94,15 @@
 				AB3632DC29227652001CCB65 /* Config.xcconfig */,
 			);
 			path = Configuration;
+			sourceTree = "<group>";
+		};
+		AD310C6D2B80AB7000D91635 /* Billing */ = {
+			isa = PBXGroup;
+			children = (
+				AD310C732B80D2F500D91635 /* BillingClient.swift */,
+				AD310C752B80FF6C00D91635 /* BillingController.swift */,
+			);
+			path = Billing;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -202,7 +216,9 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				AD310C762B80FF6C00D91635 /* BillingController.swift in Sources */,
 				2152FB042600AC8F00CF470E /* iOSApp.swift in Sources */,
+				AD310C742B80D2F500D91635 /* BillingClient.swift in Sources */,
 				AD5F8B822B4D50A3004888F6 /* ComposeViewController.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -342,7 +358,7 @@
 					"$(SRCROOT)/../shared/build/xcode-frameworks/$(CONFIGURATION)/$(SDK_NAME)\n$(SRCROOT)/../composeApp/build/xcode-frameworks/$(CONFIGURATION)/$(SDK_NAME)",
 				);
 				INFOPLIST_FILE = iosApp/Info.plist;
-				IPHONEOS_DEPLOYMENT_TARGET = 14.1;
+				IPHONEOS_DEPLOYMENT_TARGET = 15.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -375,7 +391,7 @@
 					"$(SRCROOT)/../shared/build/xcode-frameworks/$(CONFIGURATION)/$(SDK_NAME)\n$(SRCROOT)/../composeApp/build/xcode-frameworks/$(CONFIGURATION)/$(SDK_NAME)",
 				);
 				INFOPLIST_FILE = iosApp/Info.plist;
-				IPHONEOS_DEPLOYMENT_TARGET = 14.1;
+				IPHONEOS_DEPLOYMENT_TARGET = 15.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",

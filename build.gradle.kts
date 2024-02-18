@@ -6,6 +6,7 @@ plugins {
     alias(libs.plugins.kmp) apply false
     alias(libs.plugins.kmpCompose) apply false
     alias(libs.plugins.kmpComplete) apply false
+    alias(libs.plugins.kmpSwiftKlib) apply false
     alias(libs.plugins.kotlin.android) apply false
     alias(libs.plugins.kotlin.serialization) apply false
     alias(libs.plugins.firebase.crashlytics) apply false

@@ -1,13 +1,13 @@
 import org.jetbrains.compose.ExperimentalComposeLibrary
 
 plugins {
-    id("pixiview.kmp")
-    id("pixiview.kmp.android.library")
-    id("pixiview.kmp.android.compose")
-    id("pixiview.kmp.android")
-    id("pixiview.kmp.ios")
-    id("pixiview.kmp.resources")
-    id("pixiview.detekt")
+    id("pixiview.primitive.kmp.common")
+    id("pixiview.primitive.kmp.android.library")
+    id("pixiview.primitive.kmp.android.compose")
+    id("pixiview.primitive.kmp.android")
+    id("pixiview.primitive.kmp.ios")
+    id("pixiview.primitive.kmp.resources")
+    id("pixiview.primitive.detekt")
 }
 
 android {

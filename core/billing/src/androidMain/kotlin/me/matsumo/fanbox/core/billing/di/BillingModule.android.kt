@@ -5,8 +5,8 @@ import me.matsumo.fanbox.core.billing.BillingClient
 import me.matsumo.fanbox.core.billing.BillingClientImpl
 import me.matsumo.fanbox.core.billing.BillingClientProvider
 import me.matsumo.fanbox.core.billing.BillingClientProviderImpl
-import me.matsumo.fanbox.core.billing.BillingInitialize
-import me.matsumo.fanbox.core.billing.BillingInitializeImpl
+import me.matsumo.fanbox.core.billing.BillingStatus
+import me.matsumo.fanbox.core.billing.BillingStatusImpl
 import me.matsumo.fanbox.core.billing.usecase.ConsumePlusUseCase
 import me.matsumo.fanbox.core.billing.usecase.PurchaseDonateUseCase
 import me.matsumo.fanbox.core.billing.usecase.PurchasePlusSubscriptionUseCase
@@ -17,9 +17,12 @@ import org.koin.dsl.module
 
 actual val billingModule: Module = module {
 
-    single<BillingInitialize> {
-        BillingInitializeImpl(
+    single<BillingStatus> {
+        BillingStatusImpl(
+            userDataRepository = get(),
             billingClient = get(),
+            verifyPlusUseCase = get(),
+            ioDispatcher = get(),
         )
     }
 

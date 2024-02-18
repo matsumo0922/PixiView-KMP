@@ -133,7 +133,7 @@ fun LibraryScreen(
                                 navigateToPostDetailFromSupported = navigateToPostDetailFromSupported,
                                 navigateToCreatorPosts = navigateToCreatorPosts,
                                 navigateToCreatorPlans = navigateToCreatorPlans,
-                                navigateToCancelPlus = navigateToCancelPlus,
+                                navigateToSimpleAlert = navigateToCancelPlus,
                             )
                         }
                     }

@@ -1,6 +1,8 @@
 package me.matsumo.fanbox.core.repository
 
+import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.receiveAsFlow
 import me.matsumo.fanbox.core.datastore.PixiViewDataStore
 import me.matsumo.fanbox.core.model.ThemeColorConfig
 import me.matsumo.fanbox.core.model.ThemeConfig
@@ -9,6 +11,7 @@ import me.matsumo.fanbox.core.model.UserData
 interface UserDataRepository {
 
     val userData: Flow<UserData>
+    val updatePlusMode: Flow<Boolean>
 
     suspend fun setDefault()
     suspend fun setPixiViewId(id: String)
@@ -31,6 +34,10 @@ interface UserDataRepository {
 class UserDataRepositoryImpl(
     private val pixiViewDataStore: PixiViewDataStore,
 ) : UserDataRepository {
+
+    private val _updatePlusMode = Channel<Boolean>(Channel.BUFFERED)
+
+    override val updatePlusMode: Flow<Boolean> = _updatePlusMode.receiveAsFlow()
 
     override val userData: Flow<UserData> = pixiViewDataStore.userData
 
@@ -90,11 +97,12 @@ class UserDataRepositoryImpl(
         pixiViewDataStore.setDeveloperMode(isDeveloperMode)
     }
 
-    override suspend fun setPlusMode(isPlusMode: Boolean) {
-        pixiViewDataStore.setPlusMode(isPlusMode)
-    }
-
     override suspend fun setUseDynamicColor(useDynamicColor: Boolean) {
         pixiViewDataStore.setUseDynamicColor(useDynamicColor)
+    }
+
+    override suspend fun setPlusMode(isPlusMode: Boolean) {
+        pixiViewDataStore.setPlusMode(isPlusMode)
+        _updatePlusMode.send(isPlusMode)
     }
 }

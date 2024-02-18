@@ -5,12 +5,12 @@ import com.codingfeline.buildkonfig.gradle.TargetConfigDsl
 import org.jetbrains.kotlin.konan.properties.Properties
 
 plugins {
-    id("pixiview.kmp")
-    id("pixiview.kmp.android.application")
-    id("pixiview.kmp.android.compose")
-    id("pixiview.kmp.android")
-    id("pixiview.kmp.ios")
-    id("pixiview.detekt")
+    id("pixiview.primitive.kmp.common")
+    id("pixiview.primitive.kmp.android.application")
+    id("pixiview.primitive.kmp.android.compose")
+    id("pixiview.primitive.kmp.android")
+    id("pixiview.primitive.kmp.ios")
+    id("pixiview.primitive.detekt")
 }
 
 // This ID must be valid or the app will crash.

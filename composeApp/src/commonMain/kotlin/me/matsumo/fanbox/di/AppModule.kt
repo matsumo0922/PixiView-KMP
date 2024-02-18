@@ -31,7 +31,6 @@ val appModule = module {
         PixiViewViewModel(
             userDataRepository = get(),
             fanboxRepository = get(),
-            billingInitialize = get(),
         )
     }
 }

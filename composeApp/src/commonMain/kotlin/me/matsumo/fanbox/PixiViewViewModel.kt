@@ -16,7 +16,6 @@ import kotlinx.coroutines.flow.firstOrNull
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.isActive
 import kotlinx.coroutines.launch
-import me.matsumo.fanbox.core.billing.BillingInitialize
 import me.matsumo.fanbox.core.common.util.suspendRunCatching
 import me.matsumo.fanbox.core.model.ScreenState
 import me.matsumo.fanbox.core.model.UserData
@@ -31,7 +30,6 @@ import kotlin.time.Duration.Companion.minutes
 class PixiViewViewModel(
     private val userDataRepository: UserDataRepository,
     private val fanboxRepository: FanboxRepository,
-    private val billingInitialize: BillingInitialize,
 ) : ViewModel() {
 
     private val _isLoggedInFlow: MutableSharedFlow<Boolean> = MutableSharedFlow(replay = 1)
@@ -60,8 +58,6 @@ class PixiViewViewModel(
     )
 
     init {
-        billingClientInit()
-
         viewModelScope.launch {
             fanboxRepository.logoutTrigger.collectLatest {
                 _isLoggedInFlow.emit(false)
@@ -74,14 +70,6 @@ class PixiViewViewModel(
                 delay(10.minutes)
             }
         }
-    }
-
-    fun billingClientInit() {
-        billingInitialize.init()
-    }
-
-    fun billingClientFinish() {
-        billingInitialize.finish()
     }
 
     fun initPixiViewId() {

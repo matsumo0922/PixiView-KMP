@@ -210,7 +210,7 @@ private fun ExpandedNavHost(
                 navigateToPostDetailFromSupported = { subNavigator.navigateToPostDetail(it, PostDetailPagingType.Supported) },
                 navigateToCreatorPosts = { mainNavigator.navigateToCreatorTop(it, isPosts = true) },
                 navigateToCreatorPlans = { mainNavigator.navigateToCreatorTop(it) },
-                navigateToCancelPlus = { scope.launch { mainNavigator.navigateToSimpleAlertDialog(it) } },
+                navigateToSimpleAlert = { scope.launch { mainNavigator.navigateToSimpleAlertDialog(it) } },
             ) {
                 applyNavGraph(scope, mainNavigator, subNavigator)
             }
