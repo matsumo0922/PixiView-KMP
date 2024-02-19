@@ -12,13 +12,13 @@ import me.matsumo.fanbox.core.common.PixiViewConfig
 import me.matsumo.fanbox.core.common.util.suspendRunCatching
 import me.matsumo.fanbox.core.model.ScreenState
 import me.matsumo.fanbox.core.model.UserData
-import me.matsumo.fanbox.core.model.changeContent
 import me.matsumo.fanbox.core.model.fanbox.FanboxCreatorDetail
 import me.matsumo.fanbox.core.model.fanbox.FanboxCreatorPlan
 import me.matsumo.fanbox.core.model.fanbox.FanboxCreatorTag
 import me.matsumo.fanbox.core.model.fanbox.FanboxPost
 import me.matsumo.fanbox.core.model.fanbox.id.CreatorId
 import me.matsumo.fanbox.core.model.fanbox.id.PostId
+import me.matsumo.fanbox.core.model.updateWhenIdle
 import me.matsumo.fanbox.core.repository.FanboxRepository
 import me.matsumo.fanbox.core.repository.UserDataRepository
 import me.matsumo.fanbox.core.ui.MR
@@ -43,13 +43,13 @@ class CreatorTopViewModel(
     init {
         viewModelScope.launch {
             userDataRepository.userData.collectLatest { data ->
-                _screenState.value = screenState.value.changeContent { it.copy(userData = data) }
+                _screenState.value = screenState.updateWhenIdle { it.copy(userData = data) }
             }
         }
 
         viewModelScope.launch {
             fanboxRepository.bookmarkedPosts.collectLatest { data ->
-                _screenState.value = screenState.value.changeContent { it.copy(bookmarkedPosts = data) }
+                _screenState.value = screenState.updateWhenIdle { it.copy(bookmarkedPosts = data) }
             }
         }
 

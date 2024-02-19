@@ -45,7 +45,7 @@ val creatorModule = module {
     factory {
         CreatorPostsDownloadViewModel(
             fanboxRepository = get(),
-            ioDispatcher = get(),
+            imageDownloader = get(),
         )
     }
 }

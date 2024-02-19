@@ -212,12 +212,16 @@ private fun SettingTopScreen(
                     onClickAccountSetting = onClickAccountSetting,
                     onClickNotifySetting = onClickNotifySetting,
                 )
+            }
 
+            item {
                 SettingTopThemeSection(
                     modifier = Modifier.fillMaxWidth(),
                     onClickAppTheme = onClickThemeSetting,
                 )
+            }
 
+            item {
                 SettingTopGeneralSection(
                     modifier = Modifier.fillMaxWidth(),
                     userData = userData,
@@ -228,7 +232,9 @@ private fun SettingTopScreen(
                     onClickHideRestricted = onClickHideRestricted,
                     onClickGridMode = onClickGridMode,
                 )
+            }
 
+            item {
                 SettingTopInformationSection(
                     modifier = Modifier.fillMaxWidth(),
                     config = config,
@@ -236,7 +242,9 @@ private fun SettingTopScreen(
                     fanboxMetaData = metaData,
                     fanboxSessionId = fanboxSessionId,
                 )
+            }
 
+            item {
                 SettingTopOthersSection(
                     modifier = Modifier.fillMaxWidth(),
                     userData = userData,

@@ -24,7 +24,7 @@ import me.matsumo.fanbox.core.ui.view.LoadingView
 fun <T> AsyncLoadContents(
     screenState: ScreenState<T>,
     modifier: Modifier = Modifier,
-    otherModifier: Modifier = Modifier,
+    otherModifier: Modifier = modifier,
     containerColor: Color = MaterialTheme.colorScheme.surface,
     cornerShape: RoundedCornerShape = RoundedCornerShape(0.dp),
     retryAction: () -> Unit = {},
@@ -36,7 +36,7 @@ fun <T> AsyncLoadContents(
             .background(containerColor),
         targetState = screenState,
         transitionSpec = { fadeIn().togetherWith(fadeOut()) },
-        contentKey = { it::class },
+        contentKey = { it::class.simpleName },
         label = "AsyncLoadContents",
     ) { state ->
         when (state) {

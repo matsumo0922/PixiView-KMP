@@ -28,8 +28,8 @@ val LocalFanboxCookie = staticCompositionLocalOf { FanboxCookie() }
 val LocalFanboxMetadata = staticCompositionLocalOf { FanboxMetaData.dummy() }
 
 interface ImageDownloader {
-    suspend fun downloadImage(item: FanboxPostDetail.ImageItem): Boolean
-    suspend fun downloadFile(item: FanboxPostDetail.FileItem): Boolean
+    suspend fun downloadImage(item: FanboxPostDetail.ImageItem, updateCallback: (Float) -> Unit = {}): Boolean
+    suspend fun downloadFile(item: FanboxPostDetail.FileItem, updateCallback: (Float) -> Unit = {}): Boolean
 }
 
 @Composable

@@ -35,7 +35,7 @@ import me.matsumo.fanbox.core.ui.theme.color.LightBrownColorScheme
 import me.matsumo.fanbox.core.ui.theme.color.LightGreenColorScheme
 import me.matsumo.fanbox.core.ui.theme.color.LightPinckColorScheme
 import me.matsumo.fanbox.core.ui.theme.color.LightPurpleColorScheme
-import me.matsumo.fanbox.feature.setting.SettingTextItem
+import me.matsumo.fanbox.core.ui.component.SettingTextItem
 
 @Composable
 internal fun SettingThemeColorSection(

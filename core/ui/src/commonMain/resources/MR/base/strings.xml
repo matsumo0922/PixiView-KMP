@@ -21,6 +21,7 @@
     <string name="common_unknown">不明</string>
     <string name="common_details">詳細</string>
     <string name="common_delete">削除</string>
+    <string name="common_completed">完了</string>
     <string name="common_download">ダウンロード</string>
     <string name="common_downloaded">ダウンロードしました</string>
     <string name="common_supporting">支援中</string>
@@ -123,12 +124,18 @@
     <string name="creator_download_all">投稿を一括ダウンロード</string>
     <string name="creator_download_all_error">一括ダウンロードはFANBOX Viewer+専用機能です</string>
     <string name="creator_posts_download_title">一括ダウンロード</string>
-    <string name="creator_posts_download_message">クリエイターの投稿を一括でダウンロードします。\n\n※FANBOXへのアクセス集中を防ぐため、ダウンロード速度にはあえて遅延を入れております。ご了承ください。</string>
-    <string name="creator_posts_download_prepare">クリエイター情報を収集中です\nしばらくお待ちください</string>
+    <string name="creator_posts_download_message">※ FANBOXへのアクセス集中を防ぐため、ダウンロード速度にはあえて遅延を入れております。ご了承ください。</string>
     <string name="creator_posts_download_ignore_free">無料コンテンツを省く</string>
+    <string name="creator_posts_download_ignore_free_description">プランに入っていなくても閲覧できる投稿を省きます</string>
     <string name="creator_posts_download_ignore_file">ファイルを省く</string>
-    <string name="creator_posts_download_start">一括ダウンロードを開始しました</string>
-    <string name="creator_posts_download_notify_title">%1$sの投稿を一括ダウンロードしています</string>
+    <string name="creator_posts_download_ignore_file_description">投稿に付随しているファイル（ZIP,PDFなど）を省きます</string>
+    <string name="creator_posts_download_button">一括ダウンロード（%1$d件）</string>
+    <string name="creator_posts_download_button_downloading">一括ダウンロード中（%1$d/%2$d）</string>
+    <string name="creator_posts_download_dialog_title">投稿を取得中…</string>
+    <string name="creator_posts_download_alert_title">注意</string>
+    <string name="creator_posts_download_alert_message">一括ダウンロードは進行中です。\n停止しますか？</string>
+    <string name="creator_posts_download_alert_stop">停止</string>
+    <string name="creator_posts_download_ignore_keyword_placeholder">無視するキーワード（カンマ区切り）</string>
     <string name="creator_recommended">おすすめのクリエイター</string>
     <string name="creator_following_pixiv">Pixivでフォロー中のクリエイター</string>
 

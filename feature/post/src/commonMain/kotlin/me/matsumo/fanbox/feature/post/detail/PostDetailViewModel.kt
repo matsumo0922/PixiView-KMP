@@ -11,13 +11,13 @@ import me.matsumo.fanbox.core.common.util.suspendRunCatching
 import me.matsumo.fanbox.core.model.PageOffsetInfo
 import me.matsumo.fanbox.core.model.ScreenState
 import me.matsumo.fanbox.core.model.UserData
-import me.matsumo.fanbox.core.model.changeContent
 import me.matsumo.fanbox.core.model.fanbox.FanboxCreatorDetail
 import me.matsumo.fanbox.core.model.fanbox.FanboxMetaData
 import me.matsumo.fanbox.core.model.fanbox.FanboxPost
 import me.matsumo.fanbox.core.model.fanbox.FanboxPostDetail
 import me.matsumo.fanbox.core.model.fanbox.id.CommentId
 import me.matsumo.fanbox.core.model.fanbox.id.PostId
+import me.matsumo.fanbox.core.model.updateWhenIdle
 import me.matsumo.fanbox.core.repository.FanboxRepository
 import me.matsumo.fanbox.core.repository.UserDataRepository
 import me.matsumo.fanbox.core.ui.MR
@@ -38,13 +38,13 @@ class PostDetailViewModel(
     init {
         viewModelScope.launch {
             userDataRepository.userData.collectLatest { data ->
-                _screenState.value = screenState.value.changeContent { it.copy(userData = data) }
+                _screenState.value = screenState.updateWhenIdle { it.copy(userData = data) }
             }
         }
 
         viewModelScope.launch {
             fanboxRepository.bookmarkedPosts.collectLatest { bookmarkedPosts ->
-                _screenState.value = screenState.value.changeContent {
+                _screenState.value = screenState.updateWhenIdle {
                     it.copy(postDetail = it.postDetail.copy(isBookmarked = it.postDetail.id in bookmarkedPosts))
                 }
             }
@@ -72,7 +72,7 @@ class PostDetailViewModel(
 
         viewModelScope.launch {
             fanboxRepository.bookmarkedPosts.collectLatest { bookmarkedPosts ->
-                _screenState.value = screenState.value.changeContent {
+                _screenState.value = screenState.updateWhenIdle {
                     it.copy(postDetail = it.postDetail.copy(isBookmarked = it.postDetail.id in bookmarkedPosts))
                 }
             }
@@ -103,7 +103,7 @@ class PostDetailViewModel(
         viewModelScope.launch {
             val comments = fanboxRepository.getPostComment(postId, offset)
 
-            _screenState.value = screenState.value.changeContent {
+            _screenState.value = screenState.updateWhenIdle {
                 it.copy(
                     postDetail = it.postDetail.copy(
                         commentList = PageOffsetInfo(

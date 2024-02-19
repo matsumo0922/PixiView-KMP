@@ -522,5 +522,6 @@ private fun String.translateToCursor(): FanboxCursor {
     return FanboxCursor(
         maxPublishedDatetime = parameters["maxPublishedDatetime"]!!,
         maxId = parameters["maxId"]!!,
+        limit = parameters["limit"]?.toInt(),
     )
 }

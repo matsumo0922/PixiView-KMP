@@ -9,9 +9,9 @@ import kotlinx.coroutines.launch
 import me.matsumo.fanbox.core.common.util.suspendRunCatching
 import me.matsumo.fanbox.core.model.ScreenState
 import me.matsumo.fanbox.core.model.UserData
-import me.matsumo.fanbox.core.model.changeContent
 import me.matsumo.fanbox.core.model.fanbox.FanboxPost
 import me.matsumo.fanbox.core.model.fanbox.id.PostId
+import me.matsumo.fanbox.core.model.updateWhenIdle
 import me.matsumo.fanbox.core.repository.FanboxRepository
 import me.matsumo.fanbox.core.repository.UserDataRepository
 import moe.tlaster.precompose.viewmodel.ViewModel
@@ -29,7 +29,7 @@ class BookmarkedPostsViewModel(
     init {
         viewModelScope.launch {
             fanboxRepository.bookmarkedPosts.collectLatest { bookmarkedPosts ->
-                _screenState.value = screenState.value.changeContent { data ->
+                _screenState.value = screenState.updateWhenIdle { data ->
                     data.copy(bookmarkedPosts = data.bookmarkedPosts.map { it.copy(isBookmarked = it.id in bookmarkedPosts) })
                 }
             }
@@ -65,7 +65,7 @@ class BookmarkedPostsViewModel(
                 }
             }
 
-            _screenState.value = screenState.value.changeContent { it.copy(bookmarkedPosts = result) }
+            _screenState.value = screenState.updateWhenIdle { it.copy(bookmarkedPosts = result) }
         }
     }
 

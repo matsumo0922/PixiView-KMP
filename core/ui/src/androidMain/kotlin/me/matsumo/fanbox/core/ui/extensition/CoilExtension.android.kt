@@ -31,22 +31,22 @@ class ImageDownloaderImpl(
     private val fanboxRepository: FanboxRepository,
 ): ImageDownloader {
 
-    override suspend fun downloadImage(item: FanboxPostDetail.ImageItem): Boolean = suspendRunCatching {
+    override suspend fun downloadImage(item: FanboxPostDetail.ImageItem, updateCallback: (Float) -> Unit): Boolean = suspendRunCatching {
         val mime = MimeTypeMap.getSingleton().getMimeTypeFromExtension(item.extension)
         val uri = getUri(context, "illust-${item.postId}-${item.id}.${item.extension}", Environment.DIRECTORY_PICTURES, "FANBOX", mime.orEmpty())
         val outputStream = context.contentResolver.openOutputStream(uri!!)!!
 
-        fanboxRepository.download(item.originalUrl)
+        fanboxRepository.download(item.originalUrl, updateCallback)
             .bodyAsChannel()
             .copyTo(outputStream)
     }.isSuccess
 
-    override suspend fun downloadFile(item: FanboxPostDetail.FileItem): Boolean = suspendRunCatching {
+    override suspend fun downloadFile(item: FanboxPostDetail.FileItem, updateCallback: (Float) -> Unit): Boolean = suspendRunCatching {
         val mime = MimeTypeMap.getSingleton().getMimeTypeFromExtension(item.extension)
         val uri = getUri(context, "illust-${item.postId}-${item.id}.${item.extension}", Environment.DIRECTORY_DOWNLOADS, "FANBOX", mime.orEmpty())
         val outputStream = context.contentResolver.openOutputStream(uri!!)!!
 
-        fanboxRepository.download(item.url)
+        fanboxRepository.download(item.url, updateCallback)
             .bodyAsChannel()
             .copyTo(outputStream)
     }.isSuccess

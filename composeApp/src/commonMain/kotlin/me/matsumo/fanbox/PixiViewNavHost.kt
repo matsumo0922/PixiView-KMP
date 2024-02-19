@@ -356,10 +356,11 @@ private fun RouteBuilder.applyNavGraph(
     // dialog
 
     simpleAlertDialogDialog(
-        onResult = { mainNavController.goBackWith() },
+        onResult = { mainNavController.goBackWith(it) },
     )
 
     creatorPostsDownloadDialog(
+        navigateToCancelDownloadAlert = { contents, onResult -> scope.launch { mainNavController.navigateToSimpleAlertDialog(contents, onResult) } },
         terminate = { mainNavController.popBackStack() },
     )
 

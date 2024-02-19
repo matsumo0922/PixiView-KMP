@@ -90,8 +90,8 @@ class ImageDownloaderImpl(
 ): ImageDownloader {
 
     @OptIn(ExperimentalForeignApi::class, BetaInteropApi::class)
-    override suspend fun downloadImage(item: FanboxPostDetail.ImageItem): Boolean = suspendRunCatching {
-        val bytes = fanboxRepository.download(item.originalUrl).readBytes()
+    override suspend fun downloadImage(item: FanboxPostDetail.ImageItem, updateCallback: (Float) -> Unit): Boolean = suspendRunCatching {
+        val bytes = fanboxRepository.download(item.originalUrl, updateCallback).readBytes()
         val nsData = memScoped { NSData.create(bytes = allocArrayOf(bytes), length = bytes.size.toULong()) }
         val uiImage = UIImage.imageWithData(nsData)!!
 
@@ -99,7 +99,7 @@ class ImageDownloaderImpl(
     }.isSuccess
 
     @OptIn(ExperimentalForeignApi::class, BetaInteropApi::class)
-    override suspend fun downloadFile(item: FanboxPostDetail.FileItem): Boolean = suspendRunCatching {
+    override suspend fun downloadFile(item: FanboxPostDetail.FileItem, updateCallback: (Float) -> Unit): Boolean = suspendRunCatching {
         val path = NSHomeDirectory() + "/Documents/FANBOX"
         val name = "illust-${item.postId}-${item.id}.${item.extension}"
         val fileManager = NSFileManager.defaultManager
@@ -108,7 +108,7 @@ class ImageDownloaderImpl(
             fileManager.createDirectoryAtPath(path, true, null, null)
         }
 
-        val bytes = fanboxRepository.download(item.url).readBytes()
+        val bytes = fanboxRepository.download(item.url, updateCallback).readBytes()
         val nsData = memScoped { NSData.create(bytes = allocArrayOf(bytes), length = bytes.size.toULong()) }
 
         NSFileHandle.fileHandleForWritingAtPath(path + name)!!.apply {

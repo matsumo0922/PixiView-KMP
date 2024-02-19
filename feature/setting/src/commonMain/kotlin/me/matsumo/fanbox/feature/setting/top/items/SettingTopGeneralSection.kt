@@ -6,7 +6,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import me.matsumo.fanbox.core.model.UserData
 import me.matsumo.fanbox.core.ui.MR
-import me.matsumo.fanbox.feature.setting.SettingSwitchItem
+import me.matsumo.fanbox.core.ui.component.SettingSwitchItem
 
 @Composable
 internal fun SettingTopGeneralSection(

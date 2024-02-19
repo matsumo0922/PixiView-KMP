@@ -1,4 +1,4 @@
-package me.matsumo.fanbox.feature.setting
+package me.matsumo.fanbox.core.ui.component
 
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -19,7 +19,7 @@ import dev.icerock.moko.resources.StringResource
 import dev.icerock.moko.resources.compose.stringResource
 
 @Composable
-internal fun SettingSwitchItem(
+fun SettingSwitchItem(
     title: StringResource,
     description: StringResource?,
     value: Boolean,

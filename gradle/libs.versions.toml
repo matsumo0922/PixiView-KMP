@@ -89,7 +89,7 @@ puree = "1.4.0"
 # Others
 dagger = "2.49"
 koin = "3.5.1"
-ktor = "2.3.7"
+ktor = "2.3.8"
 coil = "2.5.0"
 coil3 = "3.0.0-alpha01"
 jsoup = "1.16.1"

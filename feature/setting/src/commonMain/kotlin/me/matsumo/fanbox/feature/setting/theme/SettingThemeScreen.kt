@@ -33,9 +33,9 @@ import me.matsumo.fanbox.core.model.ThemeConfig
 import me.matsumo.fanbox.core.model.UserData
 import me.matsumo.fanbox.core.ui.AsyncLoadContents
 import me.matsumo.fanbox.core.ui.MR
+import me.matsumo.fanbox.core.ui.component.SettingSwitchItem
 import me.matsumo.fanbox.core.ui.extensition.LocalSnackbarHostState
 import me.matsumo.fanbox.core.ui.extensition.SnackbarExtension
-import me.matsumo.fanbox.feature.setting.SettingSwitchItem
 import me.matsumo.fanbox.feature.setting.SettingTheme
 import me.matsumo.fanbox.feature.setting.theme.items.SettingThemeColorSection
 import me.matsumo.fanbox.feature.setting.theme.items.SettingThemeTabsSection

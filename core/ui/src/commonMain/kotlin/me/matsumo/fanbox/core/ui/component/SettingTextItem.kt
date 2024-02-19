@@ -1,4 +1,4 @@
-package me.matsumo.fanbox.feature.setting
+package me.matsumo.fanbox.core.ui.component
 
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.combinedClickable
@@ -19,7 +19,7 @@ import dev.icerock.moko.resources.compose.stringResource
 
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
-internal fun SettingTextItem(
+fun SettingTextItem(
     title: String,
     modifier: Modifier = Modifier,
     description: String? = null,
@@ -75,7 +75,7 @@ internal fun SettingTextItem(
 }
 
 @Composable
-internal fun SettingTextItem(
+fun SettingTextItem(
     title: StringResource,
     modifier: Modifier = Modifier,
     description: StringResource? = null,

@@ -7,6 +7,7 @@ import androidx.paging.cachedIn
 import com.fleeksoft.ksoup.Ksoup
 import io.github.aakira.napier.Napier
 import io.ktor.client.HttpClient
+import io.ktor.client.plugins.onDownload
 import io.ktor.client.request.get
 import io.ktor.client.request.header
 import io.ktor.client.request.parameter
@@ -91,9 +92,9 @@ interface FanboxRepository {
     suspend fun updateCookie(cookie: String)
     suspend fun updateCsrfToken()
 
-    suspend fun getHomePosts(cursor: FanboxCursor?, loadSize: Int): PageCursorInfo<FanboxPost>
-    suspend fun getSupportedPosts(cursor: FanboxCursor?, loadSize: Int): PageCursorInfo<FanboxPost>
-    suspend fun getCreatorPosts(creatorId: CreatorId, cursor: FanboxCursor?, loadSize: Int): PageCursorInfo<FanboxPost>
+    suspend fun getHomePosts(cursor: FanboxCursor?, loadSize: Int = cursor?.limit ?: 10): PageCursorInfo<FanboxPost>
+    suspend fun getSupportedPosts(cursor: FanboxCursor?, loadSize: Int = cursor?.limit ?: 10): PageCursorInfo<FanboxPost>
+    suspend fun getCreatorPosts(creatorId: CreatorId, cursor: FanboxCursor?, loadSize: Int = cursor?.limit ?: 10): PageCursorInfo<FanboxPost>
     suspend fun getCreatorPostsPaginate(creatorId: CreatorId): List<FanboxCursor>
     suspend fun getPost(postId: PostId): FanboxPostDetail
     suspend fun getPostCached(postId: PostId): FanboxPostDetail
@@ -143,7 +144,7 @@ interface FanboxRepository {
     suspend fun bookmarkPost(post: FanboxPost)
     suspend fun unbookmarkPost(post: FanboxPost)
 
-    suspend fun download(url: String): HttpResponse
+    suspend fun download(url: String, updateCallback: (Float) -> Unit): HttpResponse
 }
 
 class FanboxRepositoryImpl(
@@ -494,10 +495,14 @@ class FanboxRepositoryImpl(
         }
     }
 
-    override suspend fun download(url: String): HttpResponse {
+    override suspend fun download(url: String, updateCallback: (Float) -> Unit): HttpResponse {
         return client.get {
             url(url)
             fanboxHeader()
+            
+            onDownload { bytesSentTotal, contentLength ->
+                updateCallback.invoke(bytesSentTotal.toFloat() / contentLength.toFloat())
+            }
         }
     }
 

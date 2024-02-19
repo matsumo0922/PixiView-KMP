@@ -11,7 +11,7 @@ import me.matsumo.fanbox.core.common.PixiViewConfig
 import me.matsumo.fanbox.core.model.UserData
 import me.matsumo.fanbox.core.model.fanbox.FanboxMetaData
 import me.matsumo.fanbox.core.ui.MR
-import me.matsumo.fanbox.feature.setting.SettingTextItem
+import me.matsumo.fanbox.core.ui.component.SettingTextItem
 
 @Composable
 internal fun SettingTopInformationSection(
