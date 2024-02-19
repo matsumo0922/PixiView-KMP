@@ -1,17 +1,17 @@
 package me.matsumo.fanbox.core.ui.view
 
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.remember
-import androidx.compose.ui.window.DialogProperties
+import androidx.compose.ui.window.Dialog
+import kotlinx.cinterop.BetaInteropApi
 import kotlinx.cinterop.ExperimentalForeignApi
+import kotlinx.cinterop.ObjCAction
 import platform.UIKit.UIAlertAction
 import platform.UIKit.UIAlertActionStyleDefault
 import platform.UIKit.UIAlertController
 import platform.UIKit.UIAlertControllerStyleAlert
 import platform.UIKit.UIApplication
-import platform.UIKit.UITapGestureRecognizer
 import platform.objc.sel_registerName
 
 @Composable
@@ -24,35 +24,33 @@ actual fun SimpleAlertDialog(
     onClickNegative: () -> Unit,
     isCaution: Boolean
 ) {
-    val alertDialogManager = remember {
-        AlertDialogManager(
-            title = title,
-            description = description,
-            positiveText = positiveText,
-            negativeText = negativeText,
-            onClickPositive = onClickPositive,
-            onClickNegative = onClickNegative,
-            isCaution = isCaution
-        )
-    }
+    Dialog(
+        onDismissRequest = { onClickNegative.invoke() },
+    ) {
+        val alertDialogManager = remember {
+            AlertDialogManager(
+                title = title,
+                description = description,
+                positiveText = positiveText,
+                negativeText = negativeText,
+                onClickPositive = onClickPositive,
+                onClickNegative = onClickNegative,
+                isCaution = isCaution
+            )
+        }
 
-    LaunchedEffect(title, description, positiveText, negativeText, onClickPositive, onClickNegative, isCaution) {
-        alertDialogManager.title = title
-        alertDialogManager.description = description
-        alertDialogManager.positiveText = positiveText
-        alertDialogManager.negativeText = negativeText
-        alertDialogManager.onClickPositive = onClickPositive
-        alertDialogManager.onClickNegative = onClickNegative
-        alertDialogManager.isCaution = isCaution
-    }
+        LaunchedEffect(title, description, positiveText, negativeText, onClickPositive, onClickNegative, isCaution) {
+            alertDialogManager.title = title
+            alertDialogManager.description = description
+            alertDialogManager.positiveText = positiveText
+            alertDialogManager.negativeText = negativeText
+            alertDialogManager.onClickPositive = onClickPositive
+            alertDialogManager.onClickNegative = onClickNegative
+            alertDialogManager.isCaution = isCaution
+        }
 
-    LaunchedEffect(true) {
-        alertDialogManager.show()
-    }
-
-    DisposableEffect(true) {
-        onDispose {
-            alertDialogManager.dismiss()
+        LaunchedEffect(true) {
+            alertDialogManager.show()
         }
     }
 }
@@ -83,6 +81,8 @@ private class AlertDialogManager(
         )
     }
 
+    @OptIn(BetaInteropApi::class)
+    @ObjCAction
     fun dismiss() {
         if (!isPresented || isAnimating) return
 
@@ -128,16 +128,6 @@ private class AlertDialogManager(
             completion = {
                 isPresented = true
                 isAnimating = false
-
-                if (DialogProperties().dismissOnClickOutside) {
-                    alertController.view.superview?.setUserInteractionEnabled(true)
-                    alertController.view.superview?.addGestureRecognizer(
-                        UITapGestureRecognizer(
-                            target = this,
-                            action = dismissPointer
-                        )
-                    )
-                }
             }
         )
     }

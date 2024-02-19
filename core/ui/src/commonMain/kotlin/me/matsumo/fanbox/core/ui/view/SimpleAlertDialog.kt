@@ -17,6 +17,11 @@ enum class SimpleAlertContents(
     val negativeTextRes: StringResource? = null,
     val isCaution: Boolean = false,
 ) {
+    Login(
+        titleRes = MR.strings.welcome_login_dialog_title,
+        descriptionRes = MR.strings.welcome_login_dialog_message,
+        positiveTextRes = MR.strings.common_ok,
+    ),
     Logout(
         titleRes = MR.strings.setting_top_others_logout,
         descriptionRes = MR.strings.setting_top_others_logout_dialog_description,
@@ -60,7 +65,7 @@ suspend fun Navigator.navigateToSimpleAlertDialog(
 }
 
 fun RouteBuilder.simpleAlertDialogDialog(
-    terminateWithResult: (Boolean) -> Unit,
+    onResult: (Boolean) -> Unit,
 ) {
     dialog(SimpleAlertDialog) { entry ->
         val content = SimpleAlertContents.valueOf(entry.path<String>(SimpleAlertDialogContent).orEmpty())
@@ -70,8 +75,8 @@ fun RouteBuilder.simpleAlertDialogDialog(
             description = stringResource(content.descriptionRes),
             positiveText = content.positiveTextRes?.let { stringResource(it) },
             negativeText = content.negativeTextRes?.let { stringResource(it) },
-            onClickPositive = { terminateWithResult.invoke(true) },
-            onClickNegative = { terminateWithResult.invoke(false) },
+            onClickPositive = { onResult.invoke(true) },
+            onClickNegative = { onResult.invoke(false) },
             isCaution = content.isCaution,
         )
     }

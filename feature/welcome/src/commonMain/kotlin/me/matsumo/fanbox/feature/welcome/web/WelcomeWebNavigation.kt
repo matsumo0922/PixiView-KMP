@@ -2,8 +2,7 @@ package me.matsumo.fanbox.feature.welcome.web
 
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.ui.Modifier
-import me.matsumo.fanbox.core.ui.animation.NavigateAnimation
-import me.matsumo.fanbox.feature.welcome.top.WelcomeTopScreen
+import me.matsumo.fanbox.core.ui.view.SimpleAlertContents
 import moe.tlaster.precompose.navigation.Navigator
 import moe.tlaster.precompose.navigation.RouteBuilder
 
@@ -14,11 +13,13 @@ fun Navigator.navigateToWelcomeWeb() {
 }
 
 fun RouteBuilder.welcomeWebScreen(
+    navigateToLoginAlert: suspend (SimpleAlertContents) -> Unit,
     terminate: () -> Unit,
 ) {
     scene(WelcomeWebRoute) {
         WelcomeWebScreen(
             modifier = Modifier.fillMaxSize(),
+            navigateToLoginAlert = navigateToLoginAlert,
             terminate = terminate,
         )
     }

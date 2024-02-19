@@ -286,6 +286,8 @@
     <string name="welcome_login_toast_failed">ログインに失敗しました</string>
     <string name="welcome_login_button_login">ログイン</string>
     <string name="welcome_login_button_next">次へ</string>
+    <string name="welcome_login_dialog_title">ログインの注意</string>
+    <string name="welcome_login_dialog_message">GoogleやXのOAuthを利用した認証はセキュリティ上の懸念により対応していません。\n\nメールアドレスとパスワードを直接入力してログインを行ってください。</string>
     <string name="welcome_permission_title">権限</string>
     <string name="welcome_permission_message">アプリの利用には以下の権限が必要です\n下のボタンを押して権限を許可してください</string>
     <string name="welcome_permission_ready_title">準備完了</string>

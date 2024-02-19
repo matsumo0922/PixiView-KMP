@@ -19,11 +19,13 @@ import com.multiplatform.webview.web.rememberWebViewState
 import dev.icerock.moko.resources.compose.stringResource
 import me.matsumo.fanbox.core.ui.MR
 import me.matsumo.fanbox.core.ui.component.PixiViewTopBar
+import me.matsumo.fanbox.core.ui.view.SimpleAlertContents
 import moe.tlaster.precompose.koin.koinViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 internal fun WelcomeWebScreen(
+    navigateToLoginAlert: suspend (SimpleAlertContents) -> Unit,
     terminate: () -> Unit,
     modifier: Modifier = Modifier,
     viewModel: WelcomeWebViewModel = koinViewModel(WelcomeWebViewModel::class),
@@ -40,6 +42,10 @@ internal fun WelcomeWebScreen(
             domStorageEnabled = true
             isJavaScriptEnabled = true
         }
+    }
+
+    LaunchedEffect(true) {
+        navigateToLoginAlert.invoke(SimpleAlertContents.Login)
     }
 
     LaunchedEffect(webViewState.lastLoadedUrl) {

@@ -356,7 +356,7 @@ private fun RouteBuilder.applyNavGraph(
     // dialog
 
     simpleAlertDialogDialog(
-        terminateWithResult = { mainNavController.goBackWith(it) },
+        onResult = { mainNavController.goBackWith() },
     )
 
     creatorPostsDownloadDialog(

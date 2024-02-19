@@ -19,6 +19,8 @@ import dev.icerock.moko.permissions.compose.rememberPermissionsControllerFactory
 import kotlinx.coroutines.launch
 import me.matsumo.fanbox.core.ui.extensition.LocalSnackbarHostState
 import me.matsumo.fanbox.core.ui.extensition.rememberNavigator
+import me.matsumo.fanbox.core.ui.view.navigateToSimpleAlertDialog
+import me.matsumo.fanbox.core.ui.view.simpleAlertDialogDialog
 import me.matsumo.fanbox.feature.welcome.login.WelcomeLoginRoute
 import me.matsumo.fanbox.feature.welcome.login.navigateToWelcomeLogin
 import me.matsumo.fanbox.feature.welcome.login.welcomeLoginScreen
@@ -98,11 +100,16 @@ fun WelcomeNavHost(
                 )
 
                 welcomeWebScreen(
+                    navigateToLoginAlert = { navigator.navigateToSimpleAlertDialog(it) },
                     terminate = { navigator.goBack() }
                 )
 
                 welcomePermissionScreen(
                     navigateToHome = { onComplete.invoke() },
+                )
+
+                simpleAlertDialogDialog(
+                    onResult = { navigator.goBackWith(it) }
                 )
             }
         }
