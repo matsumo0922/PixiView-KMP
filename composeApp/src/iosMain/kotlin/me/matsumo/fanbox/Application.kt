@@ -13,10 +13,6 @@ fun MainViewController(
     topSafeArea: Float,
     bottomSafeArea: Float
 ) = ComposeUIViewController {
-    initKoin()
-    initNapier()
-    initCoil()
-
     PreComposeApp {
         KoinContext {
             PixiViewApp(

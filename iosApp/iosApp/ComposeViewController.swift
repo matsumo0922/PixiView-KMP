@@ -12,6 +12,8 @@ struct ComposeViewController: UIViewControllerRepresentable {
     }
 
     func makeUIViewController(context: Context) -> UIViewController {
+        initTools()
+        
         return ApplicationKt.MainViewController(
             topSafeArea: topSafeArea,
             bottomSafeArea: bottomSafeArea
@@ -19,4 +21,10 @@ struct ComposeViewController: UIViewControllerRepresentable {
     }
 
     func updateUIViewController(_ uiViewController: UIViewController, context: Context) {}
+    
+    private func initTools() {
+        InitHelperKt.doInitKoin()
+        InitHelperKt.doInitNapier()
+        InitHelperKt.doInitCoil()
+    }
 }
