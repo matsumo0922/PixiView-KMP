@@ -1,9 +1,9 @@
 package me.matsumo.fanbox.core.billing.usecase
 
+import com.android.billingclient.api.Purchase
 import me.matsumo.fanbox.core.billing.BillingClient
 import me.matsumo.fanbox.core.billing.models.ProductItem
 import me.matsumo.fanbox.core.billing.models.ProductType
-import com.android.billingclient.api.Purchase
 
 class VerifyPlusUseCase(
     private val billingClient: BillingClient,

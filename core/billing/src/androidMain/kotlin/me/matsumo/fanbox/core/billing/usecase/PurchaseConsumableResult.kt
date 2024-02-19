@@ -1,8 +1,8 @@
 package me.matsumo.fanbox.core.billing.usecase
 
+import com.android.billingclient.api.Purchase
 import me.matsumo.fanbox.core.billing.PurchaseSingleCommand
 import me.matsumo.fanbox.core.billing.models.ProductDetails
-import com.android.billingclient.api.Purchase
 
 data class PurchaseConsumableResult(
     val command: PurchaseSingleCommand,

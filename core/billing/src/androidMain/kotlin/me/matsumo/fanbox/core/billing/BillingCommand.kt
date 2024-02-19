@@ -1,12 +1,12 @@
 package me.matsumo.fanbox.core.billing
 
-import me.matsumo.fanbox.core.billing.models.ProductDetails
-import me.matsumo.fanbox.core.billing.models.ProductId
-import me.matsumo.fanbox.core.billing.models.ProductType
 import com.android.billingclient.api.BillingFlowParams
 import com.android.billingclient.api.BillingFlowParams.ProductDetailsParams
 import com.android.billingclient.api.QueryProductDetailsParams
 import com.android.billingclient.api.QueryProductDetailsParams.Product
+import me.matsumo.fanbox.core.billing.models.ProductDetails
+import me.matsumo.fanbox.core.billing.models.ProductId
+import me.matsumo.fanbox.core.billing.models.ProductType
 
 fun purchaseSingle(
     productDetails: ProductDetails,

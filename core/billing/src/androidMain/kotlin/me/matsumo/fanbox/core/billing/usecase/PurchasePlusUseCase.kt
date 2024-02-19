@@ -1,17 +1,15 @@
 package me.matsumo.fanbox.core.billing.usecase
 
 import android.app.Activity
+import com.android.billingclient.api.Purchase
+import kotlinx.coroutines.CoroutineDispatcher
+import kotlinx.coroutines.withContext
 import me.matsumo.fanbox.core.billing.AcknowledgeResult
 import me.matsumo.fanbox.core.billing.BillingClient
 import me.matsumo.fanbox.core.billing.models.ProductDetails
 import me.matsumo.fanbox.core.billing.models.ProductItem
 import me.matsumo.fanbox.core.billing.models.ProductType
 import me.matsumo.fanbox.core.billing.purchaseSingle
-import com.android.billingclient.api.Purchase
-import kotlinx.coroutines.CoroutineDispatcher
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.withContext
-import javax.inject.Inject
 
 class PurchasePlusUseCase(
     private val billingClient: BillingClient,

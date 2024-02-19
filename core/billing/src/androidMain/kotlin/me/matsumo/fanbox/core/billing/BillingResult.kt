@@ -1,9 +1,9 @@
 package me.matsumo.fanbox.core.billing
 
-import me.matsumo.fanbox.core.billing.models.FeatureType
 import com.android.billingclient.api.AcknowledgePurchaseParams
 import com.android.billingclient.api.ConsumeParams
 import com.android.billingclient.api.Purchase
+import me.matsumo.fanbox.core.billing.models.FeatureType
 
 data class FeaturesSupportedResult(
     val resultSet: Map<FeatureType, Boolean>,

@@ -12,7 +12,7 @@ class BillingStatusImpl(
     private val billingClient: BillingClient,
     private val verifyPlusUseCase: VerifyPlusUseCase,
     private val ioDispatcher: CoroutineDispatcher,
-): BillingStatus {
+) : BillingStatus {
 
     private val scope = CoroutineScope(ioDispatcher)
 

@@ -1,14 +1,13 @@
 package me.matsumo.fanbox
 
+import io.gitlab.arturbosch.detekt.Detekt
 import io.gitlab.arturbosch.detekt.extensions.DetektExtension
-import io.gitlab.arturbosch.detekt.report.ReportMergeTask
 import org.gradle.api.Project
-import org.gradle.api.tasks.TaskProvider
-import org.gradle.kotlin.dsl.register
+import org.gradle.kotlin.dsl.getByType
 import org.gradle.kotlin.dsl.withType
 
-internal fun Project.configureDetekt(extension: DetektExtension) {
-    extension.apply {
+internal fun Project.configureDetekt() {
+    extensions.getByType<DetektExtension>().apply {
         toolVersion = libsMain.findVersion("detekt").get().toString()
         // 並列処理
         parallel = true
@@ -24,25 +23,9 @@ internal fun Project.configureDetekt(extension: DetektExtension) {
         autoCorrect = false
     }
 
-    val reportMerge = if (!rootProject.tasks.names.contains("reportMerge")) {
-        rootProject.tasks.register("reportMerge", ReportMergeTask::class) {
-            output.set(rootProject.layout.buildDirectory.file("reports/detekt/merge.xml"))
-        }
-    } else {
-        rootProject.tasks.named("reportMerge") as TaskProvider<ReportMergeTask>
-    }
-
-    plugins.withType<io.gitlab.arturbosch.detekt.DetektPlugin> {
-        tasks.withType<io.gitlab.arturbosch.detekt.Detekt> detekt@{
-            finalizedBy(reportMerge)
-
-            reportMerge.configure {
-                input.from(this@detekt.xmlReportFile) // or .sarifReportFile
-            }
-
-            exclude {
-                it.file.relativeTo(projectDir).startsWith("build")
-            }
+    tasks.withType<Detekt> {
+        exclude {
+            it.file.relativeTo(projectDir).startsWith("build")
         }
     }
 }
