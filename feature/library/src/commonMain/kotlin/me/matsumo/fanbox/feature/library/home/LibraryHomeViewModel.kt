@@ -32,7 +32,7 @@ class LibraryHomeViewModel(
             bookmarkedPosts = emptyList(),
             homePaging = emptyPaging(),
             supportedPaging = emptyPaging(),
-            nativeAdUnitId = pixiViewConfig.adMobNativeAdUnitId,
+            nativeAdUnitId = pixiViewConfig.adMobAndroid.nativeAdUnitId,
         ),
     )
 
@@ -51,7 +51,7 @@ class LibraryHomeViewModel(
                     userData = userData,
                     homePaging = fanboxRepository.getHomePostsPager(loadSize, isHideRestricted),
                     supportedPaging = fanboxRepository.getSupportedPostsPager(loadSize, isHideRestricted),
-                    nativeAdUnitId = pixiViewConfig.adMobNativeAdUnitId,
+                    nativeAdUnitId = pixiViewConfig.adMobAndroid.nativeAdUnitId,
                 )
             }
         }

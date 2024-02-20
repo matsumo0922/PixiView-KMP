@@ -25,7 +25,7 @@ class KmpAndroidLibrary: Plugin<Project> {
 
             extensions.configure<LibraryExtension> {
                 compileSdk = libsMain.version("compileSdk").toInt()
-                defaultConfig.targetSdk = libsMain.findVersion("targetSdk").get().toString().toInt()
+                defaultConfig.targetSdk = libsMain.version("targetSdk").toInt()
                 buildFeatures.viewBinding = true
             }
         }

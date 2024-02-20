@@ -1,5 +1,3 @@
-import org.jetbrains.compose.ExperimentalComposeLibrary
-
 plugins {
     id("pixiview.primitive.kmp.common")
     id("pixiview.primitive.kmp.android.library")
@@ -45,7 +43,6 @@ kotlin {
                 api(compose.material3)
                 api(compose.ui)
                 api(compose.materialIconsExtended)
-                @OptIn(ExperimentalComposeLibrary::class)
                 api(compose.components.resources)
 
                 // Resources
@@ -54,6 +51,8 @@ kotlin {
 
                 api(libsMain.calf.ui)
                 api(libsMain.androidx.paging.compose)
+
+                implementation(libsMain.play.service.ads)
             }
         }
 
@@ -61,7 +60,12 @@ kotlin {
             dependsOn(commonMain)
 
             dependencies {
-                api(libsMain.bundles.ui.android.implementation)
+                api(libsMain.bundles.ui.android.api)
+
+                api(libsMain.androidx.compose.ui)
+                api(libsMain.androidx.compose.ui.util)
+                api(libsMain.androidx.compose.ui.tooling)
+                api(libsMain.androidx.compose.ui.binding)
             }
         }
 

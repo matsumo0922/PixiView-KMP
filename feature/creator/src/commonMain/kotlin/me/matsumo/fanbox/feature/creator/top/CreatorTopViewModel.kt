@@ -68,7 +68,7 @@ class CreatorTopViewModel(
                 CreatorTopUiState(
                     userData = userData,
                     bookmarkedPosts = fanboxRepository.bookmarkedPosts.first(),
-                    nativeAdUnitId = pixiViewConfig.adMobNativeAdUnitId,
+                    nativeAdUnitId = pixiViewConfig.adMobAndroid.nativeAdUnitId,
                     creatorDetail = fanboxRepository.getCreator(creatorId),
                     creatorPlans = fanboxRepository.getCreatorPlans(creatorId),
                     creatorTags = fanboxRepository.getCreatorTags(creatorId),

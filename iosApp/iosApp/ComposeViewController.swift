@@ -1,5 +1,6 @@
 import UIKit
 import SwiftUI
+import GoogleMobileAds
 import ComposeApp
 
 struct ComposeViewController: UIViewControllerRepresentable {

@@ -72,7 +72,8 @@ android {
             }
 
             it.manifestPlaceholders.apply {
-                putManifestPlaceholder(localProperties, "ADMOB_APP_ID", defaultValue = admobTestAppId)
+                putManifestPlaceholder(localProperties, "ADMOB_ANDROID_APP_ID", defaultValue = admobTestAppId)
+                putManifestPlaceholder(localProperties, "ADMOB_IOS_APP_ID", defaultValue = admobTestAppId)
             }
 
             it.resValues.apply {
@@ -156,9 +157,12 @@ buildkonfig {
         putBuildConfig(localProperties, "DEVELOPER_PASSWORD")
         putBuildConfig(localProperties, "PIXIV_CLIENT_ID")
         putBuildConfig(localProperties, "PIXIV_CLIENT_SECRET")
-        putBuildConfig(localProperties, "ADMOB_APP_ID", defaultValue = admobTestAppId)
-        putBuildConfig(localProperties, "ADMOB_BANNER_AD_UNIT_ID", bannerAdTestId)
-        putBuildConfig(localProperties, "ADMOB_NATIVE_AD_UNIT_ID", nativeAdTestId)
+        putBuildConfig(localProperties, "ADMOB_ANDROID_APP_ID", defaultValue = admobTestAppId)
+        putBuildConfig(localProperties, "ADMOB_ANDROID_BANNER_AD_UNIT_ID", defaultValue = bannerAdTestId)
+        putBuildConfig(localProperties, "ADMOB_ANDROID_NATIVE_AD_UNIT_ID", defaultValue = nativeAdTestId)
+        putBuildConfig(localProperties, "ADMOB_IOS_APP_ID", defaultValue = admobTestAppId)
+        putBuildConfig(localProperties, "ADMOB_IOS_BANNER_AD_UNIT_ID", defaultValue = bannerAdTestId)
+        putBuildConfig(localProperties, "ADMOB_IOS_NATIVE_AD_UNIT_ID", defaultValue = nativeAdTestId)
     }
 }
 

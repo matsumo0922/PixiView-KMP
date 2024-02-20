@@ -17,9 +17,16 @@ val appModule = module {
             developerPassword = BuildKonfig.DEVELOPER_PASSWORD,
             pixivClientId = BuildKonfig.PIXIV_CLIENT_ID,
             pixivClientSecret = BuildKonfig.PIXIV_CLIENT_SECRET,
-            adMobAppId = BuildKonfig.ADMOB_APP_ID,
-            adMobBannerAdUnitId = BuildKonfig.ADMOB_BANNER_AD_UNIT_ID,
-            adMobNativeAdUnitId = BuildKonfig.ADMOB_NATIVE_AD_UNIT_ID,
+            adMobAndroid = PixiViewConfig.AdMob(
+                appId = BuildKonfig.ADMOB_ANDROID_APP_ID,
+                bannerAdUnitId = BuildKonfig.ADMOB_ANDROID_BANNER_AD_UNIT_ID,
+                nativeAdUnitId = BuildKonfig.ADMOB_ANDROID_NATIVE_AD_UNIT_ID,
+            ),
+            adMobIos = PixiViewConfig.AdMob(
+                appId = BuildKonfig.ADMOB_IOS_APP_ID,
+                bannerAdUnitId = BuildKonfig.ADMOB_IOS_BANNER_AD_UNIT_ID,
+                nativeAdUnitId = BuildKonfig.ADMOB_IOS_NATIVE_AD_UNIT_ID,
+            ),
         )
     }
 

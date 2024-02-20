@@ -3,7 +3,7 @@
 	archiveVersion = 1;
 	classes = {
 	};
-	objectVersion = 50;
+	objectVersion = 54;
 	objects = {
 
 /* Begin PBXBuildFile section */
@@ -14,6 +14,7 @@
 		AD310C742B80D2F500D91635 /* BillingClient.swift in Sources */ = {isa = PBXBuildFile; fileRef = AD310C732B80D2F500D91635 /* BillingClient.swift */; };
 		AD310C762B80FF6C00D91635 /* BillingController.swift in Sources */ = {isa = PBXBuildFile; fileRef = AD310C752B80FF6C00D91635 /* BillingController.swift */; };
 		AD5F8B822B4D50A3004888F6 /* ComposeViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = AD5F8B812B4D50A3004888F6 /* ComposeViewController.swift */; };
+		AD6E4F652B84F33D0000CD56 /* GoogleMobileAds in Frameworks */ = {isa = PBXBuildFile; productRef = AD6E4F642B84F33D0000CD56 /* GoogleMobileAds */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -34,6 +35,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				AD6E4F652B84F33D0000CD56 /* GoogleMobileAds in Frameworks */,
 				AD14F5952B55A31600B367F8 /* StoreKit.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -123,6 +125,9 @@
 			dependencies = (
 			);
 			name = iosApp;
+			packageProductDependencies = (
+				AD6E4F642B84F33D0000CD56 /* GoogleMobileAds */,
+			);
 			productName = iosApp;
 			productReference = 7555FF7B242A565900829871 /* PixiView-KMP.app */;
 			productType = "com.apple.product-type.application";
@@ -151,6 +156,9 @@
 				Base,
 			);
 			mainGroup = 7555FF72242A565900829871;
+			packageReferences = (
+				AD6E4F632B84F33D0000CD56 /* XCRemoteSwiftPackageReference "swift-package-manager-google-mobile-ads" */,
+			);
 			productRefGroup = 7555FF7C242A565900829871 /* Products */;
 			projectDirPath = "";
 			projectRoot = "";
@@ -367,6 +375,7 @@
 					"$(inherited)",
 					"-framework",
 					composeApp,
+					"-ObjC",
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = "${BUNDLE_ID}${TEAM_ID}";
 				"PRODUCT_BUNDLE_IDENTIFIER[sdk=iphoneos*]" = me.matsumo.fanbox;
@@ -403,6 +412,7 @@
 					"$(inherited)",
 					"-framework",
 					composeApp,
+					"-ObjC",
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = "${BUNDLE_ID}${TEAM_ID}";
 				"PRODUCT_BUNDLE_IDENTIFIER[sdk=iphoneos*]" = me.matsumo.fanbox;
@@ -435,6 +445,25 @@
 			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
+
+/* Begin XCRemoteSwiftPackageReference section */
+		AD6E4F632B84F33D0000CD56 /* XCRemoteSwiftPackageReference "swift-package-manager-google-mobile-ads" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/googleads/swift-package-manager-google-mobile-ads.git";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 11.0.1;
+			};
+		};
+/* End XCRemoteSwiftPackageReference section */
+
+/* Begin XCSwiftPackageProductDependency section */
+		AD6E4F642B84F33D0000CD56 /* GoogleMobileAds */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = AD6E4F632B84F33D0000CD56 /* XCRemoteSwiftPackageReference "swift-package-manager-google-mobile-ads" */;
+			productName = GoogleMobileAds;
+		};
+/* End XCSwiftPackageProductDependency section */
 	};
 	rootObject = 7555FF73242A565900829871 /* Project object */;
 }

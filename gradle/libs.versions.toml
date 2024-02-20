@@ -348,7 +348,7 @@ infra-api = [
     "napier",
 ]
 
-ui-android-implementation = [
+ui-android-api = [
     "androidx-core",
     "androidx-annotation",
     "androidx-appcompat",
@@ -393,6 +393,14 @@ resources = [
 billing = [
     "billing",
     "billing-ktx",
+]
+
+firebase = [
+    "firebase-analytics",
+    "firebase-crushlytics",
+    "firebase-messaging",
+    "firebase-config",
+    "firebase-dynamiclinks",
 ]
 
 ktor = [
