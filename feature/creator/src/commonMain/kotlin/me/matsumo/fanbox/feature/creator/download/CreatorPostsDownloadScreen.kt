@@ -117,7 +117,7 @@ internal fun CreatorPostsDownloadRoute(
                 }
             },
             terminate = {
-                if (isCompleted) terminate.invoke()
+                if (isCompleted || targetIndex == -1) terminate.invoke()
                 else {
                     scope.launch {
                         navigateToCancelDownloadAlert(SimpleAlertContents.CancelDownload) {
