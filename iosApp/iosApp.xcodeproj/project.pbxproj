@@ -15,6 +15,9 @@
 		AD310C762B80FF6C00D91635 /* BillingController.swift in Sources */ = {isa = PBXBuildFile; fileRef = AD310C752B80FF6C00D91635 /* BillingController.swift */; };
 		AD5F8B822B4D50A3004888F6 /* ComposeViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = AD5F8B812B4D50A3004888F6 /* ComposeViewController.swift */; };
 		AD6E4F652B84F33D0000CD56 /* GoogleMobileAds in Frameworks */ = {isa = PBXBuildFile; productRef = AD6E4F642B84F33D0000CD56 /* GoogleMobileAds */; };
+		AD6E4F682B8508E70000CD56 /* NativeAdView.swift in Sources */ = {isa = PBXBuildFile; fileRef = AD6E4F672B8508E70000CD56 /* NativeAdView.swift */; };
+		AD6E4F732B865E6F0000CD56 /* NativeAdView.xib in Resources */ = {isa = PBXBuildFile; fileRef = AD6E4F722B865E6F0000CD56 /* NativeAdView.xib */; };
+		AD6E4F772B86663F0000CD56 /* UIProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = AD6E4F762B86663F0000CD56 /* UIProvider.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -28,6 +31,9 @@
 		AD310C732B80D2F500D91635 /* BillingClient.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BillingClient.swift; sourceTree = "<group>"; };
 		AD310C752B80FF6C00D91635 /* BillingController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BillingController.swift; sourceTree = "<group>"; };
 		AD5F8B812B4D50A3004888F6 /* ComposeViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ComposeViewController.swift; sourceTree = "<group>"; };
+		AD6E4F672B8508E70000CD56 /* NativeAdView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NativeAdView.swift; sourceTree = "<group>"; };
+		AD6E4F722B865E6F0000CD56 /* NativeAdView.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = NativeAdView.xib; sourceTree = "<group>"; };
+		AD6E4F762B86663F0000CD56 /* UIProvider.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UIProvider.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -80,12 +86,13 @@
 		7555FF7D242A565900829871 /* iosApp */ = {
 			isa = PBXGroup;
 			children = (
+				AD6E4F662B8508BB0000CD56 /* UI */,
 				AD310C6D2B80AB7000D91635 /* Billing */,
-				058557BA273AAA24004C7B11 /* Assets.xcassets */,
-				7555FF8C242A565B00829871 /* Info.plist */,
 				2152FB032600AC8F00CF470E /* iOSApp.swift */,
-				058557D7273AAEEB004C7B11 /* Preview Content */,
 				AD5F8B812B4D50A3004888F6 /* ComposeViewController.swift */,
+				7555FF8C242A565B00829871 /* Info.plist */,
+				058557BA273AAA24004C7B11 /* Assets.xcassets */,
+				058557D7273AAEEB004C7B11 /* Preview Content */,
 			);
 			path = iosApp;
 			sourceTree = "<group>";
@@ -105,6 +112,16 @@
 				AD310C752B80FF6C00D91635 /* BillingController.swift */,
 			);
 			path = Billing;
+			sourceTree = "<group>";
+		};
+		AD6E4F662B8508BB0000CD56 /* UI */ = {
+			isa = PBXGroup;
+			children = (
+				AD6E4F762B86663F0000CD56 /* UIProvider.swift */,
+				AD6E4F672B8508E70000CD56 /* NativeAdView.swift */,
+				AD6E4F722B865E6F0000CD56 /* NativeAdView.xib */,
+			);
+			path = UI;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -144,6 +161,7 @@
 				TargetAttributes = {
 					7555FF7A242A565900829871 = {
 						CreatedOnToolsVersion = 11.3.1;
+						LastSwiftMigration = 1500;
 					};
 				};
 			};
@@ -174,6 +192,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				058557D9273AAEEB004C7B11 /* Preview Assets.xcassets in Resources */,
+				AD6E4F732B865E6F0000CD56 /* NativeAdView.xib in Resources */,
 				058557BB273AAA24004C7B11 /* Assets.xcassets in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -228,6 +247,8 @@
 				2152FB042600AC8F00CF470E /* iOSApp.swift in Sources */,
 				AD310C742B80D2F500D91635 /* BillingClient.swift in Sources */,
 				AD5F8B822B4D50A3004888F6 /* ComposeViewController.swift in Sources */,
+				AD6E4F772B86663F0000CD56 /* UIProvider.swift in Sources */,
+				AD6E4F682B8508E70000CD56 /* NativeAdView.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -357,6 +378,7 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				BUNDLE_ID = me.matsumo.fanbox;
+				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
 				DEVELOPMENT_ASSET_PATHS = "\"iosApp/Preview Content\"";
@@ -384,6 +406,7 @@
 				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
 				SUPPORTS_MACCATALYST = NO;
 				SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD = NO;
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = 1;
 			};
@@ -394,6 +417,7 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				BUNDLE_ID = me.matsumo.fanbox;
+				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
 				DEVELOPMENT_ASSET_PATHS = "\"iosApp/Preview Content\"";
