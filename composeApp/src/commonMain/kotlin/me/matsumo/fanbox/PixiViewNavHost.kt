@@ -148,7 +148,7 @@ private fun CompactNavHost(
                 destroyTransition = slideOutHorizontally { it },
                 pauseTransition = slideOutHorizontally { -it / 4 },
                 resumeTransition = slideInHorizontally { -it / 4 },
-                exitTargetContentZIndex = 1f
+                exitTargetContentZIndex = 1f,
             )
         },
     ) {
