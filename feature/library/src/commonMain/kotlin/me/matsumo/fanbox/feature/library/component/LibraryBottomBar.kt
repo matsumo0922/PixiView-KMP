@@ -7,10 +7,10 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
 import dev.icerock.moko.resources.compose.stringResource
-import io.github.alexzhirkevich.cupertino.adaptive.AdaptiveNavigationBar
-import io.github.alexzhirkevich.cupertino.adaptive.AdaptiveNavigationBarItem
 import io.github.alexzhirkevich.cupertino.adaptive.ExperimentalAdaptiveApi
 import kotlinx.collections.immutable.ImmutableList
+import me.matsumo.fanbox.core.ui.component.PixiViewNavigationBar
+import me.matsumo.fanbox.core.ui.component.PixiViewNavigationBarItem
 import me.matsumo.fanbox.core.ui.component.PixiViewNavigationDefaults
 
 @OptIn(ExperimentalAdaptiveApi::class)
@@ -21,12 +21,12 @@ internal fun LibraryBottomBar(
     currentDestination: String?,
     modifier: Modifier = Modifier,
 ) {
-    AdaptiveNavigationBar(modifier) {
+    PixiViewNavigationBar(modifier) {
         destinations.forEach { destination ->
             val isSelected = currentDestination?.contains(destination.name, true) ?: false
 
-            AdaptiveNavigationBarItem(
-                selected = isSelected,
+            PixiViewNavigationBarItem(
+                isSelected = isSelected,
                 onClick = { navigateToDestination(destination) },
                 icon = {
                     Icon(

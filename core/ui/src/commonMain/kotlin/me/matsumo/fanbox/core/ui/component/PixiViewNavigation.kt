@@ -14,20 +14,34 @@ import androidx.compose.material3.NavigationRailItemDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
+import io.github.alexzhirkevich.cupertino.adaptive.AdaptiveNavigationBar
+import io.github.alexzhirkevich.cupertino.adaptive.AdaptiveNavigationBarItem
+import io.github.alexzhirkevich.cupertino.adaptive.ExperimentalAdaptiveApi
+import me.matsumo.fanbox.core.ui.extensition.Platform
+import me.matsumo.fanbox.core.ui.extensition.currentPlatform
 
+@OptIn(ExperimentalAdaptiveApi::class)
 @Composable
 fun PixiViewNavigationBar(
     modifier: Modifier = Modifier,
     content: @Composable RowScope.() -> Unit,
 ) {
-    NavigationBar(
-        modifier = modifier,
-        contentColor = PixiViewNavigationDefaults.navigationContentColor(),
-        tonalElevation = 0.dp,
-        content = content,
-    )
+    if (currentPlatform == Platform.Android) {
+        NavigationBar(
+            modifier = modifier,
+            contentColor = PixiViewNavigationDefaults.navigationContentColor(),
+            tonalElevation = 0.dp,
+            content = content,
+        )
+    } else {
+        AdaptiveNavigationBar(
+            modifier = modifier,
+            content = content,
+        )
+    }
 }
 
+@OptIn(ExperimentalAdaptiveApi::class)
 @Composable
 fun RowScope.PixiViewNavigationBarItem(
     icon: @Composable () -> Unit,
@@ -36,21 +50,30 @@ fun RowScope.PixiViewNavigationBarItem(
     isSelected: Boolean,
     modifier: Modifier = Modifier,
 ) {
-    NavigationBarItem(
-        modifier = modifier,
-        selected = isSelected,
-        onClick = onClick,
-        icon = icon,
-        label = label,
-        alwaysShowLabel = false,
-        colors = NavigationBarItemDefaults.colors(
-            selectedIconColor = PixiViewNavigationDefaults.navigationSelectedItemColor(),
-            unselectedIconColor = PixiViewNavigationDefaults.navigationContentColor(),
-            selectedTextColor = PixiViewNavigationDefaults.navigationSelectedItemColor(),
-            unselectedTextColor = PixiViewNavigationDefaults.navigationContentColor(),
-            indicatorColor = PixiViewNavigationDefaults.navigationIndicatorColor(),
-        ),
-    )
+    if (currentPlatform == Platform.Android) {
+        NavigationBarItem(
+            modifier = modifier,
+            selected = isSelected,
+            onClick = onClick,
+            icon = icon,
+            label = label,
+            alwaysShowLabel = false,
+            colors = NavigationBarItemDefaults.colors(
+                selectedIconColor = PixiViewNavigationDefaults.navigationSelectedItemColor(),
+                unselectedIconColor = PixiViewNavigationDefaults.navigationContentColor(),
+                selectedTextColor = PixiViewNavigationDefaults.navigationSelectedItemColor(),
+                unselectedTextColor = PixiViewNavigationDefaults.navigationContentColor(),
+                indicatorColor = PixiViewNavigationDefaults.navigationIndicatorColor(),
+            ),
+        )
+    } else {
+        AdaptiveNavigationBarItem(
+            selected = isSelected,
+            icon = icon,
+            label = label,
+            onClick = onClick,
+        )
+    }
 }
 
 @Composable
