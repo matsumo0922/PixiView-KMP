@@ -11,7 +11,6 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.LargeTopAppBar
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.material3.rememberTopAppBarState
@@ -23,6 +22,8 @@ import androidx.compose.ui.input.nestedscroll.nestedScroll
 import dev.icerock.moko.biometry.compose.BindBiometryAuthenticatorEffect
 import dev.icerock.moko.biometry.compose.rememberBiometryAuthenticatorFactory
 import dev.icerock.moko.resources.compose.stringResource
+import io.github.alexzhirkevich.cupertino.adaptive.AdaptiveScaffold
+import io.github.alexzhirkevich.cupertino.adaptive.ExperimentalAdaptiveApi
 import kotlinx.coroutines.launch
 import me.matsumo.fanbox.core.common.PixiViewConfig
 import me.matsumo.fanbox.core.model.UserData
@@ -152,7 +153,7 @@ internal fun SettingTopRoute(
     BindBiometryAuthenticatorEffect(biometryAuthenticator)
 }
 
-@OptIn(ExperimentalMaterial3Api::class)
+@OptIn(ExperimentalMaterial3Api::class, ExperimentalAdaptiveApi::class)
 @Composable
 private fun SettingTopScreen(
     userData: UserData,
@@ -180,7 +181,7 @@ private fun SettingTopScreen(
     val state = rememberTopAppBarState()
     val behavior = TopAppBarDefaults.exitUntilCollapsedScrollBehavior(state)
 
-    Scaffold(
+    AdaptiveScaffold(
         modifier = modifier.nestedScroll(behavior.nestedScrollConnection),
         topBar = {
             SettingTheme {

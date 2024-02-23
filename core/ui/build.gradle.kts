@@ -51,6 +51,7 @@ kotlin {
                 api(libsMain.moko.resources.compose)
 
                 api(libsMain.calf.ui)
+                api(libsMain.placeholder)
                 api(libsMain.androidx.paging.compose)
 
                 implementation(libsMain.play.service.ads)

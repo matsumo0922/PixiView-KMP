@@ -322,6 +322,7 @@ reorderble-compose = { module = "org.burnoutcrew.composereorderable:reorderable"
 collapsing-toolbar-compose = { module = "me.onebone:toolbar-compose", version = "2.3.5" }
 zoomable = { module = "com.mxalbert.zoomable:zoomable", version.ref = "zoomable" }
 pinch-zoom-grid = { module = "io.github.dokar3:pinchzoomgrid", version.ref = "pinchZoomGrid" }
+placeholder = { module = "com.eygraber:compose-placeholder-material3", version = "1.0.7" }
 unifile = { module = "com.github.tachiyomiorg:unifile", version = "17bec43" }
 ffmpeg = { module = "com.arthenica:ffmpeg-kit-audio", version.ref = "ffmpeg" }
 libraries-core = { module = "com.mikepenz:aboutlibraries-core", version.ref = "libraries" }

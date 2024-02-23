@@ -4,16 +4,23 @@ package me.matsumo.fanbox.core.ui.extensition
 
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.Immutable
 import androidx.compose.runtime.staticCompositionLocalOf
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.RectangleShape
 import coil3.Image
 import coil3.request.ImageRequest
 import coil3.request.httpHeaders
+import com.eygraber.compose.placeholder.PlaceholderHighlight
+import com.eygraber.compose.placeholder.material3.fade
+import com.eygraber.compose.placeholder.material3.shimmer
+import com.eygraber.compose.placeholder.placeholder
 import dev.icerock.moko.resources.ImageResource
+import io.github.alexzhirkevich.cupertino.adaptive.AdaptiveCircularProgressIndicator
+import io.github.alexzhirkevich.cupertino.adaptive.ExperimentalAdaptiveApi
 import io.ktor.http.headers
 import me.matsumo.fanbox.core.model.fanbox.FanboxMetaData
 import me.matsumo.fanbox.core.model.fanbox.FanboxPostDetail
@@ -61,12 +68,12 @@ fun SimmerPlaceHolder(
     Box(
         modifier = modifier
             .fillMaxSize()
-            /*.placeholder(
+            .placeholder(
                 visible = true,
                 color = MaterialTheme.colorScheme.surfaceVariant,
                 highlight = PlaceholderHighlight.shimmer(),
                 shape = RectangleShape,
-            ),*/
+            ),
     )
 }
 
@@ -77,21 +84,22 @@ fun FadePlaceHolder(
     Box(
         modifier = modifier
             .fillMaxSize()
-            /*.placeholder(
+            .placeholder(
                 visible = true,
                 color = MaterialTheme.colorScheme.surfaceVariant,
                 highlight = PlaceholderHighlight.fade(),
                 shape = RectangleShape,
-            ),*/
+            ),
     )
 }
 
+@OptIn(ExperimentalAdaptiveApi::class)
 @Composable
 fun IndicatorPlaceHolder(
     modifier: Modifier = Modifier,
 ) {
     Box(modifier.fillMaxSize()) {
-        CircularProgressIndicator(
+        AdaptiveCircularProgressIndicator(
             modifier = Modifier.align(Alignment.Center),
         )
     }

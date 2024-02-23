@@ -12,7 +12,6 @@ import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.LargeTopAppBar
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.material3.rememberTopAppBarState
@@ -26,10 +25,12 @@ import com.mikepenz.aboutlibraries.ui.compose.LibrariesContainer
 import com.mikepenz.aboutlibraries.ui.compose.LibraryDefaults
 import dev.icerock.moko.resources.compose.readTextAsState
 import dev.icerock.moko.resources.compose.stringResource
+import io.github.alexzhirkevich.cupertino.adaptive.AdaptiveScaffold
+import io.github.alexzhirkevich.cupertino.adaptive.ExperimentalAdaptiveApi
 import me.matsumo.fanbox.core.ui.MR
 import me.matsumo.fanbox.feature.setting.SettingTheme
 
-@OptIn(ExperimentalMaterial3Api::class)
+@OptIn(ExperimentalMaterial3Api::class, ExperimentalAdaptiveApi::class)
 @Composable
 internal fun SettingLicenseScreen(
     terminate: () -> Unit,
@@ -39,7 +40,7 @@ internal fun SettingLicenseScreen(
     val behavior = TopAppBarDefaults.exitUntilCollapsedScrollBehavior(state)
     val libs by MR.files.aboutlibraries.readTextAsState()
 
-    Scaffold(
+    AdaptiveScaffold(
         modifier = modifier.nestedScroll(behavior.nestedScrollConnection),
         topBar = {
             SettingTheme {
