@@ -20,7 +20,7 @@ class KmpAndroidApplication : Plugin<Project> {
                 apply("project-report")
                 apply("com.google.firebase.crashlytics")
                 apply("com.google.devtools.ksp")
-                // apply("com.google.gms.google-services")
+                apply("com.google.gms.google-services")
                 apply("com.mikepenz.aboutlibraries.plugin")
                 apply("com.codingfeline.buildkonfig")
             }

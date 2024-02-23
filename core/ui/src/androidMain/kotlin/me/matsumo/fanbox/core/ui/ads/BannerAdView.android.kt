@@ -5,8 +5,8 @@ import android.content.res.Resources
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.viewinterop.AndroidView
+import com.google.android.gms.ads.AdRequest
 import com.google.android.gms.ads.AdSize
-import com.google.android.gms.ads.admanager.AdManagerAdRequest
 import com.google.android.gms.ads.admanager.AdManagerAdView
 import me.matsumo.fanbox.core.ui.theme.LocalPixiViewConfig
 
@@ -27,7 +27,7 @@ actual fun BannerAdView(modifier: Modifier) {
             }
         },
         update = {
-            it.loadAd(AdManagerAdRequest())
+            it.loadAd(AdRequest.Builder().build())
         }
     )
 }
