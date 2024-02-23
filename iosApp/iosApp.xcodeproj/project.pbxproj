@@ -21,6 +21,7 @@
 		AD6E4F7B2B885A1D0000CD56 /* NCMB in Frameworks */ = {isa = PBXBuildFile; productRef = AD6E4F7A2B885A1D0000CD56 /* NCMB */; };
 		AD6E4F7D2B885A5F0000CD56 /* secret.plist in Resources */ = {isa = PBXBuildFile; fileRef = AD6E4F7C2B885A5F0000CD56 /* secret.plist */; };
 		AD6E4F7F2B885B9B0000CD56 /* KeyManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = AD6E4F7E2B885B9B0000CD56 /* KeyManager.swift */; };
+		AD6E4F812B88A1060000CD56 /* BannerAdView.swift in Sources */ = {isa = PBXBuildFile; fileRef = AD6E4F802B88A1060000CD56 /* BannerAdView.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -39,6 +40,7 @@
 		AD6E4F762B86663F0000CD56 /* UIProvider.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UIProvider.swift; sourceTree = "<group>"; };
 		AD6E4F7C2B885A5F0000CD56 /* secret.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = secret.plist; sourceTree = "<group>"; };
 		AD6E4F7E2B885B9B0000CD56 /* KeyManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KeyManager.swift; sourceTree = "<group>"; };
+		AD6E4F802B88A1060000CD56 /* BannerAdView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BannerAdView.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -128,6 +130,7 @@
 				AD6E4F762B86663F0000CD56 /* UIProvider.swift */,
 				AD6E4F672B8508E70000CD56 /* NativeAdView.swift */,
 				AD6E4F722B865E6F0000CD56 /* NativeAdView.xib */,
+				AD6E4F802B88A1060000CD56 /* BannerAdView.swift */,
 			);
 			path = UI;
 			sourceTree = "<group>";
@@ -257,6 +260,7 @@
 				AD310C762B80FF6C00D91635 /* BillingController.swift in Sources */,
 				2152FB042600AC8F00CF470E /* iOSApp.swift in Sources */,
 				AD6E4F7F2B885B9B0000CD56 /* KeyManager.swift in Sources */,
+				AD6E4F812B88A1060000CD56 /* BannerAdView.swift in Sources */,
 				AD310C742B80D2F500D91635 /* BillingClient.swift in Sources */,
 				AD5F8B822B4D50A3004888F6 /* ComposeViewController.swift in Sources */,
 				AD6E4F772B86663F0000CD56 /* UIProvider.swift in Sources */,

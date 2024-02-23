@@ -1,5 +1,7 @@
 package me.matsumo.fanbox.feature.library.notify
 
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
@@ -18,16 +20,20 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.nestedscroll.nestedScroll
+import androidx.compose.ui.unit.dp
 import androidx.paging.LoadState
 import app.cash.paging.compose.LazyPagingItems
 import app.cash.paging.compose.collectAsLazyPagingItems
 import app.cash.paging.compose.itemContentType
 import app.cash.paging.compose.itemKey
 import dev.icerock.moko.resources.compose.stringResource
+import me.matsumo.fanbox.core.model.UserData
 import me.matsumo.fanbox.core.model.fanbox.FanboxBell
 import me.matsumo.fanbox.core.model.fanbox.id.PostId
+import me.matsumo.fanbox.core.ui.AsyncLoadContents
 import me.matsumo.fanbox.core.ui.LazyPagingItemsLoadContents
 import me.matsumo.fanbox.core.ui.MR
+import me.matsumo.fanbox.core.ui.ads.BannerAdView
 import me.matsumo.fanbox.core.ui.component.PixiViewTopBar
 import me.matsumo.fanbox.core.ui.extensition.LocalNavigationType
 import me.matsumo.fanbox.core.ui.extensition.PixiViewNavigationType
@@ -44,21 +50,29 @@ internal fun LibraryNotifyRoute(
     modifier: Modifier = Modifier,
     viewModel: LibraryNotifyViewModel = koinViewModel(LibraryNotifyViewModel::class),
 ) {
-    val uiState by viewModel.uiState.collectAsStateWithLifecycle()
-    val paging = uiState.paging.collectAsLazyPagingItems()
+    val screenState by viewModel.screenState.collectAsStateWithLifecycle()
 
-    LibraryNotifyScreen(
+    AsyncLoadContents(
         modifier = modifier,
-        openDrawer = openDrawer,
-        onClickBell = navigateToPostDetail,
-        pagingAdapter = paging,
-    )
+        screenState = screenState,
+    ) {
+        val paging = it.paging.collectAsLazyPagingItems()
+
+        LibraryNotifyScreen(
+            modifier = modifier,
+            openDrawer = openDrawer,
+            onClickBell = navigateToPostDetail,
+            pagingAdapter = paging,
+            userData = it.userData,
+        )
+    }
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 private fun LibraryNotifyScreen(
     pagingAdapter: LazyPagingItems<FanboxBell>,
+    userData: UserData,
     openDrawer: () -> Unit,
     onClickBell: (PostId) -> Unit,
     modifier: Modifier = Modifier,
@@ -105,14 +119,23 @@ private fun LibraryNotifyScreen(
                     },
                     contentType = pagingAdapter.itemContentType(),
                 ) { index ->
-                    pagingAdapter[index]?.let { bell ->
-                        LibraryNotifyBellItem(
-                            modifier = Modifier.fillMaxWidth(),
-                            bell = bell,
-                            onClickBell = onClickBell,
-                        )
+                    Column(
+                        modifier = Modifier.fillMaxWidth(),
+                        verticalArrangement = Arrangement.spacedBy(16.dp),
+                    ) {
+                        pagingAdapter[index]?.let { bell ->
+                            LibraryNotifyBellItem(
+                                modifier = Modifier.fillMaxWidth(),
+                                bell = bell,
+                                onClickBell = onClickBell,
+                            )
 
-                        Divider()
+                            Divider()
+                        }
+
+                        if ((index + 5) % 10 == 0 && !userData.hasPrivilege) {
+                            BannerAdView(modifier = Modifier.fillMaxWidth())
+                        }
                     }
                 }
 

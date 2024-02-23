@@ -42,7 +42,6 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import app.cash.paging.compose.LazyPagingItems
 import app.cash.paging.compose.collectAsLazyPagingItems
-import me.matsumo.fanbox.feature.creator.top.items.CreatorTopPostsScreen
 import dev.icerock.moko.resources.StringResource
 import dev.icerock.moko.resources.compose.stringResource
 import kotlinx.collections.immutable.ImmutableList
@@ -68,6 +67,7 @@ import me.matsumo.fanbox.core.ui.extensition.SnackbarExtension
 import me.matsumo.fanbox.feature.creator.top.items.CreatorTopDescriptionDialog
 import me.matsumo.fanbox.feature.creator.top.items.CreatorTopHeader
 import me.matsumo.fanbox.feature.creator.top.items.CreatorTopPlansScreen
+import me.matsumo.fanbox.feature.creator.top.items.CreatorTopPostsScreen
 import moe.tlaster.precompose.flow.collectAsStateWithLifecycle
 import moe.tlaster.precompose.koin.koinViewModel
 import org.koin.compose.koinInject
@@ -105,8 +105,6 @@ internal fun CreatorTopRoute(
             modifier = Modifier.fillMaxSize(),
             isPosts = isPosts,
             userData = uiState.userData,
-            nativeAdUnitId = uiState.nativeAdUnitId,
-            // nativeAdsPreLoader = viewModel.adsPreLoader,
             bookmarkedPosts = uiState.bookmarkedPosts.toImmutableList(),
             creatorDetail = uiState.creatorDetail,
             creatorPlans = uiState.creatorPlans.toImmutableList(),
@@ -135,8 +133,6 @@ private fun CreatorTopScreen(
     isPosts: Boolean,
     creatorDetail: FanboxCreatorDetail,
     userData: UserData,
-    nativeAdUnitId: String,
-    // nativeAdsPreLoader: NativeAdsPreLoader,
     bookmarkedPosts: ImmutableList<PostId>,
     creatorPlans: ImmutableList<FanboxCreatorPlan>,
     creatorTags: ImmutableList<FanboxCreatorTag>,
@@ -253,8 +249,6 @@ private fun CreatorTopScreen(
                                     listState = postsListState,
                                     gridState = postsGridState,
                                     userData = userData,
-                                    nativeAdUnitId = nativeAdUnitId,
-                                    // nativeAdsPreLoader = nativeAdsPreLoader,
                                     bookmarkedPosts = bookmarkedPosts.toImmutableList(),
                                     pagingAdapter = creatorPostsPaging,
                                     creatorTags = creatorTags,

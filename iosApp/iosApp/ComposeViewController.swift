@@ -32,7 +32,8 @@ struct ComposeViewController: UIViewControllerRepresentable {
     
     private func makeUIs() -> [String: @convention(block)() -> UIViewController?] {
         return [
-            "NativeAdView": { UIHostingController(rootView: NativeAdView()) }
+            "NativeAdView": { UIHostingController(rootView: NativeAdView()) },
+            "BannerAdView": { UIHostingController(rootView: BannerAdView()) }
         ]
     }
 }

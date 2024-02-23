@@ -7,7 +7,6 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
-import me.matsumo.fanbox.core.common.PixiViewConfig
 import me.matsumo.fanbox.core.model.fanbox.FanboxPost
 import me.matsumo.fanbox.core.repository.FanboxRepository
 import me.matsumo.fanbox.core.repository.UserDataRepository
@@ -23,26 +22,15 @@ import moe.tlaster.precompose.viewmodel.viewModelScope
 class PostDetailRootViewModel(
     private val userDataRepository: UserDataRepository,
     private val fanboxRepository: FanboxRepository,
-    private val pixiViewConfig: PixiViewConfig,
-    // private val nativeAdsPreLoader: NativeAdsPreLoader,
 ) : ViewModel() {
 
     private val _uiState = MutableStateFlow(
         PostDetailRootUiState(
             paging = null,
-            nativeAdUnitId = pixiViewConfig.adMobAndroid.nativeAdUnitId,
         ),
     )
 
     val uiState = _uiState.asStateFlow()
-
-    // val adsPreLoader = nativeAdsPreLoader
-
-    /*init {
-        viewModelScope.launch {
-            adsPreLoader.preloadAd()
-        }
-    }*/
 
     fun fetch(type: PostDetailPagingType) {
         viewModelScope.launch {
@@ -58,7 +46,6 @@ class PostDetailRootViewModel(
                     Search -> fanboxRepository.getPostsFromQueryPagerCache()
                     Unknown -> emptyPaging()
                 },
-                nativeAdUnitId = pixiViewConfig.adMobAndroid.nativeAdUnitId,
             )
         }
     }
@@ -67,5 +54,4 @@ class PostDetailRootViewModel(
 @Stable
 data class PostDetailRootUiState(
     val paging: Flow<PagingData<FanboxPost>>?,
-    val nativeAdUnitId: String,
 )

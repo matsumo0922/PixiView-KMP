@@ -25,6 +25,7 @@ val libraryModule = module {
     factory {
         LibraryNotifyViewModel(
             fanboxRepository = get(),
+            userDataRepository = get(),
         )
     }
 

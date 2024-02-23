@@ -24,6 +24,7 @@ struct NativeAdView: View {
                 NativeAdItem(nativeAd: nativeAd)
             }
         }
+        .background(Color.blue.opacity(0))
         .onAppear(perform: loadAd)
     }
     
@@ -88,7 +89,7 @@ private class NativeAdModel: NSObject, ObservableObject, GADNativeAdLoaderDelega
         let request = GADRequest()
         request.scene = windowScene
         
-        adLoader = GADAdLoader(adUnitID: "ca-app-pub-3940256099942544/3986624511", rootViewController: nil, adTypes: [.native], options: nil)
+        adLoader = GADAdLoader(adUnitID: adUnitID, rootViewController: nil, adTypes: [.native], options: nil)
         adLoader!.delegate = self
         adLoader!.load(request)
     }

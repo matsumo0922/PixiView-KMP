@@ -28,7 +28,6 @@ val postModule = module {
         PostDetailRootViewModel(
             userDataRepository = get(),
             fanboxRepository = get(),
-            pixiViewConfig = get(),
         )
     }
 

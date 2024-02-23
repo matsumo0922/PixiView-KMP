@@ -10,6 +10,7 @@ import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.pager.HorizontalPager
@@ -54,13 +55,17 @@ import me.matsumo.fanbox.core.model.fanbox.id.PostId
 import me.matsumo.fanbox.core.ui.AsyncLoadContents
 import me.matsumo.fanbox.core.ui.LazyPagingItemsLoadContents
 import me.matsumo.fanbox.core.ui.MR
+import me.matsumo.fanbox.core.ui.ads.BannerAdView
+import me.matsumo.fanbox.core.ui.ads.NativeAdView
 import me.matsumo.fanbox.core.ui.component.CoordinatorScaffold
 import me.matsumo.fanbox.core.ui.component.RestrictCardItem
 import me.matsumo.fanbox.core.ui.component.TagItems
 import me.matsumo.fanbox.core.ui.extensition.FadePlaceHolder
 import me.matsumo.fanbox.core.ui.extensition.LocalSnackbarHostState
 import me.matsumo.fanbox.core.ui.extensition.NavigatorExtension
+import me.matsumo.fanbox.core.ui.extensition.Platform
 import me.matsumo.fanbox.core.ui.extensition.SnackbarExtension
+import me.matsumo.fanbox.core.ui.extensition.currentPlatform
 import me.matsumo.fanbox.core.ui.extensition.fanboxHeader
 import me.matsumo.fanbox.core.ui.extensition.isNullOrEmpty
 import me.matsumo.fanbox.core.ui.extensition.marquee
@@ -120,8 +125,6 @@ internal fun PostDetailRoute(
                     PostDetailView(
                         modifier = Modifier.fillMaxSize(),
                         postId = post.id,
-                        nativeAdUnitId = uiState.nativeAdUnitId,
-                        // nativeAdsPreLoader = viewModel.adsPreLoader,
                         navigateToPostSearch = navigateToPostSearch,
                         navigateToPostDetail = navigateToPostDetail,
                         navigateToPostImage = navigateToPostImage,
@@ -137,8 +140,6 @@ internal fun PostDetailRoute(
         PostDetailView(
             modifier = modifier,
             postId = postId,
-            nativeAdUnitId = uiState.nativeAdUnitId,
-            // nativeAdsPreLoader = viewModel.adsPreLoader,
             navigateToPostSearch = navigateToPostSearch,
             navigateToPostDetail = navigateToPostDetail,
             navigateToPostImage = navigateToPostImage,
@@ -159,8 +160,6 @@ internal fun PostDetailRoute(
 @Composable
 private fun PostDetailView(
     postId: PostId,
-    nativeAdUnitId: String,
-    // nativeAdsPreLoader: NativeAdsPreLoader,
     navigateToPostSearch: (String, CreatorId) -> Unit,
     navigateToPostDetail: (PostId) -> Unit,
     navigateToPostImage: (PostId, Int) -> Unit,
@@ -173,7 +172,6 @@ private fun PostDetailView(
     navigatorExtension: NavigatorExtension = koinInject(),
     snackExtension: SnackbarExtension = koinInject(),
 ) {
-    // val postDownloader = context as PostDownloader
     val screenState by viewModel.screenState.collectAsStateWithLifecycle()
     val snackbarHostState = LocalSnackbarHostState.current
     val scope = rememberCoroutineScope()
@@ -195,8 +193,6 @@ private fun PostDetailView(
             creatorDetail = uiState.creatorDetail,
             userData = uiState.userData,
             metaData = uiState.metaData,
-            nativeAdUnitId = nativeAdUnitId,
-            // nativeAdsPreLoader = nativeAdsPreLoader,
             onClickPost = navigateToPostDetail,
             onClickPostLike = viewModel::postLike,
             onClickPostBookmark = viewModel::postBookmark,
@@ -248,8 +244,6 @@ private fun PostDetailScreen(
     creatorDetail: FanboxCreatorDetail,
     userData: UserData,
     metaData: FanboxMetaData,
-    nativeAdUnitId: String,
-    // nativeAdsPreLoader: NativeAdsPreLoader,
     onClickPost: (PostId) -> Unit,
     onClickPostLike: (PostId) -> Unit,
     onClickPostBookmark: (FanboxPost, Boolean) -> Unit,
@@ -307,6 +301,15 @@ private fun PostDetailScreen(
                 )
             }
         },
+        bottomBar = {
+            if (!userData.hasPrivilege) {
+                BannerAdView(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .navigationBarsPadding(),
+                )
+            }
+        }
     ) {
         if (isShowCoordinateHeader) {
             item {
@@ -380,17 +383,16 @@ private fun PostDetailScreen(
             }
         }
 
-        /*if (!userData.hasPrivilege) {
+        // Android は NativeAds なので下部に置く
+        if (!userData.hasPrivilege && currentPlatform == Platform.Android) {
             item {
-                NativeAdMediumItem(
+                NativeAdView(
                     modifier = Modifier
                         .padding(horizontal = 16.dp)
                         .fillMaxWidth(),
-                    nativeAdUnitId = nativeAdUnitId,
-                    nativeAdsPreLoader = nativeAdsPreLoader,
                 )
             }
-        }*/
+        }
 
         item {
             PostDetailCreatorSection(

@@ -24,9 +24,12 @@ import me.matsumo.fanbox.core.model.UserData
 import me.matsumo.fanbox.core.model.fanbox.FanboxPost
 import me.matsumo.fanbox.core.model.fanbox.id.CreatorId
 import me.matsumo.fanbox.core.model.fanbox.id.PostId
+import me.matsumo.fanbox.core.ui.ads.BannerAdView
 import me.matsumo.fanbox.core.ui.ads.NativeAdView
 import me.matsumo.fanbox.core.ui.component.PostGridItem
 import me.matsumo.fanbox.core.ui.component.PostItem
+import me.matsumo.fanbox.core.ui.extensition.Platform
+import me.matsumo.fanbox.core.ui.extensition.currentPlatform
 import me.matsumo.fanbox.core.ui.extensition.drawVerticalScrollbar
 import me.matsumo.fanbox.core.ui.view.PagingErrorSection
 
@@ -79,6 +82,17 @@ private fun ColumnSection(
 ) {
     val state = rememberLazyListState()
 
+    val adOffset: Int
+    val adInterval: Int
+
+    if (currentPlatform == Platform.Android) {
+        adOffset = 3
+        adInterval = 4
+    } else {
+        adOffset = 1
+        adInterval = 2
+    }
+
     LazyColumn(
         modifier = modifier.drawVerticalScrollbar(state),
         state = state,
@@ -111,10 +125,12 @@ private fun ColumnSection(
                     )
                 }
 
-                if ((index + 4) % 5 == 0 && !userData.hasPrivilege) {
-                    NativeAdView(
-                        modifier = Modifier.fillMaxWidth(),
-                    )
+                if ((index + adOffset) % adInterval == 0 && !userData.hasPrivilege) {
+                    if (currentPlatform == Platform.IOS) {
+                        BannerAdView(modifier = Modifier.fillMaxWidth())
+                    } else {
+                        NativeAdView(modifier = Modifier.fillMaxWidth())
+                    }
                 }
             }
         }

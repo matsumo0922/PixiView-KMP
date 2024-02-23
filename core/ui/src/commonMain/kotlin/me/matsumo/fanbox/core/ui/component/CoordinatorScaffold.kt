@@ -1,19 +1,17 @@
 package me.matsumo.fanbox.core.ui.component
 
-import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyListScope
 import androidx.compose.foundation.lazy.LazyListState
-import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
@@ -37,6 +35,7 @@ import me.matsumo.fanbox.core.ui.theme.applyTonalElevation
 fun CoordinatorScaffold(
     header: @Composable (Modifier) -> Unit,
     modifier: Modifier = Modifier,
+    bottomBar: @Composable () -> Unit = {},
     listState: LazyListState = rememberLazyListState(),
     color: Color = MaterialTheme.colorScheme.surface,
     onClickNavigateUp: (() -> Unit)? = null,
@@ -51,22 +50,26 @@ fun CoordinatorScaffold(
     var toolBarHeight by remember { mutableIntStateOf(64) }
 
     Box(modifier.background(color)) {
-        LazyColumn(
-            modifier = Modifier.fillMaxSize(),
-            contentPadding = contentPadding,
-            verticalArrangement = verticalArrangement,
-            horizontalAlignment = horizontalAlignment,
-            state = listState,
-        ) {
-            item {
-                header.invoke(
-                    Modifier
-                        .fillMaxWidth()
-                        .onGloballyPositioned { topSectionHeight = it.size.height },
-                )
+        Column(Modifier.fillMaxSize()) {
+            LazyColumn(
+                modifier = Modifier.weight(1f),
+                contentPadding = contentPadding,
+                verticalArrangement = verticalArrangement,
+                horizontalAlignment = horizontalAlignment,
+                state = listState,
+            ) {
+                item {
+                    header.invoke(
+                        Modifier
+                            .fillMaxWidth()
+                            .onGloballyPositioned { topSectionHeight = it.size.height },
+                    )
+                }
+
+                content(this)
             }
 
-            content(this)
+            bottomBar.invoke()
         }
 
         CoordinatorToolBar(

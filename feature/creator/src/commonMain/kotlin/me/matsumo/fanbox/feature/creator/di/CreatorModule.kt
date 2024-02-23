@@ -14,7 +14,6 @@ val creatorModule = module {
         CreatorTopViewModel(
             userDataRepository = get(),
             fanboxRepository = get(),
-            pixiViewConfig = get(),
         )
     }
 

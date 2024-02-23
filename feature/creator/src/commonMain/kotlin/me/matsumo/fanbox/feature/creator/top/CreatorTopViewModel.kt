@@ -8,7 +8,6 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
-import me.matsumo.fanbox.core.common.PixiViewConfig
 import me.matsumo.fanbox.core.common.util.suspendRunCatching
 import me.matsumo.fanbox.core.model.ScreenState
 import me.matsumo.fanbox.core.model.UserData
@@ -28,15 +27,11 @@ import moe.tlaster.precompose.viewmodel.viewModelScope
 class CreatorTopViewModel(
     private val userDataRepository: UserDataRepository,
     private val fanboxRepository: FanboxRepository,
-    private val pixiViewConfig: PixiViewConfig,
-    // private val nativeAdsPreLoader: NativeAdsPreLoader,
 ) : ViewModel() {
 
     private val _screenState = MutableStateFlow<ScreenState<CreatorTopUiState>>(ScreenState.Loading)
 
     val screenState = _screenState.asStateFlow()
-
-    // val adsPreLoader = nativeAdsPreLoader
 
     private var postsPagingCache: Flow<PagingData<FanboxPost>>? = null
 
@@ -52,10 +47,6 @@ class CreatorTopViewModel(
                 _screenState.value = screenState.updateWhenIdle { it.copy(bookmarkedPosts = data) }
             }
         }
-
-        /*viewModelScope.launch {
-            nativeAdsPreLoader.preloadAd()
-        }*/
     }
 
     fun fetch(creatorId: CreatorId) {
@@ -68,7 +59,6 @@ class CreatorTopViewModel(
                 CreatorTopUiState(
                     userData = userData,
                     bookmarkedPosts = fanboxRepository.bookmarkedPosts.first(),
-                    nativeAdUnitId = pixiViewConfig.adMobAndroid.nativeAdUnitId,
                     creatorDetail = fanboxRepository.getCreator(creatorId),
                     creatorPlans = fanboxRepository.getCreatorPlans(creatorId),
                     creatorTags = fanboxRepository.getCreatorTags(creatorId),
@@ -119,7 +109,6 @@ class CreatorTopViewModel(
 @Stable
 data class CreatorTopUiState(
     val userData: UserData,
-    val nativeAdUnitId: String,
     val bookmarkedPosts: List<PostId>,
     val creatorDetail: FanboxCreatorDetail,
     val creatorPlans: List<FanboxCreatorPlan>,
