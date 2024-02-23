@@ -1,5 +1,6 @@
 package me.matsumo.fanbox.core.ui.di
 
+import me.matsumo.fanbox.core.ui.ads.NativeAdsPreLoader
 import me.matsumo.fanbox.core.ui.extensition.ImageDownloader
 import me.matsumo.fanbox.core.ui.extensition.ImageDownloaderImpl
 import me.matsumo.fanbox.core.ui.extensition.NavigatorExtension
@@ -27,6 +28,14 @@ actual val uiSubModule: Module = module {
         ImageDownloaderImpl(
             context = get(),
             fanboxRepository = get(),
+        )
+    }
+
+    single<NativeAdsPreLoader> {
+        NativeAdsPreLoader(
+            context = get(),
+            pixiViewConfig = get(),
+            iosDispatcher = get(),
         )
     }
 }

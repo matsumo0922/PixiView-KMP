@@ -18,6 +18,9 @@
 		AD6E4F682B8508E70000CD56 /* NativeAdView.swift in Sources */ = {isa = PBXBuildFile; fileRef = AD6E4F672B8508E70000CD56 /* NativeAdView.swift */; };
 		AD6E4F732B865E6F0000CD56 /* NativeAdView.xib in Resources */ = {isa = PBXBuildFile; fileRef = AD6E4F722B865E6F0000CD56 /* NativeAdView.xib */; };
 		AD6E4F772B86663F0000CD56 /* UIProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = AD6E4F762B86663F0000CD56 /* UIProvider.swift */; };
+		AD6E4F7B2B885A1D0000CD56 /* NCMB in Frameworks */ = {isa = PBXBuildFile; productRef = AD6E4F7A2B885A1D0000CD56 /* NCMB */; };
+		AD6E4F7D2B885A5F0000CD56 /* secret.plist in Resources */ = {isa = PBXBuildFile; fileRef = AD6E4F7C2B885A5F0000CD56 /* secret.plist */; };
+		AD6E4F7F2B885B9B0000CD56 /* KeyManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = AD6E4F7E2B885B9B0000CD56 /* KeyManager.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -34,6 +37,8 @@
 		AD6E4F672B8508E70000CD56 /* NativeAdView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NativeAdView.swift; sourceTree = "<group>"; };
 		AD6E4F722B865E6F0000CD56 /* NativeAdView.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = NativeAdView.xib; sourceTree = "<group>"; };
 		AD6E4F762B86663F0000CD56 /* UIProvider.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UIProvider.swift; sourceTree = "<group>"; };
+		AD6E4F7C2B885A5F0000CD56 /* secret.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = secret.plist; sourceTree = "<group>"; };
+		AD6E4F7E2B885B9B0000CD56 /* KeyManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KeyManager.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -42,6 +47,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				AD6E4F652B84F33D0000CD56 /* GoogleMobileAds in Frameworks */,
+				AD6E4F7B2B885A1D0000CD56 /* NCMB in Frameworks */,
 				AD14F5952B55A31600B367F8 /* StoreKit.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -90,7 +96,9 @@
 				AD310C6D2B80AB7000D91635 /* Billing */,
 				2152FB032600AC8F00CF470E /* iOSApp.swift */,
 				AD5F8B812B4D50A3004888F6 /* ComposeViewController.swift */,
+				AD6E4F7E2B885B9B0000CD56 /* KeyManager.swift */,
 				7555FF8C242A565B00829871 /* Info.plist */,
+				AD6E4F7C2B885A5F0000CD56 /* secret.plist */,
 				058557BA273AAA24004C7B11 /* Assets.xcassets */,
 				058557D7273AAEEB004C7B11 /* Preview Content */,
 			);
@@ -144,6 +152,7 @@
 			name = iosApp;
 			packageProductDependencies = (
 				AD6E4F642B84F33D0000CD56 /* GoogleMobileAds */,
+				AD6E4F7A2B885A1D0000CD56 /* NCMB */,
 			);
 			productName = iosApp;
 			productReference = 7555FF7B242A565900829871 /* PixiView-KMP.app */;
@@ -176,6 +185,7 @@
 			mainGroup = 7555FF72242A565900829871;
 			packageReferences = (
 				AD6E4F632B84F33D0000CD56 /* XCRemoteSwiftPackageReference "swift-package-manager-google-mobile-ads" */,
+				AD6E4F792B885A1D0000CD56 /* XCRemoteSwiftPackageReference "ncmb_swift" */,
 			);
 			productRefGroup = 7555FF7C242A565900829871 /* Products */;
 			projectDirPath = "";
@@ -191,6 +201,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				AD6E4F7D2B885A5F0000CD56 /* secret.plist in Resources */,
 				058557D9273AAEEB004C7B11 /* Preview Assets.xcassets in Resources */,
 				AD6E4F732B865E6F0000CD56 /* NativeAdView.xib in Resources */,
 				058557BB273AAA24004C7B11 /* Assets.xcassets in Resources */,
@@ -245,6 +256,7 @@
 			files = (
 				AD310C762B80FF6C00D91635 /* BillingController.swift in Sources */,
 				2152FB042600AC8F00CF470E /* iOSApp.swift in Sources */,
+				AD6E4F7F2B885B9B0000CD56 /* KeyManager.swift in Sources */,
 				AD310C742B80D2F500D91635 /* BillingClient.swift in Sources */,
 				AD5F8B822B4D50A3004888F6 /* ComposeViewController.swift in Sources */,
 				AD6E4F772B86663F0000CD56 /* UIProvider.swift in Sources */,
@@ -479,6 +491,14 @@
 				minimumVersion = 11.0.1;
 			};
 		};
+		AD6E4F792B885A1D0000CD56 /* XCRemoteSwiftPackageReference "ncmb_swift" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/NIFCLOUD-mbaas/ncmb_swift.git";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 1.3.0;
+			};
+		};
 /* End XCRemoteSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
@@ -486,6 +506,11 @@
 			isa = XCSwiftPackageProductDependency;
 			package = AD6E4F632B84F33D0000CD56 /* XCRemoteSwiftPackageReference "swift-package-manager-google-mobile-ads" */;
 			productName = GoogleMobileAds;
+		};
+		AD6E4F7A2B885A1D0000CD56 /* NCMB */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = AD6E4F792B885A1D0000CD56 /* XCRemoteSwiftPackageReference "ncmb_swift" */;
+			productName = NCMB;
 		};
 /* End XCSwiftPackageProductDependency section */
 	};

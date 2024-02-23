@@ -1,6 +1,15 @@
 {
   "pins" : [
     {
+      "identity" : "ncmb_swift",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/NIFCLOUD-mbaas/ncmb_swift.git",
+      "state" : {
+        "revision" : "a2e05e0defecadf753f8921fa548e09a492b7fb2",
+        "version" : "1.4.2"
+      }
+    },
+    {
       "identity" : "swift-package-manager-google-mobile-ads",
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/googleads/swift-package-manager-google-mobile-ads.git",

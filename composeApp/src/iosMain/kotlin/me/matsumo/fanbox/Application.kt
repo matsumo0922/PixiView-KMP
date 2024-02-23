@@ -23,6 +23,7 @@ fun MainViewController(
             PixiViewApp(
                 modifier = Modifier.fillMaxSize(),
                 windowSize = calculateWindowSizeClass().widthSizeClass,
+                nativeViews = iosUis,
             )
         }
     }

@@ -9,6 +9,7 @@ import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.staticCompositionLocalOf
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
+import me.matsumo.fanbox.core.common.PixiViewConfig
 import me.matsumo.fanbox.core.model.ThemeColorConfig
 import me.matsumo.fanbox.core.model.fanbox.FanboxMetaData
 import me.matsumo.fanbox.core.ui.extensition.FanboxCookie
@@ -24,6 +25,9 @@ import me.matsumo.fanbox.core.ui.theme.color.LightBrownColorScheme
 import me.matsumo.fanbox.core.ui.theme.color.LightGreenColorScheme
 import me.matsumo.fanbox.core.ui.theme.color.LightPinckColorScheme
 import me.matsumo.fanbox.core.ui.theme.color.LightPurpleColorScheme
+import me.matsumo.fanbox.core.ui.view.LocalNativeViewsProvider
+import me.matsumo.fanbox.core.ui.view.NativeView
+import me.matsumo.fanbox.core.ui.view.NativeViews
 
 val LightDefaultColorScheme = lightColorScheme(
     primary = Purple40,
@@ -87,9 +91,11 @@ val LocalColorScheme = staticCompositionLocalOf { LightDefaultColorScheme }
 fun PixiViewTheme(
     fanboxCookie: String = "",
     fanboxMetadata: FanboxMetaData = FanboxMetaData.dummy(),
+    pixiViewConfig: PixiViewConfig = PixiViewConfig.dummy(),
     themeColorConfig: ThemeColorConfig = ThemeColorConfig.Red,
     shouldUseDarkTheme: Boolean = isSystemInDarkTheme(),
     enableDynamicTheme: Boolean = false,
+    nativeViews: Map<String, () -> NativeView?> = emptyMap(),
     content: @Composable () -> Unit,
 ) {
     val colorScheme = when (themeColorConfig) {
@@ -109,11 +115,13 @@ fun PixiViewTheme(
     val tintTheme = TintTheme()
 
     CompositionLocalProvider(
+        LocalPixiViewConfig provides pixiViewConfig,
         LocalColorScheme provides colorScheme,
         LocalFanboxCookie provides FanboxCookie(fanboxCookie),
         LocalFanboxMetadata provides fanboxMetadata,
         LocalBackgroundTheme provides backgroundTheme,
         LocalTintTheme provides tintTheme,
+        LocalNativeViewsProvider provides NativeViews(nativeViews),
     ) {
         MaterialTheme(
             colorScheme = colorScheme,

@@ -7,7 +7,6 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
-import me.matsumo.fanbox.core.common.PixiViewConfig
 import me.matsumo.fanbox.core.common.util.suspendRunCatching
 import me.matsumo.fanbox.core.model.UserData
 import me.matsumo.fanbox.core.model.fanbox.FanboxPost
@@ -21,9 +20,6 @@ import moe.tlaster.precompose.viewmodel.viewModelScope
 class LibraryHomeViewModel(
     private val userDataRepository: UserDataRepository,
     private val fanboxRepository: FanboxRepository,
-    // private val verifiedPlusUseCase: VerifyPlusUseCase,
-    // private val nativeAdsPreLoader: NativeAdsPreLoader,
-    private val pixiViewConfig: PixiViewConfig,
 ) : ViewModel() {
 
     private val _uiState = MutableStateFlow(
@@ -32,14 +28,11 @@ class LibraryHomeViewModel(
             bookmarkedPosts = emptyList(),
             homePaging = emptyPaging(),
             supportedPaging = emptyPaging(),
-            nativeAdUnitId = pixiViewConfig.adMobAndroid.nativeAdUnitId,
         ),
     )
 
     val uiState = _uiState.asStateFlow()
     val updatePlusTrigger = userDataRepository.updatePlusMode
-
-    // val adsPreLoader = nativeAdsPreLoader
 
     init {
         viewModelScope.launch {
@@ -51,7 +44,6 @@ class LibraryHomeViewModel(
                     userData = userData,
                     homePaging = fanboxRepository.getHomePostsPager(loadSize, isHideRestricted),
                     supportedPaging = fanboxRepository.getSupportedPostsPager(loadSize, isHideRestricted),
-                    nativeAdUnitId = pixiViewConfig.adMobAndroid.nativeAdUnitId,
                 )
             }
         }
@@ -61,10 +53,6 @@ class LibraryHomeViewModel(
                 _uiState.value = uiState.value.copy(bookmarkedPosts = it)
             }
         }
-
-        /*viewModelScope.launch {
-            adsPreLoader.preloadAd()
-        }*/
     }
 
     fun postLike(postId: PostId) {
@@ -94,5 +82,4 @@ data class LibraryUiState(
     val bookmarkedPosts: List<PostId>,
     val homePaging: Flow<PagingData<FanboxPost>>,
     val supportedPaging: Flow<PagingData<FanboxPost>>,
-    val nativeAdUnitId: String,
 )

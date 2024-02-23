@@ -25,6 +25,7 @@ import dev.icerock.moko.biometry.compose.rememberBiometryAuthenticatorFactory
 import io.github.aakira.napier.Napier
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
+import me.matsumo.fanbox.core.common.PixiViewConfig
 import me.matsumo.fanbox.core.model.ScreenState
 import me.matsumo.fanbox.core.model.ThemeConfig
 import me.matsumo.fanbox.core.ui.AsyncLoadContents
@@ -39,6 +40,7 @@ import me.matsumo.fanbox.core.ui.theme.DarkDefaultColorScheme
 import me.matsumo.fanbox.core.ui.theme.LightDefaultColorScheme
 import me.matsumo.fanbox.core.ui.theme.PixiViewTheme
 import me.matsumo.fanbox.core.ui.view.LoadingView
+import me.matsumo.fanbox.core.ui.view.NativeView
 import me.matsumo.fanbox.feature.welcome.WelcomeNavHost
 import moe.tlaster.precompose.flow.collectAsStateWithLifecycle
 import moe.tlaster.precompose.koin.koinViewModel
@@ -50,9 +52,11 @@ import org.koin.compose.koinInject
 @Composable
 fun PixiViewApp(
     windowSize: WindowWidthSizeClass,
+    nativeViews: Map<String, () -> NativeView?>,
     modifier: Modifier = Modifier,
     viewModel: PixiViewViewModel = koinViewModel(PixiViewViewModel::class),
     navigatorExtension: NavigatorExtension = koinInject(),
+    pixiViewConfig: PixiViewConfig = koinInject(),
 ) {
     val scope = rememberCoroutineScope()
     val screenState by viewModel.screenState.collectAsStateWithLifecycle()
@@ -81,8 +85,10 @@ fun PixiViewApp(
                 fanboxCookie = it.fanboxCookie,
                 fanboxMetadata = it.fanboxMetadata,
                 themeColorConfig = it.userData.themeColorConfig,
+                pixiViewConfig = pixiViewConfig,
                 shouldUseDarkTheme = shouldUseDarkTheme,
                 enableDynamicTheme = shouldUseDynamicColor(screenState),
+                nativeViews = nativeViews,
             ) {
                 PixiViewBackground(modifier) {
                     PixiViewScreen(

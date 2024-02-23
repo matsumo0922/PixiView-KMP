@@ -7,7 +7,10 @@ import GoogleMobileAds
 struct iOSApp: App {
     
     @UIApplicationDelegateAdaptor(PixiViewDelegate.self)
-    var appDelegate
+    private var appDelegate
+    
+    @Environment(\.scenePhase)
+    private var scenePhase
     
     var body: some Scene {
         WindowGroup {

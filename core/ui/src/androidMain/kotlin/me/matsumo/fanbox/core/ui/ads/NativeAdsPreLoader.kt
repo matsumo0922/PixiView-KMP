@@ -2,15 +2,13 @@ package me.matsumo.fanbox.core.ui.ads
 
 import android.annotation.SuppressLint
 import android.content.Context
-import androidx.compose.runtime.Composable
 import androidx.compose.runtime.Stable
-import androidx.compose.ui.platform.LocalContext
 import com.google.android.gms.ads.AdLoader
 import com.google.android.gms.ads.AdRequest
 import com.google.android.gms.ads.nativead.NativeAd
 import com.google.android.gms.ads.nativead.NativeAdOptions
+import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import me.matsumo.fanbox.core.common.PixiViewConfig
 import java.time.LocalDateTime
@@ -23,10 +21,12 @@ data class PreLoadedNativeAd(
 )
 
 class NativeAdsPreLoader(
-    private val scope: CoroutineScope,
-    context: Context,
-    pixiViewConfig: PixiViewConfig,
+    private val context: Context,
+    private val pixiViewConfig: PixiViewConfig,
+    private val iosDispatcher: CoroutineDispatcher,
 ) {
+
+    private val scope = CoroutineScope(iosDispatcher)
     private var preloadedNativeAds: MutableList<PreLoadedNativeAd> = mutableListOf()
     private var adLoader: AdLoader
     private var key = 0
@@ -46,6 +46,8 @@ class NativeAdsPreLoader(
             }
             .withNativeAdOptions(NativeAdOptions.Builder().build())
             .build()
+
+        preloadAd()
     }
 
     @SuppressLint("MissingPermission")
@@ -97,13 +99,6 @@ class NativeAdsPreLoader(
     }
 
     companion object {
-        const val NUMBER_OF_PRELOAD_ADS = 3
-
-        @Composable
-        fun dummy() = NativeAdsPreLoader(
-            scope = CoroutineScope(Dispatchers.IO),
-            context = LocalContext.current,
-            pixiViewConfig = PixiViewConfig.dummy(),
-        )
+        const val NUMBER_OF_PRELOAD_ADS = 4
     }
 }

@@ -1,14 +1,58 @@
-*.iml
-.gradle
-**/build/
-xcuserdata
-!src/**/build/
-local.properties
-.idea
-.DS_Store
-captures
+# built application files
+*.apk
+*.ap_
 .externalNativeBuild
 .cxx
+
+# files for the dex VM
+*.dex
+
+# Java class files
+*.class
+
+# generated files
+bin/
+gen/
+out/
+build/
+app/release/
+!src/**/build/
+
+# Local configuration file (sdk path, etc)
+local.properties
+
+# Eclipse project files
+.classpath
+.project
+
+# MacOS thumbnail db
+.DS_Store
+
+# Keystore
+gradle/keystore/release.keystore
+
+# IDEA/Android Studio project files, because
+# the project can be imported from settings.gradle.kts
+*.iml
+.idea
+
+# Gradle cache
+.gradle
+
+# Sandbox stuff
+_sandbox
+
+# Android Studio captures folder
+captures/
+
+# Room schema
+core/database/schemas
+
+# iOS secret files
+iosApp/iosApp/secret.plist
+
+# Xcode
+xcuserdata
 *.xcodeproj/*
 !*.xcodeproj/project.pbxproj
 !*.xcodeproj/xcshareddata/

@@ -16,13 +16,14 @@ struct NativeAdView: View {
     private var sceneDelegate: PixiViewSceneDelegate
     
     @StateObject
-    private var model = NativeAdModel(adUnitID: "")
+    private var model = NativeAdModel()
     
     var body: some View {
         VStack {
-            if let nativeAd = model.nativeAd {
-                NativeAdItem(nativeAd: nativeAd)
-            }
+            Text("NativeAd")
+//            if let nativeAd = model.nativeAd {
+//                NativeAdItem(nativeAd: nativeAd)
+//            }
         }.onAppear(perform: loadAd)
     }
     
@@ -79,8 +80,8 @@ private class NativeAdModel: NSObject, ObservableObject, GADNativeAdLoaderDelega
     private var adLoader: GADAdLoader?
     private var adUnitID: String
     
-    init(adUnitID: String) {
-        self.adUnitID = adUnitID
+    override init() {
+        self.adUnitID = KeyManager().getValue(key: "ADMOB_IOS_NATIVE_AD_UNIT_ID") as! String
     }
     
     func load(windowScene: UIWindowScene?, rootViewController: UIViewController?) {

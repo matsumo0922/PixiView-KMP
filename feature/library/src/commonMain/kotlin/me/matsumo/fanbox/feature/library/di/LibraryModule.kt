@@ -19,7 +19,6 @@ val libraryModule = module {
         LibraryHomeViewModel(
             userDataRepository = get(),
             fanboxRepository = get(),
-            pixiViewConfig = get(),
         )
     }
 

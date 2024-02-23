@@ -13,7 +13,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
-import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
@@ -27,15 +27,19 @@ import com.google.android.gms.ads.AdLoader
 import com.google.android.gms.ads.AdRequest
 import com.google.android.gms.ads.nativead.NativeAd
 import com.google.android.gms.ads.nativead.NativeAdOptions
+import kotlinx.coroutines.launch
 import me.matsumo.fanbox.core.ui.databinding.LayoutNativeAdsMediumBinding
+import me.matsumo.fanbox.core.ui.theme.LocalPixiViewConfig
+import org.koin.compose.koinInject
 
 @SuppressLint("MissingPermission")
 @Composable
-fun NativeAdMediumItem(
-    nativeAdUnitId: String,
-    nativeAdsPreLoader: NativeAdsPreLoader,
-    modifier: Modifier = Modifier,
+actual fun NativeAdView(
+    modifier: Modifier,
 ) {
+    val pixiViewConfig = LocalPixiViewConfig.current
+    val nativeAdsPreLoader = koinInject<NativeAdsPreLoader>()
+
     fun setupNativeAd(binding: LayoutNativeAdsMediumBinding, nativeAd: NativeAd) {
         val adView = binding.root.also { adView ->
             adView.advertiserView = binding.tvAdvertiser
@@ -64,66 +68,63 @@ fun NativeAdMediumItem(
     }
 
     val context = LocalContext.current
+    val scope = rememberCoroutineScope()
 
     var nativeAdKey by rememberSaveable { mutableIntStateOf(-1) }
-    var isAdLoaded by rememberSaveable { mutableStateOf(false) }
 
     val titleTextColor = MaterialTheme.colorScheme.onSurface.toArgb()
     val bodyTextColor = MaterialTheme.colorScheme.onSurfaceVariant.toArgb()
     val buttonColor = MaterialTheme.colorScheme.primary.toArgb()
     val buttonTextColor = MaterialTheme.colorScheme.onPrimary.toArgb()
 
-    DisposableEffect(!isAdLoaded) {
-        if (!isAdLoaded) {
-            nativeAdKey = nativeAdsPreLoader.getKey() ?: -1
-            isAdLoaded = true
-        }
+    DisposableEffect(true) {
+        nativeAdKey = nativeAdsPreLoader.getKey() ?: -1
 
         onDispose {
             nativeAdsPreLoader.popAd(nativeAdKey)
         }
     }
 
-    if (isAdLoaded) {
-        Card(
-            modifier = modifier.clip(RoundedCornerShape(8.dp)),
-            shape = RoundedCornerShape(8.dp),
-            colors = CardDefaults.cardColors(MaterialTheme.colorScheme.surfaceColorAtElevation(2.dp)),
-        ) {
-            AndroidViewBinding(
-                modifier = Modifier.fillMaxWidth(),
-                factory = { inflater, parent, attachToParent ->
-                    val binding = LayoutNativeAdsMediumBinding.inflate(inflater, parent, attachToParent)
+    Card(
+        modifier = modifier.clip(RoundedCornerShape(8.dp)),
+        shape = RoundedCornerShape(8.dp),
+        colors = CardDefaults.cardColors(MaterialTheme.colorScheme.surfaceColorAtElevation(2.dp)),
+    ) {
+        AndroidViewBinding(
+            modifier = Modifier.fillMaxWidth(),
+            factory = { inflater, parent, attachToParent ->
+                val binding = LayoutNativeAdsMediumBinding.inflate(inflater, parent, attachToParent)
 
-                    binding.tvAdvertiser.setTextColor(bodyTextColor)
-                    binding.tvBody.setTextColor(bodyTextColor)
-                    binding.btnCta.setTextColor(buttonTextColor)
-                    binding.btnCta.backgroundTintList = ColorStateList.valueOf(buttonColor)
-                    binding.tvHeadline.setTextColor(titleTextColor)
-                    binding.tvPrice.setTextColor(bodyTextColor)
-                    binding.tvStore.setTextColor(bodyTextColor)
-                    binding.tvAd.setTextColor(bodyTextColor)
+                binding.tvAdvertiser.setTextColor(bodyTextColor)
+                binding.tvBody.setTextColor(bodyTextColor)
+                binding.btnCta.setTextColor(buttonTextColor)
+                binding.btnCta.backgroundTintList = ColorStateList.valueOf(buttonColor)
+                binding.tvHeadline.setTextColor(titleTextColor)
+                binding.tvPrice.setTextColor(bodyTextColor)
+                binding.tvStore.setTextColor(bodyTextColor)
+                binding.tvAd.setTextColor(bodyTextColor)
 
-                    binding
-                },
-                update = {
-                    this.root.doOnLayout {
-                        if (nativeAdKey != -1) {
-                            nativeAdsPreLoader.getAd(nativeAdKey)?.let {
-                                setupNativeAd(this, it)
-                                return@doOnLayout
-                            }
+                binding
+            },
+            update = {
+                this.root.doOnLayout {
+                    if (nativeAdKey != -1) {
+                        nativeAdsPreLoader.getAd(nativeAdKey)?.let {
+                            setupNativeAd(this, it)
+                            return@doOnLayout
                         }
+                    }
 
-                        val adLoader = AdLoader.Builder(context, nativeAdUnitId)
-                            .forNativeAd { setupNativeAd(this, it) }
+                    scope.launch {
+                        val adLoader = AdLoader.Builder(context, pixiViewConfig.adMobAndroid.nativeAdUnitId)
+                            .forNativeAd { setupNativeAd(this@AndroidViewBinding, it) }
                             .withNativeAdOptions(NativeAdOptions.Builder().build())
                             .build()
 
                         adLoader.loadAd(AdRequest.Builder().build())
                     }
-                },
-            )
-        }
+                }
+            },
+        )
     }
 }

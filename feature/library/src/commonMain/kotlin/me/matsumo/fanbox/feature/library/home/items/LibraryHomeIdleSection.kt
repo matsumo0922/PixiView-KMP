@@ -24,6 +24,7 @@ import me.matsumo.fanbox.core.model.UserData
 import me.matsumo.fanbox.core.model.fanbox.FanboxPost
 import me.matsumo.fanbox.core.model.fanbox.id.CreatorId
 import me.matsumo.fanbox.core.model.fanbox.id.PostId
+import me.matsumo.fanbox.core.ui.ads.NativeAdView
 import me.matsumo.fanbox.core.ui.component.PostGridItem
 import me.matsumo.fanbox.core.ui.component.PostItem
 import me.matsumo.fanbox.core.ui.extensition.drawVerticalScrollbar
@@ -33,8 +34,6 @@ import me.matsumo.fanbox.core.ui.view.PagingErrorSection
 internal fun LibraryHomeIdleSection(
     pagingAdapter: LazyPagingItems<FanboxPost>,
     userData: UserData,
-    nativeAdUnitId: String,
-    // nativeAdsPreLoader: NativeAdsPreLoader,
     bookmarkedPosts: ImmutableList<PostId>,
     onClickPost: (PostId) -> Unit,
     onClickPostLike: (PostId) -> Unit,
@@ -55,8 +54,6 @@ internal fun LibraryHomeIdleSection(
         ColumnSection(
             pagingAdapter = pagingAdapter,
             userData = userData,
-            nativeAdUnitId = nativeAdUnitId,
-            // nativeAdsPreLoader = nativeAdsPreLoader,
             bookmarkedPosts = bookmarkedPosts,
             onClickPost = onClickPost,
             onClickPostLike = onClickPostLike,
@@ -72,8 +69,6 @@ internal fun LibraryHomeIdleSection(
 private fun ColumnSection(
     pagingAdapter: LazyPagingItems<FanboxPost>,
     userData: UserData,
-    nativeAdUnitId: String,
-    // nativeAdsPreLoader: NativeAdsPreLoader,
     bookmarkedPosts: ImmutableList<PostId>,
     onClickPost: (PostId) -> Unit,
     onClickPostLike: (PostId) -> Unit,
@@ -116,13 +111,11 @@ private fun ColumnSection(
                     )
                 }
 
-                /*if ((index + 4) % 5 == 0 && !userData.hasPrivilege) {
-                    NativeAdMediumItem(
+                if ((index + 4) % 5 == 0 && !userData.hasPrivilege) {
+                    NativeAdView(
                         modifier = Modifier.fillMaxWidth(),
-                        nativeAdUnitId = nativeAdUnitId,
-                        nativeAdsPreLoader = nativeAdsPreLoader,
                     )
-                }*/
+                }
             }
         }
 

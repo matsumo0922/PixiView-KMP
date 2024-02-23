@@ -54,6 +54,7 @@ class MainActivity : FragmentActivity(), KoinComponent {
                     PixiViewApp(
                         modifier = Modifier.fillMaxSize(),
                         windowSize = windowSize.widthSizeClass,
+                        nativeViews = emptyMap(),
                     )
                 }
             }
