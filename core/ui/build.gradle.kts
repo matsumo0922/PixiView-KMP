@@ -32,6 +32,7 @@ kotlin {
                 api(project(":precompose:precompose-viewmodel"))
 
                 api(libsMain.bundles.ui.common.api)
+                api(libsMain.bundles.cupertino)
 
                 // Compose
                 api(compose.runtime)

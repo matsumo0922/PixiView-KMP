@@ -50,7 +50,7 @@ class PixiViewViewModel(
                 fanboxCookie = cookie,
                 fanboxMetadata = metadata,
                 isLoggedIn = isLoggedIn,
-                isAppLocked = if (userData.isAppLock) isAppLocked else false,
+                isAppLocked = if (userData.isUseAppLock) isAppLocked else false,
             ),
         )
     }.stateIn(
@@ -106,7 +106,7 @@ class PixiViewViewModel(
 
     fun setAppLock(isAppLock: Boolean) {
         viewModelScope.launch {
-            _isAppLockedFlow.emit(if (userDataRepository.userData.first().isAppLock) isAppLock else false)
+            _isAppLockedFlow.emit(if (userDataRepository.userData.first().isUseAppLock) isAppLock else false)
         }
     }
 

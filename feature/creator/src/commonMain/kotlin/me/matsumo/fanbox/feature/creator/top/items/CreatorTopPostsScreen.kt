@@ -79,7 +79,7 @@ internal fun CreatorTopPostsScreen(
     onClickPlanList: (CreatorId) -> Unit,
     modifier: Modifier = Modifier,
 ) {
-    if (userData.isGridMode) {
+    if (userData.isUseGridMode) {
         GridSection(
             modifier = modifier,
             state = gridState,

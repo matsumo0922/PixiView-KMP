@@ -20,16 +20,17 @@ interface UserDataRepository {
     suspend fun setAgreedTermsOfService(isAgreed: Boolean)
     suspend fun setThemeConfig(themeConfig: ThemeConfig)
     suspend fun setThemeColorConfig(themeColorConfig: ThemeColorConfig)
-    suspend fun setAppLock(isAppLock: Boolean)
+    suspend fun setUseDynamicColor(useDynamicColor: Boolean)
+    suspend fun setUseAppLock(isAppLock: Boolean)
+    suspend fun setUseGridMode(isGridMode: Boolean)
+    suspend fun setUseInfinityPostDetail(isInfinityPostDetail: Boolean)
     suspend fun setFollowTabDefaultHome(isFollowTabDefaultHome: Boolean)
     suspend fun setHideAdultContents(isHideAdultContents: Boolean)
     suspend fun setOverrideAdultContents(isOverrideAdultContents: Boolean)
     suspend fun setTestUser(isTestUser: Boolean)
     suspend fun setHideRestricted(isHideRestricted: Boolean)
-    suspend fun setGridMode(isGridMode: Boolean)
     suspend fun setDeveloperMode(isDeveloperMode: Boolean)
     suspend fun setPlusMode(isPlusMode: Boolean)
-    suspend fun setUseDynamicColor(useDynamicColor: Boolean)
 }
 
 class UserDataRepositoryImpl(
@@ -66,8 +67,12 @@ class UserDataRepositoryImpl(
         pixiViewDataStore.setThemeColorConfig(themeColorConfig)
     }
 
-    override suspend fun setAppLock(isAppLock: Boolean) {
-        pixiViewDataStore.setAppLock(isAppLock)
+    override suspend fun setUseAppLock(isAppLock: Boolean) {
+        pixiViewDataStore.setUseAppLock(isAppLock)
+    }
+
+    override suspend fun setUseInfinityPostDetail(isInfinityPostDetail: Boolean) {
+        pixiViewDataStore.setUseInfinityPostDetail(isInfinityPostDetail)
     }
 
     override suspend fun setFollowTabDefaultHome(isFollowTabDefaultHome: Boolean) {
@@ -90,8 +95,8 @@ class UserDataRepositoryImpl(
         pixiViewDataStore.setHideRestricted(isHideRestricted)
     }
 
-    override suspend fun setGridMode(isGridMode: Boolean) {
-        pixiViewDataStore.setGridMode(isGridMode)
+    override suspend fun setUseGridMode(isGridMode: Boolean) {
+        pixiViewDataStore.setUseGridMode(isGridMode)
     }
 
     override suspend fun setDeveloperMode(isDeveloperMode: Boolean) {

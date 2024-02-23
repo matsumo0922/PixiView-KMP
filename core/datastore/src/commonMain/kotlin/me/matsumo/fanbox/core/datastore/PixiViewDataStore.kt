@@ -29,14 +29,15 @@ class PixiViewDataStore(
             setAgreedTermsOfService(data.isAgreedTermsOfService)
             setThemeConfig(data.themeConfig)
             setThemeColorConfig(data.themeColorConfig)
-            setUseDynamicColor(data.isDynamicColor)
-            setAppLock(data.isAppLock)
-            setFollowTabDefaultHome(data.isFollowTabDefaultHome)
+            setUseDynamicColor(data.isUseDynamicColor)
+            setUseAppLock(data.isUseAppLock)
+            setUseGridMode(data.isUseGridMode)
+            setUseInfinityPostDetail(data.isUseInfinityPostDetail)
+            setFollowTabDefaultHome(data.isDefaultFollowTabInHome)
             setHideAdultContents(data.isHideAdultContents)
             setOverrideAdultContents(data.isOverrideAdultContents)
             setTestUser(data.isTestUser)
             setHideRestricted(data.isHideRestricted)
-            setGridMode(data.isGridMode)
             setDeveloperMode(data.isDeveloperMode)
             setPlusMode(data.isPlusMode)
         }
@@ -74,19 +75,31 @@ class PixiViewDataStore(
 
     suspend fun setUseDynamicColor(useDynamicColor: Boolean) = withContext(ioDispatcher) {
         userPreference.edit {
-            it[booleanPreferencesKey(UserData::isDynamicColor.name)] = useDynamicColor
+            it[booleanPreferencesKey(UserData::isUseDynamicColor.name)] = useDynamicColor
         }
     }
 
-    suspend fun setAppLock(isAppLock: Boolean) = withContext(ioDispatcher) {
+    suspend fun setUseAppLock(isAppLock: Boolean) = withContext(ioDispatcher) {
         userPreference.edit {
-            it[booleanPreferencesKey(UserData::isAppLock.name)] = isAppLock
+            it[booleanPreferencesKey(UserData::isUseAppLock.name)] = isAppLock
+        }
+    }
+
+    suspend fun setUseGridMode(isGridMode: Boolean) = withContext(ioDispatcher) {
+        userPreference.edit {
+            it[booleanPreferencesKey(UserData::isUseGridMode.name)] = isGridMode
+        }
+    }
+
+    suspend fun setUseInfinityPostDetail(isUseInfinityPostDetail: Boolean) = withContext(ioDispatcher) {
+        userPreference.edit {
+            it[booleanPreferencesKey(UserData::isUseInfinityPostDetail.name)] = isUseInfinityPostDetail
         }
     }
 
     suspend fun setFollowTabDefaultHome(isFollowTabDefaultHome: Boolean) = withContext(ioDispatcher) {
         userPreference.edit {
-            it[booleanPreferencesKey(UserData::isFollowTabDefaultHome.name)] = isFollowTabDefaultHome
+            it[booleanPreferencesKey(UserData::isDefaultFollowTabInHome.name)] = isFollowTabDefaultHome
         }
     }
 
@@ -111,12 +124,6 @@ class PixiViewDataStore(
     suspend fun setHideRestricted(isHideRestricted: Boolean) = withContext(ioDispatcher) {
         userPreference.edit {
             it[booleanPreferencesKey(UserData::isHideRestricted.name)] = isHideRestricted
-        }
-    }
-
-    suspend fun setGridMode(isGridMode: Boolean) = withContext(ioDispatcher) {
-        userPreference.edit {
-            it[booleanPreferencesKey(UserData::isGridMode.name)] = isGridMode
         }
     }
 

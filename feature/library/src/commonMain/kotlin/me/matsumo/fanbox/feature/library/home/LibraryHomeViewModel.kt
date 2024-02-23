@@ -37,7 +37,7 @@ class LibraryHomeViewModel(
     init {
         viewModelScope.launch {
             userDataRepository.userData.collectLatest { userData ->
-                val loadSize = if (userData.isHideRestricted || userData.isGridMode) 20 else 10
+                val loadSize = if (userData.isHideRestricted || userData.isUseGridMode) 20 else 10
                 val isHideRestricted = userData.isHideRestricted
 
                 _uiState.value = uiState.value.copy(

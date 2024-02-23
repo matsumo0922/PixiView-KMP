@@ -64,7 +64,7 @@ internal fun LibraryHomeScreen(
     val supportedPager = uiState.supportedPaging.collectAsLazyPagingItems()
     val scrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior(snapAnimationSpec = null, flingAnimationSpec = null)
 
-    val pagerState = rememberPagerState(initialPage = if (uiState.userData.isFollowTabDefaultHome) 1 else 0) { 2 }
+    val pagerState = rememberPagerState(initialPage = if (uiState.userData.isDefaultFollowTabInHome) 1 else 0) { 2 }
     val scope = rememberCoroutineScope()
 
     val tabs = listOf(

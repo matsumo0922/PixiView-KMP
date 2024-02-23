@@ -106,6 +106,7 @@ chaquopy = "15.0.0"
 libraries = "10.9.1"
 ffmpeg = "5.1"
 buildKonfig = "0.15.1"
+cupertino = "0.1.0-alpha03"
 twitterComposeRule = "0.0.26"
 
 # Debugs
@@ -249,6 +250,12 @@ calf-ui = { module = "com.mohamedrejeb.calf:calf-ui", version.ref = "calf" }
 kstore = { module = "io.github.xxfast:kstore", version.ref = "kstore" }
 kstore-file = { module = "io.github.xxfast:kstore-file", version.ref = "kstore" }
 kstore-storage = { module = "io.github.xxfast:kstore-storage", version.ref = "kstore" }
+
+# Cupertino
+cupertino = { module = "io.github.alexzhirkevich:cupertino", version.ref = "cupertino" }
+cupertino-native = { module = "io.github.alexzhirkevich:cupertino-native", version.ref = "cupertino" }
+cupertino-adaptive = { module = "io.github.alexzhirkevich:cupertino-adaptive", version.ref = "cupertino" }
+cupertino-icons = { module = "io.github.alexzhirkevich:cupertino-icons-extended", version.ref = "cupertino" }
 
 # Google
 play-review = { module = "com.google.android.play:review-ktx", version.ref = "playReview" }
@@ -401,6 +408,13 @@ firebase = [
     "firebase-messaging",
     "firebase-config",
     "firebase-dynamiclinks",
+]
+
+cupertino = [
+    "cupertino",
+    "cupertino-native",
+    "cupertino-adaptive",
+    "cupertino-icons",
 ]
 
 ktor = [

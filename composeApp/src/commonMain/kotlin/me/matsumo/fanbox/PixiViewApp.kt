@@ -224,5 +224,5 @@ private fun shouldUseDarkTheme(screenState: ScreenState<MainUiState>): Boolean {
 
 private fun shouldUseDynamicColor(screenState: ScreenState<MainUiState>): Boolean {
     val data = (screenState as? ScreenState.Idle)?.data ?: return false
-    return data.userData.isDynamicColor
+    return data.userData.isUseDynamicColor
 }

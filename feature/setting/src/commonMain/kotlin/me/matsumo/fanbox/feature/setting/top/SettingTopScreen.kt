@@ -83,6 +83,7 @@ internal fun SettingTopRoute(
             onClickFollowTabDefaultHome = viewModel::setFollowTabDefaultHome,
             onClickHideAdultContents = viewModel::setHideAdultContents,
             onClickOverrideAdultContents = viewModel::setOverrideAdultContents,
+            onClickInfinityPostDetail = viewModel::setUseInfinityPostDetail,
             onClickGridMode = {
                 if (it) {
                     if (uiState.userData.hasPrivilege) {
@@ -167,6 +168,7 @@ private fun SettingTopScreen(
     onClickOverrideAdultContents: (Boolean) -> Unit,
     onClickHideRestricted: (Boolean) -> Unit,
     onClickGridMode: (Boolean) -> Unit,
+    onClickInfinityPostDetail: (Boolean) -> Unit,
     onClickTeamsOfService: () -> Unit,
     onClickPrivacyPolicy: () -> Unit,
     onClickLogout: () -> Unit,
@@ -231,6 +233,7 @@ private fun SettingTopScreen(
                     onClickOverrideAdultContents = onClickOverrideAdultContents,
                     onClickHideRestricted = onClickHideRestricted,
                     onClickGridMode = onClickGridMode,
+                    onClickInfinityPostDetail = onClickInfinityPostDetail,
                 )
             }
 

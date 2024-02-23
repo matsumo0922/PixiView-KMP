@@ -7,6 +7,7 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
+import me.matsumo.fanbox.core.model.UserData
 import me.matsumo.fanbox.core.model.fanbox.FanboxPost
 import me.matsumo.fanbox.core.repository.FanboxRepository
 import me.matsumo.fanbox.core.repository.UserDataRepository
@@ -27,6 +28,7 @@ class PostDetailRootViewModel(
     private val _uiState = MutableStateFlow(
         PostDetailRootUiState(
             paging = null,
+            userData = UserData.default(),
         ),
     )
 
@@ -35,7 +37,7 @@ class PostDetailRootViewModel(
     fun fetch(type: PostDetailPagingType) {
         viewModelScope.launch {
             val userData = userDataRepository.userData.first()
-            val loadSize = if (userData.isHideRestricted || userData.isGridMode) 20 else 10
+            val loadSize = if (userData.isHideRestricted || userData.isUseGridMode) 20 else 10
             val isHideRestricted = userData.isHideRestricted
 
             _uiState.value = PostDetailRootUiState(
@@ -46,6 +48,7 @@ class PostDetailRootViewModel(
                     Search -> fanboxRepository.getPostsFromQueryPagerCache()
                     Unknown -> emptyPaging()
                 },
+                userData = userData,
             )
         }
     }
@@ -54,4 +57,5 @@ class PostDetailRootViewModel(
 @Stable
 data class PostDetailRootUiState(
     val paging: Flow<PagingData<FanboxPost>>?,
+    val userData: UserData,
 )

@@ -54,7 +54,7 @@ class CreatorTopViewModel(
             _screenState.value = ScreenState.Loading
             _screenState.value = suspendRunCatching {
                 val userData = userDataRepository.userData.first()
-                val loadSize = if (userData.isHideRestricted || userData.isGridMode) 20 else 10
+                val loadSize = if (userData.isHideRestricted || userData.isUseGridMode) 20 else 10
 
                 CreatorTopUiState(
                     userData = userData,

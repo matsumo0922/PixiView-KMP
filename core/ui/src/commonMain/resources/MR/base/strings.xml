@@ -188,6 +188,8 @@
     <string name="setting_top_general_hide_restricted_contents_description">支援者のみが閲覧できる投稿を無視します。</string>
     <string name="setting_top_general_grid_mode">グリッドモード</string>
     <string name="setting_top_general_grid_mode_description">投稿一覧画面の閲覧方法を表形式（一覧表示）に切り替えます。</string>
+    <string name="setting_top_general_infinity_post_detail">左右スワイプで投稿を見る</string>
+    <string name="setting_top_general_infinity_post_detail_description">投稿詳細画面で左右スワイプで前後の投稿を見ることができるようにします。</string>
     <string name="setting_top_information">情報</string>
     <string name="setting_top_information_id">CAIOS ID</string>
     <string name="setting_top_information_version">アプリバージョン</string>

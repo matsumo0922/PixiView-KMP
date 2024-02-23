@@ -35,7 +35,9 @@ import me.matsumo.fanbox.core.ui.AsyncLoadContents
 import me.matsumo.fanbox.core.ui.MR
 import me.matsumo.fanbox.core.ui.component.SettingSwitchItem
 import me.matsumo.fanbox.core.ui.extensition.LocalSnackbarHostState
+import me.matsumo.fanbox.core.ui.extensition.Platform
 import me.matsumo.fanbox.core.ui.extensition.SnackbarExtension
+import me.matsumo.fanbox.core.ui.extensition.currentPlatform
 import me.matsumo.fanbox.feature.setting.SettingTheme
 import me.matsumo.fanbox.feature.setting.theme.items.SettingThemeColorSection
 import me.matsumo.fanbox.feature.setting.theme.items.SettingThemeTabsSection
@@ -134,7 +136,8 @@ private fun SettingThemeDialog(
                         .fillMaxWidth(),
                     title = MR.strings.setting_theme_theme_dynamic_color,
                     description = MR.strings.setting_theme_theme_dynamic_color_description,
-                    value = userData.isDynamicColor,
+                    isEnabled = currentPlatform == Platform.Android,
+                    value = if (currentPlatform == Platform.Android) userData.isUseDynamicColor else false,
                     onValueChanged = {
                         if (userData.hasPrivilege) {
                             onClickDynamicColor.invoke(it)
@@ -149,7 +152,7 @@ private fun SettingThemeDialog(
             item {
                 SettingThemeColorSection(
                     modifier = Modifier.fillMaxWidth(),
-                    isUseDynamicColor = userData.isDynamicColor,
+                    isUseDynamicColor = userData.isUseDynamicColor,
                     themeConfig = userData.themeConfig,
                     themeColorConfig = userData.themeColorConfig,
                     onSelectThemeColor = onSelectThemeColor,

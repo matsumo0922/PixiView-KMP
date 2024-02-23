@@ -109,7 +109,7 @@ internal fun PostDetailRoute(
         }
     }
 
-    if (!paging.isNullOrEmpty()) {
+    if (!paging.isNullOrEmpty() && uiState.userData.isUseInfinityPostDetail) {
         LazyPagingItemsLoadContents(
             modifier = modifier,
             lazyPagingItems = paging!!,

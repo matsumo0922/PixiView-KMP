@@ -17,6 +17,7 @@ internal fun SettingTopGeneralSection(
     onClickOverrideAdultContents: (Boolean) -> Unit,
     onClickHideRestricted: (Boolean) -> Unit,
     onClickGridMode: (Boolean) -> Unit,
+    onClickInfinityPostDetail: (Boolean) -> Unit,
     modifier: Modifier = Modifier,
 ) {
     Column(modifier) {
@@ -29,7 +30,7 @@ internal fun SettingTopGeneralSection(
             modifier = Modifier.fillMaxWidth(),
             title = MR.strings.setting_top_general_app_lock,
             description = MR.strings.setting_top_general_app_lock_description,
-            value = userData.isAppLock,
+            value = userData.isUseAppLock,
             onValueChanged = onClickAppLock,
         )
 
@@ -37,7 +38,7 @@ internal fun SettingTopGeneralSection(
             modifier = Modifier.fillMaxWidth(),
             title = MR.strings.setting_top_general_default_follow_tab,
             description = MR.strings.setting_top_general_default_follow_tab_description,
-            value = userData.isFollowTabDefaultHome,
+            value = userData.isDefaultFollowTabInHome,
             onValueChanged = onClickFollowTabDefaultHome,
         )
 
@@ -69,8 +70,16 @@ internal fun SettingTopGeneralSection(
             modifier = Modifier.fillMaxWidth(),
             title = MR.strings.setting_top_general_grid_mode,
             description = MR.strings.setting_top_general_grid_mode_description,
-            value = userData.isGridMode,
+            value = userData.isUseGridMode,
             onValueChanged = onClickGridMode,
+        )
+
+        SettingSwitchItem(
+            modifier = Modifier.fillMaxWidth(),
+            title = MR.strings.setting_top_general_infinity_post_detail,
+            description = MR.strings.setting_top_general_infinity_post_detail_description,
+            value = userData.isUseInfinityPostDetail,
+            onValueChanged = onClickInfinityPostDetail,
         )
     }
 }

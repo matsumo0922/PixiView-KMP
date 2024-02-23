@@ -45,7 +45,7 @@ internal fun LibrarySupportedIdleSection(
     onClickPlanList: (CreatorId) -> Unit,
     modifier: Modifier = Modifier,
 ) {
-    if (userData.isGridMode) {
+    if (userData.isUseGridMode) {
         GridSection(
             pagingAdapter = pagingAdapter,
             userData = userData,

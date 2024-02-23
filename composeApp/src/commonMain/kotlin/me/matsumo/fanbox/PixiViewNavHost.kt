@@ -139,7 +139,7 @@ private fun CompactNavHost(
         navigator = navigator,
         initialRoute = startDestination,
         swipeProperties = SwipeProperties(
-            spaceToSwipe = 40.dp,
+            spaceToSwipe = 64.dp,
             positionalThreshold = { it * 0.3f },
         ),
         navTransition = remember {
@@ -168,7 +168,7 @@ private fun MediumNavHost(
         navigator = navigator,
         initialRoute = startDestination,
         swipeProperties = SwipeProperties(
-            spaceToSwipe = 40.dp,
+            spaceToSwipe = 64.dp,
             positionalThreshold = { it * 0.3f },
         ),
         navTransition = remember {

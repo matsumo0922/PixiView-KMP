@@ -53,7 +53,7 @@ class SettingTopViewModel(
 
     fun setAppLock(isAppLock: Boolean) {
         viewModelScope.launch {
-            userDataRepository.setAppLock(isAppLock)
+            userDataRepository.setUseAppLock(isAppLock)
         }
     }
 
@@ -75,6 +75,12 @@ class SettingTopViewModel(
         }
     }
 
+    fun setUseInfinityPostDetail(isInfinityPostDetail: Boolean) {
+        viewModelScope.launch {
+            userDataRepository.setUseInfinityPostDetail(isInfinityPostDetail)
+        }
+    }
+
     fun setHideRestricted(isHideRestricted: Boolean) {
         viewModelScope.launch {
             userDataRepository.setHideRestricted(isHideRestricted)
@@ -83,7 +89,7 @@ class SettingTopViewModel(
 
     fun setGridMode(isGridMode: Boolean) {
         viewModelScope.launch {
-            userDataRepository.setGridMode(isGridMode)
+            userDataRepository.setUseGridMode(isGridMode)
         }
     }
 
