@@ -20,11 +20,11 @@ struct NativeAdView: View {
     
     var body: some View {
         VStack {
-            Text("NativeAd")
-//            if let nativeAd = model.nativeAd {
-//                NativeAdItem(nativeAd: nativeAd)
-//            }
-        }.onAppear(perform: loadAd)
+            if let nativeAd = model.nativeAd {
+                NativeAdItem(nativeAd: nativeAd)
+            }
+        }
+        .onAppear(perform: loadAd)
     }
     
     private func loadAd() {
@@ -85,13 +85,12 @@ private class NativeAdModel: NSObject, ObservableObject, GADNativeAdLoaderDelega
     }
     
     func load(windowScene: UIWindowScene?, rootViewController: UIViewController?) {
-        let adLoader = GADAdLoader(adUnitID: adUnitID, rootViewController: rootViewController, adTypes: [.native], options: nil)
-        self.adLoader = adLoader
-        adLoader.delegate = self
-        
         let request = GADRequest()
         request.scene = windowScene
-        adLoader.load(request)
+        
+        adLoader = GADAdLoader(adUnitID: "ca-app-pub-3940256099942544/3986624511", rootViewController: nil, adTypes: [.native], options: nil)
+        adLoader!.delegate = self
+        adLoader!.load(request)
     }
     
     func adLoader(_ adLoader: GADAdLoader, didReceive nativeAd: GADNativeAd) {
