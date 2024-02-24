@@ -2,6 +2,7 @@ import UIKit
 import SwiftUI
 import ComposeApp
 import GoogleMobileAds
+import FirebaseCore
 
 @main
 struct iOSApp: App {
@@ -35,6 +36,8 @@ class PixiViewDelegate: NSObject, UIApplicationDelegate, ObservableObject {
     
     func application(application: UIApplication, launchOptions: [UIApplication.LaunchOptionsKey : Any]? = nil) -> Bool {
         GADMobileAds.sharedInstance().start(completionHandler: nil)
+        FirebaseApp.configure()
+        
         return true
     }
 }

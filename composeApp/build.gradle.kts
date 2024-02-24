@@ -123,11 +123,11 @@ kotlin {
         val androidMain by getting {
             dependsOn(commonMain)
             dependencies {
+                implementation(libsMain.bundles.firebase)
+
                 implementation(libsMain.androidx.core.splashscreen)
                 implementation(libsMain.play.review)
                 implementation(libsMain.play.update)
-                // implementation(libsMain.play.service.oss)
-                // implementation(libsMain.play.service.ads)
                 implementation(libsMain.google.material)
             }
         }

@@ -425,13 +425,12 @@ private fun PostDetailScreen(
         }
     }
 
-    if (isShowMenu) {
-        PostDetailMenuDialog(
-            onClickOpenBrowser = { onClickOpenBrowser.invoke(postDetail.browserUrl) },
-            onClickAllDownload = { onClickDownloadImages.invoke(postDetail.body.imageItems) },
-            onDismissRequest = { isShowMenu = false },
-        )
-    }
+    PostDetailMenuDialog(
+        isVisible = isShowMenu,
+        onClickOpenBrowser = { onClickOpenBrowser.invoke(postDetail.browserUrl) },
+        onClickAllDownload = { onClickDownloadImages.invoke(postDetail.body.imageItems) },
+        onDismissRequest = { isShowMenu = false },
+    )
 }
 
 @Composable

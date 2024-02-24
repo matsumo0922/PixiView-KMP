@@ -23,6 +23,8 @@ import me.matsumo.fanbox.core.ui.component.EmptyDetailRoute
 import me.matsumo.fanbox.core.ui.component.emptyDetailScreen
 import me.matsumo.fanbox.core.ui.extensition.LocalSnackbarHostState
 import me.matsumo.fanbox.core.ui.extensition.PixiViewNavigationType
+import me.matsumo.fanbox.core.ui.extensition.Platform
+import me.matsumo.fanbox.core.ui.extensition.currentPlatform
 import me.matsumo.fanbox.core.ui.extensition.rememberNavigator
 import me.matsumo.fanbox.core.ui.view.navigateToSimpleAlertDialog
 import me.matsumo.fanbox.core.ui.view.simpleAlertDialogDialog
@@ -85,6 +87,15 @@ internal fun PixiViewNavHost(
     val snackbarHostState = remember { SnackbarHostState() }
     val scope = rememberCoroutineScope()
 
+    val swipeProperties = if (currentPlatform == Platform.IOS) {
+        SwipeProperties(
+            spaceToSwipe = 64.dp,
+            positionalThreshold = { it * 0.3f },
+        )
+    } else {
+        null
+    }
+
     CompositionLocalProvider(LocalSnackbarHostState provides snackbarHostState) {
         Scaffold(
             modifier = modifier,
@@ -111,6 +122,7 @@ internal fun PixiViewNavHost(
                         navigator = mainNavigator,
                         scope = scope,
                         startDestination = startDestination,
+                        swipeProperties = swipeProperties,
                     )
                 }
 
@@ -120,6 +132,7 @@ internal fun PixiViewNavHost(
                         navigator = mainNavigator,
                         scope = scope,
                         startDestination = startDestination,
+                        swipeProperties = swipeProperties,
                     )
                 }
             }
@@ -133,15 +146,13 @@ private fun CompactNavHost(
     scope: CoroutineScope,
     modifier: Modifier = Modifier,
     startDestination: String = LibraryRoute,
+    swipeProperties: SwipeProperties? = null,
 ) {
     NavHost(
         modifier = modifier,
         navigator = navigator,
         initialRoute = startDestination,
-        swipeProperties = SwipeProperties(
-            spaceToSwipe = 64.dp,
-            positionalThreshold = { it * 0.3f },
-        ),
+        swipeProperties = swipeProperties,
         navTransition = remember {
             NavTransition(
                 createTransition = slideInHorizontally { it },
@@ -162,15 +173,13 @@ private fun MediumNavHost(
     scope: CoroutineScope,
     modifier: Modifier = Modifier,
     startDestination: String = LibraryRoute,
+    swipeProperties: SwipeProperties? = null,
 ) {
     NavHost(
         modifier = modifier,
         navigator = navigator,
         initialRoute = startDestination,
-        swipeProperties = SwipeProperties(
-            spaceToSwipe = 64.dp,
-            positionalThreshold = { it * 0.3f },
-        ),
+        swipeProperties = swipeProperties,
         navTransition = remember {
             NavTransition(
                 createTransition = slideInHorizontally { it },

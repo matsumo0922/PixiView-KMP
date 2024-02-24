@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>API_KEY</key>
+	<string>AIzaSyCYiPUgECk3CfoQv6pnzOGBunDruEwE5SM</string>
+	<key>GCM_SENDER_ID</key>
+	<string>561281916572</string>
+	<key>PLIST_VERSION</key>
+	<string>1</string>
+	<key>BUNDLE_ID</key>
+	<string>me.matsumo.fanbox</string>
+	<key>PROJECT_ID</key>
+	<string>pixiview-b5dc7</string>
+	<key>STORAGE_BUCKET</key>
+	<string>pixiview-b5dc7.appspot.com</string>
+	<key>IS_ADS_ENABLED</key>
+	<false></false>
+	<key>IS_ANALYTICS_ENABLED</key>
+	<false></false>
+	<key>IS_APPINVITE_ENABLED</key>
+	<true></true>
+	<key>IS_GCM_ENABLED</key>
+	<true></true>
+	<key>IS_SIGNIN_ENABLED</key>
+	<true></true>
+	<key>GOOGLE_APP_ID</key>
+	<string>1:561281916572:ios:20203c31dc288716ab1759</string>
+</dict>
+</plist>

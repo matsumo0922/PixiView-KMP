@@ -7,9 +7,48 @@
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:561281916572:android:0952e4cd0fe2fe01ab1759",
+        "mobilesdk_app_id": "1:561281916572:android:925776ddd5d210faab1759",
         "android_client_info": {
           "package_name": "caios.android.fanbox"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyC6SxUp9ipDpVjQMSHmcgy7SZMnPUwqAmA"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      },
+      "admob_app_id": "ca-app-pub-5078928265341654~7546890907"
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:561281916572:android:85a0c0e2e341d0fdab1759",
+        "android_client_info": {
+          "package_name": "caios.android.fanbox.debug"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyC6SxUp9ipDpVjQMSHmcgy7SZMnPUwqAmA"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:561281916572:android:0952e4cd0fe2fe01ab1759",
+        "android_client_info": {
+          "package_name": "caios.android.pixiview"
         }
       },
       "oauth_client": [],
@@ -28,7 +67,7 @@
       "client_info": {
         "mobilesdk_app_id": "1:561281916572:android:f13c227614ab0708ab1759",
         "android_client_info": {
-          "package_name": "caios.android.fanbox.debug"
+          "package_name": "caios.android.pixiview.debug"
         }
       },
       "oauth_client": [],

@@ -131,7 +131,7 @@ private fun ColumnSection(
         adInterval = 4
     } else {
         adOffset = 1
-        adInterval = 2
+        adInterval = 3
     }
 
     LazyColumn(

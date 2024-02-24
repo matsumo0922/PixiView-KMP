@@ -17,9 +17,16 @@ struct BannerAdView: View {
 }
 
 struct BannerAdItem: UIViewControllerRepresentable {
-    @State private var viewWidth: CGFloat = .zero
+    
+    @State
+    private var viewWidth: CGFloat = .zero
+    
     private let bannerView = GADBannerView()
-    private let adUnitID = "ca-app-pub-3940256099942544/2934735716"  // Test用のIDが入力されています
+    private var adUnitID = "ca-app-pub-3940256099942544/2934735716"  // Test用のID
+    
+    init() {
+        self.adUnitID = KeyManager().getValue(key: "ADMOB_IOS_BANNER_AD_UNIT_ID") as! String
+    }
     
     func makeUIViewController(context: Context) -> some UIViewController {
         let bannerViewController = BannerViewController()

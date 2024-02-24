@@ -46,11 +46,10 @@ internal fun PostDetailImageItem(
         contentDescription = null,
     )
 
-    if (isShowMenu) {
-        PostImageMenuDialog(
-            onClickDownload = { onClickDownload.invoke() },
-            onClickAllDownload = { onClickAllDownload.invoke() },
-            onDismissRequest = { isShowMenu = false },
-        )
-    }
+    PostImageMenuDialog(
+        isVisible = isShowMenu,
+        onClickDownload = { onClickDownload.invoke() },
+        onClickAllDownload = { onClickAllDownload.invoke() },
+        onDismissRequest = { isShowMenu = false },
+    )
 }

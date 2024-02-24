@@ -1,6 +1,7 @@
 package me.matsumo.fanbox.feature.post.image
 
 import androidx.compose.foundation.ExperimentalFoundationApi
+import androidx.compose.foundation.combinedClickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -91,7 +92,11 @@ private fun PostImageScreen(
                 SubcomposeAsyncImage(
                     modifier = Modifier
                         .align(Alignment.Center)
-                        .fillMaxWidth(),
+                        .fillMaxWidth()
+                        .combinedClickable(
+                            onClick = { /* do nothing */ },
+                            onLongClick = { isShowMenu = true },
+                        ),
                     model = ImageRequest.Builder(LocalPlatformContext.current)
                         .fanboxHeader()
                         .data(postDetail.body.imageItems[it].thumbnailUrl)
@@ -114,12 +119,11 @@ private fun PostImageScreen(
             isTransparent = true,
         )
 
-        if (isShowMenu) {
-            PostImageMenuDialog(
-                onClickDownload = { onClickDownload.invoke(listOf(postDetail.body.imageItems[pagerState.settledPage])) },
-                onClickAllDownload = { onClickDownload.invoke(postDetail.body.imageItems) },
-                onDismissRequest = { isShowMenu = false },
-            )
-        }
+        PostImageMenuDialog(
+            isVisible = isShowMenu,
+            onClickDownload = { onClickDownload.invoke(listOf(postDetail.body.imageItems[pagerState.settledPage])) },
+            onClickAllDownload = { onClickDownload.invoke(postDetail.body.imageItems) },
+            onDismissRequest = { isShowMenu = false },
+        )
     }
 }
