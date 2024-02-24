@@ -389,6 +389,7 @@ ui-android-api = [
 ui-common-api = [
     "coil3-compose",
     "coil3-network",
+    "coil3-gif",
     "window-size",
     "stately-common",
 ]

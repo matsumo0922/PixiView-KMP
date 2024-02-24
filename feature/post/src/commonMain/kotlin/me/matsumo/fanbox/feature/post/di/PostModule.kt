@@ -34,6 +34,7 @@ val postModule = module {
     factory {
         PostImageViewModel(
             fanboxRepository = get(),
+            imageDownloader = get(),
         )
     }
 

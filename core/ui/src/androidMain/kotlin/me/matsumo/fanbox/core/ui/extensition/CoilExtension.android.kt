@@ -32,11 +32,12 @@ class ImageDownloaderImpl(
 ): ImageDownloader {
 
     override suspend fun downloadImage(item: FanboxPostDetail.ImageItem, updateCallback: (Float) -> Unit): Boolean = suspendRunCatching {
+        val url = if (item.extension.lowercase() == "gif") item.originalUrl else item.thumbnailUrl
         val mime = MimeTypeMap.getSingleton().getMimeTypeFromExtension(item.extension)
         val uri = getUri(context, "illust-${item.postId}-${item.id}.${item.extension}", Environment.DIRECTORY_PICTURES, "FANBOX", mime.orEmpty())
         val outputStream = context.contentResolver.openOutputStream(uri!!)!!
 
-        fanboxRepository.download(item.originalUrl, updateCallback)
+        fanboxRepository.download(url, updateCallback)
             .bodyAsChannel()
             .copyTo(outputStream)
     }.isSuccess

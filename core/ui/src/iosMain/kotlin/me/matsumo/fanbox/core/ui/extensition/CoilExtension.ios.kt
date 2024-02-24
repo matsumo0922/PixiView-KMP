@@ -91,7 +91,8 @@ class ImageDownloaderImpl(
 
     @OptIn(ExperimentalForeignApi::class, BetaInteropApi::class)
     override suspend fun downloadImage(item: FanboxPostDetail.ImageItem, updateCallback: (Float) -> Unit): Boolean = suspendRunCatching {
-        val bytes = fanboxRepository.download(item.originalUrl, updateCallback).readBytes()
+        val url = if (item.extension.lowercase() == "gif") item.originalUrl else item.thumbnailUrl
+        val bytes = fanboxRepository.download(url, updateCallback).readBytes()
         val nsData = memScoped { NSData.create(bytes = allocArrayOf(bytes), length = bytes.size.toULong()) }
         val uiImage = UIImage.imageWithData(nsData)!!
 

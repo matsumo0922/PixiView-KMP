@@ -1,9 +1,12 @@
 package me.matsumo.fanbox
 
 import android.app.Application
+import android.os.Build
 import coil3.ImageLoader
 import coil3.SingletonImageLoader
 import coil3.annotation.ExperimentalCoilApi
+import coil3.decode.GifDecoder
+import coil3.decode.ImageDecoderDecoder
 import coil3.disk.DiskCache
 import coil3.fetch.NetworkFetcher
 import coil3.memory.MemoryCache
@@ -34,6 +37,7 @@ class PixiViewApplication : Application() {
             Napier.base(DebugAntilog())
         }
 
+        setupFirebase()
         setupCoil()
     }
 
@@ -54,6 +58,12 @@ class PixiViewApplication : Application() {
                 }
                 .components {
                     add(NetworkFetcher.Factory())
+
+                    if (Build.VERSION.SDK_INT >= 28) {
+                        add(ImageDecoderDecoder.Factory())
+                    } else {
+                        add(GifDecoder.Factory())
+                    }
                 }
                 .crossfade(true)
                 .build()

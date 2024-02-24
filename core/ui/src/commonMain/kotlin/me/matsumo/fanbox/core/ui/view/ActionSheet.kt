@@ -63,7 +63,12 @@ fun ActionSheet(
             onDismissRequest = onDismissRequest,
         ) {
             for (action in actions) {
-                default(action.onClick) {
+                default(
+                    onClick = {
+                        action.onClick.invoke()
+                        onDismissRequest.invoke()
+                    }
+                ) {
                     Text(stringResource(action.text))
                 }
             }

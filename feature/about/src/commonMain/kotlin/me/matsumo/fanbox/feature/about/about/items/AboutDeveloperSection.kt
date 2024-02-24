@@ -29,6 +29,8 @@ import androidx.compose.ui.unit.dp
 import dev.icerock.moko.resources.compose.painterResource
 import dev.icerock.moko.resources.compose.stringResource
 import me.matsumo.fanbox.core.ui.MR
+import me.matsumo.fanbox.core.ui.extensition.Platform
+import me.matsumo.fanbox.core.ui.extensition.currentPlatform
 import me.matsumo.fanbox.core.ui.icon.GitHub
 import me.matsumo.fanbox.core.ui.icon.GooglePlay
 import me.matsumo.fanbox.core.ui.icon.Twitter
@@ -229,6 +231,21 @@ private fun AboutDeveloperCard(
                 style = MaterialTheme.typography.bodySmall,
                 color = MaterialTheme.colorScheme.onSurfaceVariant,
             )
+
+            if (currentPlatform != Platform.Android) {
+                Text(
+                    modifier = Modifier
+                        .padding(
+                            bottom = 24.dp,
+                            start = 24.dp,
+                            end = 24.dp,
+                        )
+                        .fillMaxWidth(),
+                    text = stringResource(MR.strings.about_contribute_ios_description),
+                    style = MaterialTheme.typography.bodySmall,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                )
+            }
         }
     }
 }

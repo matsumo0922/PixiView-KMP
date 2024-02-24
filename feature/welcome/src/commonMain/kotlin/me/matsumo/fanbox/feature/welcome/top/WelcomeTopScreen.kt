@@ -1,5 +1,8 @@
 package me.matsumo.fanbox.feature.welcome.top
 
+import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -14,14 +17,17 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.ClickableText
 import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Checkbox
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -36,15 +42,20 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.window.Dialog
 import dev.icerock.moko.resources.compose.painterResource
 import dev.icerock.moko.resources.compose.stringResource
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import me.matsumo.fanbox.core.ui.MR
 import me.matsumo.fanbox.core.ui.extensition.LocalNavigationType
 import me.matsumo.fanbox.core.ui.extensition.NavigatorExtension
 import me.matsumo.fanbox.core.ui.extensition.PixiViewNavigationType
+import me.matsumo.fanbox.core.ui.extensition.Platform
+import me.matsumo.fanbox.core.ui.extensition.currentPlatform
 import me.matsumo.fanbox.core.ui.theme.bold
 import me.matsumo.fanbox.core.ui.theme.center
+import me.matsumo.fanbox.core.ui.view.SimpleAlertContents
 import me.matsumo.fanbox.feature.welcome.WelcomeIndicatorItem
 import moe.tlaster.precompose.koin.koinViewModel
 import org.koin.compose.koinInject
@@ -52,11 +63,19 @@ import org.koin.compose.koinInject
 @Composable
 internal fun WelcomeTopScreen(
     navigateToWelcomeLogin: () -> Unit,
+    navigateToForIos: suspend (SimpleAlertContents) -> Unit,
     modifier: Modifier = Modifier,
     viewModel: WelcomeTopViewModel = koinViewModel(WelcomeTopViewModel::class),
     navigatorExtension: NavigatorExtension = koinInject(),
 ) {
     val navigationType = LocalNavigationType.current.type
+    var isShowForIosDialog by remember { mutableStateOf(currentPlatform != Platform.Android) }
+
+    if (isShowForIosDialog) {
+        ForIosDialog {
+            isShowForIosDialog = false
+        }
+    }
 
     if (navigationType != PixiViewNavigationType.PermanentNavigationDrawer) {
         Column(
@@ -261,5 +280,75 @@ private fun CheckBoxLinkButton(
                 }
             },
         )
+    }
+}
+
+@Composable
+private fun ForIosDialog(
+    onDismissRequest: () -> Unit,
+) {
+    val scope = rememberCoroutineScope()
+    var animateTrigger by remember { mutableStateOf(false) }
+
+    Dialog(
+        onDismissRequest = {
+            scope.launch {
+                animateTrigger = false
+                delay(100)
+                onDismissRequest.invoke()
+            }
+        }
+    ) {
+        AnimatedVisibility(
+            visible = animateTrigger,
+            enter = fadeIn(),
+            exit = fadeOut(),
+        ) {
+            Column(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .wrapContentHeight()
+                    .clip(RoundedCornerShape(16.dp))
+                    .background(MaterialTheme.colorScheme.surface)
+                    .padding(24.dp),
+                verticalArrangement = Arrangement.spacedBy(16.dp),
+            ) {
+                Text(
+                    modifier = Modifier.fillMaxWidth(),
+                    text = stringResource(MR.strings.about_for_ios_title),
+                    style = MaterialTheme.typography.titleMedium.bold(),
+                    color = MaterialTheme.colorScheme.onSurface,
+                )
+
+                Text(
+                    modifier = Modifier.fillMaxWidth(),
+                    text = stringResource(MR.strings.about_for_ios_description),
+                    style = MaterialTheme.typography.bodyMedium,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                )
+
+                Button(
+                    modifier = Modifier
+                        .padding(top = 8.dp)
+                        .fillMaxWidth(),
+                    shape = RoundedCornerShape(4.dp),
+                    colors = ButtonDefaults.buttonColors(MaterialTheme.colorScheme.primary),
+                    onClick = {
+                        scope.launch {
+                            animateTrigger = false
+                            delay(100)
+                            onDismissRequest.invoke()
+                        }
+                    },
+                ) {
+                    Text(text = stringResource(MR.strings.common_ok))
+                }
+            }
+        }
+    }
+
+    LaunchedEffect(true) {
+        delay(100)
+        animateTrigger = true
     }
 }
