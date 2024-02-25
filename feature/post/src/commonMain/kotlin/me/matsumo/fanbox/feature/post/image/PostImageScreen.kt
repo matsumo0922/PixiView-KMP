@@ -2,7 +2,6 @@ package me.matsumo.fanbox.feature.post.image
 
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
-import androidx.compose.foundation.combinedClickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -26,8 +25,6 @@ import androidx.compose.ui.unit.dp
 import coil3.compose.LocalPlatformContext
 import coil3.compose.SubcomposeAsyncImage
 import coil3.request.ImageRequest
-import com.mxalbert.zoomable.Zoomable
-import com.mxalbert.zoomable.rememberZoomableState
 import dev.icerock.moko.resources.compose.stringResource
 import kotlinx.coroutines.launch
 import me.matsumo.fanbox.core.model.ScreenState
@@ -35,6 +32,8 @@ import me.matsumo.fanbox.core.model.fanbox.FanboxPostDetail
 import me.matsumo.fanbox.core.model.fanbox.id.PostId
 import me.matsumo.fanbox.core.ui.AsyncLoadContents
 import me.matsumo.fanbox.core.ui.MR
+import me.matsumo.fanbox.core.ui.animation.Zoomable
+import me.matsumo.fanbox.core.ui.animation.rememberZoomableState
 import me.matsumo.fanbox.core.ui.component.PixiViewTopBar
 import me.matsumo.fanbox.core.ui.extensition.IndicatorPlaceHolder
 import me.matsumo.fanbox.core.ui.extensition.LocalSnackbarHostState
@@ -111,15 +110,12 @@ private fun PostImageScreen(
                 Zoomable(
                     modifier = Modifier.fillMaxSize(),
                     state = zoomState,
+                    onLongPress = { isShowMenu = true },
                 ) {
                     SubcomposeAsyncImage(
                         modifier = Modifier
                             .align(Alignment.Center)
-                            .fillMaxWidth()
-                            .combinedClickable(
-                                onClick = { /* do nothing */ },
-                                onLongClick = { isShowMenu = true },
-                            ),
+                            .fillMaxWidth(),
                         model = ImageRequest.Builder(LocalPlatformContext.current)
                             .fanboxHeader()
                             .data(postDetail.body.imageItems[it].thumbnailUrl)

@@ -1,7 +1,7 @@
 [versions]
 # Application
-versionName = "2.0.0"
-versionCode = "13"
+versionName = "2.0.1"
+versionCode = "15"
 
 # SDK
 minSdk = "26"
@@ -99,8 +99,6 @@ composeWebView = "1.8.8"
 windowSize = "0.3.2"
 detekt = "1.23.4"
 balloon = "1.5.3"
-zoomable = "1.6.1"
-pinchZoomGrid = "0.0.4"
 orbital = "0.2.4"
 chaquopy = "15.0.0"
 libraries = "10.9.1"
@@ -320,8 +318,6 @@ balloon-compose = { module = "com.github.skydoves:balloon-compose", version.ref 
 spell-checker = { module = "org.apache.lucene:lucene-spellchecker", version = "3.6.2" }
 reorderble-compose = { module = "org.burnoutcrew.composereorderable:reorderable", version = "0.9.6" }
 collapsing-toolbar-compose = { module = "me.onebone:toolbar-compose", version = "2.3.5" }
-zoomable = { module = "com.mxalbert.zoomable:zoomable", version.ref = "zoomable" }
-pinch-zoom-grid = { module = "io.github.dokar3:pinchzoomgrid", version.ref = "pinchZoomGrid" }
 placeholder = { module = "com.eygraber:compose-placeholder-material3", version = "1.0.7" }
 unifile = { module = "com.github.tachiyomiorg:unifile", version = "17bec43" }
 ffmpeg = { module = "com.arthenica:ffmpeg-kit-audio", version.ref = "ffmpeg" }

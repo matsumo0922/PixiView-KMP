@@ -4,11 +4,14 @@ import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.animateContentSize
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.lazy.LazyListScope
+import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Delete
@@ -50,122 +53,126 @@ import me.matsumo.fanbox.core.ui.extensition.asCoilImage
 import me.matsumo.fanbox.core.ui.theme.bold
 import me.matsumo.fanbox.core.ui.theme.center
 
-@Composable
-internal fun PostDetailCommentSection(
+internal fun LazyListScope.postDetailCommentItems(
+    isShowCommentEditor: Boolean,
     postDetail: FanboxPostDetail,
     metaData: FanboxMetaData,
     onClickLoadMore: (PostId, Int) -> Unit,
     onClickCommentLike: (CommentId) -> Unit,
     onClickCommentReply: (String, CommentId, CommentId) -> Unit,
     onClickCommentDelete: (CommentId) -> Unit,
-    modifier: Modifier = Modifier,
+    onClickShowCommentEditor: (Boolean) -> Unit,
 ) {
-    var isShowCommentEditor by rememberSaveable { mutableStateOf(false) }
-    var latestComment by rememberSaveable { mutableStateOf("") }
-
-    LaunchedEffect(postDetail.commentList) {
-        if (isShowCommentEditor) {
-            val comments = postDetail.commentList.contents.flatMap { comment -> listOf(comment) + comment.replies }
-            isShowCommentEditor = !comments.any { comment -> comment.user.name == metaData.context.user.name && comment.body == latestComment }
-        }
-    }
-
-    Column(modifier) {
-        Row(
-            modifier = Modifier.fillMaxWidth(),
-            verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.spacedBy(16.dp),
+    item {
+        Column(
+            modifier = Modifier
+                .padding(horizontal = 16.dp)
+                .fillMaxWidth()
         ) {
-            Text(
-                modifier = Modifier.weight(1f),
-                text = stringResource(MR.strings.post_detail_comment_title),
-                style = MaterialTheme.typography.titleMedium,
-                color = MaterialTheme.colorScheme.onSurface,
-            )
-
-            IconButton(onClick = { isShowCommentEditor = !isShowCommentEditor }) {
-                Icon(
-                    imageVector = Icons.Default.Edit,
-                    tint = MaterialTheme.colorScheme.onSurface,
-                    contentDescription = null,
-                )
-            }
-        }
-
-        AnimatedVisibility(visible = isShowCommentEditor) {
-            CommentEditor(
-                modifier = Modifier
-                    .animateContentSize()
-                    .padding(top = 24.dp)
-                    .padding(horizontal = 8.dp)
-                    .fillMaxWidth(),
-                parentCommentId = CommentId("0"),
-                rootCommentId = CommentId("0"),
-                metaData = metaData,
-                onClickCommentReply = { body, parentCommentId, rootCommentId ->
-                    latestComment = body
-                    onClickCommentReply.invoke(body, parentCommentId, rootCommentId)
-                },
-            )
-        }
-
-        if (postDetail.commentList.contents.isNotEmpty()) {
-            Column(
-                modifier = Modifier
-                    .padding(top = 24.dp)
-                    .fillMaxWidth(),
-                verticalArrangement = Arrangement.spacedBy(24.dp),
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.spacedBy(16.dp),
             ) {
-                for (comment in postDetail.commentList.contents) {
-                    CommentItem(
-                        modifier = Modifier
-                            .padding(horizontal = 8.dp)
-                            .fillMaxWidth(),
-                        metaData = metaData,
-                        comment = comment,
-                        onClickCommentLike = onClickCommentLike,
-                        onClickCommentReply = { body, parentCommentId, rootCommentId ->
-                            latestComment = body
-                            onClickCommentReply.invoke(body, parentCommentId, rootCommentId)
-                        },
-                        onClickCommentDelete = onClickCommentDelete,
+                Text(
+                    modifier = Modifier.weight(1f),
+                    text = stringResource(MR.strings.post_detail_comment_title),
+                    style = MaterialTheme.typography.titleMedium,
+                    color = MaterialTheme.colorScheme.onSurface,
+                )
+
+                IconButton(onClick = { onClickShowCommentEditor.invoke(!isShowCommentEditor) }) {
+                    Icon(
+                        imageVector = Icons.Default.Edit,
+                        tint = MaterialTheme.colorScheme.onSurface,
+                        contentDescription = null,
                     )
                 }
             }
-        } else {
+
+            AnimatedVisibility(visible = isShowCommentEditor) {
+                CommentEditor(
+                    modifier = Modifier
+                        .animateContentSize()
+                        .padding(top = 24.dp)
+                        .padding(horizontal = 8.dp)
+                        .fillMaxWidth(),
+                    parentCommentId = CommentId("0"),
+                    rootCommentId = CommentId("0"),
+                    metaData = metaData,
+                    onClickCommentReply = { body, parentCommentId, rootCommentId ->
+                        onClickCommentReply.invoke(body, parentCommentId, rootCommentId)
+                    },
+                )
+            }
+        }
+    }
+
+    if (postDetail.commentList.contents.isNotEmpty()) {
+        items(
+            items = postDetail.commentList.contents,
+            key = { comment -> comment.id.value },
+        ) {
+            CommentItem(
+                modifier = Modifier
+                    .padding(horizontal = 24.dp)
+                    .fillMaxWidth(),
+                metaData = metaData,
+                comment = it,
+                onClickCommentLike = onClickCommentLike,
+                onClickCommentReply = { body, parentCommentId, rootCommentId ->
+                    onClickCommentReply.invoke(body, parentCommentId, rootCommentId)
+                },
+                onClickCommentDelete = onClickCommentDelete,
+            )
+        }
+    } else {
+        item {
             Text(
                 modifier = Modifier
                     .alpha(if (!isShowCommentEditor) 1f else 0f)
-                    .padding(top = 8.dp)
+                    .padding(
+                        top = 8.dp,
+                        start = 16.dp,
+                        end = 16.dp,
+                    )
                     .fillMaxWidth(),
                 text = stringResource(MR.strings.post_detail_comment_empty),
                 style = MaterialTheme.typography.bodyMedium.center(),
                 color = MaterialTheme.colorScheme.onSurfaceVariant,
             )
         }
+    }
 
-        if (postDetail.commentList.offset != null) {
-            Button(
+    if (postDetail.commentList.offset != null) {
+        item {
+            Box(
                 modifier = Modifier
-                    .padding(top = 24.dp)
-                    .align(Alignment.CenterHorizontally),
-                onClick = { onClickLoadMore.invoke(postDetail.id, postDetail.commentList.offset!!) },
+                    .padding(horizontal = 16.dp)
+                    .fillMaxWidth()
             ) {
-                Row(
-                    verticalAlignment = Alignment.CenterVertically,
+                Button(
+                    modifier = Modifier
+                        .padding(top = 24.dp)
+                        .align(Alignment.Center),
+                    onClick = { onClickLoadMore.invoke(postDetail.id, postDetail.commentList.offset!!) },
                 ) {
-                    Icon(
-                        imageVector = Icons.Default.KeyboardArrowDown,
-                        tint = MaterialTheme.colorScheme.onPrimary,
-                        contentDescription = null,
-                    )
+                    Row(
+                        verticalAlignment = Alignment.CenterVertically,
+                    ) {
+                        Icon(
+                            imageVector = Icons.Default.KeyboardArrowDown,
+                            tint = MaterialTheme.colorScheme.onPrimary,
+                            contentDescription = null,
+                        )
 
-                    Text(
-                        modifier = Modifier.padding(start = 8.dp),
-                        text = stringResource(MR.strings.common_see_more),
-                        style = MaterialTheme.typography.bodyMedium,
-                        color = MaterialTheme.colorScheme.onPrimary,
-                    )
+                        Text(
+                            modifier = Modifier.padding(start = 8.dp),
+                            text = stringResource(MR.strings.common_see_more),
+                            style = MaterialTheme.typography.bodyMedium,
+                            color = MaterialTheme.colorScheme.onPrimary,
+                        )
+                    }
                 }
             }
         }

@@ -1,0 +1,317 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <!-- Common -->
+    <string name="common_ok">OK</string>
+    <string name="common_cancel">キャンセル</string>
+    <string name="common_allow">許可</string>
+    <string name="common_denied">拒否</string>
+    <string name="common_retry">再試行</string>
+    <string name="common_reload">再読み込み</string>
+    <string name="common_back">戻る</string>
+    <string name="common_close">閉じる</string>
+    <string name="common_next">次へ</string>
+    <string name="common_finish">完了</string>
+    <string name="common_skip">スキップ</string>
+    <string name="common_loading">処理中…</string>
+    <string name="common_caution">注意</string>
+    <string name="common_error">エラー</string>
+    <string name="common_warning">警告</string>
+    <string name="common_save">保存</string>
+    <string name="common_unknown">不明</string>
+    <string name="common_details">詳細</string>
+    <string name="common_delete">削除</string>
+    <string name="common_completed">完了</string>
+    <string name="common_download">ダウンロード</string>
+    <string name="common_downloaded">ダウンロードしました</string>
+    <string name="common_supporting">支援中</string>
+    <string name="common_follow">フォロー</string>
+    <string name="common_unfollow">フォロー中</string>
+    <string name="common_see_more">もっと見る</string>
+    <string name="common_tag">タグ</string>
+    <string name="common_post">投稿</string>
+    <string name="common_creator">投稿</string>
+
+    <!-- Common Error -->
+    <string name="error_executed">エラーが発生しました</string>
+    <string name="error_unknown">不明なエラーが発生しました</string>
+    <string name="error_download">ダウンロードに失敗しました</string>
+    <string name="error_no_data">データがありません</string>
+    <string name="error_no_data_search">キーワードを変えて再度お試しください</string>
+    <string name="error_no_data_discovery">おすすめのクリエイターはいません</string>
+    <string name="error_no_data_following">フォロー中のクリエイターがいません</string>
+    <string name="error_no_data_supported">支援中のクリエイターがいません</string>
+    <string name="error_no_data_creator">投稿はありません</string>
+    <string name="error_no_data_bookmark">ブックマークした投稿はありません</string>
+    <string name="error_no_data_message">メッセージはまだ届いていません</string>
+    <string name="error_no_data_payments">決済履歴はありません</string>
+    <string name="error_no_data_notify">通知はまだ届いていません</string>
+    <string name="error_network">通信エラーが発生しました</string>
+    <string name="error_paging">ページネーションを継続できません</string>
+    <string name="error_developing_feature">開発中の機能です</string>
+    <string name="error_billing">購入情報を取得できませんでした</string>
+    <string name="error_restricted_post">月額%d円以上支援すると見ることができます</string>
+    <string name="error_adult_content">成人向けコンテンツ</string>
+    <string name="error_adult_content_test_user">このコンテンツは一時的に制限されています</string>
+    <string name="error_adult_content_description">表示する</string>
+    <string name="error_ios_gif_support">iOS での GIF のプレビューは\n現在開発中です</string>
+
+    <!-- Common Unit -->
+    <string name="unit_day_before">%1$d日前</string>
+    <string name="unit_hour_before">%1$d時間前</string>
+    <string name="unit_minute_before">%1$d分前</string>
+    <string name="unit_second_before">%1$d秒前</string>
+    <string name="unit_favorite">%1$dいいね</string>
+    <string name="unit_tag">%1$d件</string>
+    <string name="unit_jpy">￥%d</string>
+
+    <!-- Notify -->
+    <string name="notify_download_channel_name">ダウンロード</string>
+    <string name="notify_download_channel_description">ダウンロードの進捗状況を通知します</string>
+    <string name="notify_download_title">ダウンロード中…</string>
+    <string name="notify_download_message">イラストのダウンロードを実行中です（残り%1$d枚）</string>
+
+    <!-- Library -->
+    <string name="library_navigation_home">ホーム</string>
+    <string name="library_navigation_discovery">検索</string>
+    <string name="library_navigation_notify">通知</string>
+    <string name="library_navigation_message">メッセージ</string>
+    <string name="library_navigation_bookmark">ブックマーク</string>
+    <string name="library_navigation_following">フォロー中</string>
+    <string name="library_navigation_supporting">支援中</string>
+    <string name="library_navigation_payments">決済履歴</string>
+    <string name="library_navigation_setting">設定</string>
+    <string name="library_navigation_about">アプリについて</string>
+    <string name="library_navigation_plus_description">コーヒー1杯程度の金額で、全ての機能にアクセスできるようになります！</string>
+    <string name="library_navigation_plus_purchased_description">あなたは FANBOX Viewer+ ユーザーです。快適な音楽視聴をお楽しみください！</string>
+
+    <!-- Fanbox -->
+    <string name="fanbox_free_fee">全体公開</string>
+    <string name="fanbox_plan_List">プラン一覧</string>
+
+    <!-- Home -->
+    <string name="home_tab_home">フォロー中</string>
+    <string name="home_tab_supported">支援中</string>
+    <string name="home_app_lock_title">認証が必要です</string>
+    <string name="home_app_lock_message">アプリを使用するにはロック解除が必要です</string>
+    <string name="home_review_success">レビューありがとうございました</string>
+
+    <!-- Empty -->
+    <string name="empty_detail_title">投稿を確認</string>
+    <string name="empty_detail_description">投稿を選択するとここに詳細が表示されます</string>
+
+    <!-- Notify -->
+    <string name="notify_load_more">もっと見る</string>
+    <string name="notify_title_post_published">「%1$s」が公開されました！</string>
+    <string name="notify_title_comment">%1$sさんからあなたのコメントに返信がありました！</string>
+    <string name="notify_title_like">あなたのコメントが%1$d人にいいねされました！</string>
+
+    <!-- Creator -->
+    <string name="creator_tab_posts">投稿</string>
+    <string name="creator_tab_plans">プラン</string>
+    <string name="creator_supporting_payment_method_card">クレジットカード</string>
+    <string name="creator_supporting_payment_method_paypal">PayPal</string>
+    <string name="creator_supporting_payment_method_cvs">コンビニ払い</string>
+    <string name="creator_supporting_payment_method_unknown">不明</string>
+    <string name="creator_supporting_fan_card">ファンカード</string>
+    <string name="creator_supporting_plan_detail">詳細</string>
+    <string name="creator_fan_card_not_supported">このクリエイターを支援していません</string>
+    <string name="creator_fan_card_switch_display_name">名前の表示を切り替える</string>
+    <string name="creator_fan_card_download">ファンカードをダウンロード</string>
+    <string name="creator_tag_has_adult_content">成人向けコンテンツ</string>
+    <string name="creator_tag_has_booth_shop">BOOTHショップ有り</string>
+    <string name="creator_tag_is_supported">支援中</string>
+    <string name="creator_tag_is_accepting_request">リクエスト受付中</string>
+    <string name="creator_download_all">投稿を一括ダウンロード</string>
+    <string name="creator_download_all_error">一括ダウンロードはFANBOX Viewer+専用機能です</string>
+    <string name="creator_posts_download_title">一括ダウンロード</string>
+    <string name="creator_posts_download_message">※ FANBOXへのアクセス集中を防ぐため、ダウンロード速度にはあえて遅延を入れております。ご了承ください。</string>
+    <string name="creator_posts_download_ignore_free">無料コンテンツを省く</string>
+    <string name="creator_posts_download_ignore_free_description">プランに入っていなくても閲覧できる投稿を省きます</string>
+    <string name="creator_posts_download_ignore_file">ファイルを省く</string>
+    <string name="creator_posts_download_ignore_file_description">投稿に付随しているファイル（ZIP,PDFなど）を省きます</string>
+    <string name="creator_posts_download_button">一括ダウンロード（%1$d件）</string>
+    <string name="creator_posts_download_button_downloading">一括ダウンロード中（%1$d/%2$d）</string>
+    <string name="creator_posts_download_dialog_title">投稿を取得中…</string>
+    <string name="creator_posts_download_alert_title">注意</string>
+    <string name="creator_posts_download_alert_message">一括ダウンロードは進行中です。\n停止しますか？</string>
+    <string name="creator_posts_download_alert_stop">停止</string>
+    <string name="creator_posts_download_ignore_keyword_placeholder">無視するキーワード（カンマ区切り）</string>
+    <string name="creator_recommended">おすすめのクリエイター</string>
+    <string name="creator_following_pixiv">Pixivでフォロー中のクリエイター</string>
+
+    <!-- Bookmark -->
+    <string name="bookmark_search_placeholder">ブックマークを検索</string>
+    <string name="bookmark_empty_title">ブックマークはありません</string>
+    <string name="bookmark_empty_description">お気に入りの投稿を見つけてブックマークしよう！</string>
+
+    <!-- PostDetail -->
+    <string name="post_detail_title">投稿詳細</string>
+    <string name="post_detail_download_images">画像を全てダウンロード (%1$d枚)</string>
+    <string name="post_detail_creator">クリエイター</string>
+    <string name="post_detail_comment_title">コメント</string>
+    <string name="post_detail_comment_reply">返信</string>
+    <string name="post_detail_comment_empty">コメントはまだありません</string>
+    <string name="post_detail_comment_placeholder">コメントを入力</string>
+    <string name="post_detail_comment_commented">コメントしました</string>
+    <string name="post_detail_comment_comment_failed">コメントに失敗しました</string>
+    <string name="post_detail_comment_delete_title">コメントを削除</string>
+    <string name="post_detail_comment_delete_message">このコメントを削除しますか？</string>
+    <string name="post_detail_comment_delete_success">削除しました</string>
+    <string name="post_detail_comment_delete_failed">削除に失敗しました</string>
+    <string name="post_detail_oldest_post">前の投稿はありません</string>
+    <string name="post_detail_newest_post">次の投稿はありません</string>
+    <string name="post_detail_all_posts">すべての投稿を見る</string>
+    <string name="post_detail_downloading">ダウンロード中…</string>
+    <string name="post_detail_open_browser">ブラウザで開く</string>
+    <string name="post_image_download">この画像をダウンロード</string>
+    <string name="post_image_all_download">すべての画像をダウンロード</string>
+    <string name="post_search_placeholder">クリエイター・タグを検索</string>
+
+    <!-- Settings -->
+    <string name="setting_title">設定</string>
+    <string name="setting_top_theme">テーマ</string>
+    <string name="setting_top_theme_app">アプリのテーマ</string>
+    <string name="setting_top_theme_app_description">アプリのテーマを変更します。</string>
+    <string name="setting_top_theme_app_light">ライトテーマ</string>
+    <string name="setting_top_theme_app_dark">ダークテーマ</string>
+    <string name="setting_top_theme_app_system">システムのテーマ</string>
+    <string name="setting_top_general">一般</string>
+    <string name="setting_top_general_app_lock">アプリ起動にパスワードを要求する</string>
+    <string name="setting_top_general_app_lock_description">アプリを起動する際にパスワードを要求します。</string>
+    <string name="setting_top_general_default_follow_tab">フォロー中をデフォルトにする</string>
+    <string name="setting_top_general_default_follow_tab_description">ホーム画面のデフォルトタブをフォロー中にします。</string>
+    <string name="setting_top_general_hide_adult_contents">成人向けコンテンツを隠す</string>
+    <string name="setting_top_general_hide_adult_contents_description">投稿一覧画面などでは成人向けコンテンツに警告が表示されます。</string>
+    <string name="setting_top_general_override_adult_contents_setting">閲覧設定をオーバーライドする</string>
+    <string name="setting_top_general_override_adult_contents_setting_description">FANBOXで設定した、成人向けコンテンツを表示するかどうかの設定をオーバーライドします。</string>
+    <string name="setting_top_general_hide_restricted_contents">表示制限コンテンツを無視する</string>
+    <string name="setting_top_general_hide_restricted_contents_description">支援者のみが閲覧できる投稿を無視します。</string>
+    <string name="setting_top_general_grid_mode">グリッドモード</string>
+    <string name="setting_top_general_grid_mode_description">投稿一覧画面の閲覧方法を表形式（一覧表示）に切り替えます。</string>
+    <string name="setting_top_general_infinity_post_detail">左右スワイプで投稿を見る</string>
+    <string name="setting_top_general_infinity_post_detail_description">投稿詳細画面で左右スワイプで前後の投稿を見ることができるようにします。</string>
+    <string name="setting_top_information">情報</string>
+    <string name="setting_top_information_id">CAIOS ID</string>
+    <string name="setting_top_information_version">アプリバージョン</string>
+    <string name="setting_top_information_csrf_token">CSRFトークン</string>
+    <string name="setting_top_information_fanbox_session_id">FANBOXSESSID</string>
+    <string name="setting_top_information_team_of_service">利用規約</string>
+    <string name="setting_top_information_privacy_policy">プライバシーポリシー</string>
+    <string name="setting_top_others">その他</string>
+    <string name="setting_top_others_logout">ログアウト</string>
+    <string name="setting_top_others_logout_description">認証情報を削除し、FANBOXからログアウトします</string>
+    <string name="setting_top_others_logout_dialog_description">FANBOXからログアウトしますか？</string>
+    <string name="setting_top_others_logout_dialog_success">ログアウトしました</string>
+    <string name="setting_top_others_logout_dialog_failed">ログアウトに失敗しました</string>
+    <string name="setting_top_others_open_source_license">オープンソースライセンス</string>
+    <string name="setting_top_others_open_source_license_description">OSSライブラリのライセンスを表示します。</string>
+    <string name="setting_top_others_developer_mode">開発モード</string>
+    <string name="setting_top_others_developer_mode_description">[Warning] Do not enable this mode if you are not a developer.</string>
+    <string name="setting_account">アカウント</string>
+    <string name="setting_account_title">アカウント設定</string>
+    <string name="setting_account_description">アカウント名やアイコン変更などを行います。</string>
+    <string name="setting_notify_title">通知設定</string>
+    <string name="setting_notify_description">プッシュ通知やメール通知の設定を行います。</string>
+    <string name="setting_theme_title">テーマ</string>
+    <string name="setting_theme_theme_dynamic_color">Dynamic Color</string>
+    <string name="setting_theme_theme_dynamic_color_description">ホームに設定している壁紙などから色を自動抽出する Dynamic Color を使用します。Android 12 以降でのみ利用可能です。</string>
+    <string name="setting_theme_color">テーマカラー</string>
+    <string name="setting_theme_color_description">アプリのテーマカラーを設定します。Dynamic Color と同時使用はできません。</string>
+    <string name="setting_developer_title">開発モード</string>
+    <string name="setting_developer_warning">You are trying to turn on this mode.Please enter the developer\'s PIN.\n\n[Warning] When this mode is turned on, you will not be able to receive any support.</string>
+
+    <!-- About -->
+    <string name="about_title">アプリについて</string>
+    <string name="about_name">FANBOX Viewer</string>
+    <string name="about_developer_name">CAIOS</string>
+    <string name="about_developer_prefix">Developed and designed by</string>
+    <string name="about_special_thanks">SPECIAL THANKS</string>
+    <string name="about_special_thanks_contributor">GitHub コントリビューターの皆様</string>
+    <string name="about_special_thanks_contributor_description">このアプリをより良いものへと開発を手伝ってくださっている、コントリビューターの皆様に感謝します。</string>
+    <string name="about_contribute">CONTRIBUTE</string>
+    <string name="about_contribute_description">このアプリは OSS となっており、GPL でライセンスされています。コントリビュートはいつでも誰でも歓迎です。特に英語と中国語への翻訳を手伝ってくれる方を探しています。</string>
+    <string name="about_contribute_ios_description">このアプリは KMP (Compose-Multiplatform) を用いて開発されています。開発者自身、まだ不慣れなことも多く、特に iOS ユーザーの皆様には不具合が多く不便をおかけしてしまうかもしれません。iOS 技術者の方や、KMP にお詳しい方などの貢献を特に歓迎いたします。</string>
+    <string name="about_for_ios_title">iOSユーザーの皆様へ</string>
+    <string name="about_for_ios_description">このアプリは KMP (Compose-Multiplatform) という、Android アプリ用のコードを iOS 用アプリに流用する技術を用いて作成されています。\n\n開発者自身 KMP に不慣れなことも多く、特に iOS ユーザーの皆様には不具合が多くご不便をおかけしてしまうかもしれません。あらかじめご了承ください。\n\n[ iOS 技術者の方へ]\nこのアプリは KMP で開発されていますが、一部コンポーネントを SwiftUI に移植する作業を進めている最中です。貢献を行える場合は、サイドバーの「アプリについて」から本アプリの GitHub リポジトリに遷移できますので、ぜひご貢献ください。</string>
+    <string name="about_support">SUPPORT</string>
+    <string name="about_support_version_history">更新履歴</string>
+    <string name="about_support_rate_app">アプリを評価</string>
+    <string name="about_support_opinion">ご意見・ご要望</string>
+    <string name="about_support_donate">寄付</string>
+
+    <!-- Billing -->
+    <string name="billing_plus_title">FANBOX Viewer+</string>
+    <string name="billing_plus_description">FANBOX Viewer+ は、月々コーヒー1杯の金額で全ての機能にアクセスできるようになる開発者への支援プランです。</string>
+    <string name="billing_plus_purchase_button">%1$s / 月で支援</string>
+    <string name="billing_plus_verify_button">購入を復元</string>
+    <string name="billing_plus_consume_button">購入を消費</string>
+    <string name="billing_plus_caution1">※ FANBOX Viewer+ は下記の限定機能を追加する定期購入契約です。支払いは直ちに行われ、機能を利用し続けるには1ヶ月ごとの更新が必要となります。解約はいつでも可能です。</string>
+    <string name="billing_plus_caution2">※ アプリ利用開始時に利用規約とプライバシーポリシーにすでに同意されていますが、設定画面から再度ご確認ください。</string>
+    <string name="billing_plus_toast_require_plus">この機能はFANBOX Viewer+でのみ使用することができます</string>
+    <string name="billing_plus_toast_purchased">購入しました</string>
+    <string name="billing_plus_toast_purchased_error">購入に失敗しました</string>
+    <string name="billing_plus_toast_consumed">消費しました</string>
+    <string name="billing_plus_toast_consumed_error">消費に失敗しました</string>
+    <string name="billing_plus_toast_verify">購入を復元しました</string>
+    <string name="billing_plus_toast_verify_error">購入情報が見つかりませんでした</string>
+    <string name="billing_plus_item_hide_ads">広告を非表示</string>
+    <string name="billing_plus_item_hide_ads_description">アプリ内の広告を全て非表示にし、もっと快適に投稿を楽しめる！</string>
+    <string name="billing_plus_item_download">一括ダウンロード</string>
+    <string name="billing_plus_item_download_description">クリエイターの投稿を一括でダウンロードして、ほかの媒体でも楽しもう！</string>
+    <string name="billing_plus_item_lock">アプリをロック</string>
+    <string name="billing_plus_item_lock_description">アプリを起動する際にパスワードを要求し、セキュリティを強化！</string>
+    <string name="billing_plus_item_hide_restricted">支援プラン外の投稿を非表示</string>
+    <string name="billing_plus_item_hide_restricted_description">支援していないプランでの投稿など、見れない投稿を全て非表示にして一覧性を高めよう！（設定でON/OFF可能）</string>
+    <string name="billing_plus_item_widget">ホームウィジェット</string>
+    <string name="billing_plus_item_widget_description">ホーム画面にウィジェットを追加し、ホームから投稿をチェックできる！（アップデートで提供予定）</string>
+    <string name="billing_plus_item_material_you">Material You</string>
+    <string name="billing_plus_item_material_you_description">全てのバージョンで Material You によるカスタムテーマで自分好みにカスタマイズ！</string>
+    <string name="billing_plus_item_accent_color">アクセントカラー</string>
+    <string name="billing_plus_item_accent_color_description">アプリのアクセントカラーを自由に設定！。</string>
+    <string name="billing_plus_item_feature">新機能の追加</string>
+    <string name="billing_plus_item_feature_description">新機能が追加された際にいち早く体験！</string>
+    <string name="billing_plus_item_support">最優先サポート</string>
+    <string name="billing_plus_item_support_description">いつでも最優先でサポート！</string>
+    <string name="billing_plus_purchase_title">支援完了</string>
+    <string name="billing_plus_purchase_message">FANBOX Viewer+ の購入が完了しました。\n支援ありがとうございます！</string>
+    <string name="billing_plus_cancel_title">プランの解約</string>
+    <string name="billing_plus_cancel_message">FANBOX Viewer+ のプランが解約されたため、通常ユーザーに戻りました。\n\n意図していない場合は支払いに失敗している可能性があります。ストアアプリより、プランの状況をご確認ください。</string>
+
+    <!-- Report -->
+    <string name="report_crush_title">Oops! Something went wrong</string>
+    <string name="report_crush_description">技術的な要因により、FANBOX Viewer がクラッシュしました。以下のレポートを開発者に送付してください。</string>
+    <string name="report_crush_copy">コピー</string>
+    <string name="report_crush_toast_copy">コピーしました</string>
+
+    <!-- Welcome -->
+    <string name="welcome_title">FANBOX Viewer</string>
+    <string name="welcome_description">このアプリは PIXIV FANBOX の\n非公式 Android クライアントです</string>
+    <string name="welcome_privacy_policy">プライバシーポリシー</string>
+    <string name="welcome_team_of_service">利用規約</string>
+    <string name="welcome_agree">%1$sに同意する</string>
+    <string name="welcome_button_next">はじめる</string>
+    <string name="welcome_login_title">ログイン</string>
+    <string name="welcome_login_message">このアプリを利用するには Pixiv アカウントで\nログインする必要があります</string>
+    <string name="welcome_login_ready_title">ログイン済み</string>
+    <string name="welcome_login_ready_message">Pixiv アカウントでログイン済みです</string>
+    <string name="welcome_login_toast_success">ログインしました</string>
+    <string name="welcome_login_toast_failed">ログインに失敗しました</string>
+    <string name="welcome_login_button_login">ログイン</string>
+    <string name="welcome_login_button_next">次へ</string>
+    <string name="welcome_login_dialog_title">ログインの注意</string>
+    <string name="welcome_login_dialog_message">GoogleやXのOAuthを利用した認証はセキュリティ上の懸念により対応していません。\n\nメールアドレスとパスワードを直接入力してログインを行ってください。</string>
+    <string name="welcome_permission_title">権限</string>
+    <string name="welcome_permission_message">アプリの利用には以下の権限が必要です\n下のボタンを押して権限を許可してください</string>
+    <string name="welcome_permission_ready_title">準備完了</string>
+    <string name="welcome_permission_ready_message">アプリの利用に必要な権限がすべて許可されました</string>
+    <string name="welcome_permission_storage">ストレージ</string>
+    <string name="welcome_permission_storage_message">コンテンツを保存するため</string>
+    <string name="welcome_permission_notification">通知</string>
+    <string name="welcome_permission_notification_message">通知を表示するため</string>
+    <string name="welcome_permission_allowed">ALLOWED</string>
+    <string name="welcome_permission_denied">DENIED</string>
+    <string name="welcome_permission_optional">OPTIONAL</string>
+    <string name="welcome_permission_allow_button">許可</string>
+    <string name="welcome_permission_complete_button">完了</string>
+</resources>

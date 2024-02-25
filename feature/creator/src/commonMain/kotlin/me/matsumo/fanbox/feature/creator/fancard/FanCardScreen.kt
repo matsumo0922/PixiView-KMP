@@ -14,7 +14,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import com.mxalbert.zoomable.Zoomable
+import me.matsumo.fanbox.core.ui.animation.Zoomable
 import kotlinx.coroutines.flow.collectLatest
 import me.matsumo.fanbox.core.model.ScreenState
 import me.matsumo.fanbox.core.model.fanbox.FanboxCreatorPlanDetail

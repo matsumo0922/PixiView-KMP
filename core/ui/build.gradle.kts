@@ -14,6 +14,7 @@ android {
 
 multiplatformResources {
     multiplatformResourcesPackage = "me.matsumo.fanbox.core.ui"
+    iosBaseLocalizationRegion = "Base"
 }
 
 kotlin {

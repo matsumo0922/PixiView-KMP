@@ -25,6 +25,9 @@ import dev.icerock.moko.resources.compose.stringResource
 import me.matsumo.fanbox.core.common.PixiViewConfig
 import me.matsumo.fanbox.core.model.UserData
 import me.matsumo.fanbox.core.ui.MR
+import me.matsumo.fanbox.core.ui.extensition.Platform
+import me.matsumo.fanbox.core.ui.extensition.currentPlatform
+import me.matsumo.fanbox.core.ui.icon.Apple
 import me.matsumo.fanbox.core.ui.icon.Discord
 import me.matsumo.fanbox.core.ui.icon.GitHub
 import me.matsumo.fanbox.core.ui.icon.GooglePlay
@@ -35,7 +38,7 @@ internal fun AboutAppSection(
     config: PixiViewConfig,
     onClickGithub: () -> Unit,
     onClickDiscord: () -> Unit,
-    onClickGooglePlay: () -> Unit,
+    onClickStore: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
     Box(modifier) {
@@ -103,8 +106,8 @@ internal fun AboutAppSection(
 
                         AboutIconButton(
                             modifier = Modifier.size(28.dp),
-                            imageVector = Icons.Outlined.GooglePlay,
-                            onClick = { onClickGooglePlay.invoke() },
+                            imageVector = if (currentPlatform == Platform.IOS) Icons.Outlined.Apple else Icons.Outlined.GooglePlay,
+                            onClick = { onClickStore.invoke() },
                         )
                     }
                 }

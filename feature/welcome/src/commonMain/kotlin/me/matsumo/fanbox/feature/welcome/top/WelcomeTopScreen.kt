@@ -51,6 +51,8 @@ import me.matsumo.fanbox.core.ui.MR
 import me.matsumo.fanbox.core.ui.extensition.LocalNavigationType
 import me.matsumo.fanbox.core.ui.extensition.NavigatorExtension
 import me.matsumo.fanbox.core.ui.extensition.PixiViewNavigationType
+import me.matsumo.fanbox.core.ui.extensition.Platform
+import me.matsumo.fanbox.core.ui.extensition.currentPlatform
 import me.matsumo.fanbox.core.ui.theme.bold
 import me.matsumo.fanbox.core.ui.theme.center
 import me.matsumo.fanbox.feature.welcome.WelcomeIndicatorItem
@@ -65,7 +67,7 @@ internal fun WelcomeTopScreen(
     navigatorExtension: NavigatorExtension = koinInject(),
 ) {
     val navigationType = LocalNavigationType.current.type
-    var isShowForIosDialog by remember { mutableStateOf(true) }
+    var isShowForIosDialog by remember { mutableStateOf(currentPlatform != Platform.Android) }
 
     if (isShowForIosDialog) {
         ForIosDialog {

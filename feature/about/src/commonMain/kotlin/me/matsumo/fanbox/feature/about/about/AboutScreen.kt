@@ -25,7 +25,9 @@ import me.matsumo.fanbox.core.ui.MR
 import me.matsumo.fanbox.core.ui.component.PixiViewTopBar
 import me.matsumo.fanbox.core.ui.extensition.LocalSnackbarHostState
 import me.matsumo.fanbox.core.ui.extensition.NavigatorExtension
+import me.matsumo.fanbox.core.ui.extensition.Platform
 import me.matsumo.fanbox.core.ui.extensition.SnackbarExtension
+import me.matsumo.fanbox.core.ui.extensition.currentPlatform
 import me.matsumo.fanbox.feature.about.about.items.AboutAppSection
 import me.matsumo.fanbox.feature.about.about.items.AboutDeveloperSection
 import me.matsumo.fanbox.feature.about.about.items.AboutSupportSection
@@ -62,6 +64,8 @@ internal fun AboutRoute(
             onClickDiscord = { scope.launch { snackbarExtension.showSnackbar(snackHostState, MR.strings.error_developing_feature) } },
             onClickGooglePlay = { navigatorExtension.navigateToWebPage("https://play.google.com/store/apps/details?id=caios.android.fanbox") },
             onClickGooglePlayDeveloper = { navigatorExtension.navigateToWebPage("https://play.google.com/store/apps/developer?id=CAIOS") },
+            onClickAppStore = { navigatorExtension.navigateToWebPage("https://apps.apple.com/jp/developer/caios/id1563407383") },
+            onClickAppStoreDeveloper = { navigatorExtension.navigateToWebPage("https://apps.apple.com/jp/developer/caios/id1563407383") },
             onClickTwitter = { navigatorExtension.navigateToWebPage("https://twitter.com/matsumo0922") },
             onClickVersionHistory = { navigateToVersionHistory.invoke() },
             onClickDonate = { navigateToDonate.invoke() },
@@ -80,7 +84,9 @@ private fun AboutScreen(
     onClickGithubIssue: () -> Unit,
     onClickGitHubContributor: () -> Unit,
     onClickDiscord: () -> Unit,
+    onClickAppStore: () -> Unit,
     onClickGooglePlay: () -> Unit,
+    onClickAppStoreDeveloper: () -> Unit,
     onClickGooglePlayDeveloper: () -> Unit,
     onClickTwitter: () -> Unit,
     onClickVersionHistory: () -> Unit,
@@ -119,7 +125,7 @@ private fun AboutScreen(
                     config = config,
                     onClickGithub = onClickGithub,
                     onClickDiscord = onClickDiscord,
-                    onClickGooglePlay = onClickGooglePlay,
+                    onClickStore = if (currentPlatform == Platform.IOS) onClickAppStore else onClickGooglePlay,
                 )
             }
 
@@ -129,6 +135,7 @@ private fun AboutScreen(
                     onClickTwitter = onClickTwitter,
                     onClickGithub = onClickGithubProfile,
                     onClickGooglePlay = onClickGooglePlayDeveloper,
+                    onClickAppStore = onClickAppStoreDeveloper,
                     onClickGitHubContributor = onClickGitHubContributor,
                 )
             }
@@ -137,7 +144,7 @@ private fun AboutScreen(
                 AboutSupportSection(
                     modifier = Modifier.fillMaxWidth(),
                     onClickVersionHistory = onClickVersionHistory,
-                    onClickRateApp = onClickGooglePlay,
+                    onClickRateApp = if (currentPlatform == Platform.IOS) onClickAppStore else onClickGooglePlay,
                     onClickEmail = onClickGithubIssue,
                     onClickDonation = onClickDonate,
                 )

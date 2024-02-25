@@ -31,6 +31,7 @@ import dev.icerock.moko.resources.compose.stringResource
 import me.matsumo.fanbox.core.ui.MR
 import me.matsumo.fanbox.core.ui.extensition.Platform
 import me.matsumo.fanbox.core.ui.extensition.currentPlatform
+import me.matsumo.fanbox.core.ui.icon.Apple
 import me.matsumo.fanbox.core.ui.icon.GitHub
 import me.matsumo.fanbox.core.ui.icon.GooglePlay
 import me.matsumo.fanbox.core.ui.icon.Twitter
@@ -42,6 +43,7 @@ internal fun AboutDeveloperSection(
     onClickTwitter: () -> Unit,
     onClickGithub: () -> Unit,
     onClickGooglePlay: () -> Unit,
+    onClickAppStore: () -> Unit,
     onClickGitHubContributor: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
@@ -57,6 +59,7 @@ internal fun AboutDeveloperSection(
                 onClickTwitter = onClickTwitter,
                 onClickGithub = onClickGithub,
                 onClickGooglePlay = onClickGooglePlay,
+                onClickAppStore = onClickAppStore,
                 onClickGitHubContributor = onClickGitHubContributor,
             )
         },
@@ -111,6 +114,7 @@ private fun AboutDeveloperCard(
     onClickTwitter: () -> Unit,
     onClickGithub: () -> Unit,
     onClickGooglePlay: () -> Unit,
+    onClickAppStore: () -> Unit,
     onClickGitHubContributor: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
@@ -168,6 +172,12 @@ private fun AboutDeveloperCard(
                     modifier = Modifier.size(28.dp),
                     imageVector = Icons.Outlined.GooglePlay,
                     onClick = onClickGooglePlay,
+                )
+
+                AboutIconButton(
+                    modifier = Modifier.size(28.dp),
+                    imageVector = Icons.Outlined.Apple,
+                    onClick = onClickAppStore,
                 )
             }
 

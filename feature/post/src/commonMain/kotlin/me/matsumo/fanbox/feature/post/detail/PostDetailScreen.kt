@@ -75,12 +75,12 @@ import me.matsumo.fanbox.core.ui.view.ErrorView
 import me.matsumo.fanbox.core.ui.view.SimpleAlertContents
 import me.matsumo.fanbox.feature.post.detail.items.PostDetailArticleHeader
 import me.matsumo.fanbox.feature.post.detail.items.PostDetailCommentLikeButton
-import me.matsumo.fanbox.feature.post.detail.items.PostDetailCommentSection
 import me.matsumo.fanbox.feature.post.detail.items.PostDetailCreatorSection
 import me.matsumo.fanbox.feature.post.detail.items.PostDetailDownloadSection
 import me.matsumo.fanbox.feature.post.detail.items.PostDetailFileHeader
 import me.matsumo.fanbox.feature.post.detail.items.PostDetailImageHeader
 import me.matsumo.fanbox.feature.post.detail.items.PostDetailMenuDialog
+import me.matsumo.fanbox.feature.post.detail.items.postDetailCommentItems
 import moe.tlaster.precompose.flow.collectAsStateWithLifecycle
 import moe.tlaster.precompose.koin.koinViewModel
 import org.koin.compose.koinInject
@@ -268,6 +268,16 @@ private fun PostDetailScreen(
     var isPostLiked by rememberSaveable(postDetail.isLiked) { mutableStateOf(postDetail.isLiked) }
     var isBookmarked by remember(postDetail.isBookmarked) { mutableStateOf(postDetail.isBookmarked) }
 
+    var isShowCommentEditor by remember { mutableStateOf(false) }
+    var latestComment by remember { mutableStateOf("") }
+
+    LaunchedEffect(postDetail.commentList) {
+        if (isShowCommentEditor) {
+            val comments = postDetail.commentList.contents.flatMap { comment -> listOf(comment) + comment.replies }
+            isShowCommentEditor = !comments.any { comment -> comment.user.name == metaData.context.user.name && comment.body == latestComment }
+        }
+    }
+
     val isShowCoordinateHeader = when (val content = postDetail.body) {
         is FanboxPostDetail.Body.Article -> content.blocks.first() !is FanboxPostDetail.Body.Article.Block.Image
         is FanboxPostDetail.Body.File -> true
@@ -406,19 +416,19 @@ private fun PostDetailScreen(
             )
         }
 
-        item {
-            PostDetailCommentSection(
-                modifier = Modifier
-                    .padding(horizontal = 16.dp)
-                    .fillMaxWidth(),
-                postDetail = postDetail,
-                metaData = metaData,
-                onClickLoadMore = onClickCommentLoadMore,
-                onClickCommentLike = onClickCommentLike,
-                onClickCommentReply = { body, parent, root -> onClickCommentReply.invoke(postDetail.id, body, parent, root) },
-                onClickCommentDelete = onClickCommentDelete,
-            )
-        }
+        postDetailCommentItems(
+            postDetail = postDetail,
+            metaData = metaData,
+            isShowCommentEditor = isShowCommentEditor,
+            onClickLoadMore = onClickCommentLoadMore,
+            onClickCommentLike = onClickCommentLike,
+            onClickCommentReply = { body, parent, root ->
+                latestComment = body
+                onClickCommentReply.invoke(postDetail.id, body, parent, root)
+            },
+            onClickCommentDelete = onClickCommentDelete,
+            onClickShowCommentEditor = { isShowCommentEditor = it },
+        )
 
         item {
             Spacer(modifier = Modifier.height(128.dp))

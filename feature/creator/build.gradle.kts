@@ -19,8 +19,6 @@ kotlin {
             implementation(project(":core:repository"))
             implementation(project(":core:datastore"))
             implementation(project(":core:ui"))
-
-            implementation(libsMain.zoomable)
         }
     }
 }

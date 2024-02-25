@@ -22,6 +22,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import dev.icerock.moko.biometry.compose.BindBiometryAuthenticatorEffect
 import dev.icerock.moko.biometry.compose.rememberBiometryAuthenticatorFactory
+import dev.icerock.moko.resources.desc.StringDesc
 import io.github.aakira.napier.Napier
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
@@ -73,6 +74,7 @@ fun PixiViewApp(
         else -> PixiViewNavigationType.BottomNavigation
     }
 
+    StringDesc.localeType = StringDesc.LocaleType.System
     BindBiometryAuthenticatorEffect(biometryAuthenticator)
 
     CompositionLocalProvider(LocalNavigationType provides NavigationType(navigationType)) {

@@ -42,7 +42,7 @@ data class UserData(
                 isOverrideAdultContents = false,
                 isHideRestricted = false,
                 isTestUser = false,
-                isDeveloperMode = true,
+                isDeveloperMode = false,
                 isPlusMode = false,
             )
         }
