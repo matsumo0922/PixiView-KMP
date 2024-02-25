@@ -84,7 +84,6 @@ fun WelcomeNavHost(
             ) {
                 welcomeTopScreen(
                     navigateToWelcomeLogin = { navigator.navigateToWelcomeLogin() },
-                    navigateToForIos = { navigator.navigateToSimpleAlertDialog(it) },
                 )
 
                 welcomeLoginScreen(

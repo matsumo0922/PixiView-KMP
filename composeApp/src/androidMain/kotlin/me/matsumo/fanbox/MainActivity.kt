@@ -14,6 +14,7 @@ import androidx.core.view.WindowCompat
 import androidx.fragment.app.FragmentActivity
 import com.google.accompanist.systemuicontroller.rememberSystemUiController
 import me.matsumo.fanbox.core.model.ThemeConfig
+import me.matsumo.fanbox.core.repository.FanboxRepository
 import me.matsumo.fanbox.core.repository.UserDataRepository
 import moe.tlaster.precompose.PreComposeApp
 import moe.tlaster.precompose.flow.collectAsStateWithLifecycle
@@ -24,6 +25,8 @@ import org.koin.core.component.inject
 class MainActivity : FragmentActivity(), KoinComponent {
 
     private val userDataRepository: UserDataRepository by inject()
+
+    private val fanboxRepository: FanboxRepository by inject()
 
     @OptIn(ExperimentalMaterial3WindowSizeClassApi::class)
     override fun onCreate(savedInstanceState: Bundle?) {

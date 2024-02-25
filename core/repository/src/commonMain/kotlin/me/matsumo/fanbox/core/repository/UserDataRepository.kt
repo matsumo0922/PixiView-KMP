@@ -111,6 +111,13 @@ class UserDataRepositoryImpl(
         if (userData.first().isPlusMode != isPlusMode) {
             pixiViewDataStore.setPlusMode(isPlusMode)
             _updatePlusMode.send(isPlusMode)
+
+            if (!isPlusMode) {
+                setUseDynamicColor(false)
+                setUseAppLock(false)
+                setHideRestricted(false)
+                setUseGridMode(false)
+            }
         }
     }
 }
