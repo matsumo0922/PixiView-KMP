@@ -1,3 +1,4 @@
 [submodule "precompose"]
 	path = precompose
-	url = git@github.com:Tlaster/PreCompose.git
+	url = git@github.com:matsumo0922/PreCompose.git
+	branch = compose-1.6
