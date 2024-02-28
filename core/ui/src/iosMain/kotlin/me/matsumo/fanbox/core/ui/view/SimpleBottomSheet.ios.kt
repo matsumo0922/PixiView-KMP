@@ -145,9 +145,6 @@ private class BottomSheetManager(
         )
         bottomSheetUIViewController.sheetPresentationController?.prefersGrabberVisible = true
 
-        println(bottomSheetUIViewController.sheetPresentationController)
-        println(bottomSheetUIViewController.sheetPresentationController?.detents)
-
         UIApplication.sharedApplication.keyWindow?.rootViewController?.presentViewController(
             viewControllerToPresent = bottomSheetUIViewController,
             animated = true,

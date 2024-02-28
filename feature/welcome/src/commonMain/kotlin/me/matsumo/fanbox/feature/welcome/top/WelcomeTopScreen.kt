@@ -67,13 +67,6 @@ internal fun WelcomeTopScreen(
     navigatorExtension: NavigatorExtension = koinInject(),
 ) {
     val navigationType = LocalNavigationType.current.type
-    var isShowForIosDialog by remember { mutableStateOf(currentPlatform != Platform.Android) }
-
-    if (isShowForIosDialog) {
-        ForIosDialog {
-            isShowForIosDialog = false
-        }
-    }
 
     if (navigationType != PixiViewNavigationType.PermanentNavigationDrawer) {
         Column(
@@ -278,75 +271,5 @@ private fun CheckBoxLinkButton(
                 }
             },
         )
-    }
-}
-
-@Composable
-private fun ForIosDialog(
-    onDismissRequest: () -> Unit,
-) {
-    val scope = rememberCoroutineScope()
-    var animateTrigger by remember { mutableStateOf(false) }
-
-    Dialog(
-        onDismissRequest = {
-            scope.launch {
-                animateTrigger = false
-                delay(100)
-                onDismissRequest.invoke()
-            }
-        }
-    ) {
-        AnimatedVisibility(
-            visible = animateTrigger,
-            enter = fadeIn(),
-            exit = fadeOut(),
-        ) {
-            Column(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .wrapContentHeight()
-                    .clip(RoundedCornerShape(16.dp))
-                    .background(MaterialTheme.colorScheme.surface)
-                    .padding(24.dp),
-                verticalArrangement = Arrangement.spacedBy(16.dp),
-            ) {
-                Text(
-                    modifier = Modifier.fillMaxWidth(),
-                    text = stringResource(MR.strings.about_for_ios_title),
-                    style = MaterialTheme.typography.titleMedium.bold(),
-                    color = MaterialTheme.colorScheme.onSurface,
-                )
-
-                Text(
-                    modifier = Modifier.fillMaxWidth(),
-                    text = stringResource(MR.strings.about_for_ios_description),
-                    style = MaterialTheme.typography.bodyMedium,
-                    color = MaterialTheme.colorScheme.onSurfaceVariant,
-                )
-
-                Button(
-                    modifier = Modifier
-                        .padding(top = 8.dp)
-                        .fillMaxWidth(),
-                    shape = RoundedCornerShape(4.dp),
-                    colors = ButtonDefaults.buttonColors(MaterialTheme.colorScheme.primary),
-                    onClick = {
-                        scope.launch {
-                            animateTrigger = false
-                            delay(100)
-                            onDismissRequest.invoke()
-                        }
-                    },
-                ) {
-                    Text(text = stringResource(MR.strings.common_ok))
-                }
-            }
-        }
-    }
-
-    LaunchedEffect(true) {
-        delay(100)
-        animateTrigger = true
     }
 }

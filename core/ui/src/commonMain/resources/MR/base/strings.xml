@@ -216,7 +216,7 @@
     <string name="setting_notify_description">Configure push notifications and email notifications.</string>
     <string name="setting_theme_title">Theme</string>
     <string name="setting_theme_theme_dynamic_color">Dynamic Color</string>
-    <string name="setting_theme_theme_dynamic_color_description">Uses Dynamic Color, which automatically extracts colors from the wallpaper set on your home page. Available only on Android 12 and above.</string>
+    <string name="setting_theme_theme_dynamic_color_description">Uses Dynamic Color, which automatically extracts colors from the wallpaper set on your home page.</string>
     <string name="setting_theme_color">Theme color</string>
     <string name="setting_theme_color_description">Sets the app\'s theme color. Cannot be used at the same time as Dynamic Color.</string>
     <string name="setting_developer_title">Development mode</string>
@@ -289,7 +289,7 @@
 
     <!-- Welcome -->
     <string name="welcome_title">FANBOX Viewer</string>
-    <string name="welcome_description">This app is an unofficial Android client for his PIXIV FANBOX</string>
+    <string name="welcome_description">This app is an unofficial client application for pixivFANBOX</string>
     <string name="welcome_privacy_policy">Privacy policy</string>
     <string name="welcome_team_of_service">Terms of Service</string>
     <string name="welcome_agree">Agree with %1$s</string>

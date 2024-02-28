@@ -215,7 +215,7 @@
     <string name="setting_notify_description">プッシュ通知やメール通知の設定を行います。</string>
     <string name="setting_theme_title">テーマ</string>
     <string name="setting_theme_theme_dynamic_color">Dynamic Color</string>
-    <string name="setting_theme_theme_dynamic_color_description">ホームに設定している壁紙などから色を自動抽出する Dynamic Color を使用します。Android 12 以降でのみ利用可能です。</string>
+    <string name="setting_theme_theme_dynamic_color_description">ホームに設定している壁紙などから色を自動抽出する Dynamic Color を使用します。</string>
     <string name="setting_theme_color">テーマカラー</string>
     <string name="setting_theme_color_description">アプリのテーマカラーを設定します。Dynamic Color と同時使用はできません。</string>
     <string name="setting_developer_title">開発モード</string>
@@ -286,7 +286,7 @@
 
     <!-- Welcome -->
     <string name="welcome_title">FANBOX Viewer</string>
-    <string name="welcome_description">このアプリは PIXIV FANBOX の\n非公式 Android クライアントです</string>
+    <string name="welcome_description">このアプリは PIXIV FANBOX の\n非公式クライアントアプリです</string>
     <string name="welcome_privacy_policy">プライバシーポリシー</string>
     <string name="welcome_team_of_service">利用規約</string>
     <string name="welcome_agree">%1$sに同意する</string>
