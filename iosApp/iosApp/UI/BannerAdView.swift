@@ -25,7 +25,7 @@ struct BannerAdItem: UIViewControllerRepresentable {
     private var adUnitID = "ca-app-pub-3940256099942544/2934735716"  // Test用のID
     
     init() {
-        self.adUnitID = KeyManager().getValue(key: "ADMOB_IOS_BANNER_AD_UNIT_ID") as! String
+        self.adUnitID = (KeyManager().getValue(key: "ADMOB_IOS_BANNER_AD_UNIT_ID") as? String) ?? adUnitID
     }
     
     func makeUIViewController(context: Context) -> some UIViewController {
