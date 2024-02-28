@@ -168,11 +168,13 @@ private fun AboutDeveloperCard(
                     onClick = onClickGithub,
                 )
 
-                AboutIconButton(
-                    modifier = Modifier.size(28.dp),
-                    imageVector = Icons.Outlined.GooglePlay,
-                    onClick = onClickGooglePlay,
-                )
+                if (currentPlatform != Platform.IOS) {
+                    AboutIconButton(
+                        modifier = Modifier.size(28.dp),
+                        imageVector = Icons.Outlined.GooglePlay,
+                        onClick = onClickGooglePlay,
+                    )
+                }
 
                 AboutIconButton(
                     modifier = Modifier.size(28.dp),
@@ -241,21 +243,6 @@ private fun AboutDeveloperCard(
                 style = MaterialTheme.typography.bodySmall,
                 color = MaterialTheme.colorScheme.onSurfaceVariant,
             )
-
-            if (currentPlatform != Platform.Android) {
-                Text(
-                    modifier = Modifier
-                        .padding(
-                            bottom = 24.dp,
-                            start = 24.dp,
-                            end = 24.dp,
-                        )
-                        .fillMaxWidth(),
-                    text = stringResource(MR.strings.about_contribute_ios_description),
-                    style = MaterialTheme.typography.bodySmall,
-                    color = MaterialTheme.colorScheme.onSurfaceVariant,
-                )
-            }
         }
     }
 }

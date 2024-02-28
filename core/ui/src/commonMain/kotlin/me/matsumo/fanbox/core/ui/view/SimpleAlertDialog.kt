@@ -17,11 +17,6 @@ enum class SimpleAlertContents(
     val negativeTextRes: StringResource? = null,
     val isCaution: Boolean = false,
 ) {
-    FOR_IOS(
-        titleRes = MR.strings.about_for_ios_title,
-        descriptionRes = MR.strings.about_for_ios_description,
-        positiveTextRes = MR.strings.common_ok,
-    ),
     Login(
         titleRes = MR.strings.welcome_login_dialog_title,
         descriptionRes = MR.strings.welcome_login_dialog_message,

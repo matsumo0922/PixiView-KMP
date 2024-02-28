@@ -231,9 +231,7 @@
     <string name="about_special_thanks_contributor_description">このアプリをより良いものへと開発を手伝ってくださっている、コントリビューターの皆様に感謝します。</string>
     <string name="about_contribute">CONTRIBUTE</string>
     <string name="about_contribute_description">このアプリは OSS となっており、GPL でライセンスされています。コントリビュートはいつでも誰でも歓迎です。特に英語と中国語への翻訳を手伝ってくれる方を探しています。</string>
-    <string name="about_contribute_ios_description">このアプリは KMP (Compose-Multiplatform) を用いて開発されています。開発者自身、まだ不慣れなことも多く、特に iOS ユーザーの皆様には不具合が多く不便をおかけしてしまうかもしれません。iOS 技術者の方や、KMP にお詳しい方などの貢献を特に歓迎いたします。</string>
     <string name="about_for_ios_title">iOSユーザーの皆様へ</string>
-    <string name="about_for_ios_description">このアプリは KMP (Compose-Multiplatform) という、Android アプリ用のコードを iOS 用アプリに流用する技術を用いて作成されています。\n\n開発者自身 KMP に不慣れなことも多く、特に iOS ユーザーの皆様には不具合が多くご不便をおかけしてしまうかもしれません。あらかじめご了承ください。\n\n[ iOS 技術者の方へ]\nこのアプリは KMP で開発されていますが、一部コンポーネントを SwiftUI に移植する作業を進めている最中です。貢献を行える場合は、サイドバーの「アプリについて」から本アプリの GitHub リポジトリに遷移できますので、ぜひご貢献ください。</string>
     <string name="about_support">SUPPORT</string>
     <string name="about_support_version_history">更新履歴</string>
     <string name="about_support_rate_app">アプリを評価</string>

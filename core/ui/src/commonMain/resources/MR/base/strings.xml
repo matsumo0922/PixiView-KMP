@@ -232,9 +232,7 @@
     <string name="about_special_thanks_contributor_description">Thank you to all the contributors who help make this app even better.</string>
     <string name="about_contribute">CONTRIBUTE</string>
     <string name="about_contribute_description">This app is OSS and licensed under the GPL. Contributions are always welcome. I am especially looking for someone to help me with translations into English and Chinese.</string>
-    <string name="about_contribute_ios_description">This app is developed using KMP (Compose-Multiplatform). The developer himself is still inexperienced with many things, and he may cause many problems and inconvenience to iOS users. We particularly welcome contributions from iOS engineers and those familiar with KMP.</string>
     <string name="about_for_ios_title">For iOS users</string>
-    <string name="about_for_ios_description">This app was created using a technology called KMP (Compose-Multiplatform), which repurposes code for Android apps into iOS apps. \n\nThe developer himself is often unfamiliar with KMP, and there may be many problems that may cause inconvenience, especially to his iOS users. Please note. \n\n[For iOS engineers]\nThis app was developed in his KMP, but we are in the process of porting some components to SwiftUI. If you are able to contribute, please go to his GitHub repository for this app by clicking on "About the app" in the sidebar.</string>
     <string name="about_support">SUPPORT</string>
     <string name="about_support_version_history">Update history</string>
     <string name="about_support_rate_app">Rate app</string>

@@ -19,6 +19,7 @@ import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.filled.ColorLens
 import androidx.compose.material.icons.filled.DesignServices
 import androidx.compose.material.icons.filled.DoNotDisturb
@@ -30,6 +31,7 @@ import androidx.compose.material.icons.outlined.HelpOutline
 import androidx.compose.material.icons.outlined.HideImage
 import androidx.compose.material3.Button
 import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Text
@@ -56,7 +58,9 @@ import kotlinx.coroutines.launch
 import me.matsumo.fanbox.core.ui.AsyncLoadContents
 import me.matsumo.fanbox.core.ui.MR
 import me.matsumo.fanbox.core.ui.extensition.LocalSnackbarHostState
+import me.matsumo.fanbox.core.ui.extensition.Platform
 import me.matsumo.fanbox.core.ui.extensition.SnackbarExtension
+import me.matsumo.fanbox.core.ui.extensition.currentPlatform
 import me.matsumo.fanbox.core.ui.theme.bold
 import me.matsumo.fanbox.core.ui.view.LoadingView
 import moe.tlaster.precompose.flow.collectAsStateWithLifecycle
@@ -128,6 +132,7 @@ internal fun BillingPlusRoute(
                     }
                 }
             },
+            onTerminate = terminate,
         )
 
         LaunchedEffect(uiState.isPlusMode) {
@@ -150,6 +155,7 @@ private fun BillingPlusDialog(
     onClickPurchase: () -> Unit,
     onClickVerify: () -> Unit,
     onClickConsume: () -> Unit,
+    onTerminate: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
     Box(modifier) {
@@ -161,6 +167,7 @@ private fun BillingPlusDialog(
         ) {
             TitleItem(
                 modifier = Modifier.fillMaxWidth(),
+                onTerminate = onTerminate
             )
 
             Column(
@@ -333,6 +340,7 @@ private fun BillingPlusDialog(
 
 @Composable
 private fun TitleItem(
+    onTerminate: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
     val titleStyle = MaterialTheme.typography.headlineLarge.bold()
@@ -344,17 +352,32 @@ private fun TitleItem(
         }
     }
 
-    Text(
-        modifier = modifier
-            .padding(
-                top = 16.dp,
-                start = 24.dp,
-                end = 24.dp,
-            ),
-        text = annotatedString,
-        style = titleStyle,
-        color = MaterialTheme.colorScheme.onSurface,
-    )
+    Row(
+        modifier = modifier.padding(top = 24.dp),
+        verticalAlignment = Alignment.Top,
+        horizontalArrangement = Arrangement.spacedBy(16.dp),
+    ) {
+        Text(
+            modifier = Modifier
+                .padding(start = 24.dp)
+                .weight(1f),
+            text = annotatedString,
+            style = titleStyle,
+            color = MaterialTheme.colorScheme.onSurface,
+        )
+
+        if (currentPlatform != Platform.Android) {
+            IconButton(
+                modifier = Modifier.padding(end = 8.dp),
+                onClick = onTerminate,
+            ) {
+                Icon(
+                    imageVector = Icons.Default.Close,
+                    contentDescription = null,
+                )
+            }
+        }
+    }
 }
 
 @Composable
