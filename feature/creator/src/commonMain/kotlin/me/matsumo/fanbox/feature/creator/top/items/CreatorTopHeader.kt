@@ -64,7 +64,6 @@ import me.matsumo.fanbox.core.ui.theme.bold
 internal fun CreatorTopHeader(
     creatorDetail: FanboxCreatorDetail,
     onClickTerminate: () -> Unit,
-    onClickMenu: () -> Unit,
     onClickLink: (String) -> Unit,
     onClickDescription: (String) -> Unit,
     onClickFollow: suspend (String) -> Result<Unit>,
@@ -158,7 +157,6 @@ internal fun CreatorTopHeader(
             isTransparent = true,
             windowInsets = WindowInsets(0, 0, 0, 0),
             onClickNavigation = onClickTerminate,
-            onClickActions = onClickMenu,
         )
     }
 }

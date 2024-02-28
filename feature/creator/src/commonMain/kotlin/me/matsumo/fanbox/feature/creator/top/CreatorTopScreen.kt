@@ -193,7 +193,6 @@ private fun CreatorTopScreen(
                         },
                     creatorDetail = creatorDetail,
                     onClickTerminate = onTerminate,
-                    onClickMenu = {},
                     onClickLink = onClickLink,
                     onClickFollow = onClickFollow,
                     onClickUnfollow = onClickUnfollow,
