@@ -12,4 +12,10 @@ interface SnackbarExtension {
         message: StringResource,
         isOverride: Boolean = true,
     )
+
+    suspend fun showSnackbar(
+        snackbarHostState: SnackbarHostState,
+        message: String,
+        isOverride: Boolean = true,
+    )
 }

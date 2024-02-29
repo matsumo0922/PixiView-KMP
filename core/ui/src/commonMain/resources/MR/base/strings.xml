@@ -51,6 +51,7 @@
     <string name="error_developing_feature">Feature under development</string>
     <string name="error_billing">Failed to retrieve purchase information</string>
     <string name="error_restricted_post">Pledge %,d JPY per month or more to see this content</string>
+    <string name="error_restricted_post_ios">Cannot be viewed with current plan</string>
     <string name="error_adult_content">Adult content</string>
     <string name="error_adult_content_test_user">This content has been temporarily restricted</string>
     <string name="error_adult_content_description">Show</string>
@@ -83,7 +84,7 @@
     <string name="library_navigation_setting">Settings</string>
     <string name="library_navigation_about">About the app</string>
     <string name="library_navigation_plus_description">Get access to all features for the price of a cup of coffee!</string>
-    <string name="library_navigation_plus_purchased_description">You are a FANBOX Viewer+ user. Enjoy comfortable music listening!</string>
+    <string name="library_navigation_plus_purchased_description">You are a %1$s+ user. Enjoy comfortable music listening!</string>
 
     <!-- Fanbox -->
     <string name="fanbox_free_fee">All users</string>
@@ -123,7 +124,7 @@
     <string name="creator_tag_is_supported">Supported</string>
     <string name="creator_tag_is_accepting_request">Accepting request</string>
     <string name="creator_download_all">Download posts in bulk</string>
-    <string name="creator_download_all_error">Batch download is a FANBOX Viewer+ exclusive feature</string>
+    <string name="creator_download_all_error">Batch download is a %1$s+ exclusive feature</string>
     <string name="creator_posts_download_title">Bulk download</string>
     <string name="creator_posts_download_message">Download creator\'s posts in bulk. \n\n*In order to prevent the concentration of access to FANBOX, we have deliberately added a delay to the download speed. note that.</string>
     <string name="creator_posts_download_prepare">Collecting creator information\nPlease wait for a while</string>
@@ -224,7 +225,7 @@
 
     <!-- About -->
     <string name="about_title">About the app</string>
-    <string name="about_name">FANBOX Viewer</string>
+    <string name="about_name">%1$s</string>
     <string name="about_developer_name">CAIOS</string>
     <string name="about_developer_prefix">Developed and designed by</string>
     <string name="about_special_thanks">SPECIAL THANKS</string>
@@ -240,14 +241,14 @@
     <string name="about_support_donate">Donate</string>
 
     <!-- Billing -->
-    <string name="billing_plus_title">FANBOX Viewer+</string>
-    <string name="billing_plus_description">FANBOX Viewer+ is a support plan for developers that allows access to all features for the cost of one coffee per month.</string>
+    <string name="billing_plus_title">%1$s+</string>
+    <string name="billing_plus_description">%1$s+ is a support plan for developers that allows access to all features for the cost of one coffee per month.</string>
     <string name="billing_plus_purchase_button">Buy for %1$s / month</string>
     <string name="billing_plus_verify_button">Restore purchase</string>
     <string name="billing_plus_consume_button">Consume Purchase</string>
-    <string name="billing_plus_caution1">※ FANBOX Viewer+ is a subscription service that adds exclusive features. The payment is made immediately, and to continue using the features, monthly renewal is necessary. You can cancel the subscription at any time.</string>
+    <string name="billing_plus_caution1">※ %1$s+ is a subscription service that adds exclusive features. The payment is made immediately, and to continue using the features, monthly renewal is necessary. You can cancel the subscription at any time.</string>
     <string name="billing_plus_caution2">※ When using the app, you have already agreed to the Terms of Service and Privacy Policy, but please reconfirm them from the settings screen.</string>
-    <string name="billing_plus_toast_require_plus">This feature can only be used with FANBOX Viewer+</string>
+    <string name="billing_plus_toast_require_plus">This feature can only be used with %1$s+</string>
     <string name="billing_plus_toast_purchased">Purchased</string>
     <string name="billing_plus_toast_purchased_error">Purchase failed</string>
     <string name="billing_plus_toast_consumed">Consumed</string>
@@ -273,20 +274,13 @@
     <string name="billing_plus_item_support">Priority support</string>
     <string name="billing_plus_item_support_description">Always give top priority support!</string>
     <string name="billing_plus_cancel_title">Plan canceled</string>
-    <string name="billing_plus_cancel_message">Your FANBOX Viewer+ plan was canceled, so returned to being a regular user. \n\nIf this is not what you intended, the payment may have failed. Please check the plan status from the Play Store.</string>
+    <string name="billing_plus_cancel_message">Your %1$s+ plan was canceled, so returned to being a regular user. \n\nIf this is not what you intended, the payment may have failed. Please check the plan status from the Play Store.</string>
     <string name="billing_plus_purchase_title">Supported!!</string>
-    <string name="billing_plus_purchase_message">Your purchase of FANBOX Viewer+ has been completed. \nThank you for your support!</string>
+    <string name="billing_plus_purchase_message">Your purchase has been completed. \nThank you for your support!</string>
     <string name="billing_plus_cancel_title">Cancellation of plan</string>
-    <string name="billing_plus_cancel_message">Your FANBOX Viewer+ plan was canceled, so you returned to being a regular user. \n\nIf this is not what you intended, the payment may have failed. Please check the plan status from the store app.</string>
-
-    <!-- Report -->
-    <string name="report_crush_title">Oops! Something went wrong</string>
-    <string name="report_crush_description">Due to technical factors, FANBOX Viewer has crashed. Please send the report below to the developer.</string>
-    <string name="report_crush_copy">Copy</string>
-    <string name="report_crush_toast_copy">Copied</string>
+    <string name="billing_plus_cancel_message">Your plan was canceled, so you returned to being a regular user. \n\nIf this is not what you intended, the payment may have failed. Please check the plan status from the store app.</string>
 
     <!-- Welcome -->
-    <string name="welcome_title">FANBOX Viewer</string>
     <string name="welcome_description">This app is an unofficial client application for pixivFANBOX</string>
     <string name="welcome_privacy_policy">Privacy policy</string>
     <string name="welcome_team_of_service">Terms of Service</string>

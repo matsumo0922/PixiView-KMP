@@ -51,6 +51,7 @@
     <string name="error_developing_feature">開発中の機能です</string>
     <string name="error_billing">購入情報を取得できませんでした</string>
     <string name="error_restricted_post">月額%d円以上支援すると見ることができます</string>
+    <string name="error_restricted_post_ios">現在のプランでは閲覧できません</string>
     <string name="error_adult_content">成人向けコンテンツ</string>
     <string name="error_adult_content_test_user">このコンテンツは一時的に制限されています</string>
     <string name="error_adult_content_description">表示する</string>
@@ -83,7 +84,7 @@
     <string name="library_navigation_setting">設定</string>
     <string name="library_navigation_about">アプリについて</string>
     <string name="library_navigation_plus_description">コーヒー1杯程度の金額で、全ての機能にアクセスできるようになります！</string>
-    <string name="library_navigation_plus_purchased_description">あなたは FANBOX Viewer+ ユーザーです。快適な音楽視聴をお楽しみください！</string>
+    <string name="library_navigation_plus_purchased_description">あなたは %1$s+ ユーザーです。快適な投稿視聴をお楽しみください！</string>
 
     <!-- Fanbox -->
     <string name="fanbox_free_fee">全体公開</string>
@@ -123,7 +124,7 @@
     <string name="creator_tag_is_supported">支援中</string>
     <string name="creator_tag_is_accepting_request">リクエスト受付中</string>
     <string name="creator_download_all">投稿を一括ダウンロード</string>
-    <string name="creator_download_all_error">一括ダウンロードはFANBOX Viewer+専用機能です</string>
+    <string name="creator_download_all_error">一括ダウンロードは%1$s+専用機能です</string>
     <string name="creator_posts_download_title">一括ダウンロード</string>
     <string name="creator_posts_download_message">※ FANBOXへのアクセス集中を防ぐため、ダウンロード速度にはあえて遅延を入れております。ご了承ください。</string>
     <string name="creator_posts_download_ignore_free">無料コンテンツを省く</string>
@@ -223,7 +224,6 @@
 
     <!-- About -->
     <string name="about_title">アプリについて</string>
-    <string name="about_name">FANBOX Viewer</string>
     <string name="about_developer_name">CAIOS</string>
     <string name="about_developer_prefix">Developed and designed by</string>
     <string name="about_special_thanks">SPECIAL THANKS</string>
@@ -239,14 +239,13 @@
     <string name="about_support_donate">寄付</string>
 
     <!-- Billing -->
-    <string name="billing_plus_title">FANBOX Viewer+</string>
-    <string name="billing_plus_description">FANBOX Viewer+ は、月々コーヒー1杯の金額で全ての機能にアクセスできるようになる開発者への支援プランです。</string>
+    <string name="billing_plus_description">%1$s+ は、月々コーヒー1杯の金額で全ての機能にアクセスできるようになる開発者への支援プランです。</string>
     <string name="billing_plus_purchase_button">%1$s / 月で支援</string>
     <string name="billing_plus_verify_button">購入を復元</string>
     <string name="billing_plus_consume_button">購入を消費</string>
-    <string name="billing_plus_caution1">※ FANBOX Viewer+ は下記の限定機能を追加する定期購入契約です。支払いは直ちに行われ、機能を利用し続けるには1ヶ月ごとの更新が必要となります。解約はいつでも可能です。</string>
+    <string name="billing_plus_caution1">※ %1$s+ は下記の限定機能を追加する定期購入契約です。支払いは直ちに行われ、機能を利用し続けるには1ヶ月ごとの更新が必要となります。解約はいつでも可能です。</string>
     <string name="billing_plus_caution2">※ アプリ利用開始時に利用規約とプライバシーポリシーにすでに同意されていますが、設定画面から再度ご確認ください。</string>
-    <string name="billing_plus_toast_require_plus">この機能はFANBOX Viewer+でのみ使用することができます</string>
+    <string name="billing_plus_toast_require_plus">この機能は%1$s+でのみ使用することができます</string>
     <string name="billing_plus_toast_purchased">購入しました</string>
     <string name="billing_plus_toast_purchased_error">購入に失敗しました</string>
     <string name="billing_plus_toast_consumed">消費しました</string>
@@ -272,18 +271,11 @@
     <string name="billing_plus_item_support">最優先サポート</string>
     <string name="billing_plus_item_support_description">いつでも最優先でサポート！</string>
     <string name="billing_plus_purchase_title">支援完了</string>
-    <string name="billing_plus_purchase_message">FANBOX Viewer+ の購入が完了しました。\n支援ありがとうございます！</string>
+    <string name="billing_plus_purchase_message">購入が完了しました。\n支援ありがとうございます！</string>
     <string name="billing_plus_cancel_title">プランの解約</string>
-    <string name="billing_plus_cancel_message">FANBOX Viewer+ のプランが解約されたため、通常ユーザーに戻りました。\n\n意図していない場合は支払いに失敗している可能性があります。ストアアプリより、プランの状況をご確認ください。</string>
-
-    <!-- Report -->
-    <string name="report_crush_title">Oops! Something went wrong</string>
-    <string name="report_crush_description">技術的な要因により、FANBOX Viewer がクラッシュしました。以下のレポートを開発者に送付してください。</string>
-    <string name="report_crush_copy">コピー</string>
-    <string name="report_crush_toast_copy">コピーしました</string>
+    <string name="billing_plus_cancel_message">プランが解約されたため、通常ユーザーに戻りました。\n\n意図していない場合は支払いに失敗している可能性があります。ストアアプリより、プランの状況をご確認ください。</string>
 
     <!-- Welcome -->
-    <string name="welcome_title">FANBOX Viewer</string>
     <string name="welcome_description">このアプリは PIXIV FANBOX の\n非公式クライアントアプリです</string>
     <string name="welcome_privacy_policy">プライバシーポリシー</string>
     <string name="welcome_team_of_service">利用規約</string>

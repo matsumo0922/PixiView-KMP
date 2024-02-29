@@ -37,6 +37,7 @@ import me.matsumo.fanbox.core.model.fanbox.id.CreatorId
 import me.matsumo.fanbox.core.model.fanbox.id.PostId
 import me.matsumo.fanbox.core.ui.LazyPagingItemsLoadContents
 import me.matsumo.fanbox.core.ui.MR
+import me.matsumo.fanbox.core.ui.appName
 import me.matsumo.fanbox.core.ui.extensition.LocalNavigationType
 import me.matsumo.fanbox.core.ui.extensition.PixiViewNavigationType
 import me.matsumo.fanbox.core.ui.view.SimpleAlertContents
@@ -85,7 +86,7 @@ internal fun LibraryHomeScreen(
                 CenterAlignedTopAppBar(
                     modifier = Modifier.fillMaxWidth(),
                     title = {
-                        Text(text = stringResource(MR.strings.about_name))
+                        Text(text = appName)
                     },
                     navigationIcon = {
                         IconButton(onClick = openDrawer) {

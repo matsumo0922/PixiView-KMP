@@ -10,4 +10,9 @@ class SnackbarExtensionImpl : SnackbarExtension {
         snackbarHostState.currentSnackbarData?.dismiss()
         snackbarHostState.showSnackbar(message.desc().localized())
     }
+
+    override suspend fun showSnackbar(snackbarHostState: SnackbarHostState, message: String, isOverride: Boolean) {
+        snackbarHostState.currentSnackbarData?.dismiss()
+        snackbarHostState.showSnackbar(message)
+    }
 }

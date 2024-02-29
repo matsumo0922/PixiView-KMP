@@ -30,6 +30,7 @@ import me.matsumo.fanbox.core.model.UserData
 import me.matsumo.fanbox.core.model.fanbox.FanboxMetaData
 import me.matsumo.fanbox.core.ui.AsyncLoadContents
 import me.matsumo.fanbox.core.ui.MR
+import me.matsumo.fanbox.core.ui.appName
 import me.matsumo.fanbox.core.ui.extensition.LocalSnackbarHostState
 import me.matsumo.fanbox.core.ui.extensition.NavigatorExtension
 import me.matsumo.fanbox.core.ui.extensition.SnackbarExtension
@@ -64,6 +65,7 @@ internal fun SettingTopRoute(
 
     val screenState by viewModel.screenState.collectAsStateWithLifecycle()
     val snackbarHostState = LocalSnackbarHostState.current
+    val requirePlus = stringResource(MR.strings.billing_plus_toast_require_plus, appName)
 
     AsyncLoadContents(
         modifier = modifier,
@@ -90,7 +92,7 @@ internal fun SettingTopRoute(
                     if (uiState.userData.hasPrivilege) {
                         viewModel.setGridMode(true)
                     } else {
-                        scope.launch { snackbarExtension.showSnackbar(snackbarHostState, MR.strings.billing_plus_toast_require_plus) }
+                        scope.launch { snackbarExtension.showSnackbar(snackbarHostState, requirePlus) }
                         navigateToBillingPlus.invoke()
                     }
                 } else {
@@ -102,7 +104,7 @@ internal fun SettingTopRoute(
                     if (uiState.userData.hasPrivilege) {
                         viewModel.setHideRestricted(true)
                     } else {
-                        scope.launch { snackbarExtension.showSnackbar(snackbarHostState, MR.strings.billing_plus_toast_require_plus) }
+                        scope.launch { snackbarExtension.showSnackbar(snackbarHostState, requirePlus) }
                         navigateToBillingPlus.invoke()
                     }
                 } else {

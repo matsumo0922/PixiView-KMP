@@ -51,7 +51,9 @@ import me.matsumo.fanbox.core.model.fanbox.id.CreatorId
 import me.matsumo.fanbox.core.model.fanbox.id.PostId
 import me.matsumo.fanbox.core.ui.MR
 import me.matsumo.fanbox.core.ui.extensition.FadePlaceHolder
+import me.matsumo.fanbox.core.ui.extensition.Platform
 import me.matsumo.fanbox.core.ui.extensition.asCoilImage
+import me.matsumo.fanbox.core.ui.extensition.currentPlatform
 import me.matsumo.fanbox.core.ui.extensition.fanboxHeader
 import me.matsumo.fanbox.core.ui.theme.bold
 import me.matsumo.fanbox.core.ui.theme.center
@@ -298,7 +300,7 @@ private fun RestrictThumbnail(
 
         Text(
             modifier = Modifier.fillMaxWidth(),
-            text = stringResource(MR.strings.error_restricted_post, feeRequired),
+            text = if (currentPlatform == Platform.Android) stringResource(MR.strings.error_restricted_post, feeRequired) else stringResource(MR.strings.error_restricted_post_ios),
             style = MaterialTheme.typography.bodySmall.center(),
             color = Color.White,
         )

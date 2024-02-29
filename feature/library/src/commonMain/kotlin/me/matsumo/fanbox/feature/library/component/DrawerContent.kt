@@ -57,6 +57,7 @@ import dev.icerock.moko.resources.compose.stringResource
 import kotlinx.coroutines.launch
 import me.matsumo.fanbox.core.model.UserData
 import me.matsumo.fanbox.core.ui.MR
+import me.matsumo.fanbox.core.ui.appName
 import me.matsumo.fanbox.core.ui.extensition.FadePlaceHolder
 import me.matsumo.fanbox.core.ui.extensition.LocalFanboxMetadata
 import me.matsumo.fanbox.core.ui.extensition.asCoilImage
@@ -317,10 +318,10 @@ private fun NavigationDrawerPlusItem(
     if (isPlusMode) {
         title = buildAnnotatedString {
             withStyle(titleStyle.copy(color = MaterialTheme.colorScheme.primary).toSpanStyle()) {
-                append("FANBOX Viewer+")
+                append("$appName+")
             }
         }
-        description = stringResource(MR.strings.library_navigation_plus_purchased_description)
+        description = stringResource(MR.strings.library_navigation_plus_purchased_description, appName)
     } else {
         title = buildAnnotatedString {
             append("Buy ")

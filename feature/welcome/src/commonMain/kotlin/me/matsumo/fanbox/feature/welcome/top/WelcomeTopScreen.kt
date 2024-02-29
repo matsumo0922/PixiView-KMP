@@ -48,6 +48,7 @@ import dev.icerock.moko.resources.compose.stringResource
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import me.matsumo.fanbox.core.ui.MR
+import me.matsumo.fanbox.core.ui.appName
 import me.matsumo.fanbox.core.ui.extensition.LocalNavigationType
 import me.matsumo.fanbox.core.ui.extensition.NavigatorExtension
 import me.matsumo.fanbox.core.ui.extensition.PixiViewNavigationType
@@ -154,7 +155,7 @@ private fun SecondSection(
     ) {
         Text(
             modifier = Modifier.fillMaxWidth(),
-            text = stringResource(MR.strings.welcome_title),
+            text = appName,
             style = MaterialTheme.typography.displaySmall.bold().center(),
             color = MaterialTheme.colorScheme.onSurface,
         )

@@ -12,4 +12,9 @@ class SnackbarExtensionImpl(
         snackbarHostState.currentSnackbarData?.dismiss()
         snackbarHostState.showSnackbar(message.getString(context))
     }
+
+    override suspend fun showSnackbar(snackbarHostState: SnackbarHostState, message: String, isOverride: Boolean) {
+        snackbarHostState.currentSnackbarData?.dismiss()
+        snackbarHostState.showSnackbar(message)
+    }
 }

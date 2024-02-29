@@ -22,6 +22,8 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import dev.icerock.moko.resources.compose.stringResource
 import me.matsumo.fanbox.core.ui.MR
+import me.matsumo.fanbox.core.ui.extensition.Platform
+import me.matsumo.fanbox.core.ui.extensition.currentPlatform
 
 @Composable
 fun RestrictCardItem(
@@ -51,7 +53,7 @@ fun RestrictCardItem(
 
             Text(
                 modifier = Modifier.weight(1f),
-                text = stringResource(MR.strings.error_restricted_post, feeRequired),
+                text = if (currentPlatform == Platform.Android) stringResource(MR.strings.error_restricted_post, feeRequired) else stringResource(MR.strings.error_restricted_post_ios),
                 style = MaterialTheme.typography.bodyMedium,
                 color = MaterialTheme.colorScheme.onSurfaceVariant,
             )

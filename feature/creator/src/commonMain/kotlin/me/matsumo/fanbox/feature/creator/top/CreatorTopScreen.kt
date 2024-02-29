@@ -58,6 +58,7 @@ import me.matsumo.fanbox.core.model.fanbox.id.PostId
 import me.matsumo.fanbox.core.ui.AsyncLoadContents
 import me.matsumo.fanbox.core.ui.LazyPagingItemsLoadContents
 import me.matsumo.fanbox.core.ui.MR
+import me.matsumo.fanbox.core.ui.appName
 import me.matsumo.fanbox.core.ui.component.CollapsingToolbarScaffold
 import me.matsumo.fanbox.core.ui.component.ScrollStrategy
 import me.matsumo.fanbox.core.ui.component.rememberCollapsingToolbarScaffoldState
@@ -148,7 +149,7 @@ private fun CreatorTopScreen(
     onClickFollow: suspend (String) -> Result<Unit>,
     onClickUnfollow: suspend (String) -> Result<Unit>,
     onClickSupporting: (String) -> Unit,
-    onShowSnackBar: (StringResource) -> Unit,
+    onShowSnackBar: (String) -> Unit,
     onTerminate: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
@@ -167,6 +168,8 @@ private fun CreatorTopScreen(
         CreatorTab.POSTS,
         CreatorTab.PLANS,
     )
+
+    val requirePlusError = stringResource(MR.strings.creator_download_all_error, appName)
 
     LaunchedEffect(true) {
         isVisibleFAB = true
@@ -297,7 +300,7 @@ private fun CreatorTopScreen(
                     if (userData.hasPrivilege) {
                         onClickAllDownload.invoke(creatorDetail.creatorId)
                     } else {
-                        onShowSnackBar.invoke(MR.strings.creator_download_all_error)
+                        onShowSnackBar.invoke(requirePlusError)
                         onClickBillingPlus.invoke()
                     }
                 },

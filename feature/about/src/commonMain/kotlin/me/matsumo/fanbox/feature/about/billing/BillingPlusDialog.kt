@@ -57,6 +57,7 @@ import dev.icerock.moko.resources.compose.stringResource
 import kotlinx.coroutines.launch
 import me.matsumo.fanbox.core.ui.AsyncLoadContents
 import me.matsumo.fanbox.core.ui.MR
+import me.matsumo.fanbox.core.ui.appName
 import me.matsumo.fanbox.core.ui.extensition.LocalSnackbarHostState
 import me.matsumo.fanbox.core.ui.extensition.Platform
 import me.matsumo.fanbox.core.ui.extensition.SnackbarExtension
@@ -180,7 +181,7 @@ private fun BillingPlusDialog(
                     modifier = Modifier
                         .padding(top = 8.dp)
                         .fillMaxWidth(),
-                    text = stringResource(MR.strings.billing_plus_description),
+                    text = stringResource(MR.strings.billing_plus_description, appName),
                     style = MaterialTheme.typography.bodyMedium,
                     color = MaterialTheme.colorScheme.onSurface,
                 )
@@ -227,7 +228,7 @@ private fun BillingPlusDialog(
                             modifier = Modifier
                                 .padding(bottom = 8.dp)
                                 .fillMaxWidth(),
-                            text = stringResource(MR.strings.billing_plus_caution1),
+                            text = stringResource(MR.strings.billing_plus_caution1, appName),
                             style = MaterialTheme.typography.bodySmall.copy(fontSize = 11.sp),
                             color = MaterialTheme.colorScheme.onSurfaceVariant,
                         )
@@ -348,7 +349,7 @@ private fun TitleItem(
         append("Buy ")
 
         withStyle(titleStyle.copy(color = MaterialTheme.colorScheme.primary).toSpanStyle()) {
-            append("FANBOX Viewer+")
+            append("$appName+")
         }
     }
 
