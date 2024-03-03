@@ -14,9 +14,9 @@
         <com.google.android.gms.ads.nativead.MediaView
             android:id="@+id/mv_content"
             android:layout_width="0dp"
-            android:layout_height="0dp"
+            android:layout_height="wrap_content"
             android:layout_gravity="center_horizontal"
-            app:layout_constraintDimensionRatio="16:9"
+            android:minHeight="120dp"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
@@ -26,7 +26,6 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="8dp"
-            android:maxLines="1"
             android:textSize="12sp"
             app:layout_constraintBottom_toBottomOf="@+id/rtb_stars"
             app:layout_constraintStart_toEndOf="@+id/rtb_stars"
@@ -65,7 +64,7 @@
             android:layout_marginStart="12dp"
             android:layout_marginEnd="8dp"
             android:ellipsize="end"
-            android:maxLines="2"
+            android:maxLines="3"
             android:minWidth="100dp"
             android:textSize="14sp"
             android:textStyle="bold"
@@ -122,7 +121,7 @@
 
         <LinearLayout
             android:layout_width="0dp"
-            android:layout_height="match_parent"
+            android:layout_height="wrap_content"
             android:layout_marginTop="16dp"
             android:layout_marginBottom="12dp"
             android:orientation="vertical"

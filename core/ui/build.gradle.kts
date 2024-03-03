@@ -54,8 +54,7 @@ kotlin {
                 api(libsMain.calf.ui)
                 api(libsMain.placeholder)
                 api(libsMain.androidx.paging.compose)
-
-                implementation(libsMain.play.service.ads)
+                api(libsMain.play.service.ads)
             }
         }
 

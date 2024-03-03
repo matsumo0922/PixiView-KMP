@@ -23,10 +23,13 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.viewinterop.AndroidViewBinding
 import androidx.core.view.doOnLayout
+import com.google.android.gms.ads.AdListener
 import com.google.android.gms.ads.AdLoader
 import com.google.android.gms.ads.AdRequest
+import com.google.android.gms.ads.LoadAdError
 import com.google.android.gms.ads.nativead.NativeAd
 import com.google.android.gms.ads.nativead.NativeAdOptions
+import io.github.aakira.napier.Napier
 import kotlinx.coroutines.launch
 import me.matsumo.fanbox.core.ui.databinding.LayoutNativeAdsMediumBinding
 import me.matsumo.fanbox.core.ui.theme.LocalPixiViewConfig
@@ -61,10 +64,28 @@ actual fun NativeAdView(
         nativeAd.price?.let { binding.tvPrice.text = it }
         nativeAd.starRating?.let { binding.rtbStars.rating = it.toFloat() }
         nativeAd.store?.let { binding.tvStore.text = it }
+        nativeAd.mediaContent?.let { binding.mvContent.mediaContent = it }
 
         binding.tvAdvertiser.visibility = if (nativeAd.advertiser.isNullOrBlank()) View.GONE else View.VISIBLE
 
         adView.setNativeAd(nativeAd)
+    }
+
+    val adListener = object : AdListener() {
+        override fun onAdLoaded() {
+            super.onAdLoaded()
+            Napier.d("onAdLoaded")
+        }
+
+        override fun onAdFailedToLoad(p0: LoadAdError) {
+            super.onAdFailedToLoad(p0)
+            Napier.d("onAdFailedToLoad: $p0")
+        }
+
+        override fun onAdImpression() {
+            super.onAdImpression()
+            Napier.d("onAdImpression")
+        }
     }
 
     val context = LocalContext.current
@@ -119,6 +140,7 @@ actual fun NativeAdView(
                         val adLoader = AdLoader.Builder(context, pixiViewConfig.adMobAndroid.nativeAdUnitId)
                             .forNativeAd { setupNativeAd(this@AndroidViewBinding, it) }
                             .withNativeAdOptions(NativeAdOptions.Builder().build())
+                            .withAdListener(adListener)
                             .build()
 
                         adLoader.loadAd(AdRequest.Builder().build())

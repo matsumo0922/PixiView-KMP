@@ -14,6 +14,10 @@ class KmpCommonPlugin : Plugin<Project> {
             }
             tasks.withType(org.jetbrains.kotlin.gradle.tasks.KotlinCompile::class.java) {
                 kotlinOptions.jvmTarget = JavaVersion.VERSION_17.toString()
+                compilerOptions.freeCompilerArgs.addAll(
+                    "-P",
+                    "plugin:androidx.compose.compiler.plugins.kotlin:experimentalStrongSkipping=true",
+                )
             }
             tasks.withType<org.jetbrains.kotlin.gradle.tasks.KotlinNativeLink>().configureEach {
                 notCompatibleWithConfigurationCache("Configuration chache not supported for a system property read at configuration time")

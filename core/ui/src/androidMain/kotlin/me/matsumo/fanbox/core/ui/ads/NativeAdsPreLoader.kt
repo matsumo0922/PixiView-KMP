@@ -21,11 +21,10 @@ data class PreLoadedNativeAd(
 )
 
 class NativeAdsPreLoader(
-    private val context: Context,
-    private val pixiViewConfig: PixiViewConfig,
-    private val iosDispatcher: CoroutineDispatcher,
+    context: Context,
+    pixiViewConfig: PixiViewConfig,
+    iosDispatcher: CoroutineDispatcher,
 ) {
-
     private val scope = CoroutineScope(iosDispatcher)
     private var preloadedNativeAds: MutableList<PreLoadedNativeAd> = mutableListOf()
     private var adLoader: AdLoader

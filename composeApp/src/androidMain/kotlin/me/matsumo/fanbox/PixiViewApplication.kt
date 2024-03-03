@@ -11,6 +11,8 @@ import coil3.disk.DiskCache
 import coil3.fetch.NetworkFetcher
 import coil3.memory.MemoryCache
 import coil3.request.crossfade
+import com.google.android.gms.ads.MobileAds
+import com.google.android.gms.ads.RequestConfiguration
 import com.google.firebase.FirebaseApp
 import com.google.firebase.FirebaseOptions
 import io.github.aakira.napier.DebugAntilog
@@ -38,7 +40,17 @@ class PixiViewApplication : Application() {
         }
 
         setupFirebase()
+        setupAdMob()
         setupCoil()
+    }
+
+    private fun setupAdMob() {
+        MobileAds.initialize(this)
+        /*MobileAds.setRequestConfiguration(
+            RequestConfiguration.Builder()
+                .setTestDeviceIds(listOf("33BE2250B43518CCDA7DE426D04EE231"))
+                .build()
+        )*/
     }
 
     @OptIn(ExperimentalCoilApi::class)

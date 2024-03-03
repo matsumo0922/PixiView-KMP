@@ -64,7 +64,7 @@ internal fun PostSearchTagScreen(
         ) {
             items(
                 count = pagingAdapter.itemCount,
-                key = pagingAdapter.itemKey { it.id.value },
+                key = pagingAdapter.itemKey { it.id.uniqueValue },
                 contentType = pagingAdapter.itemContentType(),
             ) { index ->
                 pagingAdapter[index]?.let { post ->
