@@ -22,6 +22,7 @@ import okio.Path.Companion.toOkioPath
 import org.koin.android.ext.koin.androidContext
 import org.koin.android.ext.koin.androidLogger
 import org.koin.core.context.startKoin
+import java.util.Arrays
 
 class PixiViewApplication : Application() {
 
@@ -48,7 +49,7 @@ class PixiViewApplication : Application() {
         MobileAds.initialize(this)
         /*MobileAds.setRequestConfiguration(
             RequestConfiguration.Builder()
-                .setTestDeviceIds(listOf("33BE2250B43518CCDA7DE426D04EE231"))
+                .setTestDeviceIds(listOf("5BF0B07F227A5817A04A51CEED4B4608"))
                 .build()
         )*/
     }

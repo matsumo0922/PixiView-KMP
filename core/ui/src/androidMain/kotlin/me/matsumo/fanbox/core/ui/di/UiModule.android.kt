@@ -35,7 +35,7 @@ actual val uiSubModule: Module = module {
         NativeAdsPreLoader(
             context = get(),
             pixiViewConfig = get(),
-            iosDispatcher = get(),
+            ioDispatcher = get(),
         )
     }
 }

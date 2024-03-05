@@ -1,8 +1,10 @@
 
+import com.android.build.api.variant.BuildConfigField
 import com.android.build.api.variant.ResValue
 import com.codingfeline.buildkonfig.compiler.FieldSpec
 import com.codingfeline.buildkonfig.gradle.TargetConfigDsl
 import org.jetbrains.kotlin.konan.properties.Properties
+import java.io.Serializable
 
 plugins {
     id("pixiview.primitive.kmp.common")
@@ -74,6 +76,12 @@ android {
             it.manifestPlaceholders.apply {
                 putManifestPlaceholder(localProperties, "ADMOB_ANDROID_APP_ID", defaultValue = admobTestAppId)
                 putManifestPlaceholder(localProperties, "ADMOB_IOS_APP_ID", defaultValue = admobTestAppId)
+            }
+
+            it.buildConfigFields.apply {
+                putBuildConfig(localProperties, "ADMOB_ANDROID_APP_ID", defaultValue = admobTestAppId)
+                putBuildConfig(localProperties, "ADMOB_ANDROID_BANNER_AD_UNIT_ID", if (it.buildType != "release") bannerAdTestId else null)
+                putBuildConfig(localProperties, "ADMOB_ANDROID_NATIVE_AD_UNIT_ID", if (it.buildType != "release") nativeAdTestId else null)
             }
 
             it.resValues.apply {
@@ -178,6 +186,20 @@ fun TargetConfigDsl.putBuildConfig(
     buildConfigField(FieldSpec.Type.STRING, key, (value ?: property ?: env ?: defaultValue).replace("\"", ""))
 }
 
+fun MapProperty<String, BuildConfigField<out Serializable>>.putBuildConfig(
+    localProperties: Properties,
+    key: String,
+    value: String? = null,
+    type: String = "String",
+    defaultValue: String = "",
+    comment: String? = null
+) {
+    val property = localProperties.getProperty(key)
+    val env = System.getenv(key)
+
+    put(key, BuildConfigField(type, (value ?: property ?: env ?: defaultValue).toStringLiteral(), comment))
+}
+
 fun MapProperty<String, String>.putManifestPlaceholder(
     localProperties: Properties,
     key: String,
@@ -188,4 +210,14 @@ fun MapProperty<String, String>.putManifestPlaceholder(
     val env = System.getenv(key)
 
     put(key, (value ?: property ?: env ?: defaultValue).replace("\"", ""))
+}
+
+fun Any.toStringLiteral(): String {
+    val value = toString()
+
+    if (value.firstOrNull() == '\"' && value.lastOrNull() == '\"') {
+        return value
+    }
+
+    return "\"$value\""
 }

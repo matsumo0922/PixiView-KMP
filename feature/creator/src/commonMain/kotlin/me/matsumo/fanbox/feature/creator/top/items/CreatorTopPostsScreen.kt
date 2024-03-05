@@ -188,7 +188,10 @@ private fun ColumnSection(
                     if (currentPlatform == Platform.IOS) {
                         BannerAdView(modifier = Modifier.fillMaxWidth())
                     } else {
-                        NativeAdView(modifier = Modifier.fillMaxWidth())
+                        NativeAdView(
+                            modifier = Modifier.fillMaxWidth(),
+                            key = "$index",
+                        )
                     }
                 }
             }

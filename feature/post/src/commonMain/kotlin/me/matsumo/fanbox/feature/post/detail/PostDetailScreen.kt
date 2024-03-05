@@ -400,6 +400,7 @@ private fun PostDetailScreen(
                     modifier = Modifier
                         .padding(horizontal = 16.dp)
                         .fillMaxWidth(),
+                    key = creatorDetail.creatorId.value
                 )
             }
         }

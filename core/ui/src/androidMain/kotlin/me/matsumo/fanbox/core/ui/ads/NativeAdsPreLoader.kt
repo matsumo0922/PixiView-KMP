@@ -2,48 +2,59 @@ package me.matsumo.fanbox.core.ui.ads
 
 import android.annotation.SuppressLint
 import android.content.Context
+import androidx.compose.runtime.Composable
 import androidx.compose.runtime.Stable
+import androidx.compose.runtime.rememberCoroutineScope
+import com.google.android.gms.ads.AdListener
 import com.google.android.gms.ads.AdLoader
 import com.google.android.gms.ads.AdRequest
+import com.google.android.gms.ads.LoadAdError
+import com.google.android.gms.ads.MediaAspectRatio
+import com.google.android.gms.ads.VideoOptions
 import com.google.android.gms.ads.nativead.NativeAd
 import com.google.android.gms.ads.nativead.NativeAdOptions
+import io.github.aakira.napier.Napier
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 import me.matsumo.fanbox.core.common.PixiViewConfig
 import java.time.LocalDateTime
 
-@Stable
-data class PreLoadedNativeAd(
-    val key: Int = 0,
-    val ad: NativeAd,
-    val date: LocalDateTime,
-)
-
 class NativeAdsPreLoader(
     context: Context,
     pixiViewConfig: PixiViewConfig,
-    iosDispatcher: CoroutineDispatcher,
+    ioDispatcher: CoroutineDispatcher,
 ) {
-    private val scope = CoroutineScope(iosDispatcher)
-    private var preloadedNativeAds: MutableList<PreLoadedNativeAd> = mutableListOf()
-    private var adLoader: AdLoader
-    private var key = 0
+    private val scope = CoroutineScope(ioDispatcher)
+    private val preloadedNativeAds: MutableList<NativeAd> = mutableListOf()
+    private val keyMap: MutableMap<String, NativeAd> = mutableMapOf()
+    private val adLoader: AdLoader
 
     init {
-        adLoader = AdLoader.Builder(context, pixiViewConfig.adMobAndroid.nativeAdUnitId)
-            .forNativeAd { nativeAd ->
-                preloadedNativeAds.add(
-                    PreLoadedNativeAd(
-                        key = key,
-                        ad = nativeAd,
-                        date = LocalDateTime.now(),
-                    ),
-                )
+        val nativeAdOptions = NativeAdOptions.Builder()
+            .setVideoOptions(
+                VideoOptions.Builder()
+                    .setStartMuted(true)
+                    .setClickToExpandRequested(true)
+                    .build()
+            )
+            .setMediaAspectRatio(MediaAspectRatio.LANDSCAPE)
+            .setRequestMultipleImages(true)
+            .setReturnUrlsForImageAssets(true)
+            .build()
 
-                key++
+        val adListener = object : AdListener() {
+            override fun onAdFailedToLoad(cause: LoadAdError) {
+                Napier.e("onAdFailedToLoad: ${cause.message}")
             }
-            .withNativeAdOptions(NativeAdOptions.Builder().build())
+        }
+
+        adLoader = AdLoader.Builder(context, pixiViewConfig.adMobAndroid.nativeAdUnitId)
+            .withNativeAdOptions(nativeAdOptions)
+            .withAdListener(adListener)
+            .forNativeAd { nativeAd ->
+                preloadedNativeAds.add(nativeAd)
+            }
             .build()
 
         preloadAd()
@@ -53,48 +64,31 @@ class NativeAdsPreLoader(
     fun preloadAd() {
         if (adLoader.isLoading) return
 
-        removeExpiredAds()
-
-        val numberOfAds = NUMBER_OF_PRELOAD_ADS - preloadedNativeAds.count()
-
-        if (numberOfAds > 0) {
-            adLoader.loadAds(AdRequest.Builder().build(), numberOfAds)
-        }
-    }
-
-    fun getKey(): Int? {
-        removeExpiredAds()
-
-        val first = preloadedNativeAds.firstOrNull()
-
-        return if (first != null) {
-            // ここでプリロードしてしまうと、フリークエンシーキャップを設定している場合の効果がなくなる.
-            // 従って、広告を表示する少し前にプリロードするのが望ましい
-            // preloadAd()
-
-            if (preloadedNativeAds.size < 1) {
-                scope.launch { preloadAd() }
+        scope.launch {
+            val numberOfAds = NUMBER_OF_PRELOAD_ADS - preloadedNativeAds.count()
+            if (numberOfAds > 0) {
+                adLoader.loadAds(AdRequest.Builder().build(), numberOfAds)
             }
-
-            first.key
-        } else {
-            scope.launch { preloadAd() }
-            null
         }
     }
 
-    fun getAd(key: Int): NativeAd? {
-        return preloadedNativeAds.firstOrNull { it.key == key }?.ad
+    fun getNativeAd(key: String): NativeAd? {
+        Napier.d("getNativeAd: $key, ${keyMap.containsKey(key)}, ${keyMap.size}, ${preloadedNativeAds.size}")
+
+        keyMap[key]?.let { return it }
+        preloadedNativeAds.removeFirstOrNull()?.also {
+            preloadAd()
+
+            keyMap[key] = it
+            return it
+        }
+
+        return null
     }
 
-    fun popAd(key: Int) {
-        preloadedNativeAds.removeIf { it.key == key }
-    }
-
-    /** 期限切れのNativeAdを削除する */
-    private fun removeExpiredAds() {
-        val adLimitDate = LocalDateTime.now().minusHours(1)
-        preloadedNativeAds = preloadedNativeAds.filter { it.date > adLimitDate }.toMutableList()
+    fun popAd(key: String) {
+        Napier.d("popAd: $key")
+        keyMap.remove(key)?.destroy()
     }
 
     companion object {
