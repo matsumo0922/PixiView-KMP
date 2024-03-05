@@ -82,5 +82,12 @@
     "date": "2024/02/26",
     "logJp": "・iOS 版をリリース！ :tada:\n・投稿の無限スクロールの可否を設定する項目を追加\n・FANBOXからログアウトできなくなる問題を修正\n・一部遷移アニメーションを変更\n・広告量の調整を実施",
     "logEn": "・Release of iOS! :tada:\n・Added an item to set whether or not infinite scrolling of posts is possible.\n・Fixed the problem of not being able to log out from FANBOX.\n・Changed some transition animations.\n・Adjustment of advertising amount."
+  },
+  {
+    "versionName": "2.0.2",
+    "versionCode": 16,
+    "date": "2024/03/05",
+    "logJp": "・スワイプしてリロードができない問題を修正\n・ログインができない問題を修正\n・一部の投稿が表示されない問題を修正",
+    "logEn": "・Fixed an issue where you could not swipe to reload.\n・Fixed an issue where you could not login.\n・Fixed an issue where some posts were not displayed."
   }
 ]
