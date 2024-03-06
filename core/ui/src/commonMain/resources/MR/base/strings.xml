@@ -31,6 +31,8 @@
     <string name="common_tag">tag</string>
     <string name="common_post">Post</string>
     <string name="common_creator">Post</string>
+    <string name="common_block">Block</string>
+    <string name="common_unblock">Unblock</string>
 
     <!-- Common Error -->
     <string name="error_executed">An error occurred</string>
@@ -125,6 +127,10 @@
     <string name="creator_tag_is_accepting_request">Accepting request</string>
     <string name="creator_download_all">Download posts in bulk</string>
     <string name="creator_download_all_error">Batch download is a %1$s+ exclusive feature</string>
+    <string name="creator_block_dialog_title">Block</string>
+    <string name="creator_block_dialog_message">Would you like to block this creator?</string>
+    <string name="creator_unblock_dialog_title">Blocking</string>
+    <string name="creator_unblock_dialog_message">Do you want to unblock this creator?</string>
     <string name="creator_posts_download_title">Bulk download</string>
     <string name="creator_posts_download_message">Download creator\'s posts in bulk. \n\n*In order to prevent the concentration of access to FANBOX, we have deliberately added a delay to the download speed. note that.</string>
     <string name="creator_posts_download_prepare">Collecting creator information\nPlease wait for a while</string>

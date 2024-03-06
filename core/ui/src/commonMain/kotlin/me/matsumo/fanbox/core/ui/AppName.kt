@@ -8,6 +8,6 @@ val appName: String
         if (currentPlatform == Platform.Android) {
             return "FANBOX Viewer"
         } else {
-            return "PixiView"
+            return "FanViewer"
         }
     }

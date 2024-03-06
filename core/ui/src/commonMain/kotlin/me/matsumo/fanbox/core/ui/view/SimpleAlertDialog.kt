@@ -50,7 +50,19 @@ enum class SimpleAlertContents(
         descriptionRes = MR.strings.creator_posts_download_alert_message,
         positiveTextRes = MR.strings.creator_posts_download_alert_stop,
         negativeTextRes = MR.strings.common_cancel,
-    )
+    ),
+    CreatorBlock(
+        titleRes = MR.strings.creator_block_dialog_title,
+        descriptionRes = MR.strings.creator_block_dialog_message,
+        positiveTextRes = MR.strings.common_block,
+        negativeTextRes = MR.strings.common_cancel,
+    ),
+    CreatorUnblock(
+        titleRes = MR.strings.creator_unblock_dialog_title,
+        descriptionRes = MR.strings.creator_unblock_dialog_message,
+        positiveTextRes = MR.strings.common_unblock,
+        negativeTextRes = MR.strings.common_cancel,
+    ),
 }
 
 const val SimpleAlertDialogContent = "simpleAlertDialogSongs"
