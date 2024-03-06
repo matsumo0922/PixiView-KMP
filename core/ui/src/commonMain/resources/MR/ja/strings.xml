@@ -128,9 +128,12 @@
     <string name="creator_download_all">投稿を一括ダウンロード</string>
     <string name="creator_download_all_error">一括ダウンロードは%1$s+専用機能です</string>
     <string name="creator_block_dialog_title">ブロック</string>
-    <string name="creator_block_dialog_message">このクリエイターをブロックしますか？</string>
+    <string name="creator_block_dialog_message">このクリエイターをブロックしますか？\n\nブロックしたユーザーを表示しないようにするためには、アプリの再起動が必要です。</string>
     <string name="creator_unblock_dialog_title">ブロック中</string>
     <string name="creator_unblock_dialog_message">このクリエイターのブロックを解除しますか？</string>
+    <string name="creator_plans_for_ios_error">FANBOXへの遷移が必要です</string>
+    <string name="creator_plans_for_ios_error_description">iOSではアプリからプランを確認することはできません。pixivFANBOXのサイトよりご確認ください。</string>
+    <string name="creator_plans_for_ios_error_button">FANBOXへ</string>
     <string name="creator_posts_download_title">一括ダウンロード</string>
     <string name="creator_posts_download_message">※ FANBOXへのアクセス集中を防ぐため、ダウンロード速度にはあえて遅延を入れております。ご了承ください。</string>
     <string name="creator_posts_download_ignore_free">無料コンテンツを省く</string>

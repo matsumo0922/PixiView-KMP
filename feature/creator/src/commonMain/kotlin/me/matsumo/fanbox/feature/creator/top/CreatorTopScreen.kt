@@ -323,6 +323,7 @@ private fun CreatorTopScreen(
                                 state = plansListState,
                                 creatorPlans = creatorPlans,
                                 onClickPlan = onClickPlan,
+                                onClickFanbox = { onClickLink.invoke("https://www.fanbox.cc/@${creatorDetail.creatorId}") }
                             )
                         }
                     }

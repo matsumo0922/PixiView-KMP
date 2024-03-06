@@ -23,7 +23,7 @@
 	<key>CFBundleShortVersionString</key>
 	<string>2.0.1</string>
 	<key>CFBundleVersion</key>
-	<string>19</string>
+	<string>20</string>
 	<key>CFBundleLocalizations</key>
 	<array>
 		<string>en</string>
@@ -38,15 +38,15 @@
 	<key>NSContactsUsageDescription</key>
 	<string>$(PRODUCT_NAME) requests permission to read contacts</string>
 	<key>NSFaceIDUsageDescription</key>
-	<string>$(PRODUCT_NAME) Authentication with TouchId or FaceID</string>
+	<string>Used to unlock the application.</string>
 	<key>NSLocationWhenInUseUsageDescription</key>
 	<string>$(PRODUCT_NAME) requests permission to read locations</string>
 	<key>NSMotionUsageDescription</key>
 	<string>$(PRODUCT_NAME) requests permission to read motions</string>
 	<key>NSPhotoLibraryAddUsageDescription</key>
-	<string>$(PRODUCT_NAME) requests permission to write photo library</string>
+	<string>Used to unlock the application.</string>
 	<key>NSPhotoLibraryUsageDescription</key>
-	<string>$(PRODUCT_NAME) requests permission to read photo library</string>
+	<string>Used to unlock the application.</string>
 	<key>UIApplicationSceneManifest</key>
 	<dict>
 		<key>UIApplicationSupportsMultipleScenes</key>
