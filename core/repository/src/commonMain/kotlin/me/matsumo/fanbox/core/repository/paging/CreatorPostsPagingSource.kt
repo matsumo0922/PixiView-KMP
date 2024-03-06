@@ -2,6 +2,7 @@ package me.matsumo.fanbox.core.repository.paging
 
 import androidx.paging.PagingSource
 import androidx.paging.PagingState
+import kotlinx.coroutines.flow.first
 import me.matsumo.fanbox.core.common.util.suspendRunCatching
 import me.matsumo.fanbox.core.model.fanbox.FanboxCursor
 import me.matsumo.fanbox.core.model.fanbox.FanboxPost
@@ -15,6 +16,10 @@ class CreatorPostsPagingSource(
 
     override suspend fun load(params: LoadParams<FanboxCursor>): LoadResult<FanboxCursor, FanboxPost> {
         return suspendRunCatching {
+            if (fanboxRepository.blockedCreators.first().contains(creatorId)) {
+                error("Blocked creator: $creatorId")
+            }
+
             fanboxRepository.getCreatorPosts(creatorId, params.key, params.loadSize)
         }.fold(
             onSuccess = {

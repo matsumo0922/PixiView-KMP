@@ -34,6 +34,7 @@ import kotlinx.coroutines.withContext
 import kotlinx.serialization.json.Json
 import kotlinx.serialization.json.buildJsonObject
 import kotlinx.serialization.json.put
+import me.matsumo.fanbox.core.datastore.BlockDataStore
 import me.matsumo.fanbox.core.datastore.BookmarkDataStore
 import me.matsumo.fanbox.core.datastore.FanboxCookieDataStore
 import me.matsumo.fanbox.core.model.FanboxTag
@@ -83,6 +84,7 @@ import kotlin.random.Random
 interface FanboxRepository {
     val metaData: StateFlow<FanboxMetaData>
     val bookmarkedPosts: SharedFlow<List<PostId>>
+    val blockedCreators: SharedFlow<Set<CreatorId>>
     val cookie: Flow<String>
     val logoutTrigger: Flow<Long>
 
@@ -140,6 +142,9 @@ interface FanboxRepository {
     suspend fun followCreator(creatorUserId: String)
     suspend fun unfollowCreator(creatorUserId: String)
 
+    suspend fun blockCreator(creatorId: CreatorId)
+    suspend fun unblockCreator(creatorId: CreatorId)
+
     suspend fun getBookmarkedPosts(): List<FanboxPost>
     suspend fun bookmarkPost(post: FanboxPost)
     suspend fun unbookmarkPost(post: FanboxPost)
@@ -152,6 +157,7 @@ class FanboxRepositoryImpl(
     private val formatter: Json,
     private val fanboxCookieDataStore: FanboxCookieDataStore,
     private val bookmarkDataStore: BookmarkDataStore,
+    private val blockDataStore: BlockDataStore,
     private val ioDispatcher: CoroutineDispatcher,
 ) : FanboxRepository {
 
@@ -172,11 +178,13 @@ class FanboxRepositoryImpl(
     override val logoutTrigger: Flow<Long> = _logoutTrigger.receiveAsFlow()
 
     override val bookmarkedPosts: SharedFlow<List<PostId>> = bookmarkDataStore.data
+    override val blockedCreators: SharedFlow<Set<CreatorId>> = blockDataStore.data
 
     override suspend fun logout() {
         CoroutineScope(ioDispatcher).launch {
             fanboxCookieDataStore.save("")
             bookmarkDataStore.clear()
+            blockDataStore.clear()
             _logoutTrigger.send(Random.nextLong())
         }
     }
@@ -452,6 +460,14 @@ class FanboxRepositoryImpl(
 
     override suspend fun unfollowCreator(creatorUserId: String): Unit = withContext(ioDispatcher) {
         post("follow.delete", mapOf("creatorUserId" to creatorUserId)).requireSuccess()
+    }
+
+    override suspend fun blockCreator(creatorId: CreatorId) {
+        blockDataStore.blockCreator(creatorId)
+    }
+
+    override suspend fun unblockCreator(creatorId: CreatorId) {
+        blockDataStore.unblockCreator(creatorId)
     }
 
     override suspend fun getBookmarkedPosts(): List<FanboxPost> = withContext(ioDispatcher) {

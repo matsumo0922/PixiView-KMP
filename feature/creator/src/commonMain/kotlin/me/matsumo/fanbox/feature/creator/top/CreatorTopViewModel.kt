@@ -47,6 +47,12 @@ class CreatorTopViewModel(
                 _screenState.value = screenState.updateWhenIdle { it.copy(bookmarkedPosts = data) }
             }
         }
+
+        viewModelScope.launch {
+            fanboxRepository.blockedCreators.collectLatest { _ ->
+                _screenState.value = ScreenState.Loading
+            }
+        }
     }
 
     fun fetch(creatorId: CreatorId) {
@@ -59,6 +65,7 @@ class CreatorTopViewModel(
                 CreatorTopUiState(
                     userData = userData,
                     bookmarkedPosts = fanboxRepository.bookmarkedPosts.first(),
+                    isBlocked = fanboxRepository.blockedCreators.first().contains(creatorId),
                     creatorDetail = fanboxRepository.getCreator(creatorId),
                     creatorPlans = fanboxRepository.getCreatorPlans(creatorId),
                     creatorTags = fanboxRepository.getCreatorTags(creatorId),
@@ -104,6 +111,18 @@ class CreatorTopViewModel(
             }
         }
     }
+
+    suspend fun blockCreator(creatorId: CreatorId) {
+        suspendRunCatching {
+            fanboxRepository.blockCreator(creatorId)
+        }
+    }
+
+    suspend fun unblockCreator(creatorId: CreatorId) {
+        suspendRunCatching {
+            fanboxRepository.unblockCreator(creatorId)
+        }
+    }
 }
 
 @Stable
@@ -114,4 +133,5 @@ data class CreatorTopUiState(
     val creatorPlans: List<FanboxCreatorPlan>,
     val creatorTags: List<FanboxCreatorTag>,
     val creatorPostsPaging: Flow<PagingData<FanboxPost>>,
+    val isBlocked: Boolean,
 )

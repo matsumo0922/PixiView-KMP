@@ -2,6 +2,7 @@ package me.matsumo.fanbox.core.repository.paging
 
 import androidx.paging.PagingSource
 import androidx.paging.PagingState
+import kotlinx.coroutines.flow.first
 import me.matsumo.fanbox.core.common.util.suspendRunCatching
 import me.matsumo.fanbox.core.model.fanbox.FanboxCursor
 import me.matsumo.fanbox.core.model.fanbox.FanboxPost
@@ -17,8 +18,18 @@ class HomePostsPagingSource(
             fanboxRepository.getHomePosts(params.key, params.loadSize)
         }.fold(
             onSuccess = { page ->
+                val contents = page.contents.toMutableList()
+
+                if (isHideRestricted) {
+                    contents.removeAll { it.isRestricted }
+                }
+
+                for (blockedCreator in fanboxRepository.blockedCreators.first()) {
+                    contents.removeAll { it.user.creatorId == blockedCreator }
+                }
+
                 LoadResult.Page(
-                    data = if (isHideRestricted) page.contents.filter { !it.isRestricted } else page.contents,
+                    data = contents,
                     nextKey = page.cursor,
                     prevKey = null,
                 )

@@ -69,6 +69,7 @@ internal fun CreatorTopHeader(
     onClickFollow: suspend (String) -> Result<Unit>,
     onClickUnfollow: suspend (String) -> Result<Unit>,
     onClickSupporting: (String) -> Unit,
+    onClickAction: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
     val scope = rememberCoroutineScope()
@@ -157,6 +158,7 @@ internal fun CreatorTopHeader(
             isTransparent = true,
             windowInsets = WindowInsets(0, 0, 0, 0),
             onClickNavigation = onClickTerminate,
+            onClickActions = onClickAction,
         )
     }
 }

@@ -314,6 +314,7 @@ private fun RouteBuilder.applyNavGraph(
         navigateToPostSearch = { query, creatorId -> mainNavController.navigateToPostSearch(tag = query, creatorId = creatorId) },
         navigateToBillingPlus = { mainNavController.navigateToBillingPlus() },
         navigateToDownloadAll = { mainNavController.navigateToCreatorPostsDownload(it) },
+        navigateToAlertDialog = { contents, onPositive, onNegative -> scope.launch { mainNavController.navigateToSimpleAlertDialog(contents, onPositive, onNegative) } },
         terminate = { mainNavController.popBackStack() },
     )
 

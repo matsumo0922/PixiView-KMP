@@ -43,6 +43,7 @@ val repositoryModule = module {
             formatter = get(),
             fanboxCookieDataStore = get(),
             bookmarkDataStore = get(),
+            blockDataStore = get(),
             ioDispatcher = get(),
         )
     }

@@ -46,6 +46,7 @@ import dev.icerock.moko.resources.StringResource
 import dev.icerock.moko.resources.compose.stringResource
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.toImmutableList
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import me.matsumo.fanbox.core.model.ScreenState
 import me.matsumo.fanbox.core.model.UserData
@@ -65,8 +66,10 @@ import me.matsumo.fanbox.core.ui.component.rememberCollapsingToolbarScaffoldStat
 import me.matsumo.fanbox.core.ui.extensition.LocalSnackbarHostState
 import me.matsumo.fanbox.core.ui.extensition.NavigatorExtension
 import me.matsumo.fanbox.core.ui.extensition.SnackbarExtension
+import me.matsumo.fanbox.core.ui.view.SimpleAlertContents
 import me.matsumo.fanbox.feature.creator.top.items.CreatorTopDescriptionDialog
 import me.matsumo.fanbox.feature.creator.top.items.CreatorTopHeader
+import me.matsumo.fanbox.feature.creator.top.items.CreatorTopMenuDialog
 import me.matsumo.fanbox.feature.creator.top.items.CreatorTopPlansScreen
 import me.matsumo.fanbox.feature.creator.top.items.CreatorTopPostsScreen
 import moe.tlaster.precompose.flow.collectAsStateWithLifecycle
@@ -81,6 +84,7 @@ internal fun CreatorTopRoute(
     navigateToPostSearch: (String, CreatorId) -> Unit,
     navigateToDownloadAll: (CreatorId) -> Unit,
     navigateToBillingPlus: () -> Unit,
+    navigateToAlertDialog: (SimpleAlertContents, () -> Unit, () -> Unit) -> Unit,
     terminate: () -> Unit,
     modifier: Modifier = Modifier,
     viewModel: CreatorTopViewModel = koinViewModel(CreatorTopViewModel::class),
@@ -102,15 +106,18 @@ internal fun CreatorTopRoute(
         screenState = screenState,
         retryAction = { viewModel.fetch(creatorId) },
     ) { uiState ->
+        val creatorPostsPaging = uiState.creatorPostsPaging.collectAsLazyPagingItems()
+
         CreatorTopScreen(
             modifier = Modifier.fillMaxSize(),
             isPosts = isPosts,
+            isBlocked = uiState.isBlocked,
             userData = uiState.userData,
             bookmarkedPosts = uiState.bookmarkedPosts.toImmutableList(),
             creatorDetail = uiState.creatorDetail,
             creatorPlans = uiState.creatorPlans.toImmutableList(),
             creatorTags = uiState.creatorTags.toImmutableList(),
-            creatorPostsPaging = uiState.creatorPostsPaging.collectAsLazyPagingItems(),
+            creatorPostsPaging = creatorPostsPaging,
             onClickAllDownload = navigateToDownloadAll,
             onClickBillingPlus = navigateToBillingPlus,
             onClickPost = navigateToPostDetail,
@@ -122,7 +129,32 @@ internal fun CreatorTopRoute(
             onClickUnfollow = viewModel::unfollow,
             onClickSupporting = navigatorExtension::navigateToWebPage,
             onClickPostBookmark = viewModel::postBookmark,
-            onShowSnackBar = { scope.launch { snackbarExtension.showSnackbar(snackbarHostState, it) }},
+            onShowBlockDialog = {
+                navigateToAlertDialog.invoke(
+                    SimpleAlertContents.CreatorBlock,
+                    {
+                        scope.launch {
+                            viewModel.blockCreator(creatorId)
+                            terminate.invoke()
+                        }
+                    },
+                    { /* do nothing */ },
+                )
+            },
+            onShowUnblockDialog = {
+                navigateToAlertDialog.invoke(
+                    SimpleAlertContents.CreatorUnblock,
+                    {
+                        scope.launch {
+                            viewModel.unblockCreator(creatorId)
+                            viewModel.fetch(creatorId)
+                            creatorPostsPaging.refresh()
+                        }
+                    },
+                    { terminate.invoke() },
+                )
+            },
+            onShowSnackBar = { scope.launch { snackbarExtension.showSnackbar(snackbarHostState, it) } },
             onClickPostLike = viewModel::postLike,
         )
     }
@@ -132,6 +164,7 @@ internal fun CreatorTopRoute(
 @Composable
 private fun CreatorTopScreen(
     isPosts: Boolean,
+    isBlocked: Boolean,
     creatorDetail: FanboxCreatorDetail,
     userData: UserData,
     bookmarkedPosts: ImmutableList<PostId>,
@@ -149,6 +182,8 @@ private fun CreatorTopScreen(
     onClickFollow: suspend (String) -> Result<Unit>,
     onClickUnfollow: suspend (String) -> Result<Unit>,
     onClickSupporting: (String) -> Unit,
+    onShowBlockDialog: (SimpleAlertContents) -> Unit,
+    onShowUnblockDialog: (SimpleAlertContents) -> Unit,
     onShowSnackBar: (String) -> Unit,
     onTerminate: () -> Unit,
     modifier: Modifier = Modifier,
@@ -162,6 +197,7 @@ private fun CreatorTopScreen(
     val plansListState = rememberLazyListState()
 
     var isShowDescriptionDialog by remember { mutableStateOf(false) }
+    var isShowMenuDialog by remember { mutableStateOf(false) }
     var isVisibleFAB by remember { mutableStateOf(false) }
 
     val tabs = listOf(
@@ -173,6 +209,13 @@ private fun CreatorTopScreen(
 
     LaunchedEffect(true) {
         isVisibleFAB = true
+    }
+
+    LaunchedEffect(isBlocked) {
+        if (isBlocked) {
+            delay(1000)
+            onShowUnblockDialog.invoke(SimpleAlertContents.CreatorUnblock)
+        }
     }
 
     Box(modifier) {
@@ -201,6 +244,7 @@ private fun CreatorTopScreen(
                     onClickUnfollow = onClickUnfollow,
                     onClickSupporting = onClickSupporting,
                     onClickDescription = { isShowDescriptionDialog = true },
+                    onClickAction = { isShowMenuDialog = true },
                 )
             },
             scrollStrategy = ScrollStrategy.ExitUntilCollapsed,
@@ -224,6 +268,7 @@ private fun CreatorTopScreen(
                                                 postsListState.animateScrollToItem(0)
                                                 postsGridState.animateScrollToItem(0)
                                             }
+
                                             CreatorTab.PLANS -> {
                                                 plansListState.animateScrollToItem(0)
                                             }
@@ -311,6 +356,14 @@ private fun CreatorTopScreen(
                 )
             }
         }
+    }
+
+    if (isShowMenuDialog) {
+        CreatorTopMenuDialog(
+            isVisible = isShowMenuDialog,
+            onClickBlock = { onShowBlockDialog.invoke(SimpleAlertContents.CreatorBlock) },
+            onDismissRequest = { isShowMenuDialog = false },
+        )
     }
 
     if (isShowDescriptionDialog) {

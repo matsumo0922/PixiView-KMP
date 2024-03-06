@@ -32,7 +32,7 @@
     <string name="common_post">投稿</string>
     <string name="common_creator">投稿</string>
     <string name="common_block">ブロック</string>
-    <string name="common_unblock">ブロック解除</string>
+    <string name="common_unblock">解除</string>
 
     <!-- Common Error -->
     <string name="error_executed">エラーが発生しました</string>
@@ -130,7 +130,7 @@
     <string name="creator_block_dialog_title">ブロック</string>
     <string name="creator_block_dialog_message">このクリエイターをブロックしますか？</string>
     <string name="creator_unblock_dialog_title">ブロック中</string>
-    <string name="creator_unblock_dialog_message">このクリエイターをブロック解除しますか？</string>
+    <string name="creator_unblock_dialog_message">このクリエイターのブロックを解除しますか？</string>
     <string name="creator_posts_download_title">一括ダウンロード</string>
     <string name="creator_posts_download_message">※ FANBOXへのアクセス集中を防ぐため、ダウンロード速度にはあえて遅延を入れております。ご了承ください。</string>
     <string name="creator_posts_download_ignore_free">無料コンテンツを省く</string>
