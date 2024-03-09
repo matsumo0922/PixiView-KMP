@@ -34,7 +34,7 @@ class ImageDownloaderImpl(
     override suspend fun downloadImage(item: FanboxPostDetail.ImageItem, updateCallback: (Float) -> Unit): Boolean = suspendRunCatching {
         val url = if (item.extension.lowercase() == "gif") item.originalUrl else item.thumbnailUrl
         val mime = MimeTypeMap.getSingleton().getMimeTypeFromExtension(item.extension)
-        val uri = getUri(context, "illust-${item.postId}-${item.id}.${item.extension}", Environment.DIRECTORY_PICTURES, "FANBOX", mime.orEmpty())
+        val uri = getUri(context, "illust-${item.postId}-${item.id}.${item.extension}", "FANBOX", mime.orEmpty())
         val outputStream = context.contentResolver.openOutputStream(uri!!)!!
 
         fanboxRepository.download(url, updateCallback)
@@ -44,7 +44,7 @@ class ImageDownloaderImpl(
 
     override suspend fun downloadFile(item: FanboxPostDetail.FileItem, updateCallback: (Float) -> Unit): Boolean = suspendRunCatching {
         val mime = MimeTypeMap.getSingleton().getMimeTypeFromExtension(item.extension)
-        val uri = getUri(context, "illust-${item.postId}-${item.id}.${item.extension}", Environment.DIRECTORY_DOWNLOADS, "FANBOX", mime.orEmpty())
+        val uri = getUri(context, "illust-${item.postId}-${item.id}.${item.extension}", "FANBOX", mime.orEmpty())
         val outputStream = context.contentResolver.openOutputStream(uri!!)!!
 
         fanboxRepository.download(item.url, updateCallback)
@@ -52,7 +52,25 @@ class ImageDownloaderImpl(
             .copyTo(outputStream)
     }.isSuccess
 
-    private fun getUri(context: Context, name: String, parent: String, child: String = "", mimeType: String = ""): Uri? {
+    private fun getUri(context: Context, name: String, child: String, mimeType: String = ""): Uri? {
+        val contentUri: Uri
+        val parent: String
+
+        when {
+            mimeType.contains("image") -> {
+                contentUri = MediaStore.Images.Media.EXTERNAL_CONTENT_URI
+                parent = Environment.DIRECTORY_PICTURES
+            }
+            mimeType.contains("video") -> {
+                contentUri = MediaStore.Video.Media.EXTERNAL_CONTENT_URI
+                parent = Environment.DIRECTORY_PICTURES
+            }
+            else -> {
+                contentUri = MediaStore.Files.getContentUri("external")
+                parent = Environment.DIRECTORY_DOWNLOADS
+            }
+        }
+
         val contentResolver = context.contentResolver
         val contentValues = ContentValues().apply {
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
@@ -83,6 +101,6 @@ class ImageDownloaderImpl(
             put(MediaStore.Images.ImageColumns.DATE_TAKEN, System.currentTimeMillis())
         }
 
-        return contentResolver.insert(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, contentValues)
+        return contentResolver.insert(contentUri, contentValues)
     }
 }
