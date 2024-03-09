@@ -11,6 +11,8 @@ class SearchCreatorsPagingSource(
     private val query: String,
 ) : PagingSource<Int, FanboxCreatorDetail>() {
 
+    override val keyReuseSupported: Boolean = true
+
     override suspend fun load(params: LoadParams<Int>): LoadResult<Int, FanboxCreatorDetail> {
         return suspendRunCatching {
             fanboxRepository.getCreatorFromQuery(query, params.key ?: 0)

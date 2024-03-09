@@ -13,6 +13,8 @@ class SupportedPostsPagingSource(
     private val isHideRestricted: Boolean,
 ) : PagingSource<FanboxCursor, FanboxPost>() {
 
+    override val keyReuseSupported: Boolean = true
+
     override suspend fun load(params: LoadParams<FanboxCursor>): LoadResult<FanboxCursor, FanboxPost> {
         return suspendRunCatching {
             fanboxRepository.getSupportedPosts(params.key, params.loadSize)

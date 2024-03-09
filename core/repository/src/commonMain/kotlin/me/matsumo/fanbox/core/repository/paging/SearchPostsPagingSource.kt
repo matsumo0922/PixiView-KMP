@@ -13,6 +13,8 @@ class SearchPostsPagingSource(
     private val tag: String,
 ) : PagingSource<Int, FanboxPost>() {
 
+    override val keyReuseSupported: Boolean = true
+
     override suspend fun load(params: LoadParams<Int>): LoadResult<Int, FanboxPost> {
         return suspendRunCatching {
             fanboxRepository.getPostFromQuery(tag, creatorId, params.key ?: 0)

@@ -14,6 +14,8 @@ class CreatorPostsPagingSource(
     private val fanboxRepository: FanboxRepository,
 ) : PagingSource<FanboxCursor, FanboxPost>() {
 
+    override val keyReuseSupported: Boolean = true
+
     override suspend fun load(params: LoadParams<FanboxCursor>): LoadResult<FanboxCursor, FanboxPost> {
         return suspendRunCatching {
             if (fanboxRepository.blockedCreators.first().contains(creatorId)) {

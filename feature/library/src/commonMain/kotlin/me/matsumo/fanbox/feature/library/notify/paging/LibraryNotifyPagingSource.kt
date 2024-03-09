@@ -10,6 +10,8 @@ class LibraryNotifyPagingSource(
     private val fanboxRepository: FanboxRepository,
 ) : PagingSource<Int, FanboxBell>() {
 
+    override val keyReuseSupported: Boolean = true
+
     override suspend fun load(params: LoadParams<Int>): LoadResult<Int, FanboxBell> {
         return suspendRunCatching {
             fanboxRepository.getBells(params.key ?: 1)
