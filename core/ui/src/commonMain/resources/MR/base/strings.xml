@@ -305,6 +305,8 @@
     <string name="welcome_login_button_next">Next</string>
     <string name="welcome_login_dialog_title">Notes on login</string>
     <string name="welcome_login_dialog_message">Authentication using Google or X\'s O Auth is not supported due to security concerns. \n\nPlease log in by directly entering your email address and password.</string>
+    <string name="welcome_login_other_title">When can\'t log in</string>
+    <string name="welcome_login_other_message">A session ID called FANBOXSESSID is required for this app to work. Please follow the steps in the link below to obtain and enter your FANBOXSESSID.</string>
     <string name="welcome_permission_title">Permissions</string>
     <string name="welcome_permission_message">The following permissions are required to use the app\nClick the button below to grant permission</string>
     <string name="welcome_permission_ready_title">Ready</string>

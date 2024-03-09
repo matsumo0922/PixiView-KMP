@@ -13,9 +13,13 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material3.Button
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
@@ -23,12 +27,16 @@ import dev.icerock.moko.resources.compose.painterResource
 import dev.icerock.moko.resources.compose.stringResource
 import me.matsumo.fanbox.core.ui.MR
 import me.matsumo.fanbox.core.ui.extensition.LocalNavigationType
+import me.matsumo.fanbox.core.ui.extensition.LocalSnackbarHostState
+import me.matsumo.fanbox.core.ui.extensition.NavigatorExtension
 import me.matsumo.fanbox.core.ui.extensition.PixiViewNavigationType
+import me.matsumo.fanbox.core.ui.extensition.SnackbarExtension
 import me.matsumo.fanbox.core.ui.theme.bold
 import me.matsumo.fanbox.core.ui.theme.center
 import me.matsumo.fanbox.feature.welcome.WelcomeIndicatorItem
 import moe.tlaster.precompose.flow.collectAsStateWithLifecycle
 import moe.tlaster.precompose.koin.koinViewModel
+import org.koin.compose.koinInject
 
 @Composable
 internal fun WelcomeLoginScreen(
@@ -36,12 +44,22 @@ internal fun WelcomeLoginScreen(
     navigateToLoginScreen: () -> Unit,
     modifier: Modifier = Modifier,
     viewModel: WelcomeLoginViewModel = koinViewModel(WelcomeLoginViewModel::class),
+    navigatorExtension: NavigatorExtension = koinInject(),
+    snackbarExtension: SnackbarExtension = koinInject(),
 ) {
+    val snackbarHostState = LocalSnackbarHostState.current
     val navigationType = LocalNavigationType.current.type
     val isLoggedIn by viewModel.isLoggedInFlow.collectAsStateWithLifecycle(initial = false)
+    val isLoginError by viewModel.triggerLoginError.collectAsStateWithLifecycle(initial = -1)
 
     LaunchedEffect(true) {
         viewModel.fetchLoggedIn()
+    }
+
+    LaunchedEffect(isLoginError) {
+        if (isLoginError != -1) {
+            snackbarExtension.showSnackbar(snackbarHostState, MR.strings.welcome_login_toast_failed)
+        }
     }
 
     if (navigationType != PixiViewNavigationType.PermanentNavigationDrawer) {
@@ -58,6 +76,8 @@ internal fun WelcomeLoginScreen(
                 isLoggedIn = isLoggedIn,
                 navigateToLoginScreen = navigateToLoginScreen,
                 navigateToWelcomePermission = navigateToWelcomePermission,
+                navigateToHelp = navigatorExtension::navigateToWebPage,
+                onSetSessionId = viewModel::setSessionId,
             )
         }
     } else {
@@ -81,6 +101,8 @@ internal fun WelcomeLoginScreen(
                     isLoggedIn = isLoggedIn,
                     navigateToLoginScreen = navigateToLoginScreen,
                     navigateToWelcomePermission = navigateToWelcomePermission,
+                    navigateToHelp = navigatorExtension::navigateToWebPage,
+                    onSetSessionId = viewModel::setSessionId,
                 )
             }
         }
@@ -105,10 +127,14 @@ private fun FirstSection(
 @Composable
 private fun SecondSection(
     isLoggedIn: Boolean,
+    onSetSessionId: (String) -> Unit,
     navigateToLoginScreen: () -> Unit,
     navigateToWelcomePermission: () -> Unit,
+    navigateToHelp: (String) -> Unit,
     modifier: Modifier = Modifier,
 ) {
+    var isShowLoginDialog by remember { mutableStateOf(false) }
+
     Column(
         modifier = modifier,
         horizontalAlignment = Alignment.CenterHorizontally,
@@ -128,6 +154,17 @@ private fun SecondSection(
         )
 
         Spacer(modifier = Modifier.weight(1f))
+
+        TextButton(
+            modifier = Modifier.padding(bottom = 8.dp),
+            onClick = { isShowLoginDialog = true },
+        ) {
+            Text(
+                text = stringResource(MR.strings.welcome_login_other_title),
+                style = MaterialTheme.typography.bodySmall,
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
+            )
+        }
 
         WelcomeIndicatorItem(
             modifier = Modifier.padding(bottom = 24.dp),
@@ -162,5 +199,16 @@ private fun SecondSection(
                 )
             }
         }
+    }
+
+    if (isShowLoginDialog) {
+        WelcomeLoginDialog(
+            onDismissRequest = { isShowLoginDialog = false },
+            onClickHelp = navigateToHelp,
+            onClickLogin = { sessionId ->
+                onSetSessionId.invoke(sessionId)
+                isShowLoginDialog = false
+            },
+        )
     }
 }
