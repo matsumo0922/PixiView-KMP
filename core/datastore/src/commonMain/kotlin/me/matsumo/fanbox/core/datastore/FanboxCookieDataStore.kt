@@ -39,7 +39,7 @@ class FanboxCookieDataStore(
     }
 
     suspend fun getCookies(): List<String> {
-        return (get()?.split(";") ?: emptyList()).also {
+        return (get()?.split(";")?.filter { it.isNotBlank() } ?: emptyList()).also {
             Napier.d("CookieDataStore getCookies: ${it.joinToString(";")}")
         }
     }
