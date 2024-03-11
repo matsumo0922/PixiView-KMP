@@ -96,5 +96,12 @@
     "date": "2024/03/09",
     "logJp": "・ログインできない場合の救済導線を用意\n・特定の投稿を見るとアプリがクラッシュする問題を修正",
     "logEn": "・Prepare a rescue route in case you cannot login.\n・Fixed an issue where the app would crash when viewing certain posts."
+  },
+  {
+    "versionName": "2.0.4",
+    "versionCode": 18,
+    "date": "2024/03/09",
+    "logJp": "・動画がダウンロードできない問題を修正",
+    "logEn": "・Fixed an issue where videos could not be downloaded"
   }
 ]
