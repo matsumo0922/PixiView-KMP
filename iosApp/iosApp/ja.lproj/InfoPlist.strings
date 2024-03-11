@@ -1,0 +1,3 @@
+NSFaceIDUsageDescription = "アプリのロックを解錠するために必要です";
+NSPhotoLibraryAddUsageDescription = "イラストを保存したり読み込むために必要です";
+NSPhotoLibraryUsageDescription = "イラストを保存したり読み込むために必要です";

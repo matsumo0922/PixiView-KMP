@@ -13,6 +13,7 @@
 		AD14F5952B55A31600B367F8 /* StoreKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = AD14F5942B55A31600B367F8 /* StoreKit.framework */; };
 		AD310C742B80D2F500D91635 /* BillingClient.swift in Sources */ = {isa = PBXBuildFile; fileRef = AD310C732B80D2F500D91635 /* BillingClient.swift */; };
 		AD310C762B80FF6C00D91635 /* BillingController.swift in Sources */ = {isa = PBXBuildFile; fileRef = AD310C752B80FF6C00D91635 /* BillingController.swift */; };
+		AD38EBF52B9EE45E001603D7 /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = AD38EBF72B9EE45E001603D7 /* InfoPlist.strings */; };
 		AD5F8B822B4D50A3004888F6 /* ComposeViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = AD5F8B812B4D50A3004888F6 /* ComposeViewController.swift */; };
 		AD6E4F652B84F33D0000CD56 /* GoogleMobileAds in Frameworks */ = {isa = PBXBuildFile; productRef = AD6E4F642B84F33D0000CD56 /* GoogleMobileAds */; };
 		AD6E4F682B8508E70000CD56 /* NativeAdView.swift in Sources */ = {isa = PBXBuildFile; fileRef = AD6E4F672B8508E70000CD56 /* NativeAdView.swift */; };
@@ -50,6 +51,7 @@
 		AD6E4FB62B8A47C40000CD56 /* FirebaseRemoteConfigSwift in Frameworks */ = {isa = PBXBuildFile; productRef = AD6E4FB52B8A47C40000CD56 /* FirebaseRemoteConfigSwift */; };
 		AD6E4FB82B8A47C40000CD56 /* FirebaseStorage in Frameworks */ = {isa = PBXBuildFile; productRef = AD6E4FB72B8A47C40000CD56 /* FirebaseStorage */; };
 		AD6E4FBA2B8A47C40000CD56 /* FirebaseStorageCombine-Community in Frameworks */ = {isa = PBXBuildFile; productRef = AD6E4FB92B8A47C40000CD56 /* FirebaseStorageCombine-Community */; };
+		ADE3E5542B9ED888009C5D51 /* Localizable.strings in Resources */ = {isa = PBXBuildFile; fileRef = ADE3E5562B9ED888009C5D51 /* Localizable.strings */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -57,11 +59,13 @@
 		058557D8273AAEEB004C7B11 /* Preview Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = "Preview Assets.xcassets"; sourceTree = "<group>"; };
 		2152FB032600AC8F00CF470E /* iOSApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = iOSApp.swift; sourceTree = "<group>"; };
 		7555FF7B242A565900829871 /* PixiView-KMP.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "PixiView-KMP.app"; sourceTree = BUILT_PRODUCTS_DIR; };
-		7555FF8C242A565B00829871 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		AB3632DC29227652001CCB65 /* Config.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = Config.xcconfig; sourceTree = "<group>"; };
 		AD14F5942B55A31600B367F8 /* StoreKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = StoreKit.framework; path = System/Library/Frameworks/StoreKit.framework; sourceTree = SDKROOT; };
 		AD310C732B80D2F500D91635 /* BillingClient.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BillingClient.swift; sourceTree = "<group>"; };
 		AD310C752B80FF6C00D91635 /* BillingController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BillingController.swift; sourceTree = "<group>"; };
+		AD38EBF62B9EE45E001603D7 /* ja */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = ja; path = ja.lproj/InfoPlist.strings; sourceTree = "<group>"; };
+		AD38EBF82B9EE461001603D7 /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/InfoPlist.strings; sourceTree = "<group>"; };
+		AD38EBF92B9EE531001603D7 /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		AD5F8B812B4D50A3004888F6 /* ComposeViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ComposeViewController.swift; sourceTree = "<group>"; };
 		AD6E4F672B8508E70000CD56 /* NativeAdView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NativeAdView.swift; sourceTree = "<group>"; };
 		AD6E4F722B865E6F0000CD56 /* NativeAdView.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = NativeAdView.xib; sourceTree = "<group>"; };
@@ -71,6 +75,8 @@
 		AD6E4F802B88A1060000CD56 /* BannerAdView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BannerAdView.swift; sourceTree = "<group>"; };
 		AD6E4F822B8A46FD0000CD56 /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
 		ADA53B072B8B73B4005CD892 /* iosApp.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = iosApp.entitlements; sourceTree = "<group>"; };
+		ADE3E5552B9ED888009C5D51 /* ja */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = ja; path = ja.lproj/Localizable.strings; sourceTree = "<group>"; };
+		ADE3E5572B9ED8D4009C5D51 /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/Localizable.strings; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -133,6 +139,7 @@
 		7555FF72242A565900829871 = {
 			isa = PBXGroup;
 			children = (
+				ADE3E5562B9ED888009C5D51 /* Localizable.strings */,
 				AB1DB47929225F7C00F7AF9C /* Configuration */,
 				7555FF7D242A565900829871 /* iosApp */,
 				7555FF7C242A565900829871 /* Products */,
@@ -157,7 +164,8 @@
 				2152FB032600AC8F00CF470E /* iOSApp.swift */,
 				AD5F8B812B4D50A3004888F6 /* ComposeViewController.swift */,
 				AD6E4F7E2B885B9B0000CD56 /* KeyManager.swift */,
-				7555FF8C242A565B00829871 /* Info.plist */,
+				AD38EBF92B9EE531001603D7 /* Info.plist */,
+				AD38EBF72B9EE45E001603D7 /* InfoPlist.strings */,
 				AD6E4F7C2B885A5F0000CD56 /* secret.plist */,
 				AD6E4F822B8A46FD0000CD56 /* GoogleService-Info.plist */,
 				058557BA273AAA24004C7B11 /* Assets.xcassets */,
@@ -204,8 +212,8 @@
 				F36B1CEB2AD83DDC00CB74D5 /* Compile Kotlin Framework */,
 				7555FF77242A565900829871 /* Sources */,
 				7555FF79242A565900829871 /* Resources */,
-				ADB92A782B43F7DB00ECEB57 /* Run Script */,
 				AD14F5962B55A31600B367F8 /* Frameworks */,
+				ADB92A782B43F7DB00ECEB57 /* Run Script */,
 			);
 			buildRules = (
 			);
@@ -269,9 +277,8 @@
 			hasScannedForEncodings = 0;
 			knownRegions = (
 				ja,
-				en,
 				Base,
-				"ja-JP",
+				en,
 			);
 			mainGroup = 7555FF72242A565900829871;
 			packageReferences = (
@@ -294,6 +301,8 @@
 			buildActionMask = 2147483647;
 			files = (
 				AD6E4F7D2B885A5F0000CD56 /* secret.plist in Resources */,
+				AD38EBF52B9EE45E001603D7 /* InfoPlist.strings in Resources */,
+				ADE3E5542B9ED888009C5D51 /* Localizable.strings in Resources */,
 				058557D9273AAEEB004C7B11 /* Preview Assets.xcassets in Resources */,
 				AD6E4F832B8A46FD0000CD56 /* GoogleService-Info.plist in Resources */,
 				AD6E4F732B865E6F0000CD56 /* NativeAdView.xib in Resources */,
@@ -360,12 +369,34 @@
 		};
 /* End PBXSourcesBuildPhase section */
 
+/* Begin PBXVariantGroup section */
+		AD38EBF72B9EE45E001603D7 /* InfoPlist.strings */ = {
+			isa = PBXVariantGroup;
+			children = (
+				AD38EBF62B9EE45E001603D7 /* ja */,
+				AD38EBF82B9EE461001603D7 /* en */,
+			);
+			name = InfoPlist.strings;
+			sourceTree = "<group>";
+		};
+		ADE3E5562B9ED888009C5D51 /* Localizable.strings */ = {
+			isa = PBXVariantGroup;
+			children = (
+				ADE3E5552B9ED888009C5D51 /* ja */,
+				ADE3E5572B9ED8D4009C5D51 /* en */,
+			);
+			name = Localizable.strings;
+			sourceTree = "<group>";
+		};
+/* End PBXVariantGroup section */
+
 /* Begin XCBuildConfiguration section */
 		7555FFA3242A565B00829871 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = AB3632DC29227652001CCB65 /* Config.xcconfig */;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_LOCALIZABILITY_NONLOCALIZED = YES;
 				CLANG_ANALYZER_NONNULL = YES;
 				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
 				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
@@ -428,6 +459,7 @@
 			baseConfigurationReference = AB3632DC29227652001CCB65 /* Config.xcconfig */;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_LOCALIZABILITY_NONLOCALIZED = YES;
 				CLANG_ANALYZER_NONNULL = YES;
 				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
 				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
@@ -495,6 +527,7 @@
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(SRCROOT)/../shared/build/xcode-frameworks/$(CONFIGURATION)/$(SDK_NAME)\n$(SRCROOT)/../composeApp/build/xcode-frameworks/$(CONFIGURATION)/$(SDK_NAME)",
 				);
+				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = iosApp/Info.plist;
 				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.graphics-design";
 				IPHONEOS_DEPLOYMENT_TARGET = 15.0;
@@ -516,6 +549,7 @@
 				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
 				SUPPORTS_MACCATALYST = NO;
 				SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD = NO;
+				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = 1;
@@ -538,6 +572,7 @@
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(SRCROOT)/../shared/build/xcode-frameworks/$(CONFIGURATION)/$(SDK_NAME)\n$(SRCROOT)/../composeApp/build/xcode-frameworks/$(CONFIGURATION)/$(SDK_NAME)",
 				);
+				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = iosApp/Info.plist;
 				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.graphics-design";
 				IPHONEOS_DEPLOYMENT_TARGET = 15.0;
@@ -556,6 +591,7 @@
 				"PRODUCT_BUNDLE_IDENTIFIER[sdk=iphoneos*]" = me.matsumo.fanbox;
 				PRODUCT_NAME = "${APP_NAME}";
 				PROVISIONING_PROFILE_SPECIFIER = "";
+				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = 1;
 			};

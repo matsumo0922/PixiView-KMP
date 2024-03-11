@@ -215,6 +215,8 @@
     <string name="setting_top_others_logout_dialog_description">Do you want to log out of FANBOX?</string>
     <string name="setting_top_others_logout_dialog_success">Logged out</string>
     <string name="setting_top_others_logout_dialog_failed">Logout failed</string>
+    <string name="setting_top_others_delete_account">Account deletion</string>
+    <string name="setting_top_others_delete_account_description">Delete your FANBOX account</string>
     <string name="setting_top_others_open_source_license">Open source license</string>
     <string name="setting_top_others_open_source_license_description">Displays the OSS library license.</string>
     <string name="setting_top_others_developer_mode">Development mode</string>

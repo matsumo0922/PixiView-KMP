@@ -1,0 +1,3 @@
+NSFaceIDUsageDescription = "Required to unlock the app";
+NSPhotoLibraryAddUsageDescription = "Required to save and load illustrations";
+NSPhotoLibraryUsageDescription = "Required to save and load illustrations";
