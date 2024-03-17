@@ -1,9 +1,8 @@
-
 <h1 align="center">PixiView</h1>
 
 <p align="center">
-Enjoy a comfortable FANBOX life with PixiView!<br>
-PixiView is an unofficial Android & iOS client app for pixivFANBOX.
+PixiView で快適な FANBOX ライフを！<br>
+PixiView は PIXIV FANBOX の非公式 Android & iOS クライアントアプリです
 </p>
 
 <div align="center">
@@ -24,22 +23,21 @@ PixiView is an unofficial Android & iOS client app for pixivFANBOX.
     <img src="media/google_play/screenshots.png" width="2048" alt="screenshots">
 </p>
 
-<p align="center">Do you speak Japanese? Japanese <a href="./README-JA.md">READEME</a> is Here!</p>
 
 ## Status
 #### Ready!! :rocket:
 
-Now available on GooglePlay and AppStore! Please download from the link below.
-Or, if you're an mobile developer, you can build the app and install it yourself.
-Contributions are always welcome. Try building your app by following the section below.
+GooglePlay または AppStore にて公開中です！下記のリンクからダウンロードしてください。
+また、モバイルアプリ開発者の方はアプリをビルドして、自分でインストールすることもできます。
+コントリビュートはいつでも歓迎です。下のセクションに従ってアプリをビルドしてみてください。
 
 #### [Download](https://apps.apple.com/jp/app/fanviewer/id6476085758) from AppStore
 #### [Download](https://play.google.com/store/apps/details?id=caios.android.fanbox) from GooglePlay
-#### [Download](https://github.com/matsumo0922/PixiView-KMP/releases) from GitHub
+#### [Download](https://github.com/matsumo0922/PixiView/releases) from GitHub
 
 ## Why?
 
-There was only a web version of FANBOX, which was a bit inconvenient for viewing posts on smartphones. By developing natively for smartphones, we have been able to include several convenient features such as the ability to download posts and receive new notifications.
+FANBOX には Web 版しかなく、スマートフォンで投稿を閲覧するには少し不便だったからです。スマートフォン向けアプリとしてネイティブで開発することによって、投稿のダウンロード機能や新着通知などの便利な機能を複数搭載できました。
 
 ## Tech Stack
 
@@ -55,32 +53,32 @@ There was only a web version of FANBOX, which was a bit inconvenient for viewing
 #### Ready!!
 
 - FANBOX
-  - Display posts from followed creators in chronological order.
-  - Display posts from supported creators in chronological order.
-  - Display followed creators.
-  - Display supported creators.
-  - Follow/Unfollow creators.
-  - Like posts.
-  - Search for creators.
-  - Search by tags.
-  - Search plans.
-  - Display notifications.
-  - Display messages.
-- Download
-  - Download in image/file/GIF format.
-  - Download all images included in a post.
-  - Download fan cards.
-  - Bulk download function for individual creators.
-- Ads
-  - AdMob Native Ads
+  - フォローしているクリエイターの投稿を時系列順に表示
+  - 支援しているクリエイターの投稿を時系列順に表示
+  - フォローしているクリエイターを表示
+  - 支援しているクリエイターを表示
+  - クリエイターのフォロー / フォロー解除
+  - 投稿のいいね
+  - クリエイター検索
+  - タグ検索
+  - プラン検索
+  - 通知の表示
+  - メッセージの表示
+- ダウンロード
+  - 画像 / ファイル / GIF 形式でダウンロード
+  - 投稿に含まれるすべての画像をダウンロード
+  - ファンカードのダウンロード
+  - クリエイター単位での一括ダウンロード機能
+- 広告
+  - AdMob Native 広告
 
 #### Not Ready...
 
-- Pixiv integration feature.
-- Widget functionality.
+- Pixiv 連携機能
+- ウィジェット機能
 
 ## Architecture
-Shows the architecture diagram of the app. It's quite complex, so I've omitted some modules and dependencies to give you an overview.
+アプリのアーキテクチャ図を示します。 だいぶ複雑になっているので、一部のモジュールや依存関係は省略し、概略を掴める形にしています。
 
 ```mermaid
 %%{
@@ -90,12 +88,12 @@ init: {
 }%%
 
 graph LR
-  subgraph gradle
-    build-logic
-  end
+  subgraph gradle 
+    build-logic  
+  end  
   subgraph application
-    app
-  end
+    app  
+  end  
   subgraph core
     common
     datastore
@@ -125,11 +123,11 @@ graph LR
 
 ## Contribute
 
-This app uses Gradle's Convention Plugins to standardize the build logic, and all the logic is written in a module called `build-logic`. For information on this approach, see [nowinandroid](https://github.com/matsumo0922/nowinandroid/tree/main/build-logic).
+このアプリは Gradle の Convention Plugins を用いてビルドのロジックを共通化しており、`build-logic` というモジュールに全てのロジックが記述されています。このアプローチに関しては、[nowinandroid](https://github.com/matsumo0922/nowinandroid/tree/main/build-logic) をご覧ください。
 
-If you find a bug, want to improve a feature, or want to develop a new feature, please first write an issue. Then assign yourself and work on the development. Pull requests are always welcome :smile:
+何か不具合を発見したり機能を改善したい場合、機能を新たに開発したい場合は、まず issue を書いてください。その上であなた自身を assign し、開発に取り組んでください。pull request はいつでも歓迎です :smile:
 
-This app is monetized using AdMob. When building manually from GitHub, you need to write the AdMob App ID in `local.properties`. By default it contains a dummy ID, which causes it to crash on startup. Alternatively, please delete the AdMob code and build the app. In addition, various IDs are described in `local.properties`. See `app/build.gradle.kts` or `PixiViewConfig` for details.
+このアプリは AdMob を用いて収益化しています。GitHub から手動でビルドする際は AdMob App ID を `local.properties` に記述する必要があります。デフォルトではダミーの ID が入っているため、起動時にクラッシュします。もしくは AdMob の当該コードを削除してからアプリをビルドしてください。その他、 `local.properties` には様々な ID が記述されています。詳細は `app/build.gradle.kts` または `PixiViewConfig` をご覧ください。
 
 ## License
 
