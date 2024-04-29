@@ -52,7 +52,7 @@
     <string name="error_paging">Unable to continue pagination</string>
     <string name="error_developing_feature">Feature under development</string>
     <string name="error_billing">Failed to retrieve purchase information</string>
-    <string name="error_restricted_post">Pledge %,d JPY per month or more to see this content</string>
+    <string name="error_restricted_post">Pledge %d JPY per month or more to see this content</string>
     <string name="error_restricted_post_ios">Cannot be viewed with current plan</string>
     <string name="error_adult_content">Adult content</string>
     <string name="error_adult_content_test_user">This content has been temporarily restricted</string>
@@ -66,7 +66,7 @@
     <string name="unit_second_before">%1$d seconds ago</string>
     <string name="unit_favorite">%1$d Likes</string>
     <string name="unit_tag">%1$d items</string>
-    <string name="unit_jpy">%,d JPY</string>
+    <string name="unit_jpy">%d JPY</string>
 
     <!-- Notify -->
     <string name="notify_download_channel_name">Download</string>

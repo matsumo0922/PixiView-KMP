@@ -57,28 +57,38 @@ class PostSearchViewModel(
 
     fun search(query: PostSearchQuery) {
         viewModelScope.launch {
-            _uiState.value = uiState.value.copy(
-                query = buildQuery(query),
-                userData = userDataRepository.userData.first(),
-            )
+            suspendRunCatching {
+                _uiState.value = uiState.value.copy(
+                    query = buildQuery(query),
+                    userData = userDataRepository.userData.first(),
+                )
 
-            when (query.mode) {
-                PostSearchMode.Creator -> {
-                    _uiState.value = uiState.value.copy(
-                        suggestTags = fanboxRepository.getTagFromQuery(query.creatorQuery.orEmpty()),
-                        creatorPaging = fanboxRepository.getCreatorsFromQueryPager(query.creatorQuery.orEmpty()),
-                    )
+                when (query.mode) {
+                    PostSearchMode.Creator -> {
+                        _uiState.value = uiState.value.copy(
+                            suggestTags = fanboxRepository.getTagFromQuery(query.creatorQuery.orEmpty()),
+                            creatorPaging = fanboxRepository.getCreatorsFromQueryPager(query.creatorQuery.orEmpty()),
+                        )
+                    }
+
+                    PostSearchMode.Tag -> {
+                        _uiState.value = uiState.value.copy(tagPaging = fanboxRepository.getPostsFromQueryPager(query.tag.orEmpty(), query.creatorId))
+                    }
+
+                    else -> {
+                        _uiState.value = uiState.value.copy(
+                            creatorPaging = emptyPaging(),
+                            tagPaging = emptyPaging(),
+                            postPaging = emptyPaging(),
+                        )
+                    }
                 }
-                PostSearchMode.Tag -> {
-                    _uiState.value = uiState.value.copy(tagPaging = fanboxRepository.getPostsFromQueryPager(query.tag.orEmpty(), query.creatorId))
-                }
-                else -> {
-                    _uiState.value = uiState.value.copy(
-                        creatorPaging = emptyPaging(),
-                        tagPaging = emptyPaging(),
-                        postPaging = emptyPaging(),
-                    )
-                }
+            }.onFailure {
+                _uiState.value = uiState.value.copy(
+                    creatorPaging = emptyPaging(),
+                    tagPaging = emptyPaging(),
+                    postPaging = emptyPaging(),
+                )
             }
         }
     }

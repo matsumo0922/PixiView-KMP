@@ -1,7 +1,7 @@
 [versions]
 # Application
-versionName = "2.0.4"
-versionCode = "18"
+versionName = "2.0.5"
+versionCode = "19"
 
 # SDK
 minSdk = "26"

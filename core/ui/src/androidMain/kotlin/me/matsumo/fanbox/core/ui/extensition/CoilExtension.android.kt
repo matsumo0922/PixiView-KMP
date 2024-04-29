@@ -13,8 +13,13 @@ import coil3.Image
 import coil3.annotation.ExperimentalCoilApi
 import coil3.asCoilImage
 import dev.icerock.moko.resources.ImageResource
+import io.ktor.client.call.body
 import io.ktor.client.statement.bodyAsChannel
+import io.ktor.utils.io.ByteReadChannel
+import io.ktor.utils.io.core.isEmpty
+import io.ktor.utils.io.core.isNotEmpty
 import io.ktor.utils.io.jvm.javaio.copyTo
+import io.ktor.utils.io.streams.writePacket
 import me.matsumo.fanbox.core.common.util.suspendRunCatching
 import me.matsumo.fanbox.core.model.fanbox.FanboxPostDetail
 import me.matsumo.fanbox.core.repository.FanboxRepository
@@ -37,9 +42,11 @@ class ImageDownloaderImpl(
         val uri = getUri(context, "illust-${item.postId}-${item.id}.${item.extension}", "FANBOX", mime.orEmpty())
         val outputStream = context.contentResolver.openOutputStream(uri!!)!!
 
-        fanboxRepository.download(url, updateCallback)
-            .bodyAsChannel()
-            .copyTo(outputStream)
+        fanboxRepository.download(url, updateCallback).body<ByteReadChannel>().also {
+            while (!it.isClosedForRead) {
+                outputStream.writePacket(it.readRemaining(DEFAULT_BUFFER_SIZE.toLong()))
+            }
+        }
     }.isSuccess
 
     override suspend fun downloadFile(item: FanboxPostDetail.FileItem, updateCallback: (Float) -> Unit): Boolean = suspendRunCatching {
@@ -47,9 +54,11 @@ class ImageDownloaderImpl(
         val uri = getUri(context, "illust-${item.postId}-${item.id}.${item.extension}", "FANBOX", mime.orEmpty())
         val outputStream = context.contentResolver.openOutputStream(uri!!)!!
 
-        fanboxRepository.download(item.url, updateCallback)
-            .bodyAsChannel()
-            .copyTo(outputStream)
+        fanboxRepository.download(item.url, updateCallback).body<ByteReadChannel>().also {
+            while (!it.isClosedForRead) {
+                outputStream.writePacket(it.readRemaining(DEFAULT_BUFFER_SIZE.toLong()))
+            }
+        }
     }.isSuccess
 
     private fun getUri(context: Context, name: String, child: String, mimeType: String = ""): Uri? {

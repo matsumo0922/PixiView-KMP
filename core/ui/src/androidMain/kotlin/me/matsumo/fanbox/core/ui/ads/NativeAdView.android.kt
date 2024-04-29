@@ -3,7 +3,9 @@ package me.matsumo.fanbox.core.ui.ads
 import android.annotation.SuppressLint
 import android.content.res.ColorStateList
 import android.view.View
+import android.view.ViewGroup
 import android.view.ViewParent
+import android.widget.ImageView
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Card
@@ -18,6 +20,7 @@ import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.viewinterop.AndroidViewBinding
 import androidx.core.view.doOnLayout
+import androidx.core.view.isVisible
 import androidx.core.view.postDelayed
 import com.google.android.gms.ads.nativead.NativeAd
 import io.github.aakira.napier.Napier
@@ -60,8 +63,19 @@ actual fun NativeAdView(
 
         binding.tvAdvertiser.visibility = if (nativeAd.advertiser.isNullOrBlank()) View.GONE else View.VISIBLE
 
+        binding.mvContent.isVisible = nativeAd.mediaContent != null
+        binding.mvContent.setOnHierarchyChangeListener(object : ViewGroup.OnHierarchyChangeListener {
+            override fun onChildViewAdded(parent: View, child: View) {
+                if (child is ImageView) {
+                    child.adjustViewBounds = true
+                }
+            }
+
+            override fun onChildViewRemoved(parent: View, child: View) = Unit
+        })
+
         adView.setNativeAd(nativeAd)
-        adView.requestLayoutWithDelay(400L)
+        adView.requestLayoutWithDelay(500L)
 
         Napier.d("NativeAdView: setupNativeAd, ${binding.tvPrice.text}, $key")
     }

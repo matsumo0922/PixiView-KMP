@@ -2,32 +2,77 @@ package me.matsumo.fanbox.core.ui.ads
 
 import android.annotation.SuppressLint
 import android.content.res.Resources
+import android.view.ViewGroup
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.DisposableEffect
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.viewinterop.AndroidView
+import androidx.core.view.doOnLayout
+import androidx.lifecycle.LifecycleEventObserver
 import com.google.android.gms.ads.AdRequest
 import com.google.android.gms.ads.AdSize
+import com.google.android.gms.ads.AdView
 import com.google.android.gms.ads.admanager.AdManagerAdView
 import me.matsumo.fanbox.core.ui.theme.LocalPixiViewConfig
+import moe.tlaster.precompose.lifecycle.Lifecycle
+import moe.tlaster.precompose.lifecycle.LifecycleObserver
+import moe.tlaster.precompose.lifecycle.LocalLifecycleOwner
 
 @SuppressLint("MissingPermission")
 @Composable
 actual fun BannerAdView(modifier: Modifier) {
     val pixiViewConfig = LocalPixiViewConfig.current
+    val adManagerAdView = rememberAdViewWithLifecycle(
+        adUnitId = pixiViewConfig.adMobAndroid.bannerAdUnitId,
+        adRequest = AdRequest.Builder().build(),
+    )
 
     AndroidView(
         modifier = modifier,
-        factory = {
+        factory = { adManagerAdView },
+    )
+}
+
+@SuppressLint("MissingPermission")
+@Composable
+fun rememberAdViewWithLifecycle(
+    adUnitId: String,
+    adRequest: AdRequest = AdRequest.Builder().build(),
+): AdManagerAdView {
+    val context = LocalContext.current
+    val adView = remember {
+        AdManagerAdView(context).apply {
             val displayMetrics = Resources.getSystem().displayMetrics
             val width = (displayMetrics.widthPixels / displayMetrics.density).toInt()
 
-            AdManagerAdView(it).apply {
-                setAdSizes(AdSize.getCurrentOrientationAnchoredAdaptiveBannerAdSize(it, width))
-                adUnitId = pixiViewConfig.adMobAndroid.bannerAdUnitId
-            }
-        },
-        update = {
-            it.loadAd(AdRequest.Builder().build())
+            setAdSize(AdSize.getCurrentOrientationAnchoredAdaptiveBannerAdSize(context, width))
+            this.adUnitId = adUnitId
+            loadAd(adRequest)
         }
-    )
+    }
+
+    val lifecycleOwner = LocalLifecycleOwner.current
+
+    DisposableEffect(lifecycleOwner) {
+        val observer = object : LifecycleObserver {
+            override fun onStateChanged(state: Lifecycle.State) {
+                when (state) {
+                    Lifecycle.State.Active -> adView.resume()
+                    Lifecycle.State.InActive -> adView.pause()
+                    Lifecycle.State.Destroyed -> adView.destroy()
+                    else -> {
+                        // do nothing
+                    }
+                }
+            }
+        }
+
+        lifecycleOwner.lifecycle.addObserver(observer)
+
+        onDispose { lifecycleOwner.lifecycle.removeObserver(observer) }
+    }
+
+    return adView
 }

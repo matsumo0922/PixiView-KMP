@@ -103,5 +103,12 @@
     "date": "2024/03/09",
     "logJp": "・動画がダウンロードできない問題を修正",
     "logEn": "・Fixed an issue where videos could not be downloaded"
+  },
+  {
+    "versionName": "2.0.5",
+    "versionCode": 19,
+    "date": "2024/04/29",
+    "logJp": "・大きなファイルをダウンロードできない問題を修正\n・一括ダウンロード画面で特定の操作を行うとクラッシュする不具合を修正",
+    "logEn": "。Fixed an issue where large files could not be downloaded.\n・Fixed an issue where the app would crash when performing certain operations on the batch download screen."
   }
 ]

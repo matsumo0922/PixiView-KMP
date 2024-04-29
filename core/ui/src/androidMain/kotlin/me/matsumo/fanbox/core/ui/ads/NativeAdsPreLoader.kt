@@ -39,8 +39,8 @@ class NativeAdsPreLoader(
                     .build()
             )
             .setMediaAspectRatio(MediaAspectRatio.LANDSCAPE)
-            .setRequestMultipleImages(true)
-            .setReturnUrlsForImageAssets(true)
+            .setRequestMultipleImages(false)
+            .setReturnUrlsForImageAssets(false)
             .build()
 
         val adListener = object : AdListener() {

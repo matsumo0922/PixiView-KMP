@@ -278,12 +278,14 @@ private fun PostDetailScreen(
         }
     }
 
-    val isShowCoordinateHeader = when (val content = postDetail.body) {
-        is FanboxPostDetail.Body.Article -> content.blocks.first() !is FanboxPostDetail.Body.Article.Block.Image
-        is FanboxPostDetail.Body.File -> true
-        is FanboxPostDetail.Body.Image -> false
-        is FanboxPostDetail.Body.Unknown -> true
-    }
+    val isShowCoordinateHeader = runCatching {
+        when (val content = postDetail.body) {
+            is FanboxPostDetail.Body.Article -> content.blocks.first() !is FanboxPostDetail.Body.Article.Block.Image
+            is FanboxPostDetail.Body.File -> true
+            is FanboxPostDetail.Body.Image -> false
+            is FanboxPostDetail.Body.Unknown -> true
+        }
+    }.getOrDefault(true)
 
     CoordinatorScaffold(
         modifier = modifier,

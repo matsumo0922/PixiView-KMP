@@ -86,16 +86,18 @@ class CreatorPostsDownloadViewModel(
     }
 
     suspend fun download(postId: PostId): Boolean {
-        val postDetail = fanboxRepository.getPost(postId)
+        runCatching {
+            val postDetail = fanboxRepository.getPost(postId)
 
-        for (imageItem in postDetail.body.imageItems) {
-            imageDownloader.downloadImage(imageItem)
-            delay(500)
-        }
+            for (imageItem in postDetail.body.imageItems) {
+                imageDownloader.downloadImage(imageItem)
+                delay(500)
+            }
 
-        for (fileItem in postDetail.body.fileItems) {
-            imageDownloader.downloadFile(fileItem)
-            delay(500)
+            for (fileItem in postDetail.body.fileItems) {
+                imageDownloader.downloadFile(fileItem)
+                delay(500)
+            }
         }
 
         return true
