@@ -1,6 +1,8 @@
 package me.matsumo.fanbox.feature.post.image
 
 import androidx.compose.runtime.Stable
+import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
@@ -11,8 +13,6 @@ import me.matsumo.fanbox.core.model.fanbox.id.PostId
 import me.matsumo.fanbox.core.repository.FanboxRepository
 import me.matsumo.fanbox.core.ui.MR
 import me.matsumo.fanbox.core.ui.extensition.ImageDownloader
-import moe.tlaster.precompose.viewmodel.ViewModel
-import moe.tlaster.precompose.viewmodel.viewModelScope
 
 class PostImageViewModel(
     private val fanboxRepository: FanboxRepository,

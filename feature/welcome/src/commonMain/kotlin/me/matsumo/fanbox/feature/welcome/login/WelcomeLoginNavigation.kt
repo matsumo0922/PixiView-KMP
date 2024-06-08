@@ -2,20 +2,21 @@ package me.matsumo.fanbox.feature.welcome.login
 
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.ui.Modifier
-import moe.tlaster.precompose.navigation.Navigator
-import moe.tlaster.precompose.navigation.RouteBuilder
+import androidx.navigation.NavController
+import androidx.navigation.NavGraphBuilder
+import androidx.navigation.compose.composable
 
 const val WelcomeLoginRoute = "welcomeLogin"
 
-fun Navigator.navigateToWelcomeLogin() {
+fun NavController.navigateToWelcomeLogin() {
     this.navigate(WelcomeLoginRoute)
 }
 
-fun RouteBuilder.welcomeLoginScreen(
+fun NavGraphBuilder.welcomeLoginScreen(
     navigateToLoginScreen: () -> Unit,
     navigateToWelcomePermission: () -> Unit,
 ) {
-    scene(WelcomeLoginRoute) {
+    composable(WelcomeLoginRoute) {
         WelcomeLoginScreen(
             modifier = Modifier.fillMaxSize(),
             navigateToLoginScreen = navigateToLoginScreen,

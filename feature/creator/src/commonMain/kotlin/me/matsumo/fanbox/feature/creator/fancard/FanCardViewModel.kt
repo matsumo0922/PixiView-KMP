@@ -1,6 +1,8 @@
 package me.matsumo.fanbox.feature.creator.fancard
 
 import androidx.compose.runtime.Stable
+import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -12,8 +14,6 @@ import me.matsumo.fanbox.core.model.fanbox.FanboxCreatorPlanDetail
 import me.matsumo.fanbox.core.model.fanbox.id.CreatorId
 import me.matsumo.fanbox.core.repository.FanboxRepository
 import me.matsumo.fanbox.core.ui.MR
-import moe.tlaster.precompose.viewmodel.ViewModel
-import moe.tlaster.precompose.viewmodel.viewModelScope
 
 class FanCardViewModel(
     private val fanboxRepository: FanboxRepository,

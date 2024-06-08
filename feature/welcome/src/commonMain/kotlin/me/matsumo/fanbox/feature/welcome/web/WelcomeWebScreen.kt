@@ -20,7 +20,7 @@ import dev.icerock.moko.resources.compose.stringResource
 import me.matsumo.fanbox.core.ui.MR
 import me.matsumo.fanbox.core.ui.component.PixiViewTopBar
 import me.matsumo.fanbox.core.ui.view.SimpleAlertContents
-import moe.tlaster.precompose.koin.koinViewModel
+import org.koin.compose.viewmodel.koinViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -28,7 +28,7 @@ internal fun WelcomeWebScreen(
     navigateToLoginAlert: suspend (SimpleAlertContents) -> Unit,
     terminate: () -> Unit,
     modifier: Modifier = Modifier,
-    viewModel: WelcomeWebViewModel = koinViewModel(WelcomeWebViewModel::class),
+    viewModel: WelcomeWebViewModel = koinViewModel(),
 ) {
     val fanboxUrl = "https://www.fanbox.cc/login"
     val fanboxRedirectUrl = "https://www.fanbox.cc/creators/find"

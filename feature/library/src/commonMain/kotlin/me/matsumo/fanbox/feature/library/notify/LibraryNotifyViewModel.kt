@@ -15,8 +15,8 @@ import me.matsumo.fanbox.core.model.fanbox.FanboxBell
 import me.matsumo.fanbox.core.repository.FanboxRepository
 import me.matsumo.fanbox.core.repository.UserDataRepository
 import me.matsumo.fanbox.feature.library.notify.paging.LibraryNotifyPagingSource
-import moe.tlaster.precompose.viewmodel.ViewModel
-import moe.tlaster.precompose.viewmodel.viewModelScope
+import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
 
 class LibraryNotifyViewModel(
     private val fanboxRepository: FanboxRepository,

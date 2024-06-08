@@ -27,6 +27,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.toImmutableList
 import me.matsumo.fanbox.core.model.ScreenState
@@ -40,8 +41,7 @@ import me.matsumo.fanbox.core.ui.component.PostItem
 import me.matsumo.fanbox.core.ui.extensition.drawVerticalScrollbar
 import me.matsumo.fanbox.core.ui.view.ErrorView
 import me.matsumo.fanbox.feature.post.bookmark.items.BookmarkedPostsTopBar
-import moe.tlaster.precompose.flow.collectAsStateWithLifecycle
-import moe.tlaster.precompose.koin.koinViewModel
+import org.koin.compose.viewmodel.koinViewModel
 
 @Composable
 internal fun BookmarkedPostsRoute(
@@ -50,7 +50,7 @@ internal fun BookmarkedPostsRoute(
     navigateToCreatorPlans: (CreatorId) -> Unit,
     terminate: () -> Unit,
     modifier: Modifier = Modifier,
-    viewModel: BookmarkedPostsViewModel = koinViewModel(BookmarkedPostsViewModel::class),
+    viewModel: BookmarkedPostsViewModel = koinViewModel(),
 ) {
     val screenState by viewModel.screenState.collectAsStateWithLifecycle()
 

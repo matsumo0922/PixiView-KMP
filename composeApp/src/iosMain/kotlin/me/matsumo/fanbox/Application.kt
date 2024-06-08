@@ -6,7 +6,6 @@ import androidx.compose.material3.windowsizeclass.calculateWindowSizeClass
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.window.ComposeUIViewController
 import io.github.aakira.napier.Napier
-import moe.tlaster.precompose.PreComposeApp
 import org.koin.compose.KoinContext
 import platform.UIKit.UIViewController
 
@@ -16,15 +15,13 @@ fun MainViewController(
     bottomSafeArea: Float,
     iosUis: Map<String, () -> UIViewController?>
 ) = ComposeUIViewController {
-    PreComposeApp {
-        KoinContext {
-            Napier.d { "MainViewController: ${iosUis.size}" }
+    KoinContext {
+        Napier.d { "MainViewController: ${iosUis.size}" }
 
-            PixiViewApp(
-                modifier = Modifier.fillMaxSize(),
-                windowSize = calculateWindowSizeClass().widthSizeClass,
-                nativeViews = iosUis,
-            )
-        }
+        PixiViewApp(
+            modifier = Modifier.fillMaxSize(),
+            windowSize = calculateWindowSizeClass().widthSizeClass,
+            nativeViews = iosUis,
+        )
     }
 }

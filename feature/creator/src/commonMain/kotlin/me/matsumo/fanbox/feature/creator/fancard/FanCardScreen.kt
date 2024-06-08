@@ -14,6 +14,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import me.matsumo.fanbox.core.ui.animation.Zoomable
 import kotlinx.coroutines.flow.collectLatest
 import me.matsumo.fanbox.core.model.ScreenState
@@ -25,16 +26,15 @@ import me.matsumo.fanbox.core.ui.component.PixiViewTopBar
 import me.matsumo.fanbox.core.ui.extensition.LocalSnackbarHostState
 import me.matsumo.fanbox.core.ui.extensition.SnackbarExtension
 import me.matsumo.fanbox.feature.creator.fancard.items.FanCardItem
-import moe.tlaster.precompose.flow.collectAsStateWithLifecycle
-import moe.tlaster.precompose.koin.koinViewModel
 import org.koin.compose.koinInject
+import org.koin.compose.viewmodel.koinViewModel
 
 @Composable
 internal fun FanCardRoute(
     creatorId: CreatorId,
     terminate: () -> Unit,
     modifier: Modifier = Modifier,
-    viewModel: FanCardViewModel = koinViewModel(FanCardViewModel::class),
+    viewModel: FanCardViewModel = koinViewModel(),
     snackbarExtension: SnackbarExtension = koinInject(),
 ) {
     val screenState by viewModel.screenState.collectAsStateWithLifecycle()

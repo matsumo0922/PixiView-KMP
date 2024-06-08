@@ -40,6 +40,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import app.cash.paging.compose.LazyPagingItems
 import app.cash.paging.compose.collectAsLazyPagingItems
 import dev.icerock.moko.resources.StringResource
@@ -72,9 +73,8 @@ import me.matsumo.fanbox.feature.creator.top.items.CreatorTopHeader
 import me.matsumo.fanbox.feature.creator.top.items.CreatorTopMenuDialog
 import me.matsumo.fanbox.feature.creator.top.items.CreatorTopPlansScreen
 import me.matsumo.fanbox.feature.creator.top.items.CreatorTopPostsScreen
-import moe.tlaster.precompose.flow.collectAsStateWithLifecycle
-import moe.tlaster.precompose.koin.koinViewModel
 import org.koin.compose.koinInject
+import org.koin.compose.viewmodel.koinViewModel
 
 @Composable
 internal fun CreatorTopRoute(
@@ -87,7 +87,7 @@ internal fun CreatorTopRoute(
     navigateToAlertDialog: (SimpleAlertContents, () -> Unit, () -> Unit) -> Unit,
     terminate: () -> Unit,
     modifier: Modifier = Modifier,
-    viewModel: CreatorTopViewModel = koinViewModel(CreatorTopViewModel::class),
+    viewModel: CreatorTopViewModel = koinViewModel(),
     navigatorExtension: NavigatorExtension = koinInject(),
     snackbarExtension: SnackbarExtension = koinInject(),
 ) {

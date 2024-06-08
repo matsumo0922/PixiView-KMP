@@ -3,22 +3,22 @@ package me.matsumo.fanbox.feature.creator.follow
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.ui.Modifier
 import me.matsumo.fanbox.core.model.fanbox.id.CreatorId
-import me.matsumo.fanbox.core.ui.animation.NavigateAnimation
-import moe.tlaster.precompose.navigation.NavOptions
-import moe.tlaster.precompose.navigation.Navigator
-import moe.tlaster.precompose.navigation.RouteBuilder
+import androidx.navigation.NavController
+import androidx.navigation.NavGraphBuilder
+import androidx.navigation.NavOptions
+import androidx.navigation.compose.composable
 
 const val FollowingCreatorsRoute = "followingCreators"
 
-fun Navigator.navigateToFollowingCreators(navOptions: NavOptions? = null) {
+fun NavController.navigateToFollowingCreators(navOptions: NavOptions? = null) {
     this.navigate(FollowingCreatorsRoute, navOptions)
 }
 
-fun RouteBuilder.followingCreatorsScreen(
+fun NavGraphBuilder.followingCreatorsScreen(
     navigateToCreatorPlans: (CreatorId) -> Unit,
     terminate: () -> Unit,
 ) {
-    scene(FollowingCreatorsRoute) {
+    composable(FollowingCreatorsRoute) {
         FollowingCreatorsRoute(
             modifier = Modifier.fillMaxSize(),
             navigateToCreatorPlans = navigateToCreatorPlans,

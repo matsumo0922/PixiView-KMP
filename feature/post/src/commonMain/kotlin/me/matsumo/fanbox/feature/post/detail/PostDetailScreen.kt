@@ -36,6 +36,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import app.cash.paging.compose.collectAsLazyPagingItems
 import coil3.compose.LocalPlatformContext
 import coil3.compose.SubcomposeAsyncImage
@@ -81,9 +82,8 @@ import me.matsumo.fanbox.feature.post.detail.items.PostDetailFileHeader
 import me.matsumo.fanbox.feature.post.detail.items.PostDetailImageHeader
 import me.matsumo.fanbox.feature.post.detail.items.PostDetailMenuDialog
 import me.matsumo.fanbox.feature.post.detail.items.postDetailCommentItems
-import moe.tlaster.precompose.flow.collectAsStateWithLifecycle
-import moe.tlaster.precompose.koin.koinViewModel
 import org.koin.compose.koinInject
+import org.koin.compose.viewmodel.koinViewModel
 
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
@@ -98,7 +98,7 @@ internal fun PostDetailRoute(
     navigateToCommentDeleteDialog: (SimpleAlertContents, () -> Unit) -> Unit,
     terminate: () -> Unit,
     modifier: Modifier = Modifier,
-    viewModel: PostDetailRootViewModel = koinViewModel(PostDetailRootViewModel::class),
+    viewModel: PostDetailRootViewModel = koinViewModel(),
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
     val paging = uiState.paging?.collectAsLazyPagingItems()
@@ -168,7 +168,7 @@ private fun PostDetailView(
     navigateToCommentDeleteDialog: (SimpleAlertContents, () -> Unit) -> Unit,
     terminate: () -> Unit,
     modifier: Modifier = Modifier,
-    viewModel: PostDetailViewModel = koinViewModel(PostDetailViewModel::class, key = postId.value),
+    viewModel: PostDetailViewModel = koinViewModel(key = postId.value),
     navigatorExtension: NavigatorExtension = koinInject(),
     snackExtension: SnackbarExtension = koinInject(),
 ) {

@@ -27,7 +27,6 @@ import com.mohamedrejeb.calf.ui.sheet.BottomSheetTransitioningDelegate
 import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.CompletableDeferred
 import me.matsumo.fanbox.core.ui.extensition.LocalSnackbarHostState
-import moe.tlaster.precompose.PreComposeApp
 import platform.UIKit.UIApplication
 import platform.UIKit.UIModalPresentationPopover
 import platform.UIKit.UISheetPresentationControllerDetentIdentifierLarge
@@ -56,25 +55,23 @@ actual fun SimpleBottomSheet(
             content = {
                 val snackbarHostState = remember { SnackbarHostState() }
 
-                PreComposeApp {
-                    MaterialTheme(
-                        typography = typography,
-                        shapes = shapes,
-                        colorScheme = colorScheme,
-                    ) {
-                        CompositionLocalProvider(LocalSnackbarHostState provides snackbarHostState) {
-                            Scaffold(
-                                modifier = modifier,
-                                snackbarHost = {
-                                    SnackbarHost(
-                                        modifier = Modifier.navigationBarsPadding(),
-                                        hostState = snackbarHostState,
-                                    )
-                                },
-                            ) {
-                                Column(modifier) {
-                                    content.invoke(this)
-                                }
+                MaterialTheme(
+                    typography = typography,
+                    shapes = shapes,
+                    colorScheme = colorScheme,
+                ) {
+                    CompositionLocalProvider(LocalSnackbarHostState provides snackbarHostState) {
+                        Scaffold(
+                            modifier = modifier,
+                            snackbarHost = {
+                                SnackbarHost(
+                                    modifier = Modifier.navigationBarsPadding(),
+                                    hostState = snackbarHostState,
+                                )
+                            },
+                        ) {
+                            Column(modifier) {
+                                content.invoke(this)
                             }
                         }
                     }

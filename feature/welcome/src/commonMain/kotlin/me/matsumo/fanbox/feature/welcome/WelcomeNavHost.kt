@@ -9,15 +9,16 @@ import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
+import androidx.navigation.compose.NavHost
+import androidx.navigation.compose.rememberNavController
 import dev.icerock.moko.permissions.Permission
 import dev.icerock.moko.permissions.PermissionsController
 import dev.icerock.moko.permissions.compose.BindEffect
 import dev.icerock.moko.permissions.compose.PermissionsControllerFactory
 import dev.icerock.moko.permissions.compose.rememberPermissionsControllerFactory
 import kotlinx.coroutines.launch
-import me.matsumo.fanbox.core.ui.animation.NavigateAnimation
 import me.matsumo.fanbox.core.ui.extensition.LocalSnackbarHostState
-import me.matsumo.fanbox.core.ui.extensition.rememberNavigator
+import me.matsumo.fanbox.core.ui.extensition.popBackStackWithResult
 import me.matsumo.fanbox.core.ui.view.navigateToSimpleAlertDialog
 import me.matsumo.fanbox.core.ui.view.simpleAlertDialogDialog
 import me.matsumo.fanbox.feature.welcome.login.WelcomeLoginRoute
@@ -30,7 +31,6 @@ import me.matsumo.fanbox.feature.welcome.top.WelcomeTopRoute
 import me.matsumo.fanbox.feature.welcome.top.welcomeTopScreen
 import me.matsumo.fanbox.feature.welcome.web.navigateToWelcomeWeb
 import me.matsumo.fanbox.feature.welcome.web.welcomeWebScreen
-import moe.tlaster.precompose.navigation.NavHost
 
 @Composable
 fun WelcomeNavHost(
@@ -40,11 +40,11 @@ fun WelcomeNavHost(
     isLoggedIn: Boolean,
     modifier: Modifier = Modifier,
 ) {
+    val navController = rememberNavController()
     val scope = rememberCoroutineScope()
 
     val factory: PermissionsControllerFactory = rememberPermissionsControllerFactory()
     val controller: PermissionsController = remember(factory) { factory.createPermissionsController() }
-
     val snackbarHostState = remember { SnackbarHostState() }
 
     val startDestination = when {
@@ -64,34 +64,31 @@ fun WelcomeNavHost(
                 )
             },
         ) {
-            val navigator = rememberNavigator("Welcome")
-
             NavHost(
                 modifier = modifier,
-                navigator = navigator,
-                initialRoute = startDestination,
-                navTransition = remember { NavigateAnimation.Horizontal.transition },
+                navController = navController,
+                startDestination = startDestination,
             ) {
                 welcomeTopScreen(
-                    navigateToWelcomeLogin = { navigator.navigateToWelcomeLogin() },
+                    navigateToWelcomeLogin = { navController.navigateToWelcomeLogin() },
                 )
 
                 welcomeLoginScreen(
-                    navigateToLoginScreen = { navigator.navigateToWelcomeWeb() },
+                    navigateToLoginScreen = { navController.navigateToWelcomeWeb() },
                     navigateToWelcomePermission = {
                         scope.launch {
                             if (controller.isPermissionGranted(Permission.STORAGE)) {
                                 onComplete.invoke()
                             } else {
-                                navigator.navigateToWelcomePermission()
+                                navController.navigateToWelcomePermission()
                             }
                         }
                     },
                 )
 
                 welcomeWebScreen(
-                    navigateToLoginAlert = { navigator.navigateToSimpleAlertDialog(it) },
-                    terminate = { navigator.goBack() }
+                    navigateToLoginAlert = { navController.navigateToSimpleAlertDialog(it) },
+                    terminate = { navController.popBackStack() }
                 )
 
                 welcomePermissionScreen(
@@ -99,7 +96,7 @@ fun WelcomeNavHost(
                 )
 
                 simpleAlertDialogDialog(
-                    onResult = { navigator.goBackWith(it) }
+                    onResult = { navController.popBackStackWithResult(it) }
                 )
             }
         }

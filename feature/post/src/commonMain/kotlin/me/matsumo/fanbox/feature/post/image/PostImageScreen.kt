@@ -22,6 +22,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import coil3.compose.LocalPlatformContext
 import coil3.compose.SubcomposeAsyncImage
 import coil3.request.ImageRequest
@@ -43,9 +44,8 @@ import me.matsumo.fanbox.core.ui.extensition.currentPlatform
 import me.matsumo.fanbox.core.ui.extensition.fanboxHeader
 import me.matsumo.fanbox.core.ui.theme.center
 import me.matsumo.fanbox.feature.post.image.items.PostImageMenuDialog
-import moe.tlaster.precompose.flow.collectAsStateWithLifecycle
-import moe.tlaster.precompose.koin.koinViewModel
 import org.koin.compose.koinInject
+import org.koin.compose.viewmodel.koinViewModel
 
 @Composable
 internal fun PostImageRoute(
@@ -53,7 +53,7 @@ internal fun PostImageRoute(
     postImageIndex: Int,
     terminate: () -> Unit,
     modifier: Modifier = Modifier,
-    viewModel: PostImageViewModel = koinViewModel(PostImageViewModel::class),
+    viewModel: PostImageViewModel = koinViewModel(),
     snackExtension: SnackbarExtension = koinInject(),
 ) {
     val scope = rememberCoroutineScope()
@@ -102,7 +102,7 @@ private fun PostImageScreen(
         HorizontalPager(
             modifier = Modifier.fillMaxSize(),
             state = pagerState,
-            beyondBoundsPageCount = 1,
+            // beyondBoundsPageCount = 1,
         ) {
             val zoomState = rememberZoomableState()
 

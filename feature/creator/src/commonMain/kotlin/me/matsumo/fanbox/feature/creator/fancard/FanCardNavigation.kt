@@ -4,24 +4,29 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.ui.Modifier
 import me.matsumo.fanbox.core.model.fanbox.id.CreatorId
 import me.matsumo.fanbox.core.ui.animation.NavigateAnimation
-import moe.tlaster.precompose.navigation.Navigator
-import moe.tlaster.precompose.navigation.RouteBuilder
-import moe.tlaster.precompose.navigation.path
+import androidx.navigation.NavController
+import androidx.navigation.NavGraphBuilder
+import androidx.navigation.NavType
+import androidx.navigation.compose.composable
+import androidx.navigation.navArgument
 
 const val FanCardId = "fanCardId"
 const val FanCardRoute = "fanCard/{$FanCardId}"
 
-fun Navigator.navigateToFanCard(creatorId: CreatorId) {
+fun NavController.navigateToFanCard(creatorId: CreatorId) {
     this.navigate("fanCard/$creatorId")
 }
 
-fun RouteBuilder.fanCardScreen(
+fun NavGraphBuilder.fanCardScreen(
     terminate: () -> Unit,
 ) {
-    scene(FanCardRoute) {
+    composable(
+        route = FanCardRoute,
+        arguments = listOf(navArgument(FanCardId) { type = NavType.StringType })
+    ) {
         FanCardRoute(
             modifier = Modifier.fillMaxSize(),
-            creatorId = CreatorId(it.path<String>(FanCardId).orEmpty()),
+            creatorId = CreatorId(it.arguments?.getString(FanCardId).orEmpty()),
             terminate = terminate,
         )
     }

@@ -26,9 +26,6 @@ dependencyResolutionManagement {
         create("libsMain") {
             from(files("gradle/libs.versions.toml"))
         }
-        create("libsSubmodule") {
-            from(files("precompose/gradle/libs.versions.toml"))
-        }
     }
 }
 
@@ -47,8 +44,3 @@ include(":feature:setting")
 include(":feature:about")
 include(":feature:post")
 include(":feature:creator")
-
-include(":precompose:precompose")
-include(":precompose:precompose-koin")
-include(":precompose:precompose-molecule")
-include(":precompose:precompose-viewmodel")

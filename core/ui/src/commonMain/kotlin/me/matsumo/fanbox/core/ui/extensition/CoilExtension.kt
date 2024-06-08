@@ -12,8 +12,10 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.RectangleShape
 import coil3.Image
+import coil3.annotation.ExperimentalCoilApi
+import coil3.network.NetworkHeaders
+import coil3.network.httpHeaders
 import coil3.request.ImageRequest
-import coil3.request.httpHeaders
 import com.eygraber.compose.placeholder.PlaceholderHighlight
 import com.eygraber.compose.placeholder.material3.fade
 import com.eygraber.compose.placeholder.material3.shimmer
@@ -42,20 +44,23 @@ interface ImageDownloader {
 @Composable
 expect fun ImageResource.asCoilImage(): Image
 
+@OptIn(ExperimentalCoilApi::class)
 @Composable
 fun ImageRequest.Builder.fanboxHeader(): ImageRequest.Builder {
     val cookie = LocalFanboxCookie.current.cookie
 
     httpHeaders(
-        headers {
-            append("origin", "https://www.fanbox.cc")
-            append("referer", "https://www.fanbox.cc")
-            append("user-agent", "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/98.0.4758.102 Safari/537.36")
+        NetworkHeaders.Builder()
+            .apply {
+                set("origin", "https://www.fanbox.cc")
+                set("referer", "https://www.fanbox.cc")
+                set("user-agent", "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/98.0.4758.102 Safari/537.36")
 
-            if (cookie.isNotBlank()) {
-                append("Cookie", cookie)
+                if (cookie.isNotBlank()) {
+                    set("Cookie", cookie)
+                }
             }
-        }
+            .build()
     )
 
     return this

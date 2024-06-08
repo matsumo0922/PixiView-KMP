@@ -24,6 +24,14 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import androidx.navigation.NavGraph.Companion.findStartDestination
+import androidx.navigation.NavHostController
+import androidx.navigation.NavOptions
+import androidx.navigation.Navigator
+import androidx.navigation.compose.currentBackStackEntryAsState
+import androidx.navigation.compose.rememberNavController
+import androidx.navigation.navOptions
 import kotlinx.collections.immutable.toImmutableList
 import kotlinx.coroutines.launch
 import me.matsumo.fanbox.core.model.fanbox.id.CreatorId
@@ -33,22 +41,16 @@ import me.matsumo.fanbox.core.ui.ads.BannerAdView
 import me.matsumo.fanbox.core.ui.extensition.LocalNavigationType
 import me.matsumo.fanbox.core.ui.extensition.LocalSnackbarHostState
 import me.matsumo.fanbox.core.ui.extensition.PixiViewNavigationType
-import me.matsumo.fanbox.core.ui.extensition.rememberNavigator
 import me.matsumo.fanbox.core.ui.view.SimpleAlertContents
 import me.matsumo.fanbox.feature.library.component.LibraryBottomBar
 import me.matsumo.fanbox.feature.library.component.LibraryDestination
 import me.matsumo.fanbox.feature.library.component.LibraryDrawer
 import me.matsumo.fanbox.feature.library.component.LibraryNavigationRail
 import me.matsumo.fanbox.feature.library.discovery.navigateToLibraryDiscovery
-import me.matsumo.fanbox.feature.library.home.LibraryHomeRoute
 import me.matsumo.fanbox.feature.library.home.navigateToLibraryHome
 import me.matsumo.fanbox.feature.library.message.navigateToLibraryMessage
 import me.matsumo.fanbox.feature.library.notify.navigateToLibraryNotify
-import moe.tlaster.precompose.flow.collectAsStateWithLifecycle
-import moe.tlaster.precompose.koin.koinViewModel
-import moe.tlaster.precompose.navigation.NavOptions
-import moe.tlaster.precompose.navigation.Navigator
-import moe.tlaster.precompose.navigation.PopUpTo
+import org.koin.compose.viewmodel.koinViewModel
 
 @Composable
 fun LibraryScreen(
@@ -66,16 +68,16 @@ fun LibraryScreen(
     navigateToBillingPlus: () -> Unit,
     navigateToCancelPlus: (SimpleAlertContents) -> Unit,
     modifier: Modifier = Modifier,
-    viewModel: LibraryViewModel = koinViewModel(LibraryViewModel::class)
+    viewModel: LibraryViewModel = koinViewModel()
 ) {
-    val navigator = rememberNavigator("Library")
+    val navController = rememberNavController()
     val drawerState = rememberDrawerState(DrawerValue.Closed)
     val snackbarHostState = remember { SnackbarHostState() }
     val scope = rememberCoroutineScope()
     val navigationType = LocalNavigationType.current
 
     val screenState by viewModel.screenState.collectAsStateWithLifecycle()
-    val backStackEntry by navigator.currentEntry.collectAsStateWithLifecycle(null)
+    val currentDestination = navController.currentBackStackEntryAsState().value?.destination
 
     AsyncLoadContents(
         modifier = modifier,
@@ -87,8 +89,8 @@ fun LibraryScreen(
                 LibraryDrawer(
                     state = drawerState,
                     userData = it.userData,
-                    currentDestination = backStackEntry?.route?.route,
-                    onClickLibrary = navigator::navigateToLibraryDestination,
+                    currentDestination = currentDestination,
+                    onClickLibrary = navController::navigateToLibraryDestination,
                     navigateToBookmarkedPosts = navigateToBookmarkedPosts,
                     navigateToFollowingCreators = navigateToFollowerCreators,
                     navigateToSupportingCreators = navigateToSupportingCreators,
@@ -104,8 +106,8 @@ fun LibraryScreen(
                     LibraryNavigationRail(
                         modifier = Modifier.fillMaxHeight(),
                         destinations = LibraryDestination.entries.toImmutableList(),
-                        currentDestination = backStackEntry?.route?.route,
-                        navigateToDestination = navigator::navigateToLibraryDestination,
+                        currentDestination = currentDestination,
+                        navigateToDestination = navController::navigateToLibraryDestination,
                     )
                 }
 
@@ -126,7 +128,7 @@ fun LibraryScreen(
                         CompositionLocalProvider(LocalSnackbarHostState provides snackbarHostState) {
                             LibraryNavHost(
                                 modifier = Modifier.weight(1f),
-                                navController = navigator,
+                                navController = navController,
                                 openDrawer = {
                                     // PreCompose bug https://github.com/Tlaster/PreCompose/issues/238
 
@@ -155,8 +157,8 @@ fun LibraryScreen(
                             LibraryBottomBar(
                                 modifier = Modifier.fillMaxWidth(),
                                 destinations = LibraryDestination.entries.toImmutableList(),
-                                currentDestination = backStackEntry?.route?.route,
-                                navigateToDestination = navigator::navigateToLibraryDestination,
+                                currentDestination = currentDestination,
+                                navigateToDestination = navController::navigateToLibraryDestination,
                             )
                         }
                     }
@@ -166,11 +168,14 @@ fun LibraryScreen(
     }
 }
 
-fun Navigator.navigateToLibraryDestination(destination: LibraryDestination) {
-    val navOption = NavOptions(
-        popUpTo = PopUpTo(LibraryHomeRoute),
-        launchSingleTop = true,
-    )
+fun NavHostController.navigateToLibraryDestination(destination: LibraryDestination) {
+    val navOption = navOptions {
+        popUpTo(graph.findStartDestination().route.orEmpty()) {
+            saveState = true
+        }
+        launchSingleTop = true
+        restoreState = true
+    }
 
     when (destination) {
         LibraryDestination.Home -> navigateToLibraryHome(navOption)

@@ -26,24 +26,26 @@ kotlin {
         iosArm64()
     }
 
-    listOf(
-        iosArm64(),
-    ).forEach {
-        it.compilations {
-            val main by getting {
-                cinterops {
-                    create("BillingSwift")
+    if (System.getProperty("os.name").lowercase().contains("mac")) {
+        listOf(iosArm64()).forEach {
+            it.compilations {
+                val main by getting {
+                    cinterops {
+                        create("BillingSwift")
+                    }
+
+                    swiftklib {
+                        create("BillingSwift") {
+                            minIos = 15
+
+                            path = file("../../iosApp/iosApp/Billing")
+                            packageName("me.matsumo.fanbox.core.billing.swift")
+                        }
+                    }
                 }
             }
         }
     }
 }
 
-swiftklib {
-    create("BillingSwift") {
-        minIos = 15
 
-        path = file("../../iosApp/iosApp/Billing")
-        packageName("me.matsumo.fanbox.core.billing.swift")
-    }
-}

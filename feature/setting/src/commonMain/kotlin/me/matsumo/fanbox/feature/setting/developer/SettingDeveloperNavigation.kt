@@ -7,21 +7,20 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
-import moe.tlaster.precompose.navigation.Navigator
-import moe.tlaster.precompose.navigation.RouteBuilder
+import androidx.navigation.NavController
+import androidx.navigation.NavGraphBuilder
+import androidx.navigation.compose.dialog
 
 const val SettingDeveloperRoute = "SettingDeveloper"
 
-fun Navigator.navigateToSettingDeveloper() {
+fun NavController.navigateToSettingDeveloper() {
     this.navigate(SettingDeveloperRoute)
 }
 
-fun RouteBuilder.settingDeveloperDialog(
+fun NavGraphBuilder.settingDeveloperDialog(
     terminate: () -> Unit,
 ) {
-    dialog(
-        route = SettingDeveloperRoute,
-    ) {
+    dialog(SettingDeveloperRoute) {
         Dialog(
             onDismissRequest = terminate,
         ) {

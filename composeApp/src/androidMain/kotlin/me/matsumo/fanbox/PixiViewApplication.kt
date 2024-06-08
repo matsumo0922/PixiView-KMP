@@ -5,11 +5,11 @@ import android.os.Build
 import coil3.ImageLoader
 import coil3.SingletonImageLoader
 import coil3.annotation.ExperimentalCoilApi
-import coil3.decode.GifDecoder
-import coil3.decode.ImageDecoderDecoder
 import coil3.disk.DiskCache
-import coil3.fetch.NetworkFetcher
+import coil3.gif.AnimatedImageDecoder
+import coil3.gif.GifDecoder
 import coil3.memory.MemoryCache
+import coil3.network.NetworkFetcher
 import coil3.request.crossfade
 import com.google.android.gms.ads.MobileAds
 import com.google.android.gms.ads.RequestConfiguration
@@ -70,10 +70,8 @@ class PixiViewApplication : Application() {
                         .build()
                 }
                 .components {
-                    add(NetworkFetcher.Factory())
-
                     if (Build.VERSION.SDK_INT >= 28) {
-                        add(ImageDecoderDecoder.Factory())
+                        add(AnimatedImageDecoder.Factory())
                     } else {
                         add(GifDecoder.Factory())
                     }

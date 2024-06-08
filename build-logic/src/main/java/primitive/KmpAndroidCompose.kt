@@ -15,11 +15,11 @@ class KmpAndroidCompose : Plugin<Project> {
         with(target) {
             with(pluginManager) {
                 apply("org.jetbrains.compose")
+                apply("org.jetbrains.kotlin.plugin.compose")
             }
 
             android {
                 buildFeatures.compose = true
-                composeOptions.kotlinCompilerExtensionVersion = libsMain.version("kotlinCompiler")
             }
 
             dependencies {

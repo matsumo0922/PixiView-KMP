@@ -28,10 +28,6 @@ kotlin {
                 implementation(project(":core:repository"))
                 implementation(project(":core:datastore"))
 
-                api(project(":precompose:precompose"))
-                api(project(":precompose:precompose-koin"))
-                api(project(":precompose:precompose-viewmodel"))
-
                 api(libsMain.bundles.ui.common.api)
                 api(libsMain.bundles.cupertino)
 
@@ -53,7 +49,7 @@ kotlin {
 
                 api(libsMain.calf.ui)
                 api(libsMain.placeholder)
-                api(libsMain.androidx.paging.compose)
+                api(libsMain.kmp.paging.compose)
                 api(libsMain.play.service.ads)
             }
         }
@@ -63,11 +59,6 @@ kotlin {
 
             dependencies {
                 api(libsMain.bundles.ui.android.api)
-
-                api(libsMain.androidx.compose.ui)
-                api(libsMain.androidx.compose.ui.util)
-                api(libsMain.androidx.compose.ui.tooling)
-                api(libsMain.androidx.compose.ui.binding)
             }
         }
 

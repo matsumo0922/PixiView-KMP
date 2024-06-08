@@ -2,25 +2,26 @@ package me.matsumo.fanbox.feature.post.bookmark
 
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.ui.Modifier
+import androidx.navigation.NavController
+import androidx.navigation.NavGraphBuilder
+import androidx.navigation.compose.composable
 import me.matsumo.fanbox.core.model.fanbox.id.CreatorId
 import me.matsumo.fanbox.core.model.fanbox.id.PostId
 import me.matsumo.fanbox.core.ui.animation.NavigateAnimation
-import moe.tlaster.precompose.navigation.Navigator
-import moe.tlaster.precompose.navigation.RouteBuilder
 
 const val BookmarkedPostsRoute = "bookmarkedPosts"
 
-fun Navigator.navigateToBookmarkedPosts() {
+fun NavController.navigateToBookmarkedPosts() {
     this.navigate(BookmarkedPostsRoute)
 }
 
-fun RouteBuilder.bookmarkedPostsScreen(
+fun NavGraphBuilder.bookmarkedPostsScreen(
     navigateToPostDetail: (PostId) -> Unit,
     navigateToCreatorPosts: (CreatorId) -> Unit,
     navigateToCreatorPlans: (CreatorId) -> Unit,
     terminate: () -> Unit,
 ) {
-    scene(BookmarkedPostsRoute) {
+    composable(BookmarkedPostsRoute) {
         BookmarkedPostsRoute(
             modifier = Modifier.fillMaxSize(),
             navigateToPostDetail = navigateToPostDetail,

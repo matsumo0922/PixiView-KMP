@@ -10,8 +10,8 @@ import me.matsumo.fanbox.core.model.ThemeColorConfig
 import me.matsumo.fanbox.core.model.ThemeConfig
 import me.matsumo.fanbox.core.model.UserData
 import me.matsumo.fanbox.core.repository.UserDataRepository
-import moe.tlaster.precompose.viewmodel.ViewModel
-import moe.tlaster.precompose.viewmodel.viewModelScope
+import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
 
 
 class SettingThemeViewModel(

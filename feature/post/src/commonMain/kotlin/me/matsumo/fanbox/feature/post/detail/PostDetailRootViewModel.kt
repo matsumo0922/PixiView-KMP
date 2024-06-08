@@ -17,8 +17,8 @@ import me.matsumo.fanbox.feature.post.detail.PostDetailPagingType.Home
 import me.matsumo.fanbox.feature.post.detail.PostDetailPagingType.Search
 import me.matsumo.fanbox.feature.post.detail.PostDetailPagingType.Supported
 import me.matsumo.fanbox.feature.post.detail.PostDetailPagingType.Unknown
-import moe.tlaster.precompose.viewmodel.ViewModel
-import moe.tlaster.precompose.viewmodel.viewModelScope
+import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
 
 class PostDetailRootViewModel(
     private val userDataRepository: UserDataRepository,

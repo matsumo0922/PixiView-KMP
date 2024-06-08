@@ -24,6 +24,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import dev.icerock.moko.resources.StringResource
 import dev.icerock.moko.resources.compose.stringResource
 import io.github.alexzhirkevich.cupertino.adaptive.AdaptiveScaffold
@@ -42,16 +43,15 @@ import me.matsumo.fanbox.core.ui.extensition.currentPlatform
 import me.matsumo.fanbox.feature.setting.SettingTheme
 import me.matsumo.fanbox.feature.setting.theme.items.SettingThemeColorSection
 import me.matsumo.fanbox.feature.setting.theme.items.SettingThemeTabsSection
-import moe.tlaster.precompose.flow.collectAsStateWithLifecycle
-import moe.tlaster.precompose.koin.koinViewModel
 import org.koin.compose.koinInject
+import org.koin.compose.viewmodel.koinViewModel
 
 @Composable
 internal fun SettingThemeRoute(
     navigateToBillingPlus: () -> Unit,
     terminate: () -> Unit,
     modifier: Modifier = Modifier,
-    viewModel: SettingThemeViewModel = koinViewModel(SettingThemeViewModel::class),
+    viewModel: SettingThemeViewModel = koinViewModel(),
     snackbarExtension: SnackbarExtension = koinInject(),
 ) {
     val screenState by viewModel.screenState.collectAsStateWithLifecycle()

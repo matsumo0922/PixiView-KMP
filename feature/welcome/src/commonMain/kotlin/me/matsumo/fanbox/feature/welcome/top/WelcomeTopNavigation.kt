@@ -2,19 +2,20 @@ package me.matsumo.fanbox.feature.welcome.top
 
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.ui.Modifier
-import moe.tlaster.precompose.navigation.Navigator
-import moe.tlaster.precompose.navigation.RouteBuilder
+import androidx.navigation.NavController
+import androidx.navigation.NavGraphBuilder
+import androidx.navigation.compose.composable
 
 const val WelcomeTopRoute = "welcomeTop"
 
-fun Navigator.navigateToWelcomeTop() {
+fun NavController.navigateToWelcomeTop() {
     this.navigate(WelcomeTopRoute)
 }
 
-fun RouteBuilder.welcomeTopScreen(
+fun NavGraphBuilder.welcomeTopScreen(
     navigateToWelcomeLogin: () -> Unit,
 ) {
-    scene(WelcomeTopRoute) {
+    composable(WelcomeTopRoute) {
         WelcomeTopScreen(
             modifier = Modifier.fillMaxSize(),
             navigateToWelcomeLogin = navigateToWelcomeLogin,

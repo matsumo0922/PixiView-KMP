@@ -57,14 +57,14 @@ import me.matsumo.fanbox.core.ui.extensition.currentPlatform
 import me.matsumo.fanbox.core.ui.theme.bold
 import me.matsumo.fanbox.core.ui.theme.center
 import me.matsumo.fanbox.feature.welcome.WelcomeIndicatorItem
-import moe.tlaster.precompose.koin.koinViewModel
 import org.koin.compose.koinInject
+import org.koin.compose.viewmodel.koinViewModel
 
 @Composable
 internal fun WelcomeTopScreen(
     navigateToWelcomeLogin: () -> Unit,
     modifier: Modifier = Modifier,
-    viewModel: WelcomeTopViewModel = koinViewModel(WelcomeTopViewModel::class),
+    viewModel: WelcomeTopViewModel = koinViewModel(),
     navigatorExtension: NavigatorExtension = koinInject(),
 ) {
     val navigationType = LocalNavigationType.current.type

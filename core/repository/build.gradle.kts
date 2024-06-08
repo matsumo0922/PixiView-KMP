@@ -21,11 +21,10 @@ kotlin {
             implementation(libsMain.ksoup)
             implementation(libsMain.webview.compose)
 
-            api(libsMain.androidx.paging.common)
+            api(libsMain.kmp.paging.common)
         }
 
         androidMain.dependencies {
-            api(libsMain.androidx.paging.runtime)
             api(libsMain.ktor.okhttp)
         }
 

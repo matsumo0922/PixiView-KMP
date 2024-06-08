@@ -2,6 +2,10 @@ package me.matsumo.fanbox.feature.library
 
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.navigation.NavGraphBuilder
+import androidx.navigation.NavHost
+import androidx.navigation.NavHostController
+import androidx.navigation.compose.NavHost
 import me.matsumo.fanbox.core.model.fanbox.id.CreatorId
 import me.matsumo.fanbox.core.model.fanbox.id.PostId
 import me.matsumo.fanbox.core.ui.animation.NavigateAnimation
@@ -14,13 +18,10 @@ import me.matsumo.fanbox.feature.library.message.LibraryMessageRoute
 import me.matsumo.fanbox.feature.library.message.libraryMessageScreen
 import me.matsumo.fanbox.feature.library.notify.LibraryNotifyRoute
 import me.matsumo.fanbox.feature.library.notify.libraryNotifyScreen
-import moe.tlaster.precompose.navigation.NavHost
-import moe.tlaster.precompose.navigation.Navigator
-import moe.tlaster.precompose.navigation.RouteBuilder
 
 @Composable
 fun LibraryNavHost(
-    navController: Navigator,
+    navController: NavHostController,
     openDrawer: () -> Unit,
     navigateToPostSearch: () -> Unit,
     navigateToPostDetailFromHome: (postId: PostId) -> Unit,
@@ -30,13 +31,12 @@ fun LibraryNavHost(
     navigateToSimpleAlert: (SimpleAlertContents) -> Unit,
     modifier: Modifier = Modifier,
     startDestination: String = LibraryHomeRoute,
-    applyOtherRoutes: RouteBuilder.() -> Unit = {},
+    applyOtherRoutes: NavGraphBuilder.() -> Unit = {},
 ) {
     NavHost(
         modifier = modifier,
-        navigator = navController,
-        initialRoute = startDestination,
-        navTransition = NavigateAnimation.Horizontal.transition,
+        navController = navController,
+        startDestination = startDestination,
     ) {
         libraryHomeScreen(
             openDrawer = openDrawer,

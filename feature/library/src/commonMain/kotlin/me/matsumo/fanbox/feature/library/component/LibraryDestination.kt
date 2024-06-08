@@ -10,6 +10,8 @@ import androidx.compose.material.icons.outlined.Mail
 import androidx.compose.material.icons.outlined.Notifications
 import androidx.compose.material.icons.outlined.Search
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.navigation.NavDestination
+import androidx.navigation.NavDestination.Companion.hierarchy
 import dev.icerock.moko.resources.StringResource
 import me.matsumo.fanbox.core.ui.MR
 
@@ -38,4 +40,8 @@ enum class LibraryDestination(
         deselectedIcon = Icons.Outlined.Mail,
         title = MR.strings.library_navigation_message,
     ),
+}
+
+internal fun NavDestination?.isLibraryDestinationInHierarchy(destination: LibraryDestination): Boolean {
+    return this?.hierarchy?.any { it.route?.contains(destination.name, true) ?: false } == true
 }

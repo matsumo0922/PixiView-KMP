@@ -2,21 +2,21 @@ package me.matsumo.fanbox.feature.library.home
 
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.ui.Modifier
+import androidx.navigation.NavController
+import androidx.navigation.NavGraphBuilder
+import androidx.navigation.NavOptions
+import androidx.navigation.compose.composable
 import me.matsumo.fanbox.core.model.fanbox.id.CreatorId
 import me.matsumo.fanbox.core.model.fanbox.id.PostId
-import me.matsumo.fanbox.core.ui.animation.NavigateAnimation
 import me.matsumo.fanbox.core.ui.view.SimpleAlertContents
-import moe.tlaster.precompose.navigation.NavOptions
-import moe.tlaster.precompose.navigation.Navigator
-import moe.tlaster.precompose.navigation.RouteBuilder
 
 const val LibraryHomeRoute = "libraryHome"
 
-fun Navigator.navigateToLibraryHome(navOptions: NavOptions? = null) {
+fun NavController.navigateToLibraryHome(navOptions: NavOptions? = null) {
     this.navigate(LibraryHomeRoute, navOptions)
 }
 
-fun RouteBuilder.libraryHomeScreen(
+fun NavGraphBuilder.libraryHomeScreen(
     openDrawer: () -> Unit,
     navigateToPostDetailFromHome: (PostId) -> Unit,
     navigateToPostDetailFromSupported: (PostId) -> Unit,
@@ -24,9 +24,8 @@ fun RouteBuilder.libraryHomeScreen(
     navigateToCreatorPlans: (CreatorId) -> Unit,
     navigateToSimpleAlert: (SimpleAlertContents) -> Unit,
 ) {
-    scene(
-        route = LibraryHomeRoute,
-        navTransition = NavigateAnimation.Library.transition
+    composable(
+        route = LibraryHomeRoute
     ) {
         LibraryHomeScreen(
             modifier = Modifier.fillMaxSize(),

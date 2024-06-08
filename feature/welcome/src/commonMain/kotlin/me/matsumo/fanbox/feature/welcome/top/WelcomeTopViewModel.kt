@@ -1,7 +1,7 @@
 package me.matsumo.fanbox.feature.welcome.top
 
+import androidx.lifecycle.ViewModel
 import me.matsumo.fanbox.core.repository.UserDataRepository
-import moe.tlaster.precompose.viewmodel.ViewModel
 
 class WelcomeTopViewModel(
     private val userDataRepository: UserDataRepository

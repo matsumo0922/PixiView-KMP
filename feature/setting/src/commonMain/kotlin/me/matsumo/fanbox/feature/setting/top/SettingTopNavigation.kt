@@ -4,16 +4,17 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.ui.Modifier
 import me.matsumo.fanbox.core.ui.animation.NavigateAnimation
 import me.matsumo.fanbox.core.ui.view.SimpleAlertContents
-import moe.tlaster.precompose.navigation.Navigator
-import moe.tlaster.precompose.navigation.RouteBuilder
+import androidx.navigation.NavController
+import androidx.navigation.NavGraphBuilder
+import androidx.navigation.compose.composable
 
 const val SettingTopRoute = "settingTop"
 
-fun Navigator.navigateToSettingTop() {
+fun NavController.navigateToSettingTop() {
     this.navigate(SettingTopRoute)
 }
 
-fun RouteBuilder.settingTopScreen(
+fun NavGraphBuilder.settingTopScreen(
     navigateToThemeSetting: () -> Unit,
     navigateToBillingPlus: () -> Unit,
     navigateToLogoutDialog: (SimpleAlertContents, () -> Unit) -> Unit,
@@ -21,7 +22,7 @@ fun RouteBuilder.settingTopScreen(
     navigateToSettingDeveloper: () -> Unit,
     terminate: () -> Unit,
 ) {
-    scene(SettingTopRoute) {
+    composable(SettingTopRoute) {
         SettingTopRoute(
             modifier = Modifier.fillMaxSize(),
             navigateToThemeSetting = navigateToThemeSetting,
