@@ -7,7 +7,7 @@ dependencyResolutionManagement {
         gradlePluginPortal()
     }
     versionCatalogs {
-        create("libsMain") {
+        create("libs") {
             from(files("../gradle/libs.versions.toml"))
         }
     }

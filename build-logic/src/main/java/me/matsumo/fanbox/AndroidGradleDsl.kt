@@ -23,8 +23,8 @@ fun Project.android(action: TestedExtension.() -> Unit) {
 fun Project.setupAndroid() {
     android {
         defaultConfig {
-            targetSdk = libsMain.version("targetSdk").toInt()
-            minSdk = libsMain.version("minSdk").toInt()
+            targetSdk = libs.version("targetSdk").toInt()
+            minSdk = libs.version("minSdk").toInt()
 
             javaCompileOptions {
                 annotationProcessorOptions {
@@ -55,7 +55,7 @@ fun Project.setupAndroid() {
         }
 
         dependencies {
-            add("coreLibraryDesugaring", libsMain.library("desugar"))
+            add("coreLibraryDesugaring", libs.library("desugar"))
         }
     }
 }

@@ -20,7 +20,7 @@ kotlin {
         }
 
         androidMain.dependencies {
-            api(libsMain.bundles.billing)
+            api(libs.bundles.billing)
         }
 
         iosArm64()

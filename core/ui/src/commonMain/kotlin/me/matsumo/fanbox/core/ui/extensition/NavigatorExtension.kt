@@ -43,6 +43,7 @@ typealias NavResultCallback<T> = (T) -> Unit
 
 // A SavedStateHandle key is used to set/get NavResultCallback<T>
 private const val NavResultCallbackKey = "NavResultCallbackKey"
+private val navResultLambdas = mutableMapOf<String, NavResultCallback<*>>()
 
 /**
  * Set the navigation result callback on calling screen.
@@ -50,7 +51,7 @@ private const val NavResultCallbackKey = "NavResultCallbackKey"
  * @param callback The navigation result callback.
  */
 fun <T> NavController.setNavResultCallback(callback: NavResultCallback<T>) {
-    currentBackStackEntry?.savedStateHandle?.set(NavResultCallbackKey, callback)
+   navResultLambdas[NavResultCallbackKey] = callback
 }
 
 /**
@@ -59,7 +60,7 @@ fun <T> NavController.setNavResultCallback(callback: NavResultCallback<T>) {
  * @return The navigation result callback if the previous backstack entry exists
  */
 fun <T> NavController.getNavResultCallback(): NavResultCallback<T>? {
-    return previousBackStackEntry?.savedStateHandle?.remove(NavResultCallbackKey)
+    return navResultLambdas.remove(NavResultCallbackKey) as? NavResultCallback<T>
 }
 
 /**

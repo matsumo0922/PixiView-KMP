@@ -2,7 +2,10 @@ package me.matsumo.fanbox.core.repository.di
 
 import io.github.aakira.napier.Napier
 import io.ktor.client.HttpClient
+import io.ktor.client.plugins.HttpRedirect
 import io.ktor.client.plugins.HttpRequestRetry
+import io.ktor.client.plugins.HttpResponseValidator
+import io.ktor.client.plugins.RedirectResponseException
 import io.ktor.client.plugins.contentnegotiation.ContentNegotiation
 import io.ktor.client.plugins.cookies.HttpCookies
 import io.ktor.client.plugins.logging.LogLevel
@@ -36,6 +39,14 @@ val repositoryModule = module {
 
     single<HttpClient> {
         HttpClient {
+            HttpResponseValidator {
+                validateResponse { response ->
+                    if (response.call.request.url.toString().contains("https://www.fanbox.cc") && response.status.value in 300..399) {
+                        throw RedirectResponseException(response, "Redirect is not allowed.")
+                    }
+                }
+            }
+
             install(Logging) {
                 level = LogLevel.INFO
                 logger = object : Logger {
@@ -54,7 +65,7 @@ val repositoryModule = module {
             }
 
             install(HttpRequestRetry) {
-                maxRetries = 2
+                maxRetries = 1
 
                 retryIf { _, response ->
                     !response.status.isSuccess()

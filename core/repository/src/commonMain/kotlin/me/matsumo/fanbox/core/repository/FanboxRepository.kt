@@ -198,8 +198,6 @@ class FanboxRepositoryImpl(
     }
 
     override suspend fun updateCsrfToken() = withContext(ioDispatcher) {
-        Napier.d { "updateCsrfToken" }
-
         val response = client.get("https://www.fanbox.cc/")
         val html = response.bodyAsText()
         val doc = Ksoup.parse(html)

@@ -28,8 +28,8 @@ kotlin {
                 implementation(project(":core:repository"))
                 implementation(project(":core:datastore"))
 
-                api(libsMain.bundles.ui.common.api)
-                api(libsMain.bundles.cupertino)
+                api(libs.bundles.ui.common.api)
+                api(libs.bundles.cupertino)
 
                 // Compose
                 api(compose.runtime)
@@ -44,13 +44,13 @@ kotlin {
                 api(compose.components.resources)
 
                 // Resources
-                api(libsMain.moko.resources)
-                api(libsMain.moko.resources.compose)
+                api(libs.moko.resources)
+                api(libs.moko.resources.compose)
 
-                api(libsMain.calf.ui)
-                api(libsMain.placeholder)
-                api(libsMain.kmp.paging.compose)
-                api(libsMain.play.service.ads)
+                api(libs.calf.ui)
+                api(libs.placeholder)
+                api(libs.kmp.paging.compose)
+                api(libs.play.service.ads)
             }
         }
 
@@ -58,7 +58,7 @@ kotlin {
             dependsOn(commonMain)
 
             dependencies {
-                api(libsMain.bundles.ui.android.api)
+                api(libs.bundles.ui.android.api)
             }
         }
 

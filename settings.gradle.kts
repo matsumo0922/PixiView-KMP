@@ -22,11 +22,6 @@ dependencyResolutionManagement {
         maven("https://www.jitpack.io")
         maven("https://maven.pkg.jetbrains.space/public/p/compose/dev")
     }
-    versionCatalogs {
-        create("libsMain") {
-            from(files("gradle/libs.versions.toml"))
-        }
-    }
 }
 
 include(":composeApp")
