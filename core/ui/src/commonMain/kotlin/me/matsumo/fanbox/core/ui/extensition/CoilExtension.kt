@@ -23,7 +23,6 @@ import com.eygraber.compose.placeholder.placeholder
 import dev.icerock.moko.resources.ImageResource
 import io.github.alexzhirkevich.cupertino.adaptive.AdaptiveCircularProgressIndicator
 import io.github.alexzhirkevich.cupertino.adaptive.ExperimentalAdaptiveApi
-import io.ktor.http.headers
 import me.matsumo.fanbox.core.model.fanbox.FanboxMetaData
 import me.matsumo.fanbox.core.model.fanbox.FanboxPostDetail
 
@@ -37,8 +36,11 @@ val LocalFanboxCookie = staticCompositionLocalOf { FanboxCookie() }
 val LocalFanboxMetadata = staticCompositionLocalOf { FanboxMetaData.dummy() }
 
 interface ImageDownloader {
-    suspend fun downloadImage(item: FanboxPostDetail.ImageItem, updateCallback: (Float) -> Unit = {}): Boolean
-    suspend fun downloadFile(item: FanboxPostDetail.FileItem, updateCallback: (Float) -> Unit = {}): Boolean
+    fun downloadImages(items: List<FanboxPostDetail.ImageItem>, callback: () -> Unit)
+    fun downloadFiles(items: List<FanboxPostDetail.FileItem>, callback: () -> Unit)
+
+    fun downloadImage(item: FanboxPostDetail.ImageItem, callback: () -> Unit)
+    fun downloadFile(item: FanboxPostDetail.FileItem, callback: () -> Unit)
 }
 
 @Composable

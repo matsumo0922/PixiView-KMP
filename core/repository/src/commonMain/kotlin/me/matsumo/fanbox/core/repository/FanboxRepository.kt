@@ -7,7 +7,6 @@ import androidx.paging.cachedIn
 import com.fleeksoft.ksoup.Ksoup
 import io.github.aakira.napier.Napier
 import io.ktor.client.HttpClient
-import io.ktor.client.plugins.onDownload
 import io.ktor.client.request.get
 import io.ktor.client.request.header
 import io.ktor.client.request.parameter
@@ -149,7 +148,7 @@ interface FanboxRepository {
     suspend fun bookmarkPost(post: FanboxPost)
     suspend fun unbookmarkPost(post: FanboxPost)
 
-    suspend fun download(url: String, updateCallback: (Float) -> Unit): HttpResponse
+    suspend fun download(url: String): HttpResponse
 }
 
 class FanboxRepositoryImpl(
@@ -511,14 +510,10 @@ class FanboxRepositoryImpl(
         }
     }
 
-    override suspend fun download(url: String, updateCallback: (Float) -> Unit): HttpResponse {
+    override suspend fun download(url: String): HttpResponse {
         return client.get {
             url(url)
             fanboxHeader()
-            
-            onDownload { bytesSentTotal, contentLength ->
-                updateCallback.invoke(bytesSentTotal.toFloat() / contentLength.toFloat())
-            }
         }
     }
 

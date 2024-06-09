@@ -212,15 +212,17 @@ private fun PostDetailView(
                 }
             },
             onClickFile = {
-                scope.launch {
-                    val result = if (viewModel.downloadFiles(listOf(it))) MR.strings.common_downloaded else MR.strings.error_download
-                    snackExtension.showSnackbar(snackbarHostState, result)
+                viewModel.downloadFiles(listOf(it)) {
+                    scope.launch {
+                        snackExtension.showSnackbar(snackbarHostState, MR.strings.common_downloaded)
+                    }
                 }
             },
             onClickDownloadImages = {
-                scope.launch {
-                    val result = if (viewModel.downloadImages(it)) MR.strings.common_downloaded else MR.strings.error_download
-                    snackExtension.showSnackbar(snackbarHostState, result)
+                viewModel.downloadImages(it) {
+                    scope.launch {
+                        snackExtension.showSnackbar(snackbarHostState, MR.strings.common_downloaded)
+                    }
                 }
             },
             onClickCreatorPosts = navigateToCreatorPosts,

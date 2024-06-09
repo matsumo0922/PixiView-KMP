@@ -76,9 +76,10 @@ internal fun PostImageRoute(
             imageIndex = postImageIndex,
             postDetail = uiState.postDetail,
             onClickDownload = {
-                scope.launch {
-                    val result = if (viewModel.downloadImages(it)) MR.strings.common_downloaded else MR.strings.error_download
-                    snackExtension.showSnackbar(snackbarHostState, result)
+                viewModel.downloadImages(it) {
+                    scope.launch {
+                        snackExtension.showSnackbar(snackbarHostState, MR.strings.common_downloaded)
+                    }
                 }
             },
             onTerminate = terminate,

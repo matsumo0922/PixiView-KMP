@@ -7,6 +7,7 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.suspendCancellableCoroutine
 import me.matsumo.fanbox.core.common.util.suspendRunCatching
 import me.matsumo.fanbox.core.model.ScreenState
 import me.matsumo.fanbox.core.model.fanbox.FanboxCreatorDetail
@@ -18,6 +19,7 @@ import me.matsumo.fanbox.core.model.updateWhenIdle
 import me.matsumo.fanbox.core.repository.FanboxRepository
 import me.matsumo.fanbox.core.ui.MR
 import me.matsumo.fanbox.core.ui.extensition.ImageDownloader
+import kotlin.coroutines.resume
 
 class CreatorPostsDownloadViewModel(
     private val fanboxRepository: FanboxRepository,
@@ -90,12 +92,20 @@ class CreatorPostsDownloadViewModel(
             val postDetail = fanboxRepository.getPost(postId)
 
             for (imageItem in postDetail.body.imageItems) {
-                imageDownloader.downloadImage(imageItem)
+                suspendCancellableCoroutine {
+                    imageDownloader.downloadImage(imageItem) {
+                        it.resume(Unit)
+                    }
+                }
                 delay(500)
             }
 
             for (fileItem in postDetail.body.fileItems) {
-                imageDownloader.downloadFile(fileItem)
+                suspendCancellableCoroutine {
+                    imageDownloader.downloadFile(fileItem) {
+                        it.resume(Unit)
+                    }
+                }
                 delay(500)
             }
         }

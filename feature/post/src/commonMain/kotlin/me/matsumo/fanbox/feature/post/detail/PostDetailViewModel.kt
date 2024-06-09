@@ -1,6 +1,8 @@
 package me.matsumo.fanbox.feature.post.detail
 
 import androidx.compose.runtime.Stable
+import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
 import dev.icerock.moko.resources.StringResource
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -22,8 +24,6 @@ import me.matsumo.fanbox.core.repository.FanboxRepository
 import me.matsumo.fanbox.core.repository.UserDataRepository
 import me.matsumo.fanbox.core.ui.MR
 import me.matsumo.fanbox.core.ui.extensition.ImageDownloader
-import androidx.lifecycle.ViewModel
-import androidx.lifecycle.viewModelScope
 
 class PostDetailViewModel(
     private val userDataRepository: UserDataRepository,
@@ -216,12 +216,12 @@ class PostDetailViewModel(
         }
     }
 
-    suspend fun downloadImages(imageItems: List<FanboxPostDetail.ImageItem>): Boolean {
-        return imageItems.map { imageDownloader.downloadImage(it) }.all { it }
+    fun downloadImages(imageItems: List<FanboxPostDetail.ImageItem>, callback: () -> Unit) {
+        imageDownloader.downloadImages(imageItems, callback)
     }
 
-    suspend fun downloadFiles(fileItems: List<FanboxPostDetail.FileItem>): Boolean {
-        return fileItems.map { imageDownloader.downloadFile(it) }.all { it }
+    fun downloadFiles(fileItems: List<FanboxPostDetail.FileItem>, callback: () -> Unit) {
+        imageDownloader.downloadFiles(fileItems, callback)
     }
 }
 

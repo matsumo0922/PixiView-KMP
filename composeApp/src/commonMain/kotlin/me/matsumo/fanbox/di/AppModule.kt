@@ -1,8 +1,11 @@
 package me.matsumo.fanbox.di
 
 import kotlinx.coroutines.CoroutineDispatcher
+import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.IO
+import kotlinx.coroutines.SupervisorJob
 import me.matsumo.fanbox.BuildKonfig
 import me.matsumo.fanbox.PixiViewViewModel
 import me.matsumo.fanbox.core.common.PixiViewConfig
@@ -10,6 +13,7 @@ import org.koin.dsl.module
 
 expect fun getPixiViewConfig(): PixiViewConfig
 
+@OptIn(ExperimentalCoroutinesApi::class)
 val appModule = module {
 
     single {
@@ -17,7 +21,11 @@ val appModule = module {
     }
 
     single<CoroutineDispatcher> {
-        Dispatchers.IO
+        Dispatchers.IO.limitedParallelism(24)
+    }
+
+    single<CoroutineScope> {
+        CoroutineScope(SupervisorJob() + get<CoroutineDispatcher>())
     }
 
     factory { 

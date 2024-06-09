@@ -33,8 +33,8 @@ import androidx.compose.material.icons.outlined.Notifications
 import androidx.compose.material.icons.outlined.Payment
 import androidx.compose.material.icons.outlined.PersonAdd
 import androidx.compose.material.icons.outlined.Search
-import androidx.compose.material3.Divider
 import androidx.compose.material3.DrawerState
+import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
@@ -129,10 +129,10 @@ fun DrawerContent(
             onClick = { onClickLibrary.invoke(LibraryDestination.Message) },
         )
 
-        Divider(
+        HorizontalDivider(
             modifier = Modifier
                 .padding(vertical = 8.dp)
-                .fillMaxWidth(),
+                .fillMaxWidth()
         )
 
         NavigationDrawerItem(
@@ -163,10 +163,10 @@ fun DrawerContent(
             onClick = navigateToPayments,
         )
 
-        Divider(
+        HorizontalDivider(
             modifier = Modifier
                 .padding(vertical = 8.dp)
-                .fillMaxWidth(),
+                .fillMaxWidth()
         )
 
         NavigationDrawerItem(
@@ -185,10 +185,10 @@ fun DrawerContent(
 
         Spacer(modifier = Modifier.weight(1f))
 
-        Divider(
+        HorizontalDivider(
             modifier = Modifier
                 .padding(top = 8.dp)
-                .fillMaxWidth(),
+                .fillMaxWidth()
         )
 
         NavigationDrawerPlusItem(

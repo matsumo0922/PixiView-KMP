@@ -28,6 +28,7 @@ actual val uiSubModule: Module = module {
         ImageDownloaderImpl(
             context = get(),
             fanboxRepository = get(),
+            scope = get(),
         )
     }
 

@@ -2,7 +2,6 @@ package me.matsumo.fanbox.core.repository.di
 
 import io.github.aakira.napier.Napier
 import io.ktor.client.HttpClient
-import io.ktor.client.plugins.HttpRedirect
 import io.ktor.client.plugins.HttpRequestRetry
 import io.ktor.client.plugins.HttpResponseValidator
 import io.ktor.client.plugins.RedirectResponseException

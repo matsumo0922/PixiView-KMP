@@ -37,8 +37,8 @@ class PostImageViewModel(
         }
     }
 
-    suspend fun downloadImages(imageItems: List<FanboxPostDetail.ImageItem>): Boolean {
-        return imageItems.map { imageDownloader.downloadImage(it) }.all { it }
+    fun downloadImages(imageItems: List<FanboxPostDetail.ImageItem>, callback: () -> Unit) {
+        imageDownloader.downloadImages(imageItems, callback)
     }
 }
 
