@@ -17,6 +17,7 @@ import dev.icerock.moko.permissions.compose.BindEffect
 import dev.icerock.moko.permissions.compose.PermissionsControllerFactory
 import dev.icerock.moko.permissions.compose.rememberPermissionsControllerFactory
 import kotlinx.coroutines.launch
+import me.matsumo.fanbox.core.ui.animation.NavigateAnimation
 import me.matsumo.fanbox.core.ui.extensition.LocalSnackbarHostState
 import me.matsumo.fanbox.core.ui.extensition.popBackStackWithResult
 import me.matsumo.fanbox.core.ui.view.navigateToSimpleAlertDialog
@@ -68,6 +69,10 @@ fun WelcomeNavHost(
                 modifier = modifier,
                 navController = navController,
                 startDestination = startDestination,
+                enterTransition = { NavigateAnimation.Horizontal.enter },
+                exitTransition = { NavigateAnimation.Horizontal.exit },
+                popEnterTransition = { NavigateAnimation.Horizontal.popEnter },
+                popExitTransition = { NavigateAnimation.Horizontal.popExit },
             ) {
                 welcomeTopScreen(
                     navigateToWelcomeLogin = { navController.navigateToWelcomeLogin() },

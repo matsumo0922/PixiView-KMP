@@ -4,6 +4,8 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.window.DialogProperties
+import androidx.navigation.NavBackStackEntry
 import androidx.navigation.NavController
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.NavOptions
@@ -18,20 +20,24 @@ interface NavigatorExtension {
     fun killApp()
 }
 
-@OptIn(ExperimentalMaterial3Api::class)
 fun NavGraphBuilder.bottomSheet(
     route: String,
     onDismissRequest: () -> Unit,
     skipPartiallyExpanded: Boolean = false,
-    content: @Composable () -> Unit,
+    content: @Composable (NavBackStackEntry) -> Unit,
 ) {
-    dialog(route) {
+    dialog(
+        route = route,
+        dialogProperties = DialogProperties(
+            usePlatformDefaultWidth = false,
+        )
+    ) {
         SimpleBottomSheet(
             modifier = Modifier.fillMaxWidth(),
             onDismissRequest = onDismissRequest,
             skipPartiallyExpanded = skipPartiallyExpanded,
         ) {
-            content()
+            content(it)
         }
     }
 }
@@ -51,7 +57,7 @@ private val navResultLambdas = mutableMapOf<String, NavResultCallback<*>>()
  * @param callback The navigation result callback.
  */
 fun <T> NavController.setNavResultCallback(callback: NavResultCallback<T>) {
-   navResultLambdas[NavResultCallbackKey] = callback
+    navResultLambdas[NavResultCallbackKey] = callback
 }
 
 /**

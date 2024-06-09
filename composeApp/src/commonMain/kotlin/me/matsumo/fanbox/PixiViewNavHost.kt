@@ -10,6 +10,7 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
+import me.matsumo.fanbox.core.ui.animation.NavigateAnimation
 import me.matsumo.fanbox.core.ui.component.emptyDetailScreen
 import me.matsumo.fanbox.core.ui.extensition.PixiViewNavigationType
 import me.matsumo.fanbox.core.ui.extensition.popBackStackWithResult
@@ -63,9 +64,13 @@ internal fun PixiViewNavHost(
     val scope = rememberCoroutineScope()
 
     NavHost(
+        modifier = modifier,
         navController = navController,
         startDestination = startDestination,
-        modifier = modifier,
+        enterTransition = { NavigateAnimation.Horizontal.enter },
+        exitTransition = { NavigateAnimation.Horizontal.exit },
+        popEnterTransition = { NavigateAnimation.Horizontal.popEnter },
+        popExitTransition = { NavigateAnimation.Horizontal.popExit },
     ) {
         applyNavGraph(scope, navController)
     }

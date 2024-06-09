@@ -37,6 +37,8 @@ fun LibraryNavHost(
         modifier = modifier,
         navController = navController,
         startDestination = startDestination,
+        enterTransition = { NavigateAnimation.Home.enter },
+        exitTransition = { NavigateAnimation.Home.exit },
     ) {
         libraryHomeScreen(
             openDrawer = openDrawer,
