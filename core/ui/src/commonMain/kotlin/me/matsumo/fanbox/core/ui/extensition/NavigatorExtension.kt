@@ -1,45 +1,14 @@
 package me.matsumo.fanbox.core.ui.extensition
 
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.runtime.Composable
-import androidx.compose.ui.Modifier
-import androidx.compose.ui.window.DialogProperties
-import androidx.navigation.NavBackStackEntry
 import androidx.navigation.NavController
-import androidx.navigation.NavGraphBuilder
 import androidx.navigation.NavOptions
 import androidx.navigation.NavOptionsBuilder
 import androidx.navigation.Navigator
-import androidx.navigation.compose.dialog
 import androidx.navigation.navOptions
-import me.matsumo.fanbox.core.ui.view.SimpleBottomSheet
 
 interface NavigatorExtension {
     fun navigateToWebPage(url: String)
     fun killApp()
-}
-
-fun NavGraphBuilder.bottomSheet(
-    route: String,
-    onDismissRequest: () -> Unit,
-    skipPartiallyExpanded: Boolean = false,
-    content: @Composable (NavBackStackEntry) -> Unit,
-) {
-    dialog(
-        route = route,
-        dialogProperties = DialogProperties(
-            usePlatformDefaultWidth = false,
-        )
-    ) {
-        SimpleBottomSheet(
-            modifier = Modifier.fillMaxWidth(),
-            onDismissRequest = onDismissRequest,
-            skipPartiallyExpanded = skipPartiallyExpanded,
-        ) {
-            content(it)
-        }
-    }
 }
 
 /**

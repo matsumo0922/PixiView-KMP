@@ -1,17 +1,19 @@
 package me.matsumo.fanbox
 
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
-import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 import me.matsumo.fanbox.core.ui.animation.NavigateAnimation
 import me.matsumo.fanbox.core.ui.component.emptyDetailScreen
+import me.matsumo.fanbox.core.ui.component.sheet.ModalBottomSheetLayout
+import me.matsumo.fanbox.core.ui.component.sheet.rememberBottomSheetNavigator
 import me.matsumo.fanbox.core.ui.extensition.PixiViewNavigationType
 import me.matsumo.fanbox.core.ui.extensition.popBackStackWithResult
 import me.matsumo.fanbox.core.ui.view.navigateToSimpleAlertDialog
@@ -60,19 +62,25 @@ internal fun PixiViewNavHost(
     modifier: Modifier = Modifier,
     startDestination: String = LibraryRoute,
 ) {
-    val navController = rememberNavController()
+    val bottomSheetNavigator = rememberBottomSheetNavigator()
+    val navController = rememberNavController(bottomSheetNavigator)
     val scope = rememberCoroutineScope()
 
-    NavHost(
+    ModalBottomSheetLayout(
         modifier = modifier,
-        navController = navController,
-        startDestination = startDestination,
-        enterTransition = { NavigateAnimation.Horizontal.enter },
-        exitTransition = { NavigateAnimation.Horizontal.exit },
-        popEnterTransition = { NavigateAnimation.Horizontal.popEnter },
-        popExitTransition = { NavigateAnimation.Horizontal.popExit },
+        bottomSheetNavigator = bottomSheetNavigator,
     ) {
-        applyNavGraph(scope, navController)
+        NavHost(
+            modifier = Modifier.fillMaxSize(),
+            navController = navController,
+            startDestination = startDestination,
+            enterTransition = { NavigateAnimation.Horizontal.enter },
+            exitTransition = { NavigateAnimation.Horizontal.exit },
+            popEnterTransition = { NavigateAnimation.Horizontal.popEnter },
+            popExitTransition = { NavigateAnimation.Horizontal.popExit },
+        ) {
+            applyNavGraph(scope, navController)
+        }
     }
 }
 

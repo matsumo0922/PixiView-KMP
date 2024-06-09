@@ -4,7 +4,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.ui.Modifier
 import androidx.navigation.NavController
 import androidx.navigation.NavGraphBuilder
-import me.matsumo.fanbox.core.ui.extensition.bottomSheet
+import me.matsumo.fanbox.core.ui.component.sheet.bottomSheet
 
 const val BillingPlusRoute = "billingPlus"
 
@@ -15,11 +15,7 @@ fun NavController.navigateToBillingPlus() {
 fun NavGraphBuilder.billingPlusBottomSheet(
     terminate: () -> Unit,
 ) {
-    bottomSheet(
-        route = BillingPlusRoute,
-        skipPartiallyExpanded = true,
-        onDismissRequest = terminate,
-    ) {
+    bottomSheet(BillingPlusRoute) {
         BillingPlusRoute(
             modifier = Modifier.fillMaxSize(),
             terminate = terminate,
