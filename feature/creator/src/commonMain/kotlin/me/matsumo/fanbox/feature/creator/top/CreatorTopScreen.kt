@@ -73,6 +73,7 @@ import me.matsumo.fanbox.feature.creator.top.items.CreatorTopHeader
 import me.matsumo.fanbox.feature.creator.top.items.CreatorTopMenuDialog
 import me.matsumo.fanbox.feature.creator.top.items.CreatorTopPlansScreen
 import me.matsumo.fanbox.feature.creator.top.items.CreatorTopPostsScreen
+import me.matsumo.fanbox.feature.creator.top.items.CreatorTopRewardAdDialog
 import org.koin.compose.koinInject
 import org.koin.compose.viewmodel.koinViewModel
 
@@ -196,6 +197,7 @@ private fun CreatorTopScreen(
     val postsGridState = rememberLazyGridState()
     val plansListState = rememberLazyListState()
 
+    var isShowRewardAdDialog by remember { mutableStateOf(false) }
     var isShowDescriptionDialog by remember { mutableStateOf(false) }
     var isShowMenuDialog by remember { mutableStateOf(false) }
     var isVisibleFAB by remember { mutableStateOf(false) }
@@ -346,8 +348,7 @@ private fun CreatorTopScreen(
                     if (userData.hasPrivilege) {
                         onClickAllDownload.invoke(creatorDetail.creatorId)
                     } else {
-                        onShowSnackBar.invoke(requirePlusError)
-                        onClickBillingPlus.invoke()
+                        isShowRewardAdDialog = true
                     }
                 },
             ) {
@@ -357,6 +358,20 @@ private fun CreatorTopScreen(
                 )
             }
         }
+    }
+
+    if (isShowRewardAdDialog) {
+        CreatorTopRewardAdDialog(
+            onRewarded = {
+                onClickAllDownload.invoke(creatorDetail.creatorId)
+                isShowRewardAdDialog = false
+            },
+            onClickShowPlus = {
+                onClickBillingPlus.invoke()
+                isShowRewardAdDialog = false
+            },
+            onDismissRequest = { isShowRewardAdDialog = false },
+        )
     }
 
     if (isShowMenuDialog) {

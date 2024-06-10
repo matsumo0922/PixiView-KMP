@@ -20,6 +20,7 @@ plugins {
 val admobTestAppId = "ca-app-pub-0000000000000000~0000000000"
 val bannerAdTestId = "ca-app-pub-3940256099942544/6300978111"
 val nativeAdTestId = "ca-app-pub-3940256099942544/2247696110"
+val rewardAdTestId = "ca-app-pub-3940256099942544/5224354917"
 
 android {
     namespace = "me.matsumo.fanbox"
@@ -82,6 +83,7 @@ android {
                 putBuildConfig(localProperties, "ADMOB_ANDROID_APP_ID", defaultValue = admobTestAppId)
                 putBuildConfig(localProperties, "ADMOB_ANDROID_BANNER_AD_UNIT_ID", if (it.buildType != "release") bannerAdTestId else null)
                 putBuildConfig(localProperties, "ADMOB_ANDROID_NATIVE_AD_UNIT_ID", if (it.buildType != "release") nativeAdTestId else null)
+                putBuildConfig(localProperties, "ADMOB_ANDROID_REWARD_AD_UNIT_ID", if (it.buildType != "release") rewardAdTestId else null)
             }
 
             it.resValues.apply {
@@ -168,9 +170,11 @@ buildkonfig {
         putBuildConfig(localProperties, "ADMOB_ANDROID_APP_ID", defaultValue = admobTestAppId)
         putBuildConfig(localProperties, "ADMOB_ANDROID_BANNER_AD_UNIT_ID", defaultValue = bannerAdTestId)
         putBuildConfig(localProperties, "ADMOB_ANDROID_NATIVE_AD_UNIT_ID", defaultValue = nativeAdTestId)
+        putBuildConfig(localProperties, "ADMOB_ANDROID_REWARD_AD_UNIT_ID", defaultValue = rewardAdTestId)
         putBuildConfig(localProperties, "ADMOB_IOS_APP_ID", defaultValue = admobTestAppId)
         putBuildConfig(localProperties, "ADMOB_IOS_BANNER_AD_UNIT_ID", defaultValue = bannerAdTestId)
         putBuildConfig(localProperties, "ADMOB_IOS_NATIVE_AD_UNIT_ID", defaultValue = nativeAdTestId)
+        putBuildConfig(localProperties, "ADMOB_IOS_REWARD_AD_UNIT_ID", defaultValue = rewardAdTestId)
     }
 }
 

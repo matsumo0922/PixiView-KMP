@@ -39,4 +39,11 @@ actual val uiSubModule: Module = module {
             ioDispatcher = get(),
         )
     }
+
+    single<RewardAdLoader> {
+        RewardAdLoader(
+            context = get(),
+            pixiViewConfig = get(),
+        )
+    }
 }

@@ -130,17 +130,17 @@ private fun LibraryDiscoveryScreen(
             contentPadding = PaddingValues(16.dp),
             verticalArrangement = Arrangement.spacedBy(16.dp),
         ) {
-            if (recommendedCreators.isNotEmpty()) {
+            if (followingPixivCreators.isNotEmpty()) {
                 item {
                     TitleItem(
                         modifier = Modifier.fillMaxWidth(),
-                        title = stringResource(MR.strings.creator_recommended),
+                        title = stringResource(MR.strings.creator_following_pixiv),
                     )
                 }
 
                 items(
-                    items = recommendedCreators,
-                    key = { item -> "recommended-${item.creatorId.value}" },
+                    items = followingPixivCreators,
+                    key = { item -> "pixiv-${item.creatorId.value}" },
                 ) {
                     var isFollowed by rememberSaveable { mutableStateOf(it.isFollowed) }
 
@@ -166,17 +166,17 @@ private fun LibraryDiscoveryScreen(
                 }
             }
 
-            if (followingPixivCreators.isNotEmpty()) {
+            if (recommendedCreators.isNotEmpty()) {
                 item {
                     TitleItem(
                         modifier = Modifier.fillMaxWidth(),
-                        title = stringResource(MR.strings.creator_following_pixiv),
+                        title = stringResource(MR.strings.creator_recommended),
                     )
                 }
 
                 items(
-                    items = followingPixivCreators,
-                    key = { item -> "pixiv-${item.creatorId.value}" },
+                    items = recommendedCreators,
+                    key = { item -> "recommended-${item.creatorId.value}" },
                 ) {
                     var isFollowed by rememberSaveable { mutableStateOf(it.isFollowed) }
 
