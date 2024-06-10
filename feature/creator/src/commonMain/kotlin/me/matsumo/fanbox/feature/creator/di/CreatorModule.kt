@@ -6,45 +6,14 @@ import me.matsumo.fanbox.feature.creator.follow.FollowingCreatorsViewModel
 import me.matsumo.fanbox.feature.creator.payment.PaymentsViewModel
 import me.matsumo.fanbox.feature.creator.support.SupportingCreatorsViewModel
 import me.matsumo.fanbox.feature.creator.top.CreatorTopViewModel
+import org.koin.compose.viewmodel.dsl.viewModelOf
 import org.koin.dsl.module
 
 val creatorModule = module {
-
-    factory {
-        CreatorTopViewModel(
-            userDataRepository = get(),
-            fanboxRepository = get(),
-        )
-    }
-
-    factory {
-        SupportingCreatorsViewModel(
-            fanboxRepository = get(),
-        )
-    }
-
-    factory {
-        PaymentsViewModel(
-            fanboxRepository = get(),
-        )
-    }
-
-    factory {
-        FollowingCreatorsViewModel(
-            fanboxRepository = get(),
-        )
-    }
-
-    factory {
-        FanCardViewModel(
-            fanboxRepository = get(),
-        )
-    }
-
-    factory {
-        CreatorPostsDownloadViewModel(
-            fanboxRepository = get(),
-            imageDownloader = get(),
-        )
-    }
+    viewModelOf(::CreatorTopViewModel)
+    viewModelOf(::SupportingCreatorsViewModel)
+    viewModelOf(::PaymentsViewModel)
+    viewModelOf(::FollowingCreatorsViewModel)
+    viewModelOf(::FanCardViewModel)
+    viewModelOf(::CreatorPostsDownloadViewModel)
 }

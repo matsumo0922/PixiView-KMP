@@ -7,11 +7,12 @@ import androidx.navigation.NavGraphBuilder
 import androidx.navigation.NavOptions
 import androidx.navigation.compose.composable
 import me.matsumo.fanbox.core.model.fanbox.id.CreatorId
+import me.matsumo.fanbox.core.ui.extensition.navigateWithLog
 
 const val FollowingCreatorsRoute = "followingCreators"
 
 fun NavController.navigateToFollowingCreators(navOptions: NavOptions? = null) {
-    this.navigate(FollowingCreatorsRoute, navOptions)
+    this.navigateWithLog(FollowingCreatorsRoute, navOptions)
 }
 
 fun NavGraphBuilder.followingCreatorsScreen(

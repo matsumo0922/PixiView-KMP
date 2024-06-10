@@ -40,11 +40,15 @@ import me.matsumo.fanbox.core.ui.AsyncLoadContents
 import me.matsumo.fanbox.core.ui.ads.BannerAdView
 import me.matsumo.fanbox.core.ui.extensition.LocalNavigationType
 import me.matsumo.fanbox.core.ui.extensition.LocalSnackbarHostState
+import me.matsumo.fanbox.core.ui.extensition.NavigationType
 import me.matsumo.fanbox.core.ui.extensition.PixiViewNavigationType
 import me.matsumo.fanbox.core.ui.view.SimpleAlertContents
 import me.matsumo.fanbox.feature.library.component.LibraryBottomBar
+import me.matsumo.fanbox.feature.library.component.LibraryCompactScreen
 import me.matsumo.fanbox.feature.library.component.LibraryDestination
 import me.matsumo.fanbox.feature.library.component.LibraryDrawer
+import me.matsumo.fanbox.feature.library.component.LibraryExpandedScreen
+import me.matsumo.fanbox.feature.library.component.LibraryMediumScreen
 import me.matsumo.fanbox.feature.library.component.LibraryNavigationRail
 import me.matsumo.fanbox.feature.library.discovery.navigateToLibraryDiscovery
 import me.matsumo.fanbox.feature.library.home.navigateToLibraryHome
@@ -73,96 +77,80 @@ fun LibraryScreen(
     val navController = rememberNavController()
     val drawerState = rememberDrawerState(DrawerValue.Closed)
     val snackbarHostState = remember { SnackbarHostState() }
-    val scope = rememberCoroutineScope()
-    val navigationType = LocalNavigationType.current
 
+    val navigationType = LocalNavigationType.current.type
     val screenState by viewModel.screenState.collectAsStateWithLifecycle()
-    val currentDestination = navController.currentBackStackEntryAsState().value?.destination
 
     AsyncLoadContents(
         modifier = modifier,
         screenState = screenState,
     ) {
-        ModalNavigationDrawer(
-            drawerState = drawerState,
-            drawerContent = {
-                LibraryDrawer(
-                    state = drawerState,
-                    userData = it.userData,
-                    currentDestination = currentDestination,
-                    onClickLibrary = navController::navigateToLibraryDestination,
+        when (navigationType) {
+            PixiViewNavigationType.BottomNavigation -> {
+                LibraryCompactScreen(
+                    modifier = Modifier.fillMaxSize(),
+                    uiState = it,
+                    drawerState = drawerState,
+                    snackbarHostState = snackbarHostState,
+                    navController = navController,
+                    navigateToPostSearch = navigateToPostSearch,
+                    navigateToPostDetailFromHome = navigateToPostDetailFromHome,
+                    navigateToPostDetailFromSupported = navigateToPostDetailFromSupported,
+                    navigateToCreatorPosts = navigateToCreatorPosts,
+                    navigateToCreatorPlans = navigateToCreatorPlans,
                     navigateToBookmarkedPosts = navigateToBookmarkedPosts,
-                    navigateToFollowingCreators = navigateToFollowerCreators,
+                    navigateToFollowerCreators = navigateToFollowerCreators,
                     navigateToSupportingCreators = navigateToSupportingCreators,
                     navigateToPayments = navigateToPayments,
-                    navigateToSetting = navigateToSettingTop,
+                    navigateToSettingTop = navigateToSettingTop,
                     navigateToAbout = navigateToAbout,
                     navigateToBillingPlus = navigateToBillingPlus,
+                    navigateToCancelPlus = navigateToCancelPlus,
                 )
-            },
-        ) {
-            Row(Modifier.fillMaxSize()) {
-                AnimatedVisibility(navigationType.type == PixiViewNavigationType.NavigationRail) {
-                    LibraryNavigationRail(
-                        modifier = Modifier.fillMaxHeight(),
-                        destinations = LibraryDestination.entries.toImmutableList(),
-                        currentDestination = currentDestination,
-                        navigateToDestination = navController::navigateToLibraryDestination,
-                    )
-                }
-
-                Column(
-                    modifier = Modifier
-                        .weight(1f)
-                        .fillMaxHeight(),
-                ) {
-                    Scaffold(
-                        modifier = Modifier.weight(1f),
-                        snackbarHost = {
-                            SnackbarHost(
-                                modifier = Modifier.navigationBarsPadding(),
-                                hostState = snackbarHostState,
-                            )
-                        }
-                    ) {
-                        CompositionLocalProvider(LocalSnackbarHostState provides snackbarHostState) {
-                            LibraryNavHost(
-                                modifier = Modifier.weight(1f),
-                                navController = navController,
-                                openDrawer = {
-                                    // PreCompose bug https://github.com/Tlaster/PreCompose/issues/238
-
-                                    scope.launch {
-                                        drawerState.open()
-                                    }
-                                },
-                                navigateToPostSearch = navigateToPostSearch,
-                                navigateToPostDetailFromHome = navigateToPostDetailFromHome,
-                                navigateToPostDetailFromSupported = navigateToPostDetailFromSupported,
-                                navigateToCreatorPosts = navigateToCreatorPosts,
-                                navigateToCreatorPlans = navigateToCreatorPlans,
-                                navigateToSimpleAlert = navigateToCancelPlus,
-                            )
-                        }
-                    }
-
-                    AnimatedVisibility(navigationType.type == PixiViewNavigationType.BottomNavigation) {
-                        Column {
-                            if (!it.userData.hasPrivilege) {
-                                BannerAdView(
-                                    modifier = Modifier.fillMaxWidth(),
-                                )
-                            }
-
-                            LibraryBottomBar(
-                                modifier = Modifier.fillMaxWidth(),
-                                destinations = LibraryDestination.entries.toImmutableList(),
-                                currentDestination = currentDestination,
-                                navigateToDestination = navController::navigateToLibraryDestination,
-                            )
-                        }
-                    }
-                }
+            }
+            PixiViewNavigationType.NavigationRail -> {
+                LibraryMediumScreen(
+                    modifier = Modifier.fillMaxSize(),
+                    uiState = it,
+                    drawerState = drawerState,
+                    snackbarHostState = snackbarHostState,
+                    navController = navController,
+                    navigateToPostSearch = navigateToPostSearch,
+                    navigateToPostDetailFromHome = navigateToPostDetailFromHome,
+                    navigateToPostDetailFromSupported = navigateToPostDetailFromSupported,
+                    navigateToCreatorPosts = navigateToCreatorPosts,
+                    navigateToCreatorPlans = navigateToCreatorPlans,
+                    navigateToBookmarkedPosts = navigateToBookmarkedPosts,
+                    navigateToFollowerCreators = navigateToFollowerCreators,
+                    navigateToSupportingCreators = navigateToSupportingCreators,
+                    navigateToPayments = navigateToPayments,
+                    navigateToSettingTop = navigateToSettingTop,
+                    navigateToAbout = navigateToAbout,
+                    navigateToBillingPlus = navigateToBillingPlus,
+                    navigateToCancelPlus = navigateToCancelPlus,
+                )
+            }
+            PixiViewNavigationType.PermanentNavigationDrawer -> {
+                LibraryExpandedScreen(
+                    modifier = Modifier.fillMaxSize(),
+                    uiState = it,
+                    drawerState = drawerState,
+                    snackbarHostState = snackbarHostState,
+                    navController = navController,
+                    navigateToPostSearch = navigateToPostSearch,
+                    navigateToPostDetailFromHome = navigateToPostDetailFromHome,
+                    navigateToPostDetailFromSupported = navigateToPostDetailFromSupported,
+                    navigateToCreatorPosts = navigateToCreatorPosts,
+                    navigateToCreatorPlans = navigateToCreatorPlans,
+                    navigateToBookmarkedPosts = navigateToBookmarkedPosts,
+                    navigateToFollowerCreators = navigateToFollowerCreators,
+                    navigateToSupportingCreators = navigateToSupportingCreators,
+                    navigateToPayments = navigateToPayments,
+                    navigateToSettingTop = navigateToSettingTop,
+                    navigateToAbout = navigateToAbout,
+                    navigateToBillingPlus = navigateToBillingPlus,
+                    navigateToCancelPlus = navigateToCancelPlus,
+                )
             }
         }
     }

@@ -6,11 +6,12 @@ import me.matsumo.fanbox.core.ui.view.SimpleAlertContents
 import androidx.navigation.NavController
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.compose.composable
+import me.matsumo.fanbox.core.ui.extensition.navigateWithLog
 
 const val WelcomeWebRoute = "welcomeWeb"
 
 fun NavController.navigateToWelcomeWeb() {
-    this.navigate(WelcomeWebRoute)
+    this.navigateWithLog(WelcomeWebRoute)
 }
 
 fun NavGraphBuilder.welcomeWebScreen(

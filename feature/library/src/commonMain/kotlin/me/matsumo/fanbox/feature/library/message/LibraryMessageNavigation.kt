@@ -7,11 +7,12 @@ import androidx.navigation.NavGraphBuilder
 import androidx.navigation.NavOptions
 import androidx.navigation.compose.composable
 import me.matsumo.fanbox.core.model.fanbox.id.CreatorId
+import me.matsumo.fanbox.core.ui.extensition.navigateWithLog
 
 const val LibraryMessageRoute = "libraryMessage"
 
 fun NavController.navigateToLibraryMessage(navOptions: NavOptions? = null) {
-    this.navigate(LibraryMessageRoute, navOptions)
+    this.navigateWithLog(LibraryMessageRoute, navOptions)
 }
 
 fun NavGraphBuilder.libraryMessageScreen(

@@ -6,6 +6,10 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.grid.GridCells
+import androidx.compose.foundation.lazy.grid.GridItemSpan
+import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
+import androidx.compose.foundation.lazy.grid.rememberLazyGridState
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -26,6 +30,8 @@ import me.matsumo.fanbox.core.model.fanbox.id.PostId
 import me.matsumo.fanbox.core.ui.LazyPagingItemsLoadContents
 import me.matsumo.fanbox.core.ui.MR
 import me.matsumo.fanbox.core.ui.component.PostItem
+import me.matsumo.fanbox.core.ui.extensition.LocalNavigationType
+import me.matsumo.fanbox.core.ui.extensition.PixiViewNavigationType
 import me.matsumo.fanbox.core.ui.extensition.drawVerticalScrollbar
 import me.matsumo.fanbox.core.ui.view.PagingErrorSection
 
@@ -43,7 +49,14 @@ internal fun PostSearchTagScreen(
     modifier: Modifier = Modifier,
 ) {
     val keyboardController = LocalSoftwareKeyboardController.current
-    val state = rememberLazyListState()
+    val state = rememberLazyGridState()
+
+    val columns = when (LocalNavigationType.current.type) {
+        PixiViewNavigationType.BottomNavigation -> 1
+        PixiViewNavigationType.NavigationRail -> 2
+        PixiViewNavigationType.PermanentNavigationDrawer -> 2
+        else -> 1
+    }
 
     LaunchedEffect(state) {
         snapshotFlow { state.layoutInfo }.collect {
@@ -56,11 +69,13 @@ internal fun PostSearchTagScreen(
         lazyPagingItems = pagingAdapter,
         emptyMessageRes = MR.strings.error_no_data_search,
     ) {
-        LazyColumn(
-            modifier = Modifier.drawVerticalScrollbar(state),
+        LazyVerticalGrid(
+            modifier = Modifier.drawVerticalScrollbar(state, columns),
             state = state,
+            columns = GridCells.Fixed(columns),
             contentPadding = PaddingValues(16.dp),
             verticalArrangement = Arrangement.spacedBy(16.dp),
+            horizontalArrangement = Arrangement.spacedBy(16.dp),
         ) {
             items(
                 count = pagingAdapter.itemCount,
@@ -84,7 +99,7 @@ internal fun PostSearchTagScreen(
             }
 
             if (pagingAdapter.loadState.append is LoadState.Error) {
-                item {
+                item(span = { GridItemSpan(maxLineSpan) }) {
                     PagingErrorSection(
                         modifier = Modifier.fillMaxWidth(),
                         onRetry = { pagingAdapter.retry() },
@@ -92,7 +107,7 @@ internal fun PostSearchTagScreen(
                 }
             }
 
-            item {
+            item(span = { GridItemSpan(maxLineSpan) }) {
                 Spacer(modifier = Modifier.navigationBarsPadding())
             }
         }

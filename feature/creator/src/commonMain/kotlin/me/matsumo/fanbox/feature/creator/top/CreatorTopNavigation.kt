@@ -10,13 +10,14 @@ import androidx.navigation.NavGraphBuilder
 import androidx.navigation.NavType
 import androidx.navigation.compose.composable
 import androidx.navigation.navArgument
+import me.matsumo.fanbox.core.ui.extensition.navigateWithLog
 
 const val CreatorTopId = "creatorTopId"
 const val CreatorTopIsPosts = "creatorTopIsPosts"
 const val CreatorTopRoute = "creatorTop/{$CreatorTopId}/{$CreatorTopIsPosts}"
 
 fun NavController.navigateToCreatorTop(creatorId: CreatorId, isPosts: Boolean = false) {
-    this.navigate("creatorTop/$creatorId/$isPosts")
+    this.navigateWithLog("creatorTop/$creatorId/$isPosts")
 }
 
 fun NavGraphBuilder.creatorTopScreen(

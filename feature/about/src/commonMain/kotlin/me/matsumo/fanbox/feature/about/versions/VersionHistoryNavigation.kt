@@ -5,11 +5,12 @@ import androidx.compose.ui.Modifier
 import androidx.navigation.NavController
 import androidx.navigation.NavGraphBuilder
 import me.matsumo.fanbox.core.ui.component.sheet.bottomSheet
+import me.matsumo.fanbox.core.ui.extensition.navigateWithLog
 
 const val VersionHistoryRoute = "versionHistory"
 
 fun NavController.navigateToVersionHistory() {
-    this.navigate("versionHistory")
+    this.navigateWithLog("versionHistory")
 }
 
 fun NavGraphBuilder.versionHistoryBottomSheet(

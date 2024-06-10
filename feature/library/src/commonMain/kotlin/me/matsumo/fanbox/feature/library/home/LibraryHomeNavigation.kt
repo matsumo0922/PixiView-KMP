@@ -8,12 +8,13 @@ import androidx.navigation.NavOptions
 import androidx.navigation.compose.composable
 import me.matsumo.fanbox.core.model.fanbox.id.CreatorId
 import me.matsumo.fanbox.core.model.fanbox.id.PostId
+import me.matsumo.fanbox.core.ui.extensition.navigateWithLog
 import me.matsumo.fanbox.core.ui.view.SimpleAlertContents
 
 const val LibraryHomeRoute = "libraryHome"
 
 fun NavController.navigateToLibraryHome(navOptions: NavOptions? = null) {
-    this.navigate(LibraryHomeRoute, navOptions)
+    this.navigateWithLog(LibraryHomeRoute, navOptions)
 }
 
 fun NavGraphBuilder.libraryHomeScreen(

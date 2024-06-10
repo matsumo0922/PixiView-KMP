@@ -8,3 +8,6 @@
 
 - screen_route: !string 2000
     - 遷移先の画面
+
+- referer: !string 2000
+    - 遷移元の画面

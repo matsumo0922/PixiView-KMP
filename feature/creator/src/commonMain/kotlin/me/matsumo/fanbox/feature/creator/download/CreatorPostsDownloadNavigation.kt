@@ -9,12 +9,13 @@ import androidx.navigation.NavGraphBuilder
 import androidx.navigation.NavType
 import androidx.navigation.compose.composable
 import androidx.navigation.navArgument
+import me.matsumo.fanbox.core.ui.extensition.navigateWithLog
 
 const val CreatorPostsDownloadId = "creatorPostsDownloadId"
 const val CreatorPostsDownloadRoute = "creatorPostsDownload/{$CreatorPostsDownloadId}"
 
 fun NavController.navigateToCreatorPostsDownload(creatorId: CreatorId) {
-    this.navigate("creatorPostsDownload/$creatorId")
+    this.navigateWithLog("creatorPostsDownload/$creatorId")
 }
 
 fun NavGraphBuilder.creatorPostsDownloadDialog(

@@ -1,7 +1,10 @@
 package me.matsumo.fanbox
 
+import android.graphics.Color
 import android.os.Bundle
+import androidx.activity.SystemBarStyle
 import androidx.activity.compose.setContent
+import androidx.activity.enableEdgeToEdge
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.windowsizeclass.ExperimentalMaterial3WindowSizeClassApi
@@ -17,6 +20,7 @@ import com.google.accompanist.systemuicontroller.rememberSystemUiController
 import me.matsumo.fanbox.core.model.ThemeConfig
 import me.matsumo.fanbox.core.repository.FanboxRepository
 import me.matsumo.fanbox.core.repository.UserDataRepository
+import me.matsumo.fanbox.core.ui.theme.shouldUseDarkTheme
 import org.koin.compose.KoinContext
 import org.koin.core.component.KoinComponent
 import org.koin.core.component.inject
@@ -25,31 +29,29 @@ class MainActivity : FragmentActivity(), KoinComponent {
 
     private val userDataRepository: UserDataRepository by inject()
 
-    private val fanboxRepository: FanboxRepository by inject()
-
     @OptIn(ExperimentalMaterial3WindowSizeClassApi::class)
     override fun onCreate(savedInstanceState: Bundle?) {
         val splashScreen = installSplashScreen()
 
         super.onCreate(savedInstanceState)
 
-        WindowCompat.setDecorFitsSystemWindows(window, false)
+        enableEdgeToEdge()
 
         setContent {
             KoinContext {
-                val windowSize = calculateWindowSizeClass()
-                val systemUiController = rememberSystemUiController()
-
                 val userData by userDataRepository.userData.collectAsStateWithLifecycle(null)
-                val isSystemInDarkTheme = isSystemInDarkTheme()
+                val isSystemInDarkTheme = shouldUseDarkTheme(userData?.themeConfig ?: ThemeConfig.System)
+                val windowSize = calculateWindowSizeClass()
 
-                splashScreen.setKeepOnScreenCondition { userData == null }
+                val lightScrim = Color.argb(0xe6, 0xFF, 0xFF, 0xFF)
+                val darkScrim = Color.argb(0x80, 0x1b, 0x1b, 0x1b)
 
-                if (userData != null) {
-                    DisposableEffect(systemUiController, userData!!.themeConfig, isSystemInDarkTheme) {
-                        systemUiController.systemBarsDarkContentEnabled = (userData!!.themeConfig == ThemeConfig.Light || !isSystemInDarkTheme)
-                        onDispose {}
-                    }
+                DisposableEffect(isSystemInDarkTheme) {
+                    enableEdgeToEdge(
+                        statusBarStyle = SystemBarStyle.auto(Color.TRANSPARENT, Color.TRANSPARENT) { isSystemInDarkTheme },
+                        navigationBarStyle = SystemBarStyle.auto(lightScrim, darkScrim) { isSystemInDarkTheme },
+                    )
+                    onDispose {}
                 }
 
                 PixiViewApp(
@@ -57,6 +59,8 @@ class MainActivity : FragmentActivity(), KoinComponent {
                     windowSize = windowSize.widthSizeClass,
                     nativeViews = emptyMap(),
                 )
+
+                splashScreen.setKeepOnScreenCondition { userData == null }
             }
         }
     }

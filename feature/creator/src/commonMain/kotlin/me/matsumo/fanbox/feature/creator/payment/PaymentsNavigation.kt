@@ -7,11 +7,12 @@ import androidx.navigation.NavController
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.NavOptions
 import androidx.navigation.compose.composable
+import me.matsumo.fanbox.core.ui.extensition.navigateWithLog
 
 const val PaymentsRoute = "payments"
 
 fun NavController.navigateToPayments(navOptions: NavOptions? = null) {
-    this.navigate(PaymentsRoute, navOptions)
+    this.navigateWithLog(PaymentsRoute, navOptions)
 }
 
 fun NavGraphBuilder.paymentsScreen(

@@ -88,7 +88,6 @@ private fun LibraryNotifyScreen(
         bottomBar = {
             HorizontalDivider()
         },
-        contentWindowInsets = WindowInsets(0, 0, 0, 0),
     ) { padding ->
         LazyPagingItemsLoadContents(
             modifier = Modifier

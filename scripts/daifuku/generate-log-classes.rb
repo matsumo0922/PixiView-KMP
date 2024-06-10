@@ -1,4 +1,3 @@
-#!/usr/bin/env ruby
 require 'daifuku'
 require 'erb'
 require 'active_support/inflector'

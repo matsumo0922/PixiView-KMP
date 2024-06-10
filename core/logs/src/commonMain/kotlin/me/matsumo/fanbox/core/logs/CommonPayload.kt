@@ -1,5 +1,6 @@
 package me.matsumo.fanbox.core.logs
 
+import kotlinx.serialization.json.JsonObject
 import kotlinx.serialization.json.JsonObjectBuilder
 import kotlinx.serialization.json.put
 

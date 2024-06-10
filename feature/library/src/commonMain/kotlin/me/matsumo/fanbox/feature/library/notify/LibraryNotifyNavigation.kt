@@ -10,11 +10,12 @@ import me.matsumo.fanbox.core.model.fanbox.id.PostId
 import androidx.navigation.NavController
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.compose.composable
+import me.matsumo.fanbox.core.ui.extensition.navigateWithLog
 
 const val LibraryNotifyRoute = "libraryNotify"
 
 fun NavController.navigateToLibraryNotify(navOptions: NavOptions? = null) {
-    this.navigate(LibraryNotifyRoute, navOptions)
+    this.navigateWithLog(LibraryNotifyRoute, navOptions)
 }
 
 fun NavGraphBuilder.libraryNotifyScreen(

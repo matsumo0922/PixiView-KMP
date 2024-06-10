@@ -9,6 +9,11 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.grid.GridCells
+import androidx.compose.foundation.lazy.grid.GridItemSpan
+import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
+import androidx.compose.foundation.lazy.grid.items
+import androidx.compose.foundation.lazy.grid.rememberLazyGridState
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material.icons.Icons
@@ -101,8 +106,15 @@ private fun LibraryDiscoveryScreen(
 ) {
     val navigationType = LocalNavigationType.current.type
     val scope = rememberCoroutineScope()
-    val state = rememberLazyListState()
+    val state = rememberLazyGridState()
     val scrollBehavior = TopAppBarDefaults.pinnedScrollBehavior()
+
+    val columns = when (LocalNavigationType.current.type) {
+        PixiViewNavigationType.BottomNavigation -> 1
+        PixiViewNavigationType.NavigationRail -> 2
+        PixiViewNavigationType.PermanentNavigationDrawer -> 2
+        else -> 1
+    }
 
     Scaffold(
         modifier = modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
@@ -120,18 +132,19 @@ private fun LibraryDiscoveryScreen(
         bottomBar = {
             HorizontalDivider()
         },
-        contentWindowInsets = WindowInsets(0, 0, 0, 0),
     ) { padding ->
-        LazyColumn(
+        LazyVerticalGrid(
             modifier = Modifier
                 .padding(padding)
-                .drawVerticalScrollbar(state),
+                .drawVerticalScrollbar(state, columns),
             state = state,
+            columns = GridCells.Fixed(columns),
             contentPadding = PaddingValues(16.dp),
             verticalArrangement = Arrangement.spacedBy(16.dp),
+            horizontalArrangement = Arrangement.spacedBy(16.dp),
         ) {
             if (followingPixivCreators.isNotEmpty()) {
-                item {
+                item(span = { GridItemSpan(maxLineSpan) }) {
                     TitleItem(
                         modifier = Modifier.fillMaxWidth(),
                         title = stringResource(MR.strings.creator_following_pixiv),
@@ -167,7 +180,7 @@ private fun LibraryDiscoveryScreen(
             }
 
             if (recommendedCreators.isNotEmpty()) {
-                item {
+                item(span = { GridItemSpan(maxLineSpan) }) {
                     TitleItem(
                         modifier = Modifier.fillMaxWidth(),
                         title = stringResource(MR.strings.creator_recommended),
@@ -202,7 +215,7 @@ private fun LibraryDiscoveryScreen(
                 }
             }
 
-            item {
+            item(span = { GridItemSpan(maxLineSpan) }) {
                 Spacer(modifier = Modifier.navigationBarsPadding())
             }
         }

@@ -5,11 +5,12 @@ import androidx.compose.ui.Modifier
 import androidx.navigation.NavController
 import androidx.navigation.NavGraphBuilder
 import me.matsumo.fanbox.core.ui.component.sheet.bottomSheet
+import me.matsumo.fanbox.core.ui.extensition.navigateWithLog
 
 const val BillingPlusRoute = "billingPlus"
 
 fun NavController.navigateToBillingPlus() {
-    this.navigate(BillingPlusRoute)
+    this.navigateWithLog(BillingPlusRoute)
 }
 
 fun NavGraphBuilder.billingPlusBottomSheet(

@@ -16,6 +16,7 @@ import io.github.alexzhirkevich.cupertino.adaptive.Theme
 import io.github.alexzhirkevich.cupertino.theme.CupertinoTheme
 import me.matsumo.fanbox.core.common.PixiViewConfig
 import me.matsumo.fanbox.core.model.ThemeColorConfig
+import me.matsumo.fanbox.core.model.ThemeConfig
 import me.matsumo.fanbox.core.model.fanbox.FanboxMetaData
 import me.matsumo.fanbox.core.ui.extensition.FanboxCookie
 import me.matsumo.fanbox.core.ui.extensition.LocalFanboxCookie
@@ -102,12 +103,13 @@ fun PixiViewTheme(
     fanboxCookie: String = "",
     fanboxMetadata: FanboxMetaData = FanboxMetaData.dummy(),
     pixiViewConfig: PixiViewConfig = PixiViewConfig.dummy(),
+    themeConfig: ThemeConfig = ThemeConfig.System,
     themeColorConfig: ThemeColorConfig = ThemeColorConfig.Red,
-    shouldUseDarkTheme: Boolean = isSystemInDarkTheme(),
-    enableDynamicTheme: Boolean = false,
     nativeViews: Map<String, () -> NativeView?> = emptyMap(),
     content: @Composable () -> Unit,
 ) {
+    val shouldUseDarkTheme = shouldUseDarkTheme(themeConfig)
+
     val colorScheme = when (themeColorConfig) {
         ThemeColorConfig.Blue -> if (shouldUseDarkTheme) DarkBlueColorScheme else LightBlueColorScheme
         ThemeColorConfig.Brown -> if (shouldUseDarkTheme) DarkBrownColorScheme else LightBrownColorScheme
@@ -199,5 +201,14 @@ fun convertMaterialToIOSColorScheme(materialScheme: ColorScheme, isDark: Boolean
             secondarySystemBackground = materialScheme.surfaceVariant,
             tertiarySystemBackground = materialScheme.background,
         )
+    }
+}
+
+@Composable
+fun shouldUseDarkTheme(themeConfig: ThemeConfig): Boolean {
+    return when (themeConfig) {
+        ThemeConfig.System -> isSystemInDarkTheme()
+        ThemeConfig.Light -> false
+        ThemeConfig.Dark -> true
     }
 }

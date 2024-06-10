@@ -7,6 +7,10 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.grid.GridCells
+import androidx.compose.foundation.lazy.grid.GridItemSpan
+import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
+import androidx.compose.foundation.lazy.grid.rememberLazyGridState
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
@@ -35,6 +39,8 @@ import me.matsumo.fanbox.core.model.fanbox.id.CreatorId
 import me.matsumo.fanbox.core.ui.LazyPagingItemsLoadContents
 import me.matsumo.fanbox.core.ui.MR
 import me.matsumo.fanbox.core.ui.component.CreatorItem
+import me.matsumo.fanbox.core.ui.extensition.LocalNavigationType
+import me.matsumo.fanbox.core.ui.extensition.PixiViewNavigationType
 import me.matsumo.fanbox.core.ui.extensition.drawVerticalScrollbar
 import me.matsumo.fanbox.core.ui.theme.bold
 import me.matsumo.fanbox.core.ui.view.PagingErrorSection
@@ -53,7 +59,14 @@ internal fun PostSearchCreatorScreen(
 ) {
     val keyboardController = LocalSoftwareKeyboardController.current
     val scope = rememberCoroutineScope()
-    val state = rememberLazyListState()
+    val state = rememberLazyGridState()
+
+    val columns = when (LocalNavigationType.current.type) {
+        PixiViewNavigationType.BottomNavigation -> 1
+        PixiViewNavigationType.NavigationRail -> 2
+        PixiViewNavigationType.PermanentNavigationDrawer -> 2
+        else -> 1
+    }
 
     LaunchedEffect(state) {
         snapshotFlow { state.layoutInfo }.collect {
@@ -66,21 +79,23 @@ internal fun PostSearchCreatorScreen(
         lazyPagingItems = pagingAdapter,
         emptyMessageRes = MR.strings.error_no_data_search,
     ) {
-        LazyColumn(
-            modifier = Modifier.drawVerticalScrollbar(state),
+        LazyVerticalGrid(
+            modifier = Modifier.drawVerticalScrollbar(state, columns),
             state = state,
+            columns = GridCells.Fixed(columns),
             contentPadding = PaddingValues(16.dp),
+            horizontalArrangement = Arrangement.spacedBy(16.dp),
             verticalArrangement = Arrangement.spacedBy(16.dp),
         ) {
             if (suggestTags.isNotEmpty()) {
-                item {
+                item(span = { GridItemSpan(maxLineSpan) }) {
                     TitleItem(
                         modifier = Modifier.fillMaxWidth(),
                         title = stringResource(MR.strings.common_tag),
                     )
                 }
 
-                item {
+                item(span = { GridItemSpan(maxLineSpan) }) {
                     PostSearchSuggestTagsSection(
                         modifier = Modifier.fillMaxWidth(),
                         suggestTags = suggestTags,
@@ -88,7 +103,7 @@ internal fun PostSearchCreatorScreen(
                     )
                 }
 
-                item {
+                item(span = { GridItemSpan(maxLineSpan) }) {
                     TitleItem(
                         modifier = Modifier
                             .padding(top = 16.dp)
@@ -129,7 +144,7 @@ internal fun PostSearchCreatorScreen(
             }
 
             if (pagingAdapter.loadState.append is LoadState.Error) {
-                item {
+                item(span = { GridItemSpan(maxLineSpan) }) {
                     PagingErrorSection(
                         modifier = Modifier.fillMaxWidth(),
                         onRetry = { pagingAdapter.retry() },
@@ -137,7 +152,7 @@ internal fun PostSearchCreatorScreen(
                 }
             }
 
-            item {
+            item(span = { GridItemSpan(maxLineSpan) }) {
                 Spacer(modifier = Modifier.navigationBarsPadding())
             }
         }

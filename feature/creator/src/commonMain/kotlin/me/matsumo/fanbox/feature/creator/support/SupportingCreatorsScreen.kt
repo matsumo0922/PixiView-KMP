@@ -9,6 +9,11 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.grid.GridCells
+import androidx.compose.foundation.lazy.grid.GridItemSpan
+import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
+import androidx.compose.foundation.lazy.grid.items
+import androidx.compose.foundation.lazy.grid.rememberLazyGridState
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -20,6 +25,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.max
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import dev.icerock.moko.resources.compose.stringResource
 import kotlinx.collections.immutable.ImmutableList
@@ -29,7 +35,9 @@ import me.matsumo.fanbox.core.model.fanbox.id.CreatorId
 import me.matsumo.fanbox.core.ui.AsyncLoadContents
 import me.matsumo.fanbox.core.ui.MR
 import me.matsumo.fanbox.core.ui.component.PixiViewTopBar
+import me.matsumo.fanbox.core.ui.extensition.LocalNavigationType
 import me.matsumo.fanbox.core.ui.extensition.NavigatorExtension
+import me.matsumo.fanbox.core.ui.extensition.PixiViewNavigationType
 import me.matsumo.fanbox.core.ui.extensition.drawVerticalScrollbar
 import me.matsumo.fanbox.core.ui.view.EmptyView
 import me.matsumo.fanbox.feature.creator.support.item.SupportingCreatorItem
@@ -73,8 +81,15 @@ private fun SupportingCreatorsScreen(
     terminate: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
-    val state = rememberLazyListState()
+    val state = rememberLazyGridState()
     val scrollBehavior = TopAppBarDefaults.pinnedScrollBehavior()
+
+    val columns = when (LocalNavigationType.current.type) {
+        PixiViewNavigationType.BottomNavigation -> 1
+        PixiViewNavigationType.NavigationRail -> 2
+        PixiViewNavigationType.PermanentNavigationDrawer -> 2
+        else -> 1
+    }
 
     Scaffold(
         modifier = modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
@@ -92,13 +107,14 @@ private fun SupportingCreatorsScreen(
         contentWindowInsets = WindowInsets(0, 0, 0, 0),
     ) { padding ->
         if (supportedCreators.isNotEmpty()) {
-            LazyColumn(
+            LazyVerticalGrid(
                 modifier = Modifier
                     .padding(padding)
-                    .drawVerticalScrollbar(state),
+                    .drawVerticalScrollbar(state, columns),
                 state = state,
                 contentPadding = PaddingValues(16.dp),
                 verticalArrangement = Arrangement.spacedBy(16.dp),
+                columns = GridCells.Fixed(columns),
             ) {
                 items(supportedCreators.toList()) { supportingPlan ->
                     SupportingCreatorItem(
@@ -110,7 +126,7 @@ private fun SupportingCreatorsScreen(
                     )
                 }
 
-                item {
+                item(span = { GridItemSpan(maxCurrentLineSpan) }) {
                     Spacer(modifier = Modifier.navigationBarsPadding())
                 }
             }

@@ -88,7 +88,6 @@ private fun LibraryMessageScreen(
         bottomBar = {
             HorizontalDivider()
         },
-        contentWindowInsets = WindowInsets(0, 0, 0, 0),
     ) { padding ->
         Box(
             modifier = Modifier
