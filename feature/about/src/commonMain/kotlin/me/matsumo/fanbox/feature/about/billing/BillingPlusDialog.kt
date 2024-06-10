@@ -51,6 +51,7 @@ import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import coil3.compose.LocalPlatformContext
 import dev.icerock.moko.resources.StringResource
 import dev.icerock.moko.resources.compose.stringResource
@@ -64,16 +65,14 @@ import me.matsumo.fanbox.core.ui.extensition.SnackbarExtension
 import me.matsumo.fanbox.core.ui.extensition.currentPlatform
 import me.matsumo.fanbox.core.ui.theme.bold
 import me.matsumo.fanbox.core.ui.view.LoadingView
-import moe.tlaster.precompose.flow.collectAsStateWithLifecycle
-import moe.tlaster.precompose.koin.koinViewModel
-import moe.tlaster.precompose.navigation.BackHandler
 import org.koin.compose.koinInject
+import org.koin.compose.viewmodel.koinViewModel
 
 @Composable
 internal fun BillingPlusRoute(
     terminate: () -> Unit,
     modifier: Modifier = Modifier,
-    viewModel: BillingPlusViewModel = koinViewModel(BillingPlusViewModel::class),
+    viewModel: BillingPlusViewModel = koinViewModel(),
     snackbarExtension: SnackbarExtension = koinInject()
 ) {
     val context = LocalPlatformContext.current
@@ -83,10 +82,6 @@ internal fun BillingPlusRoute(
     val screenState by viewModel.screenState.collectAsStateWithLifecycle()
 
     var isLoading by remember { mutableStateOf(false) }
-
-    BackHandler {
-        terminate.invoke()
-    }
 
     AsyncLoadContents(
         modifier = modifier,

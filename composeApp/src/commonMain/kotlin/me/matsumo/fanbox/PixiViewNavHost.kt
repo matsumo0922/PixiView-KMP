@@ -1,31 +1,21 @@
 package me.matsumo.fanbox
 
-import androidx.compose.animation.slideInHorizontally
-import androidx.compose.animation.slideOutHorizontally
-import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.navigationBarsPadding
-import androidx.compose.material3.PermanentNavigationDrawer
-import androidx.compose.material3.Scaffold
-import androidx.compose.material3.SnackbarHost
-import androidx.compose.material3.SnackbarHostState
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.CompositionLocalProvider
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.unit.dp
+import androidx.navigation.NavGraphBuilder
+import androidx.navigation.NavHostController
+import androidx.navigation.compose.NavHost
+import androidx.navigation.compose.rememberNavController
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 import me.matsumo.fanbox.core.ui.animation.NavigateAnimation
-import me.matsumo.fanbox.core.ui.component.EmptyDetailRoute
 import me.matsumo.fanbox.core.ui.component.emptyDetailScreen
-import me.matsumo.fanbox.core.ui.extensition.LocalSnackbarHostState
+import me.matsumo.fanbox.core.ui.component.sheet.ModalBottomSheetLayout
+import me.matsumo.fanbox.core.ui.component.sheet.rememberBottomSheetNavigator
 import me.matsumo.fanbox.core.ui.extensition.PixiViewNavigationType
-import me.matsumo.fanbox.core.ui.extensition.Platform
-import me.matsumo.fanbox.core.ui.extensition.currentPlatform
-import me.matsumo.fanbox.core.ui.extensition.rememberNavigator
+import me.matsumo.fanbox.core.ui.extensition.popBackStackWithResult
 import me.matsumo.fanbox.core.ui.view.navigateToSimpleAlertDialog
 import me.matsumo.fanbox.core.ui.view.simpleAlertDialogDialog
 import me.matsumo.fanbox.feature.about.about.aboutScreen
@@ -46,11 +36,8 @@ import me.matsumo.fanbox.feature.creator.support.navigateToSupportingCreators
 import me.matsumo.fanbox.feature.creator.support.supportingCreatorsScreen
 import me.matsumo.fanbox.feature.creator.top.creatorTopScreen
 import me.matsumo.fanbox.feature.creator.top.navigateToCreatorTop
-import me.matsumo.fanbox.feature.library.LibraryNavHost
 import me.matsumo.fanbox.feature.library.LibraryRoute
-import me.matsumo.fanbox.feature.library.component.LibraryPermanentDrawer
 import me.matsumo.fanbox.feature.library.libraryScreen
-import me.matsumo.fanbox.feature.library.navigateToLibraryDestination
 import me.matsumo.fanbox.feature.post.bookmark.bookmarkedPostsScreen
 import me.matsumo.fanbox.feature.post.bookmark.navigateToBookmarkedPosts
 import me.matsumo.fanbox.feature.post.detail.PostDetailPagingType
@@ -68,12 +55,6 @@ import me.matsumo.fanbox.feature.setting.theme.navigateToSettingTheme
 import me.matsumo.fanbox.feature.setting.theme.settingThemeScreen
 import me.matsumo.fanbox.feature.setting.top.navigateToSettingTop
 import me.matsumo.fanbox.feature.setting.top.settingTopScreen
-import moe.tlaster.precompose.flow.collectAsStateWithLifecycle
-import moe.tlaster.precompose.navigation.NavHost
-import moe.tlaster.precompose.navigation.Navigator
-import moe.tlaster.precompose.navigation.RouteBuilder
-import moe.tlaster.precompose.navigation.SwipeProperties
-import moe.tlaster.precompose.navigation.transition.NavTransition
 
 @Composable
 internal fun PixiViewNavHost(
@@ -81,170 +62,28 @@ internal fun PixiViewNavHost(
     modifier: Modifier = Modifier,
     startDestination: String = LibraryRoute,
 ) {
-    val mainNavigator = rememberNavigator("Main")
-    val subNavigator = rememberNavigator("Sub")
-
-    val snackbarHostState = remember { SnackbarHostState() }
+    val bottomSheetNavigator = rememberBottomSheetNavigator()
+    val navController = rememberNavController(bottomSheetNavigator)
     val scope = rememberCoroutineScope()
 
-    val swipeProperties = if (currentPlatform == Platform.IOS) {
-        SwipeProperties(
-            spaceToSwipe = 64.dp,
-            positionalThreshold = { it * 0.3f },
-        )
-    } else {
-        null
-    }
-
-    CompositionLocalProvider(LocalSnackbarHostState provides snackbarHostState) {
-        Scaffold(
-            modifier = modifier,
-            snackbarHost = {
-                SnackbarHost(
-                    modifier = Modifier.navigationBarsPadding(),
-                    hostState = snackbarHostState,
-                )
-            },
+    ModalBottomSheetLayout(
+        modifier = modifier,
+        bottomSheetNavigator = bottomSheetNavigator,
+    ) {
+        NavHost(
+            modifier = Modifier.fillMaxSize(),
+            navController = navController,
+            startDestination = startDestination,
+            enterTransition = { NavigateAnimation.Horizontal.enter },
+            exitTransition = { NavigateAnimation.Horizontal.exit },
+            popEnterTransition = { NavigateAnimation.Horizontal.popEnter },
+            popExitTransition = { NavigateAnimation.Horizontal.popExit },
         ) {
-            when (navigationType) {
-                PixiViewNavigationType.PermanentNavigationDrawer -> {
-                    ExpandedNavHost(
-                        modifier = Modifier.fillMaxSize(),
-                        mainNavigator = mainNavigator,
-                        subNavigator = subNavigator,
-                        scope = scope,
-                    )
-                }
-
-                PixiViewNavigationType.NavigationRail -> {
-                    MediumNavHost(
-                        modifier = Modifier.fillMaxSize(),
-                        navigator = mainNavigator,
-                        scope = scope,
-                        startDestination = startDestination,
-                        swipeProperties = swipeProperties,
-                    )
-                }
-
-                PixiViewNavigationType.BottomNavigation -> {
-                    CompactNavHost(
-                        modifier = Modifier.fillMaxSize(),
-                        navigator = mainNavigator,
-                        scope = scope,
-                        startDestination = startDestination,
-                        swipeProperties = swipeProperties,
-                    )
-                }
-            }
+            applyNavGraph(scope, navController)
         }
     }
 }
 
-@Composable
-private fun CompactNavHost(
-    navigator: Navigator,
-    scope: CoroutineScope,
-    modifier: Modifier = Modifier,
-    startDestination: String = LibraryRoute,
-    swipeProperties: SwipeProperties? = null,
-) {
-    NavHost(
-        modifier = modifier,
-        navigator = navigator,
-        initialRoute = startDestination,
-        swipeProperties = swipeProperties,
-        navTransition = remember {
-            NavTransition(
-                createTransition = slideInHorizontally { it },
-                destroyTransition = slideOutHorizontally { it },
-                pauseTransition = slideOutHorizontally { -it / 4 },
-                resumeTransition = slideInHorizontally { -it / 4 },
-                exitTargetContentZIndex = 1f,
-            )
-        },
-    ) {
-        applyNavGraph(scope, navigator)
-    }
-}
-
-@Composable
-private fun MediumNavHost(
-    navigator: Navigator,
-    scope: CoroutineScope,
-    modifier: Modifier = Modifier,
-    startDestination: String = LibraryRoute,
-    swipeProperties: SwipeProperties? = null,
-) {
-    NavHost(
-        modifier = modifier,
-        navigator = navigator,
-        initialRoute = startDestination,
-        swipeProperties = swipeProperties,
-        navTransition = remember {
-            NavTransition(
-                createTransition = slideInHorizontally { it },
-                destroyTransition = slideOutHorizontally { it },
-                pauseTransition = slideOutHorizontally { -it / 4 },
-                resumeTransition = slideInHorizontally { -it / 4 },
-                exitTargetContentZIndex = 1f
-            )
-        }
-    ) {
-        applyNavGraph(scope, navigator)
-    }
-}
-
-@Composable
-private fun ExpandedNavHost(
-    mainNavigator: Navigator,
-    subNavigator: Navigator,
-    scope: CoroutineScope,
-    modifier: Modifier = Modifier,
-) {
-    val backStackEntry by mainNavigator.currentEntry.collectAsStateWithLifecycle(null)
-
-    PermanentNavigationDrawer(
-        modifier = modifier,
-        drawerContent = {
-            LibraryPermanentDrawer(
-                currentDestination = backStackEntry?.route?.route,
-                onClickLibrary = mainNavigator::navigateToLibraryDestination,
-                navigateToBookmarkedPosts = { mainNavigator.navigateToBookmarkedPosts() },
-                navigateToFollowingCreators = { mainNavigator.navigateToFollowingCreators() },
-                navigateToSupportingCreators = { mainNavigator.navigateToSupportingCreators() },
-                navigateToPayments = { subNavigator.navigateToPayments() },
-                navigateToSetting = { mainNavigator.navigateToSettingTop() },
-                navigateToAbout = { subNavigator.navigateToAbout() },
-                navigateToBillingPlus = { mainNavigator.navigateToBillingPlus() },
-            )
-        },
-    ) {
-        Row(Modifier.fillMaxSize()) {
-            LibraryNavHost(
-                modifier = Modifier.weight(1f),
-                navController = mainNavigator,
-                openDrawer = { /* do nothing */ },
-                navigateToPostSearch = { mainNavigator.navigateToPostSearch() },
-                navigateToPostDetailFromHome = { subNavigator.navigateToPostDetail(it, PostDetailPagingType.Home) },
-                navigateToPostDetailFromSupported = { subNavigator.navigateToPostDetail(it, PostDetailPagingType.Supported) },
-                navigateToCreatorPosts = { mainNavigator.navigateToCreatorTop(it, isPosts = true) },
-                navigateToCreatorPlans = { mainNavigator.navigateToCreatorTop(it) },
-                navigateToSimpleAlert = { scope.launch { mainNavigator.navigateToSimpleAlertDialog(it) } },
-            ) {
-                applyNavGraph(scope, mainNavigator, subNavigator)
-            }
-
-            NavHost(
-                modifier = Modifier.weight(1f),
-                navigator = subNavigator,
-                initialRoute = EmptyDetailRoute,
-                navTransition = NavigateAnimation.Horizontal.transition
-            ) {
-                applyNavGraph(scope, mainNavigator, subNavigator)
-            }
-        }
-    }
-}
 
 /**
  * mainNavController
@@ -257,10 +96,10 @@ private fun ExpandedNavHost(
  *   - Setting*
  *   - Dialogs*
  */
-private fun RouteBuilder.applyNavGraph(
+private fun NavGraphBuilder.applyNavGraph(
     scope: CoroutineScope,
-    mainNavController: Navigator,
-    subNavController: Navigator = mainNavController,
+    mainNavController: NavHostController,
+    subNavController: NavHostController = mainNavController,
 ) {
     // composable
 
@@ -319,14 +158,13 @@ private fun RouteBuilder.applyNavGraph(
     )
 
     supportingCreatorsScreen(
-        navigateToCreatorPlans = { mainNavController.navigateToCreatorTop(it) },
         navigateToCreatorPosts = { mainNavController.navigateToCreatorTop(it, isPosts = true) },
         navigateToFanCard = { subNavController.navigateToFanCard(it) },
         terminate = { mainNavController.popBackStack() },
     )
 
     followingCreatorsScreen(
-        navigateToCreatorPlans = { mainNavController.navigateToCreatorTop(it) },
+        navigateToCreatorPosts = { mainNavController.navigateToCreatorTop(it, true) },
         terminate = { mainNavController.popBackStack() },
     )
 
@@ -366,7 +204,7 @@ private fun RouteBuilder.applyNavGraph(
     // dialog
 
     simpleAlertDialogDialog(
-        onResult = { mainNavController.goBackWith(it) },
+        onResult = { mainNavController.popBackStackWithResult(it) },
     )
 
     creatorPostsDownloadDialog(
@@ -387,6 +225,8 @@ private fun RouteBuilder.applyNavGraph(
     billingPlusBottomSheet(
         terminate = { mainNavController.popBackStack() },
     )
+
+
 
     // empty for start destination
 

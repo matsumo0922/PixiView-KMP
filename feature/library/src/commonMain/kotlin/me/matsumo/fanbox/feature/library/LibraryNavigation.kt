@@ -5,16 +5,17 @@ import androidx.compose.ui.Modifier
 import me.matsumo.fanbox.core.model.fanbox.id.CreatorId
 import me.matsumo.fanbox.core.model.fanbox.id.PostId
 import me.matsumo.fanbox.core.ui.view.SimpleAlertContents
-import moe.tlaster.precompose.navigation.Navigator
-import moe.tlaster.precompose.navigation.RouteBuilder
+import androidx.navigation.NavController
+import androidx.navigation.NavGraphBuilder
+import androidx.navigation.compose.composable
 
 const val LibraryRoute = "library"
 
-fun Navigator.navigateToLibrary() {
+fun NavController.navigateToLibrary() {
     this.navigate(LibraryRoute)
 }
 
-fun RouteBuilder.libraryScreen(
+fun NavGraphBuilder.libraryScreen(
     navigateToPostSearch: () -> Unit,
     navigateToPostDetailFromHome: (postId: PostId) -> Unit,
     navigateToPostDetailFromSupported: (postId: PostId) -> Unit,
@@ -29,7 +30,7 @@ fun RouteBuilder.libraryScreen(
     navigateToBillingPlus: () -> Unit,
     navigateToCancelPlus: (SimpleAlertContents) -> Unit,
 ) {
-    scene(
+    composable(
         route = LibraryRoute,
     ) {
         LibraryScreen(

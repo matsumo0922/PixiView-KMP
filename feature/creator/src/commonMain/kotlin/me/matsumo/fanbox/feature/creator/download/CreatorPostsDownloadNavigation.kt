@@ -4,25 +4,30 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.ui.Modifier
 import me.matsumo.fanbox.core.model.fanbox.id.CreatorId
 import me.matsumo.fanbox.core.ui.view.SimpleAlertContents
-import moe.tlaster.precompose.navigation.Navigator
-import moe.tlaster.precompose.navigation.RouteBuilder
-import moe.tlaster.precompose.navigation.path
+import androidx.navigation.NavController
+import androidx.navigation.NavGraphBuilder
+import androidx.navigation.NavType
+import androidx.navigation.compose.composable
+import androidx.navigation.navArgument
 
 const val CreatorPostsDownloadId = "creatorPostsDownloadId"
 const val CreatorPostsDownloadRoute = "creatorPostsDownload/{$CreatorPostsDownloadId}"
 
-fun Navigator.navigateToCreatorPostsDownload(creatorId: CreatorId) {
+fun NavController.navigateToCreatorPostsDownload(creatorId: CreatorId) {
     this.navigate("creatorPostsDownload/$creatorId")
 }
 
-fun RouteBuilder.creatorPostsDownloadDialog(
+fun NavGraphBuilder.creatorPostsDownloadDialog(
     navigateToCancelDownloadAlert: (SimpleAlertContents, () -> Unit) -> Unit,
     terminate: () -> Unit,
 ) {
-    scene(CreatorPostsDownloadRoute) {
+    composable(
+        route = CreatorPostsDownloadRoute,
+        arguments = listOf(navArgument(CreatorPostsDownloadId) { type = NavType.StringType })
+    ) {
         CreatorPostsDownloadRoute(
             modifier = Modifier.fillMaxSize(),
-            creatorId = CreatorId(it.path<String>(CreatorPostsDownloadId).orEmpty()),
+            creatorId = CreatorId(it.arguments?.getString(CreatorPostsDownloadId).orEmpty()),
             navigateToCancelDownloadAlert = navigateToCancelDownloadAlert,
             terminate = terminate,
         )

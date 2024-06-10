@@ -3,8 +3,8 @@ package me.matsumo.fanbox.feature.setting.developer
 import kotlinx.coroutines.launch
 import me.matsumo.fanbox.core.common.PixiViewConfig
 import me.matsumo.fanbox.core.repository.UserDataRepository
-import moe.tlaster.precompose.viewmodel.ViewModel
-import moe.tlaster.precompose.viewmodel.viewModelScope
+import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
 
 class SettingDeveloperViewModel(
     private val pixiViewConfig: PixiViewConfig,

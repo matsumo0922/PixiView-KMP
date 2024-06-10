@@ -33,8 +33,8 @@ import androidx.compose.material.icons.outlined.Notifications
 import androidx.compose.material.icons.outlined.Payment
 import androidx.compose.material.icons.outlined.PersonAdd
 import androidx.compose.material.icons.outlined.Search
-import androidx.compose.material3.Divider
 import androidx.compose.material3.DrawerState
+import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
@@ -49,6 +49,7 @@ import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.dp
+import androidx.navigation.NavDestination
 import coil3.annotation.ExperimentalCoilApi
 import coil3.compose.LocalPlatformContext
 import coil3.compose.SubcomposeAsyncImage
@@ -67,7 +68,7 @@ import me.matsumo.fanbox.core.ui.theme.bold
 fun DrawerContent(
     state: DrawerState?,
     userData: UserData?,
-    currentDestination: String?,
+    currentDestination: NavDestination?,
     onClickLibrary: (LibraryDestination) -> Unit,
     navigateToBookmarkedPosts: () -> Unit,
     navigateToFollowingCreators: () -> Unit,
@@ -94,7 +95,7 @@ fun DrawerContent(
         NavigationDrawerItem(
             modifier = Modifier.padding(top = 8.dp),
             state = state,
-            isSelected = currentDestination?.contains(LibraryDestination.Home.name, true) ?: false,
+            isSelected = currentDestination.isLibraryDestinationInHierarchy(LibraryDestination.Home),
             label = stringResource(MR.strings.library_navigation_home),
             icon = Icons.Outlined.Home,
             selectedIcon = Icons.Default.Home,
@@ -103,7 +104,7 @@ fun DrawerContent(
 
         NavigationDrawerItem(
             state = state,
-            isSelected = currentDestination?.contains(LibraryDestination.Discovery.name, true) ?: false,
+            isSelected = currentDestination.isLibraryDestinationInHierarchy(LibraryDestination.Discovery),
             label = stringResource(MR.strings.library_navigation_discovery),
             icon = Icons.Outlined.Search,
             selectedIcon = Icons.Default.Search,
@@ -112,7 +113,7 @@ fun DrawerContent(
 
         NavigationDrawerItem(
             state = state,
-            isSelected = currentDestination?.contains(LibraryDestination.Notify.name, true) ?: false,
+            isSelected = currentDestination.isLibraryDestinationInHierarchy(LibraryDestination.Notify),
             label = stringResource(MR.strings.library_navigation_notify),
             icon = Icons.Outlined.Notifications,
             selectedIcon = Icons.Default.Notifications,
@@ -121,17 +122,17 @@ fun DrawerContent(
 
         NavigationDrawerItem(
             state = state,
-            isSelected = currentDestination?.contains(LibraryDestination.Message.name, true) ?: false,
+            isSelected = currentDestination.isLibraryDestinationInHierarchy(LibraryDestination.Message),
             label = stringResource(MR.strings.library_navigation_message),
             icon = Icons.Outlined.Mail,
             selectedIcon = Icons.Default.Mail,
             onClick = { onClickLibrary.invoke(LibraryDestination.Message) },
         )
 
-        Divider(
+        HorizontalDivider(
             modifier = Modifier
                 .padding(vertical = 8.dp)
-                .fillMaxWidth(),
+                .fillMaxWidth()
         )
 
         NavigationDrawerItem(
@@ -162,10 +163,10 @@ fun DrawerContent(
             onClick = navigateToPayments,
         )
 
-        Divider(
+        HorizontalDivider(
             modifier = Modifier
                 .padding(vertical = 8.dp)
-                .fillMaxWidth(),
+                .fillMaxWidth()
         )
 
         NavigationDrawerItem(
@@ -184,10 +185,10 @@ fun DrawerContent(
 
         Spacer(modifier = Modifier.weight(1f))
 
-        Divider(
+        HorizontalDivider(
             modifier = Modifier
                 .padding(top = 8.dp)
-                .fillMaxWidth(),
+                .fillMaxWidth()
         )
 
         NavigationDrawerPlusItem(

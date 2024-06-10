@@ -11,8 +11,8 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
-import androidx.compose.material3.Divider
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
@@ -20,6 +20,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import dev.icerock.moko.resources.compose.stringResource
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.toImmutableList
@@ -32,18 +33,16 @@ import me.matsumo.fanbox.core.ui.extensition.NavigatorExtension
 import me.matsumo.fanbox.core.ui.extensition.drawVerticalScrollbar
 import me.matsumo.fanbox.core.ui.view.EmptyView
 import me.matsumo.fanbox.feature.creator.support.item.SupportingCreatorItem
-import moe.tlaster.precompose.flow.collectAsStateWithLifecycle
-import moe.tlaster.precompose.koin.koinViewModel
 import org.koin.compose.koinInject
+import org.koin.compose.viewmodel.koinViewModel
 
 @Composable
 internal fun SupportingCreatorsRoute(
-    navigateToCreatorPlans: (CreatorId) -> Unit,
     navigateToCreatorPosts: (CreatorId) -> Unit,
     navigateToFanCard: (CreatorId) -> Unit,
     terminate: () -> Unit,
     modifier: Modifier = Modifier,
-    viewModel: SupportingCreatorsViewModel = koinViewModel(SupportingCreatorsViewModel::class),
+    viewModel: SupportingCreatorsViewModel = koinViewModel(),
     navigatorExtension: NavigatorExtension = koinInject(),
 ) {
     val screenState by viewModel.screenState.collectAsStateWithLifecycle()
@@ -58,7 +57,6 @@ internal fun SupportingCreatorsRoute(
             supportedCreators = uiState.supportedPlans.toImmutableList(),
             onClickPlanDetail = navigatorExtension::navigateToWebPage,
             onClickFanCard = navigateToFanCard,
-            onClickCreatorPlans = navigateToCreatorPlans,
             onClickCreatorPosts = navigateToCreatorPosts,
             terminate = terminate,
         )
@@ -71,7 +69,6 @@ private fun SupportingCreatorsScreen(
     supportedCreators: ImmutableList<FanboxCreatorPlan>,
     onClickPlanDetail: (String) -> Unit,
     onClickFanCard: (CreatorId) -> Unit,
-    onClickCreatorPlans: (CreatorId) -> Unit,
     onClickCreatorPosts: (CreatorId) -> Unit,
     terminate: () -> Unit,
     modifier: Modifier = Modifier,
@@ -90,7 +87,7 @@ private fun SupportingCreatorsScreen(
             )
         },
         bottomBar = {
-            Divider()
+            HorizontalDivider()
         },
         contentWindowInsets = WindowInsets(0, 0, 0, 0),
     ) { padding ->
@@ -109,7 +106,6 @@ private fun SupportingCreatorsScreen(
                         supportingPlan = supportingPlan,
                         onClickPlanDetail = onClickPlanDetail,
                         onClickFanCard = onClickFanCard,
-                        onClickCreatorPlans = onClickCreatorPlans,
                         onClickCreatorPosts = onClickCreatorPosts,
                     )
                 }

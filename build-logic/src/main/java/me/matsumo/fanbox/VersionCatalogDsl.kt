@@ -9,7 +9,7 @@ import org.gradle.api.provider.Provider
 import org.gradle.kotlin.dsl.getByType
 import org.gradle.plugin.use.PluginDependency
 
-internal val Project.libsMain: VersionCatalog
+internal val Project.libs: VersionCatalog
     get() = extensions.getByType<VersionCatalogsExtension>().named("libs")
 
 internal fun VersionCatalog.version(name: String): String {

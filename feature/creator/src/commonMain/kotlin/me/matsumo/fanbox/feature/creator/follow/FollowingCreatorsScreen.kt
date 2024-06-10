@@ -11,8 +11,8 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
-import androidx.compose.material3.Divider
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
@@ -24,6 +24,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import dev.icerock.moko.resources.compose.stringResource
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.toImmutableList
@@ -37,16 +38,15 @@ import me.matsumo.fanbox.core.ui.component.PixiViewTopBar
 import me.matsumo.fanbox.core.ui.extensition.NavigatorExtension
 import me.matsumo.fanbox.core.ui.extensition.drawVerticalScrollbar
 import me.matsumo.fanbox.core.ui.view.EmptyView
-import moe.tlaster.precompose.flow.collectAsStateWithLifecycle
-import moe.tlaster.precompose.koin.koinViewModel
 import org.koin.compose.koinInject
+import org.koin.compose.viewmodel.koinViewModel
 
 @Composable
 internal fun FollowingCreatorsRoute(
-    navigateToCreatorPlans: (CreatorId) -> Unit,
+    navigateToCreatorPosts: (CreatorId) -> Unit,
     terminate: () -> Unit,
     modifier: Modifier = Modifier,
-    viewModel: FollowingCreatorsViewModel = koinViewModel(FollowingCreatorsViewModel::class),
+    viewModel: FollowingCreatorsViewModel = koinViewModel(),
     navigatorExtension: NavigatorExtension = koinInject(),
 ) {
     val screenState by viewModel.screenState.collectAsStateWithLifecycle()
@@ -59,7 +59,7 @@ internal fun FollowingCreatorsRoute(
         FollowingCreatorsScreen(
             modifier = Modifier.fillMaxSize(),
             followingCreators = uiState.followingCreators.toImmutableList(),
-            onClickCreator = navigateToCreatorPlans,
+            onClickCreator = navigateToCreatorPosts,
             onClickFollow = viewModel::follow,
             onClickUnfollow = viewModel::unfollow,
             onClickSupporting = navigatorExtension::navigateToWebPage,
@@ -94,7 +94,7 @@ private fun FollowingCreatorsScreen(
             )
         },
         bottomBar = {
-            Divider()
+            HorizontalDivider()
         },
         contentWindowInsets = WindowInsets(0, 0, 0, 0),
     ) { padding ->

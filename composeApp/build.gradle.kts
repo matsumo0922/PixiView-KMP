@@ -20,6 +20,7 @@ plugins {
 val admobTestAppId = "ca-app-pub-0000000000000000~0000000000"
 val bannerAdTestId = "ca-app-pub-3940256099942544/6300978111"
 val nativeAdTestId = "ca-app-pub-3940256099942544/2247696110"
+val rewardAdTestId = "ca-app-pub-3940256099942544/5224354917"
 
 android {
     namespace = "me.matsumo.fanbox"
@@ -82,6 +83,7 @@ android {
                 putBuildConfig(localProperties, "ADMOB_ANDROID_APP_ID", defaultValue = admobTestAppId)
                 putBuildConfig(localProperties, "ADMOB_ANDROID_BANNER_AD_UNIT_ID", if (it.buildType != "release") bannerAdTestId else null)
                 putBuildConfig(localProperties, "ADMOB_ANDROID_NATIVE_AD_UNIT_ID", if (it.buildType != "release") nativeAdTestId else null)
+                putBuildConfig(localProperties, "ADMOB_ANDROID_REWARD_AD_UNIT_ID", if (it.buildType != "release") rewardAdTestId else null)
             }
 
             it.resValues.apply {
@@ -95,11 +97,11 @@ android {
     }
 
     dependencies {
-        debugImplementation(libsMain.facebook.flipper)
-        debugImplementation(libsMain.facebook.flipper.network)
-        debugImplementation(libsMain.facebook.flipper.leakcanary)
-        debugImplementation(libsMain.facebook.soloader)
-        // debugImplementation(libsMain.leakcanary)
+        debugImplementation(libs.facebook.flipper)
+        debugImplementation(libs.facebook.flipper.network)
+        debugImplementation(libs.facebook.flipper.leakcanary)
+        debugImplementation(libs.facebook.soloader)
+        // debugImplementation(libs.leakcanary)
     }
 }
 
@@ -121,22 +123,22 @@ kotlin {
                 implementation(project(":feature:post"))
                 implementation(project(":feature:creator"))
 
-                implementation(libsMain.moko.permissions)
-                implementation(libsMain.moko.permissions.compose)
-                implementation(libsMain.moko.biometry)
-                implementation(libsMain.moko.biometry.compose)
+                implementation(libs.moko.permissions)
+                implementation(libs.moko.permissions.compose)
+                implementation(libs.moko.biometry)
+                implementation(libs.moko.biometry.compose)
             }
         }
 
         val androidMain by getting {
             dependsOn(commonMain)
             dependencies {
-                implementation(libsMain.bundles.firebase)
+                implementation(libs.bundles.firebase)
 
-                implementation(libsMain.androidx.core.splashscreen)
-                implementation(libsMain.play.review)
-                implementation(libsMain.play.update)
-                implementation(libsMain.google.material)
+                implementation(libs.androidx.core.splashscreen)
+                implementation(libs.play.review)
+                implementation(libs.play.update)
+                implementation(libs.google.material)
             }
         }
 
@@ -160,17 +162,19 @@ buildkonfig {
     packageName = "me.matsumo.fanbox"
 
     defaultConfigs {
-        putBuildConfig(localProperties, "VERSION_NAME", libsMain.versions.versionName.get())
-        putBuildConfig(localProperties, "VERSION_CODE", libsMain.versions.versionCode.get())
+        putBuildConfig(localProperties, "VERSION_NAME", libs.versions.versionName.get())
+        putBuildConfig(localProperties, "VERSION_CODE", libs.versions.versionCode.get())
         putBuildConfig(localProperties, "DEVELOPER_PASSWORD")
         putBuildConfig(localProperties, "PIXIV_CLIENT_ID")
         putBuildConfig(localProperties, "PIXIV_CLIENT_SECRET")
         putBuildConfig(localProperties, "ADMOB_ANDROID_APP_ID", defaultValue = admobTestAppId)
         putBuildConfig(localProperties, "ADMOB_ANDROID_BANNER_AD_UNIT_ID", defaultValue = bannerAdTestId)
         putBuildConfig(localProperties, "ADMOB_ANDROID_NATIVE_AD_UNIT_ID", defaultValue = nativeAdTestId)
+        putBuildConfig(localProperties, "ADMOB_ANDROID_REWARD_AD_UNIT_ID", defaultValue = rewardAdTestId)
         putBuildConfig(localProperties, "ADMOB_IOS_APP_ID", defaultValue = admobTestAppId)
         putBuildConfig(localProperties, "ADMOB_IOS_BANNER_AD_UNIT_ID", defaultValue = bannerAdTestId)
         putBuildConfig(localProperties, "ADMOB_IOS_NATIVE_AD_UNIT_ID", defaultValue = nativeAdTestId)
+        putBuildConfig(localProperties, "ADMOB_IOS_REWARD_AD_UNIT_ID", defaultValue = rewardAdTestId)
     }
 }
 

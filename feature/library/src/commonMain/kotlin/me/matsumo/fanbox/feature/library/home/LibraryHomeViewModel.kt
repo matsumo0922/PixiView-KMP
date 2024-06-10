@@ -14,8 +14,8 @@ import me.matsumo.fanbox.core.model.fanbox.id.PostId
 import me.matsumo.fanbox.core.repository.FanboxRepository
 import me.matsumo.fanbox.core.repository.UserDataRepository
 import me.matsumo.fanbox.core.ui.extensition.emptyPaging
-import moe.tlaster.precompose.viewmodel.ViewModel
-import moe.tlaster.precompose.viewmodel.viewModelScope
+import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
 
 class LibraryHomeViewModel(
     private val userDataRepository: UserDataRepository,

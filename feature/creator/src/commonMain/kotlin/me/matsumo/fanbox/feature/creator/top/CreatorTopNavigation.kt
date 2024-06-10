@@ -5,19 +5,21 @@ import androidx.compose.ui.Modifier
 import me.matsumo.fanbox.core.model.fanbox.id.CreatorId
 import me.matsumo.fanbox.core.model.fanbox.id.PostId
 import me.matsumo.fanbox.core.ui.view.SimpleAlertContents
-import moe.tlaster.precompose.navigation.Navigator
-import moe.tlaster.precompose.navigation.RouteBuilder
-import moe.tlaster.precompose.navigation.path
+import androidx.navigation.NavController
+import androidx.navigation.NavGraphBuilder
+import androidx.navigation.NavType
+import androidx.navigation.compose.composable
+import androidx.navigation.navArgument
 
 const val CreatorTopId = "creatorTopId"
 const val CreatorTopIsPosts = "creatorTopIsPosts"
 const val CreatorTopRoute = "creatorTop/{$CreatorTopId}/{$CreatorTopIsPosts}"
 
-fun Navigator.navigateToCreatorTop(creatorId: CreatorId, isPosts: Boolean = false) {
+fun NavController.navigateToCreatorTop(creatorId: CreatorId, isPosts: Boolean = false) {
     this.navigate("creatorTop/$creatorId/$isPosts")
 }
 
-fun RouteBuilder.creatorTopScreen(
+fun NavGraphBuilder.creatorTopScreen(
     navigateToPostDetail: (PostId) -> Unit,
     navigateToPostSearch: (String, CreatorId) -> Unit,
     navigateToBillingPlus: () -> Unit,
@@ -25,13 +27,17 @@ fun RouteBuilder.creatorTopScreen(
     navigateToAlertDialog: (SimpleAlertContents, () -> Unit, () -> Unit) -> Unit,
     terminate: () -> Unit,
 ) {
-    scene(
+    composable(
         route = CreatorTopRoute,
+        arguments = listOf(
+            navArgument(CreatorTopId) { type = NavType.StringType },
+            navArgument(CreatorTopIsPosts) { type = NavType.BoolType },
+        )
     ) {
         CreatorTopRoute(
             modifier = Modifier.fillMaxSize(),
-            creatorId = CreatorId(it.path<String>(CreatorTopId).orEmpty()),
-            isPosts = it.path<Boolean>(CreatorTopIsPosts) ?: false,
+            creatorId = CreatorId(it.arguments?.getString(CreatorTopId).orEmpty()),
+            isPosts = it.arguments?.getBoolean(CreatorTopIsPosts) ?: false,
             navigateToPostDetail = navigateToPostDetail,
             navigateToPostSearch = navigateToPostSearch,
             navigateToBillingPlus = navigateToBillingPlus,

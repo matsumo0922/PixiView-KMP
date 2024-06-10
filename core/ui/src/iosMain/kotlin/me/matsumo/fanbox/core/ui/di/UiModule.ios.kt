@@ -21,7 +21,8 @@ actual val uiSubModule: Module = module {
 
     single<ImageDownloader> {
         ImageDownloaderImpl(
-            fanboxRepository = get()
+            fanboxRepository = get(),
+            scope = get(),
         )
     }
 }

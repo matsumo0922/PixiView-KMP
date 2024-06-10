@@ -3,7 +3,7 @@ import me.matsumo.fanbox.androidApplication
 import me.matsumo.fanbox.bundle
 import me.matsumo.fanbox.implementation
 import me.matsumo.fanbox.library
-import me.matsumo.fanbox.libsMain
+import me.matsumo.fanbox.libs
 import me.matsumo.fanbox.setupAndroid
 import me.matsumo.fanbox.version
 import org.gradle.api.Plugin
@@ -28,15 +28,15 @@ class KmpAndroidApplication : Plugin<Project> {
             androidApplication {
                 setupAndroid()
 
-                compileSdk = libsMain.version("compileSdk").toInt()
-                defaultConfig.targetSdk = libsMain.version("targetSdk").toInt()
+                compileSdk = libs.version("compileSdk").toInt()
+                defaultConfig.targetSdk = libs.version("targetSdk").toInt()
                 buildFeatures.viewBinding = true
 
                 defaultConfig {
                     applicationId = "caios.android.fanbox"
 
-                    versionName = libsMain.version("versionName")
-                    versionCode = libsMain.version("versionCode").toInt()
+                    versionName = libs.version("versionName")
+                    versionCode = libs.version("versionCode").toInt()
                 }
 
                 packaging {
@@ -54,10 +54,10 @@ class KmpAndroidApplication : Plugin<Project> {
             }
 
             dependencies {
-                val bom = libsMain.library("firebase-bom")
+                val bom = libs.library("firebase-bom")
 
                 implementation(platform(bom))
-                implementation(libsMain.bundle("firebase"))
+                implementation(libs.bundle("firebase"))
             }
         }
     }

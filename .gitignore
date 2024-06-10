@@ -41,6 +41,9 @@ gradle/keystore/release.keystore
 # Gradle cache
 .gradle
 
+# Kotlin
+.kotlin
+
 # Sandbox stuff
 _sandbox
 

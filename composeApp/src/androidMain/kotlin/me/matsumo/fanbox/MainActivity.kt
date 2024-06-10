@@ -12,12 +12,11 @@ import androidx.compose.ui.Modifier
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import androidx.core.view.WindowCompat
 import androidx.fragment.app.FragmentActivity
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.google.accompanist.systemuicontroller.rememberSystemUiController
 import me.matsumo.fanbox.core.model.ThemeConfig
 import me.matsumo.fanbox.core.repository.FanboxRepository
 import me.matsumo.fanbox.core.repository.UserDataRepository
-import moe.tlaster.precompose.PreComposeApp
-import moe.tlaster.precompose.flow.collectAsStateWithLifecycle
 import org.koin.compose.KoinContext
 import org.koin.core.component.KoinComponent
 import org.koin.core.component.inject
@@ -37,29 +36,27 @@ class MainActivity : FragmentActivity(), KoinComponent {
         WindowCompat.setDecorFitsSystemWindows(window, false)
 
         setContent {
-            PreComposeApp {
-                KoinContext {
-                    val windowSize = calculateWindowSizeClass()
-                    val systemUiController = rememberSystemUiController()
+            KoinContext {
+                val windowSize = calculateWindowSizeClass()
+                val systemUiController = rememberSystemUiController()
 
-                    val userData by userDataRepository.userData.collectAsStateWithLifecycle(initial = null)
-                    val isSystemInDarkTheme = isSystemInDarkTheme()
+                val userData by userDataRepository.userData.collectAsStateWithLifecycle(null)
+                val isSystemInDarkTheme = isSystemInDarkTheme()
 
-                    splashScreen.setKeepOnScreenCondition { userData == null }
+                splashScreen.setKeepOnScreenCondition { userData == null }
 
-                    if (userData != null) {
-                        DisposableEffect(systemUiController, userData!!.themeConfig, isSystemInDarkTheme) {
-                            systemUiController.systemBarsDarkContentEnabled = (userData!!.themeConfig == ThemeConfig.Light || !isSystemInDarkTheme)
-                            onDispose {}
-                        }
+                if (userData != null) {
+                    DisposableEffect(systemUiController, userData!!.themeConfig, isSystemInDarkTheme) {
+                        systemUiController.systemBarsDarkContentEnabled = (userData!!.themeConfig == ThemeConfig.Light || !isSystemInDarkTheme)
+                        onDispose {}
                     }
-
-                    PixiViewApp(
-                        modifier = Modifier.fillMaxSize(),
-                        windowSize = windowSize.widthSizeClass,
-                        nativeViews = emptyMap(),
-                    )
                 }
+
+                PixiViewApp(
+                    modifier = Modifier.fillMaxSize(),
+                    windowSize = windowSize.widthSizeClass,
+                    nativeViews = emptyMap(),
+                )
             }
         }
     }

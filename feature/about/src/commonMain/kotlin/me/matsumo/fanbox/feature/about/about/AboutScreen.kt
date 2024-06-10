@@ -16,6 +16,7 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import dev.icerock.moko.resources.compose.stringResource
 import kotlinx.coroutines.launch
 import me.matsumo.fanbox.core.common.PixiViewConfig
@@ -31,9 +32,8 @@ import me.matsumo.fanbox.core.ui.extensition.currentPlatform
 import me.matsumo.fanbox.feature.about.about.items.AboutAppSection
 import me.matsumo.fanbox.feature.about.about.items.AboutDeveloperSection
 import me.matsumo.fanbox.feature.about.about.items.AboutSupportSection
-import moe.tlaster.precompose.flow.collectAsStateWithLifecycle
-import moe.tlaster.precompose.koin.koinViewModel
 import org.koin.compose.koinInject
+import org.koin.compose.viewmodel.koinViewModel
 
 @Composable
 internal fun AboutRoute(
@@ -41,7 +41,7 @@ internal fun AboutRoute(
     navigateToDonate: () -> Unit,
     terminate: () -> Unit,
     modifier: Modifier = Modifier,
-    viewModel: AboutViewModel = koinViewModel(AboutViewModel::class),
+    viewModel: AboutViewModel = koinViewModel(),
     navigatorExtension: NavigatorExtension = koinInject(),
     snackbarExtension: SnackbarExtension = koinInject(),
 ) {

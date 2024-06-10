@@ -13,14 +13,12 @@ import coil3.Image
 import coil3.annotation.ExperimentalCoilApi
 import coil3.asCoilImage
 import dev.icerock.moko.resources.ImageResource
+import io.github.aakira.napier.Napier
 import io.ktor.client.call.body
-import io.ktor.client.statement.bodyAsChannel
 import io.ktor.utils.io.ByteReadChannel
-import io.ktor.utils.io.core.isEmpty
-import io.ktor.utils.io.core.isNotEmpty
-import io.ktor.utils.io.jvm.javaio.copyTo
 import io.ktor.utils.io.streams.writePacket
-import me.matsumo.fanbox.core.common.util.suspendRunCatching
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.launch
 import me.matsumo.fanbox.core.model.fanbox.FanboxPostDetail
 import me.matsumo.fanbox.core.repository.FanboxRepository
 import java.io.File
@@ -34,34 +32,73 @@ actual fun ImageResource.asCoilImage(): Image {
 class ImageDownloaderImpl(
     private val context: Context,
     private val fanboxRepository: FanboxRepository,
+    private val scope: CoroutineScope,
 ): ImageDownloader {
 
-    override suspend fun downloadImage(item: FanboxPostDetail.ImageItem, updateCallback: (Float) -> Unit): Boolean = suspendRunCatching {
-        val url = if (item.extension.lowercase() == "gif") item.originalUrl else item.thumbnailUrl
-        val mime = MimeTypeMap.getSingleton().getMimeTypeFromExtension(item.extension)
-        val uri = getUri(context, "illust-${item.postId}-${item.id}.${item.extension}", "FANBOX", mime.orEmpty())
-        val outputStream = context.contentResolver.openOutputStream(uri!!)!!
+    override fun downloadImages(items: List<FanboxPostDetail.ImageItem>, callback: () -> Unit) {
+        var count = 0
 
-        fanboxRepository.download(url, updateCallback).body<ByteReadChannel>().also {
-            while (!it.isClosedForRead) {
-                outputStream.writePacket(it.readRemaining(DEFAULT_BUFFER_SIZE.toLong()))
+        for (item in items) {
+            downloadImage(item) {
+                count++
+
+                if (count == items.size) {
+                    callback()
+                }
             }
         }
-    }.isSuccess
+    }
 
-    override suspend fun downloadFile(item: FanboxPostDetail.FileItem, updateCallback: (Float) -> Unit): Boolean = suspendRunCatching {
-        val mime = MimeTypeMap.getSingleton().getMimeTypeFromExtension(item.extension)
-        val uri = getUri(context, "illust-${item.postId}-${item.id}.${item.extension}", "FANBOX", mime.orEmpty())
-        val outputStream = context.contentResolver.openOutputStream(uri!!)!!
+    override fun downloadFiles(items: List<FanboxPostDetail.FileItem>, callback: () -> Unit) {
+        var count = 0
 
-        fanboxRepository.download(item.url, updateCallback).body<ByteReadChannel>().also {
-            while (!it.isClosedForRead) {
-                outputStream.writePacket(it.readRemaining(DEFAULT_BUFFER_SIZE.toLong()))
+        for (item in items) {
+            downloadFile(item) {
+                count++
+
+                if (count == items.size) {
+                    callback()
+                }
             }
         }
-    }.isSuccess
+    }
+
+    override fun downloadImage(item: FanboxPostDetail.ImageItem, callback: () -> Unit) {
+        scope.launch {
+            val url = if (item.extension.lowercase() == "gif") item.originalUrl else item.thumbnailUrl
+            val mime = MimeTypeMap.getSingleton().getMimeTypeFromExtension(item.extension)
+            val uri = getUri(context, "illust-${item.postId}-${item.id}.${item.extension}", "FANBOX", mime.orEmpty())
+            val outputStream = context.contentResolver.openOutputStream(uri!!)!!
+
+            fanboxRepository.download(url).body<ByteReadChannel>().also {
+                while (!it.isClosedForRead) {
+                    outputStream.writePacket(it.readRemaining(DEFAULT_BUFFER_SIZE.toLong()))
+                }
+            }
+
+            callback.invoke()
+        }
+    }
+
+    override fun downloadFile(item: FanboxPostDetail.FileItem, callback: () -> Unit) {
+        scope.launch {
+            val mime = MimeTypeMap.getSingleton().getMimeTypeFromExtension(item.extension)
+            val uri = getUri(context, "illust-${item.postId}-${item.id}.${item.extension}", "FANBOX", mime.orEmpty())
+            val outputStream = context.contentResolver.openOutputStream(uri!!)!!
+
+            fanboxRepository.download(item.url).body<ByteReadChannel>().also {
+                while (!it.isClosedForRead) {
+                    outputStream.writePacket(it.readRemaining(DEFAULT_BUFFER_SIZE.toLong()))
+                }
+            }
+
+            callback.invoke()
+        }
+    }
 
     private fun getUri(context: Context, name: String, child: String, mimeType: String = ""): Uri? {
+        Napier.d { "getUri: $name, $mimeType"}
+
         val contentUri: Uri
         val parent: String
 
@@ -84,6 +121,7 @@ class ImageDownloaderImpl(
         val contentValues = ContentValues().apply {
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
                 val path = when {
+                    mimeType.contains("photoshop") -> MediaStore.Files.FileColumns.RELATIVE_PATH
                     mimeType.contains("image") -> MediaStore.Images.ImageColumns.RELATIVE_PATH
                     mimeType.contains("video") -> MediaStore.Video.VideoColumns.RELATIVE_PATH
                     mimeType.contains("audio") -> MediaStore.Audio.AudioColumns.RELATIVE_PATH

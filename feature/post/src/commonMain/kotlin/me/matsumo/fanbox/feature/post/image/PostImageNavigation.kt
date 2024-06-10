@@ -2,28 +2,36 @@ package me.matsumo.fanbox.feature.post.image
 
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.ui.Modifier
+import androidx.navigation.NavController
 import me.matsumo.fanbox.core.model.fanbox.id.PostId
 import me.matsumo.fanbox.core.ui.animation.NavigateAnimation
-import moe.tlaster.precompose.navigation.Navigator
-import moe.tlaster.precompose.navigation.RouteBuilder
-import moe.tlaster.precompose.navigation.path
+import androidx.navigation.NavGraphBuilder
+import androidx.navigation.NavType
+import androidx.navigation.compose.composable
+import androidx.navigation.navArgument
 
 const val PostImageId = "postImageId"
 const val PostImageIndex = "postImageIndex"
 const val PostImageRoute = "postImage/{$PostImageId}/{$PostImageIndex}"
 
-fun Navigator.navigateToPostImage(postId: PostId, index: Int) {
+fun NavController.navigateToPostImage(postId: PostId, index: Int) {
     this.navigate("postImage/$postId/$index")
 }
 
-fun RouteBuilder.postImageScreen(
+fun NavGraphBuilder.postImageScreen(
     terminate: () -> Unit,
 ) {
-    scene(PostImageRoute) {
+    composable(
+        route = PostImageRoute,
+        arguments = listOf(
+            navArgument(PostImageId) { type = NavType.StringType },
+            navArgument(PostImageIndex) { type = NavType.IntType },
+        )
+    ) {
         PostImageRoute(
             modifier = Modifier.fillMaxSize(),
-            postId = PostId(it.path<String>(PostImageId).orEmpty()),
-            postImageIndex = it.path<Int>(PostImageIndex) ?: 0,
+            postId = PostId(it.arguments?.getString(PostImageId).orEmpty()),
+            postImageIndex = it.arguments?.getInt(PostImageIndex) ?: 0,
             terminate = terminate,
         )
     }

@@ -1,10 +1,10 @@
 package me.matsumo.fanbox.feature.about.billing
 
 import androidx.compose.runtime.Stable
+import androidx.lifecycle.ViewModel
 import coil3.PlatformContext
 import kotlinx.coroutines.flow.StateFlow
 import me.matsumo.fanbox.core.model.ScreenState
-import moe.tlaster.precompose.viewmodel.ViewModel
 
 abstract class BillingPlusViewModel: ViewModel() {
     abstract val screenState: StateFlow<ScreenState<BillingPlusUiState>>

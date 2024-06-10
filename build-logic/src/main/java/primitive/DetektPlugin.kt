@@ -1,7 +1,7 @@
 package primitive
 import me.matsumo.fanbox.configureDetekt
 import me.matsumo.fanbox.library
-import me.matsumo.fanbox.libsMain
+import me.matsumo.fanbox.libs
 import org.gradle.api.Plugin
 import org.gradle.api.Project
 import org.gradle.kotlin.dsl.dependencies
@@ -14,8 +14,8 @@ class DetektPlugin : Plugin<Project> {
             configureDetekt()
 
             dependencies {
-                "detektPlugins"(libsMain.library("detekt-formatting"))
-                "detektPlugins"(libsMain.library("twitter-compose-rule"))
+                "detektPlugins"(libs.library("detekt-formatting"))
+                "detektPlugins"(libs.library("twitter-compose-rule"))
             }
         }
     }

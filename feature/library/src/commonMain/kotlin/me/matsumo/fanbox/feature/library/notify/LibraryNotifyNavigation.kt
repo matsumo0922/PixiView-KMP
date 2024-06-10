@@ -4,25 +4,25 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.ui.Modifier
+import androidx.navigation.NavOptions
+import androidx.navigation.Navigator
 import me.matsumo.fanbox.core.model.fanbox.id.PostId
-import me.matsumo.fanbox.core.ui.animation.NavigateAnimation
-import moe.tlaster.precompose.navigation.NavOptions
-import moe.tlaster.precompose.navigation.Navigator
-import moe.tlaster.precompose.navigation.RouteBuilder
+import androidx.navigation.NavController
+import androidx.navigation.NavGraphBuilder
+import androidx.navigation.compose.composable
 
 const val LibraryNotifyRoute = "libraryNotify"
 
-fun Navigator.navigateToLibraryNotify(navOptions: NavOptions? = null) {
+fun NavController.navigateToLibraryNotify(navOptions: NavOptions? = null) {
     this.navigate(LibraryNotifyRoute, navOptions)
 }
 
-fun RouteBuilder.libraryNotifyScreen(
+fun NavGraphBuilder.libraryNotifyScreen(
     openDrawer: () -> Unit,
     navigateToPostDetail: (PostId) -> Unit,
 ) {
-    scene(
+    composable(
         route = LibraryNotifyRoute,
-        navTransition = NavigateAnimation.Library.transition
     ) {
         LibraryNotifyRoute(
             modifier = Modifier

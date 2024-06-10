@@ -1,5 +1,6 @@
 package me.matsumo.fanbox.feature.about.billing
 
+import androidx.lifecycle.viewModelScope
 import coil3.PlatformContext
 import io.github.aakira.napier.Napier
 import kotlinx.cinterop.ExperimentalForeignApi
@@ -18,7 +19,6 @@ import me.matsumo.fanbox.core.common.util.suspendRunCatching
 import me.matsumo.fanbox.core.model.ScreenState
 import me.matsumo.fanbox.core.repository.UserDataRepository
 import me.matsumo.fanbox.core.ui.MR
-import moe.tlaster.precompose.viewmodel.viewModelScope
 import kotlin.coroutines.resume
 
 @OptIn(ExperimentalForeignApi::class)

@@ -19,6 +19,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.nestedscroll.nestedScroll
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import dev.icerock.moko.biometry.compose.BindBiometryAuthenticatorEffect
 import dev.icerock.moko.biometry.compose.rememberBiometryAuthenticatorFactory
 import dev.icerock.moko.resources.compose.stringResource
@@ -41,9 +42,8 @@ import me.matsumo.fanbox.feature.setting.top.items.SettingTopGeneralSection
 import me.matsumo.fanbox.feature.setting.top.items.SettingTopInformationSection
 import me.matsumo.fanbox.feature.setting.top.items.SettingTopOthersSection
 import me.matsumo.fanbox.feature.setting.top.items.SettingTopThemeSection
-import moe.tlaster.precompose.flow.collectAsStateWithLifecycle
-import moe.tlaster.precompose.koin.koinViewModel
 import org.koin.compose.koinInject
+import org.koin.compose.viewmodel.koinViewModel
 
 @Composable
 internal fun SettingTopRoute(
@@ -54,7 +54,7 @@ internal fun SettingTopRoute(
     navigateToSettingDeveloper: () -> Unit,
     terminate: () -> Unit,
     modifier: Modifier = Modifier,
-    viewModel: SettingTopViewModel = koinViewModel(SettingTopViewModel::class),
+    viewModel: SettingTopViewModel = koinViewModel(),
     navigatorExtension: NavigatorExtension = koinInject(),
     snackbarExtension: SnackbarExtension = koinInject(),
 ) {

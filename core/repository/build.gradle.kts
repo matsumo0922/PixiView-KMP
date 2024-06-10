@@ -17,20 +17,19 @@ kotlin {
             implementation(project(":core:common"))
             implementation(project(":core:datastore"))
 
-            implementation(libsMain.bundles.ktor)
-            implementation(libsMain.ksoup)
-            implementation(libsMain.webview.compose)
+            implementation(libs.bundles.ktor)
+            implementation(libs.ksoup)
+            implementation(libs.webview.compose)
 
-            api(libsMain.androidx.paging.common)
+            api(libs.kmp.paging.common)
         }
 
         androidMain.dependencies {
-            api(libsMain.androidx.paging.runtime)
-            api(libsMain.ktor.okhttp)
+            api(libs.ktor.okhttp)
         }
 
         iosMain.dependencies {
-            api(libsMain.ktor.darwin)
+            api(libs.ktor.darwin)
         }
     }
 }

@@ -12,8 +12,10 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.RectangleShape
 import coil3.Image
+import coil3.annotation.ExperimentalCoilApi
+import coil3.network.NetworkHeaders
+import coil3.network.httpHeaders
 import coil3.request.ImageRequest
-import coil3.request.httpHeaders
 import com.eygraber.compose.placeholder.PlaceholderHighlight
 import com.eygraber.compose.placeholder.material3.fade
 import com.eygraber.compose.placeholder.material3.shimmer
@@ -21,7 +23,6 @@ import com.eygraber.compose.placeholder.placeholder
 import dev.icerock.moko.resources.ImageResource
 import io.github.alexzhirkevich.cupertino.adaptive.AdaptiveCircularProgressIndicator
 import io.github.alexzhirkevich.cupertino.adaptive.ExperimentalAdaptiveApi
-import io.ktor.http.headers
 import me.matsumo.fanbox.core.model.fanbox.FanboxMetaData
 import me.matsumo.fanbox.core.model.fanbox.FanboxPostDetail
 
@@ -35,27 +36,33 @@ val LocalFanboxCookie = staticCompositionLocalOf { FanboxCookie() }
 val LocalFanboxMetadata = staticCompositionLocalOf { FanboxMetaData.dummy() }
 
 interface ImageDownloader {
-    suspend fun downloadImage(item: FanboxPostDetail.ImageItem, updateCallback: (Float) -> Unit = {}): Boolean
-    suspend fun downloadFile(item: FanboxPostDetail.FileItem, updateCallback: (Float) -> Unit = {}): Boolean
+    fun downloadImages(items: List<FanboxPostDetail.ImageItem>, callback: () -> Unit)
+    fun downloadFiles(items: List<FanboxPostDetail.FileItem>, callback: () -> Unit)
+
+    fun downloadImage(item: FanboxPostDetail.ImageItem, callback: () -> Unit)
+    fun downloadFile(item: FanboxPostDetail.FileItem, callback: () -> Unit)
 }
 
 @Composable
 expect fun ImageResource.asCoilImage(): Image
 
+@OptIn(ExperimentalCoilApi::class)
 @Composable
 fun ImageRequest.Builder.fanboxHeader(): ImageRequest.Builder {
     val cookie = LocalFanboxCookie.current.cookie
 
     httpHeaders(
-        headers {
-            append("origin", "https://www.fanbox.cc")
-            append("referer", "https://www.fanbox.cc")
-            append("user-agent", "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/98.0.4758.102 Safari/537.36")
+        NetworkHeaders.Builder()
+            .apply {
+                set("origin", "https://www.fanbox.cc")
+                set("referer", "https://www.fanbox.cc")
+                set("user-agent", "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/98.0.4758.102 Safari/537.36")
 
-            if (cookie.isNotBlank()) {
-                append("Cookie", cookie)
+                if (cookie.isNotBlank()) {
+                    set("Cookie", cookie)
+                }
             }
-        }
+            .build()
     )
 
     return this

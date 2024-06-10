@@ -1,10 +1,13 @@
 package me.matsumo.fanbox
 
 import androidx.compose.runtime.Stable
+import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
 import com.benasher44.uuid.uuid4
 import dev.icerock.moko.biometry.BiometryAuthenticator
 import dev.icerock.moko.resources.desc.desc
 import io.github.aakira.napier.Napier
+import kotlinx.coroutines.NonCancellable.isActive
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -24,8 +27,6 @@ import me.matsumo.fanbox.core.model.fanbox.FanboxMetaData
 import me.matsumo.fanbox.core.repository.FanboxRepository
 import me.matsumo.fanbox.core.repository.UserDataRepository
 import me.matsumo.fanbox.core.ui.MR
-import moe.tlaster.precompose.viewmodel.ViewModel
-import moe.tlaster.precompose.viewmodel.viewModelScope
 import kotlin.time.Duration.Companion.minutes
 
 class PixiViewViewModel(

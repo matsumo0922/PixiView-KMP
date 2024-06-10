@@ -27,6 +27,7 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.text.font.FontWeight
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import app.cash.paging.compose.collectAsLazyPagingItems
 import dev.icerock.moko.resources.StringResource
 import dev.icerock.moko.resources.compose.stringResource
@@ -43,8 +44,7 @@ import me.matsumo.fanbox.core.ui.extensition.PixiViewNavigationType
 import me.matsumo.fanbox.core.ui.view.SimpleAlertContents
 import me.matsumo.fanbox.feature.library.home.items.LibraryHomeIdleSection
 import me.matsumo.fanbox.feature.library.home.items.LibrarySupportedIdleSection
-import moe.tlaster.precompose.flow.collectAsStateWithLifecycle
-import moe.tlaster.precompose.koin.koinViewModel
+import org.koin.compose.viewmodel.koinViewModel
 
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalFoundationApi::class)
 @Composable
@@ -56,7 +56,7 @@ internal fun LibraryHomeScreen(
     navigateToCreatorPosts: (CreatorId) -> Unit,
     navigateToSimpleAlert: (SimpleAlertContents) -> Unit,
     modifier: Modifier = Modifier,
-    viewModel: LibraryHomeViewModel = koinViewModel(LibraryHomeViewModel::class),
+    viewModel: LibraryHomeViewModel = koinViewModel(),
 ) {
     val navigationType = LocalNavigationType.current.type
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()

@@ -28,6 +28,7 @@ actual val uiSubModule: Module = module {
         ImageDownloaderImpl(
             context = get(),
             fanboxRepository = get(),
+            scope = get(),
         )
     }
 
@@ -36,6 +37,13 @@ actual val uiSubModule: Module = module {
             context = get(),
             pixiViewConfig = get(),
             ioDispatcher = get(),
+        )
+    }
+
+    single<RewardAdLoader> {
+        RewardAdLoader(
+            context = get(),
+            pixiViewConfig = get(),
         )
     }
 }

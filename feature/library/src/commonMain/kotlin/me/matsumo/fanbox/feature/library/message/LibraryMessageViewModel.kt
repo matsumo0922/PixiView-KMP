@@ -9,8 +9,8 @@ import me.matsumo.fanbox.core.model.ScreenState
 import me.matsumo.fanbox.core.model.fanbox.FanboxNewsLetter
 import me.matsumo.fanbox.core.repository.FanboxRepository
 import me.matsumo.fanbox.core.ui.MR
-import moe.tlaster.precompose.viewmodel.ViewModel
-import moe.tlaster.precompose.viewmodel.viewModelScope
+import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
 
 class LibraryMessageViewModel(
     private val fanboxRepository: FanboxRepository,

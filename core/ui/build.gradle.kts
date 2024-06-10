@@ -28,12 +28,8 @@ kotlin {
                 implementation(project(":core:repository"))
                 implementation(project(":core:datastore"))
 
-                api(project(":precompose:precompose"))
-                api(project(":precompose:precompose-koin"))
-                api(project(":precompose:precompose-viewmodel"))
-
-                api(libsMain.bundles.ui.common.api)
-                api(libsMain.bundles.cupertino)
+                api(libs.bundles.ui.common.api)
+                api(libs.bundles.cupertino)
 
                 // Compose
                 api(compose.runtime)
@@ -48,13 +44,13 @@ kotlin {
                 api(compose.components.resources)
 
                 // Resources
-                api(libsMain.moko.resources)
-                api(libsMain.moko.resources.compose)
+                api(libs.moko.resources)
+                api(libs.moko.resources.compose)
 
-                api(libsMain.calf.ui)
-                api(libsMain.placeholder)
-                api(libsMain.androidx.paging.compose)
-                api(libsMain.play.service.ads)
+                api(libs.calf.ui)
+                api(libs.placeholder)
+                api(libs.kmp.paging.compose)
+                api(libs.play.service.ads)
             }
         }
 
@@ -62,12 +58,7 @@ kotlin {
             dependsOn(commonMain)
 
             dependencies {
-                api(libsMain.bundles.ui.android.api)
-
-                api(libsMain.androidx.compose.ui)
-                api(libsMain.androidx.compose.ui.util)
-                api(libsMain.androidx.compose.ui.tooling)
-                api(libsMain.androidx.compose.ui.binding)
+                api(libs.bundles.ui.android.api)
             }
         }
 

@@ -6,9 +6,12 @@ import androidx.compose.runtime.Composable
 import dev.icerock.moko.resources.StringResource
 import dev.icerock.moko.resources.compose.stringResource
 import me.matsumo.fanbox.core.ui.MR
-import moe.tlaster.precompose.navigation.Navigator
-import moe.tlaster.precompose.navigation.RouteBuilder
-import moe.tlaster.precompose.navigation.path
+import androidx.navigation.NavController
+import androidx.navigation.NavGraphBuilder
+import androidx.navigation.NavType
+import androidx.navigation.compose.dialog
+import androidx.navigation.navArgument
+import me.matsumo.fanbox.core.ui.extensition.navigateForResult
 
 enum class SimpleAlertContents(
     val titleRes: StringResource,
@@ -68,25 +71,31 @@ enum class SimpleAlertContents(
 const val SimpleAlertDialogContent = "simpleAlertDialogSongs"
 const val SimpleAlertDialog = "simpleAlertDialog/{$SimpleAlertDialogContent}"
 
-suspend fun Navigator.navigateToSimpleAlertDialog(
+suspend fun NavController.navigateToSimpleAlertDialog(
     content: SimpleAlertContents,
     onClickPositive: (() -> Unit)? = null,
     onClickNegative: (() -> Unit)? = null,
 ) {
-    val result = navigateForResult("simpleAlertDialog/$content") as? Boolean ?: return
-
-    if (result) {
-        onClickPositive?.invoke()
-    } else {
-        onClickNegative?.invoke()
-    }
+    navigateForResult<Boolean>(
+        route = "simpleAlertDialog/${content.name}",
+        navResultCallback = { result ->
+            if (result) {
+                onClickPositive?.invoke()
+            } else {
+                onClickNegative?.invoke()
+            }
+        }
+    )
 }
 
-fun RouteBuilder.simpleAlertDialogDialog(
+fun NavGraphBuilder.simpleAlertDialogDialog(
     onResult: (Boolean) -> Unit,
 ) {
-    dialog(SimpleAlertDialog) { entry ->
-        val content = SimpleAlertContents.valueOf(entry.path<String>(SimpleAlertDialogContent).orEmpty())
+    dialog(
+        route = SimpleAlertDialog,
+        arguments = listOf(navArgument(SimpleAlertDialogContent) { type = NavType.StringType }),
+    ) { entry ->
+        val content = SimpleAlertContents.valueOf(entry.arguments?.getString(SimpleAlertDialogContent).orEmpty())
 
         SimpleAlertDialog(
             title = stringResource(content.titleRes),

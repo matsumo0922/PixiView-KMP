@@ -20,6 +20,12 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.lifecycle.DefaultLifecycleObserver
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.LifecycleObserver
+import androidx.lifecycle.LifecycleOwner
+import androidx.lifecycle.compose.LocalLifecycleOwner
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import dev.icerock.moko.biometry.compose.BindBiometryAuthenticatorEffect
 import dev.icerock.moko.biometry.compose.rememberBiometryAuthenticatorFactory
 import dev.icerock.moko.resources.desc.StringDesc
@@ -43,19 +49,17 @@ import me.matsumo.fanbox.core.ui.theme.PixiViewTheme
 import me.matsumo.fanbox.core.ui.view.LoadingView
 import me.matsumo.fanbox.core.ui.view.NativeView
 import me.matsumo.fanbox.feature.welcome.WelcomeNavHost
-import moe.tlaster.precompose.flow.collectAsStateWithLifecycle
-import moe.tlaster.precompose.koin.koinViewModel
-import moe.tlaster.precompose.lifecycle.Lifecycle
-import moe.tlaster.precompose.lifecycle.LifecycleObserver
-import moe.tlaster.precompose.lifecycle.LocalLifecycleOwner
 import org.koin.compose.koinInject
+import org.koin.compose.viewmodel.koinViewModel
+import org.koin.core.annotation.KoinExperimentalAPI
 
+@OptIn(KoinExperimentalAPI::class)
 @Composable
 fun PixiViewApp(
     windowSize: WindowWidthSizeClass,
     nativeViews: Map<String, () -> NativeView?>,
     modifier: Modifier = Modifier,
-    viewModel: PixiViewViewModel = koinViewModel(PixiViewViewModel::class),
+    viewModel: PixiViewViewModel = koinViewModel(),
     navigatorExtension: NavigatorExtension = koinInject(),
     pixiViewConfig: PixiViewConfig = koinInject(),
 ) {
@@ -130,17 +134,10 @@ fun PixiViewApp(
             }
 
             DisposableEffect(lifecycleOwner) {
-                val observer = object : LifecycleObserver {
-                    override fun onStateChanged(state: Lifecycle.State) {
-                        when (state) {
-                            Lifecycle.State.Active -> {
-                                viewModel.setAppLock(true)
-                                viewModel.billingClientUpdate()
-                            }
-                            else -> {
-                                // do nothing
-                            }
-                        }
+                val observer = object : DefaultLifecycleObserver {
+                    override fun onResume(owner: LifecycleOwner) {
+                        viewModel.setAppLock(true)
+                        viewModel.billingClientUpdate()
                     }
                 }
 

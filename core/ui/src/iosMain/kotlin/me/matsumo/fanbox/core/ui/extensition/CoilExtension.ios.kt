@@ -7,12 +7,12 @@ import coil3.annotation.ExperimentalCoilApi
 import coil3.asCoilImage
 import dev.icerock.moko.resources.ImageResource
 import io.ktor.client.statement.readBytes
-import kotlinx.cinterop.BetaInteropApi
 import kotlinx.cinterop.ExperimentalForeignApi
 import kotlinx.cinterop.allocArrayOf
 import kotlinx.cinterop.get
 import kotlinx.cinterop.memScoped
-import me.matsumo.fanbox.core.common.util.suspendRunCatching
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.launch
 import me.matsumo.fanbox.core.model.fanbox.FanboxPostDetail
 import me.matsumo.fanbox.core.repository.FanboxRepository
 import org.jetbrains.skia.ColorAlphaType
@@ -87,34 +87,73 @@ internal fun UIImage.toSkiaImage(): Image? {
 
 class ImageDownloaderImpl(
     private val fanboxRepository: FanboxRepository,
+    private val scope: CoroutineScope,
 ): ImageDownloader {
 
-    @OptIn(ExperimentalForeignApi::class, BetaInteropApi::class)
-    override suspend fun downloadImage(item: FanboxPostDetail.ImageItem, updateCallback: (Float) -> Unit): Boolean = suspendRunCatching {
-        val url = if (item.extension.lowercase() == "gif") item.originalUrl else item.thumbnailUrl
-        val bytes = fanboxRepository.download(url, updateCallback).readBytes()
-        val nsData = memScoped { NSData.create(bytes = allocArrayOf(bytes), length = bytes.size.toULong()) }
-        val uiImage = UIImage.imageWithData(nsData)!!
+    override fun downloadImages(items: List<FanboxPostDetail.ImageItem>, callback: () -> Unit) {
+        var count = 0
 
-        UIImageWriteToSavedPhotosAlbum(uiImage, null, null, null)
-    }.isSuccess
+        for (item in items) {
+            downloadImage(item) {
+                count++
 
-    @OptIn(ExperimentalForeignApi::class, BetaInteropApi::class)
-    override suspend fun downloadFile(item: FanboxPostDetail.FileItem, updateCallback: (Float) -> Unit): Boolean = suspendRunCatching {
-        val path = NSHomeDirectory() + "/Documents/FANBOX"
-        val name = "illust-${item.postId}-${item.id}.${item.extension}"
-        val fileManager = NSFileManager.defaultManager
-
-        if (!fileManager.fileExistsAtPath(path)) {
-            fileManager.createDirectoryAtPath(path, true, null, null)
+                if (count == items.size) {
+                    callback()
+                }
+            }
         }
+    }
 
-        val bytes = fanboxRepository.download(item.url, updateCallback).readBytes()
-        val nsData = memScoped { NSData.create(bytes = allocArrayOf(bytes), length = bytes.size.toULong()) }
+    override fun downloadFiles(items: List<FanboxPostDetail.FileItem>, callback: () -> Unit) {
+        var count = 0
 
-        NSFileHandle.fileHandleForWritingAtPath(path + name)!!.apply {
-            writeData(nsData)
-            closeFile()
+        for (item in items) {
+            downloadFile(item) {
+                count++
+
+                if (count == items.size) {
+                    callback()
+                }
+            }
         }
-    }.isSuccess
+    }
+
+    @OptIn(ExperimentalForeignApi::class)
+    override fun downloadImage(item: FanboxPostDetail.ImageItem, callback: () -> Unit) {
+        scope.launch {
+            runCatching {
+                val url = if (item.extension.lowercase() == "gif") item.originalUrl else item.thumbnailUrl
+                val bytes = fanboxRepository.download(url).readBytes()
+                val nsData = memScoped { NSData.create(bytes = allocArrayOf(bytes), length = bytes.size.toULong()) }
+                val uiImage = UIImage.imageWithData(nsData)!!
+
+                UIImageWriteToSavedPhotosAlbum(uiImage, null, null, null)
+
+                callback.invoke()
+            }
+        }
+    }
+
+    @OptIn(ExperimentalForeignApi::class)
+    override fun downloadFile(item: FanboxPostDetail.FileItem, callback: () -> Unit) {
+        scope.launch {
+            val path = NSHomeDirectory() + "/Documents/FANBOX"
+            val name = "illust-${item.postId}-${item.id}.${item.extension}"
+            val fileManager = NSFileManager.defaultManager
+
+            if (!fileManager.fileExistsAtPath(path)) {
+                fileManager.createDirectoryAtPath(path, true, null, null)
+            }
+
+            val bytes = fanboxRepository.download(item.url).readBytes()
+            val nsData = memScoped { NSData.create(bytes = allocArrayOf(bytes), length = bytes.size.toULong()) }
+
+            NSFileHandle.fileHandleForWritingAtPath(path + name)!!.apply {
+                writeData(nsData)
+                closeFile()
+            }
+
+            callback.invoke()
+        }
+    }
 }

@@ -6,6 +6,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
+import androidx.navigation.NavDestination
 import dev.icerock.moko.resources.compose.stringResource
 import io.github.alexzhirkevich.cupertino.adaptive.ExperimentalAdaptiveApi
 import kotlinx.collections.immutable.ImmutableList
@@ -18,12 +19,12 @@ import me.matsumo.fanbox.core.ui.component.PixiViewNavigationDefaults
 internal fun LibraryBottomBar(
     destinations: ImmutableList<LibraryDestination>,
     navigateToDestination: (LibraryDestination) -> Unit,
-    currentDestination: String?,
+    currentDestination: NavDestination?,
     modifier: Modifier = Modifier,
 ) {
     PixiViewNavigationBar(modifier) {
         destinations.forEach { destination ->
-            val isSelected = currentDestination?.contains(destination.name, true) ?: false
+            val isSelected = currentDestination.isLibraryDestinationInHierarchy(destination)
 
             PixiViewNavigationBarItem(
                 isSelected = isSelected,

@@ -25,13 +25,13 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import dev.icerock.moko.resources.compose.stringResource
 import me.matsumo.fanbox.core.ui.MR
-import moe.tlaster.precompose.koin.koinViewModel
+import org.koin.compose.viewmodel.koinViewModel
 
 @Composable
 internal fun SettingDeveloperDialog(
     terminate: () -> Unit,
     modifier: Modifier = Modifier,
-    viewModel: SettingDeveloperViewModel = koinViewModel(SettingDeveloperViewModel::class),
+    viewModel: SettingDeveloperViewModel = koinViewModel(),
 ) {
     var password by remember { mutableStateOf("") }
     var isPasswordError by remember { mutableStateOf(false) }

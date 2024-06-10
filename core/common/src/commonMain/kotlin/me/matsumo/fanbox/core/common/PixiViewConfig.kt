@@ -13,6 +13,7 @@ data class PixiViewConfig(
         val appId: String,
         val bannerAdUnitId: String,
         val nativeAdUnitId: String,
+        val rewardAdUnitId: String,
     ) {
         companion object {
             fun dummy(): AdMob {
@@ -20,6 +21,7 @@ data class PixiViewConfig(
                     appId = "ca-app-pub-1919191919~1919191919",
                     bannerAdUnitId = "ca-app-pub-1919191919~1919191919",
                     nativeAdUnitId = "ca-app-pub-1919191919~1919191919",
+                    rewardAdUnitId = "ca-app-pub-1919191919~1919191919",
                 )
             }
         }

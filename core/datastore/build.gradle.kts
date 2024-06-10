@@ -16,9 +16,9 @@ kotlin {
             implementation(project(":core:common"))
             implementation(project(":core:model"))
 
-            implementation(libsMain.androidx.datastore)
-            implementation(libsMain.androidx.datastore.proto)
-            api(libsMain.androidx.datastore.preferences)
+            implementation(libs.androidx.datastore)
+            implementation(libs.androidx.datastore.proto)
+            api(libs.androidx.datastore.preferences)
         }
     }
 }

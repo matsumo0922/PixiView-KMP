@@ -47,6 +47,7 @@ import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.window.DialogProperties
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import dev.icerock.moko.resources.compose.stringResource
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
@@ -61,9 +62,7 @@ import me.matsumo.fanbox.core.ui.view.SimpleAlertContents
 import me.matsumo.fanbox.feature.creator.download.items.CreatorPostsDownloadItem
 import me.matsumo.fanbox.feature.creator.download.items.CreatorPostsDownloadSettingsSection
 import me.matsumo.fanbox.feature.creator.download.items.CreatorPostsDownloadUserSection
-import moe.tlaster.precompose.flow.collectAsStateWithLifecycle
-import moe.tlaster.precompose.koin.koinViewModel
-import moe.tlaster.precompose.navigation.BackHandler
+import org.koin.compose.viewmodel.koinViewModel
 
 @Composable
 internal fun CreatorPostsDownloadRoute(
@@ -71,7 +70,7 @@ internal fun CreatorPostsDownloadRoute(
     navigateToCancelDownloadAlert: (SimpleAlertContents, () -> Unit) -> Unit,
     terminate: () -> Unit,
     modifier: Modifier = Modifier,
-    viewModel: CreatorPostsDownloadViewModel = koinViewModel(CreatorPostsDownloadViewModel::class),
+    viewModel: CreatorPostsDownloadViewModel = koinViewModel(),
 ) {
     val scope = rememberCoroutineScope()
     val screenState by viewModel.screenState.collectAsStateWithLifecycle()
@@ -169,10 +168,6 @@ private fun CreatorPostsDownloadScreen(
     val state = rememberLazyListState()
     val scrollBehavior = TopAppBarDefaults.pinnedScrollBehavior()
     var isDisplaySettings by remember { mutableStateOf(false) }
-
-    BackHandler(!isCompleted) {
-        terminate.invoke()
-    }
 
     LaunchedEffect(targetIndex) {
         if (targetIndex > 0) {

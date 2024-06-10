@@ -17,8 +17,8 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
-import androidx.compose.material3.Divider
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
@@ -27,6 +27,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.toImmutableList
 import me.matsumo.fanbox.core.model.ScreenState
@@ -40,8 +41,7 @@ import me.matsumo.fanbox.core.ui.component.PostItem
 import me.matsumo.fanbox.core.ui.extensition.drawVerticalScrollbar
 import me.matsumo.fanbox.core.ui.view.ErrorView
 import me.matsumo.fanbox.feature.post.bookmark.items.BookmarkedPostsTopBar
-import moe.tlaster.precompose.flow.collectAsStateWithLifecycle
-import moe.tlaster.precompose.koin.koinViewModel
+import org.koin.compose.viewmodel.koinViewModel
 
 @Composable
 internal fun BookmarkedPostsRoute(
@@ -50,7 +50,7 @@ internal fun BookmarkedPostsRoute(
     navigateToCreatorPlans: (CreatorId) -> Unit,
     terminate: () -> Unit,
     modifier: Modifier = Modifier,
-    viewModel: BookmarkedPostsViewModel = koinViewModel(BookmarkedPostsViewModel::class),
+    viewModel: BookmarkedPostsViewModel = koinViewModel(),
 ) {
     val screenState by viewModel.screenState.collectAsStateWithLifecycle()
 
@@ -107,7 +107,7 @@ private fun BookmarkedPostsScreen(
             )
         },
         bottomBar = {
-            Divider()
+            HorizontalDivider()
         },
         contentWindowInsets = WindowInsets(0, 0, 0, 0),
     ) { padding ->

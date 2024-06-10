@@ -1,6 +1,7 @@
 package me.matsumo.fanbox.feature.about.billing
 
 import android.app.Activity
+import androidx.lifecycle.viewModelScope
 import coil3.PlatformContext
 import com.android.billingclient.api.Purchase
 import io.github.aakira.napier.Napier
@@ -19,7 +20,6 @@ import me.matsumo.fanbox.core.billing.usecase.VerifyPlusUseCase
 import me.matsumo.fanbox.core.model.ScreenState
 import me.matsumo.fanbox.core.repository.UserDataRepository
 import me.matsumo.fanbox.core.ui.MR
-import moe.tlaster.precompose.viewmodel.viewModelScope
 
 class BillingPlusViewModelImpl(
     private val billingClient: BillingClient,

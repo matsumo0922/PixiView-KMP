@@ -13,14 +13,14 @@ android {
 kotlin {
     sourceSets {
         commonMain.dependencies {
-            api(project.dependencies.platform(libsMain.koin.bom))
+            api(project.dependencies.platform(libs.koin.bom))
 
-            api(libsMain.bundles.infra.api)
-            api(libsMain.bundles.koin)
+            api(libs.bundles.infra.api)
+            api(libs.bundles.koin)
         }
 
         androidMain.dependencies {
-            api(libsMain.koin.android)
+            api(libs.koin.android)
         }
     }
 }

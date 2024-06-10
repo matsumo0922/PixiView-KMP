@@ -14,8 +14,8 @@ import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Menu
 import androidx.compose.material.icons.filled.Search
-import androidx.compose.material3.Divider
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
@@ -30,6 +30,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import dev.icerock.moko.resources.compose.stringResource
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.toImmutableList
@@ -46,9 +47,8 @@ import me.matsumo.fanbox.core.ui.extensition.NavigatorExtension
 import me.matsumo.fanbox.core.ui.extensition.PixiViewNavigationType
 import me.matsumo.fanbox.core.ui.extensition.drawVerticalScrollbar
 import me.matsumo.fanbox.core.ui.theme.bold
-import moe.tlaster.precompose.flow.collectAsStateWithLifecycle
-import moe.tlaster.precompose.koin.koinViewModel
 import org.koin.compose.koinInject
+import org.koin.compose.viewmodel.koinViewModel
 
 @Composable
 internal fun LibraryDiscoveryRoute(
@@ -56,7 +56,7 @@ internal fun LibraryDiscoveryRoute(
     navigateToPostSearch: () -> Unit,
     navigateToCreatorPosts: (CreatorId) -> Unit,
     modifier: Modifier = Modifier,
-    viewModel: LibraryDiscoveryViewModel = koinViewModel(LibraryDiscoveryViewModel::class),
+    viewModel: LibraryDiscoveryViewModel = koinViewModel(),
     navigatorExtension: NavigatorExtension = koinInject(),
 ) {
     val screenState by viewModel.screenState.collectAsStateWithLifecycle()
@@ -118,7 +118,7 @@ private fun LibraryDiscoveryScreen(
             )
         },
         bottomBar = {
-            Divider()
+            HorizontalDivider()
         },
         contentWindowInsets = WindowInsets(0, 0, 0, 0),
     ) { padding ->
@@ -130,17 +130,17 @@ private fun LibraryDiscoveryScreen(
             contentPadding = PaddingValues(16.dp),
             verticalArrangement = Arrangement.spacedBy(16.dp),
         ) {
-            if (recommendedCreators.isNotEmpty()) {
+            if (followingPixivCreators.isNotEmpty()) {
                 item {
                     TitleItem(
                         modifier = Modifier.fillMaxWidth(),
-                        title = stringResource(MR.strings.creator_recommended),
+                        title = stringResource(MR.strings.creator_following_pixiv),
                     )
                 }
 
                 items(
-                    items = recommendedCreators,
-                    key = { item -> "recommended-${item.creatorId.value}" },
+                    items = followingPixivCreators,
+                    key = { item -> "pixiv-${item.creatorId.value}" },
                 ) {
                     var isFollowed by rememberSaveable { mutableStateOf(it.isFollowed) }
 
@@ -166,17 +166,17 @@ private fun LibraryDiscoveryScreen(
                 }
             }
 
-            if (followingPixivCreators.isNotEmpty()) {
+            if (recommendedCreators.isNotEmpty()) {
                 item {
                     TitleItem(
                         modifier = Modifier.fillMaxWidth(),
-                        title = stringResource(MR.strings.creator_following_pixiv),
+                        title = stringResource(MR.strings.creator_recommended),
                     )
                 }
 
                 items(
-                    items = followingPixivCreators,
-                    key = { item -> "pixiv-${item.creatorId.value}" },
+                    items = recommendedCreators,
+                    key = { item -> "recommended-${item.creatorId.value}" },
                 ) {
                     var isFollowed by rememberSaveable { mutableStateOf(it.isFollowed) }
 

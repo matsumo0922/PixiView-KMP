@@ -2,26 +2,26 @@ package me.matsumo.fanbox.feature.library.discovery
 
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.ui.Modifier
+import androidx.navigation.NavOptions
+import androidx.navigation.Navigator
 import me.matsumo.fanbox.core.model.fanbox.id.CreatorId
-import me.matsumo.fanbox.core.ui.animation.NavigateAnimation
-import moe.tlaster.precompose.navigation.NavOptions
-import moe.tlaster.precompose.navigation.Navigator
-import moe.tlaster.precompose.navigation.RouteBuilder
+import androidx.navigation.NavController
+import androidx.navigation.NavGraphBuilder
+import androidx.navigation.compose.composable
 
 const val LibraryDiscoveryRoute = "libraryDiscovery"
 
-fun Navigator.navigateToLibraryDiscovery(navOptions: NavOptions? = null) {
+fun NavController.navigateToLibraryDiscovery(navOptions: NavOptions? = null) {
     this.navigate(LibraryDiscoveryRoute, navOptions)
 }
 
-fun RouteBuilder.libraryDiscoveryScreen(
+fun NavGraphBuilder.libraryDiscoveryScreen(
     openDrawer: () -> Unit,
     navigateToPostSearch: () -> Unit,
     navigateToCreatorPosts: (CreatorId) -> Unit,
 ) {
-    scene(
+    composable(
         route = LibraryDiscoveryRoute,
-        navTransition = NavigateAnimation.Library.transition
     ) {
         LibraryDiscoveryRoute(
             modifier = Modifier.fillMaxSize(),

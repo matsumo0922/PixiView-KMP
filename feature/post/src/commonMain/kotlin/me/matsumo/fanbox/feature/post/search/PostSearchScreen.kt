@@ -11,6 +11,7 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.nestedscroll.nestedScroll
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import app.cash.paging.compose.LazyPagingItems
 import app.cash.paging.compose.collectAsLazyPagingItems
 import kotlinx.collections.immutable.ImmutableList
@@ -25,9 +26,8 @@ import me.matsumo.fanbox.core.ui.extensition.NavigatorExtension
 import me.matsumo.fanbox.feature.post.search.items.PostSearchCreatorScreen
 import me.matsumo.fanbox.feature.post.search.items.PostSearchTagScreen
 import me.matsumo.fanbox.feature.post.search.items.PostSearchTopBar
-import moe.tlaster.precompose.flow.collectAsStateWithLifecycle
-import moe.tlaster.precompose.koin.koinViewModel
 import org.koin.compose.koinInject
+import org.koin.compose.viewmodel.koinViewModel
 
 @Composable
 internal fun PostSearchRoute(
@@ -38,7 +38,7 @@ internal fun PostSearchRoute(
     navigateToCreatorPlans: (CreatorId) -> Unit,
     terminate: () -> Unit,
     modifier: Modifier = Modifier,
-    viewModel: PostSearchViewModel = koinViewModel(PostSearchViewModel::class),
+    viewModel: PostSearchViewModel = koinViewModel(),
     navigatorExtension: NavigatorExtension = koinInject(),
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()

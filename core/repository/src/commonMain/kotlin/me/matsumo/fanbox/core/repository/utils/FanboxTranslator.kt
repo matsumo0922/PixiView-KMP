@@ -1,7 +1,7 @@
 package me.matsumo.fanbox.core.repository.utils
 
 import io.github.aakira.napier.Napier
-import io.ktor.http.parseUrlEncodedParameters
+import io.ktor.http.Url
 import kotlinx.datetime.Instant
 import me.matsumo.fanbox.core.model.FanboxTag
 import me.matsumo.fanbox.core.model.PageCursorInfo
@@ -254,7 +254,7 @@ internal fun FanboxPostDetailEntity.translate(bookmarkedPosts: List<PostId>): Fa
         excerpt = body.excerpt,
         commentList = PageOffsetInfo(
             contents = body.commentList.items.map { it.translate() },
-            offset = body.commentList.nextUrl?.let { it.parseUrlEncodedParameters()["offset"]?.toIntOrNull() },
+            offset = body.commentList.nextUrl?.let { Url(it).parameters["offset"]?.toIntOrNull() },
         ),
         nextPost = body.nextPost?.let {
             FanboxPostDetail.OtherPost(
@@ -443,7 +443,7 @@ internal fun FanboxBellItemsEntity.translate(): PageNumberInfo<FanboxBell> {
                 }
             }
         },
-        nextPage = body.nextUrl?.let { it.parseUrlEncodedParameters()["page"]?.toIntOrNull() },
+        nextPage = body.nextUrl?.let { Url(it).parameters["page"]?.toIntOrNull() },
     )
 }
 
@@ -487,14 +487,14 @@ internal fun FanboxCreatorSearchEntity.translate(): PageNumberInfo<FanboxCreator
 internal fun FanboxPostSearchEntity.translate(bookmarkedPosts: List<PostId>): PageNumberInfo<FanboxPost> {
     return PageNumberInfo(
         contents = body.items.map { it.translate(bookmarkedPosts) },
-        nextPage = body.nextUrl?.let { it.parseUrlEncodedParameters()["page"]?.toIntOrNull() },
+        nextPage = body.nextUrl?.let { Url(it).parameters["page"]?.toIntOrNull() },
     )
 }
 
 internal fun FanboxPostCommentItemsEntity.translate(): PageOffsetInfo<FanboxPostDetail.Comment.CommentItem> {
     return PageOffsetInfo(
         contents = body.items.map { it.translate() },
-        offset = body.nextUrl?.let { it.parseUrlEncodedParameters()["page"]?.toIntOrNull() },
+        offset = body.nextUrl?.let { Url(it).parameters["page"]?.toIntOrNull() },
     )
 }
 
