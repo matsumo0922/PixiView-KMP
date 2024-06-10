@@ -115,6 +115,7 @@ kotlin {
                 implementation(project(":core:repository"))
                 implementation(project(":core:billing"))
                 implementation(project(":core:ui"))
+                implementation(project(":core:logs"))
 
                 implementation(project(":feature:welcome"))
                 implementation(project(":feature:library"))
@@ -133,8 +134,6 @@ kotlin {
         val androidMain by getting {
             dependsOn(commonMain)
             dependencies {
-                implementation(libs.bundles.firebase)
-
                 implementation(libs.androidx.core.splashscreen)
                 implementation(libs.play.review)
                 implementation(libs.play.update)

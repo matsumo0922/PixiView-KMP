@@ -15,6 +15,7 @@ kotlin {
         commonMain.dependencies {
             implementation(project(":core:common"))
             implementation(project(":core:model"))
+            implementation(project(":core:logs"))
 
             implementation(libs.androidx.datastore)
             implementation(libs.androidx.datastore.proto)

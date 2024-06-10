@@ -14,9 +14,7 @@ kotlin {
     sourceSets {
         commonMain.dependencies {
             implementation(project(":core:common"))
-
-            implementation(libs.ktor.core)
-            implementation(libs.moko.resources)
+            implementation(project(":core:model"))
         }
     }
 }

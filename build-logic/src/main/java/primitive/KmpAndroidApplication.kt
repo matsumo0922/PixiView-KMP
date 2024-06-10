@@ -52,13 +52,6 @@ class KmpAndroidApplication : Plugin<Project> {
                     )
                 }
             }
-
-            dependencies {
-                val bom = libs.library("firebase-bom")
-
-                implementation(platform(bom))
-                implementation(libs.bundle("firebase"))
-            }
         }
     }
 }

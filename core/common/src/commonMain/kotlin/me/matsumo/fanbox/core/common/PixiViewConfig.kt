@@ -8,6 +8,10 @@ data class PixiViewConfig(
     val pixivClientSecret: String,
     val adMobAndroid: AdMob,
     val adMobIos: AdMob,
+    val platform: String,
+    val platformVersion: String,
+    val device: String,
+    val deviceAbis: String,
 ) {
     data class AdMob(
         val appId: String,
@@ -37,6 +41,10 @@ data class PixiViewConfig(
                 pixivClientSecret = "1919191919",
                 adMobAndroid = AdMob.dummy(),
                 adMobIos = AdMob.dummy(),
+                platform = "android",
+                platformVersion = "12(32)",
+                device = "Pixel 6(Google)",
+                deviceAbis = "arm64-v8a,armeabi-v7a",
             )
         }
     }

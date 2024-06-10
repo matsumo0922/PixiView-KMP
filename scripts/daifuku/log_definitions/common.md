@@ -12,13 +12,17 @@
   - 開発者モードか
 - is_tester: !boolean
   - テスターか
-- os_version: !string 32
-  - Android OSバージョン
-- application_variant: !string 32
-  - アプリケーションのビルドバリアント(release/debug/billing)
 - application_version_code: !bigint
   - アプリケーション VersionCode (212700131 のような数値)
 - application_version_name: !string 32
   - アプリケーション VersionName (21.27.0.13 のような文字列)
+- platform: !string 32
+  - プラットフォーム (android, ios)
+- platform_version: !string 32
+  - プラットフォームバージョン (12(32))
+- device: !string 32
+  - デバイス名 (SOV36, iPhone 12 Pro)
+- device_abis: !string 32
+  - デバイスの ABI (arm64-v8a, x86)
 - time_zone: !string 64
   - タイムゾーン(Asia/Tokyoなど)

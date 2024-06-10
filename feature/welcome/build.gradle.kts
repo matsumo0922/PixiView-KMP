@@ -19,6 +19,7 @@ kotlin {
             implementation(project(":core:repository"))
             implementation(project(":core:datastore"))
             implementation(project(":core:ui"))
+            implementation(project(":core:logs"))
 
             implementation(libs.moko.permissions)
             implementation(libs.moko.permissions.compose)
