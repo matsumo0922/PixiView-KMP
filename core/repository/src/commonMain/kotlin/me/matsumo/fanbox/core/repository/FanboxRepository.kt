@@ -5,6 +5,7 @@ import androidx.paging.PagingConfig
 import androidx.paging.PagingData
 import androidx.paging.cachedIn
 import com.fleeksoft.ksoup.Ksoup
+import com.multiplatform.webview.cookie.WebViewCookieManager
 import io.github.aakira.napier.Napier
 import io.ktor.client.HttpClient
 import io.ktor.client.request.get
@@ -18,6 +19,7 @@ import io.ktor.http.HttpMessageBuilder
 import io.ktor.util.InternalAPI
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.Flow
@@ -181,9 +183,12 @@ class FanboxRepositoryImpl(
 
     override suspend fun logout() {
         CoroutineScope(ioDispatcher).launch {
+            withContext(Dispatchers.Main) { WebViewCookieManager().removeAllCookies() }
+
             fanboxCookieDataStore.save("")
             bookmarkDataStore.clear()
             blockDataStore.clear()
+
             _logoutTrigger.send(Random.nextLong())
         }
     }

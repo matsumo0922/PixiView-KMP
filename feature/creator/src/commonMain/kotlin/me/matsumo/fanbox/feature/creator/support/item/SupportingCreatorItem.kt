@@ -43,7 +43,6 @@ internal fun SupportingCreatorItem(
     supportingPlan: FanboxCreatorPlan,
     onClickPlanDetail: (String) -> Unit,
     onClickFanCard: (CreatorId) -> Unit,
-    onClickCreatorPlans: (CreatorId) -> Unit,
     onClickCreatorPosts: (CreatorId) -> Unit,
     modifier: Modifier = Modifier,
 ) {
@@ -81,7 +80,7 @@ internal fun SupportingCreatorItem(
             UserSection(
                 modifier = Modifier.fillMaxWidth(),
                 plan = supportingPlan,
-                onClickCreator = onClickCreatorPlans,
+                onClickCreator = onClickCreatorPosts,
             )
 
             Text(

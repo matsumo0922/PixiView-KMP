@@ -38,7 +38,6 @@ import org.koin.compose.viewmodel.koinViewModel
 
 @Composable
 internal fun SupportingCreatorsRoute(
-    navigateToCreatorPlans: (CreatorId) -> Unit,
     navigateToCreatorPosts: (CreatorId) -> Unit,
     navigateToFanCard: (CreatorId) -> Unit,
     terminate: () -> Unit,
@@ -58,7 +57,6 @@ internal fun SupportingCreatorsRoute(
             supportedCreators = uiState.supportedPlans.toImmutableList(),
             onClickPlanDetail = navigatorExtension::navigateToWebPage,
             onClickFanCard = navigateToFanCard,
-            onClickCreatorPlans = navigateToCreatorPlans,
             onClickCreatorPosts = navigateToCreatorPosts,
             terminate = terminate,
         )
@@ -71,7 +69,6 @@ private fun SupportingCreatorsScreen(
     supportedCreators: ImmutableList<FanboxCreatorPlan>,
     onClickPlanDetail: (String) -> Unit,
     onClickFanCard: (CreatorId) -> Unit,
-    onClickCreatorPlans: (CreatorId) -> Unit,
     onClickCreatorPosts: (CreatorId) -> Unit,
     terminate: () -> Unit,
     modifier: Modifier = Modifier,
@@ -109,7 +106,6 @@ private fun SupportingCreatorsScreen(
                         supportingPlan = supportingPlan,
                         onClickPlanDetail = onClickPlanDetail,
                         onClickFanCard = onClickFanCard,
-                        onClickCreatorPlans = onClickCreatorPlans,
                         onClickCreatorPosts = onClickCreatorPosts,
                     )
                 }

@@ -15,7 +15,6 @@ fun NavController.navigateToSupportingCreators(navOptions: NavOptions? = null) {
 }
 
 fun NavGraphBuilder.supportingCreatorsScreen(
-    navigateToCreatorPlans: (CreatorId) -> Unit,
     navigateToCreatorPosts: (CreatorId) -> Unit,
     navigateToFanCard: (CreatorId) -> Unit,
     terminate: () -> Unit,
@@ -23,7 +22,6 @@ fun NavGraphBuilder.supportingCreatorsScreen(
     composable(SupportingCreatorsRoute) {
         SupportingCreatorsRoute(
             modifier = Modifier.fillMaxSize(),
-            navigateToCreatorPlans = navigateToCreatorPlans,
             navigateToCreatorPosts = navigateToCreatorPosts,
             navigateToFanCard = navigateToFanCard,
             terminate = terminate,

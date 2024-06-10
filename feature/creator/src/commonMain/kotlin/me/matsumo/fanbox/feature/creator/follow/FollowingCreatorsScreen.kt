@@ -43,7 +43,7 @@ import org.koin.compose.viewmodel.koinViewModel
 
 @Composable
 internal fun FollowingCreatorsRoute(
-    navigateToCreatorPlans: (CreatorId) -> Unit,
+    navigateToCreatorPosts: (CreatorId) -> Unit,
     terminate: () -> Unit,
     modifier: Modifier = Modifier,
     viewModel: FollowingCreatorsViewModel = koinViewModel(),
@@ -59,7 +59,7 @@ internal fun FollowingCreatorsRoute(
         FollowingCreatorsScreen(
             modifier = Modifier.fillMaxSize(),
             followingCreators = uiState.followingCreators.toImmutableList(),
-            onClickCreator = navigateToCreatorPlans,
+            onClickCreator = navigateToCreatorPosts,
             onClickFollow = viewModel::follow,
             onClickUnfollow = viewModel::unfollow,
             onClickSupporting = navigatorExtension::navigateToWebPage,

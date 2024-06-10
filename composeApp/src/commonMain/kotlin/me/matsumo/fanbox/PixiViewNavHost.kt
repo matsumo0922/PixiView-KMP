@@ -158,14 +158,13 @@ private fun NavGraphBuilder.applyNavGraph(
     )
 
     supportingCreatorsScreen(
-        navigateToCreatorPlans = { mainNavController.navigateToCreatorTop(it) },
         navigateToCreatorPosts = { mainNavController.navigateToCreatorTop(it, isPosts = true) },
         navigateToFanCard = { subNavController.navigateToFanCard(it) },
         terminate = { mainNavController.popBackStack() },
     )
 
     followingCreatorsScreen(
-        navigateToCreatorPlans = { mainNavController.navigateToCreatorTop(it) },
+        navigateToCreatorPosts = { mainNavController.navigateToCreatorTop(it, true) },
         terminate = { mainNavController.popBackStack() },
     )
 
