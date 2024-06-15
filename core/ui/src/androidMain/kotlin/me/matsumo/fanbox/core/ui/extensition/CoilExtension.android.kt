@@ -19,6 +19,8 @@ import io.ktor.utils.io.ByteReadChannel
 import io.ktor.utils.io.streams.writePacket
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
+import me.matsumo.fanbox.core.logs.category.PostsLog
+import me.matsumo.fanbox.core.logs.logger.send
 import me.matsumo.fanbox.core.model.fanbox.FanboxPostDetail
 import me.matsumo.fanbox.core.repository.FanboxRepository
 import java.io.File
@@ -34,6 +36,8 @@ class ImageDownloaderImpl(
     private val fanboxRepository: FanboxRepository,
     private val scope: CoroutineScope,
 ): ImageDownloader {
+
+    private var globalCallback: (() -> Unit)? = null
 
     override fun downloadImages(items: List<FanboxPostDetail.ImageItem>, callback: () -> Unit) {
         var count = 0
@@ -65,34 +69,56 @@ class ImageDownloaderImpl(
 
     override fun downloadImage(item: FanboxPostDetail.ImageItem, callback: () -> Unit) {
         scope.launch {
-            val url = if (item.extension.lowercase() == "gif") item.originalUrl else item.thumbnailUrl
-            val mime = MimeTypeMap.getSingleton().getMimeTypeFromExtension(item.extension)
-            val uri = getUri(context, "illust-${item.postId}-${item.id}.${item.extension}", "FANBOX", mime.orEmpty())
-            val outputStream = context.contentResolver.openOutputStream(uri!!)!!
+            runCatching {
+                val url = if (item.extension.lowercase() == "gif") item.originalUrl else item.thumbnailUrl
+                val mime = MimeTypeMap.getSingleton().getMimeTypeFromExtension(item.extension)
+                val uri = getUri(context, "illust-${item.postId}-${item.id}.${item.extension}", "FANBOX", mime.orEmpty())
+                val outputStream = context.contentResolver.openOutputStream(uri!!)!!
 
-            fanboxRepository.download(url).body<ByteReadChannel>().also {
-                while (!it.isClosedForRead) {
-                    outputStream.writePacket(it.readRemaining(DEFAULT_BUFFER_SIZE.toLong()))
+                fanboxRepository.download(url).body<ByteReadChannel>().also {
+                    while (!it.isClosedForRead) {
+                        outputStream.writePacket(it.readRemaining(DEFAULT_BUFFER_SIZE.toLong()))
+                    }
                 }
-            }
 
-            callback.invoke()
+                callback.invoke()
+                globalCallback?.invoke()
+            }.also {
+                PostsLog.download(
+                    type = "image",
+                    postId = item.postId.value,
+                    itemId = item.id,
+                    extension = item.extension,
+                    isSuccess = it.isSuccess,
+                ).send()
+            }
         }
     }
 
     override fun downloadFile(item: FanboxPostDetail.FileItem, callback: () -> Unit) {
         scope.launch {
-            val mime = MimeTypeMap.getSingleton().getMimeTypeFromExtension(item.extension)
-            val uri = getUri(context, "illust-${item.postId}-${item.id}.${item.extension}", "FANBOX", mime.orEmpty())
-            val outputStream = context.contentResolver.openOutputStream(uri!!)!!
+            runCatching {
+                val mime = MimeTypeMap.getSingleton().getMimeTypeFromExtension(item.extension)
+                val uri = getUri(context, "illust-${item.postId}-${item.id}.${item.extension}", "FANBOX", mime.orEmpty())
+                val outputStream = context.contentResolver.openOutputStream(uri!!)!!
 
-            fanboxRepository.download(item.url).body<ByteReadChannel>().also {
-                while (!it.isClosedForRead) {
-                    outputStream.writePacket(it.readRemaining(DEFAULT_BUFFER_SIZE.toLong()))
+                fanboxRepository.download(item.url).body<ByteReadChannel>().also {
+                    while (!it.isClosedForRead) {
+                        outputStream.writePacket(it.readRemaining(DEFAULT_BUFFER_SIZE.toLong()))
+                    }
                 }
-            }
 
-            callback.invoke()
+                callback.invoke()
+                globalCallback?.invoke()
+            }.also {
+                PostsLog.download(
+                    type = "file",
+                    postId = item.postId.value,
+                    itemId = item.id,
+                    extension = item.extension,
+                    isSuccess = it.isSuccess,
+                ).send()
+            }
         }
     }
 
@@ -149,5 +175,9 @@ class ImageDownloaderImpl(
         }
 
         return contentResolver.insert(contentUri, contentValues)
+    }
+
+    override fun setCallback(callback: () -> Unit) {
+        this.globalCallback = callback
     }
 }

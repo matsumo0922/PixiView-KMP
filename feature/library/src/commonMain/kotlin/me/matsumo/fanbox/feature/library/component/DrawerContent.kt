@@ -76,7 +76,7 @@ fun DrawerContent(
     navigateToPayments: () -> Unit,
     navigateToSetting: () -> Unit,
     navigateToAbout: () -> Unit,
-    navigateToBillingPlus: () -> Unit,
+    navigateToBillingPlus: (String?) -> Unit,
     modifier: Modifier = Modifier,
 ) {
     Column(
@@ -195,7 +195,7 @@ fun DrawerContent(
             state = state,
             isPlusMode = userData?.isPlusMode == true,
             isDeveloperMode = userData?.isDeveloperMode == true,
-            onClick = navigateToBillingPlus,
+            onClick = { navigateToBillingPlus.invoke("drawer") },
         )
     }
 }

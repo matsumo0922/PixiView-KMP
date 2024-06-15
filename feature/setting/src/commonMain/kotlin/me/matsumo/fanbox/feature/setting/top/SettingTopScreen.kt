@@ -48,7 +48,7 @@ import org.koin.compose.viewmodel.koinViewModel
 @Composable
 internal fun SettingTopRoute(
     navigateToThemeSetting: () -> Unit,
-    navigateToBillingPlus: () -> Unit,
+    navigateToBillingPlus: (String?) -> Unit,
     navigateToLogoutDialog: (SimpleAlertContents, () -> Unit) -> Unit,
     navigateToOpenSourceLicense: () -> Unit,
     navigateToSettingDeveloper: () -> Unit,
@@ -93,7 +93,7 @@ internal fun SettingTopRoute(
                         viewModel.setGridMode(true)
                     } else {
                         scope.launch { snackbarExtension.showSnackbar(snackbarHostState, requirePlus) }
-                        navigateToBillingPlus.invoke()
+                        navigateToBillingPlus.invoke("isUseGridMode")
                     }
                 } else {
                     viewModel.setGridMode(false)
@@ -105,7 +105,7 @@ internal fun SettingTopRoute(
                         viewModel.setHideRestricted(true)
                     } else {
                         scope.launch { snackbarExtension.showSnackbar(snackbarHostState, requirePlus) }
-                        navigateToBillingPlus.invoke()
+                        navigateToBillingPlus.invoke("isHideRestricted")
                     }
                 } else {
                     viewModel.setHideRestricted(false)
@@ -120,7 +120,7 @@ internal fun SettingTopRoute(
                             }
                         }
                     } else {
-                        navigateToBillingPlus.invoke()
+                        navigateToBillingPlus.invoke("isUseAppLock")
                     }
                 } else {
                     viewModel.setAppLock(false)

@@ -7,7 +7,6 @@ import com.benasher44.uuid.uuid4
 import dev.icerock.moko.biometry.BiometryAuthenticator
 import dev.icerock.moko.resources.desc.desc
 import io.github.aakira.napier.Napier
-import kotlinx.coroutines.NonCancellable.isActive
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -22,6 +21,7 @@ import kotlinx.coroutines.launch
 import me.matsumo.fanbox.core.billing.BillingStatus
 import me.matsumo.fanbox.core.common.PixiViewConfig
 import me.matsumo.fanbox.core.common.util.suspendRunCatching
+import me.matsumo.fanbox.core.datastore.LaunchLogDataStore
 import me.matsumo.fanbox.core.logs.logger.LogConfigurator
 import me.matsumo.fanbox.core.model.ScreenState
 import me.matsumo.fanbox.core.model.UserData
@@ -29,11 +29,14 @@ import me.matsumo.fanbox.core.model.fanbox.FanboxMetaData
 import me.matsumo.fanbox.core.repository.FanboxRepository
 import me.matsumo.fanbox.core.repository.UserDataRepository
 import me.matsumo.fanbox.core.ui.MR
+import me.matsumo.fanbox.core.ui.extensition.ImageDownloader
 import kotlin.time.Duration.Companion.minutes
 
 class PixiViewViewModel(
     private val userDataRepository: UserDataRepository,
     private val fanboxRepository: FanboxRepository,
+    private val launchLogDataStore: LaunchLogDataStore,
+    private val imageDownloader: ImageDownloader,
     private val pixiViewConfig: PixiViewConfig,
     private val billingStatus: BillingStatus,
 ) : ViewModel() {
@@ -64,6 +67,8 @@ class PixiViewViewModel(
     )
 
     init {
+        launchLogDataStore.launch()
+
         viewModelScope.launch {
             fanboxRepository.logoutTrigger.collectLatest {
                 _isLoggedInFlow.emit(false)

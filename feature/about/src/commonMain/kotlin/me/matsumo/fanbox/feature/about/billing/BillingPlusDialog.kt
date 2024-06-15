@@ -56,6 +56,8 @@ import coil3.compose.LocalPlatformContext
 import dev.icerock.moko.resources.StringResource
 import dev.icerock.moko.resources.compose.stringResource
 import kotlinx.coroutines.launch
+import me.matsumo.fanbox.core.logs.category.BillingLog
+import me.matsumo.fanbox.core.logs.logger.send
 import me.matsumo.fanbox.core.ui.AsyncLoadContents
 import me.matsumo.fanbox.core.ui.MR
 import me.matsumo.fanbox.core.ui.appName
@@ -70,6 +72,7 @@ import org.koin.compose.viewmodel.koinViewModel
 
 @Composable
 internal fun BillingPlusRoute(
+    referrer: String,
     terminate: () -> Unit,
     modifier: Modifier = Modifier,
     viewModel: BillingPlusViewModel = koinViewModel(),
@@ -99,7 +102,14 @@ internal fun BillingPlusRoute(
                 scope.launch {
                     isLoading = true
 
-                    if (viewModel.purchase(context)) {
+                    val isSuccess = viewModel.purchase(context)
+
+                    BillingLog.purchase(
+                        referrer = referrer,
+                        isSuccess = isSuccess,
+                    ).send()
+
+                    if (isSuccess) {
                         isLoading = false
                         snackbarExtension.showSnackbar(snackbarHostState, MR.strings.billing_plus_toast_purchased)
                         terminate.invoke()
@@ -111,7 +121,11 @@ internal fun BillingPlusRoute(
             },
             onClickVerify = {
                 scope.launch {
-                    if (viewModel.verify(context)) {
+                    val isSuccess = viewModel.verify(context)
+
+                    BillingLog.verify(isSuccess).send()
+
+                    if (isSuccess) {
                         snackbarExtension.showSnackbar(snackbarHostState, MR.strings.billing_plus_toast_verify)
                         terminate.invoke()
                     } else {
@@ -121,7 +135,11 @@ internal fun BillingPlusRoute(
             },
             onClickConsume = {
                 scope.launch {
-                    if (viewModel.consume(context)) {
+                    val isSuccess = viewModel.consume(context)
+
+                    BillingLog.consume(isSuccess).send()
+
+                    if (isSuccess) {
                         snackbarExtension.showSnackbar(snackbarHostState, MR.strings.billing_plus_toast_consumed)
                     } else {
                         snackbarExtension.showSnackbar(snackbarHostState, MR.strings.billing_plus_toast_consumed_error)

@@ -22,7 +22,7 @@ fun LibraryDrawer(
     navigateToPayments: () -> Unit,
     navigateToSetting: () -> Unit,
     navigateToAbout: () -> Unit,
-    navigateToBillingPlus: () -> Unit,
+    navigateToBillingPlus: (String?) -> Unit,
     modifier: Modifier = Modifier,
 ) {
     ModalDrawerSheet(
@@ -58,7 +58,7 @@ fun LibraryPermanentDrawer(
     navigateToPayments: () -> Unit,
     navigateToSetting: () -> Unit,
     navigateToAbout: () -> Unit,
-    navigateToBillingPlus: () -> Unit,
+    navigateToBillingPlus: (String?) -> Unit,
     modifier: Modifier = Modifier,
 ) {
     PermanentDrawerSheet(

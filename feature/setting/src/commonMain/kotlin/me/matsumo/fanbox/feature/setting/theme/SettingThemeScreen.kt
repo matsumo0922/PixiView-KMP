@@ -48,7 +48,7 @@ import org.koin.compose.viewmodel.koinViewModel
 
 @Composable
 internal fun SettingThemeRoute(
-    navigateToBillingPlus: () -> Unit,
+    navigateToBillingPlus: (String?) -> Unit,
     terminate: () -> Unit,
     modifier: Modifier = Modifier,
     viewModel: SettingThemeViewModel = koinViewModel(),
@@ -65,7 +65,7 @@ internal fun SettingThemeRoute(
         SettingThemeDialog(
             modifier = Modifier.background(MaterialTheme.colorScheme.surface),
             userData = it.userData,
-            onClickBillingPlus = navigateToBillingPlus,
+            onClickBillingPlus = { navigateToBillingPlus.invoke("isUseDynamicColor") },
             onSelectTheme = viewModel::setThemeConfig,
             onSelectThemeColor = viewModel::setThemeColorConfig,
             onClickDynamicColor = viewModel::setUseDynamicColor,

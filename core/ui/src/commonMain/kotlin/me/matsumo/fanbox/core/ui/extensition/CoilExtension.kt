@@ -41,6 +41,8 @@ interface ImageDownloader {
 
     fun downloadImage(item: FanboxPostDetail.ImageItem, callback: () -> Unit)
     fun downloadFile(item: FanboxPostDetail.FileItem, callback: () -> Unit)
+
+    fun setCallback(callback: () -> Unit)
 }
 
 @Composable

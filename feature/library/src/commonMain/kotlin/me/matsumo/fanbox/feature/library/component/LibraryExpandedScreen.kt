@@ -39,7 +39,7 @@ internal fun LibraryExpandedScreen(
     navigateToPayments: () -> Unit,
     navigateToSettingTop: () -> Unit,
     navigateToAbout: () -> Unit,
-    navigateToBillingPlus: () -> Unit,
+    navigateToBillingPlus: (String?) -> Unit,
     navigateToCancelPlus: (SimpleAlertContents) -> Unit,
     modifier: Modifier = Modifier,
 ) {

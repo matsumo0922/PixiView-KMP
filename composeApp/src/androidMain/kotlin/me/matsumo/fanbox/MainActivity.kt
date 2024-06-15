@@ -2,6 +2,7 @@ package me.matsumo.fanbox
 
 import android.graphics.Color
 import android.os.Bundle
+import android.widget.Toast
 import androidx.activity.SystemBarStyle
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
@@ -15,13 +16,17 @@ import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import androidx.fragment.app.FragmentActivity
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.lifecycleScope
+import com.google.android.play.core.review.ReviewManagerFactory
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
+import me.matsumo.fanbox.core.datastore.LaunchLogDataStore
 import me.matsumo.fanbox.core.logs.category.ApplicationLog
+import me.matsumo.fanbox.core.logs.category.ReviewsLog
 import me.matsumo.fanbox.core.logs.logger.LogConfigurator
 import me.matsumo.fanbox.core.logs.logger.send
 import me.matsumo.fanbox.core.model.ThemeConfig
 import me.matsumo.fanbox.core.repository.UserDataRepository
+import me.matsumo.fanbox.core.ui.extensition.ImageDownloader
 import me.matsumo.fanbox.core.ui.theme.shouldUseDarkTheme
 import org.koin.compose.KoinContext
 import org.koin.core.component.KoinComponent
@@ -30,6 +35,10 @@ import org.koin.core.component.inject
 class MainActivity : FragmentActivity(), KoinComponent {
 
     private val userDataRepository: UserDataRepository by inject()
+
+    private val launchLogDataStore: LaunchLogDataStore by inject()
+
+    private val imageDownloader: ImageDownloader by inject()
 
     private var stayTime = 0L
 
@@ -40,6 +49,8 @@ class MainActivity : FragmentActivity(), KoinComponent {
         super.onCreate(savedInstanceState)
 
         enableEdgeToEdge()
+
+        imageDownloader.setCallback(::requestReview)
 
         setContent {
             KoinContext {
@@ -83,12 +94,37 @@ class MainActivity : FragmentActivity(), KoinComponent {
         }
     }
 
-    override fun onDestroy() {
-        super.onDestroy()
+    override fun onStop() {
+        super.onStop()
 
         if (stayTime != 0L) {
-            ApplicationLog.close(System.currentTimeMillis() - stayTime).send()
+            ApplicationLog.close((System.currentTimeMillis() - stayTime) / 1000).send()
             stayTime = 0L
+        }
+    }
+
+    private fun requestReview() {
+        lifecycleScope.launch {
+            if (launchLogDataStore.getLaunchCount() < 3) return@launch
+
+            ReviewsLog.tryRequestReview().send()
+
+            val manager = ReviewManagerFactory.create(this@MainActivity)
+            val request = manager.requestReviewFlow()
+
+            request.addOnCompleteListener {
+                if (it.isSuccessful) {
+                    ReviewsLog.requestReview().send()
+
+                    val reviewInfo = it.result
+                    val flow = manager.launchReviewFlow(this@MainActivity, reviewInfo)
+
+                    flow.addOnCompleteListener {
+                        ReviewsLog.reviewed().send()
+                        Toast.makeText(this@MainActivity, R.string.home_review_success, Toast.LENGTH_LONG).show()
+                    }
+                }
+            }
         }
     }
 }

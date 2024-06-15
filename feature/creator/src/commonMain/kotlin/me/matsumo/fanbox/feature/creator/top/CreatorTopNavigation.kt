@@ -2,15 +2,15 @@ package me.matsumo.fanbox.feature.creator.top
 
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.ui.Modifier
-import me.matsumo.fanbox.core.model.fanbox.id.CreatorId
-import me.matsumo.fanbox.core.model.fanbox.id.PostId
-import me.matsumo.fanbox.core.ui.view.SimpleAlertContents
 import androidx.navigation.NavController
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.NavType
 import androidx.navigation.compose.composable
 import androidx.navigation.navArgument
+import me.matsumo.fanbox.core.model.fanbox.id.CreatorId
+import me.matsumo.fanbox.core.model.fanbox.id.PostId
 import me.matsumo.fanbox.core.ui.extensition.navigateWithLog
+import me.matsumo.fanbox.core.ui.view.SimpleAlertContents
 
 const val CreatorTopId = "creatorTopId"
 const val CreatorTopIsPosts = "creatorTopIsPosts"
@@ -23,7 +23,7 @@ fun NavController.navigateToCreatorTop(creatorId: CreatorId, isPosts: Boolean = 
 fun NavGraphBuilder.creatorTopScreen(
     navigateToPostDetail: (PostId) -> Unit,
     navigateToPostSearch: (String, CreatorId) -> Unit,
-    navigateToBillingPlus: () -> Unit,
+    navigateToBillingPlus: (String?) -> Unit,
     navigateToDownloadAll: (CreatorId) -> Unit,
     navigateToAlertDialog: (SimpleAlertContents, () -> Unit, () -> Unit) -> Unit,
     terminate: () -> Unit,

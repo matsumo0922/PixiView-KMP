@@ -115,7 +115,7 @@ private fun NavGraphBuilder.applyNavGraph(
         navigateToPayments = { subNavController.navigateToPayments() },
         navigateToSettingTop = { subNavController.navigateToSettingTop() },
         navigateToAbout = { subNavController.navigateToAbout() },
-        navigateToBillingPlus = { mainNavController.navigateToBillingPlus() },
+        navigateToBillingPlus = { mainNavController.navigateToBillingPlus(it) },
         navigateToCancelPlus = { scope.launch { mainNavController.navigateToSimpleAlertDialog(it) } },
     )
 
@@ -151,7 +151,7 @@ private fun NavGraphBuilder.applyNavGraph(
     creatorTopScreen(
         navigateToPostDetail = { subNavController.navigateToPostDetail(it, PostDetailPagingType.Creator) },
         navigateToPostSearch = { query, creatorId -> mainNavController.navigateToPostSearch(tag = query, creatorId = creatorId) },
-        navigateToBillingPlus = { mainNavController.navigateToBillingPlus() },
+        navigateToBillingPlus = { mainNavController.navigateToBillingPlus(it) },
         navigateToDownloadAll = { mainNavController.navigateToCreatorPostsDownload(it) },
         navigateToAlertDialog = { contents, onPositive, onNegative -> scope.launch { mainNavController.navigateToSimpleAlertDialog(contents, onPositive, onNegative) } },
         terminate = { mainNavController.popBackStack() },
@@ -179,13 +179,13 @@ private fun NavGraphBuilder.applyNavGraph(
 
     aboutScreen(
         navigateToVersionHistory = { mainNavController.navigateToVersionHistory() },
-        navigateToDonate = { mainNavController.navigateToBillingPlus() },
+        navigateToDonate = { mainNavController.navigateToBillingPlus("donate") },
         terminate = { subNavController.popBackStack() },
     )
 
     settingTopScreen(
         navigateToThemeSetting = { mainNavController.navigateToSettingTheme() },
-        navigateToBillingPlus = { mainNavController.navigateToBillingPlus() },
+        navigateToBillingPlus = { mainNavController.navigateToBillingPlus(it) },
         navigateToSettingDeveloper = { mainNavController.navigateToSettingDeveloper() },
         navigateToLogoutDialog = { contents, onResult -> scope.launch { mainNavController.navigateToSimpleAlertDialog(contents, onResult) } },
         navigateToOpenSourceLicense = { mainNavController.navigateToSettingLicense() },
@@ -193,7 +193,7 @@ private fun NavGraphBuilder.applyNavGraph(
     )
 
     settingThemeScreen(
-        navigateToBillingPlus = { mainNavController.navigateToBillingPlus() },
+        navigateToBillingPlus = { mainNavController.navigateToBillingPlus(it) },
         terminate = { mainNavController.popBackStack() },
     )
 
