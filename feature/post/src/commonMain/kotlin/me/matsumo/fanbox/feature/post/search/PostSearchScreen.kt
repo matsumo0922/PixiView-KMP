@@ -68,7 +68,7 @@ internal fun PostSearchRoute(
         onClickCreatorPlans = navigateToCreatorPlans,
         onClickFollow = viewModel::follow,
         onClickUnfollow = viewModel::unfollow,
-        onClickSupporting = navigatorExtension::navigateToWebPage,
+        onClickSupporting = { navigatorExtension.navigateToWebPage(it, PostSearchRoute) },
         onSearch = {
             if (uiState.query.isNotBlank()) {
                 navigateToPostSearch.invoke(it.creatorId, it.creatorQuery, it.tag)

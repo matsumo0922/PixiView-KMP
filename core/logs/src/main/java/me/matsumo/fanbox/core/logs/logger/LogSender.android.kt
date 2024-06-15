@@ -7,10 +7,8 @@ import com.google.firebase.analytics.ParametersBuilder
 import com.google.firebase.analytics.logEvent
 import kotlinx.serialization.json.JsonElement
 import kotlinx.serialization.json.JsonObject
-import kotlinx.serialization.json.boolean
 import kotlinx.serialization.json.doubleOrNull
 import kotlinx.serialization.json.jsonPrimitive
-import kotlinx.serialization.json.long
 import kotlinx.serialization.json.longOrNull
 
 @SuppressLint("MissingPermission")

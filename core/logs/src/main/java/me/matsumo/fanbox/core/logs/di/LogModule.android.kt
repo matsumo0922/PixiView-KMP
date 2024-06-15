@@ -8,7 +8,7 @@ import org.koin.dsl.module
 actual val logModule: Module = module {
     single<LogSender> {
         LogSenderImpl(
-            context = get()
+            context = get(),
         )
     }
 }

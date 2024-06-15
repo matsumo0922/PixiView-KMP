@@ -19,7 +19,7 @@ naming:
     ignoreAnnotated:
       - 'Composable'
   MatchingDeclarationName:
-    mustBeFirst: false
+    active: false
   PackageNaming:
     active: false
   TopLevelPropertyNaming:
@@ -92,6 +92,8 @@ formatting:
   TrailingCommaOnCallSite:
     active: true
   PackageName:
+    active: false
+  Filename:
     active: false
 
 TwitterCompose:

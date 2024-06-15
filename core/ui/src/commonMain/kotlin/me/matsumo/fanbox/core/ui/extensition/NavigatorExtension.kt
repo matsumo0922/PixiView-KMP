@@ -9,7 +9,7 @@ import me.matsumo.fanbox.core.logs.category.NavigationLog
 import me.matsumo.fanbox.core.logs.logger.send
 
 interface NavigatorExtension {
-    fun navigateToWebPage(url: String)
+    fun navigateToWebPage(url: String, referrer: String)
     fun killApp()
 }
 

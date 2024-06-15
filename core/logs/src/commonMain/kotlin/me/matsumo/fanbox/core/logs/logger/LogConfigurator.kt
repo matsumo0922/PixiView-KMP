@@ -1,6 +1,8 @@
 package me.matsumo.fanbox.core.logs.logger
 
 import io.github.aakira.napier.Napier
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.serialization.json.Json
 import kotlinx.serialization.json.JsonObject
 import kotlinx.serialization.json.buildJsonObject
@@ -14,6 +16,9 @@ object LogConfigurator: KoinComponent {
 
     private var filter: LogFilter? = null
     private val sender: LogSender by inject()
+
+    private var _isConfigured = MutableStateFlow(false)
+    val isConfigured = _isConfigured.asStateFlow()
 
     private val formatter = Json {
         isLenient = true
@@ -41,6 +46,7 @@ object LogConfigurator: KoinComponent {
         userData: UserData,
     ) {
         filter = LogFilter(pixiViewConfig, userData, "PixiView")
+        _isConfigured.value = true
     }
 }
 

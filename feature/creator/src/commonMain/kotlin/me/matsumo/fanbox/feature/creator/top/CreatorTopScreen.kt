@@ -122,13 +122,12 @@ internal fun CreatorTopRoute(
             onClickAllDownload = navigateToDownloadAll,
             onClickBillingPlus = navigateToBillingPlus,
             onClickPost = navigateToPostDetail,
-            onClickPlan = { navigatorExtension.navigateToWebPage(it.planBrowserUrl) },
+            onClickPlan = { navigatorExtension.navigateToWebPage(it.planBrowserUrl, CreatorTopRoute) },
             onClickTag = { navigateToPostSearch.invoke(it.name, uiState.creatorDetail.creatorId) },
             onTerminate = terminate,
-            onClickLink = navigatorExtension::navigateToWebPage,
+            onClickLink = { navigatorExtension.navigateToWebPage(it, CreatorTopRoute) },
             onClickFollow = viewModel::follow,
             onClickUnfollow = viewModel::unfollow,
-            onClickSupporting = navigatorExtension::navigateToWebPage,
             onClickPostBookmark = viewModel::postBookmark,
             onShowBlockDialog = {
                 navigateToAlertDialog.invoke(
@@ -182,7 +181,6 @@ private fun CreatorTopScreen(
     onClickLink: (String) -> Unit,
     onClickFollow: suspend (String) -> Result<Unit>,
     onClickUnfollow: suspend (String) -> Result<Unit>,
-    onClickSupporting: (String) -> Unit,
     onShowBlockDialog: (SimpleAlertContents) -> Unit,
     onShowUnblockDialog: (SimpleAlertContents) -> Unit,
     onShowSnackBar: (String) -> Unit,
@@ -244,7 +242,7 @@ private fun CreatorTopScreen(
                     onClickLink = onClickLink,
                     onClickFollow = onClickFollow,
                     onClickUnfollow = onClickUnfollow,
-                    onClickSupporting = onClickSupporting,
+                    onClickSupporting = onClickLink,
                     onClickDescription = { isShowDescriptionDialog = true },
                     onClickAction = { isShowMenuDialog = true },
                 )
