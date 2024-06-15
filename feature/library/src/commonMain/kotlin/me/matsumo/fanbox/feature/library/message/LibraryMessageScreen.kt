@@ -1,7 +1,6 @@
 package me.matsumo.fanbox.feature.library.message
 
 import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
@@ -56,7 +55,7 @@ internal fun LibraryMessageRoute(
             messages = uiState.messages.toImmutableList(),
             openDrawer = openDrawer,
             onClickCreator = navigateToCreatorPosts,
-            onClickLink = navigatorExtension::navigateToWebPage,
+            onClickLink = { navigatorExtension.navigateToWebPage(it, LibraryMessageRoute) },
         )
     }
 }
@@ -88,7 +87,6 @@ private fun LibraryMessageScreen(
         bottomBar = {
             HorizontalDivider()
         },
-        contentWindowInsets = WindowInsets(0, 0, 0, 0),
     ) { padding ->
         Box(
             modifier = Modifier

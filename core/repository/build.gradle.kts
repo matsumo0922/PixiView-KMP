@@ -16,6 +16,7 @@ kotlin {
             implementation(project(":core:model"))
             implementation(project(":core:common"))
             implementation(project(":core:datastore"))
+            implementation(project(":core:logs"))
 
             implementation(libs.bundles.ktor)
             implementation(libs.ksoup)

@@ -4,7 +4,6 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -14,13 +13,13 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.GridItemSpan
 import androidx.compose.foundation.lazy.grid.LazyGridState
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
+import androidx.compose.foundation.lazy.grid.rememberLazyGridState
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -40,7 +39,6 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.paging.LoadState
 import app.cash.paging.compose.LazyPagingItems
-import app.cash.paging.compose.itemContentType
 import app.cash.paging.compose.itemKey
 import coil3.compose.LocalPlatformContext
 import coil3.compose.SubcomposeAsyncImage
@@ -51,11 +49,12 @@ import me.matsumo.fanbox.core.model.fanbox.FanboxCreatorTag
 import me.matsumo.fanbox.core.model.fanbox.FanboxPost
 import me.matsumo.fanbox.core.model.fanbox.id.CreatorId
 import me.matsumo.fanbox.core.model.fanbox.id.PostId
-import me.matsumo.fanbox.core.ui.ads.BannerAdView
 import me.matsumo.fanbox.core.ui.ads.NativeAdView
 import me.matsumo.fanbox.core.ui.component.PostGridItem
 import me.matsumo.fanbox.core.ui.component.PostItem
 import me.matsumo.fanbox.core.ui.extensition.FadePlaceHolder
+import me.matsumo.fanbox.core.ui.extensition.LocalNavigationType
+import me.matsumo.fanbox.core.ui.extensition.PixiViewNavigationType
 import me.matsumo.fanbox.core.ui.extensition.Platform
 import me.matsumo.fanbox.core.ui.extensition.currentPlatform
 import me.matsumo.fanbox.core.ui.extensition.drawVerticalScrollbar
@@ -79,52 +78,26 @@ internal fun CreatorTopPostsScreen(
     onClickPlanList: (CreatorId) -> Unit,
     modifier: Modifier = Modifier,
 ) {
-    if (userData.isUseGridMode) {
-        GridSection(
-            modifier = modifier,
-            state = gridState,
-            userData = userData,
-            bookmarkedPosts = bookmarkedPosts,
-            pagingAdapter = pagingAdapter,
-            creatorTags = creatorTags,
-            onClickPost = onClickPost,
-            onClickTag = onClickTag,
-        )
-    } else {
-        ColumnSection(
-            modifier = modifier,
-            state = listState,
-            userData = userData,
-            bookmarkedPosts = bookmarkedPosts,
-            pagingAdapter = pagingAdapter,
-            creatorTags = creatorTags,
-            onClickPost = onClickPost,
-            onClickPostBookmark = onClickPostBookmark,
-            onClickCreator = onClickCreator,
-            onClickTag = onClickTag,
-            onClickPostLike = onClickPostLike,
-            onClickPlanList = onClickPlanList,
-        )
-    }
-}
+    val state = rememberLazyGridState()
 
-@Composable
-private fun ColumnSection(
-    state: LazyListState,
-    userData: UserData,
-    bookmarkedPosts: ImmutableList<PostId>,
-    pagingAdapter: LazyPagingItems<FanboxPost>,
-    creatorTags: ImmutableList<FanboxCreatorTag>,
-    onClickPost: (PostId) -> Unit,
-    onClickPostBookmark: (FanboxPost, Boolean) -> Unit,
-    onClickCreator: (CreatorId) -> Unit,
-    onClickTag: (FanboxCreatorTag) -> Unit,
-    onClickPostLike: (PostId) -> Unit,
-    onClickPlanList: (CreatorId) -> Unit,
-    modifier: Modifier = Modifier,
-) {
     val adOffset: Int
     val adInterval: Int
+
+    val columns = if(userData.isUseGridMode) {
+        when (LocalNavigationType.current.type) {
+            PixiViewNavigationType.BottomNavigation -> 2
+            PixiViewNavigationType.NavigationRail -> 3
+            PixiViewNavigationType.PermanentNavigationDrawer -> 4
+            else -> 2
+        }
+    } else {
+        when (LocalNavigationType.current.type) {
+            PixiViewNavigationType.BottomNavigation -> 1
+            PixiViewNavigationType.NavigationRail -> 2
+            PixiViewNavigationType.PermanentNavigationDrawer -> 2
+            else -> 1
+        }
+    }
 
     if (currentPlatform == Platform.Android) {
         adOffset = 3
@@ -134,18 +107,60 @@ private fun ColumnSection(
         adInterval = 3
     }
 
-    LazyColumn(
-        modifier = modifier.drawVerticalScrollbar(state),
+    PagingItems(
+        modifier = modifier,
         state = state,
-        contentPadding = PaddingValues(16.dp),
-        verticalArrangement = Arrangement.spacedBy(16.dp),
+        columns = columns,
+        adOffset = adOffset,
+        adInterval = adInterval,
+        pagingAdapter = pagingAdapter,
+        userData = userData,
+        creatorTags = creatorTags,
+        bookmarkedPosts = bookmarkedPosts,
+        isGridMode = userData.isUseGridMode,
+        onClickPost = onClickPost,
+        onClickPostLike = onClickPostLike,
+        onClickPostBookmark = onClickPostBookmark,
+        onClickCreator = onClickCreator,
+        onClickPlanList = onClickPlanList,
+        onClickTag = onClickTag,
+    )
+}
+
+@Composable
+private fun PagingItems(
+    state: LazyGridState,
+    columns: Int,
+    adOffset: Int,
+    adInterval: Int,
+    userData: UserData,
+    bookmarkedPosts: ImmutableList<PostId>,
+    pagingAdapter: LazyPagingItems<FanboxPost>,
+    creatorTags: ImmutableList<FanboxCreatorTag>,
+    isGridMode: Boolean,
+    onClickPost: (PostId) -> Unit,
+    onClickPostBookmark: (FanboxPost, Boolean) -> Unit,
+    onClickCreator: (CreatorId) -> Unit,
+    onClickTag: (FanboxCreatorTag) -> Unit,
+    onClickPostLike: (PostId) -> Unit,
+    onClickPlanList: (CreatorId) -> Unit,
+    modifier: Modifier = Modifier,
+) {
+    LazyVerticalGrid(
+        modifier = modifier.drawVerticalScrollbar(state, columns),
+        state = state,
+        columns = GridCells.Fixed(columns),
+        contentPadding = PaddingValues(if (isGridMode) 0.dp else 16.dp),
+        horizontalArrangement = Arrangement.spacedBy(if (isGridMode) 4.dp else 16.dp),
+        verticalArrangement = Arrangement.spacedBy(if (isGridMode) 4.dp else 16.dp),
     ) {
         if (creatorTags.isNotEmpty()) {
-            item {
+            item(span = { GridItemSpan(maxLineSpan) }){
                 LazyRow(
                     modifier = Modifier
-                        .height(80.dp)
+                        .height(80.dp + if (!isGridMode) 0.dp else 32.dp)
                         .fillMaxWidth(),
+                    contentPadding = PaddingValues(if (!isGridMode) 0.dp else 16.dp),
                     horizontalArrangement = Arrangement.spacedBy(16.dp),
                 ) {
                     items(creatorTags) {
@@ -159,38 +174,44 @@ private fun ColumnSection(
         }
 
         items(
-            count = pagingAdapter.itemCount,
-            key = pagingAdapter.itemKey { it.id.uniqueValue },
-            contentType = pagingAdapter.itemContentType(),
-        ) { index ->
-            Column(
-                modifier = Modifier.fillMaxWidth(),
-                verticalArrangement = Arrangement.spacedBy(16.dp),
-            ) {
-                pagingAdapter[index]?.let { post ->
-                    PostItem(
-                        modifier = Modifier.fillMaxWidth(),
-                        post = post.copy(isBookmarked = bookmarkedPosts.contains(post.id)),
-                        isHideAdultContents = userData.isHideAdultContents,
-                        isOverrideAdultContents = userData.isAllowedShowAdultContents,
-                        isTestUser = userData.isTestUser,
-                        onClickPost = { if (!post.isRestricted) onClickPost.invoke(it) },
-                        onClickCreator = onClickCreator,
-                        onClickPlanList = onClickPlanList,
-                        onClickLike = onClickPostLike,
-                        onClickBookmark = { _, isBookmarked ->
-                            onClickPostBookmark.invoke(post, isBookmarked)
-                        },
-                    )
+            count = pagingAdapter.itemCount + if(userData.hasPrivilege) 0 else (pagingAdapter.itemCount / adInterval),
+            key = { index ->
+                when {
+                    userData.hasPrivilege -> pagingAdapter.itemKey { it.id.uniqueValue }(index)
+                    (index + adOffset) % adInterval == 0 -> "ad-$index"
+                    else -> pagingAdapter.itemKey { it.id.uniqueValue }(index - ((index + adOffset) / adInterval))
                 }
-
-                if ((index + adOffset) % adInterval == 0 && !userData.hasPrivilege) {
-                    if (currentPlatform == Platform.IOS) {
-                        BannerAdView(modifier = Modifier.fillMaxWidth())
-                    } else {
-                        NativeAdView(
+            }
+        ) { index ->
+            if ((index + adOffset) % adInterval == 0 && !userData.hasPrivilege) {
+                NativeAdView(
+                    modifier = Modifier.fillMaxSize(),
+                    key = "$index",
+                )
+            } else {
+                pagingAdapter[if (userData.hasPrivilege) index else index - ((index + adOffset) / adInterval)]?.let { post ->
+                    if (isGridMode) {
+                        PostGridItem(
                             modifier = Modifier.fillMaxWidth(),
-                            key = "$index",
+                            post = post.copy(isBookmarked = bookmarkedPosts.contains(post.id)),
+                            isHideAdultContents = userData.isHideAdultContents,
+                            isOverrideAdultContents = userData.isAllowedShowAdultContents,
+                            onClickPost = { if (!post.isRestricted) onClickPost.invoke(it) },
+                        )
+                    } else {
+                        PostItem(
+                            modifier = Modifier.fillMaxSize(),
+                            post = post.copy(isBookmarked = bookmarkedPosts.contains(post.id)),
+                            isHideAdultContents = userData.isHideAdultContents,
+                            isOverrideAdultContents = userData.isAllowedShowAdultContents,
+                            isTestUser = userData.isTestUser,
+                            onClickPost = { if (!post.isRestricted) onClickPost.invoke(it) },
+                            onClickCreator = onClickCreator,
+                            onClickPlanList = onClickPlanList,
+                            onClickLike = onClickPostLike,
+                            onClickBookmark = { _, isBookmarked ->
+                                onClickPostBookmark.invoke(post, isBookmarked)
+                            },
                         )
                     }
                 }
@@ -198,7 +219,7 @@ private fun ColumnSection(
         }
 
         if (pagingAdapter.loadState.append is LoadState.Error) {
-            item {
+            item(span = { GridItemSpan(maxLineSpan) }) {
                 PagingErrorSection(
                     modifier = Modifier.fillMaxWidth(),
                     onRetry = { pagingAdapter.retry() },
@@ -206,73 +227,9 @@ private fun ColumnSection(
             }
         }
 
-        item {
+        item(span = { GridItemSpan(maxLineSpan) }) {
             Spacer(modifier = Modifier.navigationBarsPadding())
         }
-    }
-}
-
-@Composable
-private fun GridSection(
-    state: LazyGridState,
-    userData: UserData,
-    bookmarkedPosts: ImmutableList<PostId>,
-    pagingAdapter: LazyPagingItems<FanboxPost>,
-    creatorTags: ImmutableList<FanboxCreatorTag>,
-    onClickPost: (PostId) -> Unit,
-    onClickTag: (FanboxCreatorTag) -> Unit,
-    modifier: Modifier = Modifier,
-) {
-    if (pagingAdapter.loadState.append !is LoadState.Error) {
-        LazyVerticalGrid(
-            modifier = modifier
-                .drawVerticalScrollbar(state, spanCount = 2)
-                .fillMaxSize(),
-            columns = GridCells.Fixed(2),
-            state = state,
-            verticalArrangement = Arrangement.spacedBy(4.dp),
-            horizontalArrangement = Arrangement.spacedBy(4.dp),
-        ) {
-            if (creatorTags.isNotEmpty()) {
-                item(span = { GridItemSpan(maxCurrentLineSpan) }) {
-                    LazyRow(
-                        modifier = Modifier
-                            .height(112.dp)
-                            .fillMaxWidth(),
-                        contentPadding = PaddingValues(16.dp),
-                        horizontalArrangement = Arrangement.spacedBy(16.dp),
-                    ) {
-                        items(creatorTags) {
-                            TagItem(
-                                tag = it,
-                                onClickTag = onClickTag,
-                            )
-                        }
-                    }
-                }
-            }
-
-            items(
-                count = pagingAdapter.itemCount,
-                key = pagingAdapter.itemKey { it.id.uniqueValue },
-                contentType = pagingAdapter.itemContentType(),
-            ) { index ->
-                pagingAdapter[index]?.let { post ->
-                    PostGridItem(
-                        modifier = Modifier.fillMaxWidth(),
-                        post = post.copy(isBookmarked = bookmarkedPosts.contains(post.id)),
-                        isHideAdultContents = userData.isHideAdultContents,
-                        isOverrideAdultContents = userData.isAllowedShowAdultContents,
-                        onClickPost = { if (!post.isRestricted) onClickPost.invoke(it) },
-                    )
-                }
-            }
-        }
-    } else {
-        PagingErrorSection(
-            modifier = Modifier.fillMaxSize(),
-            onRetry = { pagingAdapter.retry() },
-        )
     }
 }
 

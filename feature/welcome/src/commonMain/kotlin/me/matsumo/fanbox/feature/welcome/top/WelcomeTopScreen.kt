@@ -1,8 +1,5 @@
 package me.matsumo.fanbox.feature.welcome.top
 
-import androidx.compose.animation.AnimatedVisibility
-import androidx.compose.animation.fadeIn
-import androidx.compose.animation.fadeOut
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -17,17 +14,14 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.ClickableText
 import androidx.compose.material3.Button
-import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Checkbox
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -42,18 +36,14 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.window.Dialog
 import dev.icerock.moko.resources.compose.painterResource
 import dev.icerock.moko.resources.compose.stringResource
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import me.matsumo.fanbox.core.ui.MR
 import me.matsumo.fanbox.core.ui.appName
 import me.matsumo.fanbox.core.ui.extensition.LocalNavigationType
 import me.matsumo.fanbox.core.ui.extensition.NavigatorExtension
 import me.matsumo.fanbox.core.ui.extensition.PixiViewNavigationType
-import me.matsumo.fanbox.core.ui.extensition.Platform
-import me.matsumo.fanbox.core.ui.extensition.currentPlatform
 import me.matsumo.fanbox.core.ui.theme.bold
 import me.matsumo.fanbox.core.ui.theme.center
 import me.matsumo.fanbox.feature.welcome.WelcomeIndicatorItem
@@ -85,7 +75,7 @@ internal fun WelcomeTopScreen(
                 navigateToWelcomeLogin = navigateToWelcomeLogin,
                 setAgreedPrivacyPolicy = viewModel::setAgreedPrivacyPolicy,
                 setAgreedTermsOfService = viewModel::setAgreedTermsOfService,
-                navigateToWebPage = navigatorExtension::navigateToWebPage,
+                navigateToWebPage = { navigatorExtension.navigateToWebPage(it, WelcomeTopRoute) },
             )
         }
     } else {
@@ -109,7 +99,7 @@ internal fun WelcomeTopScreen(
                     navigateToWelcomeLogin = navigateToWelcomeLogin,
                     setAgreedPrivacyPolicy = viewModel::setAgreedPrivacyPolicy,
                     setAgreedTermsOfService = viewModel::setAgreedTermsOfService,
-                    navigateToWebPage = navigatorExtension::navigateToWebPage,
+                    navigateToWebPage = { navigatorExtension.navigateToWebPage(it, WelcomeTopRoute) },
                 )
             }
         }

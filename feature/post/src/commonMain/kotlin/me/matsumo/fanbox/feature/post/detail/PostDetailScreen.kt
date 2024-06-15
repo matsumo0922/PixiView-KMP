@@ -229,7 +229,7 @@ private fun PostDetailView(
             onClickCreatorPlans = navigateToCreatorPlans,
             onClickFollow = viewModel::follow,
             onClickUnfollow = viewModel::unfollow,
-            onClickOpenBrowser = navigatorExtension::navigateToWebPage,
+            onClickOpenBrowser = { navigatorExtension.navigateToWebPage(it, PostDetailRoute) },
             onTerminate = terminate,
         )
 

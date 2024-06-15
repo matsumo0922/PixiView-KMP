@@ -9,6 +9,7 @@ import androidx.navigation.NavGraphBuilder
 import androidx.navigation.NavType
 import androidx.navigation.compose.composable
 import androidx.navigation.navArgument
+import me.matsumo.fanbox.core.ui.extensition.navigateWithLog
 
 const val PostSearchQueryStr = "postSearchQuery"
 const val PostSearchRoute = "postSearch/{$PostSearchQueryStr}"
@@ -18,7 +19,7 @@ fun NavController.navigateToPostSearch(creatorId: CreatorId? = null, creatorQuer
     val encodedQuery = query.encodeURLPathPart()
     val route = if (parseQuery(query).mode != PostSearchMode.Unknown) "postSearch/$encodedQuery" else "postSearch/pixiViewUnknown"
 
-    this.navigate(route)
+    this.navigateWithLog(route)
 }
 
 fun NavGraphBuilder.postSearchScreen(

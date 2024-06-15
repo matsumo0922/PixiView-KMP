@@ -20,6 +20,9 @@ kotlin {
         }
 
         androidMain.dependencies {
+            api(project.dependencies.platform(libs.firebase.bom))
+
+            api(libs.bundles.firebase)
             api(libs.koin.android)
         }
     }

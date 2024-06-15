@@ -20,7 +20,9 @@ import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.isActive
 import kotlinx.coroutines.launch
 import me.matsumo.fanbox.core.billing.BillingStatus
+import me.matsumo.fanbox.core.common.PixiViewConfig
 import me.matsumo.fanbox.core.common.util.suspendRunCatching
+import me.matsumo.fanbox.core.logs.logger.LogConfigurator
 import me.matsumo.fanbox.core.model.ScreenState
 import me.matsumo.fanbox.core.model.UserData
 import me.matsumo.fanbox.core.model.fanbox.FanboxMetaData
@@ -32,6 +34,7 @@ import kotlin.time.Duration.Companion.minutes
 class PixiViewViewModel(
     private val userDataRepository: UserDataRepository,
     private val fanboxRepository: FanboxRepository,
+    private val pixiViewConfig: PixiViewConfig,
     private val billingStatus: BillingStatus,
 ) : ViewModel() {
 
@@ -64,6 +67,15 @@ class PixiViewViewModel(
         viewModelScope.launch {
             fanboxRepository.logoutTrigger.collectLatest {
                 _isLoggedInFlow.emit(false)
+            }
+        }
+
+        viewModelScope.launch {
+            userDataRepository.userData.collectLatest {
+                LogConfigurator.configure(
+                    pixiViewConfig = pixiViewConfig,
+                    userData = it,
+                )
             }
         }
 

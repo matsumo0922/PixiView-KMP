@@ -48,6 +48,8 @@ fun LibraryDrawer(
 
 @Composable
 fun LibraryPermanentDrawer(
+    state: DrawerState,
+    userData: UserData?,
     currentDestination: NavDestination?,
     onClickLibrary: (LibraryDestination) -> Unit,
     navigateToBookmarkedPosts: () -> Unit,
@@ -65,8 +67,8 @@ fun LibraryPermanentDrawer(
     ) {
         DrawerContent(
             modifier = modifier,
-            state = null,
-            userData = null,
+            state = state,
+            userData = userData,
             currentDestination = currentDestination,
             onClickLibrary = onClickLibrary,
             navigateToBookmarkedPosts = navigateToBookmarkedPosts,

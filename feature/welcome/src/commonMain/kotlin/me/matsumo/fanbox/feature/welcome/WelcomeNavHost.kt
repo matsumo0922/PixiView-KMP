@@ -17,6 +17,10 @@ import dev.icerock.moko.permissions.compose.BindEffect
 import dev.icerock.moko.permissions.compose.PermissionsControllerFactory
 import dev.icerock.moko.permissions.compose.rememberPermissionsControllerFactory
 import kotlinx.coroutines.launch
+import kotlinx.datetime.Clock
+import me.matsumo.fanbox.core.common.util.format
+import me.matsumo.fanbox.core.logs.category.WelcomeLog
+import me.matsumo.fanbox.core.logs.logger.send
 import me.matsumo.fanbox.core.ui.animation.NavigateAnimation
 import me.matsumo.fanbox.core.ui.extensition.LocalSnackbarHostState
 import me.matsumo.fanbox.core.ui.extensition.popBackStackWithResult
@@ -45,7 +49,8 @@ fun WelcomeNavHost(
     val scope = rememberCoroutineScope()
 
     val factory: PermissionsControllerFactory = rememberPermissionsControllerFactory()
-    val controller: PermissionsController = remember(factory) { factory.createPermissionsController() }
+    val controller: PermissionsController =
+        remember(factory) { factory.createPermissionsController() }
     val snackbarHostState = remember { SnackbarHostState() }
 
     val startDestination = when {
@@ -54,6 +59,8 @@ fun WelcomeNavHost(
         !isAllowedPermission -> WelcomePermissionRoute
         else -> WelcomeTopRoute
     }
+
+    val onboardingStartTime = Clock.System.now()
 
     CompositionLocalProvider(LocalSnackbarHostState provides snackbarHostState) {
         Scaffold(
@@ -75,7 +82,10 @@ fun WelcomeNavHost(
                 popExitTransition = { NavigateAnimation.Horizontal.popExit },
             ) {
                 welcomeTopScreen(
-                    navigateToWelcomeLogin = { navController.navigateToWelcomeLogin() },
+                    navigateToWelcomeLogin = {
+                        WelcomeLog.firstOpen().send()
+                        navController.navigateToWelcomeLogin()
+                    },
                 )
 
                 welcomeLoginScreen(
@@ -97,7 +107,17 @@ fun WelcomeNavHost(
                 )
 
                 welcomePermissionScreen(
-                    navigateToHome = { onComplete.invoke() },
+                    navigateToHome = {
+                        val onboardingEndTime = Clock.System.now()
+
+                        WelcomeLog.completedOnboarding(
+                            startAt = onboardingStartTime.format("%Y-%m-%d %H:%M:%S"),
+                            endAt = onboardingEndTime.format("%Y-%m-%d %H:%M:%S"),
+                            neededTime = onboardingEndTime.epochSeconds - onboardingStartTime.epochSeconds,
+                        ).send()
+
+                        onComplete.invoke()
+                    },
                 )
 
                 simpleAlertDialogDialog(

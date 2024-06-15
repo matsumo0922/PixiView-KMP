@@ -5,9 +5,11 @@ import androidx.navigation.NavOptions
 import androidx.navigation.NavOptionsBuilder
 import androidx.navigation.Navigator
 import androidx.navigation.navOptions
+import me.matsumo.fanbox.core.logs.category.NavigationLog
+import me.matsumo.fanbox.core.logs.logger.send
 
 interface NavigatorExtension {
-    fun navigateToWebPage(url: String)
+    fun navigateToWebPage(url: String, referrer: String)
     fun killApp()
 }
 
@@ -66,7 +68,7 @@ fun <T> NavController.navigateForResult(
     navigatorExtras: Navigator.Extras? = null,
 ) {
     setNavResultCallback(navResultCallback)
-    navigate(route, navOptions, navigatorExtras)
+    navigateWithLog(route, navOptions, navigatorExtras)
 }
 
 /**
@@ -85,5 +87,18 @@ fun <T> NavController.navigateForResult(
     builder: NavOptionsBuilder.() -> Unit,
 ) {
     setNavResultCallback(navResultCallback)
-    navigate(route, navOptions(builder))
+    navigateWithLog(route, navOptions(builder))
+}
+
+fun NavController.navigateWithLog(
+    route: String,
+    navOptions: NavOptions? = null,
+    navigatorExtras: Navigator.Extras? = null,
+) {
+    NavigationLog.navigate(
+        screenRoute = route,
+        referer = this.currentDestination?.route.orEmpty(),
+    ).send()
+
+    navigate(route, navOptions, navigatorExtras)
 }

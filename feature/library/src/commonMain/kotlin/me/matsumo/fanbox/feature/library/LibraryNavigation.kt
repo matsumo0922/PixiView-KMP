@@ -8,11 +8,12 @@ import me.matsumo.fanbox.core.ui.view.SimpleAlertContents
 import androidx.navigation.NavController
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.compose.composable
+import me.matsumo.fanbox.core.ui.extensition.navigateWithLog
 
 const val LibraryRoute = "library"
 
 fun NavController.navigateToLibrary() {
-    this.navigate(LibraryRoute)
+    this.navigateWithLog(LibraryRoute)
 }
 
 fun NavGraphBuilder.libraryScreen(

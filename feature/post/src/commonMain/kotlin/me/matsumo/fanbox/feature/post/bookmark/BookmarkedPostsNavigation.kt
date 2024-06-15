@@ -8,11 +8,12 @@ import androidx.navigation.compose.composable
 import me.matsumo.fanbox.core.model.fanbox.id.CreatorId
 import me.matsumo.fanbox.core.model.fanbox.id.PostId
 import me.matsumo.fanbox.core.ui.animation.NavigateAnimation
+import me.matsumo.fanbox.core.ui.extensition.navigateWithLog
 
 const val BookmarkedPostsRoute = "bookmarkedPosts"
 
 fun NavController.navigateToBookmarkedPosts() {
-    this.navigate(BookmarkedPostsRoute)
+    this.navigateWithLog(BookmarkedPostsRoute)
 }
 
 fun NavGraphBuilder.bookmarkedPostsScreen(

@@ -8,9 +8,11 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.items
-import androidx.compose.foundation.lazy.rememberLazyListState
+import androidx.compose.foundation.lazy.grid.GridCells
+import androidx.compose.foundation.lazy.grid.GridItemSpan
+import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
+import androidx.compose.foundation.lazy.grid.items
+import androidx.compose.foundation.lazy.grid.rememberLazyGridState
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Scaffold
@@ -35,7 +37,9 @@ import me.matsumo.fanbox.core.ui.AsyncLoadContents
 import me.matsumo.fanbox.core.ui.MR
 import me.matsumo.fanbox.core.ui.component.CreatorItem
 import me.matsumo.fanbox.core.ui.component.PixiViewTopBar
+import me.matsumo.fanbox.core.ui.extensition.LocalNavigationType
 import me.matsumo.fanbox.core.ui.extensition.NavigatorExtension
+import me.matsumo.fanbox.core.ui.extensition.PixiViewNavigationType
 import me.matsumo.fanbox.core.ui.extensition.drawVerticalScrollbar
 import me.matsumo.fanbox.core.ui.view.EmptyView
 import org.koin.compose.koinInject
@@ -62,7 +66,7 @@ internal fun FollowingCreatorsRoute(
             onClickCreator = navigateToCreatorPosts,
             onClickFollow = viewModel::follow,
             onClickUnfollow = viewModel::unfollow,
-            onClickSupporting = navigatorExtension::navigateToWebPage,
+            onClickSupporting = { navigatorExtension.navigateToWebPage(it, FollowingCreatorsRoute) },
             terminate = terminate,
         )
     }
@@ -79,9 +83,16 @@ private fun FollowingCreatorsScreen(
     terminate: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
-    val state = rememberLazyListState()
+    val state = rememberLazyGridState()
     val scope = rememberCoroutineScope()
     val scrollBehavior = TopAppBarDefaults.pinnedScrollBehavior()
+
+    val columns = when (LocalNavigationType.current.type) {
+        PixiViewNavigationType.BottomNavigation -> 1
+        PixiViewNavigationType.NavigationRail -> 2
+        PixiViewNavigationType.PermanentNavigationDrawer -> 2
+        else -> 1
+    }
 
     Scaffold(
         modifier = modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
@@ -99,13 +110,15 @@ private fun FollowingCreatorsScreen(
         contentWindowInsets = WindowInsets(0, 0, 0, 0),
     ) { padding ->
         if (followingCreators.isNotEmpty()) {
-            LazyColumn(
+            LazyVerticalGrid(
                 modifier = Modifier
                     .padding(padding)
-                    .drawVerticalScrollbar(state),
+                    .drawVerticalScrollbar(state, columns),
                 state = state,
+                columns = GridCells.Fixed(columns),
                 contentPadding = PaddingValues(16.dp),
                 verticalArrangement = Arrangement.spacedBy(16.dp),
+                horizontalArrangement = Arrangement.spacedBy(16.dp),
             ) {
                 items(followingCreators.toList()) { followingCreator ->
                     var isFollowed by rememberSaveable(followingCreator.isFollowed) { mutableStateOf(followingCreator.isFollowed) }
@@ -131,7 +144,7 @@ private fun FollowingCreatorsScreen(
                     )
                 }
 
-                item {
+                item(span = { GridItemSpan(columns) }){
                     Spacer(modifier = Modifier.navigationBarsPadding())
                 }
             }

@@ -7,11 +7,12 @@ import me.matsumo.fanbox.core.ui.view.SimpleAlertContents
 import androidx.navigation.NavController
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.compose.composable
+import me.matsumo.fanbox.core.ui.extensition.navigateWithLog
 
 const val SettingTopRoute = "settingTop"
 
 fun NavController.navigateToSettingTop() {
-    this.navigate(SettingTopRoute)
+    this.navigateWithLog(SettingTopRoute)
 }
 
 fun NavGraphBuilder.settingTopScreen(

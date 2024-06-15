@@ -67,7 +67,6 @@ fun PixiViewApp(
     val screenState by viewModel.screenState.collectAsStateWithLifecycle()
     val lifecycleOwner = LocalLifecycleOwner.current
     val shouldUseDarkTheme = shouldUseDarkTheme(screenState)
-    val shouldUseDynamicColor = shouldUseDynamicColor(screenState)
 
     val biometryAuthenticatorFactory = rememberBiometryAuthenticatorFactory()
     val biometryAuthenticator = biometryAuthenticatorFactory.createBiometryAuthenticator()
@@ -90,10 +89,9 @@ fun PixiViewApp(
             PixiViewTheme(
                 fanboxCookie = it.fanboxCookie,
                 fanboxMetadata = it.fanboxMetadata,
+                themeConfig = it.userData.themeConfig,
                 themeColorConfig = it.userData.themeColorConfig,
                 pixiViewConfig = pixiViewConfig,
-                shouldUseDarkTheme = shouldUseDarkTheme,
-                enableDynamicTheme = shouldUseDynamicColor(screenState),
                 nativeViews = nativeViews,
             ) {
                 PixiViewBackground(modifier) {

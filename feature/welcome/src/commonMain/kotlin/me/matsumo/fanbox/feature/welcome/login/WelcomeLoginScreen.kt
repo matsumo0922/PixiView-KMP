@@ -26,6 +26,7 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import dev.icerock.moko.resources.compose.painterResource
 import dev.icerock.moko.resources.compose.stringResource
+import me.matsumo.fanbox.core.logs.category.WelcomeLog
 import me.matsumo.fanbox.core.ui.MR
 import me.matsumo.fanbox.core.ui.extensition.LocalNavigationType
 import me.matsumo.fanbox.core.ui.extensition.LocalSnackbarHostState
@@ -56,9 +57,15 @@ internal fun WelcomeLoginScreen(
         viewModel.fetchLoggedIn()
     }
 
-    LaunchedEffect(isLoginError) {
-        if (isLoginError != -1) {
+    if (isLoginError != -1) {
+        LaunchedEffect(isLoginError) {
             snackbarExtension.showSnackbar(snackbarHostState, MR.strings.welcome_login_toast_failed)
+        }
+    }
+
+    if (isLoggedIn) {
+        LaunchedEffect(isLoggedIn) {
+            WelcomeLog.loggedIn()
         }
     }
 
@@ -76,7 +83,7 @@ internal fun WelcomeLoginScreen(
                 isLoggedIn = isLoggedIn,
                 navigateToLoginScreen = navigateToLoginScreen,
                 navigateToWelcomePermission = navigateToWelcomePermission,
-                navigateToHelp = navigatorExtension::navigateToWebPage,
+                navigateToHelp = { navigatorExtension.navigateToWebPage(it, WelcomeLoginRoute) },
                 onSetSessionId = viewModel::setSessionId,
             )
         }
@@ -101,7 +108,7 @@ internal fun WelcomeLoginScreen(
                     isLoggedIn = isLoggedIn,
                     navigateToLoginScreen = navigateToLoginScreen,
                     navigateToWelcomePermission = navigateToWelcomePermission,
-                    navigateToHelp = navigatorExtension::navigateToWebPage,
+                    navigateToHelp = { navigatorExtension.navigateToWebPage(it, WelcomeLoginRoute) },
                     onSetSessionId = viewModel::setSessionId,
                 )
             }

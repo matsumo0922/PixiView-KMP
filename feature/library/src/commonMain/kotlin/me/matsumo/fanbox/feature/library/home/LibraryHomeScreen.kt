@@ -104,7 +104,6 @@ internal fun LibraryHomeScreen(
                 )
             }
         },
-        contentWindowInsets = WindowInsets(0, 0, 0, 0),
     ) { padding ->
         Column(Modifier.padding(padding)) {
             TabRow(

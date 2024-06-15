@@ -11,6 +11,7 @@ import androidx.navigation.compose.composable
 import androidx.navigation.navArgument
 import me.matsumo.fanbox.core.model.fanbox.id.CreatorId
 import me.matsumo.fanbox.core.model.fanbox.id.PostId
+import me.matsumo.fanbox.core.ui.extensition.navigateWithLog
 import me.matsumo.fanbox.core.ui.view.SimpleAlertContents
 
 const val PostDetailId = "postDetailId"
@@ -18,7 +19,7 @@ const val PostDetailType = "postDetailPagingType"
 const val PostDetailRoute = "postDetail/{$PostDetailId}/{$PostDetailType}"
 
 fun NavController.navigateToPostDetail(postId: PostId, pagingType: PostDetailPagingType) {
-    this.navigate("postDetail/$postId/${pagingType.name}")
+    this.navigateWithLog("postDetail/$postId/${pagingType.name}")
 }
 
 fun NavGraphBuilder.postDetailScreen(

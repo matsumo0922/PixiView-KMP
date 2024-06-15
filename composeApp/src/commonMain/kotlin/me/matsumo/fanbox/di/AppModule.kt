@@ -9,6 +9,8 @@ import kotlinx.coroutines.SupervisorJob
 import me.matsumo.fanbox.BuildKonfig
 import me.matsumo.fanbox.PixiViewViewModel
 import me.matsumo.fanbox.core.common.PixiViewConfig
+import org.koin.compose.viewmodel.dsl.viewModel
+import org.koin.compose.viewmodel.dsl.viewModelOf
 import org.koin.dsl.module
 
 expect fun getPixiViewConfig(): PixiViewConfig
@@ -28,11 +30,5 @@ val appModule = module {
         CoroutineScope(SupervisorJob() + get<CoroutineDispatcher>())
     }
 
-    factory { 
-        PixiViewViewModel(
-            userDataRepository = get(),
-            fanboxRepository = get(),
-            billingStatus = get(),
-        )
-    }
+    viewModelOf(::PixiViewViewModel)
 }

@@ -5,43 +5,13 @@ import me.matsumo.fanbox.feature.post.detail.PostDetailRootViewModel
 import me.matsumo.fanbox.feature.post.detail.PostDetailViewModel
 import me.matsumo.fanbox.feature.post.image.PostImageViewModel
 import me.matsumo.fanbox.feature.post.search.PostSearchViewModel
+import org.koin.compose.viewmodel.dsl.viewModelOf
 import org.koin.dsl.module
 
 val postModule = module {
-
-    factory {
-        BookmarkedPostsViewModel(
-            userDataRepository = get(),
-            fanboxRepository = get(),
-        )
-    }
-
-    factory {
-        PostDetailViewModel(
-            fanboxRepository = get(),
-            userDataRepository = get(),
-            imageDownloader = get(),
-        )
-    }
-
-    factory {
-        PostDetailRootViewModel(
-            userDataRepository = get(),
-            fanboxRepository = get(),
-        )
-    }
-
-    factory {
-        PostImageViewModel(
-            fanboxRepository = get(),
-            imageDownloader = get(),
-        )
-    }
-
-    factory {
-        PostSearchViewModel(
-            userDataRepository = get(),
-            fanboxRepository = get(),
-        )
-    }
+    viewModelOf(::BookmarkedPostsViewModel)
+    viewModelOf(::PostDetailViewModel)
+    viewModelOf(::PostDetailRootViewModel)
+    viewModelOf(::PostImageViewModel)
+    viewModelOf(::PostSearchViewModel)
 }

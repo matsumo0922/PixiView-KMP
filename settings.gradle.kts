@@ -31,6 +31,7 @@ include(":core:billing")
 include(":core:repository")
 include(":core:datastore")
 include(":core:model")
+include(":core:logs")
 include(":core:common")
 
 include(":feature:welcome")

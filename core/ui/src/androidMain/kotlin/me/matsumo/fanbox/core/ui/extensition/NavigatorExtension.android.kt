@@ -5,12 +5,14 @@ import android.content.Intent
 import android.os.Process
 import android.widget.Toast
 import androidx.core.net.toUri
+import me.matsumo.fanbox.core.logs.category.NavigationLog
+import me.matsumo.fanbox.core.logs.logger.send
 
 class NavigatorExtensionImpl(
     private val context: Context,
-): NavigatorExtension {
+) : NavigatorExtension {
 
-    override fun navigateToWebPage(url: String) {
+    override fun navigateToWebPage(url: String, referrer: String) {
         runCatching {
             context.startActivity(
                 Intent(Intent.ACTION_VIEW, url.toUri()).apply {
@@ -19,6 +21,12 @@ class NavigatorExtensionImpl(
             )
         }.onFailure {
             Toast.makeText(context, "Failed to open the web page", Toast.LENGTH_SHORT).show()
+        }.also {
+            NavigationLog.openUrl(
+                url = url,
+                referer = referrer,
+                isSuccess = it.isSuccess
+            ).send()
         }
     }
 

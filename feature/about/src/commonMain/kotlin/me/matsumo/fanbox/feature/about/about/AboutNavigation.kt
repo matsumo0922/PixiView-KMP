@@ -6,11 +6,12 @@ import me.matsumo.fanbox.core.ui.animation.NavigateAnimation
 import androidx.navigation.NavController
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.compose.composable
+import me.matsumo.fanbox.core.ui.extensition.navigateWithLog
 
 const val AboutRoute = "about"
 
 fun NavController.navigateToAbout() {
-    this.navigate(AboutRoute)
+    this.navigateWithLog(AboutRoute)
 }
 
 fun NavGraphBuilder.aboutScreen(
