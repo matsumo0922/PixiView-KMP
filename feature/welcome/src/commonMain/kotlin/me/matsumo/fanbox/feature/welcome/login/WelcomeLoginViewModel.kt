@@ -1,5 +1,7 @@
 package me.matsumo.fanbox.feature.welcome.login
 
+import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.asSharedFlow
@@ -8,8 +10,6 @@ import kotlinx.coroutines.launch
 import me.matsumo.fanbox.core.common.util.suspendRunCatching
 import me.matsumo.fanbox.core.repository.FanboxRepository
 import me.matsumo.fanbox.core.repository.UserDataRepository
-import androidx.lifecycle.ViewModel
-import androidx.lifecycle.viewModelScope
 import kotlin.random.Random
 
 class WelcomeLoginViewModel(
@@ -46,6 +46,14 @@ class WelcomeLoginViewModel(
                 _isLoggedInFlow.emit(true)
             }.onFailure {
                 _triggerLoginError.send(Random.nextInt())
+            }
+        }
+    }
+
+    fun logout() {
+        viewModelScope.launch {
+            runCatching {
+                fanboxRepository.logout()
             }
         }
     }

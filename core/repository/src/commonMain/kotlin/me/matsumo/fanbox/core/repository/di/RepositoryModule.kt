@@ -17,6 +17,8 @@ import kotlinx.serialization.json.Json
 import me.matsumo.fanbox.core.datastore.FanboxCookieDataStore
 import me.matsumo.fanbox.core.repository.FanboxRepository
 import me.matsumo.fanbox.core.repository.FanboxRepositoryImpl
+import me.matsumo.fanbox.core.repository.RewardRepository
+import me.matsumo.fanbox.core.repository.RewardRepositoryImpl
 import me.matsumo.fanbox.core.repository.UserDataRepository
 import me.matsumo.fanbox.core.repository.UserDataRepositoryImpl
 import me.matsumo.fanbox.core.repository.client.CookiesStorage
@@ -88,6 +90,13 @@ val repositoryModule = module {
             fanboxCookieDataStore = get(),
             bookmarkDataStore = get(),
             blockDataStore = get(),
+            ioDispatcher = get(),
+        )
+    }
+
+    single<RewardRepository> {
+        RewardRepositoryImpl(
+            rewardLogDataStore = get(),
             ioDispatcher = get(),
         )
     }

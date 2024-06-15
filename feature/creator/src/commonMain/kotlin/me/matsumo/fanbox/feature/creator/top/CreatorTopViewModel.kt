@@ -1,6 +1,8 @@
 package me.matsumo.fanbox.feature.creator.top
 
 import androidx.compose.runtime.Stable
+import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
 import androidx.paging.PagingData
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -19,14 +21,14 @@ import me.matsumo.fanbox.core.model.fanbox.id.CreatorId
 import me.matsumo.fanbox.core.model.fanbox.id.PostId
 import me.matsumo.fanbox.core.model.updateWhenIdle
 import me.matsumo.fanbox.core.repository.FanboxRepository
+import me.matsumo.fanbox.core.repository.RewardRepository
 import me.matsumo.fanbox.core.repository.UserDataRepository
 import me.matsumo.fanbox.core.ui.MR
-import androidx.lifecycle.ViewModel
-import androidx.lifecycle.viewModelScope
 
 class CreatorTopViewModel(
     private val userDataRepository: UserDataRepository,
     private val fanboxRepository: FanboxRepository,
+    private val rewardRepository: RewardRepository,
 ) : ViewModel() {
 
     private val _screenState = MutableStateFlow<ScreenState<CreatorTopUiState>>(ScreenState.Loading)
@@ -66,6 +68,7 @@ class CreatorTopViewModel(
                     userData = userData,
                     bookmarkedPosts = fanboxRepository.bookmarkedPosts.first(),
                     isBlocked = fanboxRepository.blockedCreators.first().contains(creatorId),
+                    isAbleToReward = rewardRepository.isAbleToReward(),
                     creatorDetail = fanboxRepository.getCreator(creatorId),
                     creatorPlans = fanboxRepository.getCreatorPlans(creatorId),
                     creatorTags = fanboxRepository.getCreatorTags(creatorId),
@@ -123,6 +126,12 @@ class CreatorTopViewModel(
             fanboxRepository.unblockCreator(creatorId)
         }
     }
+
+    fun rewarded() {
+        viewModelScope.launch {
+            rewardRepository.rewarded()
+        }
+    }
 }
 
 @Stable
@@ -134,4 +143,5 @@ data class CreatorTopUiState(
     val creatorTags: List<FanboxCreatorTag>,
     val creatorPostsPaging: Flow<PagingData<FanboxPost>>,
     val isBlocked: Boolean,
+    val isAbleToReward: Boolean,
 )

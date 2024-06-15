@@ -1,7 +1,7 @@
 [versions]
 # Application
-versionName = "2.0.5"
-versionCode = "19"
+versionName = "2.0.6"
+versionCode = "20"
 
 # SDK
 minSdk = "26"
@@ -16,7 +16,7 @@ kotlin = "2.0.0"
 
 # KotlinX
 kotlinxCoroutines = "1.7.3"
-kotlinxDatetime = "0.5.0"
+kotlinxDatetime = "0.6.0"
 kotlinxSerializationJson = "1.6.3"
 kotlinxImmutable = "0.3.7"
 
@@ -37,12 +37,12 @@ androidxCore = "1.13.1"
 androidxCoreSplash = "1.0.1"
 androidxAppCompat = "1.7.0"
 androidxActivity = "1.9.0"
-androidxFragment = "1.7.1"
+androidxFragment = "1.8.0"
 androidxPreference = "1.2.1"
 androidxDataStore = "1.1.1"
 androidxPalette = "1.0.0"
 androidxAnnotation = "1.8.0"
-androidxCompose = "2024.05.00"
+androidxCompose = "2024.06.00"
 
 # Google
 playReview = "2.0.1"

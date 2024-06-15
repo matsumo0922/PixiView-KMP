@@ -21,6 +21,13 @@ sealed class WelcomeLog : LogCategory {
         }
     }
 
+    class LoggedOut internal constructor() : WelcomeLog() {
+        override val properties: JsonObject = buildJsonObject {
+            put("event_category", "welcome")
+            put("event_name", "logged_out")
+        }
+    }
+
     class CompletedOnboarding internal constructor(
         private val startAt: String,
         private val endAt: String,
@@ -41,6 +48,9 @@ sealed class WelcomeLog : LogCategory {
 
         // ログインしたときのログ
         fun loggedIn() = LoggedIn()
+
+        // ログアウトしたときのログ
+        fun loggedOut() = LoggedOut()
 
         // オンボーディングを完了したときのログ
         fun completedOnboarding(

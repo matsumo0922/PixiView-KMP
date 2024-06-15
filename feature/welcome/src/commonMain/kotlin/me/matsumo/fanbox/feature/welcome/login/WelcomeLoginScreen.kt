@@ -81,7 +81,10 @@ internal fun WelcomeLoginScreen(
             SecondSection(
                 modifier = Modifier.weight(1f),
                 isLoggedIn = isLoggedIn,
-                navigateToLoginScreen = navigateToLoginScreen,
+                navigateToLoginScreen = {
+                    viewModel.logout()
+                    navigateToLoginScreen.invoke()
+                },
                 navigateToWelcomePermission = navigateToWelcomePermission,
                 navigateToHelp = { navigatorExtension.navigateToWebPage(it, WelcomeLoginRoute) },
                 onSetSessionId = viewModel::setSessionId,
@@ -106,7 +109,10 @@ internal fun WelcomeLoginScreen(
                 SecondSection(
                     modifier = Modifier.weight(3f),
                     isLoggedIn = isLoggedIn,
-                    navigateToLoginScreen = navigateToLoginScreen,
+                    navigateToLoginScreen = {
+                        viewModel.logout()
+                        navigateToLoginScreen.invoke()
+                    },
                     navigateToWelcomePermission = navigateToWelcomePermission,
                     navigateToHelp = { navigatorExtension.navigateToWebPage(it, WelcomeLoginRoute) },
                     onSetSessionId = viewModel::setSessionId,

@@ -7,6 +7,9 @@
 ## logged_in
 ログインしたときのログ
 
+## logged_out
+ログアウトしたときのログ
+
 ## completed_onboarding
 オンボーディングを完了したときのログ
 

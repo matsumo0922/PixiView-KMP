@@ -5,6 +5,7 @@ import me.matsumo.fanbox.core.datastore.BookmarkDataStore
 import me.matsumo.fanbox.core.datastore.FanboxCookieDataStore
 import me.matsumo.fanbox.core.datastore.LaunchLogDataStore
 import me.matsumo.fanbox.core.datastore.PixiViewDataStore
+import me.matsumo.fanbox.core.datastore.RewardLogDataStore
 import org.koin.core.module.Module
 import org.koin.dsl.module
 
@@ -42,6 +43,13 @@ val dataStoreModule = module {
 
     single {
         LaunchLogDataStore(
+            preferenceHelper = get(),
+            ioDispatcher = get(),
+        )
+    }
+
+    single {
+        RewardLogDataStore(
             preferenceHelper = get(),
             ioDispatcher = get(),
         )

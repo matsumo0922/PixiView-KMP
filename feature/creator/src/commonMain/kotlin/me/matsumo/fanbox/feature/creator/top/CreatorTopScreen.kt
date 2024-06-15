@@ -63,9 +63,7 @@ import me.matsumo.fanbox.core.ui.MR
 import me.matsumo.fanbox.core.ui.component.CollapsingToolbarScaffold
 import me.matsumo.fanbox.core.ui.component.ScrollStrategy
 import me.matsumo.fanbox.core.ui.component.rememberCollapsingToolbarScaffoldState
-import me.matsumo.fanbox.core.ui.extensition.LocalSnackbarHostState
 import me.matsumo.fanbox.core.ui.extensition.NavigatorExtension
-import me.matsumo.fanbox.core.ui.extensition.SnackbarExtension
 import me.matsumo.fanbox.core.ui.view.SimpleAlertContents
 import me.matsumo.fanbox.feature.creator.top.items.CreatorTopDescriptionDialog
 import me.matsumo.fanbox.feature.creator.top.items.CreatorTopHeader
@@ -89,10 +87,8 @@ internal fun CreatorTopRoute(
     modifier: Modifier = Modifier,
     viewModel: CreatorTopViewModel = koinViewModel(),
     navigatorExtension: NavigatorExtension = koinInject(),
-    snackbarExtension: SnackbarExtension = koinInject(),
 ) {
     val screenState by viewModel.screenState.collectAsStateWithLifecycle()
-    val snackbarHostState = LocalSnackbarHostState.current
     val scope = rememberCoroutineScope()
 
     LaunchedEffect(creatorId) {
@@ -112,6 +108,7 @@ internal fun CreatorTopRoute(
             modifier = Modifier.fillMaxSize(),
             isPosts = isPosts,
             isBlocked = uiState.isBlocked,
+            isAbleToReward = uiState.isAbleToReward,
             userData = uiState.userData,
             bookmarkedPosts = uiState.bookmarkedPosts.toImmutableList(),
             creatorDetail = uiState.creatorDetail,
@@ -153,7 +150,7 @@ internal fun CreatorTopRoute(
                     { terminate.invoke() },
                 )
             },
-            onShowSnackBar = { scope.launch { snackbarExtension.showSnackbar(snackbarHostState, it) } },
+            onRewarded = viewModel::rewarded,
             onClickPostLike = viewModel::postLike,
         )
     }
@@ -164,6 +161,7 @@ internal fun CreatorTopRoute(
 private fun CreatorTopScreen(
     isPosts: Boolean,
     isBlocked: Boolean,
+    isAbleToReward: Boolean,
     creatorDetail: FanboxCreatorDetail,
     userData: UserData,
     bookmarkedPosts: ImmutableList<PostId>,
@@ -182,7 +180,7 @@ private fun CreatorTopScreen(
     onClickUnfollow: suspend (String) -> Result<Unit>,
     onShowBlockDialog: (SimpleAlertContents) -> Unit,
     onShowUnblockDialog: (SimpleAlertContents) -> Unit,
-    onShowSnackBar: (String) -> Unit,
+    onRewarded: () -> Unit,
     onTerminate: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
@@ -357,7 +355,9 @@ private fun CreatorTopScreen(
 
     if (isShowRewardAdDialog) {
         CreatorTopRewardAdDialog(
+            isAbleToReward = isAbleToReward,
             onRewarded = {
+                onRewarded.invoke()
                 onClickAllDownload.invoke(creatorDetail.creatorId)
                 isShowRewardAdDialog = false
             },

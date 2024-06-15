@@ -5,7 +5,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.ArrowBack
+import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -27,6 +27,8 @@ import io.github.alexzhirkevich.cupertino.adaptive.AdaptiveScaffold
 import io.github.alexzhirkevich.cupertino.adaptive.ExperimentalAdaptiveApi
 import kotlinx.coroutines.launch
 import me.matsumo.fanbox.core.common.PixiViewConfig
+import me.matsumo.fanbox.core.logs.category.WelcomeLog
+import me.matsumo.fanbox.core.logs.logger.send
 import me.matsumo.fanbox.core.model.UserData
 import me.matsumo.fanbox.core.model.fanbox.FanboxMetaData
 import me.matsumo.fanbox.core.ui.AsyncLoadContents
@@ -131,6 +133,7 @@ internal fun SettingTopRoute(
                     scope.launch {
                         viewModel.logout().fold(
                             onSuccess = {
+                                WelcomeLog.loggedOut().send()
                                 scope.launch { snackbarExtension.showSnackbar(snackbarHostState, MR.strings.setting_top_others_logout_dialog_success) }
                                 terminate.invoke()
                             },
@@ -197,7 +200,7 @@ private fun SettingTopScreen(
                     navigationIcon = {
                         IconButton(onClick = onTerminate) {
                             Icon(
-                                imageVector = Icons.Default.ArrowBack,
+                                imageVector = Icons.AutoMirrored.Filled.ArrowBack,
                                 contentDescription = null,
                             )
                         }

@@ -36,6 +36,7 @@ import org.koin.compose.koinInject
 
 @Composable
 actual fun CreatorTopRewardAdDialog(
+    isAbleToReward: Boolean,
     onRewarded: () -> Unit,
     onClickShowPlus: () -> Unit,
     onDismissRequest: () -> Unit,
@@ -103,7 +104,7 @@ actual fun CreatorTopRewardAdDialog(
                                 onRewarded.invoke()
                             }
                         },
-                        enabled = rewardAd != null,
+                        enabled = rewardAd != null && isAbleToReward,
                     ) {
                         Row(
                             verticalAlignment = Alignment.CenterVertically,
@@ -116,7 +117,7 @@ actual fun CreatorTopRewardAdDialog(
                                 )
                             }
 
-                            Text(text = stringResource(MR.strings.creator_download_require_plus_button_ad))
+                            Text(text = stringResource(if (isAbleToReward) MR.strings.creator_download_require_plus_button_ad else MR.strings.creator_download_require_plus_button_ad_over,))
                         }
                     }
                 }

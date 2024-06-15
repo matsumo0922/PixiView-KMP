@@ -153,6 +153,7 @@
     <string name="creator_download_require_plus_message">一括ダウンロードは%1$s+専用機能です。\n\n%1$s+を購入するか、1日3回のみ広告を見ることで一時的に機能を使用することができます。</string>
     <string name="creator_download_require_plus_button">%1$s+を購入</string>
     <string name="creator_download_require_plus_button_ad">広告を見る</string>
+    <string name="creator_download_require_plus_button_ad_over">広告視聴済み</string>
 
     <!-- Bookmark -->
     <string name="bookmark_search_placeholder">ブックマークを検索</string>
