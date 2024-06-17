@@ -25,6 +25,56 @@ sealed class PostsLog : LogCategory {
         }
     }
 
+    class Like internal constructor(
+        private val postId: String
+    ) : PostsLog() {
+        override val properties: JsonObject = buildJsonObject {
+            put("event_category", "posts")
+            put("event_name", "like")
+            put("post_id", postId)
+        }
+    }
+
+    class Comment internal constructor(
+        private val postId: String,
+        private val parentCommentId: String,
+        private val rootCommentId: String,
+        private val comment: String
+    ) : PostsLog() {
+        override val properties: JsonObject = buildJsonObject {
+            put("event_category", "posts")
+            put("event_name", "comment")
+            put("post_id", postId)
+            put("parent_comment_id", parentCommentId)
+            put("root_comment_id", rootCommentId)
+            put("comment", comment)
+        }
+    }
+
+    class LikeComment internal constructor(
+        private val postId: String,
+        private val commentId: String
+    ) : PostsLog() {
+        override val properties: JsonObject = buildJsonObject {
+            put("event_category", "posts")
+            put("event_name", "like_comment")
+            put("post_id", postId)
+            put("comment_id", commentId)
+        }
+    }
+
+    class DeleteComment internal constructor(
+        private val postId: String,
+        private val commentId: String
+    ) : PostsLog() {
+        override val properties: JsonObject = buildJsonObject {
+            put("event_category", "posts")
+            put("event_name", "delete_comment")
+            put("post_id", postId)
+            put("comment_id", commentId)
+        }
+    }
+
     companion object {
         // 投稿をダウンロードした際のログ
         fun download(
@@ -34,5 +84,30 @@ sealed class PostsLog : LogCategory {
             extension: String,
             isSuccess: Boolean
         ) = Download(type, postId, itemId, extension, isSuccess)
+
+        // 投稿にいいねをした際のログ
+        fun like(
+            postId: String
+        ) = Like(postId)
+
+        // 投稿にコメントをした際のログ
+        fun comment(
+            postId: String,
+            parentCommentId: String,
+            rootCommentId: String,
+            comment: String
+        ) = Comment(postId, parentCommentId, rootCommentId, comment)
+
+        // コメントにいいねをした際のログ
+        fun likeComment(
+            postId: String,
+            commentId: String
+        ) = LikeComment(postId, commentId)
+
+        // コメントを削除した際のログ
+        fun deleteComment(
+            postId: String,
+            commentId: String
+        ) = DeleteComment(postId, commentId)
     }
 }

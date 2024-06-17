@@ -105,6 +105,10 @@ android {
     }
 }
 
+composeCompiler {
+    enableStrongSkippingMode = true
+}
+
 kotlin {
     sourceSets {
         val commonMain by getting {

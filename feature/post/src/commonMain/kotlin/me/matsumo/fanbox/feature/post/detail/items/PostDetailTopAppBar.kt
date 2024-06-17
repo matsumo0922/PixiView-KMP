@@ -34,7 +34,7 @@ internal fun PostDetailTopAppBar(
     onClickMenu: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
-    var isTransparent by remember { mutableStateOf(false) }
+    var isTransparent by remember { mutableStateOf(true) }
 
     val containerColor by animateColorAsState(
         targetValue = if (isTransparent) Color.Transparent else MaterialTheme.colorScheme.surface,

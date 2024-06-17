@@ -2,6 +2,7 @@ package me.matsumo.fanbox.feature.post.detail
 
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
+import androidx.compose.foundation.gestures.Orientation
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -14,8 +15,6 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.rememberLazyListState
-import androidx.compose.foundation.pager.HorizontalPager
-import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.InsertDriveFile
 import androidx.compose.material3.Icon
@@ -33,6 +32,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.input.nestedscroll.NestedScrollConnection
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
@@ -41,9 +41,12 @@ import app.cash.paging.compose.collectAsLazyPagingItems
 import coil3.compose.LocalPlatformContext
 import coil3.compose.SubcomposeAsyncImage
 import coil3.request.ImageRequest
+import com.benasher44.uuid.uuid4
 import kotlinx.collections.immutable.toImmutableList
 import kotlinx.coroutines.launch
 import me.matsumo.fanbox.core.common.util.format
+import me.matsumo.fanbox.core.logs.category.PostsLog
+import me.matsumo.fanbox.core.logs.logger.send
 import me.matsumo.fanbox.core.model.ScreenState
 import me.matsumo.fanbox.core.model.UserData
 import me.matsumo.fanbox.core.model.fanbox.FanboxCreatorDetail
@@ -57,6 +60,8 @@ import me.matsumo.fanbox.core.ui.AsyncLoadContents
 import me.matsumo.fanbox.core.ui.LazyPagingItemsLoadContents
 import me.matsumo.fanbox.core.ui.MR
 import me.matsumo.fanbox.core.ui.ads.NativeAdView
+import me.matsumo.fanbox.core.ui.component.pager.HorizontalPager
+import me.matsumo.fanbox.core.ui.component.pager.rememberPagerState
 import me.matsumo.fanbox.core.ui.extensition.FadePlaceHolder
 import me.matsumo.fanbox.core.ui.extensition.LocalSnackbarHostState
 import me.matsumo.fanbox.core.ui.extensition.NavigatorExtension
@@ -106,17 +111,21 @@ internal fun PostDetailRoute(
         }
     }
 
-    if (!paging.isNullOrEmpty() && uiState.userData.isUseInfinityPostDetail) {
+    if (paging != null && !paging.isNullOrEmpty()) {
         LazyPagingItemsLoadContents(
             modifier = modifier,
-            lazyPagingItems = paging!!,
+            lazyPagingItems = paging,
+            isSwipeEnabled = false,
         ) {
             val initIndex = remember { paging.itemSnapshotList.indexOfFirst { it?.id == postId } }
-            val pagerState = rememberPagerState(if (initIndex != -1) initIndex else 0) { paging.itemCount }
+            val pagerState = rememberPagerState(if (initIndex != -1) initIndex else 0)
 
             HorizontalPager(
                 modifier = Modifier.fillMaxSize(),
                 state = pagerState,
+                count = paging.itemCount,
+                key = { paging[it]?.id?.uniqueValue ?: uuid4().toString() },
+                userScrollEnabled = uiState.userData.isUseInfinityPostDetail
             ) {
                 paging[it]?.let { post ->
                     PostDetailView(
@@ -133,18 +142,6 @@ internal fun PostDetailRoute(
                 }
             }
         }
-    } else if (paging != null) {
-        PostDetailView(
-            modifier = modifier,
-            postId = postId,
-            navigateToPostSearch = navigateToPostSearch,
-            navigateToPostDetail = navigateToPostDetail,
-            navigateToPostImage = navigateToPostImage,
-            navigateToCreatorPlans = navigateToCreatorPlans,
-            navigateToCreatorPosts = navigateToCreatorPosts,
-            navigateToCommentDeleteDialog = navigateToCommentDeleteDialog,
-            terminate = terminate,
-        )
     } else {
         ErrorView(
             modifier = Modifier.fillMaxSize(),
@@ -191,13 +188,37 @@ private fun PostDetailView(
             userData = uiState.userData,
             metaData = uiState.metaData,
             onClickPost = navigateToPostDetail,
-            onClickPostLike = viewModel::postLike,
+            onClickPostLike = {
+                PostsLog.like(postId.value).send()
+                viewModel.postLike(it)
+            },
             onClickPostBookmark = viewModel::postBookmark,
             onClickCommentLoadMore = viewModel::loadMoreComment,
-            onClickCommentLike = viewModel::commentLike,
-            onClickCommentReply = viewModel::commentReply,
+            onClickCommentLike = {
+                PostsLog.likeComment(
+                    postId = postId.value,
+                    commentId = it.value,
+                ).send()
+
+                viewModel.commentLike(it)
+            },
+            onClickCommentReply = { body, parent, root ->
+                PostsLog.comment(
+                    postId = postId.value,
+                    comment = body,
+                    parentCommentId = parent.value,
+                    rootCommentId = root.value,
+                ).send()
+
+                viewModel.commentReply(postId, body, parent, root)
+            },
             onClickCommentDelete = {
                 navigateToCommentDeleteDialog.invoke(SimpleAlertContents.CommentDelete) {
+                    PostsLog.deleteComment(
+                        postId = postId.value,
+                        commentId = it.value,
+                    ).send()
+
                     viewModel.commentDelete(it)
                 }
             },
@@ -248,7 +269,7 @@ private fun PostDetailScreen(
     onClickPostBookmark: (FanboxPost, Boolean) -> Unit,
     onClickCommentLoadMore: (PostId, Int) -> Unit,
     onClickCommentLike: (CommentId) -> Unit,
-    onClickCommentReply: (PostId, String, CommentId, CommentId) -> Unit,
+    onClickCommentReply: (String, CommentId, CommentId) -> Unit,
     onClickCommentDelete: (CommentId) -> Unit,
     onClickTag: (String) -> Unit,
     onClickCreator: (CreatorId) -> Unit,
@@ -381,7 +402,7 @@ private fun PostDetailScreen(
                 onClickCommentLike = onClickCommentLike,
                 onClickCommentReply = { body, parent, root ->
                     latestComment = body
-                    onClickCommentReply.invoke(postDetail.id, body, parent, root)
+                    onClickCommentReply.invoke(body, parent, root)
                 },
                 onClickCommentDelete = onClickCommentDelete,
                 onClickShowCommentEditor = { isShowCommentEditor = it },
