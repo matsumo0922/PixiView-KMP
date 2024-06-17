@@ -61,6 +61,7 @@ import androidx.compose.ui.input.nestedscroll.NestedScrollSource
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.platform.debugInspectorInfo
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.util.fastSumBy
@@ -69,6 +70,23 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.collectLatest
 import kotlin.math.min
+
+@Stable
+fun Modifier.padding(
+    horizontal: Dp = 0.dp,
+    vertical: Dp = 0.dp,
+    top: Dp = vertical,
+    bottom: Dp = vertical,
+    start: Dp = horizontal,
+    end: Dp = horizontal,
+) = this.then(
+    Modifier.padding(
+        top = top,
+        bottom = bottom,
+        start = start,
+        end = end,
+    )
+)
 
 fun Modifier.drawHorizontalScrollbar(
     state: ScrollState,

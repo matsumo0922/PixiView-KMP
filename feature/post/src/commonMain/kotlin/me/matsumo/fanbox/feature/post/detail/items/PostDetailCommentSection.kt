@@ -50,6 +50,7 @@ import me.matsumo.fanbox.core.model.fanbox.id.CommentId
 import me.matsumo.fanbox.core.model.fanbox.id.PostId
 import me.matsumo.fanbox.core.ui.MR
 import me.matsumo.fanbox.core.ui.extensition.asCoilImage
+import me.matsumo.fanbox.core.ui.extensition.padding
 import me.matsumo.fanbox.core.ui.theme.bold
 import me.matsumo.fanbox.core.ui.theme.center
 
@@ -66,7 +67,7 @@ internal fun LazyListScope.postDetailCommentItems(
     item {
         Column(
             modifier = Modifier
-                .padding(horizontal = 16.dp)
+                .padding(horizontal = 16.dp, top = 16.dp)
                 .fillMaxWidth()
         ) {
             Row(
@@ -115,7 +116,7 @@ internal fun LazyListScope.postDetailCommentItems(
         ) {
             CommentItem(
                 modifier = Modifier
-                    .padding(horizontal = 24.dp)
+                    .padding(horizontal = 24.dp, top = 16.dp)
                     .fillMaxWidth(),
                 metaData = metaData,
                 comment = it,
@@ -132,7 +133,7 @@ internal fun LazyListScope.postDetailCommentItems(
                 modifier = Modifier
                     .alpha(if (!isShowCommentEditor) 1f else 0f)
                     .padding(
-                        top = 8.dp,
+                        top = 24.dp,
                         start = 16.dp,
                         end = 16.dp,
                     )
@@ -148,7 +149,7 @@ internal fun LazyListScope.postDetailCommentItems(
         item {
             Box(
                 modifier = Modifier
-                    .padding(horizontal = 16.dp)
+                    .padding(horizontal = 16.dp, top = 16.dp)
                     .fillMaxWidth()
             ) {
                 Button(

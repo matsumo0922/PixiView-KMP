@@ -134,6 +134,7 @@ fun PixiViewTheme(
         LocalBackgroundTheme provides backgroundTheme,
         LocalTintTheme provides tintTheme,
         LocalNativeViewsProvider provides NativeViews(nativeViews),
+        LocalShouldUseDarkTheme provides shouldUseDarkTheme,
     ) {
         AdaptiveTheme(
             material = {
@@ -212,3 +213,5 @@ fun shouldUseDarkTheme(themeConfig: ThemeConfig): Boolean {
         ThemeConfig.Dark -> true
     }
 }
+
+val LocalShouldUseDarkTheme = staticCompositionLocalOf { false }

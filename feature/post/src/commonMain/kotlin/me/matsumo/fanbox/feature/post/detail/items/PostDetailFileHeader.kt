@@ -1,31 +1,32 @@
 package me.matsumo.fanbox.feature.post.detail.items
 
-import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.lazy.LazyListScope
+import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
-import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import me.matsumo.fanbox.core.model.fanbox.FanboxPostDetail
 
-@Composable
-internal fun PostDetailFileHeader(
+internal fun LazyListScope.postDetailFileHeader(
     content: FanboxPostDetail.Body.File,
     onClickFile: (FanboxPostDetail.FileItem) -> Unit,
-    modifier: Modifier = Modifier,
 ) {
-    Column(modifier) {
-        for (item in content.files) {
-            PostDetailFileItem(
-                modifier = Modifier.fillMaxWidth(),
-                item = item,
-                onClickDownload = onClickFile,
-            )
-        }
+    items(
+        items = content.files,
+        key = { item -> item.id },
+    ) {
+        PostDetailFileItem(
+            modifier = Modifier.fillMaxWidth(),
+            item = it,
+            onClickDownload = onClickFile,
+        )
+    }
 
-        if (content.text.isNotBlank()) {
+    if (content.text.isNotBlank()) {
+        item {
             Text(
                 modifier = Modifier.padding(16.dp),
                 text = content.text,

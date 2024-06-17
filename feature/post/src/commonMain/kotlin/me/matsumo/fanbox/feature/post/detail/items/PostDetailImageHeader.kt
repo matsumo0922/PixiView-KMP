@@ -1,56 +1,53 @@
 package me.matsumo.fanbox.feature.post.detail.items
 
-import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.lazy.LazyListScope
+import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
-import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import me.matsumo.fanbox.core.model.fanbox.FanboxPostDetail
 import me.matsumo.fanbox.core.ui.component.AdultContentThumbnail
 import me.matsumo.fanbox.core.ui.extensition.LocalFanboxMetadata
 
-@Composable
-internal fun PostDetailImageHeader(
+internal fun LazyListScope.postDetailImageHeader(
     content: FanboxPostDetail.Body.Image,
     isAdultContents: Boolean,
     isOverrideAdultContents: Boolean,
     isTestUser: Boolean,
     onClickImage: (FanboxPostDetail.ImageItem) -> Unit,
     onClickDownload: (List<FanboxPostDetail.ImageItem>) -> Unit,
-    modifier: Modifier = Modifier,
 ) {
-    val metadata = LocalFanboxMetadata.current
-
-    Column(
-        modifier = modifier,
-        verticalArrangement = Arrangement.spacedBy(8.dp),
+    items(
+        items = content.images,
+        key = { item -> item.id },
     ) {
-        for (item in content.images) {
-            if (!isOverrideAdultContents && !metadata.context.user.showAdultContent && isAdultContents) {
-                AdultContentThumbnail(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .aspectRatio(item.aspectRatio),
-                    coverImageUrl = item.thumbnailUrl,
-                    isTestUser = isTestUser,
-                )
-            } else {
-                PostDetailImageItem(
-                    modifier = Modifier.fillMaxWidth(),
-                    item = item,
-                    onClickImage = onClickImage,
-                    onClickDownload = { onClickDownload.invoke(listOf(item)) },
-                    onClickAllDownload = { onClickDownload.invoke(content.imageItems) },
-                )
-            }
-        }
+        val metadata = LocalFanboxMetadata.current
 
-        if (content.text.isNotBlank()) {
+        if (!isOverrideAdultContents && !metadata.context.user.showAdultContent && isAdultContents) {
+            AdultContentThumbnail(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .aspectRatio(it.aspectRatio),
+                coverImageUrl = it.thumbnailUrl,
+                isTestUser = isTestUser,
+            )
+        } else {
+            PostDetailImageItem(
+                modifier = Modifier.fillMaxWidth(),
+                item = it,
+                onClickImage = onClickImage,
+                onClickDownload = { onClickDownload.invoke(listOf(it)) },
+                onClickAllDownload = { onClickDownload.invoke(content.imageItems) },
+            )
+        }
+    }
+
+    if (content.text.isNotBlank()) {
+        item {
             Text(
                 modifier = Modifier.padding(16.dp),
                 text = content.text,

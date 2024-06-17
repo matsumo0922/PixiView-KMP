@@ -1,9 +1,10 @@
 package me.matsumo.fanbox.feature.post.detail.items
 
-import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.lazy.LazyListScope
+import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -18,8 +19,7 @@ import me.matsumo.fanbox.core.ui.component.AdultContentThumbnail
 import me.matsumo.fanbox.core.ui.component.PostItem
 import me.matsumo.fanbox.core.ui.extensition.LocalFanboxMetadata
 
-@Composable
-internal fun PostDetailArticleHeader(
+internal fun LazyListScope.postDetailArticleHeader(
     content: FanboxPostDetail.Body.Article,
     userData: UserData,
     isAdultContents: Boolean,
@@ -30,61 +30,61 @@ internal fun PostDetailArticleHeader(
     onClickImage: (FanboxPostDetail.ImageItem) -> Unit,
     onClickFile: (FanboxPostDetail.FileItem) -> Unit,
     onClickDownload: (List<FanboxPostDetail.ImageItem>) -> Unit,
-    modifier: Modifier = Modifier,
 ) {
-    val metadata = LocalFanboxMetadata.current
+    items(
+        items = content.blocks,
+        key = { item -> item.hashCode() },
+    ) {
+        val metadata = LocalFanboxMetadata.current
 
-    Column(modifier) {
-        for (item in content.blocks) {
-            when (item) {
-                is FanboxPostDetail.Body.Article.Block.Text -> {
-                    ArticleTextItem(
-                        modifier = Modifier.fillMaxWidth(),
-                        item = item,
-                    )
-                }
+        when (it) {
+            is FanboxPostDetail.Body.Article.Block.Text -> {
+                ArticleTextItem(
+                    modifier = Modifier.fillMaxWidth(),
+                    item = it,
+                )
+            }
 
-                is FanboxPostDetail.Body.Article.Block.Image -> {
-                    if (!userData.isAllowedShowAdultContents && !metadata.context.user.showAdultContent && isAdultContents) {
-                        AdultContentThumbnail(
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .aspectRatio(item.item.aspectRatio),
-                            coverImageUrl = item.item.thumbnailUrl,
-                            isTestUser = userData.isTestUser,
-                        )
-                    } else {
-                        PostDetailImageItem(
-                            modifier = Modifier.fillMaxWidth(),
-                            item = item.item,
-                            onClickImage = onClickImage,
-                            onClickDownload = { onClickDownload.invoke(listOf(item.item)) },
-                            onClickAllDownload = { onClickDownload.invoke(content.imageItems) },
-                        )
-                    }
-                }
-
-                is FanboxPostDetail.Body.Article.Block.File -> {
-                    PostDetailFileItem(
-                        modifier = Modifier.fillMaxWidth(),
-                        item = item.item,
-                        onClickDownload = onClickFile,
-                    )
-                }
-
-                is FanboxPostDetail.Body.Article.Block.Link -> {
-                    ArticleLinkItem(
-                        modifier = Modifier.fillMaxWidth(),
-                        item = item,
-                        isHideAdultContents = userData.isHideAdultContents,
-                        isOverrideAdultContents = userData.isAllowedShowAdultContents,
+            is FanboxPostDetail.Body.Article.Block.Image -> {
+                if (!userData.isAllowedShowAdultContents && !metadata.context.user.showAdultContent && isAdultContents) {
+                    AdultContentThumbnail(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .aspectRatio(it.item.aspectRatio),
+                        coverImageUrl = it.item.thumbnailUrl,
                         isTestUser = userData.isTestUser,
-                        onClickPost = onClickPost,
-                        onClickPostLike = onClickPostLike,
-                        onClickPostBookmark = { _, isLiked -> item.post?.let { onClickPostBookmark.invoke(it, isLiked) } },
-                        onClickCreator = onClickCreator,
+                    )
+                } else {
+                    PostDetailImageItem(
+                        modifier = Modifier.fillMaxWidth(),
+                        item = it.item,
+                        onClickImage = onClickImage,
+                        onClickDownload = { onClickDownload.invoke(listOf(it.item)) },
+                        onClickAllDownload = { onClickDownload.invoke(content.imageItems) },
                     )
                 }
+            }
+
+            is FanboxPostDetail.Body.Article.Block.File -> {
+                PostDetailFileItem(
+                    modifier = Modifier.fillMaxWidth(),
+                    item = it.item,
+                    onClickDownload = onClickFile,
+                )
+            }
+
+            is FanboxPostDetail.Body.Article.Block.Link -> {
+                ArticleLinkItem(
+                    modifier = Modifier.fillMaxWidth(),
+                    item = it,
+                    isHideAdultContents = userData.isHideAdultContents,
+                    isOverrideAdultContents = userData.isAllowedShowAdultContents,
+                    isTestUser = userData.isTestUser,
+                    onClickPost = onClickPost,
+                    onClickPostLike = onClickPostLike,
+                    onClickPostBookmark = { _, isLiked -> it.post?.let { onClickPostBookmark.invoke(it, isLiked) } },
+                    onClickCreator = onClickCreator,
+                )
             }
         }
     }
