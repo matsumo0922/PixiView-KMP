@@ -36,7 +36,7 @@ import me.matsumo.fanbox.core.ui.MR
 import me.matsumo.fanbox.core.ui.appName
 import me.matsumo.fanbox.core.ui.extensition.LocalSnackbarHostState
 import me.matsumo.fanbox.core.ui.extensition.NavigatorExtension
-import me.matsumo.fanbox.core.ui.extensition.SnackbarExtension
+import me.matsumo.fanbox.core.ui.extensition.ToastExtension
 import me.matsumo.fanbox.core.ui.view.SimpleAlertContents
 import me.matsumo.fanbox.feature.setting.SettingTheme
 import me.matsumo.fanbox.feature.setting.top.items.SettingTopAccountSection
@@ -58,7 +58,7 @@ internal fun SettingTopRoute(
     modifier: Modifier = Modifier,
     viewModel: SettingTopViewModel = koinViewModel(),
     navigatorExtension: NavigatorExtension = koinInject(),
-    snackbarExtension: SnackbarExtension = koinInject(),
+    toastExtension: ToastExtension = koinInject(),
 ) {
     val scope = rememberCoroutineScope()
 
@@ -94,7 +94,7 @@ internal fun SettingTopRoute(
                     if (uiState.userData.hasPrivilege) {
                         viewModel.setGridMode(true)
                     } else {
-                        scope.launch { snackbarExtension.showSnackbar(snackbarHostState, requirePlus) }
+                        scope.launch { toastExtension.showToast(snackbarHostState, requirePlus) }
                         navigateToBillingPlus.invoke("isUseGridMode")
                     }
                 } else {
@@ -106,7 +106,7 @@ internal fun SettingTopRoute(
                     if (uiState.userData.hasPrivilege) {
                         viewModel.setHideRestricted(true)
                     } else {
-                        scope.launch { snackbarExtension.showSnackbar(snackbarHostState, requirePlus) }
+                        scope.launch { toastExtension.showToast(snackbarHostState, requirePlus) }
                         navigateToBillingPlus.invoke("isHideRestricted")
                     }
                 } else {
@@ -134,11 +134,11 @@ internal fun SettingTopRoute(
                         viewModel.logout().fold(
                             onSuccess = {
                                 WelcomeLog.loggedOut().send()
-                                scope.launch { snackbarExtension.showSnackbar(snackbarHostState, MR.strings.setting_top_others_logout_dialog_success) }
+                                scope.launch { toastExtension.showToast(snackbarHostState, MR.strings.setting_top_others_logout_dialog_success) }
                                 terminate.invoke()
                             },
                             onFailure = {
-                                scope.launch { snackbarExtension.showSnackbar(snackbarHostState, MR.strings.setting_top_others_logout_dialog_failed) }
+                                scope.launch { toastExtension.showToast(snackbarHostState, MR.strings.setting_top_others_logout_dialog_failed) }
                             },
                         )
                     }

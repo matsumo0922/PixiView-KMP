@@ -32,7 +32,7 @@ import me.matsumo.fanbox.core.ui.extensition.LocalNavigationType
 import me.matsumo.fanbox.core.ui.extensition.LocalSnackbarHostState
 import me.matsumo.fanbox.core.ui.extensition.NavigatorExtension
 import me.matsumo.fanbox.core.ui.extensition.PixiViewNavigationType
-import me.matsumo.fanbox.core.ui.extensition.SnackbarExtension
+import me.matsumo.fanbox.core.ui.extensition.ToastExtension
 import me.matsumo.fanbox.core.ui.theme.bold
 import me.matsumo.fanbox.core.ui.theme.center
 import me.matsumo.fanbox.feature.welcome.WelcomeIndicatorItem
@@ -46,7 +46,7 @@ internal fun WelcomeLoginScreen(
     modifier: Modifier = Modifier,
     viewModel: WelcomeLoginViewModel = koinViewModel(),
     navigatorExtension: NavigatorExtension = koinInject(),
-    snackbarExtension: SnackbarExtension = koinInject(),
+    toastExtension: ToastExtension = koinInject(),
 ) {
     val snackbarHostState = LocalSnackbarHostState.current
     val navigationType = LocalNavigationType.current.type
@@ -59,7 +59,7 @@ internal fun WelcomeLoginScreen(
 
     if (isLoginError != -1) {
         LaunchedEffect(isLoginError) {
-            snackbarExtension.showSnackbar(snackbarHostState, MR.strings.welcome_login_toast_failed)
+            toastExtension.showToast(snackbarHostState, MR.strings.welcome_login_toast_failed)
         }
     }
 

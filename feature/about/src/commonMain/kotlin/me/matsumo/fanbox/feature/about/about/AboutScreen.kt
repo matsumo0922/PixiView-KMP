@@ -27,7 +27,7 @@ import me.matsumo.fanbox.core.ui.component.PixiViewTopBar
 import me.matsumo.fanbox.core.ui.extensition.LocalSnackbarHostState
 import me.matsumo.fanbox.core.ui.extensition.NavigatorExtension
 import me.matsumo.fanbox.core.ui.extensition.Platform
-import me.matsumo.fanbox.core.ui.extensition.SnackbarExtension
+import me.matsumo.fanbox.core.ui.extensition.ToastExtension
 import me.matsumo.fanbox.core.ui.extensition.currentPlatform
 import me.matsumo.fanbox.feature.about.about.items.AboutAppSection
 import me.matsumo.fanbox.feature.about.about.items.AboutDeveloperSection
@@ -43,7 +43,7 @@ internal fun AboutRoute(
     modifier: Modifier = Modifier,
     viewModel: AboutViewModel = koinViewModel(),
     navigatorExtension: NavigatorExtension = koinInject(),
-    snackbarExtension: SnackbarExtension = koinInject(),
+    toastExtension: ToastExtension = koinInject(),
 ) {
     val screenState by viewModel.screenState.collectAsStateWithLifecycle()
     val snackHostState = LocalSnackbarHostState.current
@@ -61,7 +61,7 @@ internal fun AboutRoute(
             onClickGithubProfile = { navigatorExtension.navigateToWebPage("https://github.com/matsumo0922", AboutRoute) },
             onClickGithubIssue = { navigatorExtension.navigateToWebPage("https://github.com/matsumo0922/PixiView/issues/new", AboutRoute) },
             onClickGitHubContributor = { navigatorExtension.navigateToWebPage("https://github.com/matsumo0922/PixiView/graphs/contributors", AboutRoute) },
-            onClickDiscord = { scope.launch { snackbarExtension.showSnackbar(snackHostState, MR.strings.error_developing_feature) } },
+            onClickDiscord = { scope.launch { toastExtension.showToast(snackHostState, MR.strings.error_developing_feature) } },
             onClickGooglePlay = { navigatorExtension.navigateToWebPage("https://play.google.com/store/apps/details?id=caios.android.fanbox", AboutRoute) },
             onClickGooglePlayDeveloper = { navigatorExtension.navigateToWebPage("https://play.google.com/store/apps/developer?id=CAIOS", AboutRoute) },
             onClickAppStore = { navigatorExtension.navigateToWebPage("https://apps.apple.com/jp/developer/caios/id1563407383", AboutRoute) },

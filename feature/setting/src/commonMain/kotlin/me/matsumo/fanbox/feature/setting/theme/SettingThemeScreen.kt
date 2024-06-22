@@ -38,7 +38,7 @@ import me.matsumo.fanbox.core.ui.MR
 import me.matsumo.fanbox.core.ui.component.SettingSwitchItem
 import me.matsumo.fanbox.core.ui.extensition.LocalSnackbarHostState
 import me.matsumo.fanbox.core.ui.extensition.Platform
-import me.matsumo.fanbox.core.ui.extensition.SnackbarExtension
+import me.matsumo.fanbox.core.ui.extensition.ToastExtension
 import me.matsumo.fanbox.core.ui.extensition.currentPlatform
 import me.matsumo.fanbox.feature.setting.SettingTheme
 import me.matsumo.fanbox.feature.setting.theme.items.SettingThemeColorSection
@@ -52,7 +52,7 @@ internal fun SettingThemeRoute(
     terminate: () -> Unit,
     modifier: Modifier = Modifier,
     viewModel: SettingThemeViewModel = koinViewModel(),
-    snackbarExtension: SnackbarExtension = koinInject(),
+    toastExtension: ToastExtension = koinInject(),
 ) {
     val screenState by viewModel.screenState.collectAsStateWithLifecycle()
     val snackbarHostState = LocalSnackbarHostState.current
@@ -69,7 +69,7 @@ internal fun SettingThemeRoute(
             onSelectTheme = viewModel::setThemeConfig,
             onSelectThemeColor = viewModel::setThemeColorConfig,
             onClickDynamicColor = viewModel::setUseDynamicColor,
-            onShowSnackbar = { scope.launch { snackbarExtension.showSnackbar(snackbarHostState, it) } },
+            onShowSnackbar = { scope.launch { toastExtension.showToast(snackbarHostState, it) } },
             onTerminate = terminate,
         )
     }

@@ -4,8 +4,8 @@ import me.matsumo.fanbox.core.ui.extensition.ImageDownloader
 import me.matsumo.fanbox.core.ui.extensition.ImageDownloaderImpl
 import me.matsumo.fanbox.core.ui.extensition.NavigatorExtension
 import me.matsumo.fanbox.core.ui.extensition.NavigatorExtensionImpl
-import me.matsumo.fanbox.core.ui.extensition.SnackbarExtension
-import me.matsumo.fanbox.core.ui.extensition.SnackbarExtensionImpl
+import me.matsumo.fanbox.core.ui.extensition.ToastExtension
+import me.matsumo.fanbox.core.ui.extensition.ToastExtensionImpl
 import org.koin.core.module.Module
 import org.koin.dsl.module
 
@@ -15,8 +15,8 @@ actual val uiSubModule: Module = module {
         NavigatorExtensionImpl()
     }
 
-    single<SnackbarExtension> {
-        SnackbarExtensionImpl()
+    single<ToastExtension> {
+        ToastExtensionImpl()
     }
 
     single<ImageDownloader> {

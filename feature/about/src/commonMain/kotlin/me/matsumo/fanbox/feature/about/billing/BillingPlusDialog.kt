@@ -63,7 +63,7 @@ import me.matsumo.fanbox.core.ui.MR
 import me.matsumo.fanbox.core.ui.appName
 import me.matsumo.fanbox.core.ui.extensition.LocalSnackbarHostState
 import me.matsumo.fanbox.core.ui.extensition.Platform
-import me.matsumo.fanbox.core.ui.extensition.SnackbarExtension
+import me.matsumo.fanbox.core.ui.extensition.ToastExtension
 import me.matsumo.fanbox.core.ui.extensition.currentPlatform
 import me.matsumo.fanbox.core.ui.theme.bold
 import me.matsumo.fanbox.core.ui.view.LoadingView
@@ -76,7 +76,7 @@ internal fun BillingPlusRoute(
     terminate: () -> Unit,
     modifier: Modifier = Modifier,
     viewModel: BillingPlusViewModel = koinViewModel(),
-    snackbarExtension: SnackbarExtension = koinInject()
+    toastExtension: ToastExtension = koinInject()
 ) {
     val context = LocalPlatformContext.current
     val snackbarHostState = LocalSnackbarHostState.current
@@ -111,11 +111,11 @@ internal fun BillingPlusRoute(
 
                     if (isSuccess) {
                         isLoading = false
-                        snackbarExtension.showSnackbar(snackbarHostState, MR.strings.billing_plus_toast_purchased)
+                        toastExtension.showToast(snackbarHostState, MR.strings.billing_plus_toast_purchased)
                         terminate.invoke()
                     } else {
                         isLoading = false
-                        snackbarExtension.showSnackbar(snackbarHostState, MR.strings.billing_plus_toast_purchased_error)
+                        toastExtension.showToast(snackbarHostState, MR.strings.billing_plus_toast_purchased_error)
                     }
                 }
             },
@@ -126,10 +126,10 @@ internal fun BillingPlusRoute(
                     BillingLog.verify(isSuccess).send()
 
                     if (isSuccess) {
-                        snackbarExtension.showSnackbar(snackbarHostState, MR.strings.billing_plus_toast_verify)
+                        toastExtension.showToast(snackbarHostState, MR.strings.billing_plus_toast_verify)
                         terminate.invoke()
                     } else {
-                        snackbarExtension.showSnackbar(snackbarHostState, MR.strings.billing_plus_toast_verify_error)
+                        toastExtension.showToast(snackbarHostState, MR.strings.billing_plus_toast_verify_error)
                     }
                 }
             },
@@ -140,9 +140,9 @@ internal fun BillingPlusRoute(
                     BillingLog.consume(isSuccess).send()
 
                     if (isSuccess) {
-                        snackbarExtension.showSnackbar(snackbarHostState, MR.strings.billing_plus_toast_consumed)
+                        toastExtension.showToast(snackbarHostState, MR.strings.billing_plus_toast_consumed)
                     } else {
-                        snackbarExtension.showSnackbar(snackbarHostState, MR.strings.billing_plus_toast_consumed_error)
+                        toastExtension.showToast(snackbarHostState, MR.strings.billing_plus_toast_consumed_error)
                     }
                 }
             },
@@ -151,7 +151,7 @@ internal fun BillingPlusRoute(
 
         LaunchedEffect(uiState.isPlusMode) {
             if (uiState.isPlusMode) {
-                snackbarExtension.showSnackbar(snackbarHostState, MR.strings.billing_plus_toast_purchased)
+                toastExtension.showToast(snackbarHostState, MR.strings.billing_plus_toast_purchased)
 
                 if (!uiState.isDeveloperMode) {
                     terminate.invoke()

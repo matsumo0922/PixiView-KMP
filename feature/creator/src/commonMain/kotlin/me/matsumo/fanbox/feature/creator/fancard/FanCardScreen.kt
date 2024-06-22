@@ -24,7 +24,7 @@ import me.matsumo.fanbox.core.ui.AsyncLoadContents
 import me.matsumo.fanbox.core.ui.MR
 import me.matsumo.fanbox.core.ui.component.PixiViewTopBar
 import me.matsumo.fanbox.core.ui.extensition.LocalSnackbarHostState
-import me.matsumo.fanbox.core.ui.extensition.SnackbarExtension
+import me.matsumo.fanbox.core.ui.extensition.ToastExtension
 import me.matsumo.fanbox.feature.creator.fancard.items.FanCardItem
 import org.koin.compose.koinInject
 import org.koin.compose.viewmodel.koinViewModel
@@ -35,7 +35,7 @@ internal fun FanCardRoute(
     terminate: () -> Unit,
     modifier: Modifier = Modifier,
     viewModel: FanCardViewModel = koinViewModel(),
-    snackbarExtension: SnackbarExtension = koinInject(),
+    toastExtension: ToastExtension = koinInject(),
 ) {
     val screenState by viewModel.screenState.collectAsStateWithLifecycle()
     val snackHostState = LocalSnackbarHostState.current
@@ -48,7 +48,7 @@ internal fun FanCardRoute(
 
     LaunchedEffect(true) {
         viewModel.downloadedEvent.collectLatest {
-            snackbarExtension.showSnackbar(snackHostState, if (it) MR.strings.common_downloaded else MR.strings.error_network)
+            toastExtension.showToast(snackHostState, if (it) MR.strings.common_downloaded else MR.strings.error_network)
         }
     }
 

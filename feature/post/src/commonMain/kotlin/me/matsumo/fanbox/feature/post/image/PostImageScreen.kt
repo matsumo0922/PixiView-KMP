@@ -39,7 +39,7 @@ import me.matsumo.fanbox.core.ui.component.PixiViewTopBar
 import me.matsumo.fanbox.core.ui.extensition.IndicatorPlaceHolder
 import me.matsumo.fanbox.core.ui.extensition.LocalSnackbarHostState
 import me.matsumo.fanbox.core.ui.extensition.Platform
-import me.matsumo.fanbox.core.ui.extensition.SnackbarExtension
+import me.matsumo.fanbox.core.ui.extensition.ToastExtension
 import me.matsumo.fanbox.core.ui.extensition.currentPlatform
 import me.matsumo.fanbox.core.ui.extensition.fanboxHeader
 import me.matsumo.fanbox.core.ui.theme.center
@@ -54,7 +54,7 @@ internal fun PostImageRoute(
     terminate: () -> Unit,
     modifier: Modifier = Modifier,
     viewModel: PostImageViewModel = koinViewModel(),
-    snackExtension: SnackbarExtension = koinInject(),
+    snackExtension: ToastExtension = koinInject(),
 ) {
     val scope = rememberCoroutineScope()
     val snackbarHostState = LocalSnackbarHostState.current
@@ -78,7 +78,7 @@ internal fun PostImageRoute(
             onClickDownload = {
                 viewModel.downloadImages(it) {
                     scope.launch {
-                        snackExtension.showSnackbar(snackbarHostState, MR.strings.common_downloaded)
+                        snackExtension.showToast(snackbarHostState, MR.strings.common_downloaded)
                     }
                 }
             },

@@ -2,7 +2,6 @@ package me.matsumo.fanbox.feature.post.detail
 
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
-import androidx.compose.foundation.gestures.Orientation
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -32,7 +31,6 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.input.nestedscroll.NestedScrollConnection
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
@@ -66,7 +64,7 @@ import me.matsumo.fanbox.core.ui.extensition.FadePlaceHolder
 import me.matsumo.fanbox.core.ui.extensition.LocalSnackbarHostState
 import me.matsumo.fanbox.core.ui.extensition.NavigatorExtension
 import me.matsumo.fanbox.core.ui.extensition.Platform
-import me.matsumo.fanbox.core.ui.extensition.SnackbarExtension
+import me.matsumo.fanbox.core.ui.extensition.ToastExtension
 import me.matsumo.fanbox.core.ui.extensition.currentPlatform
 import me.matsumo.fanbox.core.ui.extensition.fanboxHeader
 import me.matsumo.fanbox.core.ui.extensition.isNullOrEmpty
@@ -175,7 +173,7 @@ private fun PostDetailView(
     modifier: Modifier = Modifier,
     viewModel: PostDetailViewModel = koinViewModel(key = postId.value),
     navigatorExtension: NavigatorExtension = koinInject(),
-    snackExtension: SnackbarExtension = koinInject(),
+    snackExtension: ToastExtension = koinInject(),
 ) {
     val screenState by viewModel.screenState.collectAsStateWithLifecycle()
     val snackbarHostState = LocalSnackbarHostState.current
@@ -243,14 +241,14 @@ private fun PostDetailView(
             onClickFile = {
                 viewModel.downloadFiles(listOf(it)) {
                     scope.launch {
-                        snackExtension.showSnackbar(snackbarHostState, MR.strings.common_downloaded)
+                        snackExtension.showToast(snackbarHostState, MR.strings.common_downloaded)
                     }
                 }
             },
             onClickDownloadImages = {
                 viewModel.downloadImages(it) {
                     scope.launch {
-                        snackExtension.showSnackbar(snackbarHostState, MR.strings.common_downloaded)
+                        snackExtension.showToast(snackbarHostState, MR.strings.common_downloaded)
                     }
                 }
             },
@@ -263,7 +261,7 @@ private fun PostDetailView(
         )
 
         LaunchedEffect(uiState.messageToast) {
-            uiState.messageToast?.let { scope.launch { snackExtension.showSnackbar(snackbarHostState, it) } }
+            uiState.messageToast?.let { scope.launch { snackExtension.showToast(snackbarHostState, it) } }
             viewModel.consumeToast()
         }
     }
