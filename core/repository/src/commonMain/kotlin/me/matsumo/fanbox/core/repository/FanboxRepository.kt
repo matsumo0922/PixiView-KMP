@@ -475,11 +475,11 @@ class FanboxRepositoryImpl(
     }
 
     override suspend fun getBookmarkedPosts(): List<FanboxPost> = withContext(ioDispatcher) {
-        bookmarkDataStore.get()
+        bookmarkDataStore.get().map { it.copy(isBookmarked = true) }
     }
 
     override suspend fun bookmarkPost(post: FanboxPost) = withContext(ioDispatcher) {
-        bookmarkDataStore.save(post)
+        bookmarkDataStore.save(post.copy(isBookmarked = true))
     }
 
     override suspend fun unbookmarkPost(post: FanboxPost) {

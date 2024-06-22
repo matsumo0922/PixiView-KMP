@@ -111,7 +111,7 @@ internal fun PostDetailRoute(
         }
     }
 
-    if (paging != null && !paging.isNullOrEmpty()) {
+    if (paging != null && !paging.isNullOrEmpty() && uiState.userData.isUseInfinityPostDetail) {
         LazyPagingItemsLoadContents(
             modifier = modifier,
             lazyPagingItems = paging,
@@ -125,7 +125,6 @@ internal fun PostDetailRoute(
                 state = pagerState,
                 count = paging.itemCount,
                 key = { paging[it]?.id?.uniqueValue ?: uuid4().toString() },
-                userScrollEnabled = uiState.userData.isUseInfinityPostDetail
             ) {
                 paging[it]?.let { post ->
                     PostDetailView(
@@ -142,6 +141,18 @@ internal fun PostDetailRoute(
                 }
             }
         }
+    } else if (paging != null) {
+        PostDetailView(
+            modifier = Modifier.fillMaxSize(),
+            postId = postId,
+            navigateToPostSearch = navigateToPostSearch,
+            navigateToPostDetail = navigateToPostDetail,
+            navigateToPostImage = navigateToPostImage,
+            navigateToCreatorPlans = navigateToCreatorPlans,
+            navigateToCreatorPosts = navigateToCreatorPosts,
+            navigateToCommentDeleteDialog = navigateToCommentDeleteDialog,
+            terminate = terminate,
+        )
     } else {
         ErrorView(
             modifier = Modifier.fillMaxSize(),

@@ -121,7 +121,6 @@ class MainActivity : FragmentActivity(), KoinComponent {
 
                     flow.addOnCompleteListener {
                         ReviewsLog.reviewed().send()
-                        Toast.makeText(this@MainActivity, R.string.home_review_success, Toast.LENGTH_LONG).show()
                     }
                 }
             }

@@ -37,7 +37,7 @@ internal fun PostDetailTopAppBar(
     var isTransparent by remember { mutableStateOf(true) }
 
     val containerColor by animateColorAsState(
-        targetValue = if (isTransparent) Color.Transparent else MaterialTheme.colorScheme.surface,
+        targetValue = if (isTransparent) Color.Transparent else MaterialTheme.colorScheme.surfaceColorAtElevation(3.dp),
         label = "containerColor",
     )
 
