@@ -14,10 +14,7 @@ internal fun LazyListScope.postDetailFileHeader(
     content: FanboxPostDetail.Body.File,
     onClickFile: (FanboxPostDetail.FileItem) -> Unit,
 ) {
-    items(
-        items = content.files,
-        key = { item -> item.id },
-    ) {
+    items(content.files) {
         PostDetailFileItem(
             modifier = Modifier.fillMaxWidth(),
             item = it,

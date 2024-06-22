@@ -251,7 +251,7 @@ private fun CreatorPostsDownloadScreen(
 
             itemsIndexed(
                 items = posts,
-                key = { index, post -> "${post.post.id.value}-$index" },
+                key = {  _, post -> post.post.id.uniqueValue },
             ) { index, data ->
                 CreatorPostsDownloadItem(
                     modifier = Modifier

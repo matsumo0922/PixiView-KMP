@@ -100,7 +100,7 @@ private fun LibraryMessageScreen(
                 ) {
                     items(
                         items = messages,
-                        key = { it.id.value },
+                        key = { it.id.uniqueValue },
                     ) {
                         LibraryMessageItem(
                             modifier = Modifier.fillMaxWidth(),

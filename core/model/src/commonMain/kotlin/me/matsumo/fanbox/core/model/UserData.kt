@@ -39,7 +39,7 @@ data class UserData(
                 isUseInfinityPostDetail = false,
                 isDefaultFollowTabInHome = false,
                 isHideAdultContents = true,
-                isOverrideAdultContents = false,
+                isOverrideAdultContents = true,
                 isHideRestricted = false,
                 isTestUser = false,
                 isDeveloperMode = false,

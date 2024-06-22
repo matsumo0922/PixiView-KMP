@@ -21,10 +21,7 @@ internal fun LazyListScope.postDetailImageHeader(
     onClickImage: (FanboxPostDetail.ImageItem) -> Unit,
     onClickDownload: (List<FanboxPostDetail.ImageItem>) -> Unit,
 ) {
-    items(
-        items = content.images,
-        key = { item -> item.id },
-    ) {
+    items(content.images) {
         val metadata = LocalFanboxMetadata.current
 
         if (!isOverrideAdultContents && !metadata.context.user.showAdultContent && isAdultContents) {

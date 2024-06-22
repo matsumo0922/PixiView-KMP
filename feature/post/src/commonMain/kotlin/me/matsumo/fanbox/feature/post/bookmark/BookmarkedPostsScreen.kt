@@ -147,7 +147,7 @@ private fun BookmarkedPostsScreen(
                     ) {
                         items(
                             items = bookmarkedPosts,
-                            key = { it.id.value },
+                            key = { it.id.uniqueValue },
                         ) { likedPost ->
                             PostItem(
                                 modifier = Modifier

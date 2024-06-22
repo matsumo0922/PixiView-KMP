@@ -46,6 +46,8 @@ object LogConfigurator: KoinComponent {
         userData: UserData,
     ) {
         filter = LogFilter(pixiViewConfig, userData, "PixiView")
+        sender.init(userData)
+
         _isConfigured.value = true
     }
 }

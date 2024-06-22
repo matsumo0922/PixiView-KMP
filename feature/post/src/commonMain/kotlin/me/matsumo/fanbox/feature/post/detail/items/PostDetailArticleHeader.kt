@@ -31,10 +31,7 @@ internal fun LazyListScope.postDetailArticleHeader(
     onClickFile: (FanboxPostDetail.FileItem) -> Unit,
     onClickDownload: (List<FanboxPostDetail.ImageItem>) -> Unit,
 ) {
-    items(
-        items = content.blocks,
-        key = { item -> item.hashCode() },
-    ) {
+    items(content.blocks) {
         val metadata = LocalFanboxMetadata.current
 
         when (it) {

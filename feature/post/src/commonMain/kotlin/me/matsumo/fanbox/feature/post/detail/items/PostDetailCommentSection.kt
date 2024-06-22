@@ -112,7 +112,7 @@ internal fun LazyListScope.postDetailCommentItems(
     if (postDetail.commentList.contents.isNotEmpty()) {
         items(
             items = postDetail.commentList.contents,
-            key = { comment -> comment.id.value },
+            key = { comment -> comment.id.uniqueValue },
         ) {
             CommentItem(
                 modifier = Modifier
