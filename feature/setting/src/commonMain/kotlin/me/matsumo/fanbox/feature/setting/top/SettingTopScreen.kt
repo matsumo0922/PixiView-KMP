@@ -94,7 +94,7 @@ internal fun SettingTopRoute(
                     if (uiState.userData.hasPrivilege) {
                         viewModel.setGridMode(true)
                     } else {
-                        scope.launch { toastExtension.showToast(snackbarHostState, requirePlus) }
+                        scope.launch { toastExtension.show(snackbarHostState, requirePlus) }
                         navigateToBillingPlus.invoke("isUseGridMode")
                     }
                 } else {
@@ -106,7 +106,7 @@ internal fun SettingTopRoute(
                     if (uiState.userData.hasPrivilege) {
                         viewModel.setHideRestricted(true)
                     } else {
-                        scope.launch { toastExtension.showToast(snackbarHostState, requirePlus) }
+                        scope.launch { toastExtension.show(snackbarHostState, requirePlus) }
                         navigateToBillingPlus.invoke("isHideRestricted")
                     }
                 } else {
@@ -134,11 +134,11 @@ internal fun SettingTopRoute(
                         viewModel.logout().fold(
                             onSuccess = {
                                 WelcomeLog.loggedOut().send()
-                                scope.launch { toastExtension.showToast(snackbarHostState, MR.strings.setting_top_others_logout_dialog_success) }
+                                scope.launch { toastExtension.show(snackbarHostState, MR.strings.setting_top_others_logout_dialog_success) }
                                 terminate.invoke()
                             },
                             onFailure = {
-                                scope.launch { toastExtension.showToast(snackbarHostState, MR.strings.setting_top_others_logout_dialog_failed) }
+                                scope.launch { toastExtension.show(snackbarHostState, MR.strings.setting_top_others_logout_dialog_failed) }
                             },
                         )
                     }

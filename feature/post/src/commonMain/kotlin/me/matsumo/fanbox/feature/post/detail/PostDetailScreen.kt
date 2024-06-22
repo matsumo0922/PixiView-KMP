@@ -241,14 +241,14 @@ private fun PostDetailView(
             onClickFile = {
                 viewModel.downloadFiles(listOf(it)) {
                     scope.launch {
-                        snackExtension.showToast(snackbarHostState, MR.strings.common_downloaded)
+                        snackExtension.show(snackbarHostState, MR.strings.common_downloaded)
                     }
                 }
             },
             onClickDownloadImages = {
                 viewModel.downloadImages(it) {
                     scope.launch {
-                        snackExtension.showToast(snackbarHostState, MR.strings.common_downloaded)
+                        snackExtension.show(snackbarHostState, MR.strings.common_downloaded)
                     }
                 }
             },
@@ -261,7 +261,7 @@ private fun PostDetailView(
         )
 
         LaunchedEffect(uiState.messageToast) {
-            uiState.messageToast?.let { scope.launch { snackExtension.showToast(snackbarHostState, it) } }
+            uiState.messageToast?.let { scope.launch { snackExtension.show(snackbarHostState, it) } }
             viewModel.consumeToast()
         }
     }

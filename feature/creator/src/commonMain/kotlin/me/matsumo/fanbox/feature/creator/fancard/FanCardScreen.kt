@@ -48,7 +48,7 @@ internal fun FanCardRoute(
 
     LaunchedEffect(true) {
         viewModel.downloadedEvent.collectLatest {
-            toastExtension.showToast(snackHostState, if (it) MR.strings.common_downloaded else MR.strings.error_network)
+            toastExtension.show(snackHostState, if (it) MR.strings.common_downloaded else MR.strings.error_network)
         }
     }
 

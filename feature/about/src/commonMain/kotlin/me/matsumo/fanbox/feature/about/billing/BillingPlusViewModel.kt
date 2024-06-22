@@ -20,5 +20,17 @@ abstract class BillingPlusViewModel: ViewModel() {
 data class BillingPlusUiState(
     val isPlusMode: Boolean = false,
     val isDeveloperMode: Boolean = false,
-    val formattedPrice: String? = null,
-)
+    val plans: List<Plan> = emptyList(),
+) {
+    @Stable
+    data class Plan(
+        val price: Int,
+        val formattedPrice: String,
+        val type: Type,
+    )
+
+    enum class Type {
+        MONTH,
+        YEAR,
+    }
+}

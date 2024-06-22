@@ -61,7 +61,7 @@ internal fun AboutRoute(
             onClickGithubProfile = { navigatorExtension.navigateToWebPage("https://github.com/matsumo0922", AboutRoute) },
             onClickGithubIssue = { navigatorExtension.navigateToWebPage("https://github.com/matsumo0922/PixiView/issues/new", AboutRoute) },
             onClickGitHubContributor = { navigatorExtension.navigateToWebPage("https://github.com/matsumo0922/PixiView/graphs/contributors", AboutRoute) },
-            onClickDiscord = { scope.launch { toastExtension.showToast(snackHostState, MR.strings.error_developing_feature) } },
+            onClickDiscord = { scope.launch { toastExtension.show(snackHostState, MR.strings.error_developing_feature) } },
             onClickGooglePlay = { navigatorExtension.navigateToWebPage("https://play.google.com/store/apps/details?id=caios.android.fanbox", AboutRoute) },
             onClickGooglePlayDeveloper = { navigatorExtension.navigateToWebPage("https://play.google.com/store/apps/developer?id=CAIOS", AboutRoute) },
             onClickAppStore = { navigatorExtension.navigateToWebPage("https://apps.apple.com/jp/developer/caios/id1563407383", AboutRoute) },

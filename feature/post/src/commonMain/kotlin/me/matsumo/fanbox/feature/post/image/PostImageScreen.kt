@@ -78,7 +78,7 @@ internal fun PostImageRoute(
             onClickDownload = {
                 viewModel.downloadImages(it) {
                     scope.launch {
-                        snackExtension.showToast(snackbarHostState, MR.strings.common_downloaded)
+                        snackExtension.show(snackbarHostState, MR.strings.common_downloaded)
                     }
                 }
             },

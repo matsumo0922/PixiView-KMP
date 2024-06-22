@@ -11,11 +11,11 @@ class ToastExtensionImpl(
 
     private var toast: Toast? = null
 
-    override suspend fun showToast(snackbarHostState: SnackbarHostState, message: StringResource, isSnackbar: Boolean, isOverride: Boolean) {
-        showToast(snackbarHostState, message.getString(context), isSnackbar, isOverride)
+    override suspend fun show(snackbarHostState: SnackbarHostState, message: StringResource, isSnackbar: Boolean, isOverride: Boolean) {
+        show(snackbarHostState, message.getString(context), isSnackbar, isOverride)
     }
 
-    override suspend fun showToast(snackbarHostState: SnackbarHostState, message: String, isSnackbar: Boolean, isOverride: Boolean) {
+    override suspend fun show(snackbarHostState: SnackbarHostState, message: String, isSnackbar: Boolean, isOverride: Boolean) {
         if (isSnackbar) {
             snackbarHostState.currentSnackbarData?.dismiss()
             snackbarHostState.showSnackbar(message)

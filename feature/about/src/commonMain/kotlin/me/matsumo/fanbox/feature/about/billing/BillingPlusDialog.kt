@@ -7,6 +7,7 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
@@ -16,6 +17,7 @@ import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.statusBarsPadding
+import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
@@ -55,6 +57,8 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import coil3.compose.LocalPlatformContext
 import dev.icerock.moko.resources.StringResource
 import dev.icerock.moko.resources.compose.stringResource
+import kotlinx.collections.immutable.ImmutableList
+import kotlinx.collections.immutable.toImmutableList
 import kotlinx.coroutines.launch
 import me.matsumo.fanbox.core.logs.category.BillingLog
 import me.matsumo.fanbox.core.logs.logger.send
@@ -67,6 +71,8 @@ import me.matsumo.fanbox.core.ui.extensition.ToastExtension
 import me.matsumo.fanbox.core.ui.extensition.currentPlatform
 import me.matsumo.fanbox.core.ui.theme.bold
 import me.matsumo.fanbox.core.ui.view.LoadingView
+import me.matsumo.fanbox.feature.about.billing.items.billingPlusDescriptionSection
+import me.matsumo.fanbox.feature.about.billing.items.billingPlusTitleSection
 import org.koin.compose.koinInject
 import org.koin.compose.viewmodel.koinViewModel
 
@@ -95,7 +101,7 @@ internal fun BillingPlusRoute(
     ) { uiState ->
         BillingPlusDialog(
             modifier = Modifier.fillMaxSize(),
-            formattedPrice = uiState.formattedPrice,
+            plans = uiState.plans.toImmutableList(),
             isDeveloperMode = uiState.isDeveloperMode,
             isLoading = isLoading,
             onClickPurchase = {
@@ -111,11 +117,11 @@ internal fun BillingPlusRoute(
 
                     if (isSuccess) {
                         isLoading = false
-                        toastExtension.showToast(snackbarHostState, MR.strings.billing_plus_toast_purchased)
+                        toastExtension.show(snackbarHostState, MR.strings.billing_plus_toast_purchased)
                         terminate.invoke()
                     } else {
                         isLoading = false
-                        toastExtension.showToast(snackbarHostState, MR.strings.billing_plus_toast_purchased_error)
+                        toastExtension.show(snackbarHostState, MR.strings.billing_plus_toast_purchased_error)
                     }
                 }
             },
@@ -126,10 +132,10 @@ internal fun BillingPlusRoute(
                     BillingLog.verify(isSuccess).send()
 
                     if (isSuccess) {
-                        toastExtension.showToast(snackbarHostState, MR.strings.billing_plus_toast_verify)
+                        toastExtension.show(snackbarHostState, MR.strings.billing_plus_toast_verify)
                         terminate.invoke()
                     } else {
-                        toastExtension.showToast(snackbarHostState, MR.strings.billing_plus_toast_verify_error)
+                        toastExtension.show(snackbarHostState, MR.strings.billing_plus_toast_verify_error)
                     }
                 }
             },
@@ -140,9 +146,9 @@ internal fun BillingPlusRoute(
                     BillingLog.consume(isSuccess).send()
 
                     if (isSuccess) {
-                        toastExtension.showToast(snackbarHostState, MR.strings.billing_plus_toast_consumed)
+                        toastExtension.show(snackbarHostState, MR.strings.billing_plus_toast_consumed)
                     } else {
-                        toastExtension.showToast(snackbarHostState, MR.strings.billing_plus_toast_consumed_error)
+                        toastExtension.show(snackbarHostState, MR.strings.billing_plus_toast_consumed_error)
                     }
                 }
             },
@@ -151,7 +157,7 @@ internal fun BillingPlusRoute(
 
         LaunchedEffect(uiState.isPlusMode) {
             if (uiState.isPlusMode) {
-                toastExtension.showToast(snackbarHostState, MR.strings.billing_plus_toast_purchased)
+                toastExtension.show(snackbarHostState, MR.strings.billing_plus_toast_purchased)
 
                 if (!uiState.isDeveloperMode) {
                     terminate.invoke()
@@ -163,7 +169,7 @@ internal fun BillingPlusRoute(
 
 @Composable
 private fun BillingPlusDialog(
-    formattedPrice: String?,
+    plans: ImmutableList<BillingPlusUiState.Plan>,
     isLoading: Boolean,
     isDeveloperMode: Boolean,
     onClickPurchase: () -> Unit,
@@ -172,6 +178,21 @@ private fun BillingPlusDialog(
     onTerminate: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
+    Column(
+        modifier = modifier,
+        horizontalAlignment = Alignment.CenterHorizontally,
+    ) {
+        LazyColumn(
+            modifier = Modifier.fillMaxSize(),
+            contentPadding = PaddingValues(vertical = 16.dp),
+        ) {
+            billingPlusTitleSection(onTerminate)
+            billingPlusDescriptionSection()
+        }
+
+
+    }
+
     Box(modifier) {
         Column(
             modifier = Modifier
@@ -257,68 +278,7 @@ private fun BillingPlusDialog(
 
                         Spacer(modifier = Modifier.height(8.dp))
 
-                        PlusItem(
-                            modifier = Modifier.fillMaxWidth(),
-                            title = MR.strings.billing_plus_item_hide_ads,
-                            description = MR.strings.billing_plus_item_hide_ads_description,
-                            icon = Icons.Default.DoNotDisturb,
-                        )
 
-                        PlusItem(
-                            modifier = Modifier.fillMaxWidth(),
-                            title = MR.strings.billing_plus_item_download,
-                            description = MR.strings.billing_plus_item_download_description,
-                            icon = Icons.Default.Download,
-                        )
-
-                        PlusItem(
-                            modifier = Modifier.fillMaxWidth(),
-                            title = MR.strings.billing_plus_item_lock,
-                            description = MR.strings.billing_plus_item_lock_description,
-                            icon = Icons.Default.Lock,
-                        )
-
-                        PlusItem(
-                            modifier = Modifier.fillMaxWidth(),
-                            title = MR.strings.billing_plus_item_hide_restricted,
-                            description = MR.strings.billing_plus_item_hide_restricted_description,
-                            icon = Icons.Outlined.HideImage,
-                        )
-
-                        PlusItem(
-                            modifier = Modifier.fillMaxWidth(),
-                            title = MR.strings.billing_plus_item_widget,
-                            description = MR.strings.billing_plus_item_widget_description,
-                            icon = Icons.Default.Widgets,
-                        )
-
-                        PlusItem(
-                            modifier = Modifier.fillMaxWidth(),
-                            title = MR.strings.billing_plus_item_material_you,
-                            description = MR.strings.billing_plus_item_material_you_description,
-                            icon = Icons.Default.DesignServices,
-                        )
-
-                        PlusItem(
-                            modifier = Modifier.fillMaxWidth(),
-                            title = MR.strings.billing_plus_item_accent_color,
-                            description = MR.strings.billing_plus_item_accent_color_description,
-                            icon = Icons.Default.ColorLens,
-                        )
-
-                        PlusItem(
-                            modifier = Modifier.fillMaxWidth(),
-                            title = MR.strings.billing_plus_item_feature,
-                            description = MR.strings.billing_plus_item_feature_description,
-                            icon = Icons.Default.MoreHoriz,
-                        )
-
-                        PlusItem(
-                            modifier = Modifier.fillMaxWidth(),
-                            title = MR.strings.billing_plus_item_support,
-                            description = MR.strings.billing_plus_item_support_description,
-                            icon = Icons.Outlined.HelpOutline,
-                        )
                     }
 
                     Box(
@@ -347,87 +307,6 @@ private fun BillingPlusDialog(
                 modifier = Modifier
                     .fillMaxSize()
                     .background(MaterialTheme.colorScheme.surface.copy(alpha = 0.7f)),
-            )
-        }
-    }
-}
-
-@Composable
-private fun TitleItem(
-    onTerminate: () -> Unit,
-    modifier: Modifier = Modifier,
-) {
-    val titleStyle = MaterialTheme.typography.headlineLarge.bold()
-    val annotatedString = buildAnnotatedString {
-        append("Buy ")
-
-        withStyle(titleStyle.copy(color = MaterialTheme.colorScheme.primary).toSpanStyle()) {
-            append("$appName+")
-        }
-    }
-
-    Row(
-        modifier = modifier.padding(top = 24.dp),
-        verticalAlignment = Alignment.Top,
-        horizontalArrangement = Arrangement.spacedBy(16.dp),
-    ) {
-        Text(
-            modifier = Modifier
-                .padding(start = 24.dp)
-                .weight(1f),
-            text = annotatedString,
-            style = titleStyle,
-            color = MaterialTheme.colorScheme.onSurface,
-        )
-
-        if (currentPlatform != Platform.Android) {
-            IconButton(
-                modifier = Modifier.padding(end = 8.dp),
-                onClick = onTerminate,
-            ) {
-                Icon(
-                    imageVector = Icons.Default.Close,
-                    contentDescription = null,
-                )
-            }
-        }
-    }
-}
-
-@Composable
-private fun PlusItem(
-    title: StringResource,
-    description: StringResource,
-    icon: ImageVector,
-    modifier: Modifier = Modifier,
-) {
-    Row(
-        modifier = modifier.padding(vertical = 16.dp),
-        horizontalArrangement = Arrangement.spacedBy(16.dp),
-    ) {
-        Icon(
-            modifier = Modifier.size(24.dp),
-            imageVector = icon,
-            contentDescription = null,
-            tint = MaterialTheme.colorScheme.onSurface,
-        )
-
-        Column(
-            modifier = Modifier.weight(1f),
-            verticalArrangement = Arrangement.spacedBy(8.dp),
-        ) {
-            Text(
-                modifier = Modifier.fillMaxWidth(),
-                text = stringResource(title),
-                style = MaterialTheme.typography.titleMedium,
-                color = MaterialTheme.colorScheme.onSurface,
-            )
-
-            Text(
-                modifier = Modifier.fillMaxWidth(),
-                text = stringResource(description),
-                style = MaterialTheme.typography.bodySmall,
-                color = MaterialTheme.colorScheme.onSurfaceVariant,
             )
         }
     }

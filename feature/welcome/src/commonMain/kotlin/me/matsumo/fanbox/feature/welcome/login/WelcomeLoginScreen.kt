@@ -59,7 +59,7 @@ internal fun WelcomeLoginScreen(
 
     if (isLoginError != -1) {
         LaunchedEffect(isLoginError) {
-            toastExtension.showToast(snackbarHostState, MR.strings.welcome_login_toast_failed)
+            toastExtension.show(snackbarHostState, MR.strings.welcome_login_toast_failed)
         }
     }
 

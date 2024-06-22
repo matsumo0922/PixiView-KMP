@@ -42,15 +42,24 @@ class BillingPlusViewModelImpl(
                 val userData = userDataRepository.userData.firstOrNull()
                 val productDetail = billingClient.queryProductDetails(ProductItem.plusSubscription, ProductType.SUBS)
 
-                val plusSubscription = productDetail.rawProductDetails.subscriptionOfferDetails?.firstOrNull()
-                val basePlanPricing = plusSubscription?.pricingPhases?.pricingPhaseList?.firstOrNull()
+                val plans = productDetail.rawProductDetails.subscriptionOfferDetails?.map {
+                    BillingPlusUiState.Plan(
+                        price = it.pricingPhases.pricingPhaseList.first().priceAmountMicros.toInt() / 1000000,
+                        formattedPrice = it.pricingPhases.pricingPhaseList.first().formattedPrice,
+                        type = when (it.basePlanId) {
+                            "plus" -> BillingPlusUiState.Type.MONTH
+                            "plus-year" -> BillingPlusUiState.Type.YEAR
+                            else -> BillingPlusUiState.Type.MONTH
+                        },
+                    )
+                }
 
                 lastPurchase = verifyPlusUseCase.invoke()
 
                 BillingPlusUiState(
                     isPlusMode = userData?.isPlusMode ?: false,
                     isDeveloperMode = userData?.isDeveloperMode ?: false,
-                    formattedPrice = basePlanPricing?.formattedPrice,
+                    plans = plans.orEmpty(),
                 )
             }.fold(
                 onSuccess = { ScreenState.Idle(it) },

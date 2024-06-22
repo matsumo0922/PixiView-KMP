@@ -7,14 +7,14 @@ import dev.icerock.moko.resources.StringResource
 val LocalSnackbarHostState = staticCompositionLocalOf { SnackbarHostState() }
 
 interface ToastExtension {
-    suspend fun showToast(
+    suspend fun show(
         snackbarHostState: SnackbarHostState,
         message: StringResource,
         isSnackbar: Boolean = false,
         isOverride: Boolean = true,
     )
 
-    suspend fun showToast(
+    suspend fun show(
         snackbarHostState: SnackbarHostState,
         message: String,
         isSnackbar: Boolean = false,
