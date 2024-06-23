@@ -56,10 +56,12 @@ import me.matsumo.fanbox.core.model.fanbox.id.CreatorId
 import me.matsumo.fanbox.core.model.fanbox.id.PostId
 import me.matsumo.fanbox.core.ui.AsyncLoadContents
 import me.matsumo.fanbox.core.ui.LazyPagingItemsLoadContents
-import me.matsumo.fanbox.core.ui.MR
+import me.matsumo.fanbox.core.ui.Res
 import me.matsumo.fanbox.core.ui.ads.NativeAdView
+import me.matsumo.fanbox.core.ui.common_downloaded
 import me.matsumo.fanbox.core.ui.component.pager.HorizontalPager
 import me.matsumo.fanbox.core.ui.component.pager.rememberPagerState
+import me.matsumo.fanbox.core.ui.error_network
 import me.matsumo.fanbox.core.ui.extensition.FadePlaceHolder
 import me.matsumo.fanbox.core.ui.extensition.LocalSnackbarHostState
 import me.matsumo.fanbox.core.ui.extensition.NavigatorExtension
@@ -154,7 +156,7 @@ internal fun PostDetailRoute(
     } else {
         ErrorView(
             modifier = Modifier.fillMaxSize(),
-            errorState = ScreenState.Error(MR.strings.error_network),
+            errorState = ScreenState.Error(Res.string.error_network),
             retryAction = { terminate.invoke() },
         )
     }
@@ -241,14 +243,14 @@ private fun PostDetailView(
             onClickFile = {
                 viewModel.downloadFiles(listOf(it)) {
                     scope.launch {
-                        snackExtension.show(snackbarHostState, MR.strings.common_downloaded)
+                        snackExtension.show(snackbarHostState, Res.string.common_downloaded)
                     }
                 }
             },
             onClickDownloadImages = {
                 viewModel.downloadImages(it) {
                     scope.launch {
-                        snackExtension.show(snackbarHostState, MR.strings.common_downloaded)
+                        snackExtension.show(snackbarHostState, Res.string.common_downloaded)
                     }
                 }
             },

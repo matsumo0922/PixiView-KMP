@@ -41,18 +41,28 @@ import coil3.annotation.ExperimentalCoilApi
 import coil3.compose.AsyncImage
 import coil3.compose.LocalPlatformContext
 import coil3.request.ImageRequest
-import dev.icerock.moko.resources.compose.stringResource
 import kotlinx.datetime.Clock
 import kotlinx.datetime.Instant
 import me.matsumo.fanbox.core.model.fanbox.FanboxMetaData
 import me.matsumo.fanbox.core.model.fanbox.FanboxPostDetail
 import me.matsumo.fanbox.core.model.fanbox.id.CommentId
 import me.matsumo.fanbox.core.model.fanbox.id.PostId
-import me.matsumo.fanbox.core.ui.MR
+import me.matsumo.fanbox.core.ui.Res
+import me.matsumo.fanbox.core.ui.common_delete
+import me.matsumo.fanbox.core.ui.common_see_more
 import me.matsumo.fanbox.core.ui.extensition.asCoilImage
 import me.matsumo.fanbox.core.ui.extensition.padding
+import me.matsumo.fanbox.core.ui.im_default_user
+import me.matsumo.fanbox.core.ui.post_detail_comment_empty
+import me.matsumo.fanbox.core.ui.post_detail_comment_reply
+import me.matsumo.fanbox.core.ui.post_detail_comment_title
 import me.matsumo.fanbox.core.ui.theme.bold
 import me.matsumo.fanbox.core.ui.theme.center
+import me.matsumo.fanbox.core.ui.unit_day_before
+import me.matsumo.fanbox.core.ui.unit_hour_before
+import me.matsumo.fanbox.core.ui.unit_minute_before
+import me.matsumo.fanbox.core.ui.unit_second_before
+import org.jetbrains.compose.resources.stringResource
 
 internal fun LazyListScope.postDetailCommentItems(
     isShowCommentEditor: Boolean,
@@ -77,7 +87,7 @@ internal fun LazyListScope.postDetailCommentItems(
             ) {
                 Text(
                     modifier = Modifier.weight(1f),
-                    text = stringResource(MR.strings.post_detail_comment_title),
+                    text = stringResource(Res.string.post_detail_comment_title),
                     style = MaterialTheme.typography.titleMedium,
                     color = MaterialTheme.colorScheme.onSurface,
                 )
@@ -138,7 +148,7 @@ internal fun LazyListScope.postDetailCommentItems(
                         end = 16.dp,
                     )
                     .fillMaxWidth(),
-                text = stringResource(MR.strings.post_detail_comment_empty),
+                text = stringResource(Res.string.post_detail_comment_empty),
                 style = MaterialTheme.typography.bodyMedium.center(),
                 color = MaterialTheme.colorScheme.onSurfaceVariant,
             )
@@ -169,7 +179,7 @@ internal fun LazyListScope.postDetailCommentItems(
 
                         Text(
                             modifier = Modifier.padding(start = 8.dp),
-                            text = stringResource(MR.strings.common_see_more),
+                            text = stringResource(Res.string.common_see_more),
                             style = MaterialTheme.typography.bodyMedium,
                             color = MaterialTheme.colorScheme.onPrimary,
                         )
@@ -203,7 +213,7 @@ private fun CommentItem(
                 .clip(CircleShape)
                 .size(36.dp),
             model = ImageRequest.Builder(LocalPlatformContext.current)
-                .error(MR.images.im_default_user.asCoilImage())
+                .error(Res.drawable.im_default_user.asCoilImage())
                 .data(comment.user.iconUrl)
                 .build(),
             contentDescription = null,
@@ -283,7 +293,7 @@ private fun CommentItem(
                     )
 
                     Text(
-                        text = stringResource(MR.strings.post_detail_comment_reply),
+                        text = stringResource(Res.string.post_detail_comment_reply),
                         style = MaterialTheme.typography.bodySmall,
                         color = MaterialTheme.colorScheme.onSurfaceVariant,
                     )
@@ -306,7 +316,7 @@ private fun CommentItem(
                         )
 
                         Text(
-                            text = stringResource(MR.strings.common_delete),
+                            text = stringResource(Res.string.common_delete),
                             style = MaterialTheme.typography.bodySmall,
                             color = MaterialTheme.colorScheme.onSurfaceVariant,
                         )
@@ -368,7 +378,7 @@ private fun CommentEditor(
                 .clip(CircleShape)
                 .size(36.dp),
             model = ImageRequest.Builder(LocalPlatformContext.current)
-                .error(MR.images.im_default_user.asCoilImage())
+                .error(Res.drawable.im_default_user.asCoilImage())
                 .data(metaData.context.user.iconUrl)
                 .build(),
             contentDescription = null,
@@ -395,7 +405,7 @@ private fun CommentEditor(
                     onClickCommentReply.invoke(value, parentCommentId, if (rootCommentId.value != "0") rootCommentId else parentCommentId)
                 },
             ) {
-                Text(text = stringResource(MR.strings.post_detail_comment_reply))
+                Text(text = stringResource(Res.string.post_detail_comment_reply))
             }
         }
     }
@@ -407,9 +417,9 @@ private fun Instant.toRelativeTimeString(): String {
     val duration = now - this
 
     return when {
-        duration.inWholeDays > 0 -> stringResource(MR.strings.unit_day_before, duration.inWholeDays)
-        duration.inWholeHours > 0 -> stringResource(MR.strings.unit_hour_before, duration.inWholeHours)
-        duration.inWholeMinutes > 0 -> stringResource(MR.strings.unit_minute_before, duration.inWholeMinutes)
-        else -> stringResource(MR.strings.unit_second_before, duration.inWholeSeconds)
+        duration.inWholeDays > 0 -> stringResource(Res.string.unit_day_before, duration.inWholeDays)
+        duration.inWholeHours > 0 -> stringResource(Res.string.unit_hour_before, duration.inWholeHours)
+        duration.inWholeMinutes > 0 -> stringResource(Res.string.unit_minute_before, duration.inWholeMinutes)
+        else -> stringResource(Res.string.unit_second_before, duration.inWholeSeconds)
     }
 }

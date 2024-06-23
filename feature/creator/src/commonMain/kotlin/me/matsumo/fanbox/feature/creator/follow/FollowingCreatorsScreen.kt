@@ -27,21 +27,24 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import dev.icerock.moko.resources.compose.stringResource
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.toImmutableList
 import kotlinx.coroutines.launch
 import me.matsumo.fanbox.core.model.fanbox.FanboxCreatorDetail
 import me.matsumo.fanbox.core.model.fanbox.id.CreatorId
 import me.matsumo.fanbox.core.ui.AsyncLoadContents
-import me.matsumo.fanbox.core.ui.MR
+import me.matsumo.fanbox.core.ui.Res
 import me.matsumo.fanbox.core.ui.component.CreatorItem
 import me.matsumo.fanbox.core.ui.component.PixiViewTopBar
+import me.matsumo.fanbox.core.ui.error_no_data
+import me.matsumo.fanbox.core.ui.error_no_data_following
 import me.matsumo.fanbox.core.ui.extensition.LocalNavigationType
 import me.matsumo.fanbox.core.ui.extensition.NavigatorExtension
 import me.matsumo.fanbox.core.ui.extensition.PixiViewNavigationType
 import me.matsumo.fanbox.core.ui.extensition.drawVerticalScrollbar
+import me.matsumo.fanbox.core.ui.library_navigation_following
 import me.matsumo.fanbox.core.ui.view.EmptyView
+import org.jetbrains.compose.resources.stringResource
 import org.koin.compose.koinInject
 import org.koin.compose.viewmodel.koinViewModel
 
@@ -99,7 +102,7 @@ private fun FollowingCreatorsScreen(
         topBar = {
             PixiViewTopBar(
                 modifier = Modifier.fillMaxWidth(),
-                title = stringResource(MR.strings.library_navigation_following),
+                title = stringResource(Res.string.library_navigation_following),
                 onClickNavigation = terminate,
                 scrollBehavior = scrollBehavior,
             )
@@ -151,8 +154,8 @@ private fun FollowingCreatorsScreen(
         } else {
             EmptyView(
                 modifier = Modifier.fillMaxSize(),
-                titleRes = MR.strings.error_no_data,
-                messageRes = MR.strings.error_no_data_following,
+                titleRes = Res.string.error_no_data,
+                messageRes = Res.string.error_no_data_following,
             )
         }
     }

@@ -12,8 +12,12 @@ import androidx.compose.material.icons.outlined.Search
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.navigation.NavDestination
 import androidx.navigation.NavDestination.Companion.hierarchy
-import dev.icerock.moko.resources.StringResource
-import me.matsumo.fanbox.core.ui.MR
+import me.matsumo.fanbox.core.ui.Res
+import me.matsumo.fanbox.core.ui.library_navigation_discovery
+import me.matsumo.fanbox.core.ui.library_navigation_home
+import me.matsumo.fanbox.core.ui.library_navigation_message
+import me.matsumo.fanbox.core.ui.library_navigation_notify
+import org.jetbrains.compose.resources.StringResource
 
 enum class LibraryDestination(
     val selectedIcon: ImageVector,
@@ -23,22 +27,22 @@ enum class LibraryDestination(
     Home(
         selectedIcon = Icons.Default.Home,
         deselectedIcon = Icons.Outlined.Home,
-        title = MR.strings.library_navigation_home,
+        title = Res.string.library_navigation_home,
     ),
     Discovery(
         selectedIcon = Icons.Default.Search,
         deselectedIcon = Icons.Outlined.Search,
-        title = MR.strings.library_navigation_discovery,
+        title = Res.string.library_navigation_discovery,
     ),
     Notify(
         selectedIcon = Icons.Default.Notifications,
         deselectedIcon = Icons.Outlined.Notifications,
-        title = MR.strings.library_navigation_notify,
+        title = Res.string.library_navigation_notify,
     ),
     Message(
         selectedIcon = Icons.Default.Mail,
         deselectedIcon = Icons.Outlined.Mail,
-        title = MR.strings.library_navigation_message,
+        title = Res.string.library_navigation_message,
     ),
 }
 

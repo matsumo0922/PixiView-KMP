@@ -18,7 +18,7 @@ import me.matsumo.fanbox.core.billing.swift.BillingController
 import me.matsumo.fanbox.core.common.util.suspendRunCatching
 import me.matsumo.fanbox.core.model.ScreenState
 import me.matsumo.fanbox.core.repository.UserDataRepository
-import me.matsumo.fanbox.core.ui.MR
+import me.matsumo.fanbox.core.ui.Res
 import kotlin.coroutines.resume
 
 @OptIn(ExperimentalForeignApi::class)
@@ -50,8 +50,8 @@ class BillingPlusViewModelImpl @OptIn(ExperimentalForeignApi::class) constructor
             onSuccess = { ScreenState.Idle(it) },
             onFailure = {
                 ScreenState.Error(
-                    message = MR.strings.error_billing,
-                    retryTitle = MR.strings.common_close,
+                    message = Res.string.error_billing,
+                    retryTitle = Res.string.common_close,
                 )
             },
         )

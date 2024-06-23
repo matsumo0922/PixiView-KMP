@@ -41,15 +41,19 @@ import coil3.compose.AsyncImage
 import coil3.compose.LocalPlatformContext
 import coil3.compose.SubcomposeAsyncImage
 import coil3.request.ImageRequest
-import dev.icerock.moko.resources.compose.stringResource
 import me.matsumo.fanbox.core.model.fanbox.FanboxCreatorDetail
 import me.matsumo.fanbox.core.model.fanbox.id.CreatorId
-import me.matsumo.fanbox.core.ui.MR
+import me.matsumo.fanbox.core.ui.Res
+import me.matsumo.fanbox.core.ui.common_follow
+import me.matsumo.fanbox.core.ui.common_supporting
+import me.matsumo.fanbox.core.ui.common_unfollow
 import me.matsumo.fanbox.core.ui.extensition.FadePlaceHolder
 import me.matsumo.fanbox.core.ui.extensition.SimmerPlaceHolder
 import me.matsumo.fanbox.core.ui.extensition.asCoilImage
 import me.matsumo.fanbox.core.ui.extensition.fanboxHeader
+import me.matsumo.fanbox.core.ui.im_default_user
 import me.matsumo.fanbox.core.ui.theme.bold
+import org.jetbrains.compose.resources.stringResource
 
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
@@ -180,7 +184,7 @@ private fun UserSection(
                 .size(32.dp)
                 .clip(CircleShape),
             model = ImageRequest.Builder(LocalPlatformContext.current)
-                .error(MR.images.im_default_user.asCoilImage())
+                .error(Res.drawable.im_default_user.asCoilImage())
                 .data(creatorDetail.user.iconUrl)
                 .build(),
             contentDescription = null,
@@ -208,19 +212,19 @@ private fun UserSection(
         when {
             creatorDetail.isSupported -> {
                 Button(onClick = { onClickSupporting.invoke(creatorDetail.supportingBrowserUrl) }) {
-                    Text(stringResource(MR.strings.common_supporting))
+                    Text(stringResource(Res.string.common_supporting))
                 }
             }
 
             isFollowed -> {
                 OutlinedButton(onClick = { onClickUnfollow.invoke(creatorDetail.user.userId) }) {
-                    Text(stringResource(MR.strings.common_unfollow))
+                    Text(stringResource(Res.string.common_unfollow))
                 }
             }
 
             else -> {
                 Button(onClick = { onClickFollow.invoke(creatorDetail.user.userId) }) {
-                    Text(stringResource(MR.strings.common_follow))
+                    Text(stringResource(Res.string.common_follow))
                 }
             }
         }

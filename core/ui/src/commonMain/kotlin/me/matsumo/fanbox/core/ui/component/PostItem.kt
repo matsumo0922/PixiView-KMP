@@ -43,20 +43,25 @@ import coil3.annotation.ExperimentalCoilApi
 import coil3.compose.LocalPlatformContext
 import coil3.compose.SubcomposeAsyncImage
 import coil3.request.ImageRequest
-import dev.icerock.moko.resources.compose.stringResource
 import io.github.aakira.napier.Napier
 import me.matsumo.fanbox.core.common.util.format
 import me.matsumo.fanbox.core.model.fanbox.FanboxPost
 import me.matsumo.fanbox.core.model.fanbox.id.CreatorId
 import me.matsumo.fanbox.core.model.fanbox.id.PostId
-import me.matsumo.fanbox.core.ui.MR
+import me.matsumo.fanbox.core.ui.Res
+import me.matsumo.fanbox.core.ui.error_restricted_post
+import me.matsumo.fanbox.core.ui.error_restricted_post_ios
 import me.matsumo.fanbox.core.ui.extensition.FadePlaceHolder
 import me.matsumo.fanbox.core.ui.extensition.Platform
 import me.matsumo.fanbox.core.ui.extensition.asCoilImage
 import me.matsumo.fanbox.core.ui.extensition.currentPlatform
 import me.matsumo.fanbox.core.ui.extensition.fanboxHeader
+import me.matsumo.fanbox.core.ui.fanbox_free_fee
+import me.matsumo.fanbox.core.ui.im_default_user
 import me.matsumo.fanbox.core.ui.theme.bold
 import me.matsumo.fanbox.core.ui.theme.center
+import me.matsumo.fanbox.core.ui.unit_jpy
+import org.jetbrains.compose.resources.stringResource
 
 @Composable
 fun PostItem(
@@ -233,7 +238,7 @@ private fun UserSection(
                     .size(32.dp)
                     .clip(CircleShape),
                 model = ImageRequest.Builder(LocalPlatformContext.current)
-                    .error(MR.images.im_default_user.asCoilImage())
+                    .error(Res.drawable.im_default_user.asCoilImage())
                     .data(post.user.iconUrl)
                     .build(),
                 loading = {
@@ -268,7 +273,7 @@ private fun UserSection(
         ) {
             Text(
                 modifier = Modifier.padding(6.dp, 4.dp),
-                text = if (post.feeRequired == 0) stringResource(MR.strings.fanbox_free_fee) else stringResource(MR.strings.unit_jpy, post.feeRequired),
+                text = if (post.feeRequired == 0) stringResource(Res.string.fanbox_free_fee) else stringResource(Res.string.unit_jpy, post.feeRequired),
                 style = MaterialTheme.typography.bodySmall,
                 color = MaterialTheme.colorScheme.onSurfaceVariant,
             )
@@ -300,7 +305,7 @@ private fun RestrictThumbnail(
 
         Text(
             modifier = Modifier.fillMaxWidth(),
-            text = if (currentPlatform == Platform.Android) stringResource(MR.strings.error_restricted_post, feeRequired) else stringResource(MR.strings.error_restricted_post_ios),
+            text = if (currentPlatform == Platform.Android) stringResource(Res.string.error_restricted_post, feeRequired) else stringResource(Res.string.error_restricted_post_ios),
             style = MaterialTheme.typography.bodySmall.center(),
             color = Color.White,
         )

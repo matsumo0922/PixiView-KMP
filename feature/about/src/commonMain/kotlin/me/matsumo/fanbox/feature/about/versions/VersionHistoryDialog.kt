@@ -21,23 +21,28 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.material3.rememberTopAppBarState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.text.intl.Locale
 import androidx.compose.ui.unit.dp
-import dev.icerock.moko.resources.compose.readTextAsState
-import dev.icerock.moko.resources.compose.stringResource
 import kotlinx.serialization.builtins.ListSerializer
 import kotlinx.serialization.json.Json
 import me.matsumo.fanbox.core.model.Version
 import me.matsumo.fanbox.core.model.entity.VersionEntity
-import me.matsumo.fanbox.core.ui.MR
+import me.matsumo.fanbox.core.ui.Res
+import me.matsumo.fanbox.core.ui.about_support_version_history
 import me.matsumo.fanbox.core.ui.extensition.Platform
 import me.matsumo.fanbox.core.ui.extensition.currentPlatform
 import me.matsumo.fanbox.core.ui.theme.end
 import me.matsumo.fanbox.core.ui.theme.start
+import org.jetbrains.compose.resources.ExperimentalResourceApi
+import org.jetbrains.compose.resources.stringResource
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -56,7 +61,7 @@ internal fun VersionHistoryDialog(
                 modifier = Modifier.fillMaxWidth(),
                 title = {
                     Text(
-                        text = stringResource(MR.strings.about_support_version_history),
+                        text = stringResource(Res.string.about_support_version_history),
                         style = MaterialTheme.typography.bodyLarge,
                         color = MaterialTheme.colorScheme.onSurface,
                     )
@@ -133,12 +138,17 @@ private fun VersionItem(
     }
 }
 
+@OptIn(ExperimentalResourceApi::class)
 @Composable
 private fun getVersions(): List<Version> {
     val serializer = ListSerializer(VersionEntity.serializer())
-    val json by MR.files.versions.readTextAsState()
+    var json by remember { mutableStateOf("") }
 
-    return if (json.isNullOrBlank()) emptyList() else Json.decodeFromString(serializer, json!!)
+    LaunchedEffect(true) {
+        json = Res.readBytes("files/versions.json").decodeToString()
+    }
+
+    return if (json.isBlank()) emptyList() else Json.decodeFromString(serializer, json)
         .map {
             Version(
                 name = it.versionName,

@@ -32,7 +32,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import dev.icerock.moko.resources.compose.stringResource
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.toImmutableList
 import kotlinx.coroutines.launch
@@ -40,14 +39,18 @@ import me.matsumo.fanbox.core.model.ScreenState
 import me.matsumo.fanbox.core.model.fanbox.FanboxCreatorDetail
 import me.matsumo.fanbox.core.model.fanbox.id.CreatorId
 import me.matsumo.fanbox.core.ui.AsyncLoadContents
-import me.matsumo.fanbox.core.ui.MR
+import me.matsumo.fanbox.core.ui.Res
 import me.matsumo.fanbox.core.ui.component.CreatorItem
 import me.matsumo.fanbox.core.ui.component.PixiViewTopBar
+import me.matsumo.fanbox.core.ui.creator_following_pixiv
+import me.matsumo.fanbox.core.ui.creator_recommended
 import me.matsumo.fanbox.core.ui.extensition.LocalNavigationType
 import me.matsumo.fanbox.core.ui.extensition.NavigatorExtension
 import me.matsumo.fanbox.core.ui.extensition.PixiViewNavigationType
 import me.matsumo.fanbox.core.ui.extensition.drawVerticalScrollbar
+import me.matsumo.fanbox.core.ui.library_navigation_discovery
 import me.matsumo.fanbox.core.ui.theme.bold
+import org.jetbrains.compose.resources.stringResource
 import org.koin.compose.koinInject
 import org.koin.compose.viewmodel.koinViewModel
 
@@ -117,7 +120,7 @@ private fun LibraryDiscoveryScreen(
         topBar = {
             PixiViewTopBar(
                 modifier = Modifier.fillMaxWidth(),
-                title = stringResource(MR.strings.library_navigation_discovery),
+                title = stringResource(Res.string.library_navigation_discovery),
                 navigationIcon = Icons.Default.Menu,
                 actionsIcon = Icons.Default.Search,
                 onClickNavigation = if (navigationType != PixiViewNavigationType.PermanentNavigationDrawer) openDrawer else null,
@@ -143,7 +146,7 @@ private fun LibraryDiscoveryScreen(
                 item(span = { GridItemSpan(maxLineSpan) }) {
                     TitleItem(
                         modifier = Modifier.fillMaxWidth(),
-                        title = stringResource(MR.strings.creator_following_pixiv),
+                        title = stringResource(Res.string.creator_following_pixiv),
                     )
                 }
 
@@ -179,7 +182,7 @@ private fun LibraryDiscoveryScreen(
                 item(span = { GridItemSpan(maxLineSpan) }) {
                     TitleItem(
                         modifier = Modifier.fillMaxWidth(),
-                        title = stringResource(MR.strings.creator_recommended),
+                        title = stringResource(Res.string.creator_recommended),
                     )
                 }
 

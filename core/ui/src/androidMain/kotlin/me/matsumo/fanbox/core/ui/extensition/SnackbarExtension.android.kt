@@ -3,7 +3,8 @@ package me.matsumo.fanbox.core.ui.extensition
 import android.content.Context
 import android.widget.Toast
 import androidx.compose.material3.SnackbarHostState
-import dev.icerock.moko.resources.StringResource
+import org.jetbrains.compose.resources.StringResource
+import org.jetbrains.compose.resources.getString
 
 class ToastExtensionImpl(
     private val context: Context,
@@ -12,7 +13,7 @@ class ToastExtensionImpl(
     private var toast: Toast? = null
 
     override suspend fun show(snackbarHostState: SnackbarHostState, message: StringResource, isSnackbar: Boolean, isOverride: Boolean) {
-        show(snackbarHostState, message.getString(context), isSnackbar, isOverride)
+        show(snackbarHostState, getString(message), isSnackbar, isOverride)
     }
 
     override suspend fun show(snackbarHostState: SnackbarHostState, message: String, isSnackbar: Boolean, isOverride: Boolean) {

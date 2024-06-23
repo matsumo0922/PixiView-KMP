@@ -7,11 +7,11 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
 import androidx.navigation.NavDestination
-import dev.icerock.moko.resources.compose.stringResource
 import kotlinx.collections.immutable.ImmutableList
 import me.matsumo.fanbox.core.ui.component.PixiViewNavigationDefaults
 import me.matsumo.fanbox.core.ui.component.PixiViewNavigationRail
 import me.matsumo.fanbox.core.ui.component.PixiViewNavigationRailItem
+import org.jetbrains.compose.resources.stringResource
 
 @Composable
 internal fun LibraryNavigationRail(

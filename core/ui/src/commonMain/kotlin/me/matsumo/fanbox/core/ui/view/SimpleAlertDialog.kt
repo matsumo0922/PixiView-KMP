@@ -3,15 +3,37 @@
 package me.matsumo.fanbox.core.ui.view
 
 import androidx.compose.runtime.Composable
-import dev.icerock.moko.resources.StringResource
-import dev.icerock.moko.resources.compose.stringResource
-import me.matsumo.fanbox.core.ui.MR
+import me.matsumo.fanbox.core.ui.Res
 import androidx.navigation.NavController
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.NavType
 import androidx.navigation.compose.dialog
 import androidx.navigation.navArgument
+import me.matsumo.fanbox.core.ui.billing_plus_cancel_message
+import me.matsumo.fanbox.core.ui.billing_plus_cancel_title
+import me.matsumo.fanbox.core.ui.billing_plus_purchase_message
+import me.matsumo.fanbox.core.ui.billing_plus_purchase_title
+import me.matsumo.fanbox.core.ui.common_block
+import me.matsumo.fanbox.core.ui.common_cancel
+import me.matsumo.fanbox.core.ui.common_delete
+import me.matsumo.fanbox.core.ui.common_ok
+import me.matsumo.fanbox.core.ui.common_unblock
+import me.matsumo.fanbox.core.ui.creator_block_dialog_message
+import me.matsumo.fanbox.core.ui.creator_block_dialog_title
+import me.matsumo.fanbox.core.ui.creator_posts_download_alert_message
+import me.matsumo.fanbox.core.ui.creator_posts_download_alert_stop
+import me.matsumo.fanbox.core.ui.creator_posts_download_alert_title
+import me.matsumo.fanbox.core.ui.creator_unblock_dialog_message
+import me.matsumo.fanbox.core.ui.creator_unblock_dialog_title
 import me.matsumo.fanbox.core.ui.extensition.navigateForResult
+import me.matsumo.fanbox.core.ui.post_detail_comment_delete_message
+import me.matsumo.fanbox.core.ui.post_detail_comment_delete_title
+import me.matsumo.fanbox.core.ui.setting_top_others_logout
+import me.matsumo.fanbox.core.ui.setting_top_others_logout_dialog_description
+import me.matsumo.fanbox.core.ui.welcome_login_dialog_message
+import me.matsumo.fanbox.core.ui.welcome_login_dialog_title
+import org.jetbrains.compose.resources.StringResource
+import org.jetbrains.compose.resources.stringResource
 
 enum class SimpleAlertContents(
     val titleRes: StringResource,
@@ -21,50 +43,50 @@ enum class SimpleAlertContents(
     val isCaution: Boolean = false,
 ) {
     Login(
-        titleRes = MR.strings.welcome_login_dialog_title,
-        descriptionRes = MR.strings.welcome_login_dialog_message,
-        positiveTextRes = MR.strings.common_ok,
+        titleRes = Res.string.welcome_login_dialog_title,
+        descriptionRes = Res.string.welcome_login_dialog_message,
+        positiveTextRes = Res.string.common_ok,
     ),
     Logout(
-        titleRes = MR.strings.setting_top_others_logout,
-        descriptionRes = MR.strings.setting_top_others_logout_dialog_description,
-        positiveTextRes = MR.strings.setting_top_others_logout,
-        negativeTextRes = MR.strings.common_cancel,
+        titleRes = Res.string.setting_top_others_logout,
+        descriptionRes = Res.string.setting_top_others_logout_dialog_description,
+        positiveTextRes = Res.string.setting_top_others_logout,
+        negativeTextRes = Res.string.common_cancel,
     ),
     CommentDelete(
-        titleRes = MR.strings.post_detail_comment_delete_title,
-        descriptionRes = MR.strings.post_detail_comment_delete_message,
-        positiveTextRes = MR.strings.common_delete,
-        negativeTextRes = MR.strings.common_cancel,
+        titleRes = Res.string.post_detail_comment_delete_title,
+        descriptionRes = Res.string.post_detail_comment_delete_message,
+        positiveTextRes = Res.string.common_delete,
+        negativeTextRes = Res.string.common_cancel,
         isCaution = true,
     ),
     PurchasePlus(
-        titleRes = MR.strings.billing_plus_purchase_title,
-        descriptionRes = MR.strings.billing_plus_purchase_message,
-        positiveTextRes = MR.strings.common_ok,
+        titleRes = Res.string.billing_plus_purchase_title,
+        descriptionRes = Res.string.billing_plus_purchase_message,
+        positiveTextRes = Res.string.common_ok,
     ),
     CancelPlus(
-        titleRes = MR.strings.billing_plus_cancel_title,
-        descriptionRes = MR.strings.billing_plus_cancel_message,
-        positiveTextRes = MR.strings.common_ok,
+        titleRes = Res.string.billing_plus_cancel_title,
+        descriptionRes = Res.string.billing_plus_cancel_message,
+        positiveTextRes = Res.string.common_ok,
     ),
     CancelDownload(
-        titleRes = MR.strings.creator_posts_download_alert_title,
-        descriptionRes = MR.strings.creator_posts_download_alert_message,
-        positiveTextRes = MR.strings.creator_posts_download_alert_stop,
-        negativeTextRes = MR.strings.common_cancel,
+        titleRes = Res.string.creator_posts_download_alert_title,
+        descriptionRes = Res.string.creator_posts_download_alert_message,
+        positiveTextRes = Res.string.creator_posts_download_alert_stop,
+        negativeTextRes = Res.string.common_cancel,
     ),
     CreatorBlock(
-        titleRes = MR.strings.creator_block_dialog_title,
-        descriptionRes = MR.strings.creator_block_dialog_message,
-        positiveTextRes = MR.strings.common_block,
-        negativeTextRes = MR.strings.common_cancel,
+        titleRes = Res.string.creator_block_dialog_title,
+        descriptionRes = Res.string.creator_block_dialog_message,
+        positiveTextRes = Res.string.common_block,
+        negativeTextRes = Res.string.common_cancel,
     ),
     CreatorUnblock(
-        titleRes = MR.strings.creator_unblock_dialog_title,
-        descriptionRes = MR.strings.creator_unblock_dialog_message,
-        positiveTextRes = MR.strings.common_unblock,
-        negativeTextRes = MR.strings.common_cancel,
+        titleRes = Res.string.creator_unblock_dialog_title,
+        descriptionRes = Res.string.creator_unblock_dialog_message,
+        positiveTextRes = Res.string.common_unblock,
+        negativeTextRes = Res.string.common_cancel,
     ),
 }
 

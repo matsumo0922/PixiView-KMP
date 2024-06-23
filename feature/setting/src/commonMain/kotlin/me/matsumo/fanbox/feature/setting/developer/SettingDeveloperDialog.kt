@@ -23,8 +23,12 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
-import dev.icerock.moko.resources.compose.stringResource
-import me.matsumo.fanbox.core.ui.MR
+import me.matsumo.fanbox.core.ui.Res
+import me.matsumo.fanbox.core.ui.common_cancel
+import me.matsumo.fanbox.core.ui.common_ok
+import me.matsumo.fanbox.core.ui.setting_developer_title
+import me.matsumo.fanbox.core.ui.setting_developer_warning
+import org.jetbrains.compose.resources.stringResource
 import org.koin.compose.viewmodel.koinViewModel
 
 @Composable
@@ -48,14 +52,14 @@ internal fun SettingDeveloperDialog(
     ) {
         Text(
             modifier = Modifier.fillMaxWidth(),
-            text = stringResource(MR.strings.setting_developer_title),
+            text = stringResource(Res.string.setting_developer_title),
             style = MaterialTheme.typography.titleMedium,
             color = MaterialTheme.colorScheme.onSurface,
         )
 
         Text(
             modifier = Modifier.fillMaxWidth(),
-            text = stringResource(MR.strings.setting_developer_warning),
+            text = stringResource(Res.string.setting_developer_warning),
             style = MaterialTheme.typography.bodySmall,
             color = MaterialTheme.colorScheme.onSurfaceVariant,
         )
@@ -83,7 +87,7 @@ internal fun SettingDeveloperDialog(
                 onClick = { terminate.invoke() },
             ) {
                 Text(
-                    text = stringResource(MR.strings.common_cancel),
+                    text = stringResource(Res.string.common_cancel),
                     style = MaterialTheme.typography.labelMedium,
                     color = MaterialTheme.colorScheme.primary,
                 )
@@ -102,7 +106,7 @@ internal fun SettingDeveloperDialog(
                 enabled = password.isNotBlank() && !isPasswordError,
             ) {
                 Text(
-                    text = stringResource(MR.strings.common_ok),
+                    text = stringResource(Res.string.common_ok),
                     style = MaterialTheme.typography.labelMedium,
                     color = if (password.isNotBlank() && !isPasswordError) MaterialTheme.colorScheme.onPrimary else MaterialTheme.colorScheme.onSurface,
                 )

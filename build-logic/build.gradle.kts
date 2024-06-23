@@ -22,7 +22,6 @@ dependencies {
     implementation(libs.kotlin.gradlePlugin)
     implementation(libs.secret.gradlePlugin)
     implementation(libs.detekt.gradlePlugin)
-    implementation(libs.moko.resources.gradlePlugin)
     implementation(libs.build.konfig.gradlePlugin)
     implementation(libs.gms.services)
     implementation(libs.gms.oss)
@@ -53,10 +52,6 @@ gradlePlugin {
         register("KmpIosPlugin") {
             id = "pixiview.primitive.kmp.ios"
             implementationClass = "primitive.KmpIosPlugin"
-        }
-        register("KmpResources") {
-            id = "pixiview.primitive.kmp.resources"
-            implementationClass = "primitive.KmpResources"
         }
         register("DetektPlugin") {
             id = "pixiview.primitive.detekt"

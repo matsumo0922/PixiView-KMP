@@ -26,17 +26,25 @@ import androidx.compose.ui.layout.layoutId
 import androidx.compose.ui.unit.Constraints
 import androidx.compose.ui.unit.IntSize
 import androidx.compose.ui.unit.dp
-import dev.icerock.moko.resources.compose.painterResource
-import dev.icerock.moko.resources.compose.stringResource
-import me.matsumo.fanbox.core.ui.MR
+import me.matsumo.fanbox.core.ui.Res
+import me.matsumo.fanbox.core.ui.about_contribute
+import me.matsumo.fanbox.core.ui.about_contribute_description
+import me.matsumo.fanbox.core.ui.about_developer_name
+import me.matsumo.fanbox.core.ui.about_developer_prefix
+import me.matsumo.fanbox.core.ui.about_special_thanks
+import me.matsumo.fanbox.core.ui.about_special_thanks_contributor
+import me.matsumo.fanbox.core.ui.about_special_thanks_contributor_description
 import me.matsumo.fanbox.core.ui.extensition.Platform
 import me.matsumo.fanbox.core.ui.extensition.currentPlatform
+import me.matsumo.fanbox.core.ui.ic_developer_profile
 import me.matsumo.fanbox.core.ui.icon.Apple
 import me.matsumo.fanbox.core.ui.icon.GitHub
 import me.matsumo.fanbox.core.ui.icon.GooglePlay
 import me.matsumo.fanbox.core.ui.icon.Twitter
 import me.matsumo.fanbox.core.ui.theme.bold
 import me.matsumo.fanbox.core.ui.theme.center
+import org.jetbrains.compose.resources.painterResource
+import org.jetbrains.compose.resources.stringResource
 
 @Composable
 internal fun AboutDeveloperSection(
@@ -104,7 +112,7 @@ private fun ProfileIconItem(
                 color = MaterialTheme.colorScheme.onSurface,
                 shape = CircleShape,
             ),
-        painter = painterResource(MR.images.ic_developer_profile),
+        painter = painterResource(Res.drawable.ic_developer_profile),
         contentDescription = null,
     )
 }
@@ -132,7 +140,7 @@ private fun AboutDeveloperCard(
                 modifier = Modifier
                     .padding(top = 68.dp)
                     .fillMaxWidth(),
-                text = stringResource(MR.strings.about_developer_prefix),
+                text = stringResource(Res.string.about_developer_prefix),
                 style = MaterialTheme.typography.bodyMedium.center(),
                 color = MaterialTheme.colorScheme.onSurfaceVariant,
             )
@@ -141,7 +149,7 @@ private fun AboutDeveloperCard(
                 modifier = Modifier
                     .padding(top = 8.dp)
                     .fillMaxWidth(),
-                text = stringResource(MR.strings.about_developer_name),
+                text = stringResource(Res.string.about_developer_name),
                 style = MaterialTheme.typography.titleLarge.center(),
                 color = MaterialTheme.colorScheme.onSurface,
             )
@@ -193,15 +201,15 @@ private fun AboutDeveloperCard(
                 modifier = Modifier
                     .padding(horizontal = 24.dp)
                     .fillMaxWidth(),
-                text = stringResource(MR.strings.about_special_thanks).uppercase(),
+                text = stringResource(Res.string.about_special_thanks).uppercase(),
                 style = MaterialTheme.typography.bodyMedium.bold(),
                 color = MaterialTheme.colorScheme.primary,
             )
 
             AboutThanksItem(
                 modifier = Modifier.fillMaxWidth(),
-                titleRes = MR.strings.about_special_thanks_contributor,
-                descriptionRes = MR.strings.about_special_thanks_contributor_description,
+                titleRes = Res.string.about_special_thanks_contributor,
+                descriptionRes = Res.string.about_special_thanks_contributor_description,
                 iconVector = Icons.Outlined.GitHub,
             ) {
                 AboutIconButton(
@@ -225,7 +233,7 @@ private fun AboutDeveloperCard(
                         end = 24.dp,
                     )
                     .fillMaxWidth(),
-                text = stringResource(MR.strings.about_contribute).uppercase(),
+                text = stringResource(Res.string.about_contribute).uppercase(),
                 style = MaterialTheme.typography.bodyMedium.bold(),
                 color = MaterialTheme.colorScheme.primary,
             )
@@ -239,7 +247,7 @@ private fun AboutDeveloperCard(
                         end = 24.dp,
                     )
                     .fillMaxWidth(),
-                text = stringResource(MR.strings.about_contribute_description),
+                text = stringResource(Res.string.about_contribute_description),
                 style = MaterialTheme.typography.bodySmall,
                 color = MaterialTheme.colorScheme.onSurfaceVariant,
             )

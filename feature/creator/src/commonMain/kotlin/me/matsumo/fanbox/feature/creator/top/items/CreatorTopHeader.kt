@@ -45,19 +45,37 @@ import coil3.annotation.ExperimentalCoilApi
 import coil3.compose.LocalPlatformContext
 import coil3.compose.SubcomposeAsyncImage
 import coil3.request.ImageRequest
-import dev.icerock.moko.resources.compose.painterResource
-import dev.icerock.moko.resources.compose.stringResource
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.toImmutableList
 import kotlinx.coroutines.launch
 import me.matsumo.fanbox.core.model.fanbox.FanboxCreatorDetail
-import me.matsumo.fanbox.core.ui.MR
+import me.matsumo.fanbox.core.ui.Res
+import me.matsumo.fanbox.core.ui.common_follow
+import me.matsumo.fanbox.core.ui.common_supporting
+import me.matsumo.fanbox.core.ui.common_unfollow
 import me.matsumo.fanbox.core.ui.component.PixiViewTopBar
 import me.matsumo.fanbox.core.ui.component.TagItems
+import me.matsumo.fanbox.core.ui.creator_tag_has_adult_content
+import me.matsumo.fanbox.core.ui.creator_tag_has_booth_shop
+import me.matsumo.fanbox.core.ui.creator_tag_is_accepting_request
+import me.matsumo.fanbox.core.ui.creator_tag_is_supported
 import me.matsumo.fanbox.core.ui.extensition.FadePlaceHolder
 import me.matsumo.fanbox.core.ui.extensition.asCoilImage
 import me.matsumo.fanbox.core.ui.extensition.fanboxHeader
+import me.matsumo.fanbox.core.ui.im_default_user
 import me.matsumo.fanbox.core.ui.theme.bold
+import me.matsumo.fanbox.core.ui.vec_booth
+import me.matsumo.fanbox.core.ui.vec_facebook
+import me.matsumo.fanbox.core.ui.vec_fanza
+import me.matsumo.fanbox.core.ui.vec_instagram
+import me.matsumo.fanbox.core.ui.vec_line
+import me.matsumo.fanbox.core.ui.vec_pixiv
+import me.matsumo.fanbox.core.ui.vec_tumblr
+import me.matsumo.fanbox.core.ui.vec_twitter
+import me.matsumo.fanbox.core.ui.vec_unknown_link
+import me.matsumo.fanbox.core.ui.vec_youtube
+import org.jetbrains.compose.resources.painterResource
+import org.jetbrains.compose.resources.stringResource
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -178,7 +196,7 @@ private fun FollowStateButton(
                 modifier = modifier.width(128.dp),
                 onClick = onClickSupport,
             ) {
-                Text(text = stringResource(MR.strings.common_supporting))
+                Text(text = stringResource(Res.string.common_supporting))
             }
         }
 
@@ -187,7 +205,7 @@ private fun FollowStateButton(
                 modifier = modifier.width(128.dp),
                 onClick = onClickUnfollow,
             ) {
-                Text(text = stringResource(MR.strings.common_unfollow))
+                Text(text = stringResource(Res.string.common_unfollow))
             }
         }
 
@@ -196,7 +214,7 @@ private fun FollowStateButton(
                 modifier = modifier.width(128.dp),
                 onClick = onClickFollow,
             ) {
-                Text(text = stringResource(MR.strings.common_follow))
+                Text(text = stringResource(Res.string.common_follow))
             }
         }
     }
@@ -227,16 +245,16 @@ private fun ProfileLinkItem(
                         .padding(4.dp),
                     painter = painterResource(
                         when (profileLink.link) {
-                            FanboxCreatorDetail.Platform.BOOTH -> MR.images.vec_booth
-                            FanboxCreatorDetail.Platform.FACEBOOK -> MR.images.vec_facebook
-                            FanboxCreatorDetail.Platform.FANZA -> MR.images.vec_fanza
-                            FanboxCreatorDetail.Platform.INSTAGRAM -> MR.images.vec_instagram
-                            FanboxCreatorDetail.Platform.LINE -> MR.images.vec_line
-                            FanboxCreatorDetail.Platform.PIXIV -> MR.images.vec_pixiv
-                            FanboxCreatorDetail.Platform.TUMBLR -> MR.images.vec_tumblr
-                            FanboxCreatorDetail.Platform.TWITTER -> MR.images.vec_twitter
-                            FanboxCreatorDetail.Platform.YOUTUBE -> MR.images.vec_youtube
-                            FanboxCreatorDetail.Platform.UNKNOWN -> MR.images.vec_unknown_link
+                            FanboxCreatorDetail.Platform.BOOTH -> Res.drawable.vec_booth
+                            FanboxCreatorDetail.Platform.FACEBOOK -> Res.drawable.vec_facebook
+                            FanboxCreatorDetail.Platform.FANZA -> Res.drawable.vec_fanza
+                            FanboxCreatorDetail.Platform.INSTAGRAM -> Res.drawable.vec_instagram
+                            FanboxCreatorDetail.Platform.LINE -> Res.drawable.vec_line
+                            FanboxCreatorDetail.Platform.PIXIV -> Res.drawable.vec_pixiv
+                            FanboxCreatorDetail.Platform.TUMBLR -> Res.drawable.vec_tumblr
+                            FanboxCreatorDetail.Platform.TWITTER -> Res.drawable.vec_twitter
+                            FanboxCreatorDetail.Platform.YOUTUBE -> Res.drawable.vec_youtube
+                            FanboxCreatorDetail.Platform.UNKNOWN -> Res.drawable.vec_unknown_link
                         },
                     ),
                     tint = MaterialTheme.colorScheme.onSurfaceVariant,
@@ -289,7 +307,7 @@ private fun HeaderTop(
                     ),
                 model = ImageRequest.Builder(LocalPlatformContext.current)
                     .fanboxHeader()
-                    .error(MR.images.im_default_user.asCoilImage())
+                    .error(Res.drawable.im_default_user.asCoilImage())
                     .data(creatorDetail.user.iconUrl)
                     .build(),
                 loading = {
@@ -390,19 +408,19 @@ private fun DescriptionItem(
 private fun createTags(creatorDetail: FanboxCreatorDetail): List<String> {
     return mutableListOf<String>().apply {
         if (creatorDetail.isSupported) {
-            add(stringResource(MR.strings.creator_tag_is_supported))
+            add(stringResource(Res.string.creator_tag_is_supported))
         }
 
         if (creatorDetail.hasAdultContent) {
-            add(stringResource(MR.strings.creator_tag_has_adult_content))
+            add(stringResource(Res.string.creator_tag_has_adult_content))
         }
 
         if (creatorDetail.isAcceptingRequest) {
-            add(stringResource(MR.strings.creator_tag_is_accepting_request))
+            add(stringResource(Res.string.creator_tag_is_accepting_request))
         }
 
         if (creatorDetail.hasBoothShop) {
-            add(stringResource(MR.strings.creator_tag_has_booth_shop))
+            add(stringResource(Res.string.creator_tag_has_booth_shop))
         }
     }
 }

@@ -17,13 +17,14 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import dev.icerock.moko.resources.compose.stringResource
 import kotlinx.coroutines.launch
 import me.matsumo.fanbox.core.common.PixiViewConfig
 import me.matsumo.fanbox.core.model.UserData
 import me.matsumo.fanbox.core.ui.AsyncLoadContents
-import me.matsumo.fanbox.core.ui.MR
+import me.matsumo.fanbox.core.ui.Res
+import me.matsumo.fanbox.core.ui.about_title
 import me.matsumo.fanbox.core.ui.component.PixiViewTopBar
+import me.matsumo.fanbox.core.ui.error_developing_feature
 import me.matsumo.fanbox.core.ui.extensition.LocalSnackbarHostState
 import me.matsumo.fanbox.core.ui.extensition.NavigatorExtension
 import me.matsumo.fanbox.core.ui.extensition.Platform
@@ -32,6 +33,7 @@ import me.matsumo.fanbox.core.ui.extensition.currentPlatform
 import me.matsumo.fanbox.feature.about.about.items.AboutAppSection
 import me.matsumo.fanbox.feature.about.about.items.AboutDeveloperSection
 import me.matsumo.fanbox.feature.about.about.items.AboutSupportSection
+import org.jetbrains.compose.resources.stringResource
 import org.koin.compose.koinInject
 import org.koin.compose.viewmodel.koinViewModel
 
@@ -61,7 +63,7 @@ internal fun AboutRoute(
             onClickGithubProfile = { navigatorExtension.navigateToWebPage("https://github.com/matsumo0922", AboutRoute) },
             onClickGithubIssue = { navigatorExtension.navigateToWebPage("https://github.com/matsumo0922/PixiView-KMP/issues/new", AboutRoute) },
             onClickGitHubContributor = { navigatorExtension.navigateToWebPage("https://github.com/matsumo0922/PixiView-KMP/graphs/contributors", AboutRoute) },
-            onClickDiscord = { scope.launch { toastExtension.show(snackHostState, MR.strings.error_developing_feature) } },
+            onClickDiscord = { scope.launch { toastExtension.show(snackHostState, Res.string.error_developing_feature) } },
             onClickGooglePlay = { navigatorExtension.navigateToWebPage("https://play.google.com/store/apps/details?id=caios.android.fanbox", AboutRoute) },
             onClickGooglePlayDeveloper = { navigatorExtension.navigateToWebPage("https://play.google.com/store/apps/developer?id=CAIOS", AboutRoute) },
             onClickAppStore = { navigatorExtension.navigateToWebPage("https://apps.apple.com/jp/developer/caios/id1563407383", AboutRoute) },
@@ -102,7 +104,7 @@ private fun AboutScreen(
         topBar = {
             PixiViewTopBar(
                 modifier = Modifier.fillMaxWidth(),
-                title = stringResource(MR.strings.about_title),
+                title = stringResource(Res.string.about_title),
                 onClickNavigation = onTerminate,
                 scrollBehavior = behavior,
             )

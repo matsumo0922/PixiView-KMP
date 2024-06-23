@@ -8,33 +8,13 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
-import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.foundation.verticalScroll
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Close
-import androidx.compose.material.icons.filled.ColorLens
-import androidx.compose.material.icons.filled.DesignServices
-import androidx.compose.material.icons.filled.DoNotDisturb
-import androidx.compose.material.icons.filled.Download
-import androidx.compose.material.icons.filled.Lock
-import androidx.compose.material.icons.filled.MoreHoriz
-import androidx.compose.material.icons.filled.Widgets
-import androidx.compose.material.icons.outlined.HelpOutline
-import androidx.compose.material.icons.outlined.HideImage
 import androidx.compose.material3.Button
-import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Text
@@ -49,34 +29,37 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.graphics.Brush
-import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.vector.ImageVector
-import androidx.compose.ui.text.buildAnnotatedString
-import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import coil3.compose.LocalPlatformContext
-import dev.icerock.moko.resources.StringResource
-import dev.icerock.moko.resources.compose.stringResource
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.toImmutableList
 import kotlinx.coroutines.launch
 import me.matsumo.fanbox.core.logs.category.BillingLog
 import me.matsumo.fanbox.core.logs.logger.send
 import me.matsumo.fanbox.core.ui.AsyncLoadContents
-import me.matsumo.fanbox.core.ui.MR
+import me.matsumo.fanbox.core.ui.Res
 import me.matsumo.fanbox.core.ui.appName
+import me.matsumo.fanbox.core.ui.billing_plus_caution1
+import me.matsumo.fanbox.core.ui.billing_plus_consume_button
+import me.matsumo.fanbox.core.ui.billing_plus_purchase_button
+import me.matsumo.fanbox.core.ui.billing_plus_toast_consumed
+import me.matsumo.fanbox.core.ui.billing_plus_toast_consumed_error
+import me.matsumo.fanbox.core.ui.billing_plus_toast_purchased
+import me.matsumo.fanbox.core.ui.billing_plus_toast_purchased_error
+import me.matsumo.fanbox.core.ui.billing_plus_toast_verify
+import me.matsumo.fanbox.core.ui.billing_plus_toast_verify_error
+import me.matsumo.fanbox.core.ui.billing_plus_verify_button
 import me.matsumo.fanbox.core.ui.extensition.LocalSnackbarHostState
-import me.matsumo.fanbox.core.ui.extensition.Platform
 import me.matsumo.fanbox.core.ui.extensition.ToastExtension
-import me.matsumo.fanbox.core.ui.extensition.currentPlatform
-import me.matsumo.fanbox.core.ui.theme.bold
+import me.matsumo.fanbox.core.ui.unit_month
+import me.matsumo.fanbox.core.ui.unit_year
 import me.matsumo.fanbox.core.ui.view.LoadingView
 import me.matsumo.fanbox.feature.about.billing.items.BillingPlusPlanItem
 import me.matsumo.fanbox.feature.about.billing.items.billingPlusDescriptionSection
 import me.matsumo.fanbox.feature.about.billing.items.billingPlusTitleSection
+import org.jetbrains.compose.resources.stringResource
 import org.koin.compose.koinInject
 import org.koin.compose.viewmodel.koinViewModel
 
@@ -123,11 +106,11 @@ internal fun BillingPlusRoute(
 
                     if (isSuccess) {
                         isLoading = false
-                        toastExtension.show(snackbarHostState, MR.strings.billing_plus_toast_purchased)
+                        toastExtension.show(snackbarHostState, Res.string.billing_plus_toast_purchased)
                         terminate.invoke()
                     } else {
                         isLoading = false
-                        toastExtension.show(snackbarHostState, MR.strings.billing_plus_toast_purchased_error)
+                        toastExtension.show(snackbarHostState, Res.string.billing_plus_toast_purchased_error)
                     }
                 }
             },
@@ -138,10 +121,10 @@ internal fun BillingPlusRoute(
                     BillingLog.verify(isSuccess).send()
 
                     if (isSuccess) {
-                        toastExtension.show(snackbarHostState, MR.strings.billing_plus_toast_verify)
+                        toastExtension.show(snackbarHostState, Res.string.billing_plus_toast_verify)
                         terminate.invoke()
                     } else {
-                        toastExtension.show(snackbarHostState, MR.strings.billing_plus_toast_verify_error)
+                        toastExtension.show(snackbarHostState, Res.string.billing_plus_toast_verify_error)
                     }
                 }
             },
@@ -152,9 +135,9 @@ internal fun BillingPlusRoute(
                     BillingLog.consume(isSuccess).send()
 
                     if (isSuccess) {
-                        toastExtension.show(snackbarHostState, MR.strings.billing_plus_toast_consumed)
+                        toastExtension.show(snackbarHostState, Res.string.billing_plus_toast_consumed)
                     } else {
-                        toastExtension.show(snackbarHostState, MR.strings.billing_plus_toast_consumed_error)
+                        toastExtension.show(snackbarHostState, Res.string.billing_plus_toast_consumed_error)
                     }
                 }
             },
@@ -163,7 +146,7 @@ internal fun BillingPlusRoute(
 
         LaunchedEffect(uiState.isPlusMode) {
             if (uiState.isPlusMode) {
-                toastExtension.show(snackbarHostState, MR.strings.billing_plus_toast_purchased)
+                toastExtension.show(snackbarHostState, Res.string.billing_plus_toast_purchased)
 
                 if (!uiState.isDeveloperMode) {
                     terminate.invoke()
@@ -229,16 +212,16 @@ private fun BillingPlusDialog(
                     onClick = { onClickPurchase.invoke(selectedPlan) },
                 ) {
                     val price = plans.find { it.type == selectedPlan }?.formattedPrice ?: "Unknown"
-                    val unit = if (selectedPlan == BillingPlusUiState.Type.YEARLY) stringResource(MR.strings.unit_year) else stringResource(MR.strings.unit_month)
+                    val unit = if (selectedPlan == BillingPlusUiState.Type.YEARLY) stringResource(Res.string.unit_year) else stringResource(Res.string.unit_month)
 
-                    Text(stringResource(MR.strings.billing_plus_purchase_button, "$price / $unit"))
+                    Text(stringResource(Res.string.billing_plus_purchase_button, "$price / $unit"))
                 }
 
                 OutlinedButton(
                     modifier = Modifier.fillMaxWidth(),
                     onClick = { onClickVerify.invoke() },
                 ) {
-                    Text(stringResource(MR.strings.billing_plus_verify_button))
+                    Text(stringResource(Res.string.billing_plus_verify_button))
                 }
 
                 if (isDeveloperMode) {
@@ -246,7 +229,7 @@ private fun BillingPlusDialog(
                         modifier = Modifier.fillMaxWidth(),
                         onClick = { onClickConsume.invoke() },
                     ) {
-                        Text(stringResource(MR.strings.billing_plus_consume_button))
+                        Text(stringResource(Res.string.billing_plus_consume_button))
                     }
                 }
 
@@ -254,7 +237,7 @@ private fun BillingPlusDialog(
                     modifier = Modifier
                         .padding(top = 8.dp)
                         .fillMaxWidth(),
-                    text = stringResource(MR.strings.billing_plus_caution1, appName),
+                    text = stringResource(Res.string.billing_plus_caution1, appName),
                     style = MaterialTheme.typography.bodySmall.copy(fontSize = 11.sp),
                     color = MaterialTheme.colorScheme.onSurfaceVariant,
                 )

@@ -1,8 +1,8 @@
 package me.matsumo.fanbox.core.model
 
 import androidx.compose.runtime.Stable
-import dev.icerock.moko.resources.StringResource
 import kotlinx.coroutines.flow.StateFlow
+import org.jetbrains.compose.resources.StringResource
 
 @Stable
 sealed class ScreenState<out T> {

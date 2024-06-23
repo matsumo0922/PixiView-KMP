@@ -4,8 +4,13 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import me.matsumo.fanbox.core.ui.MR
+import me.matsumo.fanbox.core.ui.Res
 import me.matsumo.fanbox.core.ui.component.SettingTextItem
+import me.matsumo.fanbox.core.ui.setting_account
+import me.matsumo.fanbox.core.ui.setting_account_description
+import me.matsumo.fanbox.core.ui.setting_account_title
+import me.matsumo.fanbox.core.ui.setting_notify_description
+import me.matsumo.fanbox.core.ui.setting_notify_title
 
 @Composable
 internal fun SettingTopAccountSection(
@@ -16,20 +21,20 @@ internal fun SettingTopAccountSection(
     Column(modifier) {
         SettingTopTitleItem(
             modifier = Modifier.fillMaxWidth(),
-            text = MR.strings.setting_account,
+            text = Res.string.setting_account,
         )
 
         SettingTextItem(
             modifier = Modifier.fillMaxWidth(),
-            title = MR.strings.setting_account_title,
-            description = MR.strings.setting_account_description,
+            title = Res.string.setting_account_title,
+            description = Res.string.setting_account_description,
             onClick = onClickAccountSetting,
         )
 
         SettingTextItem(
             modifier = Modifier.fillMaxWidth(),
-            title = MR.strings.setting_notify_title,
-            description = MR.strings.setting_notify_description,
+            title = Res.string.setting_notify_title,
+            description = Res.string.setting_notify_description,
             onClick = onClickNotifySetting,
         )
     }

@@ -8,6 +8,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyListScope
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.outlined.HelpOutline
 import androidx.compose.material.icons.filled.ColorLens
 import androidx.compose.material.icons.filled.DesignServices
 import androidx.compose.material.icons.filled.DoNotDisturb
@@ -15,7 +16,6 @@ import androidx.compose.material.icons.filled.Download
 import androidx.compose.material.icons.filled.Lock
 import androidx.compose.material.icons.filled.MoreHoriz
 import androidx.compose.material.icons.filled.Widgets
-import androidx.compose.material.icons.outlined.HelpOutline
 import androidx.compose.material.icons.outlined.HideImage
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
@@ -24,16 +24,34 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.unit.dp
-import dev.icerock.moko.resources.StringResource
-import dev.icerock.moko.resources.compose.stringResource
-import me.matsumo.fanbox.core.ui.MR
+import me.matsumo.fanbox.core.ui.Res
+import me.matsumo.fanbox.core.ui.billing_plus_item_accent_color
+import me.matsumo.fanbox.core.ui.billing_plus_item_accent_color_description
+import me.matsumo.fanbox.core.ui.billing_plus_item_download
+import me.matsumo.fanbox.core.ui.billing_plus_item_download_description
+import me.matsumo.fanbox.core.ui.billing_plus_item_feature
+import me.matsumo.fanbox.core.ui.billing_plus_item_feature_description
+import me.matsumo.fanbox.core.ui.billing_plus_item_hide_ads
+import me.matsumo.fanbox.core.ui.billing_plus_item_hide_ads_description
+import me.matsumo.fanbox.core.ui.billing_plus_item_hide_restricted
+import me.matsumo.fanbox.core.ui.billing_plus_item_hide_restricted_description
+import me.matsumo.fanbox.core.ui.billing_plus_item_lock
+import me.matsumo.fanbox.core.ui.billing_plus_item_lock_description
+import me.matsumo.fanbox.core.ui.billing_plus_item_material_you
+import me.matsumo.fanbox.core.ui.billing_plus_item_material_you_description
+import me.matsumo.fanbox.core.ui.billing_plus_item_support
+import me.matsumo.fanbox.core.ui.billing_plus_item_support_description
+import me.matsumo.fanbox.core.ui.billing_plus_item_widget
+import me.matsumo.fanbox.core.ui.billing_plus_item_widget_description
+import org.jetbrains.compose.resources.StringResource
+import org.jetbrains.compose.resources.stringResource
 
 internal fun LazyListScope.billingPlusDescriptionSection() {
     item {
         PlusItem(
             modifier = Modifier.fillMaxWidth(),
-            title = MR.strings.billing_plus_item_hide_ads,
-            description = MR.strings.billing_plus_item_hide_ads_description,
+            title = Res.string.billing_plus_item_hide_ads,
+            description = Res.string.billing_plus_item_hide_ads_description,
             icon = Icons.Default.DoNotDisturb,
         )
     }
@@ -41,8 +59,8 @@ internal fun LazyListScope.billingPlusDescriptionSection() {
     item {
         PlusItem(
             modifier = Modifier.fillMaxWidth(),
-            title = MR.strings.billing_plus_item_download,
-            description = MR.strings.billing_plus_item_download_description,
+            title = Res.string.billing_plus_item_download,
+            description = Res.string.billing_plus_item_download_description,
             icon = Icons.Default.Download,
         )
     }
@@ -50,8 +68,8 @@ internal fun LazyListScope.billingPlusDescriptionSection() {
     item {
         PlusItem(
             modifier = Modifier.fillMaxWidth(),
-            title = MR.strings.billing_plus_item_lock,
-            description = MR.strings.billing_plus_item_lock_description,
+            title = Res.string.billing_plus_item_lock,
+            description = Res.string.billing_plus_item_lock_description,
             icon = Icons.Default.Lock,
         )
     }
@@ -59,8 +77,8 @@ internal fun LazyListScope.billingPlusDescriptionSection() {
     item {
         PlusItem(
             modifier = Modifier.fillMaxWidth(),
-            title = MR.strings.billing_plus_item_hide_restricted,
-            description = MR.strings.billing_plus_item_hide_restricted_description,
+            title = Res.string.billing_plus_item_hide_restricted,
+            description = Res.string.billing_plus_item_hide_restricted_description,
             icon = Icons.Outlined.HideImage,
         )
     }
@@ -68,8 +86,8 @@ internal fun LazyListScope.billingPlusDescriptionSection() {
     item {
         PlusItem(
             modifier = Modifier.fillMaxWidth(),
-            title = MR.strings.billing_plus_item_widget,
-            description = MR.strings.billing_plus_item_widget_description,
+            title = Res.string.billing_plus_item_widget,
+            description = Res.string.billing_plus_item_widget_description,
             icon = Icons.Default.Widgets,
         )
     }
@@ -77,8 +95,8 @@ internal fun LazyListScope.billingPlusDescriptionSection() {
     item {
         PlusItem(
             modifier = Modifier.fillMaxWidth(),
-            title = MR.strings.billing_plus_item_material_you,
-            description = MR.strings.billing_plus_item_material_you_description,
+            title = Res.string.billing_plus_item_material_you,
+            description = Res.string.billing_plus_item_material_you_description,
             icon = Icons.Default.DesignServices,
         )
     }
@@ -86,8 +104,8 @@ internal fun LazyListScope.billingPlusDescriptionSection() {
     item {
         PlusItem(
             modifier = Modifier.fillMaxWidth(),
-            title = MR.strings.billing_plus_item_accent_color,
-            description = MR.strings.billing_plus_item_accent_color_description,
+            title = Res.string.billing_plus_item_accent_color,
+            description = Res.string.billing_plus_item_accent_color_description,
             icon = Icons.Default.ColorLens,
         )
     }
@@ -95,8 +113,8 @@ internal fun LazyListScope.billingPlusDescriptionSection() {
     item {
         PlusItem(
             modifier = Modifier.fillMaxWidth(),
-            title = MR.strings.billing_plus_item_feature,
-            description = MR.strings.billing_plus_item_feature_description,
+            title = Res.string.billing_plus_item_feature,
+            description = Res.string.billing_plus_item_feature_description,
             icon = Icons.Default.MoreHoriz,
         )
     }
@@ -104,9 +122,9 @@ internal fun LazyListScope.billingPlusDescriptionSection() {
     item {
         PlusItem(
             modifier = Modifier.fillMaxWidth(),
-            title = MR.strings.billing_plus_item_support,
-            description = MR.strings.billing_plus_item_support_description,
-            icon = Icons.Outlined.HelpOutline,
+            title = Res.string.billing_plus_item_support,
+            description = Res.string.billing_plus_item_support_description,
+            icon = Icons.AutoMirrored.Outlined.HelpOutline,
         )
     }
 }

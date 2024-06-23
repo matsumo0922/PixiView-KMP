@@ -1,7 +1,8 @@
 package me.matsumo.fanbox.feature.creator.top.items
 
 import androidx.compose.runtime.Composable
-import me.matsumo.fanbox.core.ui.MR
+import me.matsumo.fanbox.core.ui.Res
+import me.matsumo.fanbox.core.ui.common_block
 import me.matsumo.fanbox.core.ui.view.Action
 import me.matsumo.fanbox.core.ui.view.ActionSheet
 
@@ -13,7 +14,7 @@ internal fun CreatorTopMenuDialog(
 ) {
     val actions = listOf(
         Action(
-            text = MR.strings.common_block,
+            text = Res.string.common_block,
             onClick = onClickBlock,
         ),
     )

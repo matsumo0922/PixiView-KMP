@@ -25,16 +25,22 @@ import coil3.annotation.ExperimentalCoilApi
 import coil3.compose.AsyncImage
 import coil3.compose.LocalPlatformContext
 import coil3.request.ImageRequest
-import dev.icerock.moko.resources.compose.stringResource
 import kotlinx.datetime.Instant
 import me.matsumo.fanbox.core.common.util.format
 import me.matsumo.fanbox.core.model.fanbox.FanboxPaidRecord
 import me.matsumo.fanbox.core.model.fanbox.PaymentMethod
 import me.matsumo.fanbox.core.model.fanbox.id.CreatorId
-import me.matsumo.fanbox.core.ui.MR
+import me.matsumo.fanbox.core.ui.Res
+import me.matsumo.fanbox.core.ui.creator_supporting_payment_method_card
+import me.matsumo.fanbox.core.ui.creator_supporting_payment_method_cvs
+import me.matsumo.fanbox.core.ui.creator_supporting_payment_method_paypal
+import me.matsumo.fanbox.core.ui.creator_supporting_payment_method_unknown
 import me.matsumo.fanbox.core.ui.extensition.asCoilImage
+import me.matsumo.fanbox.core.ui.im_default_user
 import me.matsumo.fanbox.core.ui.theme.bold
+import me.matsumo.fanbox.core.ui.unit_jpy
 import me.matsumo.fanbox.feature.creator.payment.Payment
+import org.jetbrains.compose.resources.stringResource
 
 @Composable
 internal fun PaymentItem(
@@ -110,7 +116,7 @@ private fun TitleItem(
         }
 
         Text(
-            text = stringResource(MR.strings.unit_jpy, totalPaidAmount),
+            text = stringResource(Res.string.unit_jpy, totalPaidAmount),
             style = MaterialTheme.typography.titleMedium.bold(),
             color = MaterialTheme.colorScheme.onSurface,
         )
@@ -143,7 +149,7 @@ private fun PaidItem(
                     .size(32.dp)
                     .clip(CircleShape),
                 model = ImageRequest.Builder(LocalPlatformContext.current)
-                    .error(MR.images.im_default_user.asCoilImage())
+                    .error(Res.drawable.im_default_user.asCoilImage())
                     .data(paidRecord.creator.user.iconUrl)
                     .build(),
                 contentDescription = null,
@@ -163,10 +169,10 @@ private fun PaidItem(
                 Text(
                     modifier = Modifier.fillMaxWidth(),
                     text = when (paidRecord.paymentMethod) {
-                        PaymentMethod.CARD -> stringResource(MR.strings.creator_supporting_payment_method_card)
-                        PaymentMethod.PAYPAL -> stringResource(MR.strings.creator_supporting_payment_method_paypal)
-                        PaymentMethod.CVS -> stringResource(MR.strings.creator_supporting_payment_method_cvs)
-                        PaymentMethod.UNKNOWN -> stringResource(MR.strings.creator_supporting_payment_method_unknown)
+                        PaymentMethod.CARD -> stringResource(Res.string.creator_supporting_payment_method_card)
+                        PaymentMethod.PAYPAL -> stringResource(Res.string.creator_supporting_payment_method_paypal)
+                        PaymentMethod.CVS -> stringResource(Res.string.creator_supporting_payment_method_cvs)
+                        PaymentMethod.UNKNOWN -> stringResource(Res.string.creator_supporting_payment_method_unknown)
                     },
                     style = MaterialTheme.typography.bodySmall,
                     color = MaterialTheme.colorScheme.onSurfaceVariant,
@@ -176,7 +182,7 @@ private fun PaidItem(
 
         Text(
             modifier = Modifier.padding(6.dp, 4.dp),
-            text = stringResource(MR.strings.unit_jpy, paidRecord.paidAmount),
+            text = stringResource(Res.string.unit_jpy, paidRecord.paidAmount),
             style = MaterialTheme.typography.bodyMedium.bold(),
             color = MaterialTheme.colorScheme.onSurface,
         )

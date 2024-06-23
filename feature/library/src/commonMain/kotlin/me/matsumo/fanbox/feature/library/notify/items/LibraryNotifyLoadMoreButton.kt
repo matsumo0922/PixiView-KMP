@@ -9,8 +9,9 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import dev.icerock.moko.resources.compose.stringResource
-import me.matsumo.fanbox.core.ui.MR
+import me.matsumo.fanbox.core.ui.Res
+import me.matsumo.fanbox.core.ui.notify_load_more
+import org.jetbrains.compose.resources.stringResource
 
 @Composable
 internal fun LibraryNotifyLoadMoreButton(
@@ -25,7 +26,7 @@ internal fun LibraryNotifyLoadMoreButton(
             onClick = onClick,
         ) {
             Text(
-                text = stringResource(MR.strings.notify_load_more),
+                text = stringResource(Res.string.notify_load_more),
                 style = MaterialTheme.typography.labelMedium,
                 color = MaterialTheme.colorScheme.onPrimary,
             )

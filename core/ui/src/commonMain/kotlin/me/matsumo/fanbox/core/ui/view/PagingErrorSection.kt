@@ -11,10 +11,13 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import dev.icerock.moko.resources.compose.stringResource
-import me.matsumo.fanbox.core.ui.MR
+import me.matsumo.fanbox.core.ui.Res
+import me.matsumo.fanbox.core.ui.common_reload
+import me.matsumo.fanbox.core.ui.error_network
+import me.matsumo.fanbox.core.ui.error_paging
 import me.matsumo.fanbox.core.ui.theme.bold
 import me.matsumo.fanbox.core.ui.theme.center
+import org.jetbrains.compose.resources.stringResource
 
 @Composable
 fun PagingErrorSection(
@@ -31,14 +34,14 @@ fun PagingErrorSection(
     ) {
         Text(
             modifier = Modifier.fillMaxWidth(),
-            text = stringResource(MR.strings.error_network),
+            text = stringResource(Res.string.error_network),
             style = MaterialTheme.typography.titleMedium.bold().center(),
             color = MaterialTheme.colorScheme.onSurface,
         )
 
         Text(
             modifier = Modifier.fillMaxWidth(),
-            text = stringResource(MR.strings.error_paging),
+            text = stringResource(Res.string.error_paging),
             style = MaterialTheme.typography.bodyMedium.center(),
             color = MaterialTheme.colorScheme.onSurfaceVariant,
         )
@@ -48,7 +51,7 @@ fun PagingErrorSection(
             onClick = onRetry,
         ) {
             Text(
-                text = stringResource(MR.strings.common_reload),
+                text = stringResource(Res.string.common_reload),
                 style = MaterialTheme.typography.labelMedium,
                 color = MaterialTheme.colorScheme.onPrimary,
             )

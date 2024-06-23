@@ -1,6 +1,8 @@
 package me.matsumo.fanbox.feature.creator.support
 
 import androidx.compose.runtime.Stable
+import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
@@ -8,9 +10,8 @@ import me.matsumo.fanbox.core.common.util.suspendRunCatching
 import me.matsumo.fanbox.core.model.ScreenState
 import me.matsumo.fanbox.core.model.fanbox.FanboxCreatorPlan
 import me.matsumo.fanbox.core.repository.FanboxRepository
-import me.matsumo.fanbox.core.ui.MR
-import androidx.lifecycle.ViewModel
-import androidx.lifecycle.viewModelScope
+import me.matsumo.fanbox.core.ui.Res
+import me.matsumo.fanbox.core.ui.error_network
 
 class SupportingCreatorsViewModel(
     private val fanboxRepository: FanboxRepository,
@@ -33,7 +34,7 @@ class SupportingCreatorsViewModel(
                 )
             }.fold(
                 onSuccess = { ScreenState.Idle(it) },
-                onFailure = { ScreenState.Error(MR.strings.error_network) },
+                onFailure = { ScreenState.Error(Res.string.error_network) },
             )
         }
     }

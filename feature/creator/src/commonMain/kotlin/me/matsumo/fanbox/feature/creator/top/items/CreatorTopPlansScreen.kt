@@ -13,7 +13,10 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import kotlinx.collections.immutable.ImmutableList
 import me.matsumo.fanbox.core.model.fanbox.FanboxCreatorPlan
-import me.matsumo.fanbox.core.ui.MR
+import me.matsumo.fanbox.core.ui.Res
+import me.matsumo.fanbox.core.ui.creator_plans_for_ios_error
+import me.matsumo.fanbox.core.ui.creator_plans_for_ios_error_button
+import me.matsumo.fanbox.core.ui.creator_plans_for_ios_error_description
 import me.matsumo.fanbox.core.ui.extensition.Platform
 import me.matsumo.fanbox.core.ui.extensition.currentPlatform
 import me.matsumo.fanbox.core.ui.view.ErrorView
@@ -50,9 +53,9 @@ internal fun CreatorTopPlansScreen(
     } else {
         ErrorView(
             modifier = Modifier.fillMaxWidth(),
-            title = MR.strings.creator_plans_for_ios_error,
-            message = MR.strings.creator_plans_for_ios_error_description,
-            retryTitle = MR.strings.creator_plans_for_ios_error_button,
+            title = Res.string.creator_plans_for_ios_error,
+            message = Res.string.creator_plans_for_ios_error_description,
+            retryTitle = Res.string.creator_plans_for_ios_error_button,
             retryAction = onClickFanbox,
         )
     }

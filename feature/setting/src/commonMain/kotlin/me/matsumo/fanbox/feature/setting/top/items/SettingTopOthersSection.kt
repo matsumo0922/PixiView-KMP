@@ -4,11 +4,20 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import dev.icerock.moko.resources.compose.stringResource
 import me.matsumo.fanbox.core.model.UserData
-import me.matsumo.fanbox.core.ui.MR
+import me.matsumo.fanbox.core.ui.Res
 import me.matsumo.fanbox.core.ui.component.SettingSwitchItem
 import me.matsumo.fanbox.core.ui.component.SettingTextItem
+import me.matsumo.fanbox.core.ui.setting_top_information_privacy_policy
+import me.matsumo.fanbox.core.ui.setting_top_information_team_of_service
+import me.matsumo.fanbox.core.ui.setting_top_others
+import me.matsumo.fanbox.core.ui.setting_top_others_developer_mode
+import me.matsumo.fanbox.core.ui.setting_top_others_developer_mode_description
+import me.matsumo.fanbox.core.ui.setting_top_others_logout
+import me.matsumo.fanbox.core.ui.setting_top_others_logout_description
+import me.matsumo.fanbox.core.ui.setting_top_others_open_source_license
+import me.matsumo.fanbox.core.ui.setting_top_others_open_source_license_description
+import org.jetbrains.compose.resources.stringResource
 
 @Composable
 internal fun SettingTopOthersSection(
@@ -23,39 +32,39 @@ internal fun SettingTopOthersSection(
     Column(modifier) {
         SettingTopTitleItem(
             modifier = Modifier.fillMaxWidth(),
-            text = MR.strings.setting_top_others,
+            text = Res.string.setting_top_others,
         )
 
         SettingTextItem(
             modifier = Modifier.fillMaxWidth(),
-            title = stringResource(MR.strings.setting_top_information_team_of_service),
+            title = stringResource(Res.string.setting_top_information_team_of_service),
             onClick = onClickTeamsOfService,
         )
 
         SettingTextItem(
             modifier = Modifier.fillMaxWidth(),
-            title = stringResource(MR.strings.setting_top_information_privacy_policy),
+            title = stringResource(Res.string.setting_top_information_privacy_policy),
             onClick = onClickPrivacyPolicy,
         )
 
         SettingTextItem(
             modifier = Modifier.fillMaxWidth(),
-            title = MR.strings.setting_top_others_logout,
-            description = MR.strings.setting_top_others_logout_description,
+            title = Res.string.setting_top_others_logout,
+            description = Res.string.setting_top_others_logout_description,
             onClick = onClickLogout,
         )
 
         SettingTextItem(
             modifier = Modifier.fillMaxWidth(),
-            title = MR.strings.setting_top_others_open_source_license,
-            description = MR.strings.setting_top_others_open_source_license_description,
+            title = Res.string.setting_top_others_open_source_license,
+            description = Res.string.setting_top_others_open_source_license_description,
             onClick = { onClickOpenSourceLicense.invoke() },
         )
 
         SettingSwitchItem(
             modifier = Modifier.fillMaxWidth(),
-            title = MR.strings.setting_top_others_developer_mode,
-            description = MR.strings.setting_top_others_developer_mode_description,
+            title = Res.string.setting_top_others_developer_mode,
+            description = Res.string.setting_top_others_developer_mode_description,
             value = userData.isDeveloperMode,
             onValueChanged = onClickDeveloperMode,
         )

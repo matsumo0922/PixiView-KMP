@@ -44,14 +44,16 @@ import androidx.compose.ui.unit.dp
 import coil3.compose.LocalPlatformContext
 import coil3.compose.SubcomposeAsyncImage
 import coil3.request.ImageRequest
-import dev.icerock.moko.resources.compose.stringResource
 import io.github.aakira.napier.Napier
 import kotlinx.coroutines.delay
 import me.matsumo.fanbox.core.model.fanbox.FanboxPost
-import me.matsumo.fanbox.core.ui.MR
+import me.matsumo.fanbox.core.ui.Res
 import me.matsumo.fanbox.core.ui.extensition.fanboxHeader
+import me.matsumo.fanbox.core.ui.fanbox_free_fee
 import me.matsumo.fanbox.core.ui.theme.bold
+import me.matsumo.fanbox.core.ui.unit_jpy
 import me.matsumo.fanbox.feature.creator.download.CreatorPostsDownloadData
+import org.jetbrains.compose.resources.stringResource
 import kotlin.random.Random
 
 @Composable
@@ -210,8 +212,8 @@ private fun CommentLikeItem(
         ) {
             Text(
                 modifier = Modifier.padding(6.dp, 4.dp),
-                text = if (post.feeRequired == 0) stringResource(MR.strings.fanbox_free_fee) else stringResource(
-                    MR.strings.unit_jpy,
+                text = if (post.feeRequired == 0) stringResource(Res.string.fanbox_free_fee) else stringResource(
+                    Res.string.unit_jpy,
                     post.feeRequired
                 ),
                 style = MaterialTheme.typography.bodySmall,

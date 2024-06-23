@@ -23,7 +23,8 @@ import me.matsumo.fanbox.core.model.updateWhenIdle
 import me.matsumo.fanbox.core.repository.FanboxRepository
 import me.matsumo.fanbox.core.repository.RewardRepository
 import me.matsumo.fanbox.core.repository.UserDataRepository
-import me.matsumo.fanbox.core.ui.MR
+import me.matsumo.fanbox.core.ui.Res
+import me.matsumo.fanbox.core.ui.error_network
 
 class CreatorTopViewModel(
     private val userDataRepository: UserDataRepository,
@@ -78,7 +79,7 @@ class CreatorTopViewModel(
                 )
             }.fold(
                 onSuccess = { ScreenState.Idle(it) },
-                onFailure = { ScreenState.Error(MR.strings.error_network) },
+                onFailure = { ScreenState.Error(Res.string.error_network) },
             )
         }
     }

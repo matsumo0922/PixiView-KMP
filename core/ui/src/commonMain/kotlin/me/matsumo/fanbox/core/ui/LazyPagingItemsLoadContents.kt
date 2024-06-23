@@ -19,12 +19,12 @@ import androidx.compose.ui.Modifier
 import androidx.paging.CombinedLoadStates
 import androidx.paging.LoadState
 import app.cash.paging.compose.LazyPagingItems
-import dev.icerock.moko.resources.StringResource
 import me.matsumo.fanbox.core.model.ScreenState
 import me.matsumo.fanbox.core.ui.extensition.isEmpty
 import me.matsumo.fanbox.core.ui.view.EmptyView
 import me.matsumo.fanbox.core.ui.view.ErrorView
 import me.matsumo.fanbox.core.ui.view.LoadingView
+import org.jetbrains.compose.resources.StringResource
 
 @OptIn(ExperimentalMaterialApi::class)
 @Composable
@@ -32,8 +32,8 @@ fun <T : Any> LazyPagingItemsLoadContents(
     lazyPagingItems: LazyPagingItems<T>,
     modifier: Modifier = Modifier,
     isSwipeEnabled: Boolean = true,
-    emptyTitleRes: StringResource = MR.strings.error_no_data,
-    emptyMessageRes: StringResource = MR.strings.error_executed,
+    emptyTitleRes: StringResource = Res.string.error_no_data,
+    emptyMessageRes: StringResource = Res.string.error_executed,
     content: @Composable (CombinedLoadStates) -> Unit,
 ) {
     Surface(modifier) {
@@ -57,7 +57,7 @@ fun <T : Any> LazyPagingItemsLoadContents(
 
                         is LoadState.Error -> {
                             ErrorView(
-                                errorState = ScreenState.Error(MR.strings.error_no_data),
+                                errorState = ScreenState.Error(Res.string.error_no_data),
                                 retryAction = { lazyPagingItems.refresh() },
                             )
                         }

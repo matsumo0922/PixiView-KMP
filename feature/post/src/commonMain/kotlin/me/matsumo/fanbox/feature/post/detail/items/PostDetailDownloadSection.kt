@@ -15,11 +15,13 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import dev.icerock.moko.resources.compose.stringResource
 import me.matsumo.fanbox.core.model.fanbox.FanboxPostDetail
-import me.matsumo.fanbox.core.ui.MR
+import me.matsumo.fanbox.core.ui.Res
+import me.matsumo.fanbox.core.ui.common_download
+import me.matsumo.fanbox.core.ui.post_detail_download_images
 import me.matsumo.fanbox.core.ui.theme.bold
 import me.matsumo.fanbox.core.ui.theme.center
+import org.jetbrains.compose.resources.stringResource
 
 @Composable
 internal fun PostDetailDownloadSection(
@@ -49,13 +51,13 @@ internal fun PostDetailDownloadSection(
         ) {
             Text(
                 modifier = Modifier.fillMaxWidth(),
-                text = stringResource(MR.strings.post_detail_download_images, postDetail.body.imageItems.size),
+                text = stringResource(Res.string.post_detail_download_images, postDetail.body.imageItems.size),
                 style = MaterialTheme.typography.bodyLarge.bold().center(),
                 color = MaterialTheme.colorScheme.onSurface,
             )
 
             Button(onClick = { onClickDownload.invoke(postDetail.body.imageItems) }) {
-                Text(stringResource(MR.strings.common_download))
+                Text(stringResource(Res.string.common_download))
             }
         }
     }

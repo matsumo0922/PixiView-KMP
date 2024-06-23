@@ -25,9 +25,13 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
-import dev.icerock.moko.resources.compose.stringResource
-import me.matsumo.fanbox.core.ui.MR
+import me.matsumo.fanbox.core.ui.Res
+import me.matsumo.fanbox.core.ui.common_cancel
 import me.matsumo.fanbox.core.ui.theme.bold
+import me.matsumo.fanbox.core.ui.welcome_login_other_message
+import me.matsumo.fanbox.core.ui.welcome_login_other_title
+import me.matsumo.fanbox.core.ui.welcome_login_title
+import org.jetbrains.compose.resources.stringResource
 
 @Composable
 internal fun WelcomeLoginDialog(
@@ -51,14 +55,14 @@ internal fun WelcomeLoginDialog(
         ) {
             Text(
                 modifier = Modifier.fillMaxWidth(),
-                text = stringResource(MR.strings.welcome_login_other_title),
+                text = stringResource(Res.string.welcome_login_other_title),
                 style = MaterialTheme.typography.titleMedium.bold(),
                 color = MaterialTheme.colorScheme.onSurface,
             )
 
             Text(
                 modifier = Modifier.fillMaxWidth(),
-                text = stringResource(MR.strings.welcome_login_other_message),
+                text = stringResource(Res.string.welcome_login_other_message),
                 style = MaterialTheme.typography.bodyMedium,
                 color = MaterialTheme.colorScheme.onSurfaceVariant,
             )
@@ -95,7 +99,7 @@ internal fun WelcomeLoginDialog(
                     shape = RoundedCornerShape(4.dp),
                     onClick = onDismissRequest,
                 ) {
-                    Text(text = stringResource(MR.strings.common_cancel))
+                    Text(text = stringResource(Res.string.common_cancel))
                 }
 
                 Button(
@@ -105,7 +109,7 @@ internal fun WelcomeLoginDialog(
                     colors = ButtonDefaults.buttonColors(MaterialTheme.colorScheme.primary),
                     onClick = { onClickLogin.invoke(sessionId) },
                 ) {
-                    Text(text = stringResource(MR.strings.welcome_login_title))
+                    Text(text = stringResource(Res.string.welcome_login_title))
                 }
             }
         }

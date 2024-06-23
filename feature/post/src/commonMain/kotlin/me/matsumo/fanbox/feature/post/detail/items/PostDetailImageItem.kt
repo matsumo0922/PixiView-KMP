@@ -23,15 +23,16 @@ import coil3.compose.LocalPlatformContext
 import coil3.compose.SubcomposeAsyncImage
 import coil3.request.ImageRequest
 import coil3.size.Size
-import dev.icerock.moko.resources.compose.stringResource
 import me.matsumo.fanbox.core.model.fanbox.FanboxPostDetail
-import me.matsumo.fanbox.core.ui.MR
+import me.matsumo.fanbox.core.ui.Res
+import me.matsumo.fanbox.core.ui.error_ios_gif_support
 import me.matsumo.fanbox.core.ui.extensition.Platform
 import me.matsumo.fanbox.core.ui.extensition.SimmerPlaceHolder
 import me.matsumo.fanbox.core.ui.extensition.currentPlatform
 import me.matsumo.fanbox.core.ui.extensition.fanboxHeader
 import me.matsumo.fanbox.core.ui.theme.center
 import me.matsumo.fanbox.feature.post.image.items.PostImageMenuDialog
+import org.jetbrains.compose.resources.stringResource
 
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
@@ -76,7 +77,7 @@ internal fun PostDetailImageItem(
                     modifier = Modifier
                         .align(Alignment.Center)
                         .padding(24.dp),
-                    text = stringResource(MR.strings.error_ios_gif_support),
+                    text = stringResource(Res.string.error_ios_gif_support),
                     style = MaterialTheme.typography.bodyLarge.center(),
                     color = MaterialTheme.colorScheme.onSurface,
                 )

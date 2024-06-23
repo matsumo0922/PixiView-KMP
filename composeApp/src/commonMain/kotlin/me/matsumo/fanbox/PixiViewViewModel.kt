@@ -28,8 +28,12 @@ import me.matsumo.fanbox.core.model.UserData
 import me.matsumo.fanbox.core.model.fanbox.FanboxMetaData
 import me.matsumo.fanbox.core.repository.FanboxRepository
 import me.matsumo.fanbox.core.repository.UserDataRepository
-import me.matsumo.fanbox.core.ui.MR
+import me.matsumo.fanbox.core.ui.Res
+import me.matsumo.fanbox.core.ui.error_no_data
 import me.matsumo.fanbox.core.ui.extensition.ImageDownloader
+import me.matsumo.fanbox.core.ui.home_app_lock_message
+import me.matsumo.fanbox.core.ui.home_app_lock_title
+import org.jetbrains.compose.resources.getString
 import kotlin.time.Duration.Companion.minutes
 
 class PixiViewViewModel(
@@ -130,9 +134,9 @@ class PixiViewViewModel(
 
     suspend fun tryToAuthenticate(biometryAuthenticator: BiometryAuthenticator): Boolean = suspendRunCatching {
         biometryAuthenticator.checkBiometryAuthentication(
-            requestTitle = MR.strings.home_app_lock_title.desc(),
-            requestReason = MR.strings.home_app_lock_message.desc(),
-            failureButtonText = MR.strings.error_no_data.desc(),
+            requestTitle = getString(Res.string.home_app_lock_title).desc(),
+            requestReason = getString(Res.string.home_app_lock_message).desc(),
+            failureButtonText = getString(Res.string.error_no_data).desc(),
             allowDeviceCredentials = true
         )
     }.fold(

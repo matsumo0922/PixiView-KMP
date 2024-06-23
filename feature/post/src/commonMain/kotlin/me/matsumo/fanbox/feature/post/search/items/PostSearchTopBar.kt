@@ -52,11 +52,12 @@ import androidx.compose.ui.text.input.OffsetMapping
 import androidx.compose.ui.text.input.TransformedText
 import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.unit.dp
-import dev.icerock.moko.resources.compose.stringResource
-import me.matsumo.fanbox.core.ui.MR
+import me.matsumo.fanbox.core.ui.Res
+import me.matsumo.fanbox.core.ui.post_search_placeholder
 import me.matsumo.fanbox.feature.post.search.PostSearchMode
 import me.matsumo.fanbox.feature.post.search.PostSearchQuery
 import me.matsumo.fanbox.feature.post.search.parseQuery
+import org.jetbrains.compose.resources.stringResource
 
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalComposeUiApi::class)
 @Composable
@@ -133,7 +134,7 @@ internal fun PostSearchTopBar(
                             Box(Modifier.weight(1f)) {
                                 if (queryText.isEmpty()) {
                                     Text(
-                                        text = stringResource(MR.strings.post_search_placeholder),
+                                        text = stringResource(Res.string.post_search_placeholder),
                                         style = MaterialTheme.typography.bodyLarge,
                                         color = MaterialTheme.colorScheme.onSurfaceVariant,
                                     )

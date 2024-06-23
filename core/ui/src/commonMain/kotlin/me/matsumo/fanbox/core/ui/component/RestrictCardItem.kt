@@ -20,10 +20,13 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
-import dev.icerock.moko.resources.compose.stringResource
-import me.matsumo.fanbox.core.ui.MR
+import me.matsumo.fanbox.core.ui.Res
+import me.matsumo.fanbox.core.ui.error_restricted_post
+import me.matsumo.fanbox.core.ui.error_restricted_post_ios
 import me.matsumo.fanbox.core.ui.extensition.Platform
 import me.matsumo.fanbox.core.ui.extensition.currentPlatform
+import me.matsumo.fanbox.core.ui.fanbox_plan_List
+import org.jetbrains.compose.resources.stringResource
 
 @Composable
 fun RestrictCardItem(
@@ -53,13 +56,13 @@ fun RestrictCardItem(
 
             Text(
                 modifier = Modifier.weight(1f),
-                text = if (currentPlatform == Platform.Android) stringResource(MR.strings.error_restricted_post, feeRequired) else stringResource(MR.strings.error_restricted_post_ios),
+                text = if (currentPlatform == Platform.Android) stringResource(Res.string.error_restricted_post, feeRequired) else stringResource(Res.string.error_restricted_post_ios),
                 style = MaterialTheme.typography.bodyMedium,
                 color = MaterialTheme.colorScheme.onSurfaceVariant,
             )
 
             Button(onClick = { onClickPlanList.invoke() }) {
-                Text(stringResource(MR.strings.fanbox_plan_List))
+                Text(stringResource(Res.string.fanbox_plan_List))
             }
         }
     }

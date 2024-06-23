@@ -24,11 +24,14 @@ import androidx.compose.ui.unit.dp
 import coil3.compose.LocalPlatformContext
 import coil3.compose.SubcomposeAsyncImage
 import coil3.request.ImageRequest
-import dev.icerock.moko.resources.compose.stringResource
-import me.matsumo.fanbox.core.ui.MR
+import me.matsumo.fanbox.core.ui.Res
+import me.matsumo.fanbox.core.ui.error_adult_content
+import me.matsumo.fanbox.core.ui.error_adult_content_description
+import me.matsumo.fanbox.core.ui.error_adult_content_test_user
 import me.matsumo.fanbox.core.ui.extensition.SimmerPlaceHolder
 import me.matsumo.fanbox.core.ui.extensition.fanboxHeader
 import me.matsumo.fanbox.core.ui.theme.center
+import org.jetbrains.compose.resources.stringResource
 
 @Composable
 fun AdultContentThumbnail(
@@ -79,14 +82,14 @@ fun AdultContentThumbnail(
 
             Text(
                 modifier = Modifier.fillMaxWidth(),
-                text = stringResource(if (isTestUser) MR.strings.error_adult_content_test_user else MR.strings.error_adult_content),
+                text = stringResource(if (isTestUser) Res.string.error_adult_content_test_user else Res.string.error_adult_content),
                 style = MaterialTheme.typography.bodySmall.center(),
                 color = Color.White,
             )
 
             if (isAllowedShow) {
                 Button(onClick = { onClickShowAdultContent.invoke() }) {
-                    Text(text = stringResource(MR.strings.error_adult_content_description))
+                    Text(text = stringResource(Res.string.error_adult_content_description))
                 }
             }
         }

@@ -26,13 +26,18 @@ import coil3.annotation.ExperimentalCoilApi
 import coil3.compose.AsyncImage
 import coil3.compose.LocalPlatformContext
 import coil3.request.ImageRequest
-import dev.icerock.moko.resources.compose.stringResource
 import me.matsumo.fanbox.core.model.fanbox.FanboxCreatorDetail
 import me.matsumo.fanbox.core.model.fanbox.FanboxPostDetail
 import me.matsumo.fanbox.core.model.fanbox.id.CreatorId
-import me.matsumo.fanbox.core.ui.MR
+import me.matsumo.fanbox.core.ui.Res
+import me.matsumo.fanbox.core.ui.common_follow
+import me.matsumo.fanbox.core.ui.common_supporting
+import me.matsumo.fanbox.core.ui.common_unfollow
 import me.matsumo.fanbox.core.ui.extensition.asCoilImage
+import me.matsumo.fanbox.core.ui.im_default_user
+import me.matsumo.fanbox.core.ui.post_detail_creator
 import me.matsumo.fanbox.core.ui.theme.bold
+import org.jetbrains.compose.resources.stringResource
 
 @Composable
 internal fun PostDetailCreatorSection(
@@ -56,7 +61,7 @@ internal fun PostDetailCreatorSection(
                     end = 16.dp,
                 )
                 .fillMaxWidth(),
-            text = stringResource(MR.strings.post_detail_creator),
+            text = stringResource(Res.string.post_detail_creator),
             style = MaterialTheme.typography.titleMedium,
             color = MaterialTheme.colorScheme.onSurface,
         )
@@ -102,7 +107,7 @@ private fun CreatorItem(
                 .clip(CircleShape)
                 .size(36.dp),
             model = ImageRequest.Builder(LocalPlatformContext.current)
-                .error(MR.images.im_default_user.asCoilImage())
+                .error(Res.drawable.im_default_user.asCoilImage())
                 .data(postDetail.user.iconUrl)
                 .build(),
             contentDescription = null,
@@ -132,7 +137,7 @@ private fun CreatorItem(
         when {
             creatorDetail.isSupported -> {
                 Button(onClick = { onClickSupporting.invoke(creatorDetail.supportingBrowserUrl) }) {
-                    Text(stringResource(MR.strings.common_supporting))
+                    Text(stringResource(Res.string.common_supporting))
                 }
             }
 
@@ -143,7 +148,7 @@ private fun CreatorItem(
                         onClickUnfollow.invoke(creatorDetail.user.userId)
                     },
                 ) {
-                    Text(stringResource(MR.strings.common_unfollow))
+                    Text(stringResource(Res.string.common_unfollow))
                 }
             }
 
@@ -154,7 +159,7 @@ private fun CreatorItem(
                         onClickFollow.invoke(creatorDetail.user.userId)
                     },
                 ) {
-                    Text(stringResource(MR.strings.common_follow))
+                    Text(stringResource(Res.string.common_follow))
                 }
             }
         }

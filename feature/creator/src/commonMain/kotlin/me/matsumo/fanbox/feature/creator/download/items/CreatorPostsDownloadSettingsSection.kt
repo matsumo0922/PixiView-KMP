@@ -9,9 +9,15 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import dev.icerock.moko.resources.compose.stringResource
-import me.matsumo.fanbox.core.ui.MR
+import me.matsumo.fanbox.core.ui.Res
 import me.matsumo.fanbox.core.ui.component.SettingSwitchItem
+import me.matsumo.fanbox.core.ui.creator_posts_download_ignore_file
+import me.matsumo.fanbox.core.ui.creator_posts_download_ignore_file_description
+import me.matsumo.fanbox.core.ui.creator_posts_download_ignore_free
+import me.matsumo.fanbox.core.ui.creator_posts_download_ignore_free_description
+import me.matsumo.fanbox.core.ui.creator_posts_download_ignore_keyword_placeholder
+import me.matsumo.fanbox.core.ui.creator_posts_download_message
+import org.jetbrains.compose.resources.stringResource
 
 @Composable
 internal fun CreatorPostsDownloadSettingsSection(
@@ -28,23 +34,23 @@ internal fun CreatorPostsDownloadSettingsSection(
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(horizontal = 24.dp, vertical = 12.dp),
-            text = stringResource(MR.strings.creator_posts_download_message),
+            text = stringResource(Res.string.creator_posts_download_message),
             style = MaterialTheme.typography.bodySmall,
             color = MaterialTheme.colorScheme.onSurfaceVariant,
         )
 
         SettingSwitchItem(
             modifier = Modifier.fillMaxWidth(),
-            title = MR.strings.creator_posts_download_ignore_free,
-            description = MR.strings.creator_posts_download_ignore_free_description,
+            title = Res.string.creator_posts_download_ignore_free,
+            description = Res.string.creator_posts_download_ignore_free_description,
             value = isIgnoreFreePosts,
             onValueChanged = onClickIgnoreFreePosts,
         )
 
         SettingSwitchItem(
             modifier = Modifier.fillMaxWidth(),
-            title = MR.strings.creator_posts_download_ignore_file,
-            description = MR.strings.creator_posts_download_ignore_file_description,
+            title = Res.string.creator_posts_download_ignore_file,
+            description = Res.string.creator_posts_download_ignore_file_description,
             value = isIgnoreFiles,
             onValueChanged = onClickIgnoreFiles,
         )
@@ -57,7 +63,7 @@ internal fun CreatorPostsDownloadSettingsSection(
             onValueChange = onUpdateIgnoreKeyword,
             placeholder = {
                 Text(
-                    text = stringResource(MR.strings.creator_posts_download_ignore_keyword_placeholder),
+                    text = stringResource(Res.string.creator_posts_download_ignore_keyword_placeholder),
                     style = MaterialTheme.typography.bodyMedium,
                 )
             }

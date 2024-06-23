@@ -25,10 +25,15 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.unit.dp
-import dev.icerock.moko.resources.StringResource
-import dev.icerock.moko.resources.compose.stringResource
-import me.matsumo.fanbox.core.ui.MR
+import me.matsumo.fanbox.core.ui.Res
+import me.matsumo.fanbox.core.ui.about_support
+import me.matsumo.fanbox.core.ui.about_support_donate
+import me.matsumo.fanbox.core.ui.about_support_opinion
+import me.matsumo.fanbox.core.ui.about_support_rate_app
+import me.matsumo.fanbox.core.ui.about_support_version_history
 import me.matsumo.fanbox.core.ui.theme.bold
+import org.jetbrains.compose.resources.StringResource
+import org.jetbrains.compose.resources.stringResource
 
 @Composable
 internal fun AboutSupportSection(
@@ -57,28 +62,28 @@ internal fun AboutSupportSection(
                             bottom = 18.dp,
                         )
                         .fillMaxWidth(),
-                    text = stringResource(MR.strings.about_support).uppercase(),
+                    text = stringResource(Res.string.about_support).uppercase(),
                     style = MaterialTheme.typography.bodyMedium.bold(),
                     color = MaterialTheme.colorScheme.primary,
                 )
 
                 AboutSupportItem(
                     modifier = Modifier.fillMaxWidth(),
-                    titleRes = MR.strings.about_support_version_history,
+                    titleRes = Res.string.about_support_version_history,
                     imageVector = Icons.Outlined.History,
                     onClick = onClickVersionHistory,
                 )
 
                 AboutSupportItem(
                     modifier = Modifier.fillMaxWidth(),
-                    titleRes = MR.strings.about_support_rate_app,
+                    titleRes = Res.string.about_support_rate_app,
                     imageVector = Icons.Outlined.StarOutline,
                     onClick = onClickRateApp,
                 )
 
                 AboutSupportItem(
                     modifier = Modifier.fillMaxWidth(),
-                    titleRes = MR.strings.about_support_opinion,
+                    titleRes = Res.string.about_support_opinion,
                     imageVector = Icons.Outlined.Feedback,
                     onClick = onClickEmail,
                 )
@@ -87,7 +92,7 @@ internal fun AboutSupportSection(
                     modifier = Modifier
                         .padding(bottom = 16.dp)
                         .fillMaxWidth(),
-                    titleRes = MR.strings.about_support_donate,
+                    titleRes = Res.string.about_support_donate,
                     imageVector = Icons.Outlined.Redeem,
                     onClick = onClickDonation,
                 )

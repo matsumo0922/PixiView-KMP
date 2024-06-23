@@ -27,7 +27,6 @@ kmpSwiftKlib = "0.5.1"
 kmpLifecycle = "2.8.0"
 kmpNavigation = "2.8.0-alpha02"
 kmpPaging = "3.3.0-alpha02-0.4.0"
-mokoResource = "0.23.0"
 mokoPermissions = "0.17.0"
 mokoBiometry = "0.4.0"
 calf = "0.3.1"
@@ -101,7 +100,6 @@ android-gradlePlugin = { group = "com.android.tools.build", name = "gradle", ver
 kotlin-gradlePlugin = { group = "org.jetbrains.kotlin", name = "kotlin-gradle-plugin", version.ref = "kotlin" }
 gms-services = { group = "com.google.gms", name = "google-services", version.ref = "gms" }
 gms-oss = { group = "com.google.android.gms", name = "oss-licenses-plugin", version = "0.10.6" }
-moko-resources-gradlePlugin = { group = "dev.icerock.moko", name = "resources-generator", version.ref = "mokoResource" }
 build-konfig-gradlePlugin = { group = "com.codingfeline.buildkonfig", name = "buildkonfig-gradle-plugin", version.ref = "buildKonfig" }
 secret-gradlePlugin = { group = "com.google.android.libraries.mapsplatform.secrets-gradle-plugin", name = "secrets-gradle-plugin", version = "2.0.1" }
 detekt-gradlePlugin = { group = "io.gitlab.arturbosch.detekt", name = "detekt-gradle-plugin", version.ref = "detekt" }
@@ -150,8 +148,6 @@ billing = { module = "com.android.billingclient:billing", version.ref = "billing
 billing-ktx = { module = "com.android.billingclient:billing-ktx", version.ref = "billing" }
 
 # MOKO
-moko-resources = { module = "dev.icerock.moko:resources", version.ref = "mokoResource" }
-moko-resources-compose = { module = "dev.icerock.moko:resources-compose", version.ref = "mokoResource" }
 moko-permissions = { module = "dev.icerock.moko:permissions", version.ref = "mokoPermissions" }
 moko-permissions-compose = { module = "dev.icerock.moko:permissions-compose", version.ref = "mokoPermissions" }
 moko-biometry = { module = "dev.icerock.moko:biometry", version.ref = "mokoBiometry" }
@@ -263,11 +259,6 @@ ui-common-api = [
     "coil3-network",
     "coil3-gif",
     "window-size",
-]
-
-resources = [
-    "moko-resources",
-    "moko-resources-compose",
 ]
 
 billing = [

@@ -2,7 +2,7 @@ package me.matsumo.fanbox.core.ui.extensition
 
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.runtime.staticCompositionLocalOf
-import dev.icerock.moko.resources.StringResource
+import org.jetbrains.compose.resources.StringResource
 
 val LocalSnackbarHostState = staticCompositionLocalOf { SnackbarHostState() }
 

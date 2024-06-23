@@ -22,7 +22,10 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import me.matsumo.fanbox.core.model.ThemeColorConfig
 import me.matsumo.fanbox.core.model.ThemeConfig
-import me.matsumo.fanbox.core.ui.MR
+import me.matsumo.fanbox.core.ui.Res
+import me.matsumo.fanbox.core.ui.component.SettingTextItem
+import me.matsumo.fanbox.core.ui.setting_theme_color
+import me.matsumo.fanbox.core.ui.setting_theme_color_description
 import me.matsumo.fanbox.core.ui.theme.DarkDefaultColorScheme
 import me.matsumo.fanbox.core.ui.theme.LightDefaultColorScheme
 import me.matsumo.fanbox.core.ui.theme.color.DarkBlueColorScheme
@@ -35,7 +38,6 @@ import me.matsumo.fanbox.core.ui.theme.color.LightBrownColorScheme
 import me.matsumo.fanbox.core.ui.theme.color.LightGreenColorScheme
 import me.matsumo.fanbox.core.ui.theme.color.LightPinckColorScheme
 import me.matsumo.fanbox.core.ui.theme.color.LightPurpleColorScheme
-import me.matsumo.fanbox.core.ui.component.SettingTextItem
 
 @Composable
 internal fun SettingThemeColorSection(
@@ -54,8 +56,8 @@ internal fun SettingThemeColorSection(
     Column(modifier) {
         SettingTextItem(
             modifier = Modifier.fillMaxWidth(),
-            title = MR.strings.setting_theme_color,
-            description = MR.strings.setting_theme_color_description,
+            title = Res.string.setting_theme_color,
+            description = Res.string.setting_theme_color_description,
             onClick = { /* do nothing */ },
             isEnabled = !isUseDynamicColor,
         )

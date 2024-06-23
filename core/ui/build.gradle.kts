@@ -4,7 +4,6 @@ plugins {
     id("pixiview.primitive.kmp.android.compose")
     id("pixiview.primitive.kmp.android")
     id("pixiview.primitive.kmp.ios")
-    id("pixiview.primitive.kmp.resources")
     id("pixiview.primitive.detekt")
 }
 
@@ -12,16 +11,15 @@ android {
     namespace = "me.matsumo.fanbox.core.ui"
 }
 
-multiplatformResources {
-    multiplatformResourcesPackage = "me.matsumo.fanbox.core.ui"
-    iosBaseLocalizationRegion = "Base"
+compose.resources {
+    publicResClass = true
+    packageOfResClass = "me.matsumo.fanbox.core.ui"
+    generateResClass = always
 }
 
 kotlin {
     sourceSets {
         val commonMain by getting {
-            resources.srcDir("src/commonMain/resources")
-
             dependencies {
                 implementation(project(":core:model"))
                 implementation(project(":core:common"))
@@ -43,10 +41,6 @@ kotlin {
                 api(compose.ui)
                 api(compose.materialIconsExtended)
                 api(compose.components.resources)
-
-                // Resources
-                api(libs.moko.resources)
-                api(libs.moko.resources.compose)
 
                 api(libs.calf.ui)
                 api(libs.placeholder)

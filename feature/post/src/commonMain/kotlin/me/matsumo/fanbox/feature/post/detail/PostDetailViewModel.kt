@@ -3,7 +3,6 @@ package me.matsumo.fanbox.feature.post.detail
 import androidx.compose.runtime.Stable
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import dev.icerock.moko.resources.StringResource
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.collectLatest
@@ -22,8 +21,14 @@ import me.matsumo.fanbox.core.model.fanbox.id.PostId
 import me.matsumo.fanbox.core.model.updateWhenIdle
 import me.matsumo.fanbox.core.repository.FanboxRepository
 import me.matsumo.fanbox.core.repository.UserDataRepository
-import me.matsumo.fanbox.core.ui.MR
+import me.matsumo.fanbox.core.ui.Res
+import me.matsumo.fanbox.core.ui.error_network
 import me.matsumo.fanbox.core.ui.extensition.ImageDownloader
+import me.matsumo.fanbox.core.ui.post_detail_comment_comment_failed
+import me.matsumo.fanbox.core.ui.post_detail_comment_commented
+import me.matsumo.fanbox.core.ui.post_detail_comment_delete_failed
+import me.matsumo.fanbox.core.ui.post_detail_comment_delete_success
+import org.jetbrains.compose.resources.StringResource
 
 class PostDetailViewModel(
     private val userDataRepository: UserDataRepository,
@@ -66,7 +71,7 @@ class PostDetailViewModel(
                 )
             }.fold(
                 onSuccess = { ScreenState.Idle(it) },
-                onFailure = { ScreenState.Error(MR.strings.error_network) },
+                onFailure = { ScreenState.Error(Res.string.error_network) },
             )
         }
 
@@ -135,14 +140,14 @@ class PostDetailViewModel(
                         ScreenState.Idle(
                             data.data.copy(
                                 postDetail = it,
-                                messageToast = MR.strings.post_detail_comment_commented,
+                                messageToast = Res.string.post_detail_comment_commented,
                             ),
                         )
                     },
                     onFailure = {
                         ScreenState.Idle(
                             data.data.copy(
-                                messageToast = MR.strings.post_detail_comment_comment_failed,
+                                messageToast = Res.string.post_detail_comment_comment_failed,
                             ),
                         )
                     },
@@ -162,14 +167,14 @@ class PostDetailViewModel(
                         ScreenState.Idle(
                             data.data.copy(
                                 postDetail = it,
-                                messageToast = MR.strings.post_detail_comment_delete_success,
+                                messageToast = Res.string.post_detail_comment_delete_success,
                             ),
                         )
                     },
                     onFailure = {
                         ScreenState.Idle(
                             data.data.copy(
-                                messageToast = MR.strings.post_detail_comment_delete_failed,
+                                messageToast = Res.string.post_detail_comment_delete_failed,
                             ),
                         )
                     },

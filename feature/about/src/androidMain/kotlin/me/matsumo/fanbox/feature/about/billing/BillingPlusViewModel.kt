@@ -20,7 +20,9 @@ import me.matsumo.fanbox.core.billing.usecase.PurchasePlusSubscriptionUseCase
 import me.matsumo.fanbox.core.billing.usecase.VerifyPlusUseCase
 import me.matsumo.fanbox.core.model.ScreenState
 import me.matsumo.fanbox.core.repository.UserDataRepository
-import me.matsumo.fanbox.core.ui.MR
+import me.matsumo.fanbox.core.ui.Res
+import me.matsumo.fanbox.core.ui.common_close
+import me.matsumo.fanbox.core.ui.error_billing
 import java.text.NumberFormat
 import java.util.Locale
 
@@ -78,8 +80,8 @@ class BillingPlusViewModelImpl(
                 onFailure = {
                     Napier.w(it) { "BillingPlusViewModelImpl" }
                     ScreenState.Error(
-                        message = MR.strings.error_billing,
-                        retryTitle = MR.strings.common_close,
+                        message = Res.string.error_billing,
+                        retryTitle = Res.string.common_close,
                     )
                 },
             )

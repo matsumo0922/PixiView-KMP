@@ -22,7 +22,6 @@ import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import dev.icerock.moko.biometry.compose.BindBiometryAuthenticatorEffect
 import dev.icerock.moko.biometry.compose.rememberBiometryAuthenticatorFactory
-import dev.icerock.moko.resources.compose.stringResource
 import io.github.alexzhirkevich.cupertino.adaptive.AdaptiveScaffold
 import io.github.alexzhirkevich.cupertino.adaptive.ExperimentalAdaptiveApi
 import kotlinx.coroutines.launch
@@ -32,11 +31,15 @@ import me.matsumo.fanbox.core.logs.logger.send
 import me.matsumo.fanbox.core.model.UserData
 import me.matsumo.fanbox.core.model.fanbox.FanboxMetaData
 import me.matsumo.fanbox.core.ui.AsyncLoadContents
-import me.matsumo.fanbox.core.ui.MR
+import me.matsumo.fanbox.core.ui.Res
 import me.matsumo.fanbox.core.ui.appName
+import me.matsumo.fanbox.core.ui.billing_plus_toast_require_plus
 import me.matsumo.fanbox.core.ui.extensition.LocalSnackbarHostState
 import me.matsumo.fanbox.core.ui.extensition.NavigatorExtension
 import me.matsumo.fanbox.core.ui.extensition.ToastExtension
+import me.matsumo.fanbox.core.ui.setting_title
+import me.matsumo.fanbox.core.ui.setting_top_others_logout_dialog_failed
+import me.matsumo.fanbox.core.ui.setting_top_others_logout_dialog_success
 import me.matsumo.fanbox.core.ui.view.SimpleAlertContents
 import me.matsumo.fanbox.feature.setting.SettingTheme
 import me.matsumo.fanbox.feature.setting.top.items.SettingTopAccountSection
@@ -44,6 +47,7 @@ import me.matsumo.fanbox.feature.setting.top.items.SettingTopGeneralSection
 import me.matsumo.fanbox.feature.setting.top.items.SettingTopInformationSection
 import me.matsumo.fanbox.feature.setting.top.items.SettingTopOthersSection
 import me.matsumo.fanbox.feature.setting.top.items.SettingTopThemeSection
+import org.jetbrains.compose.resources.stringResource
 import org.koin.compose.koinInject
 import org.koin.compose.viewmodel.koinViewModel
 
@@ -67,7 +71,7 @@ internal fun SettingTopRoute(
 
     val screenState by viewModel.screenState.collectAsStateWithLifecycle()
     val snackbarHostState = LocalSnackbarHostState.current
-    val requirePlus = stringResource(MR.strings.billing_plus_toast_require_plus, appName)
+    val requirePlus = stringResource(Res.string.billing_plus_toast_require_plus, appName)
 
     AsyncLoadContents(
         modifier = modifier,
@@ -134,11 +138,11 @@ internal fun SettingTopRoute(
                         viewModel.logout().fold(
                             onSuccess = {
                                 WelcomeLog.loggedOut().send()
-                                scope.launch { toastExtension.show(snackbarHostState, MR.strings.setting_top_others_logout_dialog_success) }
+                                scope.launch { toastExtension.show(snackbarHostState, Res.string.setting_top_others_logout_dialog_success) }
                                 terminate.invoke()
                             },
                             onFailure = {
-                                scope.launch { toastExtension.show(snackbarHostState, MR.strings.setting_top_others_logout_dialog_failed) }
+                                scope.launch { toastExtension.show(snackbarHostState, Res.string.setting_top_others_logout_dialog_failed) }
                             },
                         )
                     }
@@ -194,7 +198,7 @@ private fun SettingTopScreen(
                     modifier = Modifier.fillMaxWidth(),
                     title = {
                         Text(
-                            text = stringResource(MR.strings.setting_title),
+                            text = stringResource(Res.string.setting_title),
                         )
                     },
                     navigationIcon = {

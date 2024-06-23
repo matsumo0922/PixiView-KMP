@@ -48,7 +48,6 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.window.DialogProperties
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import dev.icerock.moko.resources.compose.stringResource
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import me.matsumo.fanbox.core.common.util.format
@@ -56,12 +55,18 @@ import me.matsumo.fanbox.core.model.ScreenState
 import me.matsumo.fanbox.core.model.fanbox.FanboxCreatorDetail
 import me.matsumo.fanbox.core.model.fanbox.id.CreatorId
 import me.matsumo.fanbox.core.ui.AsyncLoadContents
-import me.matsumo.fanbox.core.ui.MR
+import me.matsumo.fanbox.core.ui.Res
+import me.matsumo.fanbox.core.ui.common_completed
 import me.matsumo.fanbox.core.ui.component.PixiViewTopBar
+import me.matsumo.fanbox.core.ui.creator_posts_download_button
+import me.matsumo.fanbox.core.ui.creator_posts_download_button_downloading
+import me.matsumo.fanbox.core.ui.creator_posts_download_dialog_title
+import me.matsumo.fanbox.core.ui.creator_posts_download_title
 import me.matsumo.fanbox.core.ui.view.SimpleAlertContents
 import me.matsumo.fanbox.feature.creator.download.items.CreatorPostsDownloadItem
 import me.matsumo.fanbox.feature.creator.download.items.CreatorPostsDownloadSettingsSection
 import me.matsumo.fanbox.feature.creator.download.items.CreatorPostsDownloadUserSection
+import org.jetbrains.compose.resources.stringResource
 import org.koin.compose.viewmodel.koinViewModel
 
 @Composable
@@ -180,7 +185,7 @@ private fun CreatorPostsDownloadScreen(
         topBar = {
             PixiViewTopBar(
                 modifier = Modifier.fillMaxWidth(),
-                title = stringResource(MR.strings.creator_posts_download_title),
+                title = stringResource(Res.string.creator_posts_download_title),
                 onClickNavigation = terminate,
                 scrollBehavior = scrollBehavior,
             )
@@ -206,9 +211,9 @@ private fun CreatorPostsDownloadScreen(
                 Text(
                     modifier = Modifier.padding(start = 8.dp),
                     text =  when {
-                        isCompleted -> stringResource(MR.strings.common_completed)
-                        targetIndex == -1 -> stringResource(MR.strings.creator_posts_download_button, posts.size)
-                        else -> stringResource(MR.strings.creator_posts_download_button_downloading, targetIndex, posts.size)
+                        isCompleted -> stringResource(Res.string.common_completed)
+                        targetIndex == -1 -> stringResource(Res.string.creator_posts_download_button, posts.size)
+                        else -> stringResource(Res.string.creator_posts_download_button_downloading, targetIndex, posts.size)
                     },
                 )
             }
@@ -292,7 +297,7 @@ private fun LoadingDialog(progress: Float) {
             ) {
                 Text(
                     modifier = Modifier.weight(1f),
-                    text = stringResource(MR.strings.creator_posts_download_dialog_title),
+                    text = stringResource(Res.string.creator_posts_download_dialog_title),
                     style = MaterialTheme.typography.bodyMedium,
                     color = MaterialTheme.colorScheme.onSurface,
                 )

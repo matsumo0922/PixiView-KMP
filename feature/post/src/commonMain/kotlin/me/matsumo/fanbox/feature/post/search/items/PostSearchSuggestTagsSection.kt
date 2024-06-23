@@ -26,11 +26,13 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.unit.dp
-import dev.icerock.moko.resources.compose.stringResource
 import kotlinx.collections.immutable.ImmutableList
 import me.matsumo.fanbox.core.model.FanboxTag
-import me.matsumo.fanbox.core.ui.MR
+import me.matsumo.fanbox.core.ui.Res
+import me.matsumo.fanbox.core.ui.common_see_more
 import me.matsumo.fanbox.core.ui.theme.bold
+import me.matsumo.fanbox.core.ui.unit_tag
+import org.jetbrains.compose.resources.stringResource
 
 @Composable
 internal fun PostSearchSuggestTagsSection(
@@ -69,7 +71,7 @@ internal fun PostSearchSuggestTagsSection(
 
                     Text(
                         modifier = Modifier.padding(start = 8.dp),
-                        text = stringResource(MR.strings.common_see_more),
+                        text = stringResource(Res.string.common_see_more),
                         style = MaterialTheme.typography.bodyMedium,
                         color = MaterialTheme.colorScheme.onPrimary,
                     )
@@ -110,7 +112,7 @@ private fun TagItem(
             ) {
                 Text(
                     modifier = Modifier.padding(6.dp, 4.dp),
-                    text = stringResource(MR.strings.unit_tag, tag.count),
+                    text = stringResource(Res.string.unit_tag, tag.count),
                     style = MaterialTheme.typography.bodySmall,
                     color = MaterialTheme.colorScheme.onSurfaceVariant,
                 )

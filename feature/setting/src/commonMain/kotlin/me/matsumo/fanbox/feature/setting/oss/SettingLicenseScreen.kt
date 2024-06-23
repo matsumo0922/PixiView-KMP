@@ -16,21 +16,26 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.material3.rememberTopAppBarState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.unit.dp
 import com.mikepenz.aboutlibraries.ui.compose.LibrariesContainer
 import com.mikepenz.aboutlibraries.ui.compose.LibraryDefaults
-import dev.icerock.moko.resources.compose.readTextAsState
-import dev.icerock.moko.resources.compose.stringResource
 import io.github.alexzhirkevich.cupertino.adaptive.AdaptiveScaffold
 import io.github.alexzhirkevich.cupertino.adaptive.ExperimentalAdaptiveApi
-import me.matsumo.fanbox.core.ui.MR
+import me.matsumo.fanbox.core.ui.Res
+import me.matsumo.fanbox.core.ui.setting_top_others_open_source_license
 import me.matsumo.fanbox.feature.setting.SettingTheme
+import org.jetbrains.compose.resources.ExperimentalResourceApi
+import org.jetbrains.compose.resources.stringResource
 
-@OptIn(ExperimentalMaterial3Api::class, ExperimentalAdaptiveApi::class)
+@OptIn(ExperimentalMaterial3Api::class, ExperimentalAdaptiveApi::class, ExperimentalResourceApi::class)
 @Composable
 internal fun SettingLicenseScreen(
     terminate: () -> Unit,
@@ -38,7 +43,11 @@ internal fun SettingLicenseScreen(
 ) {
     val state = rememberTopAppBarState()
     val behavior = TopAppBarDefaults.exitUntilCollapsedScrollBehavior(state)
-    val libs by MR.files.aboutlibraries.readTextAsState()
+    var libs by remember { mutableStateOf("") }
+
+    LaunchedEffect(true) {
+        libs = Res.readBytes("files/aboutlibraries.json").decodeToString()
+    }
 
     AdaptiveScaffold(
         modifier = modifier.nestedScroll(behavior.nestedScrollConnection),
@@ -48,7 +57,7 @@ internal fun SettingLicenseScreen(
                     modifier = Modifier.fillMaxWidth(),
                     title = {
                         Text(
-                            text = stringResource(MR.strings.setting_top_others_open_source_license),
+                            text = stringResource(Res.string.setting_top_others_open_source_license),
                         )
                     },
                     navigationIcon = {
@@ -69,10 +78,10 @@ internal fun SettingLicenseScreen(
         },
     ) { paddingValues ->
 
-        // ./gradlew exportLibraryDefinitions -PaboutLibraries.exportPath=../core/ui/src/commonMain/resources/MR/files
+        // ./gradlew exportLibraryDefinitions -PaboutLibraries.exportPath=../core/ui/src/commonMain/composeResources/files
         LibrariesContainer(
             modifier = Modifier.fillMaxSize(),
-            aboutLibsJson = libs.orEmpty(),
+            aboutLibsJson = libs,
             contentPadding = paddingValues,
             colors = LibraryDefaults.libraryColors(
                 backgroundColor = MaterialTheme.colorScheme.surface,

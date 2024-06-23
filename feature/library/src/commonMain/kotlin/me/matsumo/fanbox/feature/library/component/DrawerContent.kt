@@ -54,15 +54,28 @@ import coil3.annotation.ExperimentalCoilApi
 import coil3.compose.LocalPlatformContext
 import coil3.compose.SubcomposeAsyncImage
 import coil3.request.ImageRequest
-import dev.icerock.moko.resources.compose.stringResource
 import kotlinx.coroutines.launch
 import me.matsumo.fanbox.core.model.UserData
-import me.matsumo.fanbox.core.ui.MR
+import me.matsumo.fanbox.core.ui.Res
 import me.matsumo.fanbox.core.ui.appName
 import me.matsumo.fanbox.core.ui.extensition.FadePlaceHolder
 import me.matsumo.fanbox.core.ui.extensition.LocalFanboxMetadata
 import me.matsumo.fanbox.core.ui.extensition.asCoilImage
+import me.matsumo.fanbox.core.ui.im_default_user
+import me.matsumo.fanbox.core.ui.library_navigation_about
+import me.matsumo.fanbox.core.ui.library_navigation_bookmark
+import me.matsumo.fanbox.core.ui.library_navigation_discovery
+import me.matsumo.fanbox.core.ui.library_navigation_following
+import me.matsumo.fanbox.core.ui.library_navigation_home
+import me.matsumo.fanbox.core.ui.library_navigation_message
+import me.matsumo.fanbox.core.ui.library_navigation_notify
+import me.matsumo.fanbox.core.ui.library_navigation_payments
+import me.matsumo.fanbox.core.ui.library_navigation_plus_description
+import me.matsumo.fanbox.core.ui.library_navigation_plus_purchased_description
+import me.matsumo.fanbox.core.ui.library_navigation_setting
+import me.matsumo.fanbox.core.ui.library_navigation_supporting
 import me.matsumo.fanbox.core.ui.theme.bold
+import org.jetbrains.compose.resources.stringResource
 
 @Composable
 fun DrawerContent(
@@ -96,7 +109,7 @@ fun DrawerContent(
             modifier = Modifier.padding(top = 8.dp),
             state = state,
             isSelected = currentDestination.isLibraryDestinationInHierarchy(LibraryDestination.Home),
-            label = stringResource(MR.strings.library_navigation_home),
+            label = stringResource(Res.string.library_navigation_home),
             icon = Icons.Outlined.Home,
             selectedIcon = Icons.Default.Home,
             onClick = { onClickLibrary.invoke(LibraryDestination.Home) },
@@ -105,7 +118,7 @@ fun DrawerContent(
         NavigationDrawerItem(
             state = state,
             isSelected = currentDestination.isLibraryDestinationInHierarchy(LibraryDestination.Discovery),
-            label = stringResource(MR.strings.library_navigation_discovery),
+            label = stringResource(Res.string.library_navigation_discovery),
             icon = Icons.Outlined.Search,
             selectedIcon = Icons.Default.Search,
             onClick = { onClickLibrary.invoke(LibraryDestination.Discovery) },
@@ -114,7 +127,7 @@ fun DrawerContent(
         NavigationDrawerItem(
             state = state,
             isSelected = currentDestination.isLibraryDestinationInHierarchy(LibraryDestination.Notify),
-            label = stringResource(MR.strings.library_navigation_notify),
+            label = stringResource(Res.string.library_navigation_notify),
             icon = Icons.Outlined.Notifications,
             selectedIcon = Icons.Default.Notifications,
             onClick = { onClickLibrary.invoke(LibraryDestination.Notify) },
@@ -123,7 +136,7 @@ fun DrawerContent(
         NavigationDrawerItem(
             state = state,
             isSelected = currentDestination.isLibraryDestinationInHierarchy(LibraryDestination.Message),
-            label = stringResource(MR.strings.library_navigation_message),
+            label = stringResource(Res.string.library_navigation_message),
             icon = Icons.Outlined.Mail,
             selectedIcon = Icons.Default.Mail,
             onClick = { onClickLibrary.invoke(LibraryDestination.Message) },
@@ -137,28 +150,28 @@ fun DrawerContent(
 
         NavigationDrawerItem(
             state = state,
-            label = stringResource(MR.strings.library_navigation_bookmark),
+            label = stringResource(Res.string.library_navigation_bookmark),
             icon = Icons.Outlined.Bookmark,
             onClick = navigateToBookmarkedPosts,
         )
 
         NavigationDrawerItem(
             state = state,
-            label = stringResource(MR.strings.library_navigation_following),
+            label = stringResource(Res.string.library_navigation_following),
             icon = Icons.Outlined.PersonAdd,
             onClick = navigateToFollowingCreators,
         )
 
         NavigationDrawerItem(
             state = state,
-            label = stringResource(MR.strings.library_navigation_supporting),
+            label = stringResource(Res.string.library_navigation_supporting),
             icon = Icons.Outlined.Group,
             onClick = navigateToSupportingCreators,
         )
 
         NavigationDrawerItem(
             state = state,
-            label = stringResource(MR.strings.library_navigation_payments),
+            label = stringResource(Res.string.library_navigation_payments),
             icon = Icons.Outlined.Payment,
             onClick = navigateToPayments,
         )
@@ -171,14 +184,14 @@ fun DrawerContent(
 
         NavigationDrawerItem(
             state = state,
-            label = stringResource(MR.strings.library_navigation_setting),
+            label = stringResource(Res.string.library_navigation_setting),
             icon = Icons.Default.Settings,
             onClick = navigateToSetting,
         )
 
         NavigationDrawerItem(
             state = state,
-            label = stringResource(MR.strings.library_navigation_about),
+            label = stringResource(Res.string.library_navigation_about),
             icon = Icons.Outlined.Info,
             onClick = navigateToAbout,
         )
@@ -215,7 +228,7 @@ private fun NavigationDrawerHeader(modifier: Modifier = Modifier) {
                 .size(40.dp)
                 .clip(CircleShape),
             model = ImageRequest.Builder(LocalPlatformContext.current)
-                .error(MR.images.im_default_user.asCoilImage())
+                .error(Res.drawable.im_default_user.asCoilImage())
                 .data(metadata.context.user.iconUrl)
                 .build(),
             loading = {
@@ -322,7 +335,7 @@ private fun NavigationDrawerPlusItem(
                 append("$appName+")
             }
         }
-        description = stringResource(MR.strings.library_navigation_plus_purchased_description, appName)
+        description = stringResource(Res.string.library_navigation_plus_purchased_description, appName)
     } else {
         title = buildAnnotatedString {
             append("Buy ")
@@ -330,7 +343,7 @@ private fun NavigationDrawerPlusItem(
                 append("Plus+")
             }
         }
-        description = stringResource(MR.strings.library_navigation_plus_description)
+        description = stringResource(Res.string.library_navigation_plus_description)
     }
 
     Row(

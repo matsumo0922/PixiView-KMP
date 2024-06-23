@@ -298,8 +298,6 @@
     <string name="billing_plus_cancel_message">Your %1$s+ plan was canceled, so returned to being a regular user. \n\nIf this is not what you intended, the payment may have failed. Please check the plan status from the Play Store.</string>
     <string name="billing_plus_purchase_title">Supported!!</string>
     <string name="billing_plus_purchase_message">Your purchase has been completed. \nThank you for your support!</string>
-    <string name="billing_plus_cancel_title">Cancellation of plan</string>
-    <string name="billing_plus_cancel_message">Your plan was canceled, so you returned to being a regular user. \n\nIf this is not what you intended, the payment may have failed. Please check the plan status from the store app.</string>
 
     <!-- Welcome -->
     <string name="welcome_description">This app is an unofficial client application for pixivFANBOX</string>

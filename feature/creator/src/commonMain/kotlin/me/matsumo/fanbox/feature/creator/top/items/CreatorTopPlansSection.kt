@@ -23,13 +23,14 @@ import androidx.compose.ui.unit.dp
 import coil3.compose.LocalPlatformContext
 import coil3.compose.SubcomposeAsyncImage
 import coil3.request.ImageRequest
-import dev.icerock.moko.resources.compose.stringResource
 import kotlinx.collections.immutable.ImmutableList
 import me.matsumo.fanbox.core.model.fanbox.FanboxCreatorPlan
-import me.matsumo.fanbox.core.ui.MR
+import me.matsumo.fanbox.core.ui.Res
 import me.matsumo.fanbox.core.ui.extensition.SimmerPlaceHolder
 import me.matsumo.fanbox.core.ui.extensition.fanboxHeader
 import me.matsumo.fanbox.core.ui.theme.bold
+import me.matsumo.fanbox.core.ui.unit_jpy
+import org.jetbrains.compose.resources.stringResource
 
 @Composable
 internal fun CreatorTopPlansSection(
@@ -94,7 +95,7 @@ internal fun CreatorTopPlansSection(
                         ) {
                             Text(
                                 modifier = Modifier.padding(6.dp, 4.dp),
-                                text = stringResource(MR.strings.unit_jpy, plan.fee),
+                                text = stringResource(Res.string.unit_jpy, plan.fee),
                                 style = MaterialTheme.typography.bodySmall,
                                 color = MaterialTheme.colorScheme.onSurfaceVariant,
                             )

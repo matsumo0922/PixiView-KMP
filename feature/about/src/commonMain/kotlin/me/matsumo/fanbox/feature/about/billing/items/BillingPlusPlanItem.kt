@@ -25,10 +25,14 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import dev.icerock.moko.resources.compose.stringResource
-import me.matsumo.fanbox.core.ui.MR
+import me.matsumo.fanbox.core.ui.Res
+import me.matsumo.fanbox.core.ui.billing_plus_plan_monthly
+import me.matsumo.fanbox.core.ui.billing_plus_plan_yearly
 import me.matsumo.fanbox.core.ui.theme.bold
+import me.matsumo.fanbox.core.ui.unit_month
+import me.matsumo.fanbox.core.ui.unit_year
 import me.matsumo.fanbox.feature.about.billing.BillingPlusUiState
+import org.jetbrains.compose.resources.stringResource
 
 @Composable
 internal fun BillingPlusPlanItem(
@@ -46,14 +50,14 @@ internal fun BillingPlusPlanItem(
 
     when (planType) {
         BillingPlusUiState.Type.MONTHLY -> {
-            planName = stringResource(MR.strings.billing_plus_plan_monthly)
-            price = "$formattedPrice / ${stringResource(MR.strings.unit_month)}"
+            planName = stringResource(Res.string.billing_plus_plan_monthly)
+            price = "$formattedPrice / ${stringResource(Res.string.unit_month)}"
             description = null
         }
         BillingPlusUiState.Type.YEARLY -> {
-            planName = stringResource(MR.strings.billing_plus_plan_yearly)
-            price = "$formattedPrice / ${stringResource(MR.strings.unit_year)}"
-            description = "($formattedAnnualMonthlyPrice / ${stringResource(MR.strings.unit_month)})"
+            planName = stringResource(Res.string.billing_plus_plan_yearly)
+            price = "$formattedPrice / ${stringResource(Res.string.unit_year)}"
+            description = "($formattedAnnualMonthlyPrice / ${stringResource(Res.string.unit_month)})"
         }
     }
 

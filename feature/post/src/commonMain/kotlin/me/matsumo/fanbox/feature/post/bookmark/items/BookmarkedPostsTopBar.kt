@@ -41,8 +41,9 @@ import androidx.compose.ui.graphics.lerp
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.unit.dp
-import dev.icerock.moko.resources.compose.stringResource
-import me.matsumo.fanbox.core.ui.MR
+import me.matsumo.fanbox.core.ui.Res
+import me.matsumo.fanbox.core.ui.bookmark_search_placeholder
+import org.jetbrains.compose.resources.stringResource
 
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalComposeUiApi::class)
 @Composable
@@ -103,7 +104,7 @@ internal fun BookmarkedPostsTopBar(
                             Box(Modifier.weight(1f)) {
                                 if (query.isEmpty()) {
                                     Text(
-                                        text = stringResource(MR.strings.bookmark_search_placeholder),
+                                        text = stringResource(Res.string.bookmark_search_placeholder),
                                         style = MaterialTheme.typography.bodyLarge,
                                         color = MaterialTheme.colorScheme.onSurfaceVariant,
                                     )

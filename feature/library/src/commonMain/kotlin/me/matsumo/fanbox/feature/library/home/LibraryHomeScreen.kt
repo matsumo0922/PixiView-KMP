@@ -2,7 +2,6 @@ package me.matsumo.fanbox.feature.library.home
 
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
@@ -29,21 +28,25 @@ import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.text.font.FontWeight
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import app.cash.paging.compose.collectAsLazyPagingItems
-import dev.icerock.moko.resources.StringResource
-import dev.icerock.moko.resources.compose.stringResource
 import kotlinx.collections.immutable.toImmutableList
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 import me.matsumo.fanbox.core.model.fanbox.id.CreatorId
 import me.matsumo.fanbox.core.model.fanbox.id.PostId
 import me.matsumo.fanbox.core.ui.LazyPagingItemsLoadContents
-import me.matsumo.fanbox.core.ui.MR
+import me.matsumo.fanbox.core.ui.Res
 import me.matsumo.fanbox.core.ui.appName
+import me.matsumo.fanbox.core.ui.error_no_data_following
+import me.matsumo.fanbox.core.ui.error_no_data_supported
 import me.matsumo.fanbox.core.ui.extensition.LocalNavigationType
 import me.matsumo.fanbox.core.ui.extensition.PixiViewNavigationType
+import me.matsumo.fanbox.core.ui.home_tab_home
+import me.matsumo.fanbox.core.ui.home_tab_supported
 import me.matsumo.fanbox.core.ui.view.SimpleAlertContents
 import me.matsumo.fanbox.feature.library.home.items.LibraryHomeIdleSection
 import me.matsumo.fanbox.feature.library.home.items.LibrarySupportedIdleSection
+import org.jetbrains.compose.resources.StringResource
+import org.jetbrains.compose.resources.stringResource
 import org.koin.compose.viewmodel.koinViewModel
 
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalFoundationApi::class)
@@ -129,7 +132,7 @@ internal fun LibraryHomeScreen(
                         LazyPagingItemsLoadContents(
                             modifier = Modifier.fillMaxSize(),
                             lazyPagingItems = homePager,
-                            emptyMessageRes = MR.strings.error_no_data_following,
+                            emptyMessageRes = Res.string.error_no_data_following,
                         ) {
                             LibraryHomeIdleSection(
                                 modifier = Modifier.fillMaxSize(),
@@ -148,7 +151,7 @@ internal fun LibraryHomeScreen(
                         LazyPagingItemsLoadContents(
                             modifier = Modifier.fillMaxSize(),
                             lazyPagingItems = supportedPager,
-                            emptyMessageRes = MR.strings.error_no_data_supported,
+                            emptyMessageRes = Res.string.error_no_data_supported,
                         ) {
                             LibrarySupportedIdleSection(
                                 modifier = Modifier.fillMaxSize(),
@@ -191,6 +194,6 @@ private fun HomeTab(
 }
 
 private enum class HomeTabs(val titleRes: StringResource) {
-    Home(MR.strings.home_tab_home),
-    Supported(MR.strings.home_tab_supported),
+    Home(Res.string.home_tab_home),
+    Supported(Res.string.home_tab_supported),
 }

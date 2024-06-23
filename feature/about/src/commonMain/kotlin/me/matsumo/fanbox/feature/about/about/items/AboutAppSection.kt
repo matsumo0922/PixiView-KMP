@@ -20,18 +20,18 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.unit.dp
-import dev.icerock.moko.resources.compose.painterResource
-import dev.icerock.moko.resources.compose.stringResource
 import me.matsumo.fanbox.core.common.PixiViewConfig
 import me.matsumo.fanbox.core.model.UserData
-import me.matsumo.fanbox.core.ui.MR
+import me.matsumo.fanbox.core.ui.Res
 import me.matsumo.fanbox.core.ui.appName
 import me.matsumo.fanbox.core.ui.extensition.Platform
 import me.matsumo.fanbox.core.ui.extensition.currentPlatform
+import me.matsumo.fanbox.core.ui.ic_app_icon
 import me.matsumo.fanbox.core.ui.icon.Apple
 import me.matsumo.fanbox.core.ui.icon.Discord
 import me.matsumo.fanbox.core.ui.icon.GitHub
 import me.matsumo.fanbox.core.ui.icon.GooglePlay
+import org.jetbrains.compose.resources.painterResource
 
 @Composable
 internal fun AboutAppSection(
@@ -59,7 +59,7 @@ internal fun AboutAppSection(
                     modifier = Modifier
                         .size(104.dp)
                         .clip(RoundedCornerShape(12.dp)),
-                    painter = painterResource(MR.images.ic_app_icon),
+                    painter = painterResource(Res.drawable.ic_app_icon),
                     contentDescription = null,
                 )
 

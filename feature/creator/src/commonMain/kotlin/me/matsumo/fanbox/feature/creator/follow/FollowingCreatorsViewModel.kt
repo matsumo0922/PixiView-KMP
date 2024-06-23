@@ -10,7 +10,8 @@ import me.matsumo.fanbox.core.common.util.suspendRunCatching
 import me.matsumo.fanbox.core.model.ScreenState
 import me.matsumo.fanbox.core.model.fanbox.FanboxCreatorDetail
 import me.matsumo.fanbox.core.repository.FanboxRepository
-import me.matsumo.fanbox.core.ui.MR
+import me.matsumo.fanbox.core.ui.Res
+import me.matsumo.fanbox.core.ui.error_network
 
 class FollowingCreatorsViewModel(
     private val fanboxRepository: FanboxRepository,
@@ -33,7 +34,7 @@ class FollowingCreatorsViewModel(
                 )
             }.fold(
                 onSuccess = { ScreenState.Idle(it) },
-                onFailure = { ScreenState.Error(MR.strings.error_network) },
+                onFailure = { ScreenState.Error(Res.string.error_network) },
             )
         }
     }

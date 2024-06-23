@@ -15,12 +15,13 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import dev.icerock.moko.resources.compose.stringResource
 import me.matsumo.fanbox.core.common.util.toFileSizeString
 import me.matsumo.fanbox.core.model.fanbox.FanboxPostDetail
-import me.matsumo.fanbox.core.ui.MR
+import me.matsumo.fanbox.core.ui.Res
+import me.matsumo.fanbox.core.ui.common_download
 import me.matsumo.fanbox.core.ui.theme.bold
 import me.matsumo.fanbox.core.ui.theme.center
+import org.jetbrains.compose.resources.stringResource
 
 @Composable
 internal fun PostDetailFileItem(
@@ -56,7 +57,7 @@ internal fun PostDetailFileItem(
             )
 
             Button(onClick = { onClickDownload.invoke(item) }) {
-                Text("${stringResource(MR.strings.common_download)} (${item.size.toFloat().toFileSizeString()})")
+                Text("${stringResource(Res.string.common_download)} (${item.size.toFloat().toFileSizeString()})")
             }
         }
     }

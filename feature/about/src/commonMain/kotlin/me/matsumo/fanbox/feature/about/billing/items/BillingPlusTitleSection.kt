@@ -5,7 +5,6 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyListScope
-import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Close
 import androidx.compose.material3.Icon
@@ -18,12 +17,13 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.dp
-import dev.icerock.moko.resources.compose.stringResource
-import me.matsumo.fanbox.core.ui.MR
+import me.matsumo.fanbox.core.ui.Res
 import me.matsumo.fanbox.core.ui.appName
+import me.matsumo.fanbox.core.ui.billing_plus_description
 import me.matsumo.fanbox.core.ui.extensition.Platform
 import me.matsumo.fanbox.core.ui.extensition.currentPlatform
 import me.matsumo.fanbox.core.ui.theme.bold
+import org.jetbrains.compose.resources.stringResource
 
 internal fun LazyListScope.billingPlusTitleSection(
     onTerminate: () -> Unit,
@@ -40,7 +40,7 @@ internal fun LazyListScope.billingPlusTitleSection(
             modifier = Modifier
                 .padding(vertical = 16.dp)
                 .fillMaxWidth(),
-            text = stringResource(MR.strings.billing_plus_description, appName),
+            text = stringResource(Res.string.billing_plus_description, appName),
             style = MaterialTheme.typography.bodyMedium,
         )
     }

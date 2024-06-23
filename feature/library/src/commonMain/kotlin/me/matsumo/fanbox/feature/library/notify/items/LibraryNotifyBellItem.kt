@@ -29,15 +29,23 @@ import coil3.compose.AsyncImage
 import coil3.compose.LocalPlatformContext
 import coil3.compose.SubcomposeAsyncImage
 import coil3.request.ImageRequest
-import dev.icerock.moko.resources.compose.stringResource
 import kotlinx.datetime.Clock
 import kotlinx.datetime.Instant
 import me.matsumo.fanbox.core.model.fanbox.FanboxBell
 import me.matsumo.fanbox.core.model.fanbox.id.PostId
-import me.matsumo.fanbox.core.ui.MR
+import me.matsumo.fanbox.core.ui.Res
 import me.matsumo.fanbox.core.ui.extensition.FadePlaceHolder
 import me.matsumo.fanbox.core.ui.extensition.asCoilImage
 import me.matsumo.fanbox.core.ui.extensition.fanboxHeader
+import me.matsumo.fanbox.core.ui.im_default_user
+import me.matsumo.fanbox.core.ui.notify_title_comment
+import me.matsumo.fanbox.core.ui.notify_title_like
+import me.matsumo.fanbox.core.ui.notify_title_post_published
+import me.matsumo.fanbox.core.ui.unit_day_before
+import me.matsumo.fanbox.core.ui.unit_hour_before
+import me.matsumo.fanbox.core.ui.unit_minute_before
+import me.matsumo.fanbox.core.ui.unit_second_before
+import org.jetbrains.compose.resources.stringResource
 
 @Composable
 internal fun LibraryNotifyBellItem(
@@ -70,6 +78,7 @@ internal fun LibraryNotifyBellItem(
     }
 }
 
+@OptIn(ExperimentalCoilApi::class)
 @Composable
 private fun PostPublishedItem(
     bell: FanboxBell.PostPublished,
@@ -90,7 +99,7 @@ private fun PostPublishedItem(
                 .clip(CircleShape)
                 .size(36.dp),
             model = ImageRequest.Builder(LocalPlatformContext.current)
-                .error(MR.images.im_default_user.asCoilImage())
+                .error(Res.drawable.im_default_user.asCoilImage())
                 .data(bell.post.user.iconUrl)
                 .build(),
             contentDescription = null,
@@ -106,7 +115,7 @@ private fun PostPublishedItem(
             ) {
                 Text(
                     modifier = Modifier.weight(1f),
-                    text = stringResource(MR.strings.notify_title_post_published, bell.post.title),
+                    text = stringResource(Res.string.notify_title_post_published, bell.post.title),
                     style = MaterialTheme.typography.bodyMedium,
                     color = MaterialTheme.colorScheme.onSurface,
                 )
@@ -178,7 +187,7 @@ private fun CommentItem(
                 .clip(CircleShape)
                 .size(36.dp),
             model = ImageRequest.Builder(LocalPlatformContext.current)
-                .error(MR.images.im_default_user.asCoilImage())
+                .error(Res.drawable.im_default_user.asCoilImage())
                 .data(bell.userProfileIconUrl)
                 .build(),
             contentDescription = null,
@@ -194,7 +203,7 @@ private fun CommentItem(
             ) {
                 Text(
                     modifier = Modifier.weight(1f),
-                    text = stringResource(MR.strings.notify_title_comment, bell.userName),
+                    text = stringResource(Res.string.notify_title_comment, bell.userName),
                     style = MaterialTheme.typography.bodyMedium,
                     color = MaterialTheme.colorScheme.onSurface,
                 )
@@ -247,7 +256,7 @@ private fun LikeItem(
             ) {
                 Text(
                     modifier = Modifier.weight(1f),
-                    text = stringResource(MR.strings.notify_title_like, bell.count),
+                    text = stringResource(Res.string.notify_title_like, bell.count),
                     style = MaterialTheme.typography.bodyMedium,
                     color = MaterialTheme.colorScheme.onSurface,
                 )
@@ -275,9 +284,9 @@ private fun Instant.toRelativeTimeString(): String {
     val duration = now - this
 
     return when {
-        duration.inWholeDays > 0 -> stringResource(MR.strings.unit_day_before, duration.inWholeDays)
-        duration.inWholeHours > 0 -> stringResource(MR.strings.unit_hour_before, duration.inWholeHours)
-        duration.inWholeMinutes > 0 -> stringResource(MR.strings.unit_minute_before, duration.inWholeMinutes)
-        else -> stringResource(MR.strings.unit_second_before, duration.inWholeSeconds)
+        duration.inWholeDays > 0 -> stringResource(Res.string.unit_day_before, duration.inWholeDays)
+        duration.inWholeHours > 0 -> stringResource(Res.string.unit_hour_before, duration.inWholeHours)
+        duration.inWholeMinutes > 0 -> stringResource(Res.string.unit_minute_before, duration.inWholeMinutes)
+        else -> stringResource(Res.string.unit_second_before, duration.inWholeSeconds)
     }
 }

@@ -36,17 +36,23 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.dp
-import dev.icerock.moko.resources.compose.painterResource
-import dev.icerock.moko.resources.compose.stringResource
 import kotlinx.coroutines.launch
-import me.matsumo.fanbox.core.ui.MR
+import me.matsumo.fanbox.core.ui.Res
 import me.matsumo.fanbox.core.ui.appName
 import me.matsumo.fanbox.core.ui.extensition.LocalNavigationType
 import me.matsumo.fanbox.core.ui.extensition.NavigatorExtension
 import me.matsumo.fanbox.core.ui.extensition.PixiViewNavigationType
+import me.matsumo.fanbox.core.ui.ic_app_icon
 import me.matsumo.fanbox.core.ui.theme.bold
 import me.matsumo.fanbox.core.ui.theme.center
+import me.matsumo.fanbox.core.ui.welcome_agree
+import me.matsumo.fanbox.core.ui.welcome_button_next
+import me.matsumo.fanbox.core.ui.welcome_description
+import me.matsumo.fanbox.core.ui.welcome_privacy_policy
+import me.matsumo.fanbox.core.ui.welcome_team_of_service
 import me.matsumo.fanbox.feature.welcome.WelcomeIndicatorItem
+import org.jetbrains.compose.resources.painterResource
+import org.jetbrains.compose.resources.stringResource
 import org.koin.compose.koinInject
 import org.koin.compose.viewmodel.koinViewModel
 
@@ -117,7 +123,7 @@ private fun FirstSection(
                 .aspectRatio(1f)
                 .fillMaxWidth()
                 .clip(RoundedCornerShape(16.dp)),
-            painter = painterResource(MR.images.ic_app_icon),
+            painter = painterResource(Res.drawable.ic_app_icon),
             contentDescription = null,
         )
     }
@@ -155,7 +161,7 @@ private fun SecondSection(
                 .padding(top = 12.dp)
                 .padding(horizontal = 24.dp)
                 .fillMaxWidth(),
-            text = stringResource(MR.strings.welcome_description),
+            text = stringResource(Res.string.welcome_description),
             style = MaterialTheme.typography.bodySmall.center(),
             color = MaterialTheme.colorScheme.onSurfaceVariant,
         )
@@ -168,16 +174,16 @@ private fun SecondSection(
         ) {
             CheckBoxLinkButton(
                 isChecked = isAgreedTermsOfService,
-                link = stringResource(MR.strings.welcome_team_of_service),
-                body = stringResource(MR.strings.welcome_agree, stringResource(MR.strings.welcome_team_of_service)),
+                link = stringResource(Res.string.welcome_team_of_service),
+                body = stringResource(Res.string.welcome_agree, stringResource(Res.string.welcome_team_of_service)),
                 onChecked = { isAgreedTermsOfService = it },
                 onClickLink = { navigateToWebPage.invoke(teamOfServiceUri) },
             )
 
             CheckBoxLinkButton(
                 isChecked = isAgreedPrivacyPolicy,
-                link = stringResource(MR.strings.welcome_privacy_policy),
-                body = stringResource(MR.strings.welcome_agree, stringResource(MR.strings.welcome_privacy_policy)),
+                link = stringResource(Res.string.welcome_privacy_policy),
+                body = stringResource(Res.string.welcome_agree, stringResource(Res.string.welcome_privacy_policy)),
                 onChecked = { isAgreedPrivacyPolicy = it },
                 onClickLink = { navigateToWebPage.invoke(privacyPolicyUri) },
             )
@@ -207,7 +213,7 @@ private fun SecondSection(
         ) {
             Text(
                 modifier = Modifier.padding(8.dp),
-                text = stringResource(MR.strings.welcome_button_next),
+                text = stringResource(Res.string.welcome_button_next),
                 color = if (isAgreedPrivacyPolicy && isAgreedTermsOfService) MaterialTheme.colorScheme.onPrimary else MaterialTheme.colorScheme.onSurface,
             )
         }

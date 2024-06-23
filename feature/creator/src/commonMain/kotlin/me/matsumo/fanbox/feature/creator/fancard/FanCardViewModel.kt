@@ -13,7 +13,9 @@ import me.matsumo.fanbox.core.model.ScreenState
 import me.matsumo.fanbox.core.model.fanbox.FanboxCreatorPlanDetail
 import me.matsumo.fanbox.core.model.fanbox.id.CreatorId
 import me.matsumo.fanbox.core.repository.FanboxRepository
-import me.matsumo.fanbox.core.ui.MR
+import me.matsumo.fanbox.core.ui.Res
+import me.matsumo.fanbox.core.ui.common_back
+import me.matsumo.fanbox.core.ui.creator_fan_card_not_supported
 
 class FanCardViewModel(
     private val fanboxRepository: FanboxRepository,
@@ -36,8 +38,8 @@ class FanCardViewModel(
                 onSuccess = { ScreenState.Idle(it) },
                 onFailure = {
                     ScreenState.Error(
-                        message = MR.strings.creator_fan_card_not_supported,
-                        retryTitle = MR.strings.common_back,
+                        message = Res.string.creator_fan_card_not_supported,
+                        retryTitle = Res.string.common_back,
                     )
                 },
             )

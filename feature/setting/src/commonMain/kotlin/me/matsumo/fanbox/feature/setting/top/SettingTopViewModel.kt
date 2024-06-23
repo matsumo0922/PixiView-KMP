@@ -1,6 +1,8 @@
 package me.matsumo.fanbox.feature.setting.top
 
 import androidx.compose.runtime.Stable
+import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
 import dev.icerock.moko.biometry.BiometryAuthenticator
 import dev.icerock.moko.resources.desc.desc
 import kotlinx.coroutines.flow.SharingStarted
@@ -15,9 +17,11 @@ import me.matsumo.fanbox.core.model.UserData
 import me.matsumo.fanbox.core.model.fanbox.FanboxMetaData
 import me.matsumo.fanbox.core.repository.FanboxRepository
 import me.matsumo.fanbox.core.repository.UserDataRepository
-import me.matsumo.fanbox.core.ui.MR
-import androidx.lifecycle.ViewModel
-import androidx.lifecycle.viewModelScope
+import me.matsumo.fanbox.core.ui.Res
+import me.matsumo.fanbox.core.ui.error_no_data
+import me.matsumo.fanbox.core.ui.home_app_lock_message
+import me.matsumo.fanbox.core.ui.home_app_lock_title
+import org.jetbrains.compose.resources.getString
 
 class SettingTopViewModel(
     private val userDataRepository: UserDataRepository,
@@ -101,9 +105,9 @@ class SettingTopViewModel(
 
     suspend fun tryToAuthenticate(biometryAuthenticator: BiometryAuthenticator): Boolean = suspendRunCatching {
         biometryAuthenticator.checkBiometryAuthentication(
-            requestTitle = MR.strings.home_app_lock_title.desc(),
-            requestReason = MR.strings.home_app_lock_message.desc(),
-            failureButtonText = MR.strings.error_no_data.desc(),
+            requestTitle = getString(Res.string.home_app_lock_title).desc(),
+            requestReason = getString(Res.string.home_app_lock_message).desc(),
+            failureButtonText = getString(Res.string.error_no_data).desc(),
             allowDeviceCredentials = true
         )
     }.fold(

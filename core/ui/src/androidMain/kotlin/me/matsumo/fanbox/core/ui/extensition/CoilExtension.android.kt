@@ -8,11 +8,10 @@ import android.os.Environment
 import android.provider.MediaStore
 import android.webkit.MimeTypeMap
 import androidx.compose.runtime.Composable
-import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.graphics.asAndroidBitmap
 import coil3.Image
 import coil3.annotation.ExperimentalCoilApi
 import coil3.asCoilImage
-import dev.icerock.moko.resources.ImageResource
 import io.github.aakira.napier.Napier
 import io.ktor.client.call.body
 import io.ktor.utils.io.ByteReadChannel
@@ -23,12 +22,14 @@ import me.matsumo.fanbox.core.logs.category.PostsLog
 import me.matsumo.fanbox.core.logs.logger.send
 import me.matsumo.fanbox.core.model.fanbox.FanboxPostDetail
 import me.matsumo.fanbox.core.repository.FanboxRepository
+import org.jetbrains.compose.resources.DrawableResource
+import org.jetbrains.compose.resources.imageResource
 import java.io.File
 
 @OptIn(ExperimentalCoilApi::class)
 @Composable
-actual fun ImageResource.asCoilImage(): Image {
-    return getDrawable(LocalContext.current)?.asCoilImage() ?: error("can't read Drawable of $this")
+actual fun DrawableResource.asCoilImage(): Image {
+    return imageResource(this).asAndroidBitmap().asCoilImage()
 }
 
 class ImageDownloaderImpl(

@@ -27,11 +27,16 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
 import androidx.fragment.app.FragmentActivity
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import dev.icerock.moko.resources.compose.stringResource
-import me.matsumo.fanbox.core.ui.MR
+import me.matsumo.fanbox.core.ui.Res
 import me.matsumo.fanbox.core.ui.ads.RewardAdLoader
 import me.matsumo.fanbox.core.ui.appName
+import me.matsumo.fanbox.core.ui.creator_download_require_plus_button
+import me.matsumo.fanbox.core.ui.creator_download_require_plus_button_ad
+import me.matsumo.fanbox.core.ui.creator_download_require_plus_button_ad_over
+import me.matsumo.fanbox.core.ui.creator_download_require_plus_message
+import me.matsumo.fanbox.core.ui.creator_download_require_plus_title
 import me.matsumo.fanbox.core.ui.theme.bold
+import org.jetbrains.compose.resources.stringResource
 import org.koin.compose.koinInject
 
 @Composable
@@ -71,14 +76,14 @@ actual fun CreatorTopRewardAdDialog(
             ) {
                 Text(
                     modifier = Modifier.fillMaxWidth(),
-                    text = stringResource(MR.strings.creator_download_require_plus_title),
+                    text = stringResource(Res.string.creator_download_require_plus_title),
                     style = MaterialTheme.typography.titleMedium.bold(),
                     color = MaterialTheme.colorScheme.onSurface,
                 )
 
                 Text(
                     modifier = Modifier.fillMaxWidth(),
-                    text = stringResource(MR.strings.creator_download_require_plus_message, appName),
+                    text = stringResource(Res.string.creator_download_require_plus_message, appName),
                     style = MaterialTheme.typography.bodyMedium,
                     color = MaterialTheme.colorScheme.onSurfaceVariant,
                 )
@@ -94,7 +99,7 @@ actual fun CreatorTopRewardAdDialog(
                         modifier = Modifier.fillMaxWidth(),
                         onClick = onClickShowPlus,
                     ) {
-                        Text(text = stringResource(MR.strings.creator_download_require_plus_button, appName))
+                        Text(text = stringResource(Res.string.creator_download_require_plus_button, appName))
                     }
 
                     OutlinedButton(
@@ -117,7 +122,7 @@ actual fun CreatorTopRewardAdDialog(
                                 )
                             }
 
-                            Text(text = stringResource(if (isAbleToReward) MR.strings.creator_download_require_plus_button_ad else MR.strings.creator_download_require_plus_button_ad_over,))
+                            Text(text = stringResource(if (isAbleToReward) Res.string.creator_download_require_plus_button_ad else Res.string.creator_download_require_plus_button_ad_over,))
                         }
                     }
                 }

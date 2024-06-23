@@ -28,12 +28,14 @@ import coil3.annotation.ExperimentalCoilApi
 import coil3.compose.LocalPlatformContext
 import coil3.compose.SubcomposeAsyncImage
 import coil3.request.ImageRequest
-import dev.icerock.moko.resources.compose.painterResource
 import me.matsumo.fanbox.core.common.util.format
 import me.matsumo.fanbox.core.model.fanbox.FanboxCreatorPlanDetail
-import me.matsumo.fanbox.core.ui.MR
+import me.matsumo.fanbox.core.ui.Res
 import me.matsumo.fanbox.core.ui.extensition.FadePlaceHolder
 import me.matsumo.fanbox.core.ui.extensition.fanboxHeader
+import me.matsumo.fanbox.core.ui.im_fanbox_logo_dark
+import me.matsumo.fanbox.core.ui.im_fanbox_logo_light
+import org.jetbrains.compose.resources.painterResource
 
 @OptIn(ExperimentalCoilApi::class)
 @Composable
@@ -81,7 +83,7 @@ internal fun FanCardItem(
             modifier = Modifier
                 .padding(24.dp, 16.dp)
                 .align(Alignment.BottomEnd),
-            painter = painterResource(if (isSystemInDarkTheme()) MR.images.im_fanbox_logo_light else MR.images.im_fanbox_logo_dark),
+            painter = painterResource(if (isSystemInDarkTheme()) Res.drawable.im_fanbox_logo_light else Res.drawable.im_fanbox_logo_dark),
             contentDescription = null,
         )
     }

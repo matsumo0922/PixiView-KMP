@@ -24,10 +24,8 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import dev.icerock.moko.resources.compose.painterResource
-import dev.icerock.moko.resources.compose.stringResource
 import me.matsumo.fanbox.core.logs.category.WelcomeLog
-import me.matsumo.fanbox.core.ui.MR
+import me.matsumo.fanbox.core.ui.Res
 import me.matsumo.fanbox.core.ui.extensition.LocalNavigationType
 import me.matsumo.fanbox.core.ui.extensition.LocalSnackbarHostState
 import me.matsumo.fanbox.core.ui.extensition.NavigatorExtension
@@ -35,7 +33,18 @@ import me.matsumo.fanbox.core.ui.extensition.PixiViewNavigationType
 import me.matsumo.fanbox.core.ui.extensition.ToastExtension
 import me.matsumo.fanbox.core.ui.theme.bold
 import me.matsumo.fanbox.core.ui.theme.center
+import me.matsumo.fanbox.core.ui.vec_welcome_plus
+import me.matsumo.fanbox.core.ui.welcome_login_button_login
+import me.matsumo.fanbox.core.ui.welcome_login_button_next
+import me.matsumo.fanbox.core.ui.welcome_login_message
+import me.matsumo.fanbox.core.ui.welcome_login_other_title
+import me.matsumo.fanbox.core.ui.welcome_login_ready_message
+import me.matsumo.fanbox.core.ui.welcome_login_ready_title
+import me.matsumo.fanbox.core.ui.welcome_login_title
+import me.matsumo.fanbox.core.ui.welcome_login_toast_failed
 import me.matsumo.fanbox.feature.welcome.WelcomeIndicatorItem
+import org.jetbrains.compose.resources.painterResource
+import org.jetbrains.compose.resources.stringResource
 import org.koin.compose.koinInject
 import org.koin.compose.viewmodel.koinViewModel
 
@@ -59,7 +68,7 @@ internal fun WelcomeLoginScreen(
 
     if (isLoginError != -1) {
         LaunchedEffect(isLoginError) {
-            toastExtension.show(snackbarHostState, MR.strings.welcome_login_toast_failed)
+            toastExtension.show(snackbarHostState, Res.string.welcome_login_toast_failed)
         }
     }
 
@@ -132,7 +141,7 @@ private fun FirstSection(
             start = 8.dp,
             end = 8.dp,
         ),
-        painter = painterResource(MR.images.vec_welcome_plus),
+        painter = painterResource(Res.drawable.vec_welcome_plus),
         contentDescription = null,
     )
 }
@@ -154,14 +163,14 @@ private fun SecondSection(
     ) {
         Text(
             modifier = Modifier.padding(top = 32.dp),
-            text = stringResource(if (isLoggedIn) MR.strings.welcome_login_ready_title else MR.strings.welcome_login_title),
+            text = stringResource(if (isLoggedIn) Res.string.welcome_login_ready_title else Res.string.welcome_login_title),
             style = MaterialTheme.typography.displaySmall.bold(),
             color = MaterialTheme.colorScheme.primary,
         )
 
         Text(
             modifier = Modifier.padding(top = 12.dp),
-            text = stringResource(if (isLoggedIn) MR.strings.welcome_login_ready_message else MR.strings.welcome_login_message),
+            text = stringResource(if (isLoggedIn) Res.string.welcome_login_ready_message else Res.string.welcome_login_message),
             style = MaterialTheme.typography.bodySmall.center(),
             color = MaterialTheme.colorScheme.onSurfaceVariant,
         )
@@ -173,7 +182,7 @@ private fun SecondSection(
             onClick = { isShowLoginDialog = true },
         ) {
             Text(
-                text = stringResource(MR.strings.welcome_login_other_title),
+                text = stringResource(Res.string.welcome_login_other_title),
                 style = MaterialTheme.typography.bodySmall,
                 color = MaterialTheme.colorScheme.onSurfaceVariant,
             )
@@ -195,7 +204,7 @@ private fun SecondSection(
             ) {
                 Text(
                     modifier = Modifier.padding(8.dp),
-                    text = stringResource(MR.strings.welcome_login_button_next),
+                    text = stringResource(Res.string.welcome_login_button_next),
                 )
             }
         } else {
@@ -208,7 +217,7 @@ private fun SecondSection(
             ) {
                 Text(
                     modifier = Modifier.padding(8.dp),
-                    text = stringResource(MR.strings.welcome_login_button_login),
+                    text = stringResource(Res.string.welcome_login_button_login),
                 )
             }
         }

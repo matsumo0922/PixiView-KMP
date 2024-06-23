@@ -21,9 +21,10 @@ import coil3.compose.LocalPlatformContext
 import coil3.request.ImageRequest
 import me.matsumo.fanbox.core.common.util.format
 import me.matsumo.fanbox.core.model.fanbox.FanboxPostDetail
-import me.matsumo.fanbox.core.ui.MR
+import me.matsumo.fanbox.core.ui.Res
 import me.matsumo.fanbox.core.ui.extensition.asCoilImage
 import me.matsumo.fanbox.core.ui.extensition.fanboxHeader
+import me.matsumo.fanbox.core.ui.im_default_user
 import me.matsumo.fanbox.core.ui.theme.bold
 
 @OptIn(ExperimentalCoilApi::class)
@@ -43,7 +44,7 @@ internal fun PostDetailUserSection(
                 .clip(CircleShape),
             model = ImageRequest.Builder(LocalPlatformContext.current)
                 .fanboxHeader()
-                .error(MR.images.im_default_user.asCoilImage())
+                .error(Res.drawable.im_default_user.asCoilImage())
                 .data(post.user.iconUrl)
                 .build(),
             contentDescription = null,

@@ -6,12 +6,10 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.GridItemSpan
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.rememberLazyGridState
-import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -30,20 +28,23 @@ import androidx.paging.LoadState
 import app.cash.paging.compose.LazyPagingItems
 import app.cash.paging.compose.itemContentType
 import app.cash.paging.compose.itemKey
-import dev.icerock.moko.resources.compose.stringResource
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.coroutines.launch
 import me.matsumo.fanbox.core.model.FanboxTag
 import me.matsumo.fanbox.core.model.fanbox.FanboxCreatorDetail
 import me.matsumo.fanbox.core.model.fanbox.id.CreatorId
 import me.matsumo.fanbox.core.ui.LazyPagingItemsLoadContents
-import me.matsumo.fanbox.core.ui.MR
+import me.matsumo.fanbox.core.ui.Res
+import me.matsumo.fanbox.core.ui.common_creator
+import me.matsumo.fanbox.core.ui.common_tag
 import me.matsumo.fanbox.core.ui.component.CreatorItem
+import me.matsumo.fanbox.core.ui.error_no_data_search
 import me.matsumo.fanbox.core.ui.extensition.LocalNavigationType
 import me.matsumo.fanbox.core.ui.extensition.PixiViewNavigationType
 import me.matsumo.fanbox.core.ui.extensition.drawVerticalScrollbar
 import me.matsumo.fanbox.core.ui.theme.bold
 import me.matsumo.fanbox.core.ui.view.PagingErrorSection
+import org.jetbrains.compose.resources.stringResource
 
 @OptIn(ExperimentalComposeUiApi::class)
 @Composable
@@ -77,7 +78,7 @@ internal fun PostSearchCreatorScreen(
     LazyPagingItemsLoadContents(
         modifier = modifier,
         lazyPagingItems = pagingAdapter,
-        emptyMessageRes = MR.strings.error_no_data_search,
+        emptyMessageRes = Res.string.error_no_data_search,
     ) {
         LazyVerticalGrid(
             modifier = Modifier.drawVerticalScrollbar(state, columns),
@@ -91,7 +92,7 @@ internal fun PostSearchCreatorScreen(
                 item(span = { GridItemSpan(maxLineSpan) }) {
                     TitleItem(
                         modifier = Modifier.fillMaxWidth(),
-                        title = stringResource(MR.strings.common_tag),
+                        title = stringResource(Res.string.common_tag),
                     )
                 }
 
@@ -108,7 +109,7 @@ internal fun PostSearchCreatorScreen(
                         modifier = Modifier
                             .padding(top = 16.dp)
                             .fillMaxWidth(),
-                        title = stringResource(MR.strings.common_creator),
+                        title = stringResource(Res.string.common_creator),
                     )
                 }
             }

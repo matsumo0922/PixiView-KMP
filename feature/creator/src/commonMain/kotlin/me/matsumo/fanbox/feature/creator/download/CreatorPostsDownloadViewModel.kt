@@ -17,7 +17,8 @@ import me.matsumo.fanbox.core.model.fanbox.id.CreatorId
 import me.matsumo.fanbox.core.model.fanbox.id.PostId
 import me.matsumo.fanbox.core.model.updateWhenIdle
 import me.matsumo.fanbox.core.repository.FanboxRepository
-import me.matsumo.fanbox.core.ui.MR
+import me.matsumo.fanbox.core.ui.Res
+import me.matsumo.fanbox.core.ui.error_network
 import me.matsumo.fanbox.core.ui.extensition.ImageDownloader
 import kotlin.coroutines.resume
 
@@ -49,7 +50,7 @@ class CreatorPostsDownloadViewModel(
                 )
             }.fold(
                 onSuccess = { ScreenState.Idle(it) },
-                onFailure = { ScreenState.Error(MR.strings.error_network) },
+                onFailure = { ScreenState.Error(Res.string.error_network) },
             )
         }
     }

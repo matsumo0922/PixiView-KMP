@@ -33,16 +33,30 @@ import dev.icerock.moko.permissions.PermissionsController
 import dev.icerock.moko.permissions.compose.BindEffect
 import dev.icerock.moko.permissions.compose.PermissionsControllerFactory
 import dev.icerock.moko.permissions.compose.rememberPermissionsControllerFactory
-import dev.icerock.moko.resources.compose.painterResource
-import dev.icerock.moko.resources.compose.stringResource
 import io.github.aakira.napier.Napier
 import kotlinx.coroutines.launch
-import me.matsumo.fanbox.core.ui.MR
+import me.matsumo.fanbox.core.ui.Res
 import me.matsumo.fanbox.core.ui.extensition.LocalNavigationType
 import me.matsumo.fanbox.core.ui.extensition.PixiViewNavigationType
 import me.matsumo.fanbox.core.ui.theme.bold
 import me.matsumo.fanbox.core.ui.theme.center
+import me.matsumo.fanbox.core.ui.vec_welcome_permission
+import me.matsumo.fanbox.core.ui.welcome_permission_allow_button
+import me.matsumo.fanbox.core.ui.welcome_permission_allowed
+import me.matsumo.fanbox.core.ui.welcome_permission_complete_button
+import me.matsumo.fanbox.core.ui.welcome_permission_denied
+import me.matsumo.fanbox.core.ui.welcome_permission_message
+import me.matsumo.fanbox.core.ui.welcome_permission_notification
+import me.matsumo.fanbox.core.ui.welcome_permission_notification_message
+import me.matsumo.fanbox.core.ui.welcome_permission_optional
+import me.matsumo.fanbox.core.ui.welcome_permission_ready_message
+import me.matsumo.fanbox.core.ui.welcome_permission_ready_title
+import me.matsumo.fanbox.core.ui.welcome_permission_storage
+import me.matsumo.fanbox.core.ui.welcome_permission_storage_message
+import me.matsumo.fanbox.core.ui.welcome_permission_title
 import me.matsumo.fanbox.feature.welcome.WelcomeIndicatorItem
+import org.jetbrains.compose.resources.painterResource
+import org.jetbrains.compose.resources.stringResource
 
 @Composable
 internal fun WelcomePermissionScreen(
@@ -100,7 +114,7 @@ private fun FirstSection(
             start = 8.dp,
             end = 8.dp,
         ),
-        painter = painterResource(MR.images.vec_welcome_permission),
+        painter = painterResource(Res.drawable.vec_welcome_permission),
         contentDescription = null,
     )
 }
@@ -130,13 +144,13 @@ private fun SecondSection(
 
         Text(
             modifier = Modifier.padding(top = 32.dp),
-            text = stringResource(if (isGrantedStorage) MR.strings.welcome_permission_ready_title else MR.strings.welcome_permission_title),
+            text = stringResource(if (isGrantedStorage) Res.string.welcome_permission_ready_title else Res.string.welcome_permission_title),
             style = MaterialTheme.typography.displaySmall.bold(),
         )
 
         Text(
             modifier = Modifier.padding(top = 12.dp),
-            text = stringResource(if (isGrantedStorage) MR.strings.welcome_permission_ready_message else MR.strings.welcome_permission_message),
+            text = stringResource(if (isGrantedStorage) Res.string.welcome_permission_ready_message else Res.string.welcome_permission_message),
             style = MaterialTheme.typography.bodySmall.center(),
             color = MaterialTheme.colorScheme.onSurfaceVariant,
         )
@@ -148,15 +162,15 @@ private fun SecondSection(
             WelcomePermissionItem(
                 isAllowed = isGrantedStorage,
                 isOptional = false,
-                title = stringResource(MR.strings.welcome_permission_storage),
-                message = stringResource(MR.strings.welcome_permission_storage_message),
+                title = stringResource(Res.string.welcome_permission_storage),
+                message = stringResource(Res.string.welcome_permission_storage_message),
             )
 
             WelcomePermissionItem(
                 isAllowed = isGrantedNotify,
                 isOptional = true,
-                title = stringResource(MR.strings.welcome_permission_notification),
-                message = stringResource(MR.strings.welcome_permission_notification_message),
+                title = stringResource(Res.string.welcome_permission_notification),
+                message = stringResource(Res.string.welcome_permission_notification_message),
             )
         }
 
@@ -178,7 +192,7 @@ private fun SecondSection(
             ) {
                 Text(
                     modifier = Modifier.padding(8.dp),
-                    text = stringResource(MR.strings.welcome_permission_complete_button),
+                    text = stringResource(Res.string.welcome_permission_complete_button),
                 )
             }
         } else {
@@ -208,7 +222,7 @@ private fun SecondSection(
             ) {
                 Text(
                     modifier = Modifier.padding(8.dp),
-                    text = stringResource(MR.strings.welcome_permission_allow_button),
+                    text = stringResource(Res.string.welcome_permission_allow_button),
                 )
             }
         }
@@ -278,9 +292,9 @@ private fun WelcomePermissionLabel(
                 .align(Alignment.Center)
                 .padding(horizontal = 8.dp, vertical = 6.dp),
             text = when {
-                isAllowed -> stringResource(MR.strings.welcome_permission_allowed)
-                isOptional -> stringResource(MR.strings.welcome_permission_optional)
-                else -> stringResource(MR.strings.welcome_permission_denied)
+                isAllowed -> stringResource(Res.string.welcome_permission_allowed)
+                isOptional -> stringResource(Res.string.welcome_permission_optional)
+                else -> stringResource(Res.string.welcome_permission_denied)
             },
             style = MaterialTheme.typography.labelSmall,
             color = color,

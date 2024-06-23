@@ -15,14 +15,16 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import me.matsumo.fanbox.core.ui.animation.Zoomable
 import kotlinx.coroutines.flow.collectLatest
 import me.matsumo.fanbox.core.model.ScreenState
 import me.matsumo.fanbox.core.model.fanbox.FanboxCreatorPlanDetail
 import me.matsumo.fanbox.core.model.fanbox.id.CreatorId
 import me.matsumo.fanbox.core.ui.AsyncLoadContents
-import me.matsumo.fanbox.core.ui.MR
+import me.matsumo.fanbox.core.ui.Res
+import me.matsumo.fanbox.core.ui.animation.Zoomable
+import me.matsumo.fanbox.core.ui.common_downloaded
 import me.matsumo.fanbox.core.ui.component.PixiViewTopBar
+import me.matsumo.fanbox.core.ui.error_network
 import me.matsumo.fanbox.core.ui.extensition.LocalSnackbarHostState
 import me.matsumo.fanbox.core.ui.extensition.ToastExtension
 import me.matsumo.fanbox.feature.creator.fancard.items.FanCardItem
@@ -48,7 +50,7 @@ internal fun FanCardRoute(
 
     LaunchedEffect(true) {
         viewModel.downloadedEvent.collectLatest {
-            toastExtension.show(snackHostState, if (it) MR.strings.common_downloaded else MR.strings.error_network)
+            toastExtension.show(snackHostState, if (it) Res.string.common_downloaded else Res.string.error_network)
         }
     }
 

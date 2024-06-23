@@ -20,11 +20,11 @@ import com.eygraber.compose.placeholder.PlaceholderHighlight
 import com.eygraber.compose.placeholder.material3.fade
 import com.eygraber.compose.placeholder.material3.shimmer
 import com.eygraber.compose.placeholder.placeholder
-import dev.icerock.moko.resources.ImageResource
 import io.github.alexzhirkevich.cupertino.adaptive.AdaptiveCircularProgressIndicator
 import io.github.alexzhirkevich.cupertino.adaptive.ExperimentalAdaptiveApi
 import me.matsumo.fanbox.core.model.fanbox.FanboxMetaData
 import me.matsumo.fanbox.core.model.fanbox.FanboxPostDetail
+import org.jetbrains.compose.resources.DrawableResource
 
 @Immutable
 data class FanboxCookie(
@@ -46,7 +46,7 @@ interface ImageDownloader {
 }
 
 @Composable
-expect fun ImageResource.asCoilImage(): Image
+expect fun DrawableResource.asCoilImage(): Image
 
 @OptIn(ExperimentalCoilApi::class)
 @Composable

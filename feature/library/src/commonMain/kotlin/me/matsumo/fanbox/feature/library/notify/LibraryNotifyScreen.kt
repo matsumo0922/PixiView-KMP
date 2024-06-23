@@ -1,7 +1,6 @@
 package me.matsumo.fanbox.feature.library.notify
 
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.navigationBarsPadding
@@ -24,18 +23,20 @@ import app.cash.paging.compose.LazyPagingItems
 import app.cash.paging.compose.collectAsLazyPagingItems
 import app.cash.paging.compose.itemContentType
 import app.cash.paging.compose.itemKey
-import dev.icerock.moko.resources.compose.stringResource
 import me.matsumo.fanbox.core.model.fanbox.FanboxBell
 import me.matsumo.fanbox.core.model.fanbox.id.PostId
 import me.matsumo.fanbox.core.ui.AsyncLoadContents
 import me.matsumo.fanbox.core.ui.LazyPagingItemsLoadContents
-import me.matsumo.fanbox.core.ui.MR
+import me.matsumo.fanbox.core.ui.Res
 import me.matsumo.fanbox.core.ui.component.PixiViewTopBar
+import me.matsumo.fanbox.core.ui.error_no_data_notify
 import me.matsumo.fanbox.core.ui.extensition.LocalNavigationType
 import me.matsumo.fanbox.core.ui.extensition.PixiViewNavigationType
 import me.matsumo.fanbox.core.ui.extensition.drawVerticalScrollbar
+import me.matsumo.fanbox.core.ui.library_navigation_notify
 import me.matsumo.fanbox.core.ui.view.PagingErrorSection
 import me.matsumo.fanbox.feature.library.notify.items.LibraryNotifyBellItem
+import org.jetbrains.compose.resources.stringResource
 import org.koin.compose.viewmodel.koinViewModel
 
 @Composable
@@ -79,7 +80,7 @@ private fun LibraryNotifyScreen(
         topBar = {
             PixiViewTopBar(
                 modifier = Modifier.fillMaxWidth(),
-                title = stringResource(MR.strings.library_navigation_notify),
+                title = stringResource(Res.string.library_navigation_notify),
                 navigationIcon = Icons.Default.Menu,
                 onClickNavigation = if (navigationType != PixiViewNavigationType.PermanentNavigationDrawer) openDrawer else null,
                 scrollBehavior = scrollBehavior,
@@ -94,7 +95,7 @@ private fun LibraryNotifyScreen(
                 .padding(padding)
                 .fillMaxSize(),
             lazyPagingItems = pagingAdapter,
-            emptyMessageRes = MR.strings.error_no_data_notify,
+            emptyMessageRes = Res.string.error_no_data_notify,
         ) {
             LazyColumn(
                 modifier = Modifier.drawVerticalScrollbar(state),

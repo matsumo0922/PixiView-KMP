@@ -23,20 +23,23 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import dev.icerock.moko.resources.compose.stringResource
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.toImmutableList
 import me.matsumo.fanbox.core.model.fanbox.FanboxCreatorPlan
 import me.matsumo.fanbox.core.model.fanbox.id.CreatorId
 import me.matsumo.fanbox.core.ui.AsyncLoadContents
-import me.matsumo.fanbox.core.ui.MR
+import me.matsumo.fanbox.core.ui.Res
 import me.matsumo.fanbox.core.ui.component.PixiViewTopBar
+import me.matsumo.fanbox.core.ui.error_no_data
+import me.matsumo.fanbox.core.ui.error_no_data_supported
 import me.matsumo.fanbox.core.ui.extensition.LocalNavigationType
 import me.matsumo.fanbox.core.ui.extensition.NavigatorExtension
 import me.matsumo.fanbox.core.ui.extensition.PixiViewNavigationType
 import me.matsumo.fanbox.core.ui.extensition.drawVerticalScrollbar
+import me.matsumo.fanbox.core.ui.library_navigation_supporting
 import me.matsumo.fanbox.core.ui.view.EmptyView
 import me.matsumo.fanbox.feature.creator.support.item.SupportingCreatorItem
+import org.jetbrains.compose.resources.stringResource
 import org.koin.compose.koinInject
 import org.koin.compose.viewmodel.koinViewModel
 
@@ -92,7 +95,7 @@ private fun SupportingCreatorsScreen(
         topBar = {
             PixiViewTopBar(
                 modifier = Modifier.fillMaxWidth(),
-                title = stringResource(MR.strings.library_navigation_supporting),
+                title = stringResource(Res.string.library_navigation_supporting),
                 onClickNavigation = terminate,
                 scrollBehavior = scrollBehavior,
             )
@@ -129,8 +132,8 @@ private fun SupportingCreatorsScreen(
         } else {
             EmptyView(
                 modifier = Modifier.fillMaxSize(),
-                titleRes = MR.strings.error_no_data,
-                messageRes = MR.strings.error_no_data_supported,
+                titleRes = Res.string.error_no_data,
+                messageRes = Res.string.error_no_data_supported,
             )
         }
     }

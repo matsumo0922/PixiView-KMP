@@ -18,20 +18,23 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import dev.icerock.moko.resources.compose.stringResource
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.toImmutableList
 import me.matsumo.fanbox.core.model.fanbox.FanboxNewsLetter
 import me.matsumo.fanbox.core.model.fanbox.id.CreatorId
 import me.matsumo.fanbox.core.ui.AsyncLoadContents
-import me.matsumo.fanbox.core.ui.MR
+import me.matsumo.fanbox.core.ui.Res
 import me.matsumo.fanbox.core.ui.component.PixiViewTopBar
+import me.matsumo.fanbox.core.ui.error_no_data
+import me.matsumo.fanbox.core.ui.error_no_data_message
 import me.matsumo.fanbox.core.ui.extensition.LocalNavigationType
 import me.matsumo.fanbox.core.ui.extensition.NavigatorExtension
 import me.matsumo.fanbox.core.ui.extensition.PixiViewNavigationType
 import me.matsumo.fanbox.core.ui.extensition.drawVerticalScrollbar
+import me.matsumo.fanbox.core.ui.library_navigation_message
 import me.matsumo.fanbox.core.ui.view.EmptyView
 import me.matsumo.fanbox.feature.library.message.items.LibraryMessageItem
+import org.jetbrains.compose.resources.stringResource
 import org.koin.compose.koinInject
 import org.koin.compose.viewmodel.koinViewModel
 
@@ -78,7 +81,7 @@ private fun LibraryMessageScreen(
         topBar = {
             PixiViewTopBar(
                 modifier = Modifier.fillMaxWidth(),
-                title = stringResource(MR.strings.library_navigation_message),
+                title = stringResource(Res.string.library_navigation_message),
                 navigationIcon = Icons.Default.Menu,
                 onClickNavigation = if (navigationType != PixiViewNavigationType.PermanentNavigationDrawer) openDrawer else null,
                 scrollBehavior = scrollBehavior,
@@ -115,8 +118,8 @@ private fun LibraryMessageScreen(
             } else {
                 EmptyView(
                     modifier = Modifier.fillMaxSize(),
-                    titleRes = MR.strings.error_no_data,
-                    messageRes = MR.strings.error_no_data_message,
+                    titleRes = Res.string.error_no_data,
+                    messageRes = Res.string.error_no_data_message,
                 )
             }
         }

@@ -1,7 +1,9 @@
 package me.matsumo.fanbox.feature.post.detail.items
 
 import androidx.compose.runtime.Composable
-import me.matsumo.fanbox.core.ui.MR
+import me.matsumo.fanbox.core.ui.Res
+import me.matsumo.fanbox.core.ui.post_detail_open_browser
+import me.matsumo.fanbox.core.ui.post_image_all_download
 import me.matsumo.fanbox.core.ui.view.Action
 import me.matsumo.fanbox.core.ui.view.ActionSheet
 
@@ -14,11 +16,11 @@ internal fun PostDetailMenuDialog(
 ) {
     val actions = listOf(
         Action(
-            text = MR.strings.post_detail_open_browser,
+            text = Res.string.post_detail_open_browser,
             onClick = onClickOpenBrowser,
         ),
         Action(
-            text = MR.strings.post_image_all_download,
+            text = Res.string.post_image_all_download,
             onClick = onClickAllDownload,
         ),
     )
