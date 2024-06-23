@@ -67,6 +67,9 @@
     <string name="unit_favorite">%1$dいいね</string>
     <string name="unit_tag">%1$d件</string>
     <string name="unit_jpy">￥%d</string>
+    <string name="unit_year">年</string>
+    <string name="unit_month">月</string>
+    <string name="unit_day">日</string>
 
     <!-- Notify -->
     <string name="notify_download_channel_name">ダウンロード</string>
@@ -258,11 +261,13 @@
 
     <!-- Billing -->
     <string name="billing_plus_description">%1$s+ は、月々コーヒー1杯の金額で全ての機能にアクセスできるようになる開発者への支援プランです。</string>
-    <string name="billing_plus_purchase_button">%1$s / 月で支援</string>
+    <string name="billing_plus_purchase_button">%1$sで支援</string>
     <string name="billing_plus_verify_button">購入を復元</string>
     <string name="billing_plus_consume_button">購入を消費</string>
-    <string name="billing_plus_caution1">※ %1$s+ は下記の限定機能を追加する定期購入契約です。支払いは直ちに行われ、機能を利用し続けるには1ヶ月ごとの更新が必要となります。解約はいつでも可能です。</string>
+    <string name="billing_plus_caution1">※ %1$s+ は下記の限定機能を追加する定期購入契約です。支払いは直ちに行われ、機能を利用し続けるには指定された期間ごとの更新が必要となります。解約はいつでも可能です。</string>
     <string name="billing_plus_caution2">※ アプリ利用開始時に利用規約とプライバシーポリシーにすでに同意されていますが、設定画面から再度ご確認ください。</string>
+    <string name="billing_plus_plan_monthly">通常プラン</string>
+    <string name="billing_plus_plan_yearly">年間プラン</string>
     <string name="billing_plus_toast_require_plus">この機能は%1$s+でのみ使用することができます</string>
     <string name="billing_plus_toast_purchased">購入しました</string>
     <string name="billing_plus_toast_purchased_error">購入に失敗しました</string>

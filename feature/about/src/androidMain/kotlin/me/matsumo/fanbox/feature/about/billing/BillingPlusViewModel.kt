@@ -3,6 +3,7 @@ package me.matsumo.fanbox.feature.about.billing
 import android.app.Activity
 import androidx.lifecycle.viewModelScope
 import coil3.PlatformContext
+import com.android.billingclient.api.ProductDetails.SubscriptionOfferDetails
 import com.android.billingclient.api.Purchase
 import io.github.aakira.napier.Napier
 import kotlinx.coroutines.CoroutineDispatcher
@@ -20,6 +21,8 @@ import me.matsumo.fanbox.core.billing.usecase.VerifyPlusUseCase
 import me.matsumo.fanbox.core.model.ScreenState
 import me.matsumo.fanbox.core.repository.UserDataRepository
 import me.matsumo.fanbox.core.ui.MR
+import java.text.NumberFormat
+import java.util.Locale
 
 class BillingPlusViewModelImpl(
     private val billingClient: BillingClient,
@@ -31,6 +34,8 @@ class BillingPlusViewModelImpl(
 ) : BillingPlusViewModel() {
 
     private var lastPurchase: Purchase? = null
+
+    private var offerDetails: List<SubscriptionOfferDetails> = emptyList()
 
     private var _screenState = MutableStateFlow<ScreenState<BillingPlusUiState>>(ScreenState.Loading)
 
@@ -44,22 +49,29 @@ class BillingPlusViewModelImpl(
 
                 val plans = productDetail.rawProductDetails.subscriptionOfferDetails?.map {
                     BillingPlusUiState.Plan(
-                        price = it.pricingPhases.pricingPhaseList.first().priceAmountMicros.toInt() / 1000000,
+                        price = it.pricingPhases.pricingPhaseList.first().priceAmountMicros / 1000000,
                         formattedPrice = it.pricingPhases.pricingPhaseList.first().formattedPrice,
                         type = when (it.basePlanId) {
-                            "plus" -> BillingPlusUiState.Type.MONTH
-                            "plus-year" -> BillingPlusUiState.Type.YEAR
-                            else -> BillingPlusUiState.Type.MONTH
+                            "plus" -> BillingPlusUiState.Type.MONTHLY
+                            "plus-year" -> BillingPlusUiState.Type.YEARLY
+                            else -> BillingPlusUiState.Type.MONTHLY
                         },
                     )
                 }
 
+                val monthlyPrice = plans?.find { it.type == BillingPlusUiState.Type.MONTHLY }?.price ?: 0
+                val yearlyPrice = plans?.find { it.type == BillingPlusUiState.Type.YEARLY }?.price ?: 0
+                val yearlyMonthlyPrice = yearlyPrice / 12
+
+                offerDetails = productDetail.rawProductDetails.subscriptionOfferDetails.orEmpty()
                 lastPurchase = verifyPlusUseCase.invoke()
 
                 BillingPlusUiState(
                     isPlusMode = userData?.isPlusMode ?: false,
                     isDeveloperMode = userData?.isDeveloperMode ?: false,
                     plans = plans.orEmpty(),
+                    formattedAnnualMonthlyPrice = NumberFormat.getCurrencyInstance(Locale.getDefault()).format(yearlyMonthlyPrice),
+                    formattedAnnualDiscountRate = "%d%%".format((((monthlyPrice - yearlyMonthlyPrice) / monthlyPrice.toDouble()) * 100).toInt())
                 )
             }.fold(
                 onSuccess = { ScreenState.Idle(it) },
@@ -74,10 +86,16 @@ class BillingPlusViewModelImpl(
         }
     }
 
-    override suspend fun purchase(context: PlatformContext): Boolean {
+    override suspend fun purchase(context: PlatformContext, planType: BillingPlusUiState.Type): Boolean {
         return runCatching {
             withContext(ioDispatcher) {
-                purchasePlusSubscriptionUseCase.invoke(context as Activity)
+                purchasePlusSubscriptionUseCase.invoke(
+                    activity = context as Activity,
+                    offerToken = offerDetails.find { it.basePlanId == when (planType) {
+                        BillingPlusUiState.Type.MONTHLY -> "plus"
+                        BillingPlusUiState.Type.YEARLY -> "plus-year"
+                    } }?.offerToken ?: ""
+                )
             }
         }.onSuccess {
             userDataRepository.setPlusMode(true)

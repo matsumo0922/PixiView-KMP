@@ -13,7 +13,7 @@ PixiView is an unofficial Android & iOS client app for pixivFANBOX.
   <a href="">
     <img src="https://img.shields.io/badge/supports-Android%208+-AD2A5A">
   </a>
-  <a href="https://open.vscode.dev/matsumo0922/PixiView">
+  <a href="https://open.vscode.dev/matsumo0922/PixiView-KMP">
     <img alt="Open in VSCode" src="https://img.shields.io/static/v1?logo=visualstudiocode&label=&message=Open%20in%20Visual%20Studio%20Code&labelColor=2c2c32&color=007acc&logoColor=007acc" />
   </a>
 </div>

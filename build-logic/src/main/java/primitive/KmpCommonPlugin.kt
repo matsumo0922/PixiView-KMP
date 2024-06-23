@@ -12,6 +12,12 @@ class KmpCommonPlugin : Plugin<Project> {
             with(pluginManager) {
                 apply("org.jetbrains.kotlin.multiplatform")
             }
+
+            kotlin {
+                // https://stackoverflow.com/questions/36465824/android-studio-task-testclasses-not-found-in-project
+                task("testClasses")
+            }
+
             tasks.withType(org.jetbrains.kotlin.gradle.tasks.KotlinCompile::class.java) {
                 kotlinOptions.jvmTarget = JavaVersion.VERSION_17.toString()
                 compilerOptions.freeCompilerArgs.addAll(
@@ -19,6 +25,7 @@ class KmpCommonPlugin : Plugin<Project> {
                     "plugin:androidx.compose.compiler.plugins.kotlin:experimentalStrongSkipping=true",
                 )
             }
+
             tasks.withType<org.jetbrains.kotlin.gradle.tasks.KotlinNativeLink>().configureEach {
                 notCompatibleWithConfigurationCache("Configuration chache not supported for a system property read at configuration time")
             }

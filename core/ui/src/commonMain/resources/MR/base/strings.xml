@@ -67,6 +67,9 @@
     <string name="unit_favorite">%1$d Likes</string>
     <string name="unit_tag">%1$d items</string>
     <string name="unit_jpy">%d JPY</string>
+    <string name="unit_year">Year</string>
+    <string name="unit_month">Month</string>
+    <string name="unit_day">Day</string>
 
     <!-- Notify -->
     <string name="notify_download_channel_name">Download</string>
@@ -259,12 +262,14 @@
     <!-- Billing -->
     <string name="billing_plus_title">%1$s+</string>
     <string name="billing_plus_description">%1$s+ is a support plan for developers that allows access to all features for the cost of one coffee per month.</string>
-    <string name="billing_plus_purchase_button">Buy for %1$s / month</string>
+    <string name="billing_plus_purchase_button">Buy for %1$s</string>
     <string name="billing_plus_verify_button">Restore purchase</string>
     <string name="billing_plus_consume_button">Consume Purchase</string>
-    <string name="billing_plus_caution1">※ %1$s+ is a subscription service that adds exclusive features. The payment is made immediately, and to continue using the features, monthly renewal is necessary. You can cancel the subscription at any time.</string>
+    <string name="billing_plus_caution1">※ %1$s+ is a subscription service that adds exclusive features. the payment is made immediately, and to continue using the features, monthly or yearly renewal is necessary. you can cancel the subscription at any time.</string>
     <string name="billing_plus_caution2">※ When using the app, you have already agreed to the Terms of Service and Privacy Policy, but please reconfirm them from the settings screen.</string>
     <string name="billing_plus_toast_require_plus">This feature can only be used with %1$s+</string>
+    <string name="billing_plus_plan_monthly">Normal Plan</string>
+    <string name="billing_plus_plan_yearly">Annual Plan</string>
     <string name="billing_plus_toast_purchased">Purchased</string>
     <string name="billing_plus_toast_purchased_error">Purchase failed</string>
     <string name="billing_plus_toast_consumed">Consumed</string>

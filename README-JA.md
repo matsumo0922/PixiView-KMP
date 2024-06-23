@@ -33,7 +33,7 @@ GooglePlay または AppStore にて公開中です！下記のリンクから�
 
 #### [Download](https://apps.apple.com/jp/app/fanviewer/id6476085758) from AppStore
 #### [Download](https://play.google.com/store/apps/details?id=caios.android.fanbox) from GooglePlay
-#### [Download](https://github.com/matsumo0922/PixiView/releases) from GitHub
+#### [Download](https://github.com/matsumo0922/PixiView-KMP/releases) from GitHub
 
 ## Why?
 

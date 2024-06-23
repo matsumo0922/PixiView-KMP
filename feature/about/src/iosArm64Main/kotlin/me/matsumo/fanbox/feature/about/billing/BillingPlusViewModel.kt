@@ -62,7 +62,7 @@ class BillingPlusViewModelImpl @OptIn(ExperimentalForeignApi::class) constructor
     )
 
     @OptIn(ExperimentalCoroutinesApi::class)
-    override suspend fun purchase(context: PlatformContext): Boolean = suspendCancellableCoroutine { continuation ->
+    override suspend fun purchase(context: PlatformContext, planType: BillingPlusUiState.Type): Boolean = suspendCancellableCoroutine { continuation ->
         BillingController.purchaseOnResult(
             onResult = {
                 viewModelScope.launch {

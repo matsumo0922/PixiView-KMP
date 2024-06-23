@@ -16,9 +16,9 @@ class PurchasePlusSubscriptionUseCase(
     private val mainDispatcher: CoroutineDispatcher,
 ) {
 
-    suspend operator fun invoke(activity: Activity): PurchaseConsumableResult {
+    suspend operator fun invoke(activity: Activity, offerToken: String): PurchaseConsumableResult {
         val productDetails = billingClient.queryProductDetails(ProductItem.plusSubscription, ProductType.SUBS)
-        val purchaseResult = purchase(activity, productDetails)
+        val purchaseResult = purchase(activity, productDetails, offerToken)
 
         acknowledge(purchaseResult.purchase)
 
@@ -28,8 +28,9 @@ class PurchasePlusSubscriptionUseCase(
     private suspend fun purchase(
         activity: Activity,
         productDetails: ProductDetails,
+        offerToken: String,
     ): PurchaseConsumableResult = withContext(mainDispatcher) {
-        val command = purchaseSingle(productDetails, null)
+        val command = purchaseSingle(productDetails, offerToken)
         val result = billingClient.launchBillingFlow(activity, command)
 
         PurchaseConsumableResult(command, productDetails, result.billingPurchase)

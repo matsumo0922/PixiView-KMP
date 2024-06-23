@@ -117,5 +117,12 @@
     "date": "2024/06/15",
     "logJp": "・in-app-reviewを実装\n・PSDファイルなどがシステムの画像ビューワーに写真として登録されてしまう問題を修正\n・広告量の削減を実施",
     "logEn": "・Implemented in-app-review.\n・Fixed the issue where PSD files etc. were registered as photos in the system image viewer.\n・Reduced the amount of advertisements."
+  },
+  {
+    "versionName": "2.0.9",
+    "versionCode": 34,
+    "date": "2024/06/23",
+    "logJp": "・年間プランの販売を開始\n・横スワイプで投稿を閲覧中にクラッシュする不具合を修正",
+    "logEn": "・Started selling annual plans.\n・Fixed a bug that caused a crash while viewing posts with horizontal swipe."
   }
 ]

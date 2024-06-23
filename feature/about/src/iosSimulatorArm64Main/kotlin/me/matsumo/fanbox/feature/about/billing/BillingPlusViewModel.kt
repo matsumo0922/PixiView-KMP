@@ -8,7 +8,7 @@ class BillingPlusViewModelImpl: BillingPlusViewModel() {
 
     override val screenState = MutableStateFlow<ScreenState<BillingPlusUiState>>(ScreenState.Loading)
 
-    override suspend fun purchase(context: PlatformContext): Boolean {
+    override suspend fun purchase(context: PlatformContext, planType: BillingPlusUiState.Type): Boolean {
         return false
     }
 
