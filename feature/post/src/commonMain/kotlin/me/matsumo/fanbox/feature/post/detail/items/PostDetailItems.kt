@@ -24,6 +24,7 @@ internal fun LazyListScope.postDetailItems(
                 content = content,
                 userData = userData,
                 isAdultContents = post.hasAdultContent,
+                isAutoImagePreview = userData.isAutoImagePreview,
                 onClickPost = onClickPost,
                 onClickPostLike = onClickPostLike,
                 onClickPostBookmark = onClickPostBookmark,
@@ -48,7 +49,10 @@ internal fun LazyListScope.postDetailItems(
         is FanboxPostDetail.Body.File -> {
             postDetailFileHeader(
                 content = content,
+                isAutoImagePreview = userData.isAutoImagePreview,
                 onClickFile = onClickFile,
+                onClickImage = onClickImage,
+                onClickDownload = onClickDownload,
             )
         }
 

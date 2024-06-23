@@ -9,7 +9,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.staticCompositionLocalOf
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.platform.LocalViewConfiguration
 import androidx.compose.ui.unit.dp
 import io.github.alexzhirkevich.cupertino.adaptive.AdaptiveTheme
 import io.github.alexzhirkevich.cupertino.adaptive.ExperimentalAdaptiveApi
@@ -135,7 +134,6 @@ fun PixiViewTheme(
         LocalBackgroundTheme provides backgroundTheme,
         LocalTintTheme provides tintTheme,
         LocalNativeViewsProvider provides NativeViews(nativeViews),
-        LocalShouldUseDarkTheme provides shouldUseDarkTheme,
     ) {
         AdaptiveTheme(
             material = {
@@ -214,5 +212,3 @@ fun shouldUseDarkTheme(themeConfig: ThemeConfig): Boolean {
         ThemeConfig.Dark -> true
     }
 }
-
-val LocalShouldUseDarkTheme = staticCompositionLocalOf { false }

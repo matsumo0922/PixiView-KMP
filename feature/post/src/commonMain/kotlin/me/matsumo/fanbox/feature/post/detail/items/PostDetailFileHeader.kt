@@ -11,15 +11,30 @@ import androidx.compose.ui.unit.dp
 import me.matsumo.fanbox.core.model.fanbox.FanboxPostDetail
 
 internal fun LazyListScope.postDetailFileHeader(
+    isAutoImagePreview: Boolean,
     content: FanboxPostDetail.Body.File,
+    onClickImage: (FanboxPostDetail.ImageItem) -> Unit,
     onClickFile: (FanboxPostDetail.FileItem) -> Unit,
+    onClickDownload: (List<FanboxPostDetail.ImageItem>) -> Unit,
 ) {
     items(content.files) {
-        PostDetailFileItem(
-            modifier = Modifier.fillMaxWidth(),
-            item = it,
-            onClickDownload = onClickFile,
-        )
+        val imageItem = it.asImageItem()
+
+        if (isAutoImagePreview && imageItem != null) {
+            PostDetailImageItem(
+                modifier = Modifier.fillMaxWidth(),
+                item = imageItem,
+                onClickImage = onClickImage,
+                onClickDownload = { onClickDownload.invoke(listOf(imageItem)) },
+                onClickAllDownload = { onClickDownload.invoke(content.imageItems) }
+            )
+        } else {
+            PostDetailFileItem(
+                modifier = Modifier.fillMaxWidth(),
+                item = it,
+                onClickDownload = onClickFile,
+            )
+        }
     }
 
     if (content.text.isNotBlank()) {

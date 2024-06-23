@@ -210,6 +210,8 @@
     <string name="setting_top_general_grid_mode_description">Switch the viewing method of the post list screen to table format (list display).</string>
     <string name="setting_top_general_infinity_post_detail">Swipe left or right to see posts</string>
     <string name="setting_top_general_infinity_post_detail_description">You can now view previous and next posts by swiping left and right on the post details screen.</string>
+    <string name="setting_top_general_auto_image_preview">Automatic preview of image files</string>
+    <string name="setting_top_general_auto_image_preview_description">Images distributed in file formats (JPG, PNG) are automatically previewed in the same way as regular images.</string>
     <string name="setting_top_information">Information</string>
     <string name="setting_top_information_id">CAIOS ID</string>
     <string name="setting_top_information_version">App version</string>

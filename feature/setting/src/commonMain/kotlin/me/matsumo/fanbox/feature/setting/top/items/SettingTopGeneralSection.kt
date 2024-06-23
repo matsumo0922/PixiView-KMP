@@ -10,6 +10,8 @@ import me.matsumo.fanbox.core.ui.component.SettingSwitchItem
 import me.matsumo.fanbox.core.ui.setting_top_general
 import me.matsumo.fanbox.core.ui.setting_top_general_app_lock
 import me.matsumo.fanbox.core.ui.setting_top_general_app_lock_description
+import me.matsumo.fanbox.core.ui.setting_top_general_auto_image_preview
+import me.matsumo.fanbox.core.ui.setting_top_general_auto_image_preview_description
 import me.matsumo.fanbox.core.ui.setting_top_general_default_follow_tab
 import me.matsumo.fanbox.core.ui.setting_top_general_default_follow_tab_description
 import me.matsumo.fanbox.core.ui.setting_top_general_grid_mode
@@ -33,6 +35,7 @@ internal fun SettingTopGeneralSection(
     onClickHideRestricted: (Boolean) -> Unit,
     onClickGridMode: (Boolean) -> Unit,
     onClickInfinityPostDetail: (Boolean) -> Unit,
+    onClickAutoImagePreview: (Boolean) -> Unit,
     modifier: Modifier = Modifier,
 ) {
     Column(modifier) {
@@ -95,6 +98,14 @@ internal fun SettingTopGeneralSection(
             description = Res.string.setting_top_general_infinity_post_detail_description,
             value = userData.isUseInfinityPostDetail,
             onValueChanged = onClickInfinityPostDetail,
+        )
+
+        SettingSwitchItem(
+            modifier = Modifier.fillMaxWidth(),
+            title = Res.string.setting_top_general_auto_image_preview,
+            description = Res.string.setting_top_general_auto_image_preview_description,
+            value = userData.isAutoImagePreview,
+            onValueChanged = onClickAutoImagePreview,
         )
     }
 }

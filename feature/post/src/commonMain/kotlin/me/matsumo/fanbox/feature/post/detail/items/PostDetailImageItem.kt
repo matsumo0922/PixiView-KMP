@@ -18,7 +18,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import coil3.compose.AsyncImage
+import coil3.annotation.ExperimentalCoilApi
 import coil3.compose.LocalPlatformContext
 import coil3.compose.SubcomposeAsyncImage
 import coil3.request.ImageRequest
@@ -34,7 +34,7 @@ import me.matsumo.fanbox.core.ui.theme.center
 import me.matsumo.fanbox.feature.post.image.items.PostImageMenuDialog
 import org.jetbrains.compose.resources.stringResource
 
-@OptIn(ExperimentalFoundationApi::class)
+@OptIn(ExperimentalFoundationApi::class, ExperimentalCoilApi::class)
 @Composable
 internal fun PostDetailImageItem(
     item: FanboxPostDetail.ImageItem,
@@ -44,13 +44,14 @@ internal fun PostDetailImageItem(
     modifier: Modifier = Modifier,
 ) {
     var isShowMenu by remember { mutableStateOf(false) }
+    var currentAspectRatio by remember { mutableStateOf(item.aspectRatio) }
     val loadUrl = if (item.extension.lowercase() == "gif") item.originalUrl else item.thumbnailUrl
 
     Box(modifier) {
         SubcomposeAsyncImage(
             modifier = Modifier
                 .fillMaxWidth()
-                .aspectRatio(item.aspectRatio)
+                .aspectRatio(currentAspectRatio)
                 .combinedClickable(
                     onClick = { onClickImage.invoke(item) },
                     onLongClick = { isShowMenu = true },
@@ -63,6 +64,9 @@ internal fun PostDetailImageItem(
             loading = {
                 SimmerPlaceHolder()
             },
+            onSuccess = {
+                currentAspectRatio = it.result.image.width.toFloat() / it.result.image.height
+            },
             contentDescription = null,
         )
 
@@ -70,7 +74,7 @@ internal fun PostDetailImageItem(
             Box(
                 modifier = Modifier
                     .fillMaxSize()
-                    .aspectRatio(item.aspectRatio)
+                    .aspectRatio(currentAspectRatio)
                     .background(MaterialTheme.colorScheme.surface.copy(alpha = 0.5f)),
             ) {
                 Text(

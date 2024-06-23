@@ -27,6 +27,7 @@ interface UserDataRepository {
     suspend fun setFollowTabDefaultHome(isFollowTabDefaultHome: Boolean)
     suspend fun setHideAdultContents(isHideAdultContents: Boolean)
     suspend fun setOverrideAdultContents(isOverrideAdultContents: Boolean)
+    suspend fun setAutoImagePreview(isAutoImagePreview: Boolean)
     suspend fun setTestUser(isTestUser: Boolean)
     suspend fun setHideRestricted(isHideRestricted: Boolean)
     suspend fun setDeveloperMode(isDeveloperMode: Boolean)
@@ -87,6 +88,10 @@ class UserDataRepositoryImpl(
         pixiViewDataStore.setOverrideAdultContents(isOverrideAdultContents)
     }
 
+    override suspend fun setAutoImagePreview(isAutoImagePreview: Boolean) {
+        pixiViewDataStore.setAutoImagePreview(isAutoImagePreview)
+    }
+
     override suspend fun setTestUser(isTestUser: Boolean) {
         pixiViewDataStore.setTestUser(isTestUser)
     }
@@ -117,6 +122,7 @@ class UserDataRepositoryImpl(
                 setUseAppLock(false)
                 setHideRestricted(false)
                 setUseGridMode(false)
+                setAutoImagePreview(false)
             }
         }
     }

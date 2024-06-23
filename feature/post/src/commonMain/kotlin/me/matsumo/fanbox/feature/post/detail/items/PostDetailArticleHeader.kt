@@ -23,6 +23,7 @@ internal fun LazyListScope.postDetailArticleHeader(
     content: FanboxPostDetail.Body.Article,
     userData: UserData,
     isAdultContents: Boolean,
+    isAutoImagePreview: Boolean,
     onClickPost: (PostId) -> Unit,
     onClickPostLike: (PostId) -> Unit,
     onClickPostBookmark: (FanboxPost, Boolean) -> Unit,
@@ -63,11 +64,23 @@ internal fun LazyListScope.postDetailArticleHeader(
             }
 
             is FanboxPostDetail.Body.Article.Block.File -> {
-                PostDetailFileItem(
-                    modifier = Modifier.fillMaxWidth(),
-                    item = it.item,
-                    onClickDownload = onClickFile,
-                )
+                val imageItem = it.item.asImageItem()
+
+                if (isAutoImagePreview && imageItem != null) {
+                    PostDetailImageItem(
+                        modifier = Modifier.fillMaxWidth(),
+                        item = imageItem,
+                        onClickImage = onClickImage,
+                        onClickDownload = { onClickDownload.invoke(listOf(imageItem)) },
+                        onClickAllDownload = { onClickDownload.invoke(content.imageItems) }
+                    )
+                } else {
+                    PostDetailFileItem(
+                        modifier = Modifier.fillMaxWidth(),
+                        item = it.item,
+                        onClickDownload = onClickFile,
+                    )
+                }
             }
 
             is FanboxPostDetail.Body.Article.Block.Link -> {

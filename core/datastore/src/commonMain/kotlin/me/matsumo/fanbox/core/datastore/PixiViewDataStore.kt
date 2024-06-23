@@ -39,6 +39,7 @@ class PixiViewDataStore(
             setFollowTabDefaultHome(data.isDefaultFollowTabInHome)
             setHideAdultContents(data.isHideAdultContents)
             setOverrideAdultContents(data.isOverrideAdultContents)
+            setAutoImagePreview(data.isAutoImagePreview)
             setTestUser(data.isTestUser)
             setHideRestricted(data.isHideRestricted)
             setDeveloperMode(data.isDeveloperMode)
@@ -211,6 +212,20 @@ class PixiViewDataStore(
 
         userPreference.edit {
             it[booleanPreferencesKey(UserData::isOverrideAdultContents.name)] = isOverrideAdultContents
+        }
+    }
+
+    suspend fun setAutoImagePreview(isAutoImagePreview: Boolean) = withContext(ioDispatcher) {
+        if (userData.first().isAutoImagePreview == isAutoImagePreview) return@withContext
+
+        SettingsLog.update(
+            propertyName = "isAutoImagePreview",
+            oldValue = userData.first().isAutoImagePreview.toString(),
+            newValue = isAutoImagePreview.toString()
+        ).send()
+
+        userPreference.edit {
+            it[booleanPreferencesKey(UserData::isAutoImagePreview.name)] = isAutoImagePreview
         }
     }
 

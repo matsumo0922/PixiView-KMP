@@ -97,6 +97,12 @@ class SettingTopViewModel(
         }
     }
 
+    fun setAutoImagePreview(isAutoImagePreview: Boolean) {
+        viewModelScope.launch {
+            userDataRepository.setAutoImagePreview(isAutoImagePreview)
+        }
+    }
+
     fun setDeveloperMode(isDeveloperMode: Boolean) {
         viewModelScope.launch {
             userDataRepository.setDeveloperMode(isDeveloperMode)

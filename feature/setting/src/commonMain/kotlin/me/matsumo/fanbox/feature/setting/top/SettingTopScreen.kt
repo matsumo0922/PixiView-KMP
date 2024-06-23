@@ -77,6 +77,18 @@ internal fun SettingTopRoute(
         modifier = modifier,
         screenState = screenState,
     ) { uiState ->
+        fun requirePlus(setting: Boolean, settingMethod: (Boolean) -> Unit, referrer: String) {
+            if (setting) {
+                if (uiState.userData.hasPrivilege) settingMethod.invoke(true)
+                else {
+                    scope.launch { toastExtension.show(snackbarHostState, requirePlus) }
+                    navigateToBillingPlus.invoke(referrer)
+                }
+            } else {
+                settingMethod.invoke(false)
+            }
+        }
+
         SettingTopScreen(
             modifier = Modifier.background(MaterialTheme.colorScheme.surface),
             userData = uiState.userData,
@@ -93,45 +105,10 @@ internal fun SettingTopRoute(
             onClickHideAdultContents = viewModel::setHideAdultContents,
             onClickOverrideAdultContents = viewModel::setOverrideAdultContents,
             onClickInfinityPostDetail = viewModel::setUseInfinityPostDetail,
-            onClickGridMode = {
-                if (it) {
-                    if (uiState.userData.hasPrivilege) {
-                        viewModel.setGridMode(true)
-                    } else {
-                        scope.launch { toastExtension.show(snackbarHostState, requirePlus) }
-                        navigateToBillingPlus.invoke("isUseGridMode")
-                    }
-                } else {
-                    viewModel.setGridMode(false)
-                }
-            },
-            onClickHideRestricted = {
-                if (it) {
-                    if (uiState.userData.hasPrivilege) {
-                        viewModel.setHideRestricted(true)
-                    } else {
-                        scope.launch { toastExtension.show(snackbarHostState, requirePlus) }
-                        navigateToBillingPlus.invoke("isHideRestricted")
-                    }
-                } else {
-                    viewModel.setHideRestricted(false)
-                }
-            },
-            onClickAppLock = {
-                if (it) {
-                    if (uiState.userData.hasPrivilege) {
-                        scope.launch {
-                            if (viewModel.tryToAuthenticate(biometryAuthenticator)) {
-                                viewModel.setAppLock(true)
-                            }
-                        }
-                    } else {
-                        navigateToBillingPlus.invoke("isUseAppLock")
-                    }
-                } else {
-                    viewModel.setAppLock(false)
-                }
-            },
+            onClickGridMode = { requirePlus(it, viewModel::setGridMode, "isUseGridMode") },
+            onClickHideRestricted = { requirePlus(it, viewModel::setHideRestricted, "isHideRestricted") },
+            onClickAppLock = { requirePlus(it, viewModel::setAppLock, "isUseAppLock") },
+            onClickAutoImagePreview = { requirePlus(it, viewModel::setAutoImagePreview, "isAutoImagePreview") },
             onClickLogout = {
                 navigateToLogoutDialog(SimpleAlertContents.Logout) {
                     scope.launch {
@@ -179,6 +156,7 @@ private fun SettingTopScreen(
     onClickHideRestricted: (Boolean) -> Unit,
     onClickGridMode: (Boolean) -> Unit,
     onClickInfinityPostDetail: (Boolean) -> Unit,
+    onClickAutoImagePreview: (Boolean) -> Unit,
     onClickTeamsOfService: () -> Unit,
     onClickPrivacyPolicy: () -> Unit,
     onClickLogout: () -> Unit,
@@ -244,6 +222,7 @@ private fun SettingTopScreen(
                     onClickHideRestricted = onClickHideRestricted,
                     onClickGridMode = onClickGridMode,
                     onClickInfinityPostDetail = onClickInfinityPostDetail,
+                    onClickAutoImagePreview = onClickAutoImagePreview,
                 )
             }
 

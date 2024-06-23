@@ -4,7 +4,6 @@ import kotlinx.datetime.Instant
 import me.matsumo.fanbox.core.model.PageOffsetInfo
 import me.matsumo.fanbox.core.model.fanbox.id.CommentId
 import me.matsumo.fanbox.core.model.fanbox.id.PostId
-import kotlinx.datetime.LocalDateTime
 
 data class FanboxPostDetail(
     val id: PostId,
@@ -58,7 +57,7 @@ data class FanboxPostDetail(
             get() = when (this) {
                 is Article -> blocks.filterIsInstance<Article.Block.Image>().map { it.item }
                 is Image -> images
-                is File -> emptyList()
+                is File -> files.mapNotNull { it.asImageItem() }
                 is Unknown -> emptyList()
             }
 
@@ -138,7 +137,19 @@ data class FanboxPostDetail(
         val extension: String,
         val size: Long,
         val url: String,
-    )
+    ) {
+        fun asImageItem(): ImageItem? {
+            return if (!extension.lowercase().contains(Regex("""(jpg|jpeg|png|gif)"""))) null
+            else ImageItem(
+                id = id,
+                postId = postId,
+                extension = extension,
+                originalUrl = url,
+                thumbnailUrl = url,
+                aspectRatio = 1f,
+            )
+        }
+    }
 
     companion object {
         fun dummy() = FanboxPostDetail(
