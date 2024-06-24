@@ -7,6 +7,7 @@ import androidx.navigation.NavGraphBuilder
 import androidx.navigation.NavType
 import androidx.navigation.navArgument
 import me.matsumo.fanbox.core.ui.component.sheet.bottomSheet
+import me.matsumo.fanbox.core.ui.extensition.BackHandler
 import me.matsumo.fanbox.core.ui.extensition.navigateWithLog
 
 const val BillingPlusReferrer = "billingPlusReferrer"
@@ -26,6 +27,10 @@ fun NavGraphBuilder.billingPlusBottomSheet(
         ),
     ) {
         val referrer = it.arguments?.getString(BillingPlusReferrer).toString()
+
+        BackHandler {
+            terminate()
+        }
 
         BillingPlusRoute(
             modifier = Modifier.fillMaxSize(),

@@ -124,5 +124,12 @@
     "date": "2024/06/23",
     "logJp": "・年間プランの販売を開始\n・横スワイプで投稿を閲覧中にクラッシュする不具合を修正",
     "logEn": "・Started selling annual plans.\n・Fixed a bug that caused a crash while viewing posts with horizontal swipe."
+  },
+  {
+    "versionName": "2.1.1",
+    "versionCode": 36,
+    "date": "2024/06/24",
+    "logJp": "・ファイル形式で配布されている画像の自動プレビュー機能を追加\n・リソース管理システムを公式のライブラリに移行",
+    "logEn": "・Added automatic preview function for images distributed in file format.\n・Migrated resource management system to official library"
   }
 ]

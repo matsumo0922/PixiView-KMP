@@ -52,7 +52,7 @@
     <string name="error_paging">ページネーションを継続できません</string>
     <string name="error_developing_feature">開発中の機能です</string>
     <string name="error_billing">購入情報を取得できませんでした</string>
-    <string name="error_restricted_post">月額%d円以上支援すると見ることができます</string>
+    <string name="error_restricted_post">月額%1$d円以上支援すると見ることができます</string>
     <string name="error_restricted_post_ios">現在のプランでは閲覧できません</string>
     <string name="error_adult_content">成人向けコンテンツ</string>
     <string name="error_adult_content_test_user">このコンテンツは一時的に制限されています</string>
@@ -66,7 +66,7 @@
     <string name="unit_second_before">%1$d秒前</string>
     <string name="unit_favorite">%1$dいいね</string>
     <string name="unit_tag">%1$d件</string>
-    <string name="unit_jpy">￥%d</string>
+    <string name="unit_jpy">￥%1$d</string>
     <string name="unit_year">年</string>
     <string name="unit_month">月</string>
     <string name="unit_day">日</string>

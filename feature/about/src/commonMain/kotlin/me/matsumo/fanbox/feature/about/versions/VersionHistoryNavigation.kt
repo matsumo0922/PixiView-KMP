@@ -5,6 +5,7 @@ import androidx.compose.ui.Modifier
 import androidx.navigation.NavController
 import androidx.navigation.NavGraphBuilder
 import me.matsumo.fanbox.core.ui.component.sheet.bottomSheet
+import me.matsumo.fanbox.core.ui.extensition.BackHandler
 import me.matsumo.fanbox.core.ui.extensition.navigateWithLog
 
 const val VersionHistoryRoute = "versionHistory"
@@ -17,6 +18,10 @@ fun NavGraphBuilder.versionHistoryBottomSheet(
     terminate: () -> Unit,
 ) {
     bottomSheet(VersionHistoryRoute) {
+        BackHandler {
+            terminate()
+        }
+
         VersionHistoryDialog(
             modifier = Modifier.fillMaxSize(),
             terminate = terminate,

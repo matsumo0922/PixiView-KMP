@@ -1,5 +1,6 @@
 package me.matsumo.fanbox.core.ui.extensition
 
+import androidx.compose.runtime.Composable
 import kotlinx.cinterop.ExperimentalForeignApi
 import me.matsumo.fanbox.core.logs.category.NavigationLog
 import me.matsumo.fanbox.core.logs.logger.send
@@ -13,6 +14,7 @@ class NavigatorExtensionImpl: NavigatorExtension {
         NavigationLog.openUrl(
             url = url,
             referer = referrer,
+            isSuccess = true
         ).send()
 
         UIApplication.sharedApplication.openURL(NSURL(string = url))
@@ -25,4 +27,9 @@ class NavigatorExtensionImpl: NavigatorExtension {
             withObject = null
         )
     }
+}
+
+@Composable
+actual fun BackHandler(isEnable: Boolean, onBack: () -> Unit) {
+    // Not supported on iOS
 }

@@ -62,6 +62,7 @@ import me.matsumo.fanbox.core.ui.creator_posts_download_button
 import me.matsumo.fanbox.core.ui.creator_posts_download_button_downloading
 import me.matsumo.fanbox.core.ui.creator_posts_download_dialog_title
 import me.matsumo.fanbox.core.ui.creator_posts_download_title
+import me.matsumo.fanbox.core.ui.extensition.BackHandler
 import me.matsumo.fanbox.core.ui.view.SimpleAlertContents
 import me.matsumo.fanbox.feature.creator.download.items.CreatorPostsDownloadItem
 import me.matsumo.fanbox.feature.creator.download.items.CreatorPostsDownloadSettingsSection
@@ -178,6 +179,10 @@ private fun CreatorPostsDownloadScreen(
         if (targetIndex > 0) {
             state.animateScrollToItem(targetIndex + 1)
         }
+    }
+
+    BackHandler(!isCompleted) {
+        terminate.invoke()
     }
 
     Scaffold(
