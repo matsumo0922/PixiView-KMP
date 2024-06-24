@@ -22,11 +22,13 @@ import me.matsumo.fanbox.core.repository.RewardRepositoryImpl
 import me.matsumo.fanbox.core.repository.UserDataRepository
 import me.matsumo.fanbox.core.repository.UserDataRepositoryImpl
 import me.matsumo.fanbox.core.repository.client.CookiesStorage
+import org.koin.core.module.Module
 import org.koin.dsl.module
+
+expect val repositorySubModule: Module
 
 @OptIn(ExperimentalSerializationApi::class)
 val repositoryModule = module {
-
     single {
         Json {
             isLenient = true

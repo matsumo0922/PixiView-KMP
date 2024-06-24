@@ -5,6 +5,7 @@ import me.matsumo.fanbox.core.datastore.di.dataStoreHelperModule
 import me.matsumo.fanbox.core.datastore.di.dataStoreModule
 import me.matsumo.fanbox.core.logs.di.logModule
 import me.matsumo.fanbox.core.repository.di.repositoryModule
+import me.matsumo.fanbox.core.repository.di.repositorySubModule
 import me.matsumo.fanbox.core.ui.di.uiSubModule
 import me.matsumo.fanbox.feature.about.di.aboutModule
 import me.matsumo.fanbox.feature.creator.di.creatorModule
@@ -20,6 +21,7 @@ fun KoinApplication.applyModules() {
     modules(dataStoreModule)
     modules(dataStoreHelperModule)
     modules(repositoryModule)
+    modules(repositorySubModule)
     modules(billingModule)
     modules(uiSubModule)
     modules(logModule)

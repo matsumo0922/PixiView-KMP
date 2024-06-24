@@ -2,8 +2,6 @@ package me.matsumo.fanbox.core.ui.di
 
 import me.matsumo.fanbox.core.ui.ads.NativeAdsPreLoader
 import me.matsumo.fanbox.core.ui.ads.RewardAdLoader
-import me.matsumo.fanbox.core.ui.extensition.ImageDownloader
-import me.matsumo.fanbox.core.ui.extensition.ImageDownloaderImpl
 import me.matsumo.fanbox.core.ui.extensition.NavigatorExtension
 import me.matsumo.fanbox.core.ui.extensition.NavigatorExtensionImpl
 import me.matsumo.fanbox.core.ui.extensition.ToastExtension
@@ -22,14 +20,6 @@ actual val uiSubModule: Module = module {
     single<ToastExtension> {
         ToastExtensionImpl(
             context = get(),
-        )
-    }
-
-    single<ImageDownloader> {
-        ImageDownloaderImpl(
-            context = get(),
-            fanboxRepository = get(),
-            scope = get(),
         )
     }
 

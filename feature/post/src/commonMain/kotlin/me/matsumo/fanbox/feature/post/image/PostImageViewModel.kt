@@ -10,14 +10,14 @@ import me.matsumo.fanbox.core.common.util.suspendRunCatching
 import me.matsumo.fanbox.core.model.ScreenState
 import me.matsumo.fanbox.core.model.fanbox.FanboxPostDetail
 import me.matsumo.fanbox.core.model.fanbox.id.PostId
+import me.matsumo.fanbox.core.repository.DownloadPostsRepository
 import me.matsumo.fanbox.core.repository.FanboxRepository
 import me.matsumo.fanbox.core.ui.Res
 import me.matsumo.fanbox.core.ui.error_network
-import me.matsumo.fanbox.core.ui.extensition.ImageDownloader
 
 class PostImageViewModel(
     private val fanboxRepository: FanboxRepository,
-    private val imageDownloader: ImageDownloader,
+    private val downloadPostsRepository: DownloadPostsRepository,
 ) : ViewModel() {
 
     private val _screenState = MutableStateFlow<ScreenState<PostImageUiState>>(ScreenState.Loading)
@@ -39,7 +39,7 @@ class PostImageViewModel(
     }
 
     fun downloadImages(imageItems: List<FanboxPostDetail.ImageItem>, callback: () -> Unit) {
-        imageDownloader.downloadImages(imageItems, callback)
+        downloadPostsRepository.requestDownloadImages(imageItems, callback)
     }
 }
 

@@ -3,7 +3,6 @@ package me.matsumo.fanbox.feature.creator.download
 import androidx.compose.runtime.Stable
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
@@ -16,15 +15,15 @@ import me.matsumo.fanbox.core.model.fanbox.FanboxPost
 import me.matsumo.fanbox.core.model.fanbox.id.CreatorId
 import me.matsumo.fanbox.core.model.fanbox.id.PostId
 import me.matsumo.fanbox.core.model.updateWhenIdle
+import me.matsumo.fanbox.core.repository.DownloadPostsRepository
 import me.matsumo.fanbox.core.repository.FanboxRepository
 import me.matsumo.fanbox.core.ui.Res
 import me.matsumo.fanbox.core.ui.error_network
-import me.matsumo.fanbox.core.ui.extensition.ImageDownloader
 import kotlin.coroutines.resume
 
 class CreatorPostsDownloadViewModel(
     private val fanboxRepository: FanboxRepository,
-    private val imageDownloader: ImageDownloader,
+    private val downloadPostsRepository: DownloadPostsRepository,
 ) : ViewModel() {
 
     private val _screenState = MutableStateFlow<ScreenState<CreatorPostsDownloadUiState>>(ScreenState.Loading)
@@ -88,30 +87,10 @@ class CreatorPostsDownloadViewModel(
         }
     }
 
-    suspend fun download(postId: PostId): Boolean {
-        runCatching {
-            val postDetail = fanboxRepository.getPost(postId)
-
-            for (imageItem in postDetail.body.imageItems) {
-                suspendCancellableCoroutine {
-                    imageDownloader.downloadImage(imageItem) {
-                        it.resume(Unit)
-                    }
-                }
-                delay(500)
-            }
-
-            for (fileItem in postDetail.body.fileItems) {
-                suspendCancellableCoroutine {
-                    imageDownloader.downloadFile(fileItem) {
-                        it.resume(Unit)
-                    }
-                }
-                delay(500)
-            }
+    suspend fun download(postId: PostId): Boolean = suspendCancellableCoroutine {
+        downloadPostsRepository.requestDownloadPost(postId) {
+            it.resume(true)
         }
-
-        return true
     }
 
     fun updateIgnoreKeyword(ignoreKeyword: String) {

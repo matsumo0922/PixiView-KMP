@@ -30,7 +30,6 @@ import me.matsumo.fanbox.core.repository.FanboxRepository
 import me.matsumo.fanbox.core.repository.UserDataRepository
 import me.matsumo.fanbox.core.ui.Res
 import me.matsumo.fanbox.core.ui.error_no_data
-import me.matsumo.fanbox.core.ui.extensition.ImageDownloader
 import me.matsumo.fanbox.core.ui.home_app_lock_message
 import me.matsumo.fanbox.core.ui.home_app_lock_title
 import org.jetbrains.compose.resources.getString
@@ -40,7 +39,6 @@ class PixiViewViewModel(
     private val userDataRepository: UserDataRepository,
     private val fanboxRepository: FanboxRepository,
     private val launchLogDataStore: LaunchLogDataStore,
-    private val imageDownloader: ImageDownloader,
     private val pixiViewConfig: PixiViewConfig,
     private val billingStatus: BillingStatus,
 ) : ViewModel() {

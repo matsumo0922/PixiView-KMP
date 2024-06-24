@@ -1,7 +1,5 @@
 package me.matsumo.fanbox.core.ui.di
 
-import me.matsumo.fanbox.core.ui.extensition.ImageDownloader
-import me.matsumo.fanbox.core.ui.extensition.ImageDownloaderImpl
 import me.matsumo.fanbox.core.ui.extensition.NavigatorExtension
 import me.matsumo.fanbox.core.ui.extensition.NavigatorExtensionImpl
 import me.matsumo.fanbox.core.ui.extensition.ToastExtension
@@ -17,12 +15,5 @@ actual val uiSubModule: Module = module {
 
     single<ToastExtension> {
         ToastExtensionImpl()
-    }
-
-    single<ImageDownloader> {
-        ImageDownloaderImpl(
-            fanboxRepository = get(),
-            scope = get(),
-        )
     }
 }

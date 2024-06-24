@@ -2,7 +2,6 @@ package me.matsumo.fanbox
 
 import android.graphics.Color
 import android.os.Bundle
-import android.widget.Toast
 import androidx.activity.SystemBarStyle
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
@@ -14,8 +13,10 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import androidx.fragment.app.FragmentActivity
+import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.repeatOnLifecycle
 import com.google.android.play.core.review.ReviewManagerFactory
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
@@ -25,8 +26,8 @@ import me.matsumo.fanbox.core.logs.category.ReviewsLog
 import me.matsumo.fanbox.core.logs.logger.LogConfigurator
 import me.matsumo.fanbox.core.logs.logger.send
 import me.matsumo.fanbox.core.model.ThemeConfig
+import me.matsumo.fanbox.core.repository.DownloadPostsRepository
 import me.matsumo.fanbox.core.repository.UserDataRepository
-import me.matsumo.fanbox.core.ui.extensition.ImageDownloader
 import me.matsumo.fanbox.core.ui.theme.shouldUseDarkTheme
 import org.koin.compose.KoinContext
 import org.koin.core.component.KoinComponent
@@ -36,9 +37,9 @@ class MainActivity : FragmentActivity(), KoinComponent {
 
     private val userDataRepository: UserDataRepository by inject()
 
-    private val launchLogDataStore: LaunchLogDataStore by inject()
+    private val downloadPostsRepository: DownloadPostsRepository by inject()
 
-    private val imageDownloader: ImageDownloader by inject()
+    private val launchLogDataStore: LaunchLogDataStore by inject()
 
     private var stayTime = 0L
 
@@ -49,8 +50,6 @@ class MainActivity : FragmentActivity(), KoinComponent {
         super.onCreate(savedInstanceState)
 
         enableEdgeToEdge()
-
-        imageDownloader.setCallback(::requestReview)
 
         setContent {
             KoinContext {
@@ -76,6 +75,16 @@ class MainActivity : FragmentActivity(), KoinComponent {
                 )
 
                 splashScreen.setKeepOnScreenCondition { userData == null }
+            }
+        }
+
+        lifecycleScope.launch {
+            lifecycle.repeatOnLifecycle(Lifecycle.State.STARTED) {
+                downloadPostsRepository.reservingPosts.collect {
+                    if (it.isNotEmpty()) {
+                        requestReview()
+                    }
+                }
             }
         }
     }

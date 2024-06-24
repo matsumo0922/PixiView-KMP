@@ -23,7 +23,6 @@ import com.eygraber.compose.placeholder.placeholder
 import io.github.alexzhirkevich.cupertino.adaptive.AdaptiveCircularProgressIndicator
 import io.github.alexzhirkevich.cupertino.adaptive.ExperimentalAdaptiveApi
 import me.matsumo.fanbox.core.model.fanbox.FanboxMetaData
-import me.matsumo.fanbox.core.model.fanbox.FanboxPostDetail
 import org.jetbrains.compose.resources.DrawableResource
 
 @Immutable
@@ -34,16 +33,6 @@ data class FanboxCookie(
 val LocalFanboxCookie = staticCompositionLocalOf { FanboxCookie() }
 
 val LocalFanboxMetadata = staticCompositionLocalOf { FanboxMetaData.dummy() }
-
-interface ImageDownloader {
-    fun downloadImages(items: List<FanboxPostDetail.ImageItem>, callback: () -> Unit)
-    fun downloadFiles(items: List<FanboxPostDetail.FileItem>, callback: () -> Unit)
-
-    fun downloadImage(item: FanboxPostDetail.ImageItem, callback: () -> Unit)
-    fun downloadFile(item: FanboxPostDetail.FileItem, callback: () -> Unit)
-
-    fun setCallback(callback: () -> Unit)
-}
 
 @Composable
 expect fun DrawableResource.asCoilImage(): Image

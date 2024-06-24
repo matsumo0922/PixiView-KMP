@@ -19,11 +19,11 @@ import me.matsumo.fanbox.core.model.fanbox.FanboxPostDetail
 import me.matsumo.fanbox.core.model.fanbox.id.CommentId
 import me.matsumo.fanbox.core.model.fanbox.id.PostId
 import me.matsumo.fanbox.core.model.updateWhenIdle
+import me.matsumo.fanbox.core.repository.DownloadPostsRepository
 import me.matsumo.fanbox.core.repository.FanboxRepository
 import me.matsumo.fanbox.core.repository.UserDataRepository
 import me.matsumo.fanbox.core.ui.Res
 import me.matsumo.fanbox.core.ui.error_network
-import me.matsumo.fanbox.core.ui.extensition.ImageDownloader
 import me.matsumo.fanbox.core.ui.post_detail_comment_comment_failed
 import me.matsumo.fanbox.core.ui.post_detail_comment_commented
 import me.matsumo.fanbox.core.ui.post_detail_comment_delete_failed
@@ -33,7 +33,7 @@ import org.jetbrains.compose.resources.StringResource
 class PostDetailViewModel(
     private val userDataRepository: UserDataRepository,
     private val fanboxRepository: FanboxRepository,
-    private val imageDownloader: ImageDownloader,
+    private val downloadPostsRepository: DownloadPostsRepository,
 ) : ViewModel() {
 
     private val _screenState = MutableStateFlow<ScreenState<PostDetailUiState>>(ScreenState.Loading)
@@ -222,11 +222,11 @@ class PostDetailViewModel(
     }
 
     fun downloadImages(imageItems: List<FanboxPostDetail.ImageItem>, callback: () -> Unit) {
-        imageDownloader.downloadImages(imageItems, callback)
+        downloadPostsRepository.requestDownloadImages(imageItems, callback)
     }
 
     fun downloadFiles(fileItems: List<FanboxPostDetail.FileItem>, callback: () -> Unit) {
-        imageDownloader.downloadFiles(fileItems, callback)
+        downloadPostsRepository.requestDownloadFiles(fileItems, callback)
     }
 }
 
