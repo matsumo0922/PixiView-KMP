@@ -1,5 +1,6 @@
 package me.matsumo.fanbox.core.repository.client
 
+import io.github.aakira.napier.Napier
 import io.ktor.client.plugins.cookies.CookiesStorage
 import io.ktor.http.Cookie
 import io.ktor.http.Url
@@ -15,7 +16,9 @@ class CookiesStorage(
     private val mutex = Mutex()
 
     override suspend fun addCookie(requestUrl: Url, cookie: Cookie): Unit = mutex.withLock {
-        cookieDataStore.addCookies(listOf("${cookie.name}=${cookie.value}"))
+        // Napier.d { "addCookie: $requestUrl ${cookie.name}=${cookie.value}" }
+        // if (!listOf("__cf_bm", "cf_clearance", "FANBOXSESSID").contains(cookie.name)) return@withLock
+        // cookieDataStore.addCookies(listOf("${cookie.name}=${cookie.value}"))
     }
 
     override suspend fun get(requestUrl: Url): List<Cookie> = mutex.withLock {
