@@ -526,18 +526,7 @@ class FanboxRepositoryImpl(
         header("origin", "https://www.fanbox.cc")
         header("referer", "https://www.fanbox.cc")
         header("user-agent", "Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Mobile Safari/537.36")
-        header("accept", "application/json, text/plain, */*")
-        header("accept-language", "ja-JP,ja;q=0.9,en-US;q=0.8,en;q=0.7")
-        header("accept-encoding", "gzip, deflate, br")
-        header("Content-Type", "application/json")
-        header("Sec-Ch-Ua", "\"Not-A.Brand\";v=\"99\",\"Chromium\";v=\"124")
-        header("Sec-Ch-Ua-Mobile", "?1")
-        header("Sec-Ch-Ua-Platform", "\"Android\"")
-        header("Sec-Fetch-Dest", "empty")
-        header("Sec-Fetch-Mode", "cors")
-        header("Sec-Fetch-Site", "same-site")
         header("x-csrf-token", metaData.first().csrfToken)
-        header("Cookie", cookie.first())
     }
 
     companion object {

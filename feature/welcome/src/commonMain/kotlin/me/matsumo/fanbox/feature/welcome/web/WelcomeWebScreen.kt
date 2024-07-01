@@ -16,7 +16,6 @@ import androidx.compose.ui.Modifier
 import com.multiplatform.webview.web.LoadingState
 import com.multiplatform.webview.web.WebView
 import com.multiplatform.webview.web.rememberWebViewState
-import io.github.aakira.napier.Napier
 import me.matsumo.fanbox.core.ui.Res
 import me.matsumo.fanbox.core.ui.component.PixiViewTopBar
 import me.matsumo.fanbox.core.ui.view.SimpleAlertContents
@@ -52,11 +51,13 @@ internal fun WelcomeWebScreen(
     }
 
     LaunchedEffect(webViewState.lastLoadedUrl) {
-        Napier.d("lastLoadedUrl: ${webViewState.lastLoadedUrl}")
-
         if (webViewState.lastLoadedUrl == fanboxRedirectUrl) {
-            val cookies = webViewState.cookieManager.getCookies("https://www.fanbox.cc")
-            val cookieString = cookies.joinToString(";") { "${it.name}=${it.value}" }
+            val oauthCookies = webViewState.cookieManager.getCookies("https://oauth.secure.pixiv.net").associate { it.name to it.value }
+            val fanboxCookies = webViewState.cookieManager.getCookies("https://www.fanbox.cc").associate { it.name to it.value }
+            val cookieString = (fanboxCookies + oauthCookies)
+                .filterKeys { listOf("__cf_bm", "cf_clearance", "FANBOXSESSID").contains(it) }
+                .map { "${it.key}=${it.value}" }
+                .joinToString(";")
 
             viewModel.saveCookie(cookieString)
             terminate.invoke()
