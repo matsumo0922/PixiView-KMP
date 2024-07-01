@@ -35,10 +35,10 @@ class WelcomeLoginViewModel(
         }
     }
 
-    fun setSessionId(sessionId: String) {
+    fun setCookie(cookie: String) {
         viewModelScope.launch {
             suspendRunCatching {
-                // fanboxRepository.updateCookie("FANBOXSESSID=$sessionId;")
+                fanboxRepository.updateCookie(cookie)
                 fanboxRepository.updateCsrfToken()
                 fanboxRepository.getNewsLetters()
                 setDefaultHomeTab()

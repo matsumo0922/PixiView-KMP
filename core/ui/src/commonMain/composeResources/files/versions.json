@@ -131,5 +131,12 @@
     "date": "2024/06/24",
     "logJp": "・ファイル形式で配布されている画像の自動プレビュー機能を追加\n・リソース管理システムを公式のライブラリに移行",
     "logEn": "・Added automatic preview function for images distributed in file format.\n・Migrated resource management system to official library"
+  },
+  {
+    "versionName": "2.1.2",
+    "versionCode": 37,
+    "date": "2024/07/02",
+    "logJp": "・FANBOX との通信に Cloudflare Challenge が必要となり、ログインが出来なくなる問題を修正",
+    "logEn": "・Fixed an issue where Cloudflare Challenge was required to communicate with FANBOX, making it impossible to log in."
   }
 ]
