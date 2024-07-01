@@ -14,7 +14,6 @@ import io.ktor.http.isSuccess
 import io.ktor.serialization.kotlinx.json.json
 import kotlinx.serialization.ExperimentalSerializationApi
 import kotlinx.serialization.json.Json
-import me.matsumo.fanbox.core.datastore.FanboxCookieDataStore
 import me.matsumo.fanbox.core.repository.FanboxRepository
 import me.matsumo.fanbox.core.repository.FanboxRepositoryImpl
 import me.matsumo.fanbox.core.repository.RewardRepository
@@ -60,7 +59,7 @@ val repositoryModule = module {
             }
 
             install(HttpCookies) {
-                storage = CookiesStorage(get<FanboxCookieDataStore>())
+                storage = CookiesStorage(get())
             }
 
             install(ContentNegotiation) {

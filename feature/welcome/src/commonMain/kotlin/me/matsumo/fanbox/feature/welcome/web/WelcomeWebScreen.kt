@@ -16,6 +16,7 @@ import androidx.compose.ui.Modifier
 import com.multiplatform.webview.web.LoadingState
 import com.multiplatform.webview.web.WebView
 import com.multiplatform.webview.web.rememberWebViewState
+import io.github.aakira.napier.Napier
 import me.matsumo.fanbox.core.ui.Res
 import me.matsumo.fanbox.core.ui.component.PixiViewTopBar
 import me.matsumo.fanbox.core.ui.view.SimpleAlertContents
@@ -38,6 +39,7 @@ internal fun WelcomeWebScreen(
 
     webViewState.webSettings.apply {
         isJavaScriptEnabled = true
+        customUserAgentString = "Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Mobile Safari/537.36"
 
         androidWebSettings.apply {
             domStorageEnabled = true
@@ -50,8 +52,10 @@ internal fun WelcomeWebScreen(
     }
 
     LaunchedEffect(webViewState.lastLoadedUrl) {
+        Napier.d("lastLoadedUrl: ${webViewState.lastLoadedUrl}")
+
         if (webViewState.lastLoadedUrl == fanboxRedirectUrl) {
-            val cookies = webViewState.cookieManager.getCookies(fanboxRedirectUrl)
+            val cookies = webViewState.cookieManager.getCookies("https://www.fanbox.cc")
             val cookieString = cookies.joinToString(";") { "${it.name}=${it.value}" }
 
             viewModel.saveCookie(cookieString)

@@ -15,10 +15,11 @@ class CookiesStorage(
     private val mutex = Mutex()
 
     override suspend fun addCookie(requestUrl: Url, cookie: Cookie): Unit = mutex.withLock {
-        /* do nothing */
+        cookieDataStore.addCookies(listOf("${cookie.name}=${cookie.value}"))
     }
 
     override suspend fun get(requestUrl: Url): List<Cookie> = mutex.withLock {
+        if (requestUrl.toString().contains("https://www.fanbox.cc")) return@withLock emptyList()
         cookieDataStore.getCookies().map { parseServerSetCookieHeader(it) }
     }
 
