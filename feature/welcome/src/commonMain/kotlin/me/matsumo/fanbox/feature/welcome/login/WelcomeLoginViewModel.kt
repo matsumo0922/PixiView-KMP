@@ -5,6 +5,7 @@ import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.asSharedFlow
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.launch
 import me.matsumo.fanbox.core.common.util.suspendRunCatching
@@ -26,9 +27,11 @@ class WelcomeLoginViewModel(
     fun fetchLoggedIn() {
         viewModelScope.launch {
             suspendRunCatching {
-                fanboxRepository.updateCsrfToken()
-                fanboxRepository.getNewsLetters()
-                setDefaultHomeTab()
+                if (!userDataRepository.userData.first().isTestUser) {
+                    fanboxRepository.updateCsrfToken()
+                    fanboxRepository.getNewsLetters()
+                    setDefaultHomeTab()
+                }
             }.isSuccess.also {
                 _isLoggedInFlow.emit(it)
             }
@@ -38,10 +41,12 @@ class WelcomeLoginViewModel(
     fun setCookie(cookie: String) {
         viewModelScope.launch {
             suspendRunCatching {
-                fanboxRepository.updateCookie(cookie)
-                fanboxRepository.updateCsrfToken()
-                fanboxRepository.getNewsLetters()
-                setDefaultHomeTab()
+                if (!userDataRepository.userData.first().isTestUser) {
+                    fanboxRepository.updateCookie(cookie)
+                    fanboxRepository.updateCsrfToken()
+                    fanboxRepository.getNewsLetters()
+                    setDefaultHomeTab()
+                }
             }.onSuccess {
                 _isLoggedInFlow.emit(true)
             }.onFailure {

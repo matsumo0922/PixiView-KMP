@@ -1,5 +1,7 @@
 package me.matsumo.fanbox.core.datastore.di
 
+import me.matsumo.fanbox.core.datastore.DummyDataStore
+import me.matsumo.fanbox.core.datastore.DummyDataStoreImpl
 import me.matsumo.fanbox.core.datastore.PreferenceHelper
 import me.matsumo.fanbox.core.datastore.PreferenceHelperImpl
 import org.koin.core.module.Module
@@ -11,5 +13,9 @@ actual val dataStoreHelperModule: Module = module {
         PreferenceHelperImpl(
             ioDispatcher = get(),
         )
+    }
+
+    single<DummyDataStore> {
+        DummyDataStoreImpl()
     }
 }

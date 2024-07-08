@@ -316,6 +316,8 @@
     <string name="welcome_login_button_next">次へ</string>
     <string name="welcome_login_dialog_title">ログインの注意</string>
     <string name="welcome_login_dialog_message">GoogleやXのOAuthを利用した認証はセキュリティ上の懸念により対応していません。\n\nメールアドレスとパスワードを直接入力してログインを行ってください。</string>
+    <string name="welcome_login_debug_dialog_title">注意</string>
+    <string name="welcome_login_debug_dialog_message">デバッグログインを実行しますか？\n\nデバッグアカウントは事前に準備されたアカウントで、通常ユーザーの挙動を模倣します。ステージング環境保全のため、一部操作ができないもしくはエラーになる場合があります。</string>
     <string name="welcome_login_other_title">ログインできない場合</string>
     <string name="welcome_login_other_message">このアプリが動作するためには FANBOXSESSID というセッションIDが必要です。以下のリンクの手順に従って FANBOXSESSID を取得し、入力してください。</string>
     <string name="welcome_permission_title">権限</string>

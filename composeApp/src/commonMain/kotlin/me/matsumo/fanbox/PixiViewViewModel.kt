@@ -14,7 +14,6 @@ import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.first
-import kotlinx.coroutines.flow.firstOrNull
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.isActive
 import kotlinx.coroutines.launch
@@ -111,11 +110,9 @@ class PixiViewViewModel(
     fun updateState() {
         viewModelScope.launch {
             suspendRunCatching {
-                fanboxRepository.updateCsrfToken()
-                fanboxRepository.getNewsLetters()
-
-                fanboxRepository.metaData.firstOrNull()?.also {
-                    userDataRepository.setTestUser(it.context.user.userId == "100912340")
+                if (!userDataRepository.userData.first().isTestUser) {
+                    fanboxRepository.updateCsrfToken()
+                    fanboxRepository.getNewsLetters()
                 }
             }.isSuccess.also {
                 Napier.d { "update home state. isLoggedIn: $it" }

@@ -3,12 +3,12 @@
 package me.matsumo.fanbox.core.ui.view
 
 import androidx.compose.runtime.Composable
-import me.matsumo.fanbox.core.ui.Res
 import androidx.navigation.NavController
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.NavType
 import androidx.navigation.compose.dialog
 import androidx.navigation.navArgument
+import me.matsumo.fanbox.core.ui.Res
 import me.matsumo.fanbox.core.ui.billing_plus_cancel_message
 import me.matsumo.fanbox.core.ui.billing_plus_cancel_title
 import me.matsumo.fanbox.core.ui.billing_plus_purchase_message
@@ -30,6 +30,8 @@ import me.matsumo.fanbox.core.ui.post_detail_comment_delete_message
 import me.matsumo.fanbox.core.ui.post_detail_comment_delete_title
 import me.matsumo.fanbox.core.ui.setting_top_others_logout
 import me.matsumo.fanbox.core.ui.setting_top_others_logout_dialog_description
+import me.matsumo.fanbox.core.ui.welcome_login_debug_dialog_message
+import me.matsumo.fanbox.core.ui.welcome_login_debug_dialog_title
 import me.matsumo.fanbox.core.ui.welcome_login_dialog_message
 import me.matsumo.fanbox.core.ui.welcome_login_dialog_title
 import org.jetbrains.compose.resources.StringResource
@@ -51,6 +53,12 @@ enum class SimpleAlertContents(
         titleRes = Res.string.setting_top_others_logout,
         descriptionRes = Res.string.setting_top_others_logout_dialog_description,
         positiveTextRes = Res.string.setting_top_others_logout,
+        negativeTextRes = Res.string.common_cancel,
+    ),
+    LoginDebug(
+        titleRes = Res.string.welcome_login_debug_dialog_title,
+        descriptionRes = Res.string.welcome_login_debug_dialog_message,
+        positiveTextRes = Res.string.common_ok,
         negativeTextRes = Res.string.common_cancel,
     ),
     CommentDelete(
@@ -93,7 +101,7 @@ enum class SimpleAlertContents(
 const val SimpleAlertDialogContent = "simpleAlertDialogSongs"
 const val SimpleAlertDialog = "simpleAlertDialog/{$SimpleAlertDialogContent}"
 
-suspend fun NavController.navigateToSimpleAlertDialog(
+fun NavController.navigateToSimpleAlertDialog(
     content: SimpleAlertContents,
     onClickPositive: (() -> Unit)? = null,
     onClickNegative: (() -> Unit)? = null,

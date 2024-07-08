@@ -24,8 +24,8 @@ import androidx.compose.ui.graphics.vector.ImageVector
 fun PixiViewTopBar(
     modifier: Modifier = Modifier,
     title: String? = null,
-    navigationIcon: ImageVector = Icons.Filled.ArrowBack,
-    actionsIcon: ImageVector = Icons.Default.MoreVert,
+    navigationIcon: ImageVector? = Icons.Filled.ArrowBack,
+    actionsIcon: ImageVector? = Icons.Default.MoreVert,
     windowInsets: WindowInsets = TopAppBarDefaults.windowInsets,
     scrollBehavior: TopAppBarScrollBehavior? = null,
     isTransparent: Boolean = false,
@@ -58,20 +58,24 @@ fun PixiViewTopBar(
         navigationIcon = {
             if (onClickNavigation != null) {
                 IconButton(onClick = onClickNavigation) {
-                    Icon(
-                        imageVector = navigationIcon,
-                        contentDescription = null,
-                    )
+                    navigationIcon?.let {
+                        Icon(
+                            imageVector = it,
+                            contentDescription = null,
+                        )
+                    }
                 }
             }
         },
         actions = {
             if (onClickActions != null) {
                 IconButton(onClick = onClickActions) {
-                    Icon(
-                        imageVector = actionsIcon,
-                        contentDescription = null,
-                    )
+                    actionsIcon?.let {
+                        Icon(
+                            imageVector = it,
+                            contentDescription = null,
+                        )
+                    }
                 }
             }
         },

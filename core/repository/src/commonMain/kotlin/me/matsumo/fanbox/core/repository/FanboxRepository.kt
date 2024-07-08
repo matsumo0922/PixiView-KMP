@@ -38,6 +38,7 @@ import kotlinx.serialization.json.put
 import me.matsumo.fanbox.core.datastore.BlockDataStore
 import me.matsumo.fanbox.core.datastore.BookmarkDataStore
 import me.matsumo.fanbox.core.datastore.FanboxCookieDataStore
+import me.matsumo.fanbox.core.datastore.PixiViewDataStore
 import me.matsumo.fanbox.core.model.FanboxTag
 import me.matsumo.fanbox.core.model.PageCursorInfo
 import me.matsumo.fanbox.core.model.PageNumberInfo
@@ -80,6 +81,7 @@ import me.matsumo.fanbox.core.repository.paging.SupportedPostsPagingSource
 import me.matsumo.fanbox.core.repository.utils.parse
 import me.matsumo.fanbox.core.repository.utils.requireSuccess
 import me.matsumo.fanbox.core.repository.utils.translate
+import org.koin.core.component.KoinComponent
 import kotlin.random.Random
 
 interface FanboxRepository {
@@ -159,8 +161,9 @@ class FanboxRepositoryImpl(
     private val fanboxCookieDataStore: FanboxCookieDataStore,
     private val bookmarkDataStore: BookmarkDataStore,
     private val blockDataStore: BlockDataStore,
+    private val userDataStore: PixiViewDataStore,
     private val ioDispatcher: CoroutineDispatcher,
-) : FanboxRepository {
+) : FanboxRepository, KoinComponent {
 
     private val scope = CoroutineScope(SupervisorJob() + ioDispatcher)
 
@@ -188,6 +191,8 @@ class FanboxRepositoryImpl(
             fanboxCookieDataStore.save("")
             bookmarkDataStore.clear()
             blockDataStore.clear()
+            userDataStore.setTestUser(false)
+            userDataStore.setFollowTabDefaultHome(false)
 
             _logoutTrigger.send(Random.nextLong())
         }
@@ -419,8 +424,7 @@ class FanboxRepositoryImpl(
     }
 
     override suspend fun getNewsLetters(): List<FanboxNewsLetter> = withContext(ioDispatcher) {
-        val data = get("newsletter.list")
-        data.parse<FanboxNewsLettersEntity>()!!.translate()
+        get("newsletter.list").parse<FanboxNewsLettersEntity>()!!.translate()
     }
 
     override suspend fun getBells(page: Int): PageNumberInfo<FanboxBell> = withContext(ioDispatcher) {

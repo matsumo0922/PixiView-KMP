@@ -24,19 +24,21 @@ import me.matsumo.fanbox.core.repository.client.CookiesStorage
 import org.koin.core.module.Module
 import org.koin.dsl.module
 
+@OptIn(ExperimentalSerializationApi::class)
+val json = Json {
+    isLenient = true
+    prettyPrint = true
+    ignoreUnknownKeys = true
+    coerceInputValues = true
+    encodeDefaults = true
+    explicitNulls = false
+}
+
 expect val repositorySubModule: Module
 
-@OptIn(ExperimentalSerializationApi::class)
 val repositoryModule = module {
     single {
-        Json {
-            isLenient = true
-            prettyPrint = true
-            ignoreUnknownKeys = true
-            coerceInputValues = true
-            encodeDefaults = true
-            explicitNulls = false
-        }
+        json
     }
 
     single<HttpClient> {
@@ -91,6 +93,7 @@ val repositoryModule = module {
             fanboxCookieDataStore = get(),
             bookmarkDataStore = get(),
             blockDataStore = get(),
+            userDataStore = get(),
             ioDispatcher = get(),
         )
     }

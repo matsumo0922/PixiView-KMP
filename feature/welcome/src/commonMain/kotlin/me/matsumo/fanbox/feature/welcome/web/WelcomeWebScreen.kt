@@ -22,11 +22,13 @@ import me.matsumo.fanbox.core.ui.view.SimpleAlertContents
 import me.matsumo.fanbox.core.ui.welcome_login_title
 import org.jetbrains.compose.resources.stringResource
 import org.koin.compose.viewmodel.koinViewModel
+import org.koin.core.annotation.KoinExperimentalAPI
 
-@OptIn(ExperimentalMaterial3Api::class)
+@OptIn(ExperimentalMaterial3Api::class, KoinExperimentalAPI::class)
 @Composable
 internal fun WelcomeWebScreen(
-    navigateToLoginAlert: suspend (SimpleAlertContents) -> Unit,
+    navigateToLoginAlert: (SimpleAlertContents) -> Unit,
+    navigateToLoginDebugAlert: (SimpleAlertContents, () -> Unit) -> Unit,
     terminate: () -> Unit,
     modifier: Modifier = Modifier,
     viewModel: WelcomeWebViewModel = koinViewModel(),
@@ -70,7 +72,14 @@ internal fun WelcomeWebScreen(
             PixiViewTopBar(
                 modifier = Modifier.fillMaxWidth(),
                 title = stringResource(Res.string.welcome_login_title),
+                actionsIcon = null,
                 onClickNavigation = { terminate.invoke() },
+                onClickActions = {
+                    navigateToLoginDebugAlert.invoke(SimpleAlertContents.LoginDebug) {
+                        viewModel.debugLogin()
+                        terminate.invoke()
+                    }
+                }
             )
         },
     ) { padding ->

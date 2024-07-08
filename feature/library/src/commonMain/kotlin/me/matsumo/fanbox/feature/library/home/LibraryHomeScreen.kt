@@ -82,6 +82,10 @@ internal fun LibraryHomeScreen(
         }
     }
 
+    LaunchedEffect(uiState.userData.isDefaultFollowTabInHome) {
+        pagerState.scrollToPage(if (uiState.userData.isDefaultFollowTabInHome) 1 else 0)
+    }
+
     Scaffold(
         modifier = if (navigationType != PixiViewNavigationType.PermanentNavigationDrawer) modifier.nestedScroll(scrollBehavior.nestedScrollConnection) else modifier,
         topBar = {

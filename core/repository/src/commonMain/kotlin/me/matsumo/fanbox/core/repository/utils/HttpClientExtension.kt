@@ -5,6 +5,14 @@ import io.ktor.client.call.body
 import io.ktor.client.statement.HttpResponse
 import io.ktor.client.statement.bodyAsText
 import io.ktor.client.statement.request
+import io.ktor.http.encodeURLParameter
+import io.ktor.util.toMap
+import kotlinx.serialization.KSerializer
+import kotlinx.serialization.serializer
+import me.matsumo.fanbox.core.common.util.injectKoinInstance
+import me.matsumo.fanbox.core.datastore.DummyDataStore
+import me.matsumo.fanbox.core.repository.di.json
+import kotlin.reflect.typeOf
 
 suspend inline fun <reified T> HttpResponse.parse(
     allowRange: IntRange = 200..299,
@@ -13,6 +21,18 @@ suspend inline fun <reified T> HttpResponse.parse(
     val requestUrl = request.url
     val isOK = this.status.value in allowRange
 
+    val dummyDataStore = injectKoinInstance<DummyDataStore>()
+
+    val dir = request.url.pathSegments.last()
+    val params = request.url.parameters.toMap().toString()
+    val dummyKey = "${dir}_${params.encodeURLParameter()}"
+        .replace("%", "")
+        .replace(".", "_")
+        .replace("-", "_")
+        .lowercase()
+
+    val dummyData = dummyDataStore.getDummyData(dummyKey)
+
     if (isOK) {
         Napier.d("[SUCCESS] Ktor Request: $requestUrl")
     } else {
@@ -20,7 +40,15 @@ suspend inline fun <reified T> HttpResponse.parse(
         Napier.d("[RESPONSE] ${this.bodyAsText().replace("\n", "")}")
     }
 
-    return (if (isOK) this.body<T>() else null).also(f)
+    if (dummyData != null) {
+        Napier.d("[DUMMY] $dummyKey")
+        return json.decodeFromString(serializer(typeOf<T>()) as KSerializer<T>, dummyData)
+    }
+
+    return (if (isOK) this.body<T>() else null).also {
+        dummyDataStore.setDummyData(dummyKey, bodyAsText())
+        f.invoke(it)
+    }
 }
 
 fun HttpResponse.isSuccess(allowRange: IntRange = 200..299): Boolean {
