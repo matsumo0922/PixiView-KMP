@@ -45,14 +45,14 @@
     <string name="error_no_data_supported">There are no creators being supported.</string>
     <string name="error_no_data_creator">There are no posts.</string>
     <string name="error_no_data_bookmark">There are no bookmarked posts.</string>
-    <string name="error_no_data_message">Message hasn\'t arrived yet.</string>
-    <string name="error_no_data_notify">Notification hasn\'t arrived yet.</string>
+    <string name="error_no_data_message">Message hasn't arrived yet.</string>
+    <string name="error_no_data_notify">Notification hasn't arrived yet.</string>
     <string name="error_no_data_payments">There is no payment history.</string>
     <string name="error_network">A communication error occurred</string>
     <string name="error_paging">Unable to continue pagination</string>
     <string name="error_developing_feature">Feature under development</string>
     <string name="error_billing">Failed to retrieve purchase information</string>
-    <string name="error_restricted_post">Pledge %d JPY per month or more to see this content</string>
+    <string name="error_restricted_post">Pledge %1$d JPY per month or more to see this content</string>
     <string name="error_restricted_post_ios">Cannot be viewed with current plan</string>
     <string name="error_adult_content">Adult content</string>
     <string name="error_adult_content_test_user">This content has been temporarily restricted</string>
@@ -66,7 +66,7 @@
     <string name="unit_second_before">%1$d seconds ago</string>
     <string name="unit_favorite">%1$d Likes</string>
     <string name="unit_tag">%1$d items</string>
-    <string name="unit_jpy">%d JPY</string>
+    <string name="unit_jpy">%1$d JPY</string>
     <string name="unit_year">Year</string>
     <string name="unit_month">Month</string>
     <string name="unit_day">Day</string>
@@ -108,7 +108,7 @@
 
     <!-- Notify -->
     <string name="notify_load_more">More</string>
-    <string name="notify_title_post_published">\'%1$s\' has been published!</string>
+    <string name="notify_title_post_published">'%1$s' has been published!</string>
     <string name="notify_title_comment">%1$s responded to your comment!</string>
     <string name="notify_title_like">%1$d people liked your comment!</string>
 
@@ -135,10 +135,10 @@
     <string name="creator_unblock_dialog_title">Blocking</string>
     <string name="creator_unblock_dialog_message">Would you like to unblock this creator?</string>
     <string name="creator_plans_for_ios_error">Required navigate to FANBOX</string>
-    <string name="creator_plans_for_ios_error_description">Cannot check creator\'s plan from the app on iOS. Please check from the pixivFANBOX website. </string>
+    <string name="creator_plans_for_ios_error_description">Cannot check creator's plan from the app on iOS. Please check from the pixivFANBOX website. </string>
     <string name="creator_plans_for_ios_error_button">Go to FANBOX</string>
     <string name="creator_posts_download_title">Bulk download</string>
-    <string name="creator_posts_download_message">Download creator\'s posts in bulk. \n\n*In order to prevent the concentration of access to FANBOX, we have deliberately added a delay to the download speed. note that.</string>
+    <string name="creator_posts_download_message">Download creator's posts in bulk. \n\n*In order to prevent the concentration of access to FANBOX, we have deliberately added a delay to the download speed. note that.</string>
     <string name="creator_posts_download_prepare">Collecting creator information\nPlease wait for a while</string>
     <string name="creator_posts_download_ignore_free">Skip free contents</string>
     <string name="creator_posts_download_ignore_free_description">Omit posts that can be viewed even if you are not in the plan</string>
@@ -240,9 +240,9 @@
     <string name="setting_theme_theme_dynamic_color">Dynamic Color</string>
     <string name="setting_theme_theme_dynamic_color_description">Uses Dynamic Color, which automatically extracts colors from the wallpaper set on your home page.</string>
     <string name="setting_theme_color">Theme color</string>
-    <string name="setting_theme_color_description">Sets the app\'s theme color. Cannot be used at the same time as Dynamic Color.</string>
+    <string name="setting_theme_color_description">Sets the app's theme color. Cannot be used at the same time as Dynamic Color.</string>
     <string name="setting_developer_title">Development mode</string>
-    <string name="setting_developer_warning">You are trying to turn on this mode.Please enter the developer\'s PIN.\n\n[Warning] When this mode is turned on, you will not be able to receive any support.</string>
+    <string name="setting_developer_warning">You are trying to turn on this mode.Please enter the developer's PIN.\n\n[Warning] When this mode is turned on, you will not be able to receive any support.</string>
 
     <!-- About -->
     <string name="about_title">About the app</string>
@@ -281,7 +281,7 @@
     <string name="billing_plus_item_hide_ads">Hide ads</string>
     <string name="billing_plus_item_hide_ads_description">Hide all ads in the app and enjoy posting more comfortably!</string>
     <string name="billing_plus_item_download">Bulk download</string>
-    <string name="billing_plus_item_download_description">Download creators\' posts in bulk and enjoy them on other media!</string>
+    <string name="billing_plus_item_download_description">Download creators' posts in bulk and enjoy them on other media!</string>
     <string name="billing_plus_item_lock">Lock app</string>
     <string name="billing_plus_item_lock_description">Require a password when starting the app to increase security!</string>
     <string name="billing_plus_item_hide_restricted">Hide posts outside the support plan</string>
@@ -316,10 +316,10 @@
     <string name="welcome_login_button_login">Login</string>
     <string name="welcome_login_button_next">Next</string>
     <string name="welcome_login_dialog_title">Notes on login</string>
-    <string name="welcome_login_dialog_message">Authentication using Google or X\'s O Auth is not supported due to security concerns. \n\nPlease log in by directly entering your email address and password.</string>
+    <string name="welcome_login_dialog_message">Authentication using Google or X (Twitter)'s OAuth is not supported due to security concerns. \n\nPlease log in by directly entering your email address and password.</string>
     <string name="welcome_login_debug_dialog_title">Caution</string>
     <string name="welcome_login_debug_dialog_message">Do you want to perform a debug login?\n\nDebug accounts are pre-provisioned accounts that mimic the behavior of regular users. In order to preserve the staging environment, some operations may not be possible or errors may occur.</string>
-    <string name="welcome_login_other_title">When can\'t log in</string>
+    <string name="welcome_login_other_title">When can't log in</string>
     <string name="welcome_login_other_message">A session ID called FANBOXSESSID is required for this app to work. Please follow the steps in the link below to obtain and enter your FANBOXSESSID.</string>
     <string name="welcome_permission_title">Permissions</string>
     <string name="welcome_permission_message">The following permissions are required to use the app\nClick the button below to grant permission</string>
