@@ -1,0 +1,325 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <!-- Common -->
+    <string name="common_ok">OK</string>
+    <string name="common_cancel">취소</string>
+    <string name="common_allow">동의</string>
+    <string name="common_denied">거부됨</string>
+    <string name="common_retry">다시 시도</string>
+    <string name="common_reload">다시 로드</string>
+    <string name="common_back">뒤로</string>
+    <string name="common_close">닫기</string>
+    <string name="common_next">다음</string>
+    <string name="common_finish">완료</string>
+    <string name="common_skip">건너뛰기</string>
+    <string name="common_loading">로딩중...</string>
+    <string name="common_caution">주의</string>
+    <string name="common_error">오류</string>
+    <string name="common_warning">경고</string>
+    <string name="common_save">저장</string>
+    <string name="common_unknown">알 수 없음</string>
+    <string name="common_details">상세</string>
+    <string name="common_delete">삭제</string>
+    <string name="common_download">다운로드</string>
+    <string name="common_downloaded">다운로드됨</string>
+    <string name="common_supporting">지원중</string>
+    <string name="common_follow">팔로우</string>
+    <string name="common_unfollow">팔로우 중</string>
+    <string name="common_see_more">더보기</string>
+    <string name="common_tag">태그</string>
+    <string name="common_post">포스트</string>
+    <string name="common_creator">작성자</string>
+    <string name="common_block">블록</string>
+    <string name="common_unblock">해제</string>
+
+    <!-- Common Error -->
+    <string name="error_executed">오류가 발생했습니다.</string>
+    <string name="error_unknown">알 수 없는 오류가 발생했습니다.</string>
+    <string name="error_no_data">No data</string>
+    <string name="error_no_data_search">키워드를 바꿔 다시 시도해보세요.</string>
+    <string name="error_no_data_discovery">추천 크리에이터가 없습니다.</string>
+    <string name="error_no_data_following">팔로우하고 있는 크리에이터가 없습니다.</string>
+    <string name="error_no_data_supported">서포트하고 있는 크리에이터가 없습니다.</string>
+    <string name="error_no_data_creator">포스트가 없습니다.</string>
+    <string name="error_no_data_bookmark">즐겨찾기한 포스트가 없습니다.</string>
+    <string name="error_no_data_message">메시지가 아직 도착하지 않았습니다.</string>
+    <string name="error_no_data_notify">알림이 아직 도착하지 않았습니다.</string>
+    <string name="error_no_data_payments">결제 기록이 없습니다.</string>
+    <string name="error_network">통신 과정에서 문제가 발생했습니다</string>
+    <string name="error_paging">페이징을 계속할 수 없습니다</string>
+    <string name="error_developing_feature">개발 중인 기능입니다</string>
+    <string name="error_billing">결제 정보를 가져오지 못했습니다</string>
+    <string name="error_restricted_post">월 %1$d엔 이상을 지원해 포스트 보기</string>
+    <string name="error_adult_content">성인 콘텐츠</string>
+    <string name="error_adult_content_test_user">이 콘텐츠는 일시적으로 제한되었습니다</string>
+    <string name="error_adult_content_description">더보기</string>
+
+    <!-- Common Unit -->
+    <string name="unit_day_before">%1$d일 전</string>
+    <string name="unit_hour_before">%1$d시간 전</string>
+    <string name="unit_minute_before">%1$d분 전</string>
+    <string name="unit_second_before">%1$d초 전</string>
+    <string name="unit_favorite">좋아요 %1$d</string>
+    <string name="unit_tag">아이템 %1$d</string>
+    <string name="unit_jpy">%1$d엔</string>
+    <string name="unit_year">년도</string>
+    <string name="unit_month">월</string>
+    <string name="unit_day">일</string>
+
+    <!-- Notify -->
+    <string name="notify_download_channel_name">다운로드</string>
+    <string name="notify_download_channel_description">알림창에서 다운로드 상태를 확인하세요</string>
+    <string name="notify_download_title">다운로드중...</string>
+    <string name="notify_download_message">일러스트 다운로드중 (%1$d개 남음)</string>
+
+    <!-- Library -->
+    <string name="library_navigation_home">홈</string>
+    <string name="library_navigation_discovery">검색</string>
+    <string name="library_navigation_notify">알림</string>
+    <string name="library_navigation_message">메시지</string>
+    <string name="library_navigation_bookmark">즐겨찾기</string>
+    <string name="library_navigation_following">팔로우</string>
+    <string name="library_navigation_supporting">지원</string>
+    <string name="library_navigation_payments">결제 기록</string>
+    <string name="library_navigation_setting">설정</string>
+    <string name="library_navigation_about">이 앱에 대하여</string>
+    <string name="library_navigation_plus_description">커피 한 잔의 가격으로 전체 기능을 즐겨보세요!</string>
+    <string name="library_navigation_plus_purchased_description">%1$s+ 사용자가 되신 것을 축하합니다. 편안한 음악을 즐겨보세요!</string>
+
+    <!-- Fanbox -->
+    <string name="fanbox_free_fee">모든 사용자</string>
+    <string name="fanbox_plan_List">플랜 목록</string>
+
+    <!-- Home -->
+    <string name="home_tab_home">팔로우 중</string>
+    <string name="home_tab_supported">지원 중</string>
+    <string name="home_app_lock_title">인증 필요</string>
+    <string name="home_app_lock_message">사용하려면 앱을 잠금 해제하세요</string>
+    <string name="home_review_success">리뷰를 남겨주셔서 감사합니다!</string>
+
+    <!-- Empty -->
+    <string name="empty_detail_title">포스트 자세히 읽기</string>
+    <string name="empty_detail_description">자세히 읽을 포스트를 선택하세요</string>
+
+    <!-- Notify -->
+    <string name="notify_load_more">더보기</string>
+    <string name="notify_title_post_published">'%1$s'가 게시되었습니다!</string>
+    <string name="notify_title_comment">%1$s 님이 당신의 댓글에 답글을 달았습니다!</string>
+    <string name="notify_title_like">%1$d명이 당신의 댓글을 좋아합니다!</string>
+
+    <!-- Creator -->
+    <string name="creator_tab_posts">포스트</string>
+    <string name="creator_tab_plans">플랜</string>
+    <string name="creator_supporting_payment_method_card">신용 카드</string>
+    <string name="creator_supporting_payment_method_paypal">PayPal</string>
+    <string name="creator_supporting_payment_method_cvs">편의점 결제</string>
+    <string name="creator_supporting_payment_method_unknown">Unknown</string>
+    <string name="creator_supporting_fan_card">팬 카드</string>
+    <string name="creator_supporting_plan_detail">더보기</string>
+    <string name="creator_fan_card_not_supported">이 크리에이터를 지원하고 있지 않습니다</string>
+    <string name="creator_fan_card_switch_display_name">표시 이름 변경하기</string>
+    <string name="creator_fan_card_download">팬 카드 다운로드</string>
+    <string name="creator_tag_has_adult_content">성인 콘텐츠</string>
+    <string name="creator_tag_has_booth_shop">BOOTH 이용 가능</string>
+    <string name="creator_tag_is_supported">지원 중</string>
+    <string name="creator_tag_is_accepting_request">요청 수락</string>
+    <string name="creator_download_all">모두 내려받기</string>
+    <string name="creator_download_all_error">모두 내려받기는 %1$s+ 전용 기능입니다</string>
+    <string name="creator_block_dialog_title">블록</string>
+    <string name="creator_block_dialog_message">이 제작자를 차단하시겠습니까? \n\n차단한 사용자를 표시하지 않으려면 앱을 다시 시작해야 합니다.</string>
+    <string name="creator_unblock_dialog_title">블록 중</string>
+    <string name="creator_unblock_dialog_message">이 크리에이터의 차단을 해제하시겠습니까?</string>
+    <string name="creator_posts_download_title">한 번에 내려받기</string>
+    <string name="creator_posts_download_message">크리에이터의 여러 포스트를 한 번에 내려받습니다. \n\n*FANBOX와의 연결 문제를 방지하기 위해 다운로드 속도를 제한하고 있으니 참고해주세요.</string>
+    <string name="creator_posts_download_prepare">크리에이터의 정보를 가져오고 있습니다\n잠시 기다려주세요</string>
+    <string name="creator_posts_download_ignore_free">무료 콘텐츠 무시</string>
+    <string name="creator_posts_download_ignore_file">파일 무시</string>
+    <string name="creator_posts_download_start">한 번에 내려받기 시작!</string>
+    <string name="creator_posts_download_notify_title">%1$s개의 포스트 내려받는 중</string>
+    <string name="creator_recommended">추천 크리에이터</string>
+    <string name="creator_following_pixiv">pixiv에서 팔로우 중</string>
+    <string name="creator_download_require_plus_title">게시물 일괄 다운로드</string>
+    <string name="creator_download_require_plus_message">일괄 다운로드는 %1$s+ 전용 기능입니다. \n\n%1$s+를 구매하거나 하루 3회만 광고를 시청하여 일시적으로 기능을 사용할 수 있습니다.</string>
+    <string name="creator_download_require_plus_button">%1$s+ 구매</string>
+    <string name="creator_download_require_plus_button_ad">광고 보기</string>
+    <string name="creator_download_require_plus_button_ad_over">광고 시청 완료</string>
+
+    <!-- Bookmark -->
+    <string name="bookmark_search_placeholder">북마크 검색</string>
+    <string name="bookmark_empty_title">북마크가 없습니다</string>
+    <string name="bookmark_empty_description">좋아하는 포스트를 찾아 북마크해보세요!</string>
+
+    <!-- PostDetail -->
+    <string name="post_detail_title">포스트 상세정보</string>
+    <string name="post_detail_download_images">모든 이미지 다운로드 (%1$d)</string>
+    <string name="post_detail_creator">크리에이터</string>
+    <string name="post_detail_comment_title">댓글</string>
+    <string name="post_detail_comment_reply">답글</string>
+    <string name="post_detail_comment_empty">아직 댓글이 없습니다!</string>
+    <string name="post_detail_comment_placeholder">댓글 작성하기</string>
+    <string name="post_detail_comment_commented">댓글을 작성했습니다</string>
+    <string name="post_detail_comment_comment_failed">댓글 작성에 실패했습니다</string>
+    <string name="post_detail_comment_delete_title">댓글 삭제</string>
+    <string name="post_detail_comment_delete_message">이 댓글을 삭제하시겠습니까?</string>
+    <string name="post_detail_comment_delete_success">삭제 완료</string>
+    <string name="post_detail_comment_delete_failed">댓글 삭제에 실패했습니다</string>
+    <string name="post_detail_oldest_post">이전 포스트가 없습니다</string>
+    <string name="post_detail_newest_post">다음 포스트가 없습니다</string>
+    <string name="post_detail_all_posts">모든 포스트 보기</string>
+    <string name="post_detail_downloading">다운로드 중...</string>
+    <string name="post_detail_open_browser">브라우저로 열기</string>
+    <string name="post_image_download">이미지 다운로드</string>
+    <string name="post_image_all_download">모든 이미지 다운로드</string>
+    <string name="post_search_placeholder">크리에이터나 포스트를 찾아보세요!</string>
+
+    <!-- Settings -->
+    <string name="setting_title">설정</string>
+    <string name="setting_top_theme">테마</string>
+    <string name="setting_top_theme_app">앱 테마</string>
+    <string name="setting_top_theme_app_description">앱 테마를 변경합니다</string>
+    <string name="setting_top_theme_app_light">밝은 테마</string>
+    <string name="setting_top_theme_app_dark">어두운 테마</string>
+    <string name="setting_top_theme_app_system">시스템 설정에 따름</string>
+    <string name="setting_top_general">일반</string>
+    <string name="setting_top_general_app_lock">앱 비밀번호 설정</string>
+    <string name="setting_top_general_app_lock_description">앱을 실행할 때 비밀번호를 입력하게 합니다.</string>
+    <string name="setting_top_general_default_follow_tab">기본적으로 팔로잉 탭 보기</string>
+    <string name="setting_top_general_default_follow_tab_description">홈 화면의 기본 탭을 팔로잉으로 합니다.</string>
+    <string name="setting_top_general_hide_adult_contents">성인 콘텐츠 숨기기</string>
+    <string name="setting_top_general_hide_adult_contents_description">포스트 목록 등에서 성인 콘텐츠에 대해 경고가 표시됩니다.</string>
+    <string name="setting_top_general_override_adult_contents_setting">브라우징 설정 덮어쓰기</string>
+    <string name="setting_top_general_override_adult_contents_setting_description">FANBOX에서 설정한 성인 콘텐츠 표시 설정을 덮어씁니다.</string>
+    <string name="setting_top_general_hide_restricted_contents">제한된 콘텐츠 숨기기</string>
+    <string name="setting_top_general_hide_restricted_contents_description">서포터만 볼 수 있는 콘텐츠를 숨깁니다.</string>
+    <string name="setting_top_general_grid_mode">그리드 모드</string>
+    <string name="setting_top_general_grid_mode_description">포스트 목록을 표 형태로 보여줍니다.</string>
+    <string name="setting_top_general_infinity_post_detail">좌우 스와이프하여 게시물 보기</string>
+    <string name="setting_top_general_infinity_post_detail_description">게시물 상세 화면에서 좌우로 스와이프하여 이전과 이후의 게시물을 볼 수 있도록 합니다.</string>
+    <string name="setting_top_general_auto_image_preview">이미지 파일 자동 미리보기</string>
+    <string name="setting_top_general_auto_image_preview_description">파일 형식으로 배포된 이미지(JPG, PNG)를 일반 이미지와 동일하게 자동 미리보기합니다.</string>
+    <string name="setting_top_information">정보</string>
+    <string name="setting_top_information_id">CAIOS ID</string>
+    <string name="setting_top_information_version">앱 버전</string>
+    <string name="setting_top_information_csrf_token">CSRF 토큰</string>
+    <string name="setting_top_information_fanbox_session_id">FANBOX 세션 ID</string>
+    <string name="setting_top_information_team_of_service">이용 약관</string>
+    <string name="setting_top_information_privacy_policy">개인정보 처리방침</string>
+    <string name="setting_top_others">기타</string>
+    <string name="setting_top_others_logout">로그아웃</string>
+    <string name="setting_top_others_logout_description">모든 인증을 지우고 FANBOX에서 로그아웃합니다</string>
+    <string name="setting_top_others_logout_dialog_description">FANBOX에서 로그아웃하시겠습니까??</string>
+    <string name="setting_top_others_logout_dialog_success">로그아웃되었습니다</string>
+    <string name="setting_top_others_logout_dialog_failed">로그아웃에 실패했습니다</string>
+    <string name="setting_top_others_open_source_license">오픈 소스 라이선스</string>
+    <string name="setting_top_others_open_source_license_description">오픈 소스 라이브러리의 라이선스를 표시합니다.</string>
+    <string name="setting_top_others_developer_mode">개발자 모드</string>
+    <string name="setting_top_others_developer_mode_description">[경고] 개발자가 아니라면 이 설정을 활성화하지 마세요.</string>
+    <string name="setting_account">계정</string>
+    <string name="setting_account_title">계정 설정</string>
+    <string name="setting_account_description">계정 이름, 아이콘 등을 바꿔보세요!</string>
+    <string name="setting_notify_title">알림 설정</string>
+    <string name="setting_notify_description">푸시 알림 및 이메일 알림을 설정합니다.</string>
+    <string name="setting_theme_title">테마</string>
+    <string name="setting_theme_theme_dynamic_color">다이나믹 컬러</string>
+    <string name="setting_theme_theme_dynamic_color_description">홈 화면의 배경 사진에서 테마 색을 추출합니다. 안드로이드 12 이상에서만 사용 가능합니다.</string>
+    <string name="setting_theme_color">테마 색</string>
+    <string name="setting_theme_color_description">앱의 테마 색을 설정합니다. 다이나믹 컬러와 동시에 사용할 수 없습니다.</string>
+    <string name="setting_developer_title">개발자 모드</string>
+    <string name="setting_developer_warning">개발자 모드를 활성화하려 합니다. PIN을 입력해주세요.\n\n[경고] 이 모드가 켜져 있을 때에는, 기술 지원을 받을 수 없습니다.</string>
+
+    <!-- About -->
+    <string name="about_title">이 앱에 대하여</string>
+    <string name="about_name">%1$s</string>
+    <string name="about_developer_name">CAIOS</string>
+    <string name="about_developer_prefix">개발 및 디자인</string>
+    <string name="about_special_thanks">SPECIAL THANKS</string>
+    <string name="about_special_thanks_contributor">GitHub Contributors</string>
+    <string name="about_special_thanks_contributor_description">이 앱을 더 좋게 만드는 데 도움을 주신 모든 기여자 분들께 감사드립니다.</string>
+    <string name="about_contribute">기여하기</string>
+    <string name="about_contribute_description">이 앱은 GPL 라이선스의 오픈 소스 앱입니다. 기여는 항상 환영합니다. 특히 영어 및 중국어로의 번역을 도와주실 분을 찾고 있어요.</string>
+    <string name="about_support">지원</string>
+    <string name="about_support_version_history">업데이트 기록</string>
+    <string name="about_support_rate_app">평가하기</string>
+    <string name="about_support_opinion">의견과 요청</string>
+    <string name="about_support_donate">후원하기</string>
+
+    <!-- Billing -->
+    <string name="billing_plus_title">%1$s+</string>
+    <string name="billing_plus_description">%1$s+는 한 달에 커피 한 잔의 가격으로 개발자를 지원해 모든 기능의 접근 권한을 얻는 플랜입니다.</string>
+    <string name="billing_plus_purchase_button">월 %1$s에 구매</string>
+    <string name="billing_plus_verify_button">구매 복구</string>
+    <string name="billing_plus_consume_button">활성화</string>
+    <string name="billing_plus_caution1">※ %1$s+는 전용 기능을 추가하는 구독 서비스입니다. 결제는 즉시 실행되며, 기능을 계속 이용하시려면 월별 정기 결제가 필요합니다. 언제든지 취소할 수 있습니다.</string>
+    <string name="billing_plus_caution2">※ 앱을 사용함으로서, 여러분은 이미 서비스 이용 약관 및 개인정보 처리방침에 동의했습니다. 하지만, 설정 화면을 통해 다시 검토해주세요.</string>
+    <string name="billing_plus_plan_monthly">일반 플랜</string>
+    <string name="billing_plus_plan_yearly">연간 플랜</string>
+    <string name="billing_plus_toast_require_plus">이 기능은 %1$s+로만 이용 가능!</string>
+    <string name="billing_plus_toast_purchased">구매 성공</string>
+    <string name="billing_plus_toast_purchased_error">구매 실패</string>
+    <string name="billing_plus_toast_consumed">활성화 성공</string>
+    <string name="billing_plus_toast_consumed_error">활성화 실패</string>
+    <string name="billing_plus_toast_verify">구매 복구 성공</string>
+    <string name="billing_plus_toast_verify_error">구매 정보를 찾을 수 없습니다</string>
+    <string name="billing_plus_item_hide_ads">광고 숨기기</string>
+    <string name="billing_plus_item_hide_ads_description">모든 광고를 지우고 더 쾌적한 환경에서 포스트를 즐겨보세요!</string>
+    <string name="billing_plus_item_download">대량 다운로드</string>
+    <string name="billing_plus_item_download_description">크리에이터의 포스트를 대량으로 다운받아 다른 미디어를 통해 즐겨보세요!</string>
+    <string name="billing_plus_item_lock">앱 잠금</string>
+    <string name="billing_plus_item_lock_description">앱 실행 시 비밀번호를 입력하게 해 보안성을 향상시켜 줍니다!</string>
+    <string name="billing_plus_item_hide_restricted">플랜 이외의 포스트 숨기기</string>
+    <string name="billing_plus_item_hide_restricted_description">현재 플랜에서 볼 수 없는 포스트를 숨겨 더 쾌적하게 이용해 보세요!</string>
+    <string name="billing_plus_item_widget">홈 위젯</string>
+    <string name="billing_plus_item_widget_description">홈 화면에 위젯을 추가해 홈 화면에서 포스트를 읽어보세요! (업데이트를 통해 제공 예정)</string>
+    <string name="billing_plus_item_material_you">Material You</string>
+    <string name="billing_plus_item_material_you_description">Material You를 이용한 커스텀 테마로 개인화해 보세요!</string>
+    <string name="billing_plus_item_accent_color">강조색</string>
+    <string name="billing_plus_item_accent_color_description">앱의 강조색을 마음껏 바꿔보세요!</string>
+    <string name="billing_plus_item_feature">새 기능 추가</string>
+    <string name="billing_plus_item_feature_description">새로운 기능이 추가될 때 가장 먼저 경험해보세요!</string>
+    <string name="billing_plus_item_support">우선 지원</string>
+    <string name="billing_plus_item_support_description">우선적으로 기술 지원을 받아보세요!</string>
+    <string name="billing_plus_cancel_title">플랜 취소됨</string>
+    <string name="billing_plus_cancel_message">당신의 %1$s+ 플랜이 취소되어, 일반 사용자로 돌아갔습니다.\n\n의도한 게 아니라면, 결제가 실패했을 수 있습니다. 플랜 상태를 Play Store에서 확인해주세요.</string>
+
+    <!-- Report -->
+    <string name="report_crush_title">문제가 생겼습니다!</string>
+    <string name="report_crush_description">기술적 문제로 %1$s에 오류가 발생했습니다. 아래의 리포트를 개발자에 전달해주세요.</string>
+    <string name="report_crush_copy">복사하기</string>
+    <string name="report_crush_toast_copy">복사 완료</string>
+
+    <!-- Welcome -->
+    <string name="welcome_title">%1$s</string>
+    <string name="welcome_description">이 앱은 PIXIV FANBOX의 비공식 안드로이드 클라이언트입니다</string>
+    <string name="welcome_privacy_policy">개인정보 처리방침</string>
+    <string name="welcome_team_of_service">이용 약관</string>
+    <string name="welcome_agree">%1$s에 동의</string>
+    <string name="welcome_button_next">시작하기</string>
+    <string name="welcome_login_title">로그인</string>
+    <string name="welcome_login_message">이 앱을 이용하려면, PIXIV 계정에 로그인해야 합니다</string>
+    <string name="welcome_login_ready_title">로그인 완료</string>
+    <string name="welcome_login_ready_message">PIXIV 계정에 로그인되어 있습니다</string>
+    <string name="welcome_login_toast_success">로그인 성공</string>
+    <string name="welcome_login_toast_failed">로그인 실패</string>
+    <string name="welcome_login_button_login">로그인</string>
+    <string name="welcome_login_button_next">다음</string>
+    <string name="welcome_login_dialog_title">로그인 주의 사항</string>
+    <string name="welcome_login_dialog_message">구글이나 X의 OAuth를 이용한 인증은 보안상의 문제로 인해 지원하지 않습니다.\n\n 이메일 주소와 비밀번호를 직접 입력하여 로그인하십시오.</string>
+    <string name="welcome_login_debug_dialog_title">주의</string>
+    <string name="welcome_login_debug_dialog_message">디버그 로그인을 실행하시겠습니까?\n\n디버그 계정은 미리 준비된 계정으로, 일반 사용자의 행동을 모방합니다. 스테이징 환경 보존을 위해 일부 조작이 불가능하거나 오류가 발생할 수 있습니다.</string>
+    <string name="welcome_login_other_title">로그인할 수 없는 경우</string>
+    <string name="welcome_login_other_message">이 앱이 작동하려면 FANBOXSESSID라는 세션 ID가 필요합니다. 아래 링크의 절차에 따라 FANBOXSESSID를 발급받아 입력하세요.</string>
+    <string name="welcome_permission_title">권한 설정</string>
+    <string name="welcome_permission_message">이 앱을 이용하려면 다음 권한이 필요합니다.\n아래의 버튼을 눌러 권한을 허용해주세요</string>
+    <string name="welcome_permission_ready_title">준비 완료</string>
+    <string name="welcome_permission_ready_message">앱을 이용하기 위한 모든 권한이 부여됐습니다</string>
+    <string name="welcome_permission_storage">저장 공간</string>
+    <string name="welcome_permission_storage_message">콘텐츠 저장을 위해 이용합니다</string>
+    <string name="welcome_permission_notification">알림</string>
+    <string name="welcome_permission_notification_message">알림 표시를 위해 이용합니다</string>
+    <string name="welcome_permission_allowed">허용됨</string>
+    <string name="welcome_permission_denied">거부됨</string>
+    <string name="welcome_permission_optional">선택적 권한</string>
+    <string name="welcome_permission_allow_button">허용</string>
+    <string name="welcome_permission_complete_button">완료</string>
+</resources>
