@@ -63,7 +63,7 @@ class CreatorPostsDownloadViewModel(
         val posts = mutableListOf<FanboxPost>()
 
         for (cursor in paginate) {
-            posts.addAll(fanboxRepository.getCreatorPosts(creatorId, cursor).contents)
+            posts.addAll(fanboxRepository.getCreatorPosts(creatorId, cursor, null).contents)
             updateCallback.invoke(posts.size.toFloat() / max)
         }
 

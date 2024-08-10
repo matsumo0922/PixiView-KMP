@@ -11,23 +11,32 @@ import me.matsumo.fanbox.core.repository.FanboxRepository
 
 class CreatorPostsPagingSource(
     private val creatorId: CreatorId,
+    private val cursors: List<FanboxCursor>,
     private val fanboxRepository: FanboxRepository,
-) : PagingSource<FanboxCursor, FanboxPost>() {
+) : PagingSource<Int, FanboxPost>() {
 
     override val keyReuseSupported: Boolean = true
 
-    override suspend fun load(params: LoadParams<FanboxCursor>): LoadResult<FanboxCursor, FanboxPost> {
+    override suspend fun load(params: LoadParams<Int>): LoadResult<Int, FanboxPost> {
+        val currentIndex = params.key ?: 0
+        val nextIndex = currentIndex + 1
+
         return suspendRunCatching {
             if (fanboxRepository.blockedCreators.first().contains(creatorId)) {
                 error("Blocked creator: $creatorId")
             }
 
-            fanboxRepository.getCreatorPosts(creatorId, params.key, params.loadSize)
+            fanboxRepository.getCreatorPosts(
+                creatorId = creatorId,
+                currentCursor = cursors[currentIndex],
+                nextCursor = cursors[nextIndex],
+                loadSize = params.loadSize,
+            )
         }.fold(
             onSuccess = {
                 LoadResult.Page(
                     data = it.contents,
-                    nextKey = it.cursor,
+                    nextKey = nextIndex,
                     prevKey = null,
                 )
             },
@@ -37,5 +46,5 @@ class CreatorPostsPagingSource(
         )
     }
 
-    override fun getRefreshKey(state: PagingState<FanboxCursor, FanboxPost>): FanboxCursor? = null
+    override fun getRefreshKey(state: PagingState<Int, FanboxPost>): Int? = null
 }

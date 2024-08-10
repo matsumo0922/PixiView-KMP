@@ -27,6 +27,7 @@ import me.matsumo.fanbox.core.model.fanbox.entity.FanboxCreatorEntity
 import me.matsumo.fanbox.core.model.fanbox.entity.FanboxCreatorItemsEntity
 import me.matsumo.fanbox.core.model.fanbox.entity.FanboxCreatorPlanEntity
 import me.matsumo.fanbox.core.model.fanbox.entity.FanboxCreatorPlansEntity
+import me.matsumo.fanbox.core.model.fanbox.entity.FanboxCreatorPostItemsEntity
 import me.matsumo.fanbox.core.model.fanbox.entity.FanboxCreatorPostsPaginateEntity
 import me.matsumo.fanbox.core.model.fanbox.entity.FanboxCreatorSearchEntity
 import me.matsumo.fanbox.core.model.fanbox.entity.FanboxCreatorTagsEntity
@@ -52,6 +53,43 @@ internal fun FanboxPostItemsEntity.translate(bookmarkedPosts: List<PostId>): Pag
 }
 
 internal fun FanboxPostItemsEntity.Body.Item.translate(bookmarkedPosts: List<PostId>): FanboxPost {
+    return FanboxPost(
+        id = PostId(id),
+        title = title,
+        excerpt = excerpt,
+        publishedDatetime = Instant.parse(publishedDatetime),
+        updatedDatetime = Instant.parse(updatedDatetime),
+        isLiked = isLiked,
+        isBookmarked = bookmarkedPosts.contains(PostId(id)),
+        likeCount = likeCount,
+        commentCount = commentCount,
+        feeRequired = feeRequired,
+        isRestricted = isRestricted,
+        hasAdultContent = hasAdultContent,
+        tags = tags,
+        cover = cover?.let { cover ->
+            FanboxCover(
+                type = cover.type,
+                url = cover.url,
+            )
+        },
+        user = FanboxUser(
+            userId = user.userId,
+            creatorId = CreatorId(creatorId),
+            name = user.name,
+            iconUrl = user.iconUrl,
+        ),
+    )
+}
+
+internal fun FanboxCreatorPostItemsEntity.translate(bookmarkedPosts: List<PostId>, nextCursor: FanboxCursor?): PageCursorInfo<FanboxPost> {
+    return PageCursorInfo(
+        contents = body.map { it.translate(bookmarkedPosts) },
+        cursor = nextCursor,
+    )
+}
+
+internal fun FanboxCreatorPostItemsEntity.Body.translate(bookmarkedPosts: List<PostId>): FanboxPost {
     return FanboxPost(
         id = PostId(id),
         title = title,

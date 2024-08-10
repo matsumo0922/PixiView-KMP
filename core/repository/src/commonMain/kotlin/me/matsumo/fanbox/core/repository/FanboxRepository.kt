@@ -59,6 +59,7 @@ import me.matsumo.fanbox.core.model.fanbox.entity.FanboxCreatorEntity
 import me.matsumo.fanbox.core.model.fanbox.entity.FanboxCreatorItemsEntity
 import me.matsumo.fanbox.core.model.fanbox.entity.FanboxCreatorPlanEntity
 import me.matsumo.fanbox.core.model.fanbox.entity.FanboxCreatorPlansEntity
+import me.matsumo.fanbox.core.model.fanbox.entity.FanboxCreatorPostItemsEntity
 import me.matsumo.fanbox.core.model.fanbox.entity.FanboxCreatorPostsPaginateEntity
 import me.matsumo.fanbox.core.model.fanbox.entity.FanboxCreatorSearchEntity
 import me.matsumo.fanbox.core.model.fanbox.entity.FanboxCreatorTagsEntity
@@ -99,7 +100,7 @@ interface FanboxRepository {
 
     suspend fun getHomePosts(cursor: FanboxCursor?, loadSize: Int = cursor?.limit ?: 10): PageCursorInfo<FanboxPost>
     suspend fun getSupportedPosts(cursor: FanboxCursor?, loadSize: Int = cursor?.limit ?: 10): PageCursorInfo<FanboxPost>
-    suspend fun getCreatorPosts(creatorId: CreatorId, cursor: FanboxCursor?, loadSize: Int = cursor?.limit ?: 10): PageCursorInfo<FanboxPost>
+    suspend fun getCreatorPosts(creatorId: CreatorId, currentCursor: FanboxCursor, nextCursor: FanboxCursor?, loadSize: Int = currentCursor?.limit ?: 10): PageCursorInfo<FanboxPost>
     suspend fun getCreatorPostsPaginate(creatorId: CreatorId): List<FanboxCursor>
     suspend fun getPost(postId: PostId): FanboxPostDetail
     suspend fun getPostCached(postId: PostId): FanboxPostDetail
@@ -108,15 +109,15 @@ interface FanboxRepository {
     suspend fun getCreatorFromQuery(query: String, page: Int = 0): PageNumberInfo<FanboxCreatorDetail>
     suspend fun getTagFromQuery(query: String): List<FanboxTag>
 
-    fun getHomePostsPager(loadSize: Int, isHideRestricted: Boolean): Flow<PagingData<FanboxPost>>
-    fun getHomePostsPagerCache(loadSize: Int, isHideRestricted: Boolean): Flow<PagingData<FanboxPost>>
-    fun getSupportedPostsPager(loadSize: Int, isHideRestricted: Boolean): Flow<PagingData<FanboxPost>>
-    fun getSupportedPostsPagerCache(loadSize: Int, isHideRestricted: Boolean): Flow<PagingData<FanboxPost>>
-    fun getCreatorPostsPager(creatorId: CreatorId, loadSize: Int): Flow<PagingData<FanboxPost>>
-    fun getCreatorPostsPagerCache(): Flow<PagingData<FanboxPost>>?
-    fun getPostsFromQueryPager(query: String, creatorId: CreatorId? = null): Flow<PagingData<FanboxPost>>
-    fun getPostsFromQueryPagerCache(): Flow<PagingData<FanboxPost>>?
-    fun getCreatorsFromQueryPager(query: String): Flow<PagingData<FanboxCreatorDetail>>
+    suspend fun getHomePostsPager(loadSize: Int, isHideRestricted: Boolean): Flow<PagingData<FanboxPost>>
+    suspend fun getHomePostsPagerCache(loadSize: Int, isHideRestricted: Boolean): Flow<PagingData<FanboxPost>>
+    suspend fun getSupportedPostsPager(loadSize: Int, isHideRestricted: Boolean): Flow<PagingData<FanboxPost>>
+    suspend fun getSupportedPostsPagerCache(loadSize: Int, isHideRestricted: Boolean): Flow<PagingData<FanboxPost>>
+    suspend fun getCreatorPostsPager(creatorId: CreatorId, loadSize: Int): Flow<PagingData<FanboxPost>>
+    suspend fun getCreatorPostsPagerCache(): Flow<PagingData<FanboxPost>>?
+    suspend fun getPostsFromQueryPager(query: String, creatorId: CreatorId? = null): Flow<PagingData<FanboxPost>>
+    suspend fun getPostsFromQueryPagerCache(): Flow<PagingData<FanboxPost>>?
+    suspend fun getCreatorsFromQueryPager(query: String): Flow<PagingData<FanboxCreatorDetail>>
 
     suspend fun getFollowingCreators(): List<FanboxCreatorDetail>
     suspend fun getFollowingPixivCreators(): List<FanboxCreatorDetail>
@@ -244,18 +245,15 @@ class FanboxRepositoryImpl(
         }
     }
 
-    override suspend fun getCreatorPosts(creatorId: CreatorId, cursor: FanboxCursor?, loadSize: Int): PageCursorInfo<FanboxPost> =
+    override suspend fun getCreatorPosts(creatorId: CreatorId, currentCursor: FanboxCursor, nextCursor: FanboxCursor?, loadSize: Int): PageCursorInfo<FanboxPost> =
         withContext(ioDispatcher) {
             buildMap {
                 put("creatorId", creatorId.value)
                 put("limit", loadSize.toString())
-
-                if (cursor != null) {
-                    put("maxPublishedDatetime", cursor.maxPublishedDatetime)
-                    put("maxId", cursor.maxId)
-                }
+                put("maxPublishedDatetime", currentCursor.maxPublishedDatetime)
+                put("maxId", currentCursor.maxId)
             }.let {
-                get("post.listCreator", it).parse<FanboxPostItemsEntity>()!!.translate(bookmarkedPosts.first())
+                get("post.listCreator", it).parse<FanboxCreatorPostItemsEntity>()!!.translate(bookmarkedPosts.first(), nextCursor)
             }
         }
 
@@ -296,10 +294,10 @@ class FanboxRepositoryImpl(
 
     override suspend fun getPostComment(postId: PostId, offset: Int): PageOffsetInfo<FanboxPostDetail.Comment.CommentItem> =
         withContext(ioDispatcher) {
-            get("post.listComments", mapOf("postId" to postId.value, "offset" to offset.toString(), "limit" to "10"),).parse<FanboxPostCommentItemsEntity>()!!.translate()
+            get("post.listComments", mapOf("postId" to postId.value, "offset" to offset.toString(), "limit" to "10")).parse<FanboxPostCommentItemsEntity>()!!.translate()
         }
 
-    override fun getHomePostsPager(loadSize: Int, isHideRestricted: Boolean): Flow<PagingData<FanboxPost>> {
+    override suspend fun getHomePostsPager(loadSize: Int, isHideRestricted: Boolean): Flow<PagingData<FanboxPost>> {
         return Pager(
             config = PagingConfig(pageSize = loadSize),
             initialKey = null,
@@ -312,11 +310,11 @@ class FanboxRepositoryImpl(
             .also { homePostsPager = it }
     }
 
-    override fun getHomePostsPagerCache(loadSize: Int, isHideRestricted: Boolean): Flow<PagingData<FanboxPost>> {
+    override suspend fun getHomePostsPagerCache(loadSize: Int, isHideRestricted: Boolean): Flow<PagingData<FanboxPost>> {
         return homePostsPager ?: getHomePostsPager(loadSize, isHideRestricted)
     }
 
-    override fun getSupportedPostsPager(loadSize: Int, isHideRestricted: Boolean): Flow<PagingData<FanboxPost>> {
+    override suspend fun getSupportedPostsPager(loadSize: Int, isHideRestricted: Boolean): Flow<PagingData<FanboxPost>> {
         return Pager(
             config = PagingConfig(pageSize = loadSize),
             initialKey = null,
@@ -329,16 +327,22 @@ class FanboxRepositoryImpl(
             .also { supportedPostsPager = it }
     }
 
-    override fun getSupportedPostsPagerCache(loadSize: Int, isHideRestricted: Boolean): Flow<PagingData<FanboxPost>> {
+    override suspend fun getSupportedPostsPagerCache(loadSize: Int, isHideRestricted: Boolean): Flow<PagingData<FanboxPost>> {
         return supportedPostsPager ?: getSupportedPostsPager(loadSize, isHideRestricted)
     }
 
-    override fun getCreatorPostsPager(creatorId: CreatorId, loadSize: Int): Flow<PagingData<FanboxPost>> {
+    override suspend fun getCreatorPostsPager(creatorId: CreatorId, loadSize: Int): Flow<PagingData<FanboxPost>> {
+        val cursors = getCreatorPostsPaginate(creatorId)
+
         return Pager(
             config = PagingConfig(pageSize = loadSize),
             initialKey = null,
             pagingSourceFactory = {
-                CreatorPostsPagingSource(creatorId, this)
+                CreatorPostsPagingSource(
+                    creatorId = creatorId,
+                    cursors = cursors,
+                    fanboxRepository = this,
+                )
             },
         )
             .flow
@@ -346,11 +350,11 @@ class FanboxRepositoryImpl(
             .also { creatorPostsPager = it }
     }
 
-    override fun getCreatorPostsPagerCache(): Flow<PagingData<FanboxPost>>? {
+    override suspend fun getCreatorPostsPagerCache(): Flow<PagingData<FanboxPost>>? {
         return creatorPostsPager
     }
 
-    override fun getPostsFromQueryPager(query: String, creatorId: CreatorId?): Flow<PagingData<FanboxPost>> {
+    override suspend fun getPostsFromQueryPager(query: String, creatorId: CreatorId?): Flow<PagingData<FanboxPost>> {
         return Pager(
             config = PagingConfig(pageSize = 10),
             initialKey = null,
@@ -363,11 +367,11 @@ class FanboxRepositoryImpl(
             .also { searchPostsPager = it }
     }
 
-    override fun getPostsFromQueryPagerCache(): Flow<PagingData<FanboxPost>>? {
+    override suspend fun getPostsFromQueryPagerCache(): Flow<PagingData<FanboxPost>>? {
         return searchPostsPager
     }
 
-    override fun getCreatorsFromQueryPager(query: String): Flow<PagingData<FanboxCreatorDetail>> {
+    override suspend fun getCreatorsFromQueryPager(query: String): Flow<PagingData<FanboxCreatorDetail>> {
         return Pager(
             config = PagingConfig(pageSize = 10),
             initialKey = null,
