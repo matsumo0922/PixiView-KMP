@@ -1,0 +1,337 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <!-- Common -->
+    <string name="common_ok">确定</string>
+    <string name="common_cancel">取消</string>
+    <string name="common_allow">允许</string>
+    <string name="common_denied">拒绝</string>
+    <string name="common_retry">重试</string>
+    <string name="common_reload">重载</string>
+    <string name="common_back">返回</string>
+    <string name="common_close">关闭</string>
+    <string name="common_next">下一个</string>
+    <string name="common_finish">完成</string>
+    <string name="common_skip">跳过</string>
+    <string name="common_loading">加载中…</string>
+    <string name="common_caution">注意</string>
+    <string name="common_error">错误</string>
+    <string name="common_warning">警告</string>
+    <string name="common_save">保存</string>
+    <string name="common_unknown">未知</string>
+    <string name="common_details">详细</string>
+    <string name="common_delete">删除</string>
+    <string name="common_completed">已完成</string>
+    <string name="common_download">下载</string>
+    <string name="common_downloaded">已下载</string>
+    <string name="common_supporting">正在赞助</string>
+    <string name="common_follow">关注</string>
+    <string name="common_unfollow">正在关注</string>
+    <string name="common_see_more">查看更多</string>
+    <string name="common_tag">标签</string>
+    <string name="common_post">投稿</string>
+    <string name="common_creator">投稿</string>
+    <string name="common_block">屏蔽</string>
+    <string name="common_unblock">取消屏蔽</string>
+
+    <!-- Common Error -->
+    <string name="error_executed">发生错误</string>
+    <string name="error_unknown">发生未知错误</string>
+    <string name="error_download">下载失败</string>
+    <string name="error_no_data">无数据</string>
+    <string name="error_no_data_search">请更改搜索关键词后重试</string>
+    <string name="error_no_data_discovery">没有推荐的创作者</string>
+    <string name="error_no_data_following">没有正在关注的创作者</string>
+    <string name="error_no_data_supported">没有正在赞助的创作者</string>
+    <string name="error_no_data_creator">没有投稿</string>
+    <string name="error_no_data_bookmark">没有已收藏的投稿</string>
+    <string name="error_no_data_message">没有新消息</string>
+    <string name="error_no_data_notify">没有新通知</string>
+    <string name="error_no_data_payments">没有历史支付记录</string>
+    <string name="error_network">发生网络错误</string>
+    <string name="error_paging">无法继续翻页</string>
+    <string name="error_developing_feature">功能正在开发中</string>
+    <string name="error_billing">无法获取购买信息</string>
+    <string name="error_restricted_post">每月支付 %1$d JPY 或更多，以查看此内容</string>
+    <string name="error_restricted_post_ios">当前计划无法查看该内容</string>
+    <string name="error_adult_content">成人内容</string>
+    <string name="error_adult_content_test_user">此内容已被暂时限制</string>
+    <string name="error_adult_content_description">显示</string>
+    <string name="error_ios_gif_support">iOS上的GIF预览目前正在开发中</string>
+
+    <!-- Common Unit -->
+    <string name="unit_day_before">%1$d天前</string>
+    <string name="unit_hour_before">%1$d小时前</string>
+    <string name="unit_minute_before">%1$d分钟前</string>
+    <string name="unit_second_before">%1$d秒前</string>
+    <string name="unit_favorite">%1$d赞</string>
+    <string name="unit_tag">%1$d件</string>
+    <string name="unit_jpy">%1$d JPY</string>
+    <string name="unit_year">年</string>
+    <string name="unit_month">月</string>
+    <string name="unit_day">日</string>
+
+    <!-- Notify -->
+    <string name="notify_download_channel_name">下载</string>
+    <string name="notify_download_channel_description">通知下载进度</string>
+    <string name="notify_download_title">下载中…</string>
+    <string name="notify_download_message">插画下载正在进行中（还剩 %1$d）</string>
+
+    <!-- Library -->
+    <string name="library_navigation_home">主页</string>
+    <string name="library_navigation_discovery">搜索</string>
+    <string name="library_navigation_notify">通知</string>
+    <string name="library_navigation_message">消息</string>
+    <string name="library_navigation_bookmark">收藏</string>
+    <string name="library_navigation_following">正在关注</string>
+    <string name="library_navigation_supporting">正在赞助</string>
+    <string name="library_navigation_payments">历史支付记录</string>
+    <string name="library_navigation_setting">设置</string>
+    <string name="library_navigation_about">关于此应用</string>
+    <string name="library_navigation_plus_description">以一杯咖啡的价格获得所有功能！</string>
+    <string name="library_navigation_plus_purchased_description">您是 %1$s+ 用户，尽情享受更顺畅的投稿浏览！</string>
+
+    <!-- Fanbox -->
+    <string name="fanbox_free_fee">所有用户</string>
+    <string name="fanbox_plan_List">计划列表</string>
+
+    <!-- Home -->
+    <string name="home_tab_home">正在关注</string>
+    <string name="home_tab_supported">正在赞助</string>
+    <string name="home_app_lock_title">需要授权</string>
+    <string name="home_app_lock_message">需要解锁才能使用该应用</string>
+    <string name="home_review_success">感谢您的评论</string>
+
+    <!-- Empty -->
+    <string name="empty_detail_title">查看投稿详细信息</string>
+    <string name="empty_detail_description">选择一个投稿，在此处查看详细信息</string>
+
+    <!-- Notify -->
+    <string name="notify_load_more">更多</string>
+    <string name="notify_title_post_published">“%1$s” 已发布！</string>
+    <string name="notify_title_comment">%1$s回复了您的评论！</string>
+    <string name="notify_title_like">%1$d人点赞了您的评论！</string>
+
+    <!-- Creator -->
+    <string name="creator_tab_posts">投稿</string>
+    <string name="creator_tab_plans">计划</string>
+    <string name="creator_supporting_payment_method_card">信用卡</string>
+    <string name="creator_supporting_payment_method_paypal">PayPal</string>
+    <string name="creator_supporting_payment_method_cvs">便利店支付</string>
+    <string name="creator_supporting_payment_method_unknown">未知</string>
+    <string name="creator_supporting_fan_card">Fan card</string>
+    <string name="creator_supporting_plan_detail">详细信息</string>
+    <string name="creator_fan_card_not_supported">你没有赞助这个创作者</string>
+    <string name="creator_fan_card_switch_display_name">切换名称显示</string>
+    <string name="creator_fan_card_download">下载 fan card</string>
+    <string name="creator_tag_has_adult_content">成人内容</string>
+    <string name="creator_tag_has_booth_shop">有BOOTH商店</string>
+    <string name="creator_tag_is_supported">已赞助</string>
+    <string name="creator_tag_is_accepting_request">接受请求</string>
+    <string name="creator_download_all">批量下载投稿</string>
+    <string name="creator_download_all_error">批量下载是 %1$s+ 的独家功能</string>
+    <string name="creator_block_dialog_title">屏蔽</string>
+    <string name="creator_block_dialog_message">是否要屏蔽该创作者？\n\n您可能需要重新启动应用以停止看到被屏蔽的创作者。</string>
+    <string name="creator_unblock_dialog_title">已屏蔽</string>
+    <string name="creator_unblock_dialog_message">您要取消屏蔽该创作者吗？</string>
+    <string name="creator_plans_for_ios_error">需要前往FANBOX</string>
+    <string name="creator_plans_for_ios_error_description">无法在iOS上的应用程序中查看该创作者的计划。请前往pixivFANBOX网站确认。</string>
+    <string name="creator_plans_for_ios_error_button">前往FANBOX</string>
+    <string name="creator_posts_download_title">批量下载</string>
+    <string name="creator_posts_download_message">批量下载该创作者的投稿。\n\n*为防止集中访问FANBOX，我们特意降低了下载速度，还请注意。</string>
+    <string name="creator_posts_download_prepare">正在收集创作者信息，请稍等片刻。</string>
+    <string name="creator_posts_download_ignore_free">忽略免费内容</string>
+    <string name="creator_posts_download_ignore_free_description">忽略您不在计划中也可以查看的帖子</string>
+    <string name="creator_posts_download_ignore_file">忽略文件</string>
+    <string name="creator_posts_download_ignore_file_description">忽略投稿中附带的文件（ZIP、PDF 等）</string>
+    <string name="creator_posts_download_button">批量下载（%1$d项）</string>
+    <string name="creator_posts_download_button_downloading">批量下载中（%1$d/%2$d）</string>
+    <string name="creator_posts_download_dialog_title">正在获取投稿…</string>
+    <string name="creator_posts_download_alert_title">注意</string>
+    <string name="creator_posts_download_alert_message">批量下载正在进行中，您要停止吗？</string>
+    <string name="creator_posts_download_alert_stop">停止</string>
+    <string name="creator_posts_download_ignore_keyword_placeholder">忽略关键字（逗号分隔）</string>
+    <string name="creator_recommended">推荐的创作者</string>
+    <string name="creator_following_pixiv">在pixiv上正在关注</string>
+    <string name="creator_download_require_plus_title">批量下载投稿</string>
+    <string name="creator_download_require_plus_message">批量下载是 %1$s+ 的独家功能。\n\n您可以通过购买 %1$s+ 或每天观看3次广告来暂时使用该功能。</string>
+    <string name="creator_download_require_plus_button">购买 %1$s+</string>
+    <string name="creator_download_require_plus_button_ad">观看广告</string>
+    <string name="creator_download_require_plus_button_ad_over">已观看广告</string>
+
+    <!-- Bookmark -->
+    <string name="bookmark_search_placeholder">搜索收藏</string>
+    <string name="bookmark_empty_title">无收藏</string>
+    <string name="bookmark_empty_description">查找并收藏您喜欢的投稿！</string>
+
+    <!-- PostDetail -->
+    <string name="post_detail_title">投稿详细信息</string>
+    <string name="post_detail_download_images">下载所有图片（%1$d）</string>
+    <string name="post_detail_creator">创作者</string>
+    <string name="post_detail_comment_title">评论</string>
+    <string name="post_detail_comment_reply">回复</string>
+    <string name="post_detail_comment_empty">目前没有评论</string>
+    <string name="post_detail_comment_placeholder">输入评论</string>
+    <string name="post_detail_comment_commented">已评论</string>
+    <string name="post_detail_comment_comment_failed">评论失败</string>
+    <string name="post_detail_comment_delete_title">删除评论</string>
+    <string name="post_detail_comment_delete_message">您想删除该评论吗？</string>
+    <string name="post_detail_comment_delete_success">已删除</string>
+    <string name="post_detail_comment_delete_failed">删除失败</string>
+    <string name="post_detail_oldest_post">没有上一个投稿</string>
+    <string name="post_detail_newest_post">没有下一个投稿</string>
+    <string name="post_detail_all_posts">查看全部投稿</string>
+    <string name="post_detail_downloading">下载中…</string>
+    <string name="post_detail_open_browser">在浏览器打开</string>
+    <string name="post_image_download">下载该图片</string>
+    <string name="post_image_all_download">下载所有图片</string>
+    <string name="post_search_placeholder">搜索创作者标签</string>
+
+    <!-- Settings -->
+    <string name="setting_title">设置</string>
+    <string name="setting_top_theme">主题</string>
+    <string name="setting_top_theme_app">应用主题</string>
+    <string name="setting_top_theme_app_description">更改应用主题。</string>
+    <string name="setting_top_theme_app_light">浅色主题</string>
+    <string name="setting_top_theme_app_dark">深色主题</string>
+    <string name="setting_top_theme_app_system">跟随系统</string>
+    <string name="setting_top_general">常规</string>
+    <string name="setting_top_general_app_lock">应用密码锁</string>
+    <string name="setting_top_general_app_lock_description">启动应用时需要输入密码。</string>
+    <string name="setting_top_general_default_follow_tab">将“正在关注”设为默认</string>
+    <string name="setting_top_general_default_follow_tab_description">将默认主页选项卡设置为“正在关注”。</string>
+    <string name="setting_top_general_hide_adult_contents">隐藏成人内容</string>
+    <string name="setting_top_general_hide_adult_contents_description">对于成人内容，将在投稿列表上显示警告。</string>
+    <string name="setting_top_general_override_adult_contents_setting">覆盖浏览设置</string>
+    <string name="setting_top_general_override_adult_contents_setting_description">覆盖在FANBOX中设置的显示成人内容的设置。</string>
+    <string name="setting_top_general_hide_restricted_contents">隐藏受限制的内容</string>
+    <string name="setting_top_general_hide_restricted_contents_description">隐藏只有赞助者才能查看的内容。</string>
+    <string name="setting_top_general_grid_mode">网格模式</string>
+    <string name="setting_top_general_grid_mode_description">将投稿列表的查看方式切换为网格模式（列表显示）。</string>
+    <string name="setting_top_general_infinity_post_detail">向左或向右滑动查看投稿</string>
+    <string name="setting_top_general_infinity_post_detail_description">可在投稿详细信息上左右滑动来查看上一篇投稿和下一篇投稿。</string>
+    <string name="setting_top_general_auto_image_preview">自动预览图片文件</string>
+    <string name="setting_top_general_auto_image_preview_description">以文件格式（JPG、PNG）分发的图片将以与常规图片相同的方式自动预览。</string>
+    <string name="setting_top_information">信息</string>
+    <string name="setting_top_information_id">CAIOS ID</string>
+    <string name="setting_top_information_version">应用版本</string>
+    <string name="setting_top_information_csrf_token">CSRF token</string>
+    <string name="setting_top_information_fanbox_session_id">FANBOXSESSID</string>
+    <string name="setting_top_information_team_of_service">服务条款</string>
+    <string name="setting_top_information_privacy_policy">隐私政策</string>
+    <string name="setting_top_others">其他</string>
+    <string name="setting_top_others_logout">退出登录</string>
+    <string name="setting_top_others_logout_description">删除您的登录凭据并从FANBOX退出登录</string>
+    <string name="setting_top_others_logout_dialog_description">您要从FANBOX退出登录吗？</string>
+    <string name="setting_top_others_logout_dialog_success">已退出登录</string>
+    <string name="setting_top_others_logout_dialog_failed">退出登录失败</string>
+    <string name="setting_top_others_delete_account">账号删除</string>
+    <string name="setting_top_others_delete_account_description">删除您的FANBOX账号</string>
+    <string name="setting_top_others_open_source_license">开源许可</string>
+    <string name="setting_top_others_open_source_license_description">显示开源软件库许可。</string>
+    <string name="setting_top_others_developer_mode">开发者模式</string>
+    <string name="setting_top_others_developer_mode_description">[警告] 如果您不是开发者，请不要启用此模式。</string>
+    <string name="setting_account">账号</string>
+    <string name="setting_account_title">账号设置</string>
+    <string name="setting_account_description">更改您的账号名称、头像等。</string>
+    <string name="setting_notify_title">通知设置</string>
+    <string name="setting_notify_description">配置推送通知和电子邮件通知。</string>
+    <string name="setting_theme_title">主题</string>
+    <string name="setting_theme_theme_dynamic_color">动态颜色</string>
+    <string name="setting_theme_theme_dynamic_color_description">使用动态颜色，将会自动从主页壁纸中提取颜色作为主题颜色。</string>
+    <string name="setting_theme_color">主题颜色</string>
+    <string name="setting_theme_color_description">设置应用的主题颜色。不能与动态颜色同时使用。</string>
+    <string name="setting_developer_title">开发模式</string>
+    <string name="setting_developer_warning">您正在尝试打开此模式，请输入开发者的PIN码。\n\n[警告] 开启此模式后，您将无法获得任何支持。</string>
+
+    <!-- About -->
+    <string name="about_title">关于此应用</string>
+    <string name="about_name">%1$s</string>
+    <string name="about_developer_name">CAIOS</string>
+    <string name="about_developer_prefix">开发和设计</string>
+    <string name="about_special_thanks">特别感谢</string>
+    <string name="about_special_thanks_contributor">GitHub上的贡献者</string>
+    <string name="about_special_thanks_contributor_description">感谢所有帮助使这个应用变得更好的贡献者。</string>
+    <string name="about_contribute">贡献</string>
+    <string name="about_contribute_description">此应用是GPL许可证下的开源软件。我们始终欢迎贡献者。特别地，我们正在寻找可以帮助我们将该应用翻译成英文和中文的人。</string>
+    <string name="about_for_ios_title">对于iOS用户</string>
+    <string name="about_support">支持</string>
+    <string name="about_support_version_history">更新历史</string>
+    <string name="about_support_rate_app">评价应用</string>
+    <string name="about_support_opinion">意见与请求</string>
+    <string name="about_support_donate">捐赠</string>
+
+    <!-- Billing -->
+    <string name="billing_plus_title">%1$s+</string>
+    <string name="billing_plus_description">%1$s+ 是一项支持开发者的订阅计划，可使您以每月一杯咖啡的费用访问所有功能。</string>
+    <string name="billing_plus_purchase_button">以 %1$s 的价格购买</string>
+    <string name="billing_plus_verify_button">恢复购买</string>
+    <string name="billing_plus_consume_button">消费购买</string>
+    <string name="billing_plus_caution1">※ %1$s+ 是一个提供独家功能的订阅计划。付款后立即生效，继续使用这些功能需要每月或每年续订。您可以随时取消订阅。</string>
+    <string name="billing_plus_caution2">※ 当使用该应用时，您已经同意了服务条款和隐私政策，请在设置页上再次确认。</string>
+    <string name="billing_plus_toast_require_plus">这个功能仅适用于 %1$s+</string>
+    <string name="billing_plus_plan_monthly">普通计划</string>
+    <string name="billing_plus_plan_yearly">年度计划</string>
+    <string name="billing_plus_toast_purchased">已购买</string>
+    <string name="billing_plus_toast_purchased_error">购买失败</string>
+    <string name="billing_plus_toast_consumed">已消费</string>
+    <string name="billing_plus_toast_consumed_error">消费失败</string>
+    <string name="billing_plus_toast_verify">已恢复购买</string>
+    <string name="billing_plus_toast_verify_error">未找到购买信息</string>
+    <string name="billing_plus_item_hide_ads">隐藏广告</string>
+    <string name="billing_plus_item_hide_ads_description">在应用中隐藏所有广告，享受更顺畅的投稿浏览！</string>
+    <string name="billing_plus_item_download">批量下载</string>
+    <string name="billing_plus_item_download_description">批量下载创作者的投稿，然后在其他媒体上欣赏它们！</string>
+    <string name="billing_plus_item_lock">密码锁</string>
+    <string name="billing_plus_item_lock_description">在启动应用程序时要求输入密码，以增加安全性！</string>
+    <string name="billing_plus_item_hide_restricted">隐藏不在赞助计划范围内的投稿</string>
+    <string name="billing_plus_item_hide_restricted_description">隐藏在您的支持计划之外无法查看的帖子，以提高可见性！</string>
+    <string name="billing_plus_item_widget">桌面小组件</string>
+    <string name="billing_plus_item_widget_description">在桌面上添加一个小部件，并从桌面上查看帖子！（计划在更新中提供）</string>
+    <string name="billing_plus_item_material_you">Material You</string>
+    <string name="billing_plus_item_material_you_description">使用Material You的自定义主题在所有版本中按照您的喜好进行个性化定制！</string>
+    <string name="billing_plus_item_accent_color">主题色</string>
+    <string name="billing_plus_item_accent_color_description">自由设置应用程序的主题色！</string>
+    <string name="billing_plus_item_feature">新功能添加</string>
+    <string name="billing_plus_item_feature_description">成为第一批体验新功能添加的人！</string>
+    <string name="billing_plus_item_support">优先支持</string>
+    <string name="billing_plus_item_support_description">始终给予最优先的支持！</string>
+    <string name="billing_plus_cancel_title">计划已取消</string>
+    <string name="billing_plus_cancel_message">您的 %1$s+ 计划已取消，因此恢复为普通用户。\n\n如果这不是您的意图，可能是支付失败。请从Play商店检查计划状态。</string>
+    <string name="billing_plus_purchase_title">已支持！！</string>
+    <string name="billing_plus_purchase_message">您的购买已完成。\n感谢您的支持！</string>
+
+    <!-- Welcome -->
+    <string name="welcome_description">非官方的pixivFANBOX客户端应用</string>
+    <string name="welcome_privacy_policy">隐私政策</string>
+    <string name="welcome_team_of_service">服务条款</string>
+    <string name="welcome_agree">同意 %1$s</string>
+    <string name="welcome_button_next">开始使用</string>
+    <string name="welcome_login_title">登录</string>
+    <string name="welcome_login_message">您必须登录您的Pixiv账号以使用该应用</string>
+    <string name="welcome_login_ready_title">已登录</string>
+    <string name="welcome_login_ready_message">您已经登录了您的Pixiv账户</string>
+    <string name="welcome_login_toast_success">已登录</string>
+    <string name="welcome_login_toast_failed">登录失败</string>
+    <string name="welcome_login_button_login">登录</string>
+    <string name="welcome_login_button_next">下一步</string>
+    <string name="welcome_login_dialog_title">登录注意事项</string>
+    <string name="welcome_login_dialog_message">由于安全问题，不支持使用Google或X（Twitter）的OAuth进行身份验证。\n\n请直接输入您的电子邮件地址和密码登录。</string>
+    <string name="welcome_login_debug_dialog_title">注意</string>
+    <string name="welcome_login_debug_dialog_message">是否要执行调试登录？\n\n调试帐户是模拟常规用户行为的预先设置的帐户。为了保留暂存环境，某些操作可能无法执行或可能会发生错误。</string>
+    <string name="welcome_login_other_title">如果无法登录</string>
+    <string name="welcome_login_other_message">此应用需要名为FANBOXSESSID的会话ID才能运行。请按照下面链接中的步骤获取并输入您的FANBOXSESSID。</string>
+    <string name="welcome_permission_title">权限</string>
+    <string name="welcome_permission_message">使用应用程序需要以下权限。\n单击下面的按钮以授予权限。</string>
+    <string name="welcome_permission_ready_title">准备就绪</string>
+    <string name="welcome_permission_ready_message">已授予使用该应用所需的所有权限</string>
+    <string name="welcome_permission_storage">存储权限</string>
+    <string name="welcome_permission_storage_message">存储需要保存的内容</string>
+    <string name="welcome_permission_notification">通知</string>
+    <string name="welcome_permission_notification_message">展示通知信息</string>
+    <string name="welcome_permission_allowed">已允许</string>
+    <string name="welcome_permission_denied">拒绝</string>
+    <string name="welcome_permission_optional">自选</string>
+    <string name="welcome_permission_allow_button">允许</string>
+    <string name="welcome_permission_complete_button">完成</string>
+</resources>
