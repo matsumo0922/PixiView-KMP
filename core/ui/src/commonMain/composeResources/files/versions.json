@@ -138,5 +138,12 @@
     "date": "2024/07/02",
     "logJp": "・FANBOX との通信に Cloudflare Challenge が必要となり、ログインが出来なくなる問題を修正",
     "logEn": "・Fixed an issue where Cloudflare Challenge was required to communicate with FANBOX, making it impossible to log in."
+  },
+  {
+    "versionName": "2.1.3",
+    "versionCode": 38,
+    "date": "2024/08/10",
+    "logJp": "・クリエイターの投稿一覧が見られない問題を修正\n・韓国語を追加 (Thank you @HotoRas!)\n・簡体字を追加 (Thank you @CodePwn2021!)",
+    "logEn": "・Fixed the issue where the list of creator's posts could not be seen\n・Added Korean (Thank you @HotoRas!)\n・Added simplified Chinese (Thank you @CodePwn2021!)"
   }
 ]

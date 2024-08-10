@@ -315,7 +315,7 @@
     <string name="welcome_login_button_login">ログイン</string>
     <string name="welcome_login_button_next">次へ</string>
     <string name="welcome_login_dialog_title">ログインの注意</string>
-    <string name="welcome_login_dialog_message">GoogleやX（Twitter）のOAuthを利用した認証はセキュリティ上の懸念により対応していません。\n\nメールアドレスとパスワードを直接入力してログインを行ってください。</string>
+    <string name="welcome_login_dialog_message">GoogleやX(Twitter)のOAuthを利用した認証はセキュリティ上の懸念により対応していません。\n\nメールアドレスとパスワードを直接入力してログインを行ってください。</string>
     <string name="welcome_login_debug_dialog_title">注意</string>
     <string name="welcome_login_debug_dialog_message">デバッグログインを実行しますか？\n\nデバッグアカウントは事前に準備されたアカウントで、通常ユーザーの挙動を模倣します。ステージング環境保全のため、一部操作ができないもしくはエラーになる場合があります。</string>
     <string name="welcome_login_other_title">ログインできない場合</string>
