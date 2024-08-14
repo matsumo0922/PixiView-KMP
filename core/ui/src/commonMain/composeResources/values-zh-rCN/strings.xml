@@ -281,11 +281,11 @@
     <string name="billing_plus_item_hide_ads">隐藏广告</string>
     <string name="billing_plus_item_hide_ads_description">在应用中隐藏所有广告，享受更顺畅的投稿浏览！</string>
     <string name="billing_plus_item_download">批量下载</string>
-    <string name="billing_plus_item_download_description">批量下载创作者的投稿，然后在其他媒体上欣赏它们！</string>
+    <string name="billing_plus_item_download_description">批量下载创作者的投稿，然后在其他设备或软件上欣赏它们！</string>
     <string name="billing_plus_item_lock">密码锁</string>
-    <string name="billing_plus_item_lock_description">在启动应用程序时要求输入密码，以增加安全性！</string>
+    <string name="billing_plus_item_lock_description">在启动应用程序时要求输入密码，避免被他人偷看！</string>
     <string name="billing_plus_item_hide_restricted">隐藏不在赞助计划范围内的投稿</string>
-    <string name="billing_plus_item_hide_restricted_description">隐藏在您的支持计划之外无法查看的投稿，以提高可见性！</string>
+    <string name="billing_plus_item_hide_restricted_description">隐藏在您的支持计划之外无法查看的投稿，列表更清爽！</string>
     <string name="billing_plus_item_widget">桌面小组件</string>
     <string name="billing_plus_item_widget_description">在桌面上添加一个小部件，并从桌面上查看投稿！（计划在更新中提供）</string>
     <string name="billing_plus_item_material_you">Material You</string>
