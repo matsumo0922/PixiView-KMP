@@ -141,7 +141,7 @@
     <string name="creator_posts_download_message">批量下载该创作者的投稿。\n\n*为防止集中访问FANBOX，我们特意降低了下载速度，还请注意。</string>
     <string name="creator_posts_download_prepare">正在收集创作者信息，请稍等片刻。</string>
     <string name="creator_posts_download_ignore_free">忽略免费内容</string>
-    <string name="creator_posts_download_ignore_free_description">忽略您不在计划中也可以查看的帖子</string>
+    <string name="creator_posts_download_ignore_free_description">忽略您不在计划中也可以查看的投稿</string>
     <string name="creator_posts_download_ignore_file">忽略文件</string>
     <string name="creator_posts_download_ignore_file_description">忽略投稿中附带的文件（ZIP、PDF 等）</string>
     <string name="creator_posts_download_button">批量下载（%1$d项）</string>
@@ -152,7 +152,7 @@
     <string name="creator_posts_download_alert_stop">停止</string>
     <string name="creator_posts_download_ignore_keyword_placeholder">忽略关键字（逗号分隔）</string>
     <string name="creator_recommended">推荐的创作者</string>
-    <string name="creator_following_pixiv">在pixiv上正在关注</string>
+    <string name="creator_following_pixiv">在pixiv上正在关注的作者</string>
     <string name="creator_download_require_plus_title">批量下载投稿</string>
     <string name="creator_download_require_plus_message">批量下载是 %1$s+ 的独家功能。\n\n您可以通过购买 %1$s+ 或每天观看3次广告来暂时使用该功能。</string>
     <string name="creator_download_require_plus_button">购买 %1$s+</string>
@@ -285,9 +285,9 @@
     <string name="billing_plus_item_lock">密码锁</string>
     <string name="billing_plus_item_lock_description">在启动应用程序时要求输入密码，以增加安全性！</string>
     <string name="billing_plus_item_hide_restricted">隐藏不在赞助计划范围内的投稿</string>
-    <string name="billing_plus_item_hide_restricted_description">隐藏在您的支持计划之外无法查看的帖子，以提高可见性！</string>
+    <string name="billing_plus_item_hide_restricted_description">隐藏在您的支持计划之外无法查看的投稿，以提高可见性！</string>
     <string name="billing_plus_item_widget">桌面小组件</string>
-    <string name="billing_plus_item_widget_description">在桌面上添加一个小部件，并从桌面上查看帖子！（计划在更新中提供）</string>
+    <string name="billing_plus_item_widget_description">在桌面上添加一个小部件，并从桌面上查看投稿！（计划在更新中提供）</string>
     <string name="billing_plus_item_material_you">Material You</string>
     <string name="billing_plus_item_material_you_description">使用Material You的自定义主题在所有版本中按照您的喜好进行个性化定制！</string>
     <string name="billing_plus_item_accent_color">主题色</string>
