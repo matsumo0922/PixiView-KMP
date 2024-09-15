@@ -145,5 +145,12 @@
     "date": "2024/08/10",
     "logJp": "・クリエイターの投稿一覧が見られない問題を修正\n・韓国語を追加 (Thank you @HotoRas!)\n・簡体字を追加 (Thank you @CodePwn2021!)",
     "logEn": "・Fixed the issue where the list of creator's posts could not be seen\n・Added Korean (Thank you @HotoRas!)\n・Added simplified Chinese (Thank you @CodePwn2021!)"
+  },
+  {
+    "versionName": "2.1.4",
+    "versionCode": 39,
+    "date": "2024/09/15",
+    "logJp": "・一部クリエイターの投稿一覧が見られない問題を修正",
+    "logEn": "・Fixed an issue where the list of posts by some creators could not be seen"
   }
 ]
