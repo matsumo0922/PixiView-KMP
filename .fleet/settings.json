@@ -1,0 +1,4 @@
+{
+    "editor.formatOnSave": true,
+    "run.destination.stop.already.running": "Always"
+}

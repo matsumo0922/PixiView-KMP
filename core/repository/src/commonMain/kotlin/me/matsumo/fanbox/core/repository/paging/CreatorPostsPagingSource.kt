@@ -29,14 +29,14 @@ class CreatorPostsPagingSource(
             fanboxRepository.getCreatorPosts(
                 creatorId = creatorId,
                 currentCursor = cursors[currentIndex],
-                nextCursor = cursors[nextIndex],
+                nextCursor = cursors.elementAtOrNull(nextIndex),
                 loadSize = params.loadSize,
             )
         }.fold(
             onSuccess = {
                 LoadResult.Page(
                     data = it.contents,
-                    nextKey = nextIndex,
+                    nextKey = if (cursors.size > nextIndex) nextIndex else null,
                     prevKey = null,
                 )
             },
