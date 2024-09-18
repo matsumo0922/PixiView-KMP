@@ -43,6 +43,8 @@ import coil3.compose.LocalPlatformContext
 import coil3.request.ImageRequest
 import kotlinx.datetime.Clock
 import kotlinx.datetime.Instant
+import me.matsumo.fanbox.core.model.PageOffsetInfo
+import me.matsumo.fanbox.core.model.fanbox.FanboxComments
 import me.matsumo.fanbox.core.model.fanbox.FanboxMetaData
 import me.matsumo.fanbox.core.model.fanbox.FanboxPostDetail
 import me.matsumo.fanbox.core.model.fanbox.id.CommentId
@@ -67,6 +69,7 @@ import org.jetbrains.compose.resources.stringResource
 internal fun LazyListScope.postDetailCommentItems(
     isShowCommentEditor: Boolean,
     postDetail: FanboxPostDetail,
+    comments: PageOffsetInfo<FanboxComments.Item>,
     metaData: FanboxMetaData,
     onClickLoadMore: (PostId, Int) -> Unit,
     onClickCommentLike: (CommentId) -> Unit,
@@ -119,9 +122,9 @@ internal fun LazyListScope.postDetailCommentItems(
         }
     }
 
-    if (postDetail.commentList.contents.isNotEmpty()) {
+    if (comments.contents.isNotEmpty()) {
         items(
-            items = postDetail.commentList.contents,
+            items = comments.contents,
             key = { comment -> comment.id.uniqueValue },
         ) {
             CommentItem(
@@ -155,7 +158,7 @@ internal fun LazyListScope.postDetailCommentItems(
         }
     }
 
-    if (postDetail.commentList.offset != null) {
+    if (comments.offset != null) {
         item {
             Box(
                 modifier = Modifier
@@ -166,7 +169,7 @@ internal fun LazyListScope.postDetailCommentItems(
                     modifier = Modifier
                         .padding(top = 24.dp)
                         .align(Alignment.Center),
-                    onClick = { onClickLoadMore.invoke(postDetail.id, postDetail.commentList.offset!!) },
+                    onClick = { onClickLoadMore.invoke(postDetail.id, comments.offset!!) },
                 ) {
                     Row(
                         verticalAlignment = Alignment.CenterVertically,
@@ -193,7 +196,7 @@ internal fun LazyListScope.postDetailCommentItems(
 @OptIn(ExperimentalCoilApi::class)
 @Composable
 private fun CommentItem(
-    comment: FanboxPostDetail.Comment.CommentItem,
+    comment: FanboxComments.Item,
     metaData: FanboxMetaData,
     onClickCommentLike: (CommentId) -> Unit,
     onClickCommentReply: (String, CommentId, CommentId) -> Unit,

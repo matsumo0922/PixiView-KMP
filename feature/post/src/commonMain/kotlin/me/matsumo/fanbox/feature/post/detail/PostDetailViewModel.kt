@@ -12,6 +12,7 @@ import me.matsumo.fanbox.core.common.util.suspendRunCatching
 import me.matsumo.fanbox.core.model.PageOffsetInfo
 import me.matsumo.fanbox.core.model.ScreenState
 import me.matsumo.fanbox.core.model.UserData
+import me.matsumo.fanbox.core.model.fanbox.FanboxComments
 import me.matsumo.fanbox.core.model.fanbox.FanboxCreatorDetail
 import me.matsumo.fanbox.core.model.fanbox.FanboxMetaData
 import me.matsumo.fanbox.core.model.fanbox.FanboxPost
@@ -62,12 +63,14 @@ class PostDetailViewModel(
             _screenState.value = suspendRunCatching {
                 val postDetail = fanboxRepository.getPost(postId)
                 val creatorDetail = fanboxRepository.getCreatorCached(postDetail.user.creatorId)
+                val comments = fanboxRepository.getPostComment(postId)
 
                 PostDetailUiState(
                     userData = userDataRepository.userData.first(),
                     metaData = fanboxRepository.metaData.first(),
                     postDetail = postDetail,
                     creatorDetail = creatorDetail,
+                    comments = comments,
                 )
             }.fold(
                 onSuccess = { ScreenState.Idle(it) },
@@ -110,12 +113,10 @@ class PostDetailViewModel(
 
             _screenState.value = screenState.updateWhenIdle {
                 it.copy(
-                    postDetail = it.postDetail.copy(
-                        commentList = PageOffsetInfo(
-                            contents = it.postDetail.commentList.contents + comments.contents,
-                            offset = comments.offset,
-                        ),
-                    ),
+                    comments = PageOffsetInfo(
+                        contents = it.comments.contents + comments.contents,
+                        offset = comments.offset,
+                    )
                 )
             }
         }
@@ -236,5 +237,6 @@ data class PostDetailUiState(
     val metaData: FanboxMetaData,
     val creatorDetail: FanboxCreatorDetail,
     val postDetail: FanboxPostDetail,
+    val comments: PageOffsetInfo<FanboxComments.Item>,
     val messageToast: StringResource? = null,
 )

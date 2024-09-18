@@ -5,21 +5,30 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.outlined.Info
 import androidx.compose.material3.Button
+import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.unit.dp
 import me.matsumo.fanbox.core.model.ScreenState
 import me.matsumo.fanbox.core.ui.Res
 import me.matsumo.fanbox.core.ui.common_reload
 import me.matsumo.fanbox.core.ui.error_executed
+import me.matsumo.fanbox.core.ui.error_service_status
+import me.matsumo.fanbox.core.ui.extensition.NavigatorExtension
 import me.matsumo.fanbox.core.ui.theme.bold
 import me.matsumo.fanbox.core.ui.theme.center
 import org.jetbrains.compose.resources.StringResource
 import org.jetbrains.compose.resources.stringResource
+import org.koin.compose.koinInject
 
 @Composable
 fun ErrorView(
@@ -29,6 +38,8 @@ fun ErrorView(
     retryTitle: StringResource? = null,
     retryAction: (() -> Unit)? = null,
 ) {
+    val navigatorExtension = koinInject<NavigatorExtension>()
+
     Column(
         modifier = modifier
             .background(MaterialTheme.colorScheme.surface)
@@ -64,6 +75,31 @@ fun ErrorView(
                     color = MaterialTheme.colorScheme.onPrimary,
                 )
             }
+        }
+
+        TextButton(
+            modifier = Modifier.padding(top = 24.dp),
+            onClick = {
+                navigatorExtension.navigateToWebPage(
+                    url = "https://github.com/matsumo0922/PixiView-KMP/blob/master/STATUS.md",
+                    referrer = "ErrorView",
+                )
+            },
+        ) {
+            Icon(
+                modifier = Modifier.size(14.dp),
+                imageVector = Icons.Outlined.Info,
+                contentDescription = null,
+                tint = MaterialTheme.colorScheme.onSurfaceVariant,
+            )
+
+            Text(
+                modifier = Modifier.padding(start = 4.dp),
+                text = stringResource(Res.string.error_service_status),
+                style = MaterialTheme.typography.bodySmall,
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
+                textDecoration = TextDecoration.Underline,
+            )
         }
     }
 }

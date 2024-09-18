@@ -12,7 +12,6 @@ data class FanboxPostDetailEntity(
     data class Body(
         @SerialName("body") val body: Body?,
         @SerialName("commentCount") val commentCount: Int,
-        @SerialName("commentList") val commentList: CommentList,
         @SerialName("creatorId") val creatorId: String,
         @SerialName("excerpt") val excerpt: String,
         @SerialName("feeRequired") val feeRequired: Int,
@@ -97,48 +96,6 @@ data class FanboxPostDetailEntity(
                 @SerialName("postInfo")
                 val postInfo: FanboxPostItemsEntity.Body.Item?,
             )
-        }
-
-        @Serializable
-        data class CommentList(
-            @SerialName("items")
-            val items: List<Item>,
-            @SerialName("nextUrl")
-            val nextUrl: String?,
-        ) {
-            @Serializable
-            data class Item(
-                @SerialName("body")
-                val body: String,
-                @SerialName("createdDatetime")
-                val createdDatetime: String,
-                @SerialName("id")
-                val id: String,
-                @SerialName("isLiked")
-                val isLiked: Boolean,
-                @SerialName("isOwn")
-                val isOwn: Boolean,
-                @SerialName("likeCount")
-                val likeCount: Int,
-                @SerialName("parentCommentId")
-                val parentCommentId: String,
-                @SerialName("rootCommentId")
-                val rootCommentId: String,
-                @SerialName("user")
-                val user: User,
-                @SerialName("replies")
-                val replies: List<Item> = emptyList(),
-            ) {
-                @Serializable
-                data class User(
-                    @SerialName("iconUrl")
-                    val iconUrl: String?,
-                    @SerialName("name")
-                    val name: String,
-                    @SerialName("userId")
-                    val userId: String,
-                )
-            }
         }
 
         @Serializable

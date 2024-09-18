@@ -45,8 +45,10 @@ import kotlinx.coroutines.launch
 import me.matsumo.fanbox.core.common.util.format
 import me.matsumo.fanbox.core.logs.category.PostsLog
 import me.matsumo.fanbox.core.logs.logger.send
+import me.matsumo.fanbox.core.model.PageOffsetInfo
 import me.matsumo.fanbox.core.model.ScreenState
 import me.matsumo.fanbox.core.model.UserData
+import me.matsumo.fanbox.core.model.fanbox.FanboxComments
 import me.matsumo.fanbox.core.model.fanbox.FanboxCreatorDetail
 import me.matsumo.fanbox.core.model.fanbox.FanboxMetaData
 import me.matsumo.fanbox.core.model.fanbox.FanboxPost
@@ -195,6 +197,7 @@ private fun PostDetailView(
         PostDetailScreen(
             modifier = Modifier.fillMaxSize(),
             postDetail = uiState.postDetail,
+            comments = uiState.comments,
             creatorDetail = uiState.creatorDetail,
             userData = uiState.userData,
             metaData = uiState.metaData,
@@ -272,6 +275,7 @@ private fun PostDetailView(
 @Composable
 private fun PostDetailScreen(
     postDetail: FanboxPostDetail,
+    comments: PageOffsetInfo<FanboxComments.Item>,
     creatorDetail: FanboxCreatorDetail,
     userData: UserData,
     metaData: FanboxMetaData,
@@ -304,10 +308,10 @@ private fun PostDetailScreen(
     var isShowCommentEditor by remember { mutableStateOf(false) }
     var latestComment by remember { mutableStateOf("") }
 
-    LaunchedEffect(postDetail.commentList) {
+    LaunchedEffect(comments) {
         if (isShowCommentEditor) {
-            val comments = postDetail.commentList.contents.flatMap { comment -> listOf(comment) + comment.replies }
-            isShowCommentEditor = !comments.any { comment -> comment.user.name == metaData.context.user.name && comment.body == latestComment }
+            val commentItems = comments.contents.flatMap { comment -> listOf(comment) + comment.replies }
+            isShowCommentEditor = !commentItems.any { comment -> comment.user.name == metaData.context.user.name && comment.body == latestComment }
         }
     }
 
@@ -407,6 +411,7 @@ private fun PostDetailScreen(
 
             postDetailCommentItems(
                 postDetail = postDetail,
+                comments = comments,
                 metaData = metaData,
                 isShowCommentEditor = isShowCommentEditor,
                 onClickLoadMore = onClickCommentLoadMore,

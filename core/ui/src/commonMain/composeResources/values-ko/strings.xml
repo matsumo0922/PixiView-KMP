@@ -54,6 +54,7 @@
     <string name="error_adult_content">성인 콘텐츠</string>
     <string name="error_adult_content_test_user">이 콘텐츠는 일시적으로 제한되었습니다</string>
     <string name="error_adult_content_description">더보기</string>
+    <string name="error_service_status">서비스 운영 현황</string>
 
     <!-- Common Unit -->
     <string name="unit_day_before">%1$d일 전</string>
