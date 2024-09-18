@@ -58,6 +58,7 @@
     <string name="error_adult_content_test_user">このコンテンツは一時的に制限されています</string>
     <string name="error_adult_content_description">表示する</string>
     <string name="error_ios_gif_support">iOS での GIF のプレビューは\n現在開発中です</string>
+    <string name="error_service_status">サービス稼働状況</string>
 
     <!-- Common Unit -->
     <string name="unit_day_before">%1$d日前</string>
