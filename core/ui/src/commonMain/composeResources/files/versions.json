@@ -152,5 +152,12 @@
     "date": "2024/09/15",
     "logJp": "・一部クリエイターの投稿一覧が見られない問題を修正",
     "logEn": "・Fixed an issue where the list of posts by some creators could not be seen"
+  },
+  {
+    "versionName": "2.1.5",
+    "versionCode": 41,
+    "date": "2024/09/19",
+    "logJp": "・クリエイターの投稿一覧が見られない問題を修正",
+    "logEn": "・Fixed an issue where the list of posts by all creators could not be seen"
   }
 ]
