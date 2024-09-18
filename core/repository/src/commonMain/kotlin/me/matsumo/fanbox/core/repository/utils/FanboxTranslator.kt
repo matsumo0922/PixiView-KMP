@@ -8,6 +8,7 @@ import me.matsumo.fanbox.core.model.PageCursorInfo
 import me.matsumo.fanbox.core.model.PageNumberInfo
 import me.matsumo.fanbox.core.model.PageOffsetInfo
 import me.matsumo.fanbox.core.model.fanbox.FanboxBell
+import me.matsumo.fanbox.core.model.fanbox.FanboxComments
 import me.matsumo.fanbox.core.model.fanbox.FanboxCover
 import me.matsumo.fanbox.core.model.fanbox.FanboxCreator
 import me.matsumo.fanbox.core.model.fanbox.FanboxCreatorDetail
@@ -23,6 +24,7 @@ import me.matsumo.fanbox.core.model.fanbox.FanboxPostDetail
 import me.matsumo.fanbox.core.model.fanbox.FanboxUser
 import me.matsumo.fanbox.core.model.fanbox.PaymentMethod
 import me.matsumo.fanbox.core.model.fanbox.entity.FanboxBellItemsEntity
+import me.matsumo.fanbox.core.model.fanbox.entity.FanboxCommentsEntity
 import me.matsumo.fanbox.core.model.fanbox.entity.FanboxCreatorEntity
 import me.matsumo.fanbox.core.model.fanbox.entity.FanboxCreatorItemsEntity
 import me.matsumo.fanbox.core.model.fanbox.entity.FanboxCreatorPlanEntity
@@ -290,10 +292,6 @@ internal fun FanboxPostDetailEntity.translate(bookmarkedPosts: List<PostId>): Fa
         ),
         body = bodyBlock,
         excerpt = body.excerpt,
-        commentList = PageOffsetInfo(
-            contents = body.commentList.items.map { it.translate() },
-            offset = body.commentList.nextUrl?.let { Url(it).parameters["offset"]?.toIntOrNull() },
-        ),
         nextPost = body.nextPost?.let {
             FanboxPostDetail.OtherPost(
                 id = PostId(it.id),
@@ -312,8 +310,8 @@ internal fun FanboxPostDetailEntity.translate(bookmarkedPosts: List<PostId>): Fa
     )
 }
 
-internal fun FanboxPostDetailEntity.Body.CommentList.Item.translate(): FanboxPostDetail.Comment.CommentItem {
-    return FanboxPostDetail.Comment.CommentItem(
+internal fun FanboxCommentsEntity.Item.translate(): FanboxComments.Item {
+    return FanboxComments.Item(
         body = body,
         createdDatetime = Instant.parse(createdDatetime),
         id = CommentId(id),
@@ -529,10 +527,10 @@ internal fun FanboxPostSearchEntity.translate(bookmarkedPosts: List<PostId>): Pa
     )
 }
 
-internal fun FanboxPostCommentItemsEntity.translate(): PageOffsetInfo<FanboxPostDetail.Comment.CommentItem> {
+internal fun FanboxPostCommentItemsEntity.translate(): PageOffsetInfo<FanboxComments.Item> {
     return PageOffsetInfo(
         contents = body.items.map { it.translate() },
-        offset = body.nextUrl?.let { Url(it).parameters["page"]?.toIntOrNull() },
+        offset = body.nextUrl?.let { Url(it).parameters["offset"]?.toIntOrNull() },
     )
 }
 

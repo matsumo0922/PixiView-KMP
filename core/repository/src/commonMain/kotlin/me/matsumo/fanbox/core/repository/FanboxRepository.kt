@@ -44,6 +44,7 @@ import me.matsumo.fanbox.core.model.PageCursorInfo
 import me.matsumo.fanbox.core.model.PageNumberInfo
 import me.matsumo.fanbox.core.model.PageOffsetInfo
 import me.matsumo.fanbox.core.model.fanbox.FanboxBell
+import me.matsumo.fanbox.core.model.fanbox.FanboxComments
 import me.matsumo.fanbox.core.model.fanbox.FanboxCreatorDetail
 import me.matsumo.fanbox.core.model.fanbox.FanboxCreatorPlan
 import me.matsumo.fanbox.core.model.fanbox.FanboxCreatorPlanDetail
@@ -104,7 +105,7 @@ interface FanboxRepository {
     suspend fun getCreatorPostsPaginate(creatorId: CreatorId): List<FanboxCursor>
     suspend fun getPost(postId: PostId): FanboxPostDetail
     suspend fun getPostCached(postId: PostId): FanboxPostDetail
-    suspend fun getPostComment(postId: PostId, offset: Int = 0): PageOffsetInfo<FanboxPostDetail.Comment.CommentItem>
+    suspend fun getPostComment(postId: PostId, offset: Int = 0): PageOffsetInfo<FanboxComments.Item>
     suspend fun getPostFromQuery(query: String, creatorId: CreatorId? = null, page: Int = 0): PageNumberInfo<FanboxPost>
     suspend fun getCreatorFromQuery(query: String, page: Int = 0): PageNumberInfo<FanboxCreatorDetail>
     suspend fun getTagFromQuery(query: String): List<FanboxTag>
@@ -292,7 +293,7 @@ class FanboxRepositoryImpl(
         postCache.getOrPut(postId) { getPost(postId) }
     }
 
-    override suspend fun getPostComment(postId: PostId, offset: Int): PageOffsetInfo<FanboxPostDetail.Comment.CommentItem> =
+    override suspend fun getPostComment(postId: PostId, offset: Int): PageOffsetInfo<FanboxComments.Item> =
         withContext(ioDispatcher) {
             get("post.listComments", mapOf("postId" to postId.value, "offset" to offset.toString(), "limit" to "10")).parse<FanboxPostCommentItemsEntity>()!!.translate()
         }

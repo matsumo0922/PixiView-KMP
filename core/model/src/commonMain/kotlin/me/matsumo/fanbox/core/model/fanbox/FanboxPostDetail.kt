@@ -1,8 +1,6 @@
 package me.matsumo.fanbox.core.model.fanbox
 
 import kotlinx.datetime.Instant
-import me.matsumo.fanbox.core.model.PageOffsetInfo
-import me.matsumo.fanbox.core.model.fanbox.id.CommentId
 import me.matsumo.fanbox.core.model.fanbox.id.PostId
 
 data class FanboxPostDetail(
@@ -11,7 +9,6 @@ data class FanboxPostDetail(
     val body: Body,
     val coverImageUrl: String?,
     val commentCount: Int,
-    val commentList: PageOffsetInfo<Comment.CommentItem>,
     val excerpt: String,
     val feeRequired: Int,
     val hasAdultContent: Boolean,
@@ -97,24 +94,6 @@ data class FanboxPostDetail(
         data object Unknown : Body
     }
 
-    data class Comment(
-        val items: List<CommentItem>,
-        val nextUrl: String?,
-    ) {
-        data class CommentItem(
-            val body: String,
-            val createdDatetime: Instant,
-            val id: CommentId,
-            val isLiked: Boolean,
-            val isOwn: Boolean,
-            val likeCount: Int,
-            val parentCommentId: CommentId,
-            val rootCommentId: CommentId,
-            val replies: List<CommentItem>,
-            val user: FanboxUser,
-        )
-    }
-
     data class OtherPost(
         val id: PostId,
         val title: String,
@@ -158,35 +137,6 @@ data class FanboxPostDetail(
             body = Body.Unknown,
             coverImageUrl = null,
             commentCount = 3,
-            commentList = PageOffsetInfo(
-                contents = listOf(
-                    Comment.CommentItem(
-                        body = "かわいい～！",
-                        createdDatetime = Instant.parse("2024-01-01T00:00:00"),
-                        id = CommentId("123"),
-                        isLiked = false,
-                        isOwn = false,
-                        likeCount = 0,
-                        parentCommentId = CommentId(""),
-                        rootCommentId = CommentId(""),
-                        replies = emptyList(),
-                        user = FanboxUser.dummy(),
-                    ),
-                    Comment.CommentItem(
-                        body = "なるほどこれが天才か...",
-                        createdDatetime = Instant.parse("2024-01-01T00:00:00"),
-                        id = CommentId("124"),
-                        isLiked = false,
-                        isOwn = false,
-                        likeCount = 0,
-                        parentCommentId = CommentId(""),
-                        rootCommentId = CommentId(""),
-                        replies = emptyList(),
-                        user = FanboxUser.dummy(),
-                    ),
-                ),
-                offset = null,
-            ),
             excerpt = "リクエストありがとうございました！",
             feeRequired = 0,
             hasAdultContent = true,
