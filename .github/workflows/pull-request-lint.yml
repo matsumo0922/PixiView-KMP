@@ -1,0 +1,70 @@
+name: CI Lint
+
+on:
+  pull_request_target:
+    types: [ opened, reopened, synchronize, ready_for_review, converted_to_draft ]
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.event.number }}
+  cancel-in-progress: true
+
+jobs:
+  detekt:
+    if: github.event.pull_request.draft == false
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    permissions:
+      pull-requests: write
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+        with:
+          ref: "refs/pull/${{ github.event.pull_request.number }}/merge"
+
+      - name: Setup JDK
+        uses: actions/setup-java@v2
+        with:
+          distribution: 'zulu'
+          java-version: '17'
+
+      - name: Setup ReviewDog
+        uses: reviewdog/action-setup@v1.3.0
+        with:
+          reviewdog_version: latest
+
+      - name: Setup Gradle
+        uses: gradle/actions/setup-gradle@v4
+
+      - name: Run detekt and merge reports
+        id: detekt
+        continue-on-error: true
+        run: ./gradlew detekt reportMerge --continue
+
+      - name: Run report with ReviewDog
+        if: steps.detekt.outcome == 'failure'
+        env:
+          REVIEWDOG_GITHUB_API_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: cat ./build/reports/detekt/merge.xml |
+          reviewdog -f=checkstyle -name="detekt" -reporter="github-pr-review"
+
+      - name: Comment lint check failure
+        if: steps.detekt.outcome == 'failure'
+        uses: marocchino/sticky-pull-request-comment@v2
+        with:
+          header: detekt
+          recreate: true
+          message: |
+            ## :warning: Failed the PR lint check!
+            Please run `./gradlew detekt --auto-correct` locally and push the changes.
+
+      - if: steps.detekt.outcome == 'failure'
+        run: exit 1
+
+      - name: Comment lint check success
+        if: steps.detekt.outcome == 'success'
+        uses: marocchino/sticky-pull-request-comment@v2
+        with:
+          header: detekt
+          recreate: true
+          message: |
+            :sparkles: :sparkles: **That's perfect, passed the PR lint check perfectly!** :sparkles: :sparkles:

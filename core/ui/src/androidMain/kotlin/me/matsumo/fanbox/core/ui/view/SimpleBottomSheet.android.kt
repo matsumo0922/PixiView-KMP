@@ -8,7 +8,6 @@ import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.RectangleShape
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -26,7 +25,7 @@ actual fun SimpleBottomSheet(
         sheetState = sheetState,
         shape = RectangleShape,
         dragHandle = null,
-        windowInsets = WindowInsets(0, 0, 0, 0),
+        contentWindowInsets = { WindowInsets(0, 0, 0, 0) },
         onDismissRequest = onDismissRequest,
     ) {
         content.invoke(this)

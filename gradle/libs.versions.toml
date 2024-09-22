@@ -9,24 +9,24 @@ targetSdk = "34"
 compileSdk = "34"
 
 # Gradle
-gradle = "8.4.1"
+gradle = "8.4.2"
 
 # Kotlin
-kotlin = "2.0.0"
+kotlin = "2.0.20"
 
 # KotlinX
 kotlinxCoroutines = "1.7.3"
 kotlinxDatetime = "0.6.0"
-kotlinxSerializationJson = "1.6.3"
+kotlinxSerializationJson = "1.7.1"
 kotlinxImmutable = "0.3.7"
 
 # KMP
 kmpCompose = "1.6.11"
 kmpComplete = "1.1.0"
 kmpSwiftKlib = "0.5.1"
-kmpLifecycle = "2.8.0"
-kmpNavigation = "2.8.0-alpha02"
-kmpPaging = "3.3.0-alpha02-0.4.0"
+kmpLifecycle = "2.8.2"
+kmpNavigation = "2.8.0-alpha10"
+kmpPaging = "3.3.0-alpha02-0.5.1"
 mokoPermissions = "0.17.0"
 mokoBiometry = "0.4.0"
 calf = "0.3.1"
@@ -35,22 +35,22 @@ calf = "0.3.1"
 androidxCore = "1.13.1"
 androidxCoreSplash = "1.0.1"
 androidxAppCompat = "1.7.0"
-androidxActivity = "1.9.0"
-androidxFragment = "1.8.0"
+androidxActivity = "1.9.2"
+androidxFragment = "1.8.3"
 androidxPreference = "1.2.1"
 androidxDataStore = "1.1.1"
 androidxPalette = "1.0.0"
-androidxAnnotation = "1.8.0"
-androidxCompose = "2024.06.00"
+androidxAnnotation = "1.8.2"
+androidxCompose = "2024.09.02"
 
 # Google
 playReview = "2.0.1"
 playUpdate = "2.1.0"
-playServiceAds = "23.1.0"
+playServiceAds = "23.3.0"
 playServiceOss = "17.1.0"
 material = "1.12.0"
 accompanist = "0.33.2-alpha"
-ksp = "2.0.0-1.0.21"
+ksp = "2.0.20-1.0.24"
 gms = "4.4.2"
 
 # Billing
@@ -61,20 +61,20 @@ koin = "3.6.0-Beta4"
 koinMultiplatform = "1.2.0-Beta4"
 
 # Others
-ktor = "2.3.9"
+ktor = "2.3.12"
 coil3 = "3.0.0-alpha06"
 ksoup = "0.1.2"
 uuid = "0.8.2"
-composeWebView = "1.8.8"
+composeWebView = "1.9.10"
 windowSize = "0.3.2"
-detekt = "1.23.6"
+detekt = "1.23.7"
 libraries = "11.1.4"
 buildKonfig = "0.15.1"
 cupertino = "0.1.0-alpha03"
 twitterComposeRule = "0.0.26"
 
 # Debugs
-firebase = "33.1.0"
+firebase = "33.3.0"
 leakCanary = "2.12"
 flipper = "0.240.0"
 napier = "2.7.1"
@@ -87,7 +87,7 @@ kotlin-serialization = { id = "org.jetbrains.kotlin.plugin.serialization", versi
 ksp = { id = "com.google.devtools.ksp", version.ref = "ksp" }
 gms = { id = "com.google.gms.google-services", version.ref = "gms" }
 detekt = { id = "io.gitlab.arturbosch.detekt", version.ref = "detekt" }
-firebase-crashlytics = { id = "com.google.firebase.crashlytics", version = "3.0.1" }
+firebase-crashlytics = { id = "com.google.firebase.crashlytics", version = "3.0.2" }
 libraries = { id = "com.mikepenz.aboutlibraries.plugin", version.ref = "libraries" }
 kmp = { id = "org.jetbrains.kotlin.multiplatform", version.ref = "kotlin" }
 kmpCompose = { id = "org.jetbrains.compose", version.ref = "kmpCompose" }
@@ -207,7 +207,7 @@ ksoup = { module = "com.fleeksoft.ksoup:ksoup", version.ref = "ksoup" }
 uuid = { module = "com.benasher44:uuid", version.ref = "uuid" }
 webview-compose = { module = "io.github.kevinnzou:compose-webview-multiplatform", version.ref = "composeWebView" }
 window-size = { module = "dev.chrisbanes.material3:material3-window-size-class-multiplatform", version.ref = "windowSize" }
-desugar = { module = "com.android.tools:desugar_jdk_libs", version = "2.0.4" }
+desugar = { module = "com.android.tools:desugar_jdk_libs", version = "2.1.2" }
 placeholder = { module = "com.eygraber:compose-placeholder-material3", version = "1.0.7" }
 libraries-core = { module = "com.mikepenz:aboutlibraries-core", version.ref = "libraries" }
 libraries-ui = { module = "com.mikepenz:aboutlibraries-compose", version.ref = "libraries" }
