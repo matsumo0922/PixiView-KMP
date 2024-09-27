@@ -42,7 +42,7 @@ class PaymentsViewModel(
     }
 
     private fun List<FanboxPaidRecord>.translate(): List<Payment> {
-        val paymentDates = map { it.paymentDateTime }.distinctBy { it.epochSeconds }
+        val paymentDates = map { it.paymentDateTime }.distinctBy { it.format("yyyy-MM-dd") }
 
         return paymentDates.map { paymentDate ->
             Payment(

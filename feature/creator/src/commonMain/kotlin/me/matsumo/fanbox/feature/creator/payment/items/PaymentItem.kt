@@ -96,24 +96,15 @@ private fun TitleItem(
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.spacedBy(16.dp),
     ) {
-        Column(
-            modifier = Modifier.weight(1f),
-            verticalArrangement = Arrangement.spacedBy(4.dp),
-        ) {
-            Text(
-                modifier = Modifier.fillMaxWidth(),
-                text = dateTime.format("yyyy"),
-                style = MaterialTheme.typography.bodySmall,
-                color = MaterialTheme.colorScheme.onSurfaceVariant,
-            )
+        Text(
+            text = dateTime.format("MM/dd"),
+            style = MaterialTheme.typography.titleMedium.bold(),
+            color = MaterialTheme.colorScheme.onSurface,
+        )
 
-            Text(
-                modifier = Modifier.fillMaxWidth(),
-                text = dateTime.format("MM/dd"),
-                style = MaterialTheme.typography.titleMedium.bold(),
-                color = MaterialTheme.colorScheme.onSurface,
-            )
-        }
+        Spacer(
+            modifier = Modifier.weight(1f),
+        )
 
         Text(
             text = stringResource(Res.string.unit_jpy, totalPaidAmount),

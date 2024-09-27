@@ -98,19 +98,18 @@ private fun PaymentsScreen(
                 verticalArrangement = Arrangement.spacedBy(16.dp),
             ) {
                 itemsIndexed(payments) { index, item ->
-                    val isYearDifferent = rememberSaveable { isYearDifferent(payments.elementAtOrNull(index - 1), item) }
+                    val prevPayment = payments.elementAtOrNull(index - 1)
+                    val isMonthDifferent = rememberSaveable { isMonthDifferent(prevPayment, item) }
 
-                    if (isYearDifferent) {
-                        val paymentsFromYear = rememberSaveable { payments.getFromYear(item.paymentDateTime.format("yyyy")) }
-
+                    if (isMonthDifferent) {
                         MonthItem(
                             modifier = Modifier
                                 .padding(
-                                    top = 24.dp,
+                                    top = if (prevPayment != null) 24.dp else 0.dp,
                                     bottom = 16.dp,
                                 )
                                 .fillMaxWidth(),
-                            payments = paymentsFromYear,
+                            payments = payments.getFromMonth(item.paymentDateTime.format("MM")),
                         )
                     }
 
@@ -135,10 +134,10 @@ private fun PaymentsScreen(
     }
 }
 
-private fun isYearDifferent(prev: Payment?, current: Payment): Boolean {
-    return prev?.paymentDateTime?.format("yyyy") != current.paymentDateTime.format("yyyy")
+private fun isMonthDifferent(prev: Payment?, current: Payment): Boolean {
+    return prev?.paymentDateTime?.format("MM") != current.paymentDateTime.format("MM")
 }
 
-private fun List<Payment>.getFromYear(year: String): ImmutableList<Payment> {
-    return filter { it.paymentDateTime.format("yyyy") == year }.toImmutableList()
+private fun List<Payment>.getFromMonth(month: String): ImmutableList<Payment> {
+    return filter { it.paymentDateTime.format("MM") == month }.toImmutableList()
 }
