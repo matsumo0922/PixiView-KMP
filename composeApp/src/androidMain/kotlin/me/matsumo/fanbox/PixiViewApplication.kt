@@ -4,15 +4,12 @@ import android.app.Application
 import android.os.Build
 import coil3.ImageLoader
 import coil3.SingletonImageLoader
-import coil3.annotation.ExperimentalCoilApi
 import coil3.disk.DiskCache
 import coil3.gif.AnimatedImageDecoder
 import coil3.gif.GifDecoder
 import coil3.memory.MemoryCache
-import coil3.network.NetworkFetcher
 import coil3.request.crossfade
 import com.google.android.gms.ads.MobileAds
-import com.google.android.gms.ads.RequestConfiguration
 import com.google.firebase.FirebaseApp
 import com.google.firebase.FirebaseOptions
 import io.github.aakira.napier.DebugAntilog
@@ -21,19 +18,21 @@ import me.matsumo.fanbox.di.applyModules
 import okio.Path.Companion.toOkioPath
 import org.koin.android.ext.koin.androidContext
 import org.koin.android.ext.koin.androidLogger
-import org.koin.core.context.startKoin
-import java.util.Arrays
+import org.koin.androix.startup.KoinStartup.onKoinStartup
 
 class PixiViewApplication : Application() {
 
-    override fun onCreate() {
-        super.onCreate()
-
-        startKoin {
+    init {
+        @Suppress("OPT_IN_USAGE")
+        onKoinStartup {
             androidContext(applicationContext)
             androidLogger()
             applyModules()
         }
+    }
+
+    override fun onCreate() {
+        super.onCreate()
 
         if (BuildConfig.DEBUG) {
             // StrictMode.enableDefaults()
@@ -54,7 +53,6 @@ class PixiViewApplication : Application() {
         )*/
     }
 
-    @OptIn(ExperimentalCoilApi::class)
     private fun setupCoil() {
         SingletonImageLoader.setSafe {
             ImageLoader.Builder(it)

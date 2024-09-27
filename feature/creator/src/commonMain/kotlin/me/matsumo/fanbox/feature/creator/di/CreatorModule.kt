@@ -6,7 +6,7 @@ import me.matsumo.fanbox.feature.creator.follow.FollowingCreatorsViewModel
 import me.matsumo.fanbox.feature.creator.payment.PaymentsViewModel
 import me.matsumo.fanbox.feature.creator.support.SupportingCreatorsViewModel
 import me.matsumo.fanbox.feature.creator.top.CreatorTopViewModel
-import org.koin.compose.viewmodel.dsl.viewModelOf
+import org.koin.core.module.dsl.viewModelOf
 import org.koin.dsl.module
 
 val creatorModule = module {

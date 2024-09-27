@@ -1,10 +1,12 @@
 package me.matsumo.fanbox.core.model.fanbox.id
 
-import com.benasher44.uuid.uuid4
+import kotlin.uuid.ExperimentalUuidApi
+import kotlin.uuid.Uuid
 
 data class NewsLetterId(val value: String) {
 
-    val uniqueValue: String = "news-${value}-${uuid4()}"
+    @OptIn(ExperimentalUuidApi::class)
+    val uniqueValue: String = "news-${value}-${Uuid.random()}"
 
     override fun toString(): String = value
 }

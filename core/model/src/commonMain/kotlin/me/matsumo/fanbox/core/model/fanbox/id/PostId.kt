@@ -1,12 +1,14 @@
 package me.matsumo.fanbox.core.model.fanbox.id
 
-import com.benasher44.uuid.uuid4
 import kotlinx.serialization.Serializable
+import kotlin.uuid.ExperimentalUuidApi
+import kotlin.uuid.Uuid
 
 @Serializable
 data class PostId(val value: String) {
 
-    val uniqueValue: String = "post-${value}-${uuid4()}"
+    @OptIn(ExperimentalUuidApi::class)
+    val uniqueValue: String = "post-${value}-${Uuid.random()}"
 
     override fun toString(): String = value
 }

@@ -9,7 +9,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.HorizontalDivider
@@ -17,12 +17,14 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.toImmutableList
+import me.matsumo.fanbox.core.common.util.format
 import me.matsumo.fanbox.core.model.fanbox.id.CreatorId
 import me.matsumo.fanbox.core.ui.AsyncLoadContents
 import me.matsumo.fanbox.core.ui.Res
@@ -32,6 +34,7 @@ import me.matsumo.fanbox.core.ui.error_no_data_payments
 import me.matsumo.fanbox.core.ui.extensition.drawVerticalScrollbar
 import me.matsumo.fanbox.core.ui.library_navigation_payments
 import me.matsumo.fanbox.core.ui.view.EmptyView
+import me.matsumo.fanbox.feature.creator.payment.items.MonthItem
 import me.matsumo.fanbox.feature.creator.payment.items.PaymentItem
 import org.jetbrains.compose.resources.stringResource
 import org.koin.compose.viewmodel.koinViewModel
@@ -94,7 +97,23 @@ private fun PaymentsScreen(
                 contentPadding = PaddingValues(16.dp),
                 verticalArrangement = Arrangement.spacedBy(16.dp),
             ) {
-                items(payments) { item ->
+                itemsIndexed(payments) { index, item ->
+                    val isYearDifferent = rememberSaveable { isYearDifferent(payments.elementAtOrNull(index - 1), item) }
+
+                    if (isYearDifferent) {
+                        val paymentsFromYear = rememberSaveable { payments.getFromYear(item.paymentDateTime.format("yyyy")) }
+
+                        MonthItem(
+                            modifier = Modifier
+                                .padding(
+                                    top = 24.dp,
+                                    bottom = 16.dp,
+                                )
+                                .fillMaxWidth(),
+                            payments = paymentsFromYear,
+                        )
+                    }
+
                     PaymentItem(
                         modifier = Modifier.fillMaxWidth(),
                         payment = item,
@@ -114,4 +133,12 @@ private fun PaymentsScreen(
             )
         }
     }
+}
+
+private fun isYearDifferent(prev: Payment?, current: Payment): Boolean {
+    return prev?.paymentDateTime?.format("yyyy") != current.paymentDateTime.format("yyyy")
+}
+
+private fun List<Payment>.getFromYear(year: String): ImmutableList<Payment> {
+    return filter { it.paymentDateTime.format("yyyy") == year }.toImmutableList()
 }

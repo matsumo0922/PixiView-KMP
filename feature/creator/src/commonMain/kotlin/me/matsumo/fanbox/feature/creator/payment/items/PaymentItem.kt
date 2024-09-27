@@ -109,7 +109,7 @@ private fun TitleItem(
 
             Text(
                 modifier = Modifier.fillMaxWidth(),
-                text = dateTime.format("MMMdd"),
+                text = dateTime.format("MM/dd"),
                 style = MaterialTheme.typography.titleMedium.bold(),
                 color = MaterialTheme.colorScheme.onSurface,
             )
@@ -139,7 +139,11 @@ private fun PaidItem(
             modifier = Modifier
                 .weight(1f)
                 .clip(RoundedCornerShape(4.dp))
-                .clickable { onClickCreator.invoke(paidRecord.creator.user.creatorId) }
+                .clickable {
+                    if (paidRecord.creator.user.creatorId.value.isNotBlank()) {
+                        onClickCreator.invoke(paidRecord.creator.user.creatorId)
+                    }
+                }
                 .padding(8.dp),
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.spacedBy(12.dp),

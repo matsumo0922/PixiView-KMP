@@ -3,7 +3,6 @@ package me.matsumo.fanbox
 import androidx.compose.runtime.Stable
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.benasher44.uuid.uuid4
 import dev.icerock.moko.biometry.BiometryAuthenticator
 import dev.icerock.moko.resources.desc.desc
 import io.github.aakira.napier.Napier
@@ -33,6 +32,8 @@ import me.matsumo.fanbox.core.ui.home_app_lock_message
 import me.matsumo.fanbox.core.ui.home_app_lock_title
 import org.jetbrains.compose.resources.getString
 import kotlin.time.Duration.Companion.minutes
+import kotlin.uuid.ExperimentalUuidApi
+import kotlin.uuid.Uuid
 
 class PixiViewViewModel(
     private val userDataRepository: UserDataRepository,
@@ -101,9 +102,10 @@ class PixiViewViewModel(
         billingStatus.update()
     }
 
+    @OptIn(ExperimentalUuidApi::class)
     fun initPixiViewId() {
         viewModelScope.launch {
-            userDataRepository.setPixiViewId(uuid4().toString())
+            userDataRepository.setPixiViewId(Uuid.random().toString())
         }
     }
 

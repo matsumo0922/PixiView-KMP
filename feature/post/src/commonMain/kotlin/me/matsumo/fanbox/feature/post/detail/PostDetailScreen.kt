@@ -39,7 +39,6 @@ import app.cash.paging.compose.collectAsLazyPagingItems
 import coil3.compose.LocalPlatformContext
 import coil3.compose.SubcomposeAsyncImage
 import coil3.request.ImageRequest
-import com.benasher44.uuid.uuid4
 import kotlinx.collections.immutable.toImmutableList
 import kotlinx.coroutines.launch
 import me.matsumo.fanbox.core.common.util.format
@@ -88,8 +87,10 @@ import me.matsumo.fanbox.feature.post.detail.items.postDetailItems
 import me.matsumo.fanbox.feature.post.detail.items.postDetailTagsSection
 import org.koin.compose.koinInject
 import org.koin.compose.viewmodel.koinViewModel
+import kotlin.uuid.ExperimentalUuidApi
+import kotlin.uuid.Uuid
 
-@OptIn(ExperimentalFoundationApi::class)
+@OptIn(ExperimentalFoundationApi::class, ExperimentalUuidApi::class)
 @Composable
 internal fun PostDetailRoute(
     postId: PostId,
@@ -126,7 +127,7 @@ internal fun PostDetailRoute(
                 modifier = Modifier.fillMaxSize(),
                 state = pagerState,
                 count = paging.itemCount,
-                key = { paging[it]?.id?.uniqueValue ?: uuid4().toString() },
+                key = { paging[it]?.id?.uniqueValue ?: Uuid.random().toString() },
             ) {
                 paging[it]?.let { post ->
                     PostDetailView(

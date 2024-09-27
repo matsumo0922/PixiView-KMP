@@ -105,10 +105,6 @@ android {
     }
 }
 
-composeCompiler {
-    enableStrongSkippingMode = true
-}
-
 kotlin {
     sourceSets {
         val commonMain by getting {
@@ -142,6 +138,7 @@ kotlin {
                 implementation(libs.play.review)
                 implementation(libs.play.update)
                 implementation(libs.google.material)
+                implementation(libs.koin.androidx.startup)
             }
         }
 

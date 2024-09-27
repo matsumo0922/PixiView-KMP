@@ -9,8 +9,8 @@ import kotlinx.coroutines.SupervisorJob
 import me.matsumo.fanbox.BuildKonfig
 import me.matsumo.fanbox.PixiViewViewModel
 import me.matsumo.fanbox.core.common.PixiViewConfig
-import org.koin.compose.viewmodel.dsl.viewModel
-import org.koin.compose.viewmodel.dsl.viewModelOf
+import org.koin.core.module.dsl.viewModel
+import org.koin.core.module.dsl.viewModelOf
 import org.koin.dsl.module
 
 expect fun getPixiViewConfig(): PixiViewConfig
