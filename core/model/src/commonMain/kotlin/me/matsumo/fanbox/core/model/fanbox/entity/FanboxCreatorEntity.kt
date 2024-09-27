@@ -33,7 +33,7 @@ data class FanboxCreatorEntity(
         @SerialName("profileLinks")
         val profileLinks: List<String>,
         @SerialName("user")
-        val user: User,
+        val user: User?,
     ) {
         @Serializable
         data class ProfileItem(

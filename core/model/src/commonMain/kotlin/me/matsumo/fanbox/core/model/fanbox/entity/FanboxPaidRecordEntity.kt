@@ -28,7 +28,7 @@ data class FanboxPaidRecordEntity(
             @SerialName("isActive")
             val isActive: Boolean,
             @SerialName("user")
-            val user: User,
+            val user: User?,
         ) {
             @Serializable
             data class User(

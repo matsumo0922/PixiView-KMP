@@ -29,7 +29,7 @@ data class FanboxCommentsEntity(
         @SerialName("rootCommentId")
         val rootCommentId: String,
         @SerialName("user")
-        val user: User,
+        val user: User?,
         @SerialName("replies")
         val replies: List<Item> = emptyList(),
     ) {

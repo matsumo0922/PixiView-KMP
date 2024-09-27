@@ -1,7 +1,7 @@
 package me.matsumo.fanbox.core.model.fanbox
 
-import me.matsumo.fanbox.core.model.fanbox.id.CreatorId
 import kotlinx.serialization.Serializable
+import me.matsumo.fanbox.core.model.fanbox.id.CreatorId
 
 @Serializable
 data class FanboxUser(
@@ -16,6 +16,13 @@ data class FanboxUser(
             creatorId = CreatorId("island"),
             name = "あいらんど",
             iconUrl = "https://pixiv.pximg.net/c/160x160_90_a2_g5/fanbox/public/images/user/24164271/icon/3sMCyeX4owee4LwXhwpyMkpv.jpeg",
+        )
+
+        fun default() = FanboxUser(
+            userId = "",
+            creatorId = CreatorId(""),
+            name = "Unknown User",
+            iconUrl = null,
         )
     }
 }

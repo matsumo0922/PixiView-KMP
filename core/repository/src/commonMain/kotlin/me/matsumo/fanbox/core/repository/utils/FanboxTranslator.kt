@@ -75,12 +75,14 @@ internal fun FanboxPostItemsEntity.Body.Item.translate(bookmarkedPosts: List<Pos
                 url = cover.url,
             )
         },
-        user = FanboxUser(
-            userId = user.userId,
-            creatorId = CreatorId(creatorId),
-            name = user.name,
-            iconUrl = user.iconUrl,
-        ),
+        user = user?.let {
+            FanboxUser(
+                userId = it.userId,
+                creatorId = CreatorId(creatorId),
+                name = it.name,
+                iconUrl = it.iconUrl,
+            )
+        } ?: FanboxUser.default(),
     )
 }
 
@@ -112,12 +114,14 @@ internal fun FanboxCreatorPostItemsEntity.Body.translate(bookmarkedPosts: List<P
                 url = cover.url,
             )
         },
-        user = FanboxUser(
-            userId = user.userId,
-            creatorId = CreatorId(creatorId),
-            name = user.name,
-            iconUrl = user.iconUrl,
-        ),
+        user = user?.let {
+            FanboxUser(
+                userId = it.userId,
+                creatorId = CreatorId(creatorId),
+                name = it.name,
+                iconUrl = it.iconUrl,
+            )
+        } ?: FanboxUser.default(),
     )
 }
 
@@ -154,12 +158,14 @@ internal fun FanboxCreatorEntity.Body.translate(): FanboxCreatorDetail {
                 link = FanboxCreatorDetail.Platform.fromUrl(profileLink),
             )
         },
-        user = FanboxUser(
-            userId = user.userId,
-            creatorId = CreatorId(creatorId),
-            name = user.name,
-            iconUrl = user.iconUrl,
-        ),
+        user = user?.let {
+            FanboxUser(
+                userId = it.userId,
+                creatorId = CreatorId(creatorId),
+                name = it.name,
+                iconUrl = it.iconUrl,
+            )
+        } ?: FanboxUser.default(),
     )
 }
 
@@ -284,12 +290,14 @@ internal fun FanboxPostDetailEntity.translate(bookmarkedPosts: List<PostId>): Fa
         isRestricted = body.isRestricted,
         hasAdultContent = body.hasAdultContent,
         tags = body.tags,
-        user = FanboxUser(
-            userId = body.user.userId,
-            creatorId = CreatorId(body.creatorId),
-            name = body.user.name,
-            iconUrl = body.user.iconUrl,
-        ),
+        user = body.user?.let {
+            FanboxUser(
+                userId = it.userId,
+                creatorId = CreatorId(body.creatorId),
+                name = it.name,
+                iconUrl = it.iconUrl,
+            )
+        } ?: FanboxUser.default(),
         body = bodyBlock,
         excerpt = body.excerpt,
         nextPost = body.nextPost?.let {
@@ -321,12 +329,14 @@ internal fun FanboxCommentsEntity.Item.translate(): FanboxComments.Item {
         parentCommentId = CommentId(parentCommentId),
         rootCommentId = CommentId(rootCommentId),
         replies = replies.map { it.translate() }.sortedBy { it.createdDatetime },
-        user = FanboxUser(
-            userId = user.userId,
-            creatorId = CreatorId(""),
-            name = user.name,
-            iconUrl = user.iconUrl,
-        ),
+        user = user?.let {
+            FanboxUser(
+                userId = it.userId,
+                creatorId = CreatorId(""),
+                name = it.name,
+                iconUrl = it.iconUrl,
+            )
+        } ?: FanboxUser.default(),
     )
 }
 
@@ -350,12 +360,14 @@ internal fun FanboxCreatorPlansEntity.translate(): List<FanboxCreatorPlan> {
             id = PlanId(it.id),
             paymentMethod = PaymentMethod.fromString(it.paymentMethod),
             title = it.title,
-            user = FanboxUser(
-                userId = it.user.userId,
-                creatorId = CreatorId(it.creatorId),
-                name = it.user.name,
-                iconUrl = it.user.iconUrl,
-            ),
+            user = it.user?.let { user ->
+                FanboxUser(
+                    userId = user.userId,
+                    creatorId = CreatorId(it.creatorId.orEmpty()),
+                    name = user.name,
+                    iconUrl = user.iconUrl,
+                )
+            } ?: FanboxUser.default(),
         )
     }
 }
@@ -370,12 +382,14 @@ internal fun FanboxCreatorPlanEntity.translate(): FanboxCreatorPlanDetail {
             coverImageUrl = body.plan.coverImageUrl,
             hasAdultContent = body.plan.hasAdultContent,
             paymentMethod = PaymentMethod.fromString(body.plan.paymentMethod),
-            user = FanboxUser(
-                userId = body.plan.user.userId,
-                creatorId = CreatorId(body.plan.creatorId),
-                name = body.plan.user.name,
-                iconUrl = body.plan.user.iconUrl,
-            ),
+            user = body.plan.user?.let {
+                FanboxUser(
+                    userId = it.userId,
+                    creatorId = CreatorId(body.plan.creatorId.orEmpty()),
+                    name = it.name,
+                    iconUrl = it.iconUrl,
+                )
+            } ?: FanboxUser.default(),
         ),
         supportStartDatetime = body.supportStartDatetime,
         supportTransactions = body.supportTransactions.map {
@@ -386,7 +400,7 @@ internal fun FanboxCreatorPlanEntity.translate(): FanboxCreatorPlanDetail {
                 targetMonth = it.targetMonth,
                 user = FanboxUser(
                     userId = it.supporter.userId,
-                    creatorId = CreatorId(body.plan.creatorId),
+                    creatorId = CreatorId(body.plan.creatorId.orEmpty()),
                     name = it.supporter.name,
                     iconUrl = it.supporter.iconUrl,
                 ),
@@ -405,12 +419,14 @@ internal fun FanboxPaidRecordEntity.translate(): List<FanboxPaidRecord> {
             paymentMethod = PaymentMethod.fromString(it.paymentMethod),
             creator = FanboxCreator(
                 creatorId = it.creator.creatorId?.let { id -> CreatorId(id) },
-                user = FanboxUser(
-                    userId = it.creator.user.userId,
-                    creatorId = CreatorId(it.creator.creatorId.orEmpty()),
-                    name = it.creator.user.name,
-                    iconUrl = it.creator.user.iconUrl,
-                ),
+                user = it.creator.user?.let { user ->
+                    FanboxUser(
+                        userId = user.userId,
+                        creatorId = CreatorId(it.creator.creatorId.orEmpty()),
+                        name = user.name,
+                        iconUrl = user.iconUrl,
+                    )
+                } ?: FanboxUser.default(),
             ),
         )
     }
@@ -422,13 +438,15 @@ internal fun FanboxNewsLettersEntity.translate(): List<FanboxNewsLetter> {
             body = it.body,
             createdAt = Instant.parse(it.createdAt),
             creator = FanboxCreator(
-                creatorId = CreatorId(it.creator.creatorId),
-                user = FanboxUser(
-                    userId = it.creator.user.userId,
-                    creatorId = CreatorId(it.creator.creatorId),
-                    name = it.creator.user.name,
-                    iconUrl = it.creator.user.iconUrl,
-                ),
+                creatorId = CreatorId(it.creator.creatorId.orEmpty()),
+                user = it.creator.user?.let { user ->
+                    FanboxUser(
+                        userId = user.userId,
+                        creatorId = CreatorId(it.creator.creatorId.orEmpty()),
+                        name = user.name,
+                        iconUrl = user.iconUrl,
+                    )
+                } ?: FanboxUser.default(),
             ),
             id = NewsLetterId(it.id),
             isRead = it.isRead,

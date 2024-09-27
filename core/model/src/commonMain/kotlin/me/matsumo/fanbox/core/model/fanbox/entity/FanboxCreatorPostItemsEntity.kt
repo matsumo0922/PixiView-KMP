@@ -40,7 +40,7 @@ data class FanboxCreatorPostItemsEntity(
         @SerialName("updatedDatetime")
         val updatedDatetime: String,
         @SerialName("user")
-        val user: User
+        val user: User?,
     ) {
         @Serializable
         data class Cover(

@@ -29,7 +29,7 @@ data class FanboxPostDetailEntity(
         @SerialName("type") val type: String,
         @SerialName("updatedDatetime") val updatedDatetime: String,
         @SerialName("coverImageUrl") val coverImageUrl: String?,
-        @SerialName("user") val user: User,
+        @SerialName("user") val user: User?,
     ) {
         @Serializable
         data class Body(

@@ -24,9 +24,9 @@ data class FanboxNewsLettersEntity(
         @Serializable
         data class Creator(
             @SerialName("creatorId")
-            val creatorId: String,
+            val creatorId: String?,
             @SerialName("user")
-            val user: User,
+            val user: User?,
         ) {
             @Serializable
             data class User(
