@@ -109,7 +109,7 @@ private fun PaymentsScreen(
                                     bottom = 16.dp,
                                 )
                                 .fillMaxWidth(),
-                            payments = payments.getFromMonth(item.paymentDateTime.format("MM")),
+                            payments = payments.getFromYearMonth(item),
                         )
                     }
 
@@ -138,6 +138,6 @@ private fun isMonthDifferent(prev: Payment?, current: Payment): Boolean {
     return prev?.paymentDateTime?.format("MM") != current.paymentDateTime.format("MM")
 }
 
-private fun List<Payment>.getFromMonth(month: String): ImmutableList<Payment> {
-    return filter { it.paymentDateTime.format("MM") == month }.toImmutableList()
+private fun List<Payment>.getFromYearMonth(current: Payment): ImmutableList<Payment> {
+    return filter { it.paymentDateTime.format("yyyy-MM") == current.paymentDateTime.format("yyyy-MM") }.toImmutableList()
 }

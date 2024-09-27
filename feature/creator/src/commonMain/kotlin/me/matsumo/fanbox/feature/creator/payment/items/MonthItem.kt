@@ -25,7 +25,8 @@ internal fun MonthItem(
     modifier: Modifier = Modifier,
 ) {
     val samplePaymentDateTime = remember { payments.first().paymentDateTime }
-    val paidSum = remember { payments.sumOf { it.paidRecords.sumOf { record -> record.paidAmount } } }
+    val monthSum = remember { payments.map { it.paidRecords.sumOf { record -> record.paidAmount } } }
+    val paidSum = remember { monthSum.sum()}
 
     Row(
         modifier = modifier.padding(vertical = 4.dp),
