@@ -184,23 +184,11 @@ private fun PixiViewScreen(
                 }
             )
         } else {
-            IdleScreen(
+            PixiViewNavHost(
                 modifier = Modifier.fillMaxSize(),
-                navigationType = LocalNavigationType.current.type,
             )
         }
     }
-}
-
-@Composable
-private fun IdleScreen(
-    navigationType: PixiViewNavigationType,
-    modifier: Modifier = Modifier,
-) {
-    PixiViewNavHost(
-        modifier = modifier,
-        navigationType = navigationType,
-    )
 }
 
 @Composable

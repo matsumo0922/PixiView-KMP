@@ -15,7 +15,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import io.github.alexzhirkevich.cupertino.adaptive.AdaptiveNavigationBar
-import io.github.alexzhirkevich.cupertino.adaptive.AdaptiveNavigationBarItem
 import io.github.alexzhirkevich.cupertino.adaptive.ExperimentalAdaptiveApi
 import me.matsumo.fanbox.core.ui.extensition.Platform
 import me.matsumo.fanbox.core.ui.extensition.currentPlatform
@@ -50,30 +49,21 @@ fun RowScope.PixiViewNavigationBarItem(
     isSelected: Boolean,
     modifier: Modifier = Modifier,
 ) {
-    if (currentPlatform == Platform.Android) {
-        NavigationBarItem(
-            modifier = modifier,
-            selected = isSelected,
-            onClick = onClick,
-            icon = icon,
-            label = label,
-            alwaysShowLabel = false,
-            colors = NavigationBarItemDefaults.colors(
-                selectedIconColor = PixiViewNavigationDefaults.navigationSelectedItemColor(),
-                unselectedIconColor = PixiViewNavigationDefaults.navigationContentColor(),
-                selectedTextColor = PixiViewNavigationDefaults.navigationSelectedItemColor(),
-                unselectedTextColor = PixiViewNavigationDefaults.navigationContentColor(),
-                indicatorColor = PixiViewNavigationDefaults.navigationIndicatorColor(),
-            ),
-        )
-    } else {
-        AdaptiveNavigationBarItem(
-            selected = isSelected,
-            icon = icon,
-            label = label,
-            onClick = onClick,
-        )
-    }
+    NavigationBarItem(
+        modifier = modifier,
+        selected = isSelected,
+        onClick = onClick,
+        icon = icon,
+        label = label,
+        alwaysShowLabel = false,
+        colors = NavigationBarItemDefaults.colors(
+            selectedIconColor = PixiViewNavigationDefaults.navigationSelectedItemColor(),
+            unselectedIconColor = PixiViewNavigationDefaults.navigationContentColor(),
+            selectedTextColor = PixiViewNavigationDefaults.navigationSelectedItemColor(),
+            unselectedTextColor = PixiViewNavigationDefaults.navigationContentColor(),
+            indicatorColor = PixiViewNavigationDefaults.navigationIndicatorColor(),
+        ),
+    )
 }
 
 @Composable

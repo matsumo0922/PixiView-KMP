@@ -4,8 +4,8 @@ import coil3.ImageLoader
 import coil3.SingletonImageLoader
 import coil3.annotation.ExperimentalCoilApi
 import coil3.disk.DiskCache
-import coil3.fetch.NetworkFetcher
 import coil3.memory.MemoryCache
+import coil3.network.ktor.KtorNetworkFetcherFactory
 import coil3.request.crossfade
 import io.github.aakira.napier.DebugAntilog
 import io.github.aakira.napier.Napier
@@ -58,7 +58,7 @@ fun initCoil() {
                     .build()
             }
             .components {
-                add(NetworkFetcher.Factory())
+                add(KtorNetworkFetcherFactory())
             }
             .crossfade(true)
             .build()

@@ -1,6 +1,5 @@
 package me.matsumo.fanbox
 
-import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
@@ -14,7 +13,6 @@ import me.matsumo.fanbox.core.ui.animation.NavigateAnimation
 import me.matsumo.fanbox.core.ui.component.emptyDetailScreen
 import me.matsumo.fanbox.core.ui.component.sheet.ModalBottomSheetLayout
 import me.matsumo.fanbox.core.ui.component.sheet.rememberBottomSheetNavigator
-import me.matsumo.fanbox.core.ui.extensition.PixiViewNavigationType
 import me.matsumo.fanbox.core.ui.extensition.popBackStackWithResult
 import me.matsumo.fanbox.core.ui.view.navigateToSimpleAlertDialog
 import me.matsumo.fanbox.core.ui.view.simpleAlertDialogDialog
@@ -58,7 +56,6 @@ import me.matsumo.fanbox.feature.setting.top.settingTopScreen
 
 @Composable
 internal fun PixiViewNavHost(
-    navigationType: PixiViewNavigationType,
     modifier: Modifier = Modifier,
     startDestination: String = LibraryRoute,
 ) {
@@ -66,12 +63,9 @@ internal fun PixiViewNavHost(
     val navController = rememberNavController(bottomSheetNavigator)
     val scope = rememberCoroutineScope()
 
-    ModalBottomSheetLayout(
-        modifier = modifier,
-        bottomSheetNavigator = bottomSheetNavigator,
-    ) {
+    ModalBottomSheetLayout(bottomSheetNavigator) {
         NavHost(
-            modifier = Modifier.fillMaxSize(),
+            modifier = modifier,
             navController = navController,
             startDestination = startDestination,
             enterTransition = { NavigateAnimation.Horizontal.enter },

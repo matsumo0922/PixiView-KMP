@@ -87,7 +87,7 @@ fun rememberBottomSheetNavigator(
  * drive the sheet state
  */
 @OptIn(ExperimentalMaterialApi::class)
-@Navigator.Name(BottomSheetNavigator.NAME)
+@NavigatorName(BottomSheetNavigator.NAME)
 class BottomSheetNavigator(val sheetState: ModalBottomSheetState) : Navigator<Destination>() {
 
     private var attached by mutableStateOf(false)
