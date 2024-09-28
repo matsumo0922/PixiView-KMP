@@ -162,12 +162,14 @@ private fun ControllerView(
                     modifier = Modifier.size(48.dp),
                     imageVector = Icons.Default.Pause,
                     contentDescription = null,
+                    tint = Color.White,
                 )
             } else {
                 Icon(
                     modifier = Modifier.size(48.dp),
                     imageVector = Icons.Default.PlayArrow,
                     contentDescription = null,
+                    tint = Color.White,
                 )
             }
         }

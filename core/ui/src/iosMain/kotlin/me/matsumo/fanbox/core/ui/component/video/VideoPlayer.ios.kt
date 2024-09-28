@@ -4,6 +4,7 @@ import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.foundation.background
+import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxSize
@@ -21,20 +22,18 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
-import androidx.compose.runtime.snapshotFlow
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.viewinterop.UIKitView
+import kotlinx.coroutines.delay
 import me.matsumo.fanbox.core.ui.extensition.LocalFanboxCookie
-import me.matsumo.fanbox.core.ui.view.LoadingView
 import platform.AVFoundation.AVPlayer
 import platform.AVFoundation.AVPlayerItem
 import platform.AVFoundation.AVPlayerLayer
-import platform.AVFoundation.AVPlayerStatusFailed
 import platform.AVFoundation.AVURLAsset
-import platform.AVFoundation.currentItem
 import platform.AVFoundation.pause
 import platform.AVFoundation.play
 import platform.AVKit.AVPlayerViewController
@@ -49,7 +48,6 @@ actual fun VideoPlayer(url: String, modifier: Modifier) {
     val avPlayerViewController = remember { AVPlayerViewController() }
 
     var isDisplayController by remember { mutableStateOf(false) }
-    var isLoading by remember { mutableStateOf(true) }
     var isPlaying by remember { mutableStateOf(true) }
 
     SideEffect {
@@ -58,13 +56,20 @@ actual fun VideoPlayer(url: String, modifier: Modifier) {
         avPlayerViewController.showsPlaybackControls = false
     }
 
-    LaunchedEffect(player) {
-        snapshotFlow { player?.currentItem?.status }.collect {
-            isLoading = (it != AVPlayerStatusFailed)
+    LaunchedEffect(isDisplayController) {
+        if (isDisplayController) {
+            delay(2000)
+            isDisplayController = false
         }
     }
 
-    Box(modifier) {
+    Box(
+        modifier = modifier.pointerInput(true) {
+            detectTapGestures {
+                isDisplayController = !isDisplayController
+            }
+        },
+    ) {
         UIKitView(
             modifier = Modifier
                 .fillMaxWidth()
@@ -73,33 +78,27 @@ actual fun VideoPlayer(url: String, modifier: Modifier) {
             update = { player?.play() },
         )
 
-        if (isLoading) {
-            LoadingView(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .aspectRatio(16f / 9),
-            )
-        } else {
-            AnimatedVisibility(
-                modifier = Modifier.aspectRatio(16f / 9f),
-                visible = isDisplayController,
-                enter = fadeIn(),
-                exit = fadeOut(),
-            ) {
-                ControllerView(
-                    modifier = Modifier.fillMaxSize(),
-                    isPlaying = isPlaying,
-                    onPlayPauseClicked = {
-                        isPlaying = it
+        AnimatedVisibility(
+            modifier = Modifier
+                .fillMaxWidth()
+                .aspectRatio(16f / 9f),
+            visible = isDisplayController,
+            enter = fadeIn(),
+            exit = fadeOut(),
+        ) {
+            ControllerView(
+                modifier = Modifier.fillMaxSize(),
+                isPlaying = isPlaying,
+                onPlayPauseClicked = {
+                    isPlaying = it
 
-                        if (it) {
-                            player?.play()
-                        } else {
-                            player?.pause()
-                        }
-                    },
-                )
-            }
+                    if (it) {
+                        player?.play()
+                    } else {
+                        player?.pause()
+                    }
+                },
+            )
         }
     }
 }
@@ -120,12 +119,14 @@ private fun ControllerView(
                     modifier = Modifier.size(48.dp),
                     imageVector = Icons.Default.Pause,
                     contentDescription = null,
+                    tint = Color.White,
                 )
             } else {
                 Icon(
                     modifier = Modifier.size(48.dp),
                     imageVector = Icons.Default.PlayArrow,
                     contentDescription = null,
+                    tint = Color.White,
                 )
             }
         }

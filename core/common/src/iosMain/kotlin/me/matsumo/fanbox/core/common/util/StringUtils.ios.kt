@@ -34,6 +34,8 @@ actual fun String.format(vararg args: Any?): String {
 
         returnString += when (arg) {
             is Double -> NSString.stringWithFormat(newStrings[i] + singleFormats[i], args[i] as Double)
+            is Float -> NSString.stringWithFormat(newStrings[i] + singleFormats[i], (args[i] as Float).toDouble())
+            is Long -> NSString.stringWithFormat(newStrings[i] + singleFormats[i], args[i] as Long)
             is Int -> NSString.stringWithFormat(newStrings[i] + singleFormats[i], args[i] as Int)
             else -> NSString.stringWithFormat(newStrings[i] + "%@", args[i])
         }
