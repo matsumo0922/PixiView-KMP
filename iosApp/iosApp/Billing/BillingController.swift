@@ -9,36 +9,40 @@
 import Foundation
 
 @objc public class BillingController: NSObject {
-    
-    @objc public class func queryProduct() async -> PlusProduct? {
-        guard let product = await BillingClient().queryProduct() else {
-            return nil
+
+    @objc public class func queryProducts() async -> [PlusProduct] {
+        let products = await BillingClient().queryProducts().compactMap { $0 }
+        
+        return products.map { product in
+            let style = product.priceFormatStyle
+            let price = product.price as NSDecimalNumber
+            
+            let priceDouble = price.doubleValue
+            let formattedPrice = style.format(product.price)
+            
+            return PlusProduct(price: priceDouble, formattedPrice: formattedPrice)
         }
-        
-        let style = product.priceFormatStyle
-        
-        return PlusProduct(price: product.price, formattedPrice: style.format(product.price))
     }
-    
-    @objc public class func purchase(onResult: @escaping (Int) -> Void) async {
-        await BillingClient().requestPurchase(onResult: onResult)
+
+    @objc public class func purchase(id: String, onResult: @escaping (Int) -> Void) async {
+        await BillingClient().requestPurchase(id: id, onResult: onResult)
     }
-    
+
     @objc public class func refresh(onResult: @escaping (Bool) -> Void) async {
         await BillingClient().refreshStatus(onResult: onResult)
     }
-    
+
     @objc public class func observeTransactionStatus(onResult: @escaping (Bool) -> Void) {
         BillingClient().observeTransactionUpdates(onResult: onResult)
     }
 }
 
 @objc public class PlusProduct: NSObject {
-    
-    @objc public var price: Decimal
+
+    @objc public var price: Double
     @objc public var formattedPrice: String
-    
-    init(price: Decimal, formattedPrice: String) {
+
+    @objc public init(price: Double, formattedPrice: String) {
         self.price = price
         self.formattedPrice = formattedPrice
     }

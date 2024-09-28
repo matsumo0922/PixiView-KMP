@@ -12,7 +12,7 @@ compileSdk = "34"
 gradle = "8.4.2"
 
 # Kotlin
-kotlin = "2.0.20"
+kotlin = "2.1.0-Beta1"
 
 # KotlinX
 kotlinxCoroutines = "1.7.3"
@@ -23,7 +23,7 @@ kotlinxImmutable = "0.3.7"
 # KMP
 kmpCompose = "1.7.0-beta02"
 kmpComplete = "1.1.0"
-kmpSwiftKlib = "0.5.1"
+kmpSwiftKlib = "0.6.2"
 kmpLifecycle = "2.8.2"
 kmpNavigation = "2.8.0-alpha10"
 kmpPaging = "3.3.0-alpha02-0.5.1"
@@ -51,7 +51,7 @@ playServiceAds = "23.3.0"
 playServiceOss = "17.1.0"
 material = "1.12.0"
 accompanist = "0.33.2-alpha"
-ksp = "2.0.20-1.0.24"
+ksp = "2.1.0-Beta1-1.0.25"
 gms = "4.4.2"
 
 # Billing

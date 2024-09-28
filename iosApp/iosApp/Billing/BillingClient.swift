@@ -28,11 +28,14 @@ class BillingClient {
         }
     }
     
-    func queryProduct() async -> Product? {
+    func queryProducts() async -> [Product?] {
         do {
-            return try await Product.products(for: ["plus"]).first
+            let productPlus = try await Product.products(for: ["plus"]).first
+            let productPlusYear = try await Product.products(for: ["plus_year"]).first
+            
+            return [productPlus, productPlusYear]
         } catch {
-            return nil
+            return []
         }
     }
     
@@ -46,13 +49,12 @@ class BillingClient {
         }
         
         onResult(validSubscription != nil)
-    
     }
     
-    func requestPurchase(onResult: @escaping (Int) -> Void) async {
+    func requestPurchase(id: String, onResult: @escaping (Int) -> Void) async {
         do {
-            let product = await queryProduct()
-            let transaction = try await purchase(product!)
+            let product = await queryProducts().first { $0?.id == id }
+            let transaction = try await purchase(product!!)
             
             onResult(0)
             

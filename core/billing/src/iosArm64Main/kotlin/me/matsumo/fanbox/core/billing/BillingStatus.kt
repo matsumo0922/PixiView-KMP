@@ -1,5 +1,6 @@
 package me.matsumo.fanbox.core.billing
 
+import io.github.aakira.napier.Napier
 import kotlinx.cinterop.ExperimentalForeignApi
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.CoroutineScope
@@ -29,6 +30,7 @@ class BillingStatusImpl(
             BillingController.refreshOnResult(
                 onResult = {
                     scope.launch {
+                        Napier.d { "refresh billing status: $it" }
                         userDataRepository.setPlusMode(it)
                     }
                 },

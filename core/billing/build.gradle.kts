@@ -28,21 +28,27 @@ kotlin {
     }
 
     if (System.getProperty("os.name").lowercase().contains("mac")) {
-        iosArm64().compilations {
-            getByName("main") {
-                cinterops {
-                    create("BillingSwift")
-                }
-
-                swiftklib {
-                    create("BillingSwift") {
-                        minIos = 15
-
-                        path = file("../../iosApp/iosApp/Billing")
-                        packageName("me.matsumo.fanbox.core.billing.swift")
+        listOf(
+            iosX64(),
+            iosArm64(),
+            iosSimulatorArm64(),
+        ).forEach { iosTarget ->
+            iosTarget.compilations {
+                getByName("main") {
+                    cinterops {
+                        create("BillingSwift")
                     }
                 }
             }
         }
+    }
+}
+
+swiftklib {
+    create("BillingSwift") {
+        minIos = 15
+
+        path = file("../../iosApp/iosApp/Billing")
+        packageName("me.matsumo.fanbox.core.billing.swift")
     }
 }

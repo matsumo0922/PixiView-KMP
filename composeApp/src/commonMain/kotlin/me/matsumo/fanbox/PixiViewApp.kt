@@ -129,6 +129,8 @@ fun PixiViewApp(
             DisposableEffect(lifecycleOwner) {
                 val observer = object : DefaultLifecycleObserver {
                     override fun onResume(owner: LifecycleOwner) {
+                        Napier.d { "onResume" }
+
                         viewModel.setAppLock(true)
                         viewModel.billingClientUpdate()
                     }

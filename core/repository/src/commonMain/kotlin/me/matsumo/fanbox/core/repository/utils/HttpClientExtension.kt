@@ -14,6 +14,7 @@ import me.matsumo.fanbox.core.datastore.DummyDataStore
 import me.matsumo.fanbox.core.repository.di.json
 import kotlin.reflect.typeOf
 
+@Suppress("UNCHECKED_CAST")
 suspend inline fun <reified T> HttpResponse.parse(
     allowRange: IntRange = 200..299,
     f: ((T?) -> (Unit)) = {},

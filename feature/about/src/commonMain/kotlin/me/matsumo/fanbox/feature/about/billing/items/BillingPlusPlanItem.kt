@@ -114,7 +114,7 @@ internal fun BillingPlusPlanItem(
 
                     Text(
                         text = price,
-                        style = MaterialTheme.typography.bodyLarge,
+                        style = MaterialTheme.typography.bodyMedium,
                     )
                 }
 
