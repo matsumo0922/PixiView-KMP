@@ -27,7 +27,7 @@ actual fun getPixiViewConfig(): PixiViewConfig {
             rewardAdUnitId = BuildKonfig.ADMOB_IOS_REWARD_AD_UNIT_ID,
         ),
         platform = "Android",
-        platformVersion = "${release}(${Build.VERSION.SDK_INT})",
+        platformVersion = "$release(${Build.VERSION.SDK_INT})",
         device = "${Build.MODEL}(${Build.MANUFACTURER})",
         deviceAbis = Build.SUPPORTED_ABIS.contentToString(),
     )

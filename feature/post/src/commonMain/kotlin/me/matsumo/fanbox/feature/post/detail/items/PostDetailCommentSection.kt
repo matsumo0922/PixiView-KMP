@@ -81,7 +81,7 @@ internal fun LazyListScope.postDetailCommentItems(
         Column(
             modifier = Modifier
                 .padding(horizontal = 16.dp, top = 16.dp)
-                .fillMaxWidth()
+                .fillMaxWidth(),
         ) {
             Row(
                 modifier = Modifier.fillMaxWidth(),
@@ -163,7 +163,7 @@ internal fun LazyListScope.postDetailCommentItems(
             Box(
                 modifier = Modifier
                     .padding(horizontal = 16.dp, top = 16.dp)
-                    .fillMaxWidth()
+                    .fillMaxWidth(),
             ) {
                 Button(
                     modifier = Modifier

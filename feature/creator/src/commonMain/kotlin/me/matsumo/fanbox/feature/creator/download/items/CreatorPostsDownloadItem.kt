@@ -212,10 +212,14 @@ private fun CommentLikeItem(
         ) {
             Text(
                 modifier = Modifier.padding(6.dp, 4.dp),
-                text = if (post.feeRequired == 0) stringResource(Res.string.fanbox_free_fee) else stringResource(
-                    Res.string.unit_jpy,
-                    post.feeRequired
-                ),
+                text = if (post.feeRequired == 0) {
+                    stringResource(Res.string.fanbox_free_fee)
+                } else {
+                    stringResource(
+                        Res.string.unit_jpy,
+                        post.feeRequired,
+                    )
+                },
                 style = MaterialTheme.typography.bodySmall,
                 color = MaterialTheme.colorScheme.onSurfaceVariant,
             )

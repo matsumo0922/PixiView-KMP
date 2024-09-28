@@ -9,7 +9,7 @@ sealed class NavigationLog : LogCategory {
 
     class Navigate internal constructor(
         private val screenRoute: String,
-        private val referer: String
+        private val referer: String,
     ) : NavigationLog() {
         override val properties: JsonObject = buildJsonObject {
             put("event_category", "navigation")
@@ -22,7 +22,7 @@ sealed class NavigationLog : LogCategory {
     class OpenUrl internal constructor(
         private val url: String,
         private val referer: String,
-        private val isSuccess: Boolean
+        private val isSuccess: Boolean,
     ) : NavigationLog() {
         override val properties: JsonObject = buildJsonObject {
             put("event_category", "navigation")
@@ -37,14 +37,14 @@ sealed class NavigationLog : LogCategory {
         // 画面遷移したときのログ
         fun navigate(
             screenRoute: String,
-            referer: String
+            referer: String,
         ) = Navigate(screenRoute, referer)
 
         // 外部リンクを開いたときのログ
         fun openUrl(
             url: String,
             referer: String,
-            isSuccess: Boolean
+            isSuccess: Boolean,
         ) = OpenUrl(url, referer, isSuccess)
     }
 }

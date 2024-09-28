@@ -66,7 +66,7 @@ internal fun CreatorPostsDownloadSettingsSection(
                     text = stringResource(Res.string.creator_posts_download_ignore_keyword_placeholder),
                     style = MaterialTheme.typography.bodyMedium,
                 )
-            }
+            },
         )
     }
 }

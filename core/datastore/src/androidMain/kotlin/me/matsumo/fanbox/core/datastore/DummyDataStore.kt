@@ -6,7 +6,7 @@ import kotlinx.coroutines.flow.first
 class DummyDataStoreImpl(
     private val context: Context,
     private val userDataStore: PixiViewDataStore,
-): DummyDataStore {
+) : DummyDataStore {
 
     private val userData = userDataStore.userData
 

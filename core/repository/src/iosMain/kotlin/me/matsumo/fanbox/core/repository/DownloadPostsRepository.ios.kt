@@ -37,7 +37,7 @@ import platform.UIKit.UIImageWriteToSavedPhotosAlbum
 class DownloadPostsRepositoryImpl(
     private val fanboxRepository: FanboxRepository,
     private val scope: CoroutineScope,
-): DownloadPostsRepository {
+) : DownloadPostsRepository {
 
     private var _reservingPosts = MutableStateFlow(emptyList<FanboxDownloadItems>())
 

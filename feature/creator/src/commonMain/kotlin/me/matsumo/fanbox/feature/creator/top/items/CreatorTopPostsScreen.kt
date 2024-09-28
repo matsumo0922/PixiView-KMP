@@ -83,7 +83,7 @@ internal fun CreatorTopPostsScreen(
     val adOffset: Int
     val adInterval: Int
 
-    val columns = if(userData.isUseGridMode) {
+    val columns = if (userData.isUseGridMode) {
         when (LocalNavigationType.current.type) {
             PixiViewNavigationType.BottomNavigation -> 2
             PixiViewNavigationType.NavigationRail -> 3
@@ -155,7 +155,7 @@ private fun PagingItems(
         verticalArrangement = Arrangement.spacedBy(if (isGridMode) 4.dp else 16.dp),
     ) {
         if (creatorTags.isNotEmpty()) {
-            item(span = { GridItemSpan(maxLineSpan) }){
+            item(span = { GridItemSpan(maxLineSpan) }) {
                 LazyRow(
                     modifier = Modifier
                         .height(80.dp + if (!isGridMode) 0.dp else 32.dp)
@@ -174,14 +174,14 @@ private fun PagingItems(
         }
 
         items(
-            count = pagingAdapter.itemCount + if(userData.hasPrivilege) 0 else (pagingAdapter.itemCount / adInterval),
+            count = pagingAdapter.itemCount + if (userData.hasPrivilege) 0 else (pagingAdapter.itemCount / adInterval),
             key = { index ->
                 when {
                     userData.hasPrivilege -> pagingAdapter.itemKey { it.id.uniqueValue }(index)
                     (index + adOffset) % adInterval == 0 -> "ad-$index"
                     else -> pagingAdapter.itemKey { it.id.uniqueValue }(index - ((index + adOffset) / adInterval))
                 }
-            }
+            },
         ) { index ->
             if ((index + adOffset) % adInterval == 0 && !userData.hasPrivilege) {
                 NativeAdView(

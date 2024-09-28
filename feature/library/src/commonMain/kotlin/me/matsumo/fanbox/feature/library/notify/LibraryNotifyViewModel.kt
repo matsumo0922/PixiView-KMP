@@ -38,7 +38,7 @@ class LibraryNotifyViewModel(
             LibraryNotifyUiState(
                 paging = pager,
                 userData = it,
-            )
+            ),
         )
     }.stateIn(
         scope = viewModelScope,

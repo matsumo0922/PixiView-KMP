@@ -73,7 +73,7 @@ class BillingPlusViewModelImpl(
                     isDeveloperMode = userData?.isDeveloperMode ?: false,
                     plans = plans.orEmpty(),
                     formattedAnnualMonthlyPrice = NumberFormat.getCurrencyInstance(Locale.getDefault()).format(yearlyMonthlyPrice),
-                    formattedAnnualDiscountRate = "%d%%".format((((monthlyPrice - yearlyMonthlyPrice) / monthlyPrice.toDouble()) * 100).toInt())
+                    formattedAnnualDiscountRate = "%d%%".format((((monthlyPrice - yearlyMonthlyPrice) / monthlyPrice.toDouble()) * 100).toInt()),
                 )
             }.fold(
                 onSuccess = { ScreenState.Idle(it) },
@@ -93,10 +93,12 @@ class BillingPlusViewModelImpl(
             withContext(ioDispatcher) {
                 purchasePlusSubscriptionUseCase.invoke(
                     activity = context as Activity,
-                    offerToken = offerDetails.find { it.basePlanId == when (planType) {
-                        BillingPlusUiState.Type.MONTHLY -> "plus"
-                        BillingPlusUiState.Type.YEARLY -> "plus-year"
-                    } }?.offerToken ?: ""
+                    offerToken = offerDetails.find {
+                        it.basePlanId == when (planType) {
+                            BillingPlusUiState.Type.MONTHLY -> "plus"
+                            BillingPlusUiState.Type.YEARLY -> "plus-year"
+                        }
+                    }?.offerToken ?: "",
                 )
             }
         }.onSuccess {

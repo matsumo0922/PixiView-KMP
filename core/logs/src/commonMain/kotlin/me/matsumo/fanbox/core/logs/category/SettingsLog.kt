@@ -8,7 +8,7 @@ import kotlinx.serialization.json.put
 sealed class SettingsLog : LogCategory {
 
     class Init internal constructor(
-        private val settings: String
+        private val settings: String,
     ) : SettingsLog() {
         override val properties: JsonObject = buildJsonObject {
             put("event_category", "settings")
@@ -20,7 +20,7 @@ sealed class SettingsLog : LogCategory {
     class Update internal constructor(
         private val propertyName: String,
         private val oldValue: String,
-        private val newValue: String
+        private val newValue: String,
     ) : SettingsLog() {
         override val properties: JsonObject = buildJsonObject {
             put("event_category", "settings")
@@ -34,14 +34,14 @@ sealed class SettingsLog : LogCategory {
     companion object {
         // アプリの設定が初期化された際に出力されるログ
         fun init(
-            settings: String
+            settings: String,
         ) = Init(settings)
 
         // アプリの設定が更新された際に出力されるログ
         fun update(
             propertyName: String,
             oldValue: String,
-            newValue: String
+            newValue: String,
         ) = Update(propertyName, oldValue, newValue)
     }
 }

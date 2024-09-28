@@ -4,7 +4,7 @@ import coil3.PlatformContext
 import kotlinx.coroutines.flow.MutableStateFlow
 import me.matsumo.fanbox.core.model.ScreenState
 
-class BillingPlusViewModelImpl: BillingPlusViewModel() {
+class BillingPlusViewModelImpl : BillingPlusViewModel() {
 
     override val screenState = MutableStateFlow<ScreenState<BillingPlusUiState>>(ScreenState.Loading)
 

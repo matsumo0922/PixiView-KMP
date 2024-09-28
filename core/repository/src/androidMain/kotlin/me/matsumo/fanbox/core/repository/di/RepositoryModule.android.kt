@@ -10,7 +10,7 @@ actual val repositorySubModule: Module = module {
         DownloadPostsRepositoryImpl(
             context = get(),
             fanboxRepository = get(),
-            scope = get()
+            scope = get(),
         )
     }
 }

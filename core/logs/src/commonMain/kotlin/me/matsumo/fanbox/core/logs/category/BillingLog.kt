@@ -9,7 +9,7 @@ sealed class BillingLog : LogCategory {
 
     class Purchase internal constructor(
         private val referrer: String,
-        private val isSuccess: Boolean
+        private val isSuccess: Boolean,
     ) : BillingLog() {
         override val properties: JsonObject = buildJsonObject {
             put("event_category", "billing")
@@ -20,7 +20,7 @@ sealed class BillingLog : LogCategory {
     }
 
     class Consume internal constructor(
-        private val isSuccess: Boolean
+        private val isSuccess: Boolean,
     ) : BillingLog() {
         override val properties: JsonObject = buildJsonObject {
             put("event_category", "billing")
@@ -30,7 +30,7 @@ sealed class BillingLog : LogCategory {
     }
 
     class Verify internal constructor(
-        private val isSuccess: Boolean
+        private val isSuccess: Boolean,
     ) : BillingLog() {
         override val properties: JsonObject = buildJsonObject {
             put("event_category", "billing")
@@ -43,17 +43,17 @@ sealed class BillingLog : LogCategory {
         // 購入リクエスト
         fun purchase(
             referrer: String,
-            isSuccess: Boolean
+            isSuccess: Boolean,
         ) = Purchase(referrer, isSuccess)
 
         // 消費リクエスト
         fun consume(
-            isSuccess: Boolean
+            isSuccess: Boolean,
         ) = Consume(isSuccess)
 
         // 検証リクエスト
         fun verify(
-            isSuccess: Boolean
+            isSuccess: Boolean,
         ) = Verify(isSuccess)
     }
 }

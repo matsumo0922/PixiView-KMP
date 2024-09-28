@@ -44,7 +44,7 @@ fun LibraryScreen(
     navigateToBillingPlus: (String?) -> Unit,
     navigateToCancelPlus: (SimpleAlertContents) -> Unit,
     modifier: Modifier = Modifier,
-    viewModel: LibraryViewModel = koinViewModel()
+    viewModel: LibraryViewModel = koinViewModel(),
 ) {
     val navController = rememberNavController()
     val drawerState = rememberDrawerState(DrawerValue.Closed)

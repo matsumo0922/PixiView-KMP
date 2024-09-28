@@ -10,7 +10,7 @@ actual val aboutSubModule: Module = module {
     factory<BillingPlusViewModel> {
         BillingPlusViewModelImpl(
             userDataRepository = get(),
-            ioDispatcher = get()
+            ioDispatcher = get(),
         )
     }
 }

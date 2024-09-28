@@ -4,7 +4,7 @@ import android.app.Service
 import android.content.Intent
 import android.os.IBinder
 
-class DownloadPostsService: Service() {
+class DownloadPostsService : Service() {
 
     override fun onBind(intent: Intent?): IBinder? = null
 

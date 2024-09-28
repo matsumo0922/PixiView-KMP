@@ -122,7 +122,7 @@ actual fun CreatorTopRewardAdDialog(
                                 )
                             }
 
-                            Text(text = stringResource(if (isAbleToReward) Res.string.creator_download_require_plus_button_ad else Res.string.creator_download_require_plus_button_ad_over,))
+                            Text(text = stringResource(if (isAbleToReward) Res.string.creator_download_require_plus_button_ad else Res.string.creator_download_require_plus_button_ad_over))
                         }
                     }
                 }

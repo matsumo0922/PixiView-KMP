@@ -64,7 +64,7 @@ internal const val DebugLog = false
 accompanist/pager is deprecated.
 The androidx.compose equivalent of Pager is androidx.compose.foundation.pager.Pager.
 For more migration information, please visit https://google.github.io/accompanist/pager/#migration
-"""
+""",
 )
 @RequiresOptIn(message = "Accompanist Pager is experimental. The API may be changed in the future.")
 @Retention(AnnotationRetention.BINARY)
@@ -78,7 +78,7 @@ public annotation class ExperimentalPagerApi
 accompanist/pager is deprecated.
 The androidx.compose equivalent of Pager is androidx.compose.foundation.pager.Pager.
 For more migration information, please visit https://google.github.io/accompanist/pager/#migration
-"""
+""",
 )
 public object PagerDefaults {
     /**
@@ -126,7 +126,7 @@ public object PagerDefaults {
             accompanist/pager is deprecated.
             The androidx.compose equivalent of Pager is androidx.compose.foundation.pager.Pager.
             For more migration information, please visit https://google.github.io/accompanist/pager/#migration
-    """
+    """,
     )
     @Composable
     @ExperimentalSnapperApi
@@ -169,7 +169,7 @@ public object PagerDefaults {
 accompanist/pager is deprecated.
 The androidx.compose equivalent of Pager is androidx.compose.foundation.pager.Pager
 For more migration information, please visit https://google.github.io/accompanist/pager/#migration
-"""
+""",
     )
     @Composable
     @ExperimentalSnapperApi
@@ -208,8 +208,8 @@ For more migration information, please visit https://google.github.io/accompanis
 """,
         replaceWith = ReplaceWith(
             "androidx.compose.foundation.pager.PagerDefaults.flingBehavior(state = state)",
-            "androidx.compose.foundation.pager.PagerDefaults"
-        )
+            "androidx.compose.foundation.pager.PagerDefaults",
+        ),
     )
     @Composable
     @ExperimentalSnapperApi
@@ -264,8 +264,8 @@ For more migration information, please visit https://google.github.io/accompanis
 """,
     replaceWith = ReplaceWith(
         "HorizontalPager",
-        "androidx.compose.foundation.pager.HorizontalPager"
-    )
+        "androidx.compose.foundation.pager.HorizontalPager",
+    ),
 )
 public fun HorizontalPager(
     count: Int,
@@ -295,7 +295,7 @@ public fun HorizontalPager(
         key = key,
         contentPadding = contentPadding,
         userScrollEnabled = userScrollEnabled,
-        content = content
+        content = content,
     )
 }
 
@@ -327,7 +327,7 @@ public fun HorizontalPager(
 accompanist/pager is deprecated.
 The androidx.compose equivalent of VerticalPager is androidx.compose.foundation.pager.VerticalPager.
 For more migration information, please visit https://google.github.io/accompanist/pager/#migration
-"""
+""",
 )
 public fun VerticalPager(
     count: Int,
@@ -357,7 +357,7 @@ public fun VerticalPager(
         key = key,
         contentPadding = contentPadding,
         userScrollEnabled = userScrollEnabled,
-        content = content
+        content = content,
     )
 }
 
@@ -445,7 +445,7 @@ internal fun Pager(
                         .nestedScroll(connection = consumeFlingNestedScrollConnection)
                         // Constraint the content height to be <= than the height of the pager.
                         .fillParentMaxHeight()
-                        .wrapContentSize()
+                        .wrapContentSize(),
                 ) {
                     pagerScope.content(page)
                 }
@@ -474,7 +474,7 @@ internal fun Pager(
                         .nestedScroll(connection = consumeFlingNestedScrollConnection)
                         // Constraint the content width to be <= than the width of the pager.
                         .fillParentMaxWidth()
-                        .wrapContentSize()
+                        .wrapContentSize(),
                 ) {
                     pagerScope.content(page)
                 }
@@ -491,7 +491,7 @@ private class ConsumeFlingNestedScrollConnection(
     override fun onPostScroll(
         consumed: Offset,
         available: Offset,
-        source: NestedScrollSource
+        source: NestedScrollSource,
     ): Offset = when (source) {
         // We can consume all resting fling scrolls so that they don't propagate up to the
         // Pager
@@ -536,7 +536,7 @@ private fun Velocity.consume(
 accompanist/pager is deprecated.
 The androidx.compose equivalent of Pager is androidx.compose.foundation.pager.Pager.
 For more migration information, please visit https://google.github.io/accompanist/pager/#migration
-"""
+""",
 )
 @Stable
 public interface PagerScope {
@@ -572,7 +572,7 @@ private class PagerScopeImpl(
 accompanist/pager is deprecated.
 The androidx.compose equivalent of Pager is androidx.compose.foundation.pager.Pager.
 For more migration information, please visit https://google.github.io/accompanist/pager/#migration
-"""
+""",
 )
 public fun PagerScope.calculateCurrentOffsetForPage(page: Int): Float {
     return (currentPage - page) + currentPageOffset

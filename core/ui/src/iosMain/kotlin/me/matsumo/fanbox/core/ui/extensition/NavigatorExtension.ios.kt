@@ -8,13 +8,13 @@ import platform.Foundation.NSSelectorFromString
 import platform.Foundation.NSURL
 import platform.UIKit.UIApplication
 
-class NavigatorExtensionImpl: NavigatorExtension {
+class NavigatorExtensionImpl : NavigatorExtension {
 
     override fun navigateToWebPage(url: String, referrer: String) {
         NavigationLog.openUrl(
             url = url,
             referer = referrer,
-            isSuccess = true
+            isSuccess = true,
         ).send()
 
         UIApplication.sharedApplication.openURL(NSURL(string = url))
@@ -24,7 +24,7 @@ class NavigatorExtensionImpl: NavigatorExtension {
     override fun killApp() {
         UIApplication.sharedApplication.performSelector(
             aSelector = NSSelectorFromString("terminateWithSuccess"),
-            withObject = null
+            withObject = null,
         )
     }
 }

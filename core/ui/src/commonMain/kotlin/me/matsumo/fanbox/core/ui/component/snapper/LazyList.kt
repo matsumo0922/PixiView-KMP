@@ -54,7 +54,7 @@ public fun rememberSnapperFlingBehavior(
 
 @Deprecated(
     "endContentPadding is no longer necessary to be passed in",
-    ReplaceWith("rememberSnapperFlingBehavior(lazyListState, snapOffsetForItem, decayAnimationSpec, springAnimationSpec, snapIndex)")
+    ReplaceWith("rememberSnapperFlingBehavior(lazyListState, snapOffsetForItem, decayAnimationSpec, springAnimationSpec, snapIndex)"),
 )
 @ExperimentalSnapperApi
 @Composable
@@ -87,7 +87,7 @@ public fun rememberSnapperFlingBehavior(
     layoutInfo = rememberLazyListSnapperLayoutInfo(
         lazyListState = lazyListState,
         snapOffsetForItem = snapOffsetForItem,
-        endContentPadding = endContentPadding
+        endContentPadding = endContentPadding,
     ),
     decayAnimationSpec = decayAnimationSpec,
     springAnimationSpec = springAnimationSpec,
@@ -103,7 +103,7 @@ public fun rememberSnapperFlingBehavior(
  */
 @Deprecated(
     "endContentPadding is no longer necessary to be passed in",
-    ReplaceWith("rememberLazyListSnapperLayoutInfo(lazyListState, snapOffsetForItem)")
+    ReplaceWith("rememberLazyListSnapperLayoutInfo(lazyListState, snapOffsetForItem)"),
 )
 @ExperimentalSnapperApi
 @Composable
@@ -150,7 +150,7 @@ public class LazyListSnapperLayoutInfo(
 
     @Deprecated(
         "endContentPadding is no longer necessary to be passed in",
-        ReplaceWith("LazyListSnapperLayoutInfo(lazyListState, snapOffsetForItem)")
+        ReplaceWith("LazyListSnapperLayoutInfo(lazyListState, snapOffsetForItem)"),
     )
     public constructor(
         lazyListState: LazyListState,
@@ -194,8 +194,8 @@ public class LazyListSnapperLayoutInfo(
         // multiplying distancePerItem by the index delta
         val currentItem = currentItem ?: return 0 // TODO: throw?
         return ((index - currentItem.index) * estimateDistancePerItem()).roundToInt() +
-                currentItem.offset -
-                snapOffsetForItem(this, currentItem)
+            currentItem.offset -
+            snapOffsetForItem(this, currentItem)
     }
 
     override fun canScrollTowardsStart(): Boolean {
@@ -270,7 +270,9 @@ public class LazyListSnapperLayoutInfo(
             val first = visibleItemsInfo[0]
             val second = visibleItemsInfo[1]
             second.offset - (first.size + first.offset)
-        } else 0
+        } else {
+            0
+        }
     }
 
     /**

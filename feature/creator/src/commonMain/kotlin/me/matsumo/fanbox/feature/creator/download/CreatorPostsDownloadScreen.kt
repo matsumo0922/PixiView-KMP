@@ -122,8 +122,9 @@ internal fun CreatorPostsDownloadRoute(
                 }
             },
             terminate = {
-                if (isCompleted || targetIndex == -1) terminate.invoke()
-                else {
+                if (isCompleted || targetIndex == -1) {
+                    terminate.invoke()
+                } else {
                     scope.launch {
                         navigateToCancelDownloadAlert(SimpleAlertContents.CancelDownload) {
                             terminate.invoke()
@@ -215,7 +216,7 @@ private fun CreatorPostsDownloadScreen(
 
                 Text(
                     modifier = Modifier.padding(start = 8.dp),
-                    text =  when {
+                    text = when {
                         isCompleted -> stringResource(Res.string.common_completed)
                         targetIndex == -1 -> stringResource(Res.string.creator_posts_download_button, posts.size)
                         else -> stringResource(Res.string.creator_posts_download_button_downloading, targetIndex, posts.size)
@@ -261,7 +262,7 @@ private fun CreatorPostsDownloadScreen(
 
             itemsIndexed(
                 items = posts,
-                key = {  _, post -> post.post.id.uniqueValue },
+                key = { _, post -> post.post.id.uniqueValue },
             ) { index, data ->
                 CreatorPostsDownloadItem(
                     modifier = Modifier

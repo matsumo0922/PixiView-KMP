@@ -1,7 +1,7 @@
 package me.matsumo.fanbox.core.model.fanbox
 
-import me.matsumo.fanbox.core.model.fanbox.id.CreatorId
 import io.ktor.http.Url
+import me.matsumo.fanbox.core.model.fanbox.id.CreatorId
 
 data class FanboxCreatorDetail(
     val creatorId: CreatorId,

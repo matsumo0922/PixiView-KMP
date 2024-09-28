@@ -1,6 +1,5 @@
 package me.matsumo.fanbox.core.ui.component.sheet
 
-import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.ModalBottomSheetDefaults
 import androidx.compose.material.ModalBottomSheetLayout
@@ -20,7 +19,7 @@ fun ModalBottomSheetLayout(
     sheetBackgroundColor: Color = MaterialTheme.colors.surface,
     sheetContentColor: Color = contentColorFor(sheetBackgroundColor),
     scrimColor: Color = ModalBottomSheetDefaults.scrimColor,
-    content: @Composable () -> Unit
+    content: @Composable () -> Unit,
 ) {
     ModalBottomSheetLayout(
         sheetState = bottomSheetNavigator.sheetState,
@@ -31,6 +30,6 @@ fun ModalBottomSheetLayout(
         sheetBackgroundColor = sheetBackgroundColor,
         sheetContentColor = sheetContentColor,
         scrimColor = scrimColor,
-        content = content
+        content = content,
     )
 }

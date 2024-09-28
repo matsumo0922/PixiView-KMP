@@ -147,7 +147,7 @@ private fun FollowingCreatorsScreen(
                     )
                 }
 
-                item(span = { GridItemSpan(columns) }){
+                item(span = { GridItemSpan(columns) }) {
                     Spacer(modifier = Modifier.navigationBarsPadding())
                 }
             }

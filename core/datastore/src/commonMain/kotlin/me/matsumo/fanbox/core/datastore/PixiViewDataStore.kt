@@ -53,7 +53,7 @@ class PixiViewDataStore(
         SettingsLog.update(
             propertyName = "pixiViewId",
             oldValue = userData.first().pixiViewId,
-            newValue = id
+            newValue = id,
         ).send()
 
         userPreference.edit {
@@ -67,7 +67,7 @@ class PixiViewDataStore(
         SettingsLog.update(
             propertyName = "isAgreedPrivacyPolicy",
             oldValue = userData.first().isAgreedPrivacyPolicy.toString(),
-            newValue = isAgreed.toString()
+            newValue = isAgreed.toString(),
         ).send()
 
         userPreference.edit {
@@ -81,7 +81,7 @@ class PixiViewDataStore(
         SettingsLog.update(
             propertyName = "isAgreedTermsOfService",
             oldValue = userData.first().isAgreedTermsOfService.toString(),
-            newValue = isAgreed.toString()
+            newValue = isAgreed.toString(),
         ).send()
 
         userPreference.edit {
@@ -95,7 +95,7 @@ class PixiViewDataStore(
         SettingsLog.update(
             propertyName = "themeConfig",
             oldValue = userData.first().themeConfig.name,
-            newValue = themeConfig.name
+            newValue = themeConfig.name,
         ).send()
 
         userPreference.edit {
@@ -109,7 +109,7 @@ class PixiViewDataStore(
         SettingsLog.update(
             propertyName = "themeColorConfig",
             oldValue = userData.first().themeColorConfig.name,
-            newValue = themeColorConfig.name
+            newValue = themeColorConfig.name,
         ).send()
 
         userPreference.edit {
@@ -123,7 +123,7 @@ class PixiViewDataStore(
         SettingsLog.update(
             propertyName = "isUseDynamicColor",
             oldValue = userData.first().isUseDynamicColor.toString(),
-            newValue = useDynamicColor.toString()
+            newValue = useDynamicColor.toString(),
         ).send()
 
         userPreference.edit {
@@ -137,7 +137,7 @@ class PixiViewDataStore(
         SettingsLog.update(
             propertyName = "isUseAppLock",
             oldValue = userData.first().isUseAppLock.toString(),
-            newValue = isAppLock.toString()
+            newValue = isAppLock.toString(),
         ).send()
 
         userPreference.edit {
@@ -151,7 +151,7 @@ class PixiViewDataStore(
         SettingsLog.update(
             propertyName = "isUseGridMode",
             oldValue = userData.first().isUseGridMode.toString(),
-            newValue = isGridMode.toString()
+            newValue = isGridMode.toString(),
         ).send()
 
         userPreference.edit {
@@ -165,7 +165,7 @@ class PixiViewDataStore(
         SettingsLog.update(
             propertyName = "isUseInfinityPostDetail",
             oldValue = userData.first().isUseInfinityPostDetail.toString(),
-            newValue = isUseInfinityPostDetail.toString()
+            newValue = isUseInfinityPostDetail.toString(),
         ).send()
 
         userPreference.edit {
@@ -179,7 +179,7 @@ class PixiViewDataStore(
         SettingsLog.update(
             propertyName = "isDefaultFollowTabInHome",
             oldValue = userData.first().isDefaultFollowTabInHome.toString(),
-            newValue = isFollowTabDefaultHome.toString()
+            newValue = isFollowTabDefaultHome.toString(),
         ).send()
 
         userPreference.edit {
@@ -193,7 +193,7 @@ class PixiViewDataStore(
         SettingsLog.update(
             propertyName = "isHideAdultContents",
             oldValue = userData.first().isHideAdultContents.toString(),
-            newValue = isHideAdultContents.toString()
+            newValue = isHideAdultContents.toString(),
         ).send()
 
         userPreference.edit {
@@ -207,7 +207,7 @@ class PixiViewDataStore(
         SettingsLog.update(
             propertyName = "isOverrideAdultContents",
             oldValue = userData.first().isOverrideAdultContents.toString(),
-            newValue = isOverrideAdultContents.toString()
+            newValue = isOverrideAdultContents.toString(),
         ).send()
 
         userPreference.edit {
@@ -221,7 +221,7 @@ class PixiViewDataStore(
         SettingsLog.update(
             propertyName = "isAutoImagePreview",
             oldValue = userData.first().isAutoImagePreview.toString(),
-            newValue = isAutoImagePreview.toString()
+            newValue = isAutoImagePreview.toString(),
         ).send()
 
         userPreference.edit {
@@ -235,7 +235,7 @@ class PixiViewDataStore(
         SettingsLog.update(
             propertyName = "isTestUser",
             oldValue = userData.first().isTestUser.toString(),
-            newValue = isTestUser.toString()
+            newValue = isTestUser.toString(),
         ).send()
 
         userPreference.edit {
@@ -249,7 +249,7 @@ class PixiViewDataStore(
         SettingsLog.update(
             propertyName = "isHideRestricted",
             oldValue = userData.first().isHideRestricted.toString(),
-            newValue = isHideRestricted.toString()
+            newValue = isHideRestricted.toString(),
         ).send()
 
         userPreference.edit {
@@ -263,7 +263,7 @@ class PixiViewDataStore(
         SettingsLog.update(
             propertyName = "isDeveloperMode",
             oldValue = userData.first().isDeveloperMode.toString(),
-            newValue = isDeveloperMode.toString()
+            newValue = isDeveloperMode.toString(),
         ).send()
 
         userPreference.edit {
@@ -277,7 +277,7 @@ class PixiViewDataStore(
         SettingsLog.update(
             propertyName = "isPlusMode",
             oldValue = userData.first().isPlusMode.toString(),
-            newValue = isPlusMode.toString()
+            newValue = isPlusMode.toString(),
         ).send()
 
         userPreference.edit {

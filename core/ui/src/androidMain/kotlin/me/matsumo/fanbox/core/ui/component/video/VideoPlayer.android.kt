@@ -101,7 +101,7 @@ actual fun VideoPlayer(url: String, modifier: Modifier) {
                 isDisplayController = !isDisplayController
             }
         },
-        contentAlignment = Alignment.Center
+        contentAlignment = Alignment.Center,
     ) {
         AndroidView(
             modifier = Modifier
@@ -124,7 +124,7 @@ actual fun VideoPlayer(url: String, modifier: Modifier) {
             LoadingView(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .aspectRatio(16f / 9)
+                    .aspectRatio(16f / 9),
             )
         } else {
             AnimatedVisibility(
@@ -155,7 +155,7 @@ private fun ControllerView(
     Box(modifier.background(Color.Black.copy(alpha = 0.4f))) {
         IconButton(
             modifier = Modifier.align(Alignment.Center),
-            onClick = { onPlayPauseClicked(!isPlaying) }
+            onClick = { onPlayPauseClicked(!isPlaying) },
         ) {
             if (isPlaying) {
                 Icon(

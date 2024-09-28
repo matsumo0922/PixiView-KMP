@@ -33,7 +33,7 @@ fun NavGraphBuilder.creatorTopScreen(
         arguments = listOf(
             navArgument(CreatorTopId) { type = NavType.StringType },
             navArgument(CreatorTopIsPosts) { type = NavType.BoolType },
-        )
+        ),
     ) {
         CreatorTopRoute(
             modifier = Modifier.fillMaxSize(),

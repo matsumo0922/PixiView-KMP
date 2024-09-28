@@ -1,6 +1,5 @@
 package me.matsumo.fanbox.core.repository.client
 
-import io.github.aakira.napier.Napier
 import io.ktor.client.plugins.cookies.CookiesStorage
 import io.ktor.http.Cookie
 import io.ktor.http.Url
@@ -11,7 +10,7 @@ import me.matsumo.fanbox.core.datastore.FanboxCookieDataStore
 
 class CookiesStorage(
     private val cookieDataStore: FanboxCookieDataStore,
-): CookiesStorage {
+) : CookiesStorage {
 
     private val mutex = Mutex()
 

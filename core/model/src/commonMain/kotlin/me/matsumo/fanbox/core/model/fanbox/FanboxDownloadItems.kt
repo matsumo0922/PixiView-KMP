@@ -22,8 +22,8 @@ data class FanboxDownloadItems(
     }
 
     sealed interface RequestType {
-        data object Image: RequestType
-        data object File: RequestType
-        data class Post(val creatorName: String): RequestType
+        data object Image : RequestType
+        data object File : RequestType
+        data class Post(val creatorName: String) : RequestType
     }
 }

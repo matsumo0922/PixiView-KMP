@@ -59,7 +59,7 @@ fun rememberZoomableState(
     overZoomConfig: OverZoomConfig? = null,
     initialScale: Float = minScale,
     initialTranslationX: Float = 0f,
-    initialTranslationY: Float = 0f
+    initialTranslationY: Float = 0f,
 ): ZoomableState {
     val decayAnimationSpec = rememberSplineBasedDecay<Float>()
     val saver = remember(decayAnimationSpec) { ZoomableState.saver(decayAnimationSpec) }
@@ -86,7 +86,7 @@ class ZoomableState(
     private val decayAnimationSpec: DecayAnimationSpec<Float>,
     initialScale: Float = ZoomableDefaults.MinScale,
     initialTranslationX: Float = 0f,
-    initialTranslationY: Float = 0f
+    initialTranslationY: Float = 0f,
 ) {
     /**
      * The minimum [scale] value.
@@ -95,7 +95,7 @@ class ZoomableState(
         set(value) {
             if (field != value) {
                 field = value
-                scale = scale  // Make sure scale is in range
+                scale = scale // Make sure scale is in range
             }
         }
 
@@ -106,7 +106,7 @@ class ZoomableState(
         set(value) {
             if (field != value) {
                 field = value
-                scale = scale  // Make sure scale is in range
+                scale = scale // Make sure scale is in range
             }
         }
 
@@ -122,8 +122,11 @@ class ZoomableState(
      * Useful e.g. if you want to animate the alpha of the content.
      */
     val dismissDragProgress: Float by derivedStateOf {
-        if (size.height == 0) 0f else
+        if (size.height == 0) {
+            0f
+        } else {
             abs(dismissDragAbsoluteOffsetY) / (size.height * DismissDragThreshold)
+        }
     }
 
     private val velocityTracker = VelocityTracker()
@@ -141,7 +144,9 @@ class ZoomableState(
 
     internal val dismissDragOffsetY: Float by derivedStateOf {
         val maxOffset = childSize.height
-        if (maxOffset == 0f) 0f else {
+        if (maxOffset == 0f) {
+            0f
+        } else {
             val progress = (dismissDragAbsoluteOffsetY / maxOffset).coerceIn(-1f, 1f)
             childSize.height / DismissDragResistanceFactor * sin(progress * PI.toFloat() / 2)
         }
@@ -237,7 +242,7 @@ class ZoomableState(
     suspend fun animateScaleTo(
         targetScale: Float,
         targetTranslation: Offset = Offset(translationX, translationY) / scale * targetScale,
-        animationSpec: AnimationSpec<Float> = spring()
+        animationSpec: AnimationSpec<Float> = spring(),
     ) = coroutineScope {
         val initialTranslation = Offset(translationX, translationY)
         val initialScale = scale
@@ -245,7 +250,7 @@ class ZoomableState(
         animate(
             initialValue = initialScale,
             targetValue = targetScale,
-            animationSpec = animationSpec
+            animationSpec = animationSpec,
         ) { value, _ ->
             launch {
                 // Update scale here to ensure scale and translation values are updated
@@ -269,13 +274,13 @@ class ZoomableState(
      */
     suspend fun animateTranslateTo(
         targetTranslation: Offset,
-        animationSpec: AnimationSpec<Offset> = spring()
+        animationSpec: AnimationSpec<Offset> = spring(),
     ) = coroutineScope {
         animate(
             typeConverter = Offset.VectorConverter,
             initialValue = Offset(translationX, translationY),
             targetValue = targetTranslation,
-            animationSpec = animationSpec
+            animationSpec = animationSpec,
         ) { value, _ ->
             launch {
                 _translationX.snapTo(value.x)
@@ -290,13 +295,13 @@ class ZoomableState(
             launch {
                 _translationX.animateDecay(
                     initialVelocity = velocity.x,
-                    animationSpec = decayAnimationSpec
+                    animationSpec = decayAnimationSpec,
                 )
             }
             launch {
                 _translationY.animateDecay(
                     initialVelocity = velocity.y,
-                    animationSpec = decayAnimationSpec
+                    animationSpec = decayAnimationSpec,
                 )
             }
         }
@@ -348,7 +353,7 @@ class ZoomableState(
     internal suspend fun onDismissDragEnd() {
         animate(
             initialValue = dismissDragAbsoluteOffsetY,
-            targetValue = 0f
+            targetValue = 0f,
         ) { value, _ ->
             dismissDragAbsoluteOffsetY = value
         }
@@ -356,7 +361,7 @@ class ZoomableState(
 
     override fun toString(): String =
         "ZoomableState(translateX=${translationX.roundToTenths()}, " +
-                "translateY=${translationY.roundToTenths()}, scale=${scale.roundToTenths()})"
+            "translateY=${translationY.roundToTenths()}, scale=${scale.roundToTenths()})"
 
     companion object {
         /**
@@ -368,7 +373,7 @@ class ZoomableState(
                     listOf(
                         it.translationX,
                         it.translationY,
-                        it.scale
+                        it.scale,
                     )
                 },
                 restore = {
@@ -376,9 +381,9 @@ class ZoomableState(
                         decayAnimationSpec = decayAnimationSpec,
                         initialTranslationX = it[0],
                         initialTranslationY = it[1],
-                        initialScale = it[2]
+                        initialScale = it[2],
                     )
-                }
+                },
             )
     }
 }
@@ -433,13 +438,13 @@ object ZoomableDefaults {
 @Immutable
 class OverZoomConfig(
     val minSnapScale: Float,
-    val maxSnapScale: Float
+    val maxSnapScale: Float,
 ) {
     operator fun contains(scale: Float): Boolean = scale in minSnapScale..maxSnapScale
 
     override fun equals(other: Any?): Boolean =
         this === other || other is OverZoomConfig &&
-                minSnapScale == other.minSnapScale && maxSnapScale == other.maxSnapScale
+            minSnapScale == other.minSnapScale && maxSnapScale == other.maxSnapScale
 
     override fun hashCode(): Int {
         var result = minSnapScale.hashCode()

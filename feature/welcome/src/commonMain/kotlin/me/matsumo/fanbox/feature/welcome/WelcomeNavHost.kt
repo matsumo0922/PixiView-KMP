@@ -104,7 +104,7 @@ fun WelcomeNavHost(
                 welcomeWebScreen(
                     navigateToLoginAlert = { navController.navigateToSimpleAlertDialog(it) },
                     navigateToLoginDebugAlert = { contents, onPositive -> navController.navigateToSimpleAlertDialog(contents, onPositive) },
-                    terminate = { navController.popBackStack() }
+                    terminate = { navController.popBackStack() },
                 )
 
                 welcomePermissionScreen(
@@ -122,7 +122,7 @@ fun WelcomeNavHost(
                 )
 
                 simpleAlertDialogDialog(
-                    onResult = { navController.popBackStackWithResult(it) }
+                    onResult = { navController.popBackStackWithResult(it) },
                 )
             }
         }

@@ -68,7 +68,7 @@ fun ActionSheet(
                     onClick = {
                         action.onClick.invoke()
                         onDismissRequest.invoke()
-                    }
+                    },
                 ) {
                     Text(stringResource(action.text))
                 }

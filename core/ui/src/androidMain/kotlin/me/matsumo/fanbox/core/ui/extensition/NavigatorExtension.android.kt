@@ -18,7 +18,7 @@ class NavigatorExtensionImpl(
             context.startActivity(
                 Intent(Intent.ACTION_VIEW, url.toUri()).apply {
                     addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
-                }
+                },
             )
         }.onFailure {
             Toast.makeText(context, "Failed to open the web page", Toast.LENGTH_SHORT).show()
@@ -26,7 +26,7 @@ class NavigatorExtensionImpl(
             NavigationLog.openUrl(
                 url = url,
                 referer = referrer,
-                isSuccess = it.isSuccess
+                isSuccess = it.isSuccess,
             ).send()
         }
     }

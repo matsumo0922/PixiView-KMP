@@ -16,7 +16,7 @@ interface RewardRepository {
 class RewardRepositoryImpl(
     private val rewardLogDataStore: RewardLogDataStore,
     private val ioDispatcher: CoroutineDispatcher,
-): RewardRepository {
+) : RewardRepository {
 
     private val scope = CoroutineScope(ioDispatcher + SupervisorJob())
 

@@ -1,7 +1,6 @@
 package me.matsumo.fanbox.core.model.fanbox
 
 import kotlinx.datetime.Instant
-import kotlinx.datetime.LocalDateTime
 
 data class FanboxCreatorPlanDetail(
     val plan: FanboxCreatorPlan,

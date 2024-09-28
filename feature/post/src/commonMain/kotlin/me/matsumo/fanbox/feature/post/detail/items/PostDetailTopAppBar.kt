@@ -94,6 +94,6 @@ internal fun PostDetailTopAppBar(
             navigationIconContentColor = contentColor,
             titleContentColor = contentColor,
             actionIconContentColor = contentColor,
-        )
+        ),
     )
 }

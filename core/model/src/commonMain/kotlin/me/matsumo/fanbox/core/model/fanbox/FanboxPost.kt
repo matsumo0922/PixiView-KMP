@@ -1,10 +1,8 @@
 package me.matsumo.fanbox.core.model.fanbox
 
 import kotlinx.datetime.Instant
-import me.matsumo.fanbox.core.model.fanbox.id.PostId
-import kotlinx.datetime.LocalDateTime
 import kotlinx.serialization.Serializable
-import me.matsumo.fanbox.core.common.serializer.LocalDateTimeSerializer
+import me.matsumo.fanbox.core.model.fanbox.id.PostId
 
 @Serializable
 data class FanboxPost(

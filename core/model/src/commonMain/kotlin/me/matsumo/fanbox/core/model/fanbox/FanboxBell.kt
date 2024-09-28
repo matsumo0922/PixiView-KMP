@@ -4,7 +4,6 @@ import kotlinx.datetime.Instant
 import me.matsumo.fanbox.core.model.fanbox.id.CommentId
 import me.matsumo.fanbox.core.model.fanbox.id.CreatorId
 import me.matsumo.fanbox.core.model.fanbox.id.PostId
-import kotlinx.datetime.LocalDateTime
 
 sealed interface FanboxBell {
     data class Comment(

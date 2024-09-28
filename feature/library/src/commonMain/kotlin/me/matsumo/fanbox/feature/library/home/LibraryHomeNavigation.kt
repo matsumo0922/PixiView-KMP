@@ -26,7 +26,7 @@ fun NavGraphBuilder.libraryHomeScreen(
     navigateToSimpleAlert: (SimpleAlertContents) -> Unit,
 ) {
     composable(
-        route = LibraryHomeRoute
+        route = LibraryHomeRoute,
     ) {
         LibraryHomeScreen(
             modifier = Modifier.fillMaxSize(),

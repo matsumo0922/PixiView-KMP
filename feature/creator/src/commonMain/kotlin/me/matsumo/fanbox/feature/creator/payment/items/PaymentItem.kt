@@ -63,7 +63,7 @@ internal fun PaymentItem(
                     .padding(horizontal = 16.dp)
                     .fillMaxWidth(),
                 dateTime = payment.paymentDateTime,
-                totalPaidAmount = payment.paidRecords.sumOf { it.paidAmount }
+                totalPaidAmount = payment.paidRecords.sumOf { it.paidAmount },
             )
 
             Spacer(modifier = Modifier.height(8.dp))

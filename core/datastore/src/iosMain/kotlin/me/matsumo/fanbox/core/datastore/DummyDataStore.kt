@@ -1,6 +1,6 @@
 package me.matsumo.fanbox.core.datastore
 
-class DummyDataStoreImpl: DummyDataStore {
+class DummyDataStoreImpl : DummyDataStore {
     override suspend fun setDummyData(key: String, value: String) {
         // Dummy implementation
     }

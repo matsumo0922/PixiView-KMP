@@ -22,7 +22,7 @@ actual fun SimpleAlertDialog(
     negativeText: String?,
     onClickPositive: () -> Unit,
     onClickNegative: () -> Unit,
-    isCaution: Boolean
+    isCaution: Boolean,
 ) {
     Dialog(
         onDismissRequest = { onClickNegative.invoke() },
@@ -35,7 +35,7 @@ actual fun SimpleAlertDialog(
                 negativeText = negativeText,
                 onClickPositive = onClickPositive,
                 onClickNegative = onClickNegative,
-                isCaution = isCaution
+                isCaution = isCaution,
             )
         }
 
@@ -77,7 +77,7 @@ private class AlertDialogManager(
                 isPresented = false
                 isAnimating = false
                 onClickNegative.invoke()
-            }
+            },
         )
     }
 
@@ -99,7 +99,7 @@ private class AlertDialogManager(
         val alertController = UIAlertController.alertControllerWithTitle(
             title = title,
             message = description,
-            preferredStyle = UIAlertControllerStyleAlert
+            preferredStyle = UIAlertControllerStyleAlert,
         )
 
         if (positiveText != null) {
@@ -107,8 +107,8 @@ private class AlertDialogManager(
                 UIAlertAction.actionWithTitle(
                     title = positiveText,
                     style = UIAlertActionStyleDefault,
-                    handler = { onClickPositive.invoke() }
-                )
+                    handler = { onClickPositive.invoke() },
+                ),
             )
         }
 
@@ -117,8 +117,8 @@ private class AlertDialogManager(
                 UIAlertAction.actionWithTitle(
                     title = negativeText,
                     style = UIAlertActionStyleDefault,
-                    handler = { onClickNegative.invoke() }
-                )
+                    handler = { onClickNegative.invoke() },
+                ),
             )
         }
 
@@ -128,7 +128,7 @@ private class AlertDialogManager(
             completion = {
                 isPresented = true
                 isAnimating = false
-            }
+            },
         )
     }
 }

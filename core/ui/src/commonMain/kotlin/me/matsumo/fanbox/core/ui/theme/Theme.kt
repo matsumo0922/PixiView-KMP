@@ -146,10 +146,10 @@ fun PixiViewTheme(
             cupertino = {
                 CupertinoTheme(
                     colorScheme = convertMaterialToIOSColorScheme(colorScheme, shouldUseDarkTheme),
-                    content = it
+                    content = it,
                 )
             },
-            target = determineTheme()
+            target = determineTheme(),
         ) {
             content.invoke()
         }

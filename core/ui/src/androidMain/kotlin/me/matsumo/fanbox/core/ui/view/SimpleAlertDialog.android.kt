@@ -29,7 +29,7 @@ actual fun SimpleAlertDialog(
     negativeText: String?,
     onClickPositive: () -> Unit,
     onClickNegative: () -> Unit,
-    isCaution: Boolean
+    isCaution: Boolean,
 ) {
     Dialog(
         onDismissRequest = onClickNegative,

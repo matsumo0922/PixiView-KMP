@@ -6,7 +6,7 @@ import coil3.PlatformContext
 import kotlinx.coroutines.flow.StateFlow
 import me.matsumo.fanbox.core.model.ScreenState
 
-abstract class BillingPlusViewModel: ViewModel() {
+abstract class BillingPlusViewModel : ViewModel() {
     abstract val screenState: StateFlow<ScreenState<BillingPlusUiState>>
 
     abstract suspend fun purchase(context: PlatformContext, planType: BillingPlusUiState.Type): Boolean

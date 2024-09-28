@@ -33,7 +33,7 @@ class DownloadPostsRepositoryImpl(
     private val context: Context,
     private val fanboxRepository: FanboxRepository,
     private val scope: CoroutineScope,
-): DownloadPostsRepository {
+) : DownloadPostsRepository {
 
     private var _reservingPosts = MutableStateFlow(emptyList<FanboxDownloadItems>())
 
@@ -54,7 +54,8 @@ class DownloadPostsRepositoryImpl(
                 for ((item, channel) in results.filterNotNull()) {
                     runCatching {
                         val mime = MimeTypeMap.getSingleton().getMimeTypeFromExtension(item.extension)
-                        val uri = getUri(context, "${item.name}.${item.extension}", getParentDirName(downloadItems.requestType), mime.orEmpty())
+                        val uri =
+                            getUri(context, "${item.name}.${item.extension}", getParentDirName(downloadItems.requestType), mime.orEmpty())
                         val outputStream = context.contentResolver.openOutputStream(uri!!)!!
 
                         while (!channel.isClosedForRead) {

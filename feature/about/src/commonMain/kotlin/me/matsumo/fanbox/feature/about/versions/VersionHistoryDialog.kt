@@ -148,14 +148,18 @@ private fun getVersions(): List<Version> {
         json = Res.readBytes("files/versions.json").decodeToString()
     }
 
-    return if (json.isBlank()) emptyList() else Json.decodeFromString(serializer, json)
-        .map {
-            Version(
-                name = it.versionName,
-                code = it.versionCode,
-                date = it.date,
-                message = if (Locale.current.language == "ja") it.logJp else it.logEn,
-            )
-        }
-        .sortedByDescending { it.code }
+    return if (json.isBlank()) {
+        emptyList()
+    } else {
+        Json.decodeFromString(serializer, json)
+            .map {
+                Version(
+                    name = it.versionName,
+                    code = it.versionCode,
+                    date = it.date,
+                    message = if (Locale.current.language == "ja") it.logJp else it.logEn,
+                )
+            }
+            .sortedByDescending { it.code }
+    }
 }

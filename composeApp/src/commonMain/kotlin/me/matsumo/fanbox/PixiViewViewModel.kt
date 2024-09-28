@@ -134,7 +134,7 @@ class PixiViewViewModel(
             requestTitle = getString(Res.string.home_app_lock_title).desc(),
             requestReason = getString(Res.string.home_app_lock_message).desc(),
             failureButtonText = getString(Res.string.error_no_data).desc(),
-            allowDeviceCredentials = true
+            allowDeviceCredentials = true,
         )
     }.fold(
         onSuccess = { it },

@@ -9,7 +9,7 @@ actual val repositorySubModule: Module = module {
     single<DownloadPostsRepository> {
         DownloadPostsRepositoryImpl(
             fanboxRepository = get(),
-            scope = get()
+            scope = get(),
         )
     }
 }

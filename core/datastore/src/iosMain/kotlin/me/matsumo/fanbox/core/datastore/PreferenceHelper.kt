@@ -15,7 +15,7 @@ import platform.Foundation.NSUserDomainMask
 
 class PreferenceHelperImpl(
     private val ioDispatcher: CoroutineDispatcher,
-): PreferenceHelper {
+) : PreferenceHelper {
 
     @OptIn(ExperimentalForeignApi::class)
     override fun create(name: String): DataStore<Preferences> {
@@ -24,14 +24,14 @@ class PreferenceHelperImpl(
             inDomain = NSUserDomainMask,
             appropriateForURL = null,
             create = false,
-            error = null
+            error = null,
         )
 
         return PreferenceDataStoreFactory.createWithPath(
             corruptionHandler = null,
             migrations = emptyList(),
             scope = CoroutineScope(ioDispatcher),
-            produceFile = { "${documentDir!!.path}/$name.preferences_pb".toPath() }
+            produceFile = { "${documentDir!!.path}/$name.preferences_pb".toPath() },
         )
     }
 

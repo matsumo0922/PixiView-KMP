@@ -145,7 +145,7 @@ fun DrawerContent(
         HorizontalDivider(
             modifier = Modifier
                 .padding(vertical = 8.dp)
-                .fillMaxWidth()
+                .fillMaxWidth(),
         )
 
         NavigationDrawerItem(
@@ -179,7 +179,7 @@ fun DrawerContent(
         HorizontalDivider(
             modifier = Modifier
                 .padding(vertical = 8.dp)
-                .fillMaxWidth()
+                .fillMaxWidth(),
         )
 
         NavigationDrawerItem(
@@ -201,7 +201,7 @@ fun DrawerContent(
         HorizontalDivider(
             modifier = Modifier
                 .padding(top = 8.dp)
-                .fillMaxWidth()
+                .fillMaxWidth(),
         )
 
         NavigationDrawerPlusItem(

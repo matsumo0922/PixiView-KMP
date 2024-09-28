@@ -116,7 +116,7 @@ class PostDetailViewModel(
                     comments = PageOffsetInfo(
                         contents = it.comments.contents + comments.contents,
                         offset = comments.offset,
-                    )
+                    ),
                 )
             }
         }

@@ -43,7 +43,7 @@ fun <T> AsyncLoadContents(
                 hostState = LocalSnackbarHostState.current,
             )
         },
-        contentWindowInsets = WindowInsets(0, 0, 0, 0)
+        contentWindowInsets = WindowInsets(0, 0, 0, 0),
     ) {
         AnimatedContent(
             modifier = Modifier

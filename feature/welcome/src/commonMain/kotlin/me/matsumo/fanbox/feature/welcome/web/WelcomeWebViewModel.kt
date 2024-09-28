@@ -9,7 +9,7 @@ import me.matsumo.fanbox.core.repository.UserDataRepository
 class WelcomeWebViewModel(
     private val fanboxRepository: FanboxRepository,
     private val userDataRepository: UserDataRepository,
-): ViewModel() {
+) : ViewModel() {
 
     fun saveCookie(cookie: String) {
         viewModelScope.launch {

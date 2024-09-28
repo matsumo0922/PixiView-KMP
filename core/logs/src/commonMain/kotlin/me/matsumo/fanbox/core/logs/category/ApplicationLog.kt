@@ -15,7 +15,7 @@ sealed class ApplicationLog : LogCategory {
     }
 
     class Close internal constructor(
-        private val stayTime: Long
+        private val stayTime: Long,
     ) : ApplicationLog() {
         override val properties: JsonObject = buildJsonObject {
             put("event_category", "application")
@@ -30,7 +30,7 @@ sealed class ApplicationLog : LogCategory {
 
         // アプリを閉じたときのログ
         fun close(
-            stayTime: Long
+            stayTime: Long,
         ) = Close(stayTime)
     }
 }

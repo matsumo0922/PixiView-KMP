@@ -2,7 +2,6 @@ package me.matsumo.fanbox.core.model.fanbox
 
 import kotlinx.datetime.Instant
 import me.matsumo.fanbox.core.model.fanbox.id.NewsLetterId
-import kotlinx.datetime.LocalDateTime
 
 data class FanboxNewsLetter(
     val id: NewsLetterId,

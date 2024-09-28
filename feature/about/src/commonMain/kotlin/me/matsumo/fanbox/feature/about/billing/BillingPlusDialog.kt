@@ -69,7 +69,7 @@ internal fun BillingPlusRoute(
     terminate: () -> Unit,
     modifier: Modifier = Modifier,
     viewModel: BillingPlusViewModel = koinViewModel(),
-    toastExtension: ToastExtension = koinInject()
+    toastExtension: ToastExtension = koinInject(),
 ) {
     val context = LocalPlatformContext.current
     val snackbarHostState = LocalSnackbarHostState.current

@@ -15,9 +15,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.paging.LoadState
 import app.cash.paging.compose.LazyPagingItems
-import app.cash.paging.compose.itemContentType
 import app.cash.paging.compose.itemKey
-import io.ktor.client.utils.EmptyContent.contentType
 import kotlinx.collections.immutable.ImmutableList
 import me.matsumo.fanbox.core.model.UserData
 import me.matsumo.fanbox.core.model.fanbox.FanboxPost
@@ -55,14 +53,14 @@ internal fun LibraryHomePagingItems(
         verticalArrangement = Arrangement.spacedBy(if (isGridMode) 4.dp else 16.dp),
     ) {
         items(
-            count = pagingAdapter.itemCount + if(userData.hasPrivilege) 0 else (pagingAdapter.itemCount / adInterval),
+            count = pagingAdapter.itemCount + if (userData.hasPrivilege) 0 else (pagingAdapter.itemCount / adInterval),
             key = { index ->
                 when {
                     userData.hasPrivilege -> pagingAdapter.itemKey { it.id.uniqueValue }(index)
                     (index + adOffset) % adInterval == 0 -> "ad-$index"
                     else -> pagingAdapter.itemKey { it.id.uniqueValue }(index - ((index + adOffset) / adInterval))
                 }
-            }
+            },
         ) { index ->
             if ((index + adOffset) % adInterval == 0 && !userData.hasPrivilege) {
                 NativeAdView(

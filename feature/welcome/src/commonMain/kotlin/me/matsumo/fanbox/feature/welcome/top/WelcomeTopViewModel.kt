@@ -4,7 +4,7 @@ import androidx.lifecycle.ViewModel
 import me.matsumo.fanbox.core.repository.UserDataRepository
 
 class WelcomeTopViewModel(
-    private val userDataRepository: UserDataRepository
+    private val userDataRepository: UserDataRepository,
 ) : ViewModel() {
     suspend fun setAgreedPrivacyPolicy() {
         userDataRepository.setAgreedPrivacyPolicy(true)

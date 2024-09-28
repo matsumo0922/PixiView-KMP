@@ -79,8 +79,9 @@ internal fun SettingTopRoute(
     ) { uiState ->
         fun requirePlus(setting: Boolean, settingMethod: (Boolean) -> Unit, referrer: String) {
             if (setting) {
-                if (uiState.userData.hasPrivilege) settingMethod.invoke(true)
-                else {
+                if (uiState.userData.hasPrivilege) {
+                    settingMethod.invoke(true)
+                } else {
                     scope.launch { toastExtension.show(snackbarHostState, requirePlus) }
                     navigateToBillingPlus.invoke(referrer)
                 }
@@ -96,10 +97,18 @@ internal fun SettingTopRoute(
             fanboxSessionId = uiState.fanboxSessionId,
             config = uiState.config,
             onClickThemeSetting = navigateToThemeSetting,
-            onClickAccountSetting = { navigatorExtension.navigateToWebPage("https://www.fanbox.cc/user/settings", SettingTopRoute) },
-            onClickNotifySetting = { navigatorExtension.navigateToWebPage("https://www.fanbox.cc/notifications/settings", SettingTopRoute) },
-            onClickTeamsOfService = { navigatorExtension.navigateToWebPage("https://www.matsumo.me/application/pixiview/team_of_service", SettingTopRoute) },
-            onClickPrivacyPolicy = { navigatorExtension.navigateToWebPage("https://www.matsumo.me/application/pixiview/privacy_policy", SettingTopRoute) },
+            onClickAccountSetting = {
+                navigatorExtension.navigateToWebPage("https://www.fanbox.cc/user/settings", SettingTopRoute)
+            },
+            onClickNotifySetting = {
+                navigatorExtension.navigateToWebPage("https://www.fanbox.cc/notifications/settings", SettingTopRoute)
+            },
+            onClickTeamsOfService = {
+                navigatorExtension.navigateToWebPage("https://www.matsumo.me/application/pixiview/team_of_service", SettingTopRoute)
+            },
+            onClickPrivacyPolicy = {
+                navigatorExtension.navigateToWebPage("https://www.matsumo.me/application/pixiview/privacy_policy", SettingTopRoute)
+            },
             onClickOpenSourceLicense = navigateToOpenSourceLicense,
             onClickFollowTabDefaultHome = viewModel::setFollowTabDefaultHome,
             onClickHideAdultContents = viewModel::setHideAdultContents,

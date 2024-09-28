@@ -12,7 +12,7 @@ import me.matsumo.fanbox.core.model.UserData
 import org.koin.core.component.KoinComponent
 import org.koin.core.component.inject
 
-object LogConfigurator: KoinComponent {
+object LogConfigurator : KoinComponent {
 
     private var filter: LogFilter? = null
     private val sender: LogSender by inject()

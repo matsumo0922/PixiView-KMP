@@ -54,7 +54,9 @@ internal fun WelcomeWebScreen(
 
     LaunchedEffect(webViewState.lastLoadedUrl) {
         if (webViewState.lastLoadedUrl == fanboxRedirectUrl) {
-            val oauthCookies = webViewState.cookieManager.getCookies("https://oauth.secure.pixiv.net").associate { it.name to it.value }
+            val oauthCookies = webViewState.cookieManager.getCookies("https://oauth.secure.pixiv.net").associate {
+                it.name to it.value
+            }
             val fanboxCookies = webViewState.cookieManager.getCookies("https://www.fanbox.cc").associate { it.name to it.value }
             val cookieString = (fanboxCookies + oauthCookies)
                 .filterKeys { listOf("__cf_bm", "cf_clearance", "FANBOXSESSID").contains(it) }
@@ -79,7 +81,7 @@ internal fun WelcomeWebScreen(
                         viewModel.debugLogin()
                         terminate.invoke()
                     }
-                }
+                },
             )
         },
     ) { padding ->

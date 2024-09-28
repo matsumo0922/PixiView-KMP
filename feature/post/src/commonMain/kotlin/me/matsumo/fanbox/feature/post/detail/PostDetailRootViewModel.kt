@@ -1,6 +1,8 @@
 package me.matsumo.fanbox.feature.post.detail
 
 import androidx.compose.runtime.Stable
+import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
 import androidx.paging.PagingData
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -17,8 +19,6 @@ import me.matsumo.fanbox.feature.post.detail.PostDetailPagingType.Home
 import me.matsumo.fanbox.feature.post.detail.PostDetailPagingType.Search
 import me.matsumo.fanbox.feature.post.detail.PostDetailPagingType.Supported
 import me.matsumo.fanbox.feature.post.detail.PostDetailPagingType.Unknown
-import androidx.lifecycle.ViewModel
-import androidx.lifecycle.viewModelScope
 
 class PostDetailRootViewModel(
     private val userDataRepository: UserDataRepository,

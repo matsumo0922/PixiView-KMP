@@ -1,11 +1,8 @@
 package me.matsumo.fanbox.feature.library.component
 
-import androidx.compose.animation.AnimatedVisibility
-import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.material3.DrawerState
 import androidx.compose.material3.ModalNavigationDrawer
@@ -23,7 +20,6 @@ import kotlinx.coroutines.launch
 import me.matsumo.fanbox.core.model.fanbox.id.CreatorId
 import me.matsumo.fanbox.core.model.fanbox.id.PostId
 import me.matsumo.fanbox.core.ui.extensition.LocalSnackbarHostState
-import me.matsumo.fanbox.core.ui.extensition.PixiViewNavigationType
 import me.matsumo.fanbox.core.ui.view.SimpleAlertContents
 import me.matsumo.fanbox.feature.library.LibraryNavHost
 import me.matsumo.fanbox.feature.library.LibraryUiState
@@ -86,7 +82,7 @@ internal fun LibraryMediumScreen(
                         modifier = Modifier.navigationBarsPadding(),
                         hostState = snackbarHostState,
                     )
-                }
+                },
             ) {
                 CompositionLocalProvider(LocalSnackbarHostState provides snackbarHostState) {
                     LibraryNavHost(

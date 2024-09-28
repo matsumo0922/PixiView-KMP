@@ -28,11 +28,12 @@ fun NavGraphBuilder.bottomSheet(
     route: String,
     arguments: List<NamedNavArgument> = emptyList(),
     deepLinks: List<NavDeepLink> = emptyList(),
-    content: @Composable ColumnScope.(backstackEntry: NavBackStackEntry) -> Unit
+    content: @Composable ColumnScope.(backstackEntry: NavBackStackEntry) -> Unit,
 ) {
     addDestination(
         BottomSheetNavigator.Destination(
-            provider[BottomSheetNavigator::class], content
+            provider[BottomSheetNavigator::class],
+            content,
         ).apply {
             this.route = route
             arguments.fastForEach { (argumentName, argument) ->
@@ -41,27 +42,26 @@ fun NavGraphBuilder.bottomSheet(
             deepLinks.fastForEach { deepLink ->
                 addDeepLink(deepLink)
             }
-        })
+        },
+    )
 }
-
 
 inline fun <reified T : Any> NavGraphBuilder.bottomSheet(
     deepLinks: List<NavDeepLink> = emptyList(),
-    noinline content: @Composable ColumnScope.(backstackEntry: NavBackStackEntry) -> Unit
+    noinline content: @Composable ColumnScope.(backstackEntry: NavBackStackEntry) -> Unit,
 ) {
     destination(
         BottomSheetNavigatorDestinationBuilder(
             provider[BottomSheetNavigator::class],
             T::class,
             emptyMap(),
-            content
+            content,
         )
             .apply {
                 deepLinks.forEach { deepLink -> deepLink(deepLink) }
-            }
+            },
     )
 }
-
 
 /** DSL for constructing a new [ComposeNavigator.Destination] */
 @NavDestinationDsl
@@ -74,7 +74,7 @@ class BottomSheetNavigatorDestinationBuilder :
     constructor(
         navigator: BottomSheetNavigator,
         route: String,
-        content: @Composable ColumnScope.(NavBackStackEntry) -> Unit
+        content: @Composable ColumnScope.(NavBackStackEntry) -> Unit,
     ) : super(navigator, route) {
         this.composeNavigator = navigator
         this.content = content
@@ -84,7 +84,7 @@ class BottomSheetNavigatorDestinationBuilder :
         navigator: BottomSheetNavigator,
         route: KClass<*>,
         typeMap: Map<KType, @JvmSuppressWildcards NavType<*>>,
-        content: @Composable ColumnScope.(NavBackStackEntry) -> Unit
+        content: @Composable ColumnScope.(NavBackStackEntry) -> Unit,
     ) : super(navigator, route, typeMap) {
         this.composeNavigator = navigator
         this.content = content

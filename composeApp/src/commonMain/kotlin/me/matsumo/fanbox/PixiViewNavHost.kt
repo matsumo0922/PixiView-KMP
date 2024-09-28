@@ -78,7 +78,6 @@ internal fun PixiViewNavHost(
     }
 }
 
-
 /**
  * mainNavController
  *   - Library*
@@ -119,7 +118,11 @@ private fun NavGraphBuilder.applyNavGraph(
         navigateToPostImage = { postId, index -> subNavController.navigateToPostImage(postId, index) },
         navigateToCreatorPosts = { mainNavController.navigateToCreatorTop(it, isPosts = true) },
         navigateToCreatorPlans = { mainNavController.navigateToCreatorTop(it) },
-        navigateToCommentDeleteDialog = { contents, onResult -> scope.launch { mainNavController.navigateToSimpleAlertDialog(contents, onResult) } },
+        navigateToCommentDeleteDialog = { contents, onResult ->
+            scope.launch {
+                mainNavController.navigateToSimpleAlertDialog(contents, onResult)
+            }
+        },
         terminate = { subNavController.popBackStack() },
     )
 
@@ -147,7 +150,11 @@ private fun NavGraphBuilder.applyNavGraph(
         navigateToPostSearch = { query, creatorId -> mainNavController.navigateToPostSearch(tag = query, creatorId = creatorId) },
         navigateToBillingPlus = { mainNavController.navigateToBillingPlus(it) },
         navigateToDownloadAll = { mainNavController.navigateToCreatorPostsDownload(it) },
-        navigateToAlertDialog = { contents, onPositive, onNegative -> scope.launch { mainNavController.navigateToSimpleAlertDialog(contents, onPositive, onNegative) } },
+        navigateToAlertDialog = { contents, onPositive, onNegative ->
+            scope.launch {
+                mainNavController.navigateToSimpleAlertDialog(contents, onPositive, onNegative)
+            }
+        },
         terminate = { mainNavController.popBackStack() },
     )
 
@@ -181,7 +188,11 @@ private fun NavGraphBuilder.applyNavGraph(
         navigateToThemeSetting = { mainNavController.navigateToSettingTheme() },
         navigateToBillingPlus = { mainNavController.navigateToBillingPlus(it) },
         navigateToSettingDeveloper = { mainNavController.navigateToSettingDeveloper() },
-        navigateToLogoutDialog = { contents, onResult -> scope.launch { mainNavController.navigateToSimpleAlertDialog(contents, onResult) } },
+        navigateToLogoutDialog = { contents, onResult ->
+            scope.launch {
+                mainNavController.navigateToSimpleAlertDialog(contents, onResult)
+            }
+        },
         navigateToOpenSourceLicense = { mainNavController.navigateToSettingLicense() },
         terminate = { mainNavController.popBackStack() },
     )
@@ -202,7 +213,11 @@ private fun NavGraphBuilder.applyNavGraph(
     )
 
     creatorPostsDownloadDialog(
-        navigateToCancelDownloadAlert = { contents, onResult -> scope.launch { mainNavController.navigateToSimpleAlertDialog(contents, onResult) } },
+        navigateToCancelDownloadAlert = { contents, onResult ->
+            scope.launch {
+                mainNavController.navigateToSimpleAlertDialog(contents, onResult)
+            }
+        },
         terminate = { mainNavController.popBackStack() },
     )
 
@@ -219,8 +234,6 @@ private fun NavGraphBuilder.applyNavGraph(
     billingPlusBottomSheet(
         terminate = { mainNavController.popBackStack() },
     )
-
-
 
     // empty for start destination
 

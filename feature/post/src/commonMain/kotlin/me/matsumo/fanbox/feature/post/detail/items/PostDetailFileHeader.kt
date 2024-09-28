@@ -26,7 +26,7 @@ internal fun LazyListScope.postDetailFileHeader(
                 item = imageItem,
                 onClickImage = onClickImage,
                 onClickDownload = { onClickDownload.invoke(listOf(imageItem)) },
-                onClickAllDownload = { onClickDownload.invoke(content.imageItems) }
+                onClickAllDownload = { onClickDownload.invoke(content.imageItems) },
             )
         } else {
             PostDetailFileItem(

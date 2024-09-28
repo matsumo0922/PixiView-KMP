@@ -14,7 +14,7 @@ const val BillingPlusReferrer = "billingPlusReferrer"
 const val BillingPlusRoute = "billingPlus/{$BillingPlusReferrer}"
 
 fun NavController.navigateToBillingPlus(referrerSetting: String? = null) {
-    this.navigateWithLog("billingPlus/${referrerSetting.toString()}")
+    this.navigateWithLog("billingPlus/$referrerSetting")
 }
 
 fun NavGraphBuilder.billingPlusBottomSheet(

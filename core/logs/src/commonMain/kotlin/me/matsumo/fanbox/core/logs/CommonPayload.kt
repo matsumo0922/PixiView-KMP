@@ -1,6 +1,5 @@
 package me.matsumo.fanbox.core.logs
 
-import kotlinx.serialization.json.JsonObject
 import kotlinx.serialization.json.JsonObjectBuilder
 import kotlinx.serialization.json.put
 
@@ -31,7 +30,7 @@ data class CommonPayload(
     // デバイスの ABI (arm64-v8a, x86)
     val deviceAbis: String,
     // タイムゾーン(Asia/Tokyoなど)
-    val timeZone: String
+    val timeZone: String,
 ) {
     fun applyToJsonObject(builder: JsonObjectBuilder) = builder.apply {
         put("pixiview_id", pixiviewId)

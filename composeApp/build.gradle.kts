@@ -196,7 +196,7 @@ fun MapProperty<String, BuildConfigField<out Serializable>>.putBuildConfig(
     value: String? = null,
     type: String = "String",
     defaultValue: String = "",
-    comment: String? = null
+    comment: String? = null,
 ) {
     val property = localProperties.getProperty(key)
     val env = System.getenv(key)

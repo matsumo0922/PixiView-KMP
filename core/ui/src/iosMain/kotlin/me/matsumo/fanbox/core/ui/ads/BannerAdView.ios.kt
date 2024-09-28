@@ -16,6 +16,6 @@ actual fun BannerAdView(modifier: Modifier) {
 
     UIKitViewController(
         modifier = modifier.height(60.dp),
-        factory = nativeView
+        factory = nativeView,
     )
 }

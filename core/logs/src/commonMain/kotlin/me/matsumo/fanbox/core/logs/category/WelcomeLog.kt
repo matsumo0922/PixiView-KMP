@@ -31,7 +31,7 @@ sealed class WelcomeLog : LogCategory {
     class CompletedOnboarding internal constructor(
         private val startAt: String,
         private val endAt: String,
-        private val neededTime: Long
+        private val neededTime: Long,
     ) : WelcomeLog() {
         override val properties: JsonObject = buildJsonObject {
             put("event_category", "welcome")
@@ -56,7 +56,7 @@ sealed class WelcomeLog : LogCategory {
         fun completedOnboarding(
             startAt: String,
             endAt: String,
-            neededTime: Long
+            neededTime: Long,
         ) = CompletedOnboarding(startAt, endAt, neededTime)
     }
 }

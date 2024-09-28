@@ -8,7 +8,7 @@ import kotlin.uuid.Uuid
 data class PostId(val value: String) {
 
     @OptIn(ExperimentalUuidApi::class)
-    val uniqueValue: String = "post-${value}-${Uuid.random()}"
+    val uniqueValue: String = "post-$value-${Uuid.random()}"
 
     override fun toString(): String = value
 }

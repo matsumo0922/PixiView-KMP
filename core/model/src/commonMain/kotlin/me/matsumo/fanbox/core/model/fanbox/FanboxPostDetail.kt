@@ -125,25 +125,31 @@ data class FanboxPostDetail(
         val url: String,
     ) {
         fun asImageItem(): ImageItem? {
-            return if (!extension.lowercase().contains(Regex("""(jpg|jpeg|png|gif)"""))) null
-            else ImageItem(
-                id = id,
-                postId = postId,
-                extension = extension,
-                originalUrl = url,
-                thumbnailUrl = url,
-                aspectRatio = 1f,
-            )
+            return if (!extension.lowercase().contains(Regex("""(jpg|jpeg|png|gif)"""))) {
+                null
+            } else {
+                ImageItem(
+                    id = id,
+                    postId = postId,
+                    extension = extension,
+                    originalUrl = url,
+                    thumbnailUrl = url,
+                    aspectRatio = 1f,
+                )
+            }
         }
 
         fun asVideoItem(): VideoItem? {
-            return if (!extension.lowercase().contains(Regex("""(mp4|webm)"""))) null
-            else VideoItem(
-                id = id,
-                postId = postId,
-                extension = extension,
-                url = url,
-            )
+            return if (!extension.lowercase().contains(Regex("""(mp4|webm)"""))) {
+                null
+            } else {
+                VideoItem(
+                    id = id,
+                    postId = postId,
+                    extension = extension,
+                    url = url,
+                )
+            }
         }
     }
 

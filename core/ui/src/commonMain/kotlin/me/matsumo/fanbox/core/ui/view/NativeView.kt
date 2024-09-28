@@ -7,7 +7,7 @@ expect class NativeView
 
 @Immutable
 data class NativeViews(
-    private val provider: Map<String, () -> NativeView?> = emptyMap()
+    private val provider: Map<String, () -> NativeView?> = emptyMap(),
 ) {
     fun provide(key: Key): () -> NativeView {
         return provider[key.id]!! as () -> NativeView

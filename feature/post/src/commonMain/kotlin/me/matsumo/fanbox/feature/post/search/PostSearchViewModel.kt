@@ -1,6 +1,8 @@
 package me.matsumo.fanbox.feature.post.search
 
 import androidx.compose.runtime.Stable
+import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
 import androidx.paging.PagingData
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -19,8 +21,6 @@ import me.matsumo.fanbox.core.model.fanbox.id.PostId
 import me.matsumo.fanbox.core.repository.FanboxRepository
 import me.matsumo.fanbox.core.repository.UserDataRepository
 import me.matsumo.fanbox.core.ui.extensition.emptyPaging
-import androidx.lifecycle.ViewModel
-import androidx.lifecycle.viewModelScope
 
 class PostSearchViewModel(
     private val userDataRepository: UserDataRepository,

@@ -30,7 +30,7 @@ actual fun NativeAdView(
     ) {
         UIKitViewController(
             modifier = Modifier.height(256.dp),
-            factory = nativeView
+            factory = nativeView,
         )
     }
 }

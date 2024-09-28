@@ -2,9 +2,6 @@ package me.matsumo.fanbox.core.ui.ads
 
 import android.annotation.SuppressLint
 import android.content.Context
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.Stable
-import androidx.compose.runtime.rememberCoroutineScope
 import com.google.android.gms.ads.AdListener
 import com.google.android.gms.ads.AdLoader
 import com.google.android.gms.ads.AdRequest
@@ -18,7 +15,6 @@ import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 import me.matsumo.fanbox.core.common.PixiViewConfig
-import java.time.LocalDateTime
 
 class NativeAdsPreLoader(
     context: Context,
@@ -36,7 +32,7 @@ class NativeAdsPreLoader(
                 VideoOptions.Builder()
                     .setStartMuted(true)
                     .setClickToExpandRequested(true)
-                    .build()
+                    .build(),
             )
             .setMediaAspectRatio(MediaAspectRatio.LANDSCAPE)
             .setRequestMultipleImages(false)

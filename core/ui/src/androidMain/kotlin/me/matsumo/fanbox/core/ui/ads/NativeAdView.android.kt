@@ -13,13 +13,11 @@ import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.surfaceColorAtElevation
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.DisposableEffect
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.viewinterop.AndroidViewBinding
-import androidx.core.view.doOnLayout
 import androidx.core.view.isVisible
 import androidx.core.view.postDelayed
 import com.google.android.gms.ads.nativead.NativeAd
@@ -109,7 +107,7 @@ actual fun NativeAdView(
             update = {
                 nativeAd = nativeAdsPreLoader.getNativeAd(key)
                 nativeAd?.let { nativeAd -> setupNativeAd(this, nativeAd) }
-            }
+            },
         )
     }
 }

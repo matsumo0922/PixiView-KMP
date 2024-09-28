@@ -333,11 +333,13 @@ private fun HeaderTop(
             )
         },
         measurePolicy = { measurables, constraints ->
-            val iconPlaceable = measurables.find { it.layoutId == "icon" }!!.measure(Constraints.fixed(80.dp.roundToPx(), 80.dp.roundToPx()))
+            val iconPlaceable = measurables.find {
+                it.layoutId == "icon"
+            }!!.measure(Constraints.fixed(80.dp.roundToPx(), 80.dp.roundToPx()))
             val backgroundPlaceable = measurables.find { it.layoutId == "background" }!!.measure(constraints)
             val buttonPlaceable = measurables.find { it.layoutId == "button" }!!.measure(Constraints.fixedWidth(128.dp.roundToPx()))
             val linksPlaceable = measurables.find { it.layoutId == "links" }!!.measure(
-                Constraints.fixedWidth(constraints.maxWidth - iconPlaceable.width - buttonPlaceable.width - 16.dp.roundToPx() * 4)
+                Constraints.fixedWidth(constraints.maxWidth - iconPlaceable.width - buttonPlaceable.width - 16.dp.roundToPx() * 4),
             )
 
             val backgroundPosition = Alignment.TopCenter.align(

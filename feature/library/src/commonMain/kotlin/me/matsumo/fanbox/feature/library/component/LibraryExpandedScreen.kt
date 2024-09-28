@@ -70,7 +70,7 @@ internal fun LibraryExpandedScreen(
                     modifier = Modifier.navigationBarsPadding(),
                     hostState = snackbarHostState,
                 )
-            }
+            },
         ) {
             CompositionLocalProvider(LocalSnackbarHostState provides snackbarHostState) {
                 LibraryNavHost(

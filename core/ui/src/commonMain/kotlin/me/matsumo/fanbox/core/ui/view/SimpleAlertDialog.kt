@@ -114,7 +114,7 @@ fun NavController.navigateToSimpleAlertDialog(
             } else {
                 onClickNegative?.invoke()
             }
-        }
+        },
     )
 }
 

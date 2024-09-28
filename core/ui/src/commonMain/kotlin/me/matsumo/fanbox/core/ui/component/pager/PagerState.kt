@@ -40,8 +40,8 @@ For more migration information, please visit https://google.github.io/accompanis
 """,
     replaceWith = ReplaceWith(
         "androidx.compose.foundation.pager.rememberPagerState(initialPage = initialPage)",
-        "androidx.compose.foundation.pager.rememberPagerState"
-    )
+        "androidx.compose.foundation.pager.rememberPagerState",
+    ),
 )
 @Composable
 public fun rememberPagerState(
@@ -67,8 +67,8 @@ For more migration information, please visit https://google.github.io/accompanis
 """,
     replaceWith = ReplaceWith(
         "PagerState(currentPage = currentPage)",
-        "androidx.compose.foundation.pager.PagerState"
-    )
+        "androidx.compose.foundation.pager.PagerState",
+    ),
 )
 @Stable
 public class PagerState(
@@ -87,7 +87,7 @@ public class PagerState(
                 val start = maxOf(it.offset, 0)
                 val end = minOf(
                     it.offset + it.size,
-                    layoutInfo.viewportEndOffset - layoutInfo.afterContentPadding
+                    layoutInfo.viewportEndOffset - layoutInfo.afterContentPadding,
                 )
                 end - start
             }
@@ -156,10 +156,10 @@ public class PagerState(
      */
     @Deprecated(
         "targetPage is deprecated in favor of currentPage as currentPage property is" +
-                "now being updated right after we over scrolled the half of the previous current page." +
-                "If you still think that you need targetPage, not currentPage please file a bug as " +
-                "we are planning to remove this property in future.",
-        ReplaceWith("currentPage")
+            "now being updated right after we over scrolled the half of the previous current page." +
+            "If you still think that you need targetPage, not currentPage please file a bug as " +
+            "we are planning to remove this property in future.",
+        ReplaceWith("currentPage"),
     )
     public val targetPage: Int
         get() = animationTargetPage
@@ -177,7 +177,7 @@ public class PagerState(
 
     @Deprecated(
         "Replaced with animateScrollToPage(page, pageOffset)",
-        ReplaceWith("animateScrollToPage(page = page, pageOffset = pageOffset)")
+        ReplaceWith("animateScrollToPage(page = page, pageOffset = pageOffset)"),
     )
     @Suppress("UNUSED_PARAMETER")
     public suspend fun animateScrollToPage(
@@ -231,14 +231,14 @@ public class PagerState(
                     // offset from the size
                     lazyListState.animateScrollToItem(
                         index = page,
-                        scrollOffset = ((target.size + itemSpacing) * pageOffset).roundToInt()
+                        scrollOffset = ((target.size + itemSpacing) * pageOffset).roundToInt(),
                     )
                 } else if (layoutInfo.visibleItemsInfo.isNotEmpty()) {
                     // If we don't, we use the current page size as a guide
                     val currentSize = layoutInfo.visibleItemsInfo.first().size + itemSpacing
                     lazyListState.animateScrollToItem(
                         index = page,
-                        scrollOffset = (currentSize * pageOffset).roundToInt()
+                        scrollOffset = (currentSize * pageOffset).roundToInt(),
                     )
 
                     // The target should be visible now
@@ -250,7 +250,7 @@ public class PagerState(
                         // but there's not much else we can do.
                         lazyListState.animateScrollToItem(
                             index = page,
-                            scrollOffset = ((target.size + itemSpacing) * pageOffset).roundToInt()
+                            scrollOffset = ((target.size + itemSpacing) * pageOffset).roundToInt(),
                         )
                     }
                 }
@@ -316,7 +316,7 @@ public class PagerState(
 
     override suspend fun scroll(
         scrollPriority: MutatePriority,
-        block: suspend ScrollScope.() -> Unit
+        block: suspend ScrollScope.() -> Unit,
     ): Unit = lazyListState.scroll(scrollPriority, block)
 
     override fun dispatchRawDelta(delta: Float): Float {
@@ -327,10 +327,10 @@ public class PagerState(
         get() = lazyListState.isScrollInProgress
 
     override fun toString(): String = "PagerState(" +
-            "pageCount=$pageCount, " +
-            "currentPage=$currentPage, " +
-            "currentPageOffset=$currentPageOffset" +
-            ")"
+        "pageCount=$pageCount, " +
+        "currentPage=$currentPage, " +
+        "currentPageOffset=$currentPageOffset" +
+        ")"
 
     private fun requireCurrentPage(value: Int, name: String) {
         require(value >= 0) { "$name[$value] must be >= 0" }
@@ -354,7 +354,7 @@ public class PagerState(
                 PagerState(
                     currentPage = it[0] as Int,
                 )
-            }
+            },
         )
     }
 }

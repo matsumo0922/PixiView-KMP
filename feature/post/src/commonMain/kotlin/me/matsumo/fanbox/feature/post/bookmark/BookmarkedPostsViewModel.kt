@@ -1,6 +1,8 @@
 package me.matsumo.fanbox.feature.post.bookmark
 
 import androidx.compose.runtime.Stable
+import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.collectLatest
@@ -14,8 +16,6 @@ import me.matsumo.fanbox.core.model.fanbox.id.PostId
 import me.matsumo.fanbox.core.model.updateWhenIdle
 import me.matsumo.fanbox.core.repository.FanboxRepository
 import me.matsumo.fanbox.core.repository.UserDataRepository
-import androidx.lifecycle.ViewModel
-import androidx.lifecycle.viewModelScope
 
 class BookmarkedPostsViewModel(
     private val userDataRepository: UserDataRepository,

@@ -57,12 +57,12 @@ class BottomSheetNavigatorSheetState(val sheetState: ModalBottomSheetState) {
 @OptIn(ExperimentalMaterialApi::class)
 @Composable
 fun rememberBottomSheetNavigator(
-    animationSpec: AnimationSpec<Float> = SpringSpec()
+    animationSpec: AnimationSpec<Float> = SpringSpec(),
 ): BottomSheetNavigator {
     val sheetState = rememberModalBottomSheetState(
         initialValue = ModalBottomSheetValue.Hidden,
         skipHalfExpanded = true,
-        animationSpec = animationSpec
+        animationSpec = animationSpec,
     )
     return remember { BottomSheetNavigator(sheetState) }
 }
@@ -134,7 +134,7 @@ class BottomSheetNavigator(val sheetState: ModalBottomSheetState) : Navigator<De
         // we keep the entry around until the sheet is hidden
         val retainedEntry by produceState<NavBackStackEntry?>(
             initialValue = null,
-            key1 = backStack
+            key1 = backStack,
         ) {
             backStack
                 .transform { backStackEntries ->
@@ -181,7 +181,7 @@ class BottomSheetNavigator(val sheetState: ModalBottomSheetState) : Navigator<De
                 else {
                     state.pop(popUpTo = backStackEntry, saveState = false)
                 }
-            }
+            },
         )
     }
 
@@ -197,7 +197,7 @@ class BottomSheetNavigator(val sheetState: ModalBottomSheetState) : Navigator<De
     override fun navigate(
         entries: List<NavBackStackEntry>,
         navOptions: NavOptions?,
-        navigatorExtras: Extras?
+        navigatorExtras: Extras?,
     ) {
         entries.forEach { entry ->
             state.pushWithTransition(entry)
@@ -210,7 +210,7 @@ class BottomSheetNavigator(val sheetState: ModalBottomSheetState) : Navigator<De
 
     class Destination(
         navigator: BottomSheetNavigator,
-        internal val content: @Composable ColumnScope.(NavBackStackEntry) -> Unit
+        internal val content: @Composable ColumnScope.(NavBackStackEntry) -> Unit,
     ) : NavDestination(navigator), FloatingWindow
 
     companion object {

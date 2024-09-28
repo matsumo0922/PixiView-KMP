@@ -1,14 +1,14 @@
 package me.matsumo.fanbox.feature.post.search
 
 import androidx.navigation.NavController
-import io.ktor.http.decodeURLPart
-import io.ktor.http.encodeURLPathPart
-import me.matsumo.fanbox.core.model.fanbox.id.CreatorId
-import me.matsumo.fanbox.core.model.fanbox.id.PostId
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.NavType
 import androidx.navigation.compose.composable
 import androidx.navigation.navArgument
+import io.ktor.http.decodeURLPart
+import io.ktor.http.encodeURLPathPart
+import me.matsumo.fanbox.core.model.fanbox.id.CreatorId
+import me.matsumo.fanbox.core.model.fanbox.id.PostId
 import me.matsumo.fanbox.core.ui.extensition.navigateWithLog
 
 const val PostSearchQueryStr = "postSearchQuery"
@@ -31,7 +31,7 @@ fun NavGraphBuilder.postSearchScreen(
 ) {
     composable(
         route = PostSearchRoute,
-        arguments = listOf(navArgument(PostSearchQueryStr) { type = NavType.StringType })
+        arguments = listOf(navArgument(PostSearchQueryStr) { type = NavType.StringType }),
     ) {
         var query = it.arguments?.getString(PostSearchQueryStr)?.decodeURLPart().orEmpty()
 

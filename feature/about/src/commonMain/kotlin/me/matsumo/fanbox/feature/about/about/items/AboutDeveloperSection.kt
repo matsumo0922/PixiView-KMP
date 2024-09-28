@@ -59,7 +59,7 @@ internal fun AboutDeveloperSection(
         modifier = modifier,
         content = {
             ProfileIconItem(
-                modifier = Modifier.layoutId("icon")
+                modifier = Modifier.layoutId("icon"),
             )
 
             AboutDeveloperCard(
@@ -194,7 +194,7 @@ private fun AboutDeveloperCard(
             HorizontalDivider(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(24.dp)
+                    .padding(24.dp),
             )
 
             Text(
@@ -222,7 +222,7 @@ private fun AboutDeveloperCard(
             HorizontalDivider(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(horizontal = 24.dp, vertical = 8.dp)
+                    .padding(horizontal = 24.dp, vertical = 8.dp),
             )
 
             Text(

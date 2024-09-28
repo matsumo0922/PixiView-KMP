@@ -21,7 +21,7 @@ import kotlinx.coroutines.launch
 fun rememberNativeAdState(
     adUnit: String,
     adListener: AdListener? = null,
-    adOptions: NativeAdOptions? = null
+    adOptions: NativeAdOptions? = null,
 ): NativeAdState {
     val context = LocalContext.current
     val activity = (context as? FragmentActivity) ?: error("Activity not found")

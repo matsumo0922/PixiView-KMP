@@ -53,7 +53,7 @@ fun ImageRequest.Builder.fanboxHeader(): ImageRequest.Builder {
                     set("Cookie", cookie)
                 }
             }
-            .build()
+            .build(),
     )
 
     return this

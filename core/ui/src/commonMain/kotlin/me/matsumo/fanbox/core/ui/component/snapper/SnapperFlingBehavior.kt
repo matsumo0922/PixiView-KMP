@@ -108,7 +108,7 @@ public inline fun rememberSnapperFlingBehavior(
         layoutInfo = layoutInfo,
         decayAnimationSpec = decayAnimationSpec,
         springAnimationSpec = springAnimationSpec,
-        snapIndex = SnapperFlingBehaviorDefaults.SnapIndex
+        snapIndex = SnapperFlingBehaviorDefaults.SnapIndex,
     )
 }
 
@@ -328,7 +328,7 @@ public class SnapperFlingBehavior private constructor(
         private set
 
     override suspend fun ScrollScope.performFling(
-        initialVelocity: Float
+        initialVelocity: Float,
     ): Float {
         // If we're at the start/end of the scroll range, we don't snap and assume the user
         // wanted to scroll here.

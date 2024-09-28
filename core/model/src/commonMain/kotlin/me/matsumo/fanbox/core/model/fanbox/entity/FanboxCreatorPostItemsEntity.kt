@@ -1,13 +1,12 @@
 package me.matsumo.fanbox.core.model.fanbox.entity
 
-
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
 @Serializable
 data class FanboxCreatorPostItemsEntity(
     @SerialName("body")
-    val body: List<Body>
+    val body: List<Body>,
 ) {
     @Serializable
     data class Body(
@@ -47,7 +46,7 @@ data class FanboxCreatorPostItemsEntity(
             @SerialName("type")
             val type: String,
             @SerialName("url")
-            val url: String
+            val url: String,
         )
 
         @Serializable
@@ -57,7 +56,7 @@ data class FanboxCreatorPostItemsEntity(
             @SerialName("name")
             val name: String,
             @SerialName("userId")
-            val userId: String
+            val userId: String,
         )
     }
 }

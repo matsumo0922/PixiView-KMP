@@ -61,13 +61,25 @@ internal fun AboutRoute(
             config = uiState.config,
             onClickGithub = { navigatorExtension.navigateToWebPage("https://github.com/matsumo0922/PixiView-KMP", AboutRoute) },
             onClickGithubProfile = { navigatorExtension.navigateToWebPage("https://github.com/matsumo0922", AboutRoute) },
-            onClickGithubIssue = { navigatorExtension.navigateToWebPage("https://github.com/matsumo0922/PixiView-KMP/issues/new", AboutRoute) },
-            onClickGitHubContributor = { navigatorExtension.navigateToWebPage("https://github.com/matsumo0922/PixiView-KMP/graphs/contributors", AboutRoute) },
+            onClickGithubIssue = {
+                navigatorExtension.navigateToWebPage("https://github.com/matsumo0922/PixiView-KMP/issues/new", AboutRoute)
+            },
+            onClickGitHubContributor = {
+                navigatorExtension.navigateToWebPage("https://github.com/matsumo0922/PixiView-KMP/graphs/contributors", AboutRoute)
+            },
             onClickDiscord = { scope.launch { toastExtension.show(snackHostState, Res.string.error_developing_feature) } },
-            onClickGooglePlay = { navigatorExtension.navigateToWebPage("https://play.google.com/store/apps/details?id=caios.android.fanbox", AboutRoute) },
-            onClickGooglePlayDeveloper = { navigatorExtension.navigateToWebPage("https://play.google.com/store/apps/developer?id=CAIOS", AboutRoute) },
-            onClickAppStore = { navigatorExtension.navigateToWebPage("https://apps.apple.com/jp/developer/caios/id1563407383", AboutRoute) },
-            onClickAppStoreDeveloper = { navigatorExtension.navigateToWebPage("https://apps.apple.com/jp/developer/caios/id1563407383", AboutRoute) },
+            onClickGooglePlay = {
+                navigatorExtension.navigateToWebPage("https://play.google.com/store/apps/details?id=caios.android.fanbox", AboutRoute)
+            },
+            onClickGooglePlayDeveloper = {
+                navigatorExtension.navigateToWebPage("https://play.google.com/store/apps/developer?id=CAIOS", AboutRoute)
+            },
+            onClickAppStore = {
+                navigatorExtension.navigateToWebPage("https://apps.apple.com/jp/developer/caios/id1563407383", AboutRoute)
+            },
+            onClickAppStoreDeveloper = {
+                navigatorExtension.navigateToWebPage("https://apps.apple.com/jp/developer/caios/id1563407383", AboutRoute)
+            },
             onClickTwitter = { navigatorExtension.navigateToWebPage("https://twitter.com/matsumo0922", AboutRoute) },
             onClickVersionHistory = { navigateToVersionHistory.invoke() },
             onClickDonate = { navigateToDonate.invoke() },
@@ -118,7 +130,7 @@ private fun AboutScreen(
                 start = 24.dp,
                 end = 24.dp,
             ),
-            verticalArrangement = Arrangement.spacedBy(24.dp)
+            verticalArrangement = Arrangement.spacedBy(24.dp),
         ) {
             item {
                 AboutAppSection(

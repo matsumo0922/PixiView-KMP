@@ -16,7 +16,7 @@ actual fun SimpleBottomSheet(
     onDismissRequest: () -> Unit,
     modifier: Modifier,
     skipPartiallyExpanded: Boolean,
-    content: @Composable ColumnScope.() -> Unit
+    content: @Composable ColumnScope.() -> Unit,
 ) {
     val sheetState = rememberModalBottomSheetState(skipPartiallyExpanded)
 

@@ -22,7 +22,9 @@ import me.matsumo.fanbox.core.ui.Res
 import kotlin.coroutines.resume
 
 @OptIn(ExperimentalForeignApi::class)
-class BillingPlusViewModelImpl @OptIn(ExperimentalForeignApi::class) constructor(
+class BillingPlusViewModelImpl
+@OptIn(ExperimentalForeignApi::class)
+constructor(
     private val userDataRepository: UserDataRepository,
     private val ioDispatcher: CoroutineDispatcher,
 ) : BillingPlusViewModel() {
@@ -76,7 +78,7 @@ class BillingPlusViewModelImpl @OptIn(ExperimentalForeignApi::class) constructor
             },
             completionHandler = {
                 // do nothing
-            }
+            },
         )
     }
 
@@ -96,7 +98,7 @@ class BillingPlusViewModelImpl @OptIn(ExperimentalForeignApi::class) constructor
             },
             completionHandler = {
                 // do nothing
-            }
+            },
         )
     }
 }

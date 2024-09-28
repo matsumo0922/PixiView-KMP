@@ -2,7 +2,6 @@ package me.matsumo.fanbox.core.model.fanbox
 
 import me.matsumo.fanbox.core.model.fanbox.id.PlanId
 
-
 data class FanboxCreatorPlan(
     val id: PlanId,
     val title: String,

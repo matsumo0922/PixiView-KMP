@@ -13,7 +13,7 @@ import platform.UIKit.UIViewController
 fun MainViewController(
     topSafeArea: Float,
     bottomSafeArea: Float,
-    iosUis: Map<String, () -> UIViewController?>
+    iosUis: Map<String, () -> UIViewController?>,
 ) = ComposeUIViewController {
     KoinContext {
         Napier.d { "MainViewController: ${iosUis.size}" }

@@ -101,7 +101,7 @@ class CreatorPostsDownloadViewModel(
                 targetPosts = it.posts.filter { post ->
                     keywords.none { keyword -> (post.post.title + post.post.excerpt).contains(keyword, ignoreCase = true) }
                 },
-                ignoreKeyword = ignoreKeyword
+                ignoreKeyword = ignoreKeyword,
             )
         }
     }
@@ -110,7 +110,7 @@ class CreatorPostsDownloadViewModel(
         _screenState.value = _screenState.updateWhenIdle {
             it.copy(
                 targetPosts = it.posts.filter { post -> post.post.feeRequired != 0 },
-                isIgnoreFreePosts = isIgnoreFreePosts
+                isIgnoreFreePosts = isIgnoreFreePosts,
             )
         }
     }
