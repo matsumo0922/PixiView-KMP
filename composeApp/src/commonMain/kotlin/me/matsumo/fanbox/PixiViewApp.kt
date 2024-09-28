@@ -175,7 +175,6 @@ private fun PixiViewScreen(
         if (it) {
             WelcomeNavHost(
                 isAgreedTeams = isAgreedTeams,
-                isAllowedPermission = isAllowedPermission,
                 isLoggedIn = uiState.isLoggedIn,
                 onComplete = {
                     isAgreedTeams = true

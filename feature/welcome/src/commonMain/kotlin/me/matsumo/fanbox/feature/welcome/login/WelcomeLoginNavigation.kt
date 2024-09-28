@@ -15,13 +15,13 @@ fun NavController.navigateToWelcomeLogin() {
 
 fun NavGraphBuilder.welcomeLoginScreen(
     navigateToLoginScreen: () -> Unit,
-    navigateToWelcomePermission: () -> Unit,
+    navigateToHome: () -> Unit,
 ) {
     composable(WelcomeLoginRoute) {
         WelcomeLoginScreen(
             modifier = Modifier.fillMaxSize(),
             navigateToLoginScreen = navigateToLoginScreen,
-            navigateToWelcomePermission = navigateToWelcomePermission,
+            navigateToHome = navigateToHome,
         )
     }
 }

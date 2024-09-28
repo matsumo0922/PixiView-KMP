@@ -50,7 +50,7 @@ import org.koin.compose.viewmodel.koinViewModel
 
 @Composable
 internal fun WelcomeLoginScreen(
-    navigateToWelcomePermission: () -> Unit,
+    navigateToHome: () -> Unit,
     navigateToLoginScreen: () -> Unit,
     modifier: Modifier = Modifier,
     viewModel: WelcomeLoginViewModel = koinViewModel(),
@@ -94,7 +94,7 @@ internal fun WelcomeLoginScreen(
                     viewModel.logout()
                     navigateToLoginScreen.invoke()
                 },
-                navigateToWelcomePermission = navigateToWelcomePermission,
+                navigateToHome = navigateToHome,
                 navigateToHelp = { navigatorExtension.navigateToWebPage(it, WelcomeLoginRoute) },
                 onSetCookie = viewModel::setCookie,
             )
@@ -122,7 +122,7 @@ internal fun WelcomeLoginScreen(
                         viewModel.logout()
                         navigateToLoginScreen.invoke()
                     },
-                    navigateToWelcomePermission = navigateToWelcomePermission,
+                    navigateToHome = navigateToHome,
                     navigateToHelp = { navigatorExtension.navigateToWebPage(it, WelcomeLoginRoute) },
                     onSetCookie = viewModel::setCookie,
                 )
@@ -151,7 +151,7 @@ private fun SecondSection(
     isLoggedIn: Boolean,
     onSetCookie: (String) -> Unit,
     navigateToLoginScreen: () -> Unit,
-    navigateToWelcomePermission: () -> Unit,
+    navigateToHome: () -> Unit,
     navigateToHelp: (String) -> Unit,
     modifier: Modifier = Modifier,
 ) {
@@ -190,7 +190,7 @@ private fun SecondSection(
 
         WelcomeIndicatorItem(
             modifier = Modifier.padding(bottom = 24.dp),
-            max = 3,
+            max = 2,
             step = 2,
         )
 
@@ -200,7 +200,7 @@ private fun SecondSection(
                     .padding(bottom = 24.dp)
                     .fillMaxWidth(),
                 shape = CircleShape,
-                onClick = { navigateToWelcomePermission.invoke() },
+                onClick = { navigateToHome.invoke() },
             ) {
                 Text(
                     modifier = Modifier.padding(8.dp),

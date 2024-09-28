@@ -193,7 +193,7 @@ private fun SecondSection(
 
         WelcomeIndicatorItem(
             modifier = Modifier.padding(bottom = 24.dp),
-            max = 3,
+            max = 2,
             step = 1,
         )
 
