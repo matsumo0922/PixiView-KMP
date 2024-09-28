@@ -56,7 +56,11 @@ internal fun PostDetailDownloadSection(
                 color = MaterialTheme.colorScheme.onSurface,
             )
 
-            Button(onClick = { onClickDownload.invoke(postDetail.body.imageItems) }) {
+            Button(
+                onClick = {
+                    onClickDownload.invoke(postDetail.body.imageItems)
+                },
+            ) {
                 Text(stringResource(Res.string.common_download))
             }
         }

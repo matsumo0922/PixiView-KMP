@@ -54,13 +54,14 @@ class DownloadPostsRepositoryImpl(
                 for ((item, channel) in results.filterNotNull()) {
                     runCatching {
                         val mime = MimeTypeMap.getSingleton().getMimeTypeFromExtension(item.extension)
-                        val uri =
-                            getUri(context, "${item.name}.${item.extension}", getParentDirName(downloadItems.requestType), mime.orEmpty())
+                        val uri = getUri(context, "${item.name}.${item.extension}", getParentDirName(downloadItems.requestType), mime.orEmpty())
                         val outputStream = context.contentResolver.openOutputStream(uri!!)!!
 
                         while (!channel.isClosedForRead) {
                             outputStream.writePacket(channel.readRemaining(DEFAULT_BUFFER_SIZE.toLong()))
                         }
+
+                        delay(100)
                     }
                 }
 
