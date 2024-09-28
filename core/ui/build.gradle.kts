@@ -44,7 +44,6 @@ kotlin {
 
                 api(libs.calf.ui)
                 api(libs.placeholder)
-                api(libs.kmp.paging.compose)
                 api(libs.play.service.ads)
             }
         }
@@ -53,6 +52,7 @@ kotlin {
             dependsOn(commonMain)
 
             dependencies {
+                implementation(libs.bundles.media3)
                 api(libs.bundles.ui.android.api)
             }
         }

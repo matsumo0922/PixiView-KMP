@@ -41,6 +41,7 @@ androidxPreference = "1.2.1"
 androidxDataStore = "1.1.1"
 androidxPalette = "1.0.0"
 androidxAnnotation = "1.8.2"
+androidxMedia3 = "1.4.1"
 androidxCompose = "2024.09.02"
 
 # Google
@@ -125,6 +126,10 @@ androidx-preference = { module = "androidx.preference:preference-ktx", version.r
 androidx-datastore = { module = "androidx.datastore:datastore", version.ref = "androidxDataStore" }
 androidx-datastore-proto = { module = "androidx.datastore:datastore-core", version.ref = "androidxDataStore" }
 androidx-datastore-preferences = { module = "androidx.datastore:datastore-preferences-core", version.ref = "androidxDataStore" }
+androidx-media3-exoplayer = { module = "androidx.media3:media3-exoplayer", version.ref = "androidxMedia3" }
+androidx-media3-exoplayer-dashboard = { module = "androidx.media3:media3-exoplayer-dash", version.ref = "androidxMedia3" }
+androidx-media3-ui = { module = "androidx.media3:media3-ui", version.ref = "androidxMedia3" }
+androidx-media3-session = { module = "androidx.media3:media3-session", version.ref = "androidxMedia3" }
 
 # Compose
 androidx-compose-bom = { module = "androidx.compose:compose-bom", version.ref = "androidxCompose" }
@@ -252,6 +257,8 @@ ui-common-api = [
     "kmp-lifecycle-runtime-compose",
     "kmp-lifecycle-viewmodel-compose",
     "kmp-navigation-compose",
+    "kmp-paging-common",
+    "kmp-paging-compose",
     "coil3-compose",
     "coil3-network",
     "coil3-gif",
@@ -269,6 +276,13 @@ firebase = [
     "firebase-messaging",
     "firebase-config",
     "firebase-dynamiclinks",
+]
+
+media3 = [
+    "androidx-media3-exoplayer",
+    "androidx-media3-exoplayer-dashboard",
+    "androidx-media3-ui",
+    "androidx-media3-session",
 ]
 
 cupertino = [

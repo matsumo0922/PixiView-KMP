@@ -19,6 +19,7 @@ import me.matsumo.fanbox.core.common.util.toFileSizeString
 import me.matsumo.fanbox.core.model.fanbox.FanboxPostDetail
 import me.matsumo.fanbox.core.ui.Res
 import me.matsumo.fanbox.core.ui.common_download
+import me.matsumo.fanbox.core.ui.component.video.VideoPlayer
 import me.matsumo.fanbox.core.ui.theme.bold
 import me.matsumo.fanbox.core.ui.theme.center
 import org.jetbrains.compose.resources.stringResource
@@ -29,6 +30,8 @@ internal fun PostDetailFileItem(
     onClickDownload: (FanboxPostDetail.FileItem) -> Unit,
     modifier: Modifier = Modifier,
 ) {
+    val videoItem = item.asVideoItem()
+
     Card(
         modifier = modifier.padding(16.dp),
         shape = RoundedCornerShape(8.dp),
@@ -55,6 +58,13 @@ internal fun PostDetailFileItem(
                 style = MaterialTheme.typography.bodyLarge.bold().center(),
                 color = MaterialTheme.colorScheme.onSurface,
             )
+
+            if (videoItem != null) {
+                VideoPlayer(
+                    modifier = Modifier.fillMaxWidth(),
+                    url = videoItem.url,
+                )
+            }
 
             Button(onClick = { onClickDownload.invoke(item) }) {
                 Text("${stringResource(Res.string.common_download)} (${item.size.toFloat().toFileSizeString()})")

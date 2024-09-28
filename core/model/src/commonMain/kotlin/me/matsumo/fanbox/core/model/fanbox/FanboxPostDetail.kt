@@ -109,6 +109,13 @@ data class FanboxPostDetail(
         val aspectRatio: Float,
     )
 
+    data class VideoItem(
+        val id: String,
+        val postId: PostId,
+        val extension: String,
+        val url: String,
+    )
+
     data class FileItem(
         val id: String,
         val postId: PostId,
@@ -126,6 +133,16 @@ data class FanboxPostDetail(
                 originalUrl = url,
                 thumbnailUrl = url,
                 aspectRatio = 1f,
+            )
+        }
+
+        fun asVideoItem(): VideoItem? {
+            return if (!extension.lowercase().contains(Regex("""(mp4|webm)"""))) null
+            else VideoItem(
+                id = id,
+                postId = postId,
+                extension = extension,
+                url = url,
             )
         }
     }
