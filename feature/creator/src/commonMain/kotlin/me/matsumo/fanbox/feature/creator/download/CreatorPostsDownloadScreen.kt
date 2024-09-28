@@ -4,7 +4,6 @@ import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.animateContentSize
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.tween
-import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -48,6 +47,8 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.window.DialogProperties
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import kotlinx.collections.immutable.ImmutableList
+import kotlinx.collections.immutable.toImmutableList
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import me.matsumo.fanbox.core.common.util.format
@@ -98,7 +99,7 @@ internal fun CreatorPostsDownloadRoute(
         CreatorPostsDownloadScreen(
             modifier = Modifier.fillMaxSize(),
             creatorDetail = uiState.creatorDetail,
-            posts = uiState.targetPosts,
+            posts = uiState.targetPosts.toImmutableList(),
             targetIndex = targetIndex,
             isCompleted = isCompleted,
             isIgnoreFreePosts = uiState.isIgnoreFreePosts,
@@ -154,12 +155,12 @@ internal fun CreatorPostsDownloadRoute(
     }
 }
 
-@OptIn(ExperimentalMaterial3Api::class, ExperimentalFoundationApi::class)
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 private fun CreatorPostsDownloadScreen(
     creatorDetail: FanboxCreatorDetail,
     targetIndex: Int,
-    posts: List<CreatorPostsDownloadData>,
+    posts: ImmutableList<CreatorPostsDownloadData>,
     isCompleted: Boolean,
     isIgnoreFreePosts: Boolean,
     isIgnoreFiles: Boolean,

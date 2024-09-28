@@ -1,5 +1,6 @@
 package me.matsumo.fanbox.feature.welcome
 
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SnackbarHost
@@ -73,7 +74,7 @@ fun WelcomeNavHost(
             },
         ) {
             NavHost(
-                modifier = modifier,
+                modifier = Modifier.fillMaxSize(),
                 navController = navController,
                 startDestination = startDestination,
                 enterTransition = { NavigateAnimation.Horizontal.enter },

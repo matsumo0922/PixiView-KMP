@@ -18,6 +18,7 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import com.google.android.play.core.review.ReviewManagerFactory
+import kotlinx.collections.immutable.persistentMapOf
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
 import me.matsumo.fanbox.core.datastore.LaunchLogDataStore
@@ -71,7 +72,7 @@ class MainActivity : FragmentActivity(), KoinComponent {
                 PixiViewApp(
                     modifier = Modifier.fillMaxSize(),
                     windowSize = windowSize.widthSizeClass,
-                    nativeViews = emptyMap(),
+                    nativeViews = persistentMapOf(),
                 )
 
                 splashScreen.setKeepOnScreenCondition { userData == null }

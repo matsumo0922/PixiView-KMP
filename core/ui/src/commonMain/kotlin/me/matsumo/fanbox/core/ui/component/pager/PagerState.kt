@@ -1,3 +1,5 @@
+@file:Suppress("ClassOrdering")
+
 package me.matsumo.fanbox.core.ui.component.pager
 
 import androidx.annotation.FloatRange

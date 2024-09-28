@@ -12,7 +12,6 @@ import platform.UIKit.UIAlertActionStyleDefault
 import platform.UIKit.UIAlertController
 import platform.UIKit.UIAlertControllerStyleAlert
 import platform.UIKit.UIApplication
-import platform.objc.sel_registerName
 
 @Composable
 actual fun SimpleAlertDialog(
@@ -66,9 +65,6 @@ private class AlertDialogManager(
 ) {
     private var isPresented = false
     private var isAnimating = false
-
-    @OptIn(ExperimentalForeignApi::class)
-    private val dismissPointer = sel_registerName("dismiss")
 
     private val onDismissLambda = {
         UIApplication.sharedApplication.keyWindow?.rootViewController?.dismissViewControllerAnimated(

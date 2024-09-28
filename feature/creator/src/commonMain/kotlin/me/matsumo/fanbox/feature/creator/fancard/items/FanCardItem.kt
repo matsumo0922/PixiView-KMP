@@ -24,7 +24,6 @@ import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import coil3.annotation.ExperimentalCoilApi
 import coil3.compose.LocalPlatformContext
 import coil3.compose.SubcomposeAsyncImage
 import coil3.request.ImageRequest
@@ -37,7 +36,6 @@ import me.matsumo.fanbox.core.ui.im_fanbox_logo_dark
 import me.matsumo.fanbox.core.ui.im_fanbox_logo_light
 import org.jetbrains.compose.resources.painterResource
 
-@OptIn(ExperimentalCoilApi::class)
 @Composable
 internal fun FanCardItem(
     planDetail: FanboxCreatorPlanDetail,
@@ -176,13 +174,3 @@ private fun cardTextStyle(fontSize: TextUnit) = TextStyle(
         blurRadius = 3f,
     ),
 )
-
-private fun isColorLight(color: Int): Boolean {
-    val red = (color shr 16) and 0xff
-    val green = (color shr 8) and 0xff
-    val blue = color and 0xff
-
-    // 輝度の計算
-    val brightness = (red * 0.299) + (green * 0.587) + (blue * 0.114)
-    return brightness > 160 // 160を閾値として明るさを判断
-}

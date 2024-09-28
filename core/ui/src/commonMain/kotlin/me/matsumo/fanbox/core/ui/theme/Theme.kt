@@ -14,6 +14,8 @@ import io.github.alexzhirkevich.cupertino.adaptive.AdaptiveTheme
 import io.github.alexzhirkevich.cupertino.adaptive.ExperimentalAdaptiveApi
 import io.github.alexzhirkevich.cupertino.adaptive.Theme
 import io.github.alexzhirkevich.cupertino.theme.CupertinoTheme
+import kotlinx.collections.immutable.ImmutableMap
+import kotlinx.collections.immutable.persistentMapOf
 import me.matsumo.fanbox.core.common.PixiViewConfig
 import me.matsumo.fanbox.core.model.ThemeColorConfig
 import me.matsumo.fanbox.core.model.ThemeConfig
@@ -105,7 +107,7 @@ fun PixiViewTheme(
     pixiViewConfig: PixiViewConfig = PixiViewConfig.dummy(),
     themeConfig: ThemeConfig = ThemeConfig.System,
     themeColorConfig: ThemeColorConfig = ThemeColorConfig.Red,
-    nativeViews: Map<String, () -> NativeView?> = emptyMap(),
+    nativeViews: ImmutableMap<String, () -> NativeView?> = persistentMapOf(),
     content: @Composable () -> Unit,
 ) {
     val shouldUseDarkTheme = shouldUseDarkTheme(themeConfig)

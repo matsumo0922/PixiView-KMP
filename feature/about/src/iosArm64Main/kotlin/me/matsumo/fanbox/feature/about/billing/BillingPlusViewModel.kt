@@ -3,8 +3,6 @@ package me.matsumo.fanbox.feature.about.billing
 import androidx.lifecycle.viewModelScope
 import coil3.PlatformContext
 import io.github.aakira.napier.Napier
-import kotlinx.cinterop.ExperimentalForeignApi
-import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.channels.awaitClose
 import kotlinx.coroutines.flow.SharingStarted
@@ -19,14 +17,12 @@ import me.matsumo.fanbox.core.common.util.suspendRunCatching
 import me.matsumo.fanbox.core.model.ScreenState
 import me.matsumo.fanbox.core.repository.UserDataRepository
 import me.matsumo.fanbox.core.ui.Res
+import me.matsumo.fanbox.core.ui.common_close
+import me.matsumo.fanbox.core.ui.error_billing
 import kotlin.coroutines.resume
 
-@OptIn(ExperimentalForeignApi::class)
-class BillingPlusViewModelImpl
-@OptIn(ExperimentalForeignApi::class)
-constructor(
+class BillingPlusViewModelImpl(
     private val userDataRepository: UserDataRepository,
-    private val ioDispatcher: CoroutineDispatcher,
 ) : BillingPlusViewModel() {
 
     override val screenState = userDataRepository.userData.map { userData ->

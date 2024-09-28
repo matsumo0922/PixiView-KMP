@@ -13,7 +13,6 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.GridItemSpan
@@ -64,8 +63,6 @@ import me.matsumo.fanbox.core.ui.view.PagingErrorSection
 
 @Composable
 internal fun CreatorTopPostsScreen(
-    listState: LazyListState,
-    gridState: LazyGridState,
     userData: UserData,
     bookmarkedPosts: ImmutableList<PostId>,
     pagingAdapter: LazyPagingItems<FanboxPost>,

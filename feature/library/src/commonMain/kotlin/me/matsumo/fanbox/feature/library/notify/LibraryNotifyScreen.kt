@@ -55,7 +55,7 @@ internal fun LibraryNotifyRoute(
         val paging = it.paging.collectAsLazyPagingItems()
 
         LibraryNotifyScreen(
-            modifier = modifier,
+            modifier = Modifier.fillMaxSize(),
             openDrawer = openDrawer,
             onClickBell = navigateToPostDetail,
             pagingAdapter = paging,

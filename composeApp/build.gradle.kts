@@ -1,3 +1,4 @@
+@file:Suppress("UnusedPrivateProperty")
 
 import com.android.build.api.variant.BuildConfigField
 import com.android.build.api.variant.ResValue
@@ -132,7 +133,6 @@ kotlin {
         }
 
         val androidMain by getting {
-            dependsOn(commonMain)
             dependencies {
                 implementation(libs.androidx.core.splashscreen)
                 implementation(libs.play.review)
@@ -140,16 +140,6 @@ kotlin {
                 implementation(libs.google.material)
                 implementation(libs.koin.androidx.startup)
             }
-        }
-
-        val iosX64Main by getting
-        val iosArm64Main by getting
-        val iosSimulatorArm64Main by getting
-        val iosMain by getting {
-            dependsOn(commonMain)
-            iosX64Main.dependsOn(this)
-            iosArm64Main.dependsOn(this)
-            iosSimulatorArm64Main.dependsOn(this)
         }
     }
 }

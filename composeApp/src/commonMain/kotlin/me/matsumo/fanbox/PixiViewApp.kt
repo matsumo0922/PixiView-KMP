@@ -27,6 +27,7 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import dev.icerock.moko.biometry.compose.BindBiometryAuthenticatorEffect
 import dev.icerock.moko.biometry.compose.rememberBiometryAuthenticatorFactory
 import io.github.aakira.napier.Napier
+import kotlinx.collections.immutable.ImmutableMap
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import me.matsumo.fanbox.core.common.PixiViewConfig
@@ -48,13 +49,11 @@ import me.matsumo.fanbox.core.ui.view.NativeView
 import me.matsumo.fanbox.feature.welcome.WelcomeNavHost
 import org.koin.compose.koinInject
 import org.koin.compose.viewmodel.koinViewModel
-import org.koin.core.annotation.KoinExperimentalAPI
 
-@OptIn(KoinExperimentalAPI::class)
 @Composable
 fun PixiViewApp(
     windowSize: WindowWidthSizeClass,
-    nativeViews: Map<String, () -> NativeView?>,
+    nativeViews: ImmutableMap<String, () -> NativeView?>,
     modifier: Modifier = Modifier,
     viewModel: PixiViewViewModel = koinViewModel(),
     navigatorExtension: NavigatorExtension = koinInject(),
@@ -203,9 +202,4 @@ private fun shouldUseDarkTheme(screenState: ScreenState<MainUiState>): Boolean {
         ThemeConfig.Dark -> true
         ThemeConfig.System -> default
     }
-}
-
-private fun shouldUseDynamicColor(screenState: ScreenState<MainUiState>): Boolean {
-    val data = (screenState as? ScreenState.Idle)?.data ?: return false
-    return data.userData.isUseDynamicColor
 }

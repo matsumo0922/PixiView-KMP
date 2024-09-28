@@ -1,3 +1,5 @@
+@file:Suppress("UnusedPrivateProperty")
+
 plugins {
     id("pixiview.primitive.kmp.common")
     id("pixiview.primitive.kmp.android.library")
@@ -49,22 +51,10 @@ kotlin {
         }
 
         val androidMain by getting {
-            dependsOn(commonMain)
-
             dependencies {
                 implementation(libs.bundles.media3)
                 api(libs.bundles.ui.android.api)
             }
-        }
-
-        val iosX64Main by getting
-        val iosArm64Main by getting
-        val iosSimulatorArm64Main by getting
-        val iosMain by getting {
-            dependsOn(commonMain)
-            iosX64Main.dependsOn(this)
-            iosArm64Main.dependsOn(this)
-            iosSimulatorArm64Main.dependsOn(this)
         }
     }
 }

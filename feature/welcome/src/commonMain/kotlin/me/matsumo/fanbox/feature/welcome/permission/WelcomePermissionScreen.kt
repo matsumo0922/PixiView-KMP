@@ -119,6 +119,7 @@ private fun FirstSection(
     )
 }
 
+@Suppress("SwallowedException")
 @Composable
 private fun SecondSection(
     navigateToHome: () -> Unit,

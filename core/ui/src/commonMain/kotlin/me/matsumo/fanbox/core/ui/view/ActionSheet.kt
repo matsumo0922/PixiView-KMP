@@ -25,6 +25,7 @@ import me.matsumo.fanbox.core.ui.extensition.currentPlatform
 import org.jetbrains.compose.resources.StringResource
 import org.jetbrains.compose.resources.stringResource
 
+@Suppress("UnstableCollections", "ModifierMissing")
 @OptIn(ExperimentalCupertinoApi::class)
 @Composable
 fun ActionSheet(

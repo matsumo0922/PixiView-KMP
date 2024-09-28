@@ -39,6 +39,7 @@ import me.matsumo.fanbox.core.ui.theme.bold
 import org.jetbrains.compose.resources.stringResource
 import org.koin.compose.koinInject
 
+@Suppress("UnstableCollections", "ModifierMissing")
 @Composable
 actual fun CreatorTopRewardAdDialog(
     isAbleToReward: Boolean,

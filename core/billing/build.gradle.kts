@@ -30,7 +30,7 @@ kotlin {
     if (System.getProperty("os.name").lowercase().contains("mac")) {
         listOf(iosArm64()).forEach {
             it.compilations {
-                val main by getting {
+                getByName("main") {
                     cinterops {
                         create("BillingSwift")
                     }

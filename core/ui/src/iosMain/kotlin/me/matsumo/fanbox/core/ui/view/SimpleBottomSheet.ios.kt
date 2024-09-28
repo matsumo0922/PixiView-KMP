@@ -2,6 +2,7 @@ package me.matsumo.fanbox.core.ui.view
 
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ColumnScope
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
@@ -36,6 +37,7 @@ import platform.UIKit.sheetPresentationController
 import platform.UIKit.transitioningDelegate
 import kotlin.concurrent.Volatile
 
+@Suppress("UnstableCollections", "ModifierMissing")
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 actual fun SimpleBottomSheet(
@@ -70,7 +72,7 @@ actual fun SimpleBottomSheet(
                                 )
                             },
                         ) {
-                            Column(modifier) {
+                            Column(Modifier.fillMaxWidth()) {
                                 content.invoke(this)
                             }
                         }
@@ -224,9 +226,9 @@ private class AdaptiveSheetState(
 
     companion object {
         /**
-         * The default [Saver] implementation for [AdaptiveSheetState].
+         * The default [saver] implementation for [AdaptiveSheetState].
          */
-        fun Saver(
+        fun saver(
             skipPartiallyExpanded: Boolean,
             confirmValueChange: (SheetValue) -> Boolean,
         ) = Saver<AdaptiveSheetState, SheetValue>(
@@ -247,7 +249,7 @@ private fun rememberAdaptiveSheetState(
     return rememberSaveable(
         skipPartiallyExpanded,
         confirmValueChange,
-        saver = AdaptiveSheetState.Saver(
+        saver = AdaptiveSheetState.saver(
             skipPartiallyExpanded = skipPartiallyExpanded,
             confirmValueChange = confirmValueChange,
         ),

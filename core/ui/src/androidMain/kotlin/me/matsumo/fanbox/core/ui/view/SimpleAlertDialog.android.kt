@@ -21,6 +21,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
 import me.matsumo.fanbox.core.ui.theme.bold
 
+@Suppress("UnstableCollections", "ModifierMissing")
 @Composable
 actual fun SimpleAlertDialog(
     title: String,

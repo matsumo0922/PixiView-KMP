@@ -290,8 +290,6 @@ private fun CreatorTopScreen(
                             ) {
                                 CreatorTopPostsScreen(
                                     modifier = Modifier.fillMaxSize(),
-                                    listState = postsListState,
-                                    gridState = postsGridState,
                                     userData = userData,
                                     bookmarkedPosts = bookmarkedPosts.toImmutableList(),
                                     pagingAdapter = creatorPostsPaging,
