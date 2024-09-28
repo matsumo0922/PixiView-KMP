@@ -159,5 +159,12 @@
     "date": "2024/09/19",
     "logJp": "・クリエイターの投稿一覧が見られない問題を修正",
     "logEn": "・Fixed an issue where the list of posts by all creators could not be seen"
+  },
+  {
+    "versionName": "2.1.6",
+    "versionCode": 42,
+    "date": "2024/09/28",
+    "logJp": "・動画ファイルのプレビューに対応\n・予測型戻るジェスチャーに対応\n・不要となった権限を削除\n・iOS版で一部の数値が乱れている問題を修正\n・決済履歴が見られない問題を修正",
+    "logEn": "・Supports video preview\n・Supports predictive back gestures\n・Deletes unnecessary permissions\n・Fixes an issue where some numbers are distorted on the iOS version\n・Payment history can be viewed Fixed an issue where the"
   }
 ]

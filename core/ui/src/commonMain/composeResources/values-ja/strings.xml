@@ -244,7 +244,7 @@
     <string name="setting_theme_color">テーマカラー</string>
     <string name="setting_theme_color_description">アプリのテーマカラーを設定します。Dynamic Color と同時使用はできません。</string>
     <string name="setting_developer_title">開発モード</string>
-    <string name="setting_developer_warning">You are trying to turn on this mode.Please enter the developer\'s PIN.\n\n[Warning] When this mode is turned on, you will not be able to receive any support.</string>
+    <string name="setting_developer_warning">You are trying to turn on this mode. Please enter the developer\'s PIN.\n\n[Warning] When this mode is turned on, you will not be able to receive any support.</string>
 
     <!-- About -->
     <string name="about_title">アプリについて</string>
@@ -267,7 +267,7 @@
     <string name="billing_plus_purchase_button">%1$sで支援</string>
     <string name="billing_plus_verify_button">購入を復元</string>
     <string name="billing_plus_consume_button">購入を消費</string>
-    <string name="billing_plus_caution1">※ %1$s+ は下記の限定機能を追加する定期購入契約です。支払いは直ちに行われ、機能を利用し続けるには指定された期間ごとの更新が必要となります。解約はいつでも可能です。</string>
+    <string name="billing_plus_caution1">※ %1$s+ は上記の限定機能を追加する定期購入契約です。支払いは直ちに行われ、機能を利用し続けるには指定された期間ごとの更新が必要となります。解約はいつでも可能です。</string>
     <string name="billing_plus_caution2">※ アプリ利用開始時に利用規約とプライバシーポリシーにすでに同意されていますが、設定画面から再度ご確認ください。</string>
     <string name="billing_plus_plan_monthly">通常プラン</string>
     <string name="billing_plus_plan_yearly">年間プラン</string>

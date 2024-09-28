@@ -1,5 +1,4 @@
 package primitive
-import org.gradle.api.JavaVersion
 import org.gradle.api.Plugin
 import org.gradle.api.Project
 import org.gradle.kotlin.dsl.configure
@@ -16,14 +15,6 @@ class KmpCommonPlugin : Plugin<Project> {
             kotlin {
                 // https://stackoverflow.com/questions/36465824/android-studio-task-testclasses-not-found-in-project
                 task("testClasses")
-            }
-
-            tasks.withType(org.jetbrains.kotlin.gradle.tasks.KotlinCompile::class.java) {
-                kotlinOptions.jvmTarget = JavaVersion.VERSION_17.toString()
-                compilerOptions.freeCompilerArgs.addAll(
-                    "-P",
-                    "plugin:androidx.compose.compiler.plugins.kotlin:experimentalStrongSkipping=true",
-                )
             }
 
             tasks.withType<org.jetbrains.kotlin.gradle.tasks.KotlinNativeLink>().configureEach {

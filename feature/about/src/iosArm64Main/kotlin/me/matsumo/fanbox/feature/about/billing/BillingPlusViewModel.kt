@@ -3,7 +3,7 @@ package me.matsumo.fanbox.feature.about.billing
 import androidx.lifecycle.viewModelScope
 import coil3.PlatformContext
 import io.github.aakira.napier.Napier
-import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.cinterop.ExperimentalForeignApi
 import kotlinx.coroutines.channels.awaitClose
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.callbackFlow
@@ -21,6 +21,7 @@ import me.matsumo.fanbox.core.ui.common_close
 import me.matsumo.fanbox.core.ui.error_billing
 import kotlin.coroutines.resume
 
+@OptIn(ExperimentalForeignApi::class)
 class BillingPlusViewModelImpl(
     private val userDataRepository: UserDataRepository,
 ) : BillingPlusViewModel() {
@@ -33,7 +34,6 @@ class BillingPlusViewModelImpl(
                         BillingPlusUiState(
                             isPlusMode = userData.isPlusMode,
                             isDeveloperMode = userData.isDeveloperMode,
-                            formattedPrice = product!!.formattedPrice(),
                         )
                     }
 
@@ -59,7 +59,6 @@ class BillingPlusViewModelImpl(
         initialValue = ScreenState.Loading,
     )
 
-    @OptIn(ExperimentalCoroutinesApi::class)
     override suspend fun purchase(context: PlatformContext, planType: BillingPlusUiState.Type): Boolean = suspendCancellableCoroutine { continuation ->
         BillingController.purchaseOnResult(
             onResult = {
