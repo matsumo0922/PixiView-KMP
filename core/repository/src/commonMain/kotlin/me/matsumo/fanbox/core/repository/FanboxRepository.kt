@@ -10,13 +10,19 @@ import io.github.aakira.napier.Napier
 import io.ktor.client.HttpClient
 import io.ktor.client.request.get
 import io.ktor.client.request.header
+import io.ktor.client.request.options
 import io.ktor.client.request.parameter
 import io.ktor.client.request.post
+import io.ktor.client.request.setBody
 import io.ktor.client.request.url
 import io.ktor.client.statement.HttpResponse
 import io.ktor.client.statement.bodyAsText
+import io.ktor.client.statement.request
+import io.ktor.http.ContentType
 import io.ktor.http.HttpMessageBuilder
-import io.ktor.util.InternalAPI
+import io.ktor.http.content.TextContent
+import io.ktor.http.contentType
+import io.ktor.utils.io.InternalAPI
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -159,6 +165,7 @@ interface FanboxRepository {
 
 class FanboxRepositoryImpl(
     private val client: HttpClient,
+    private val defaultClient: HttpClient,
     private val formatter: Json,
     private val fanboxCookieDataStore: FanboxCookieDataStore,
     private val bookmarkDataStore: BookmarkDataStore,
@@ -512,15 +519,24 @@ class FanboxRepositoryImpl(
 
     @OptIn(InternalAPI::class)
     private suspend fun post(dir: String, parameters: Map<String, String> = emptyMap()): HttpResponse {
-        return client.post {
+        val requestBody = buildJsonObject {
+            for ((key, value) in parameters) {
+                put(key, value)
+            }
+        }
+
+        return defaultClient.post {
             url("$API/$dir")
             fanboxHeader()
-
-            body = buildJsonObject {
-                for ((key, value) in parameters) {
-                    put(key, value)
-                }
-            }.toString()
+            contentType(ContentType.Application.Json)
+            setBody(
+                TextContent(
+                    text = requestBody.toString(),
+                    contentType = ContentType.Application.Json,
+                )
+            )
+        }.also {
+            Napier.d { it.request.toString() }
         }
     }
 
@@ -533,7 +549,7 @@ class FanboxRepositoryImpl(
 
     private suspend fun HttpMessageBuilder.fanboxHeader() {
         header("origin", "https://www.fanbox.cc")
-        header("referer", "https://www.fanbox.cc")
+        header("referer", "https://www.fanbox.cc/")
         header("user-agent", "Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Mobile Safari/537.36")
         header("x-csrf-token", metaData.first().csrfToken)
     }

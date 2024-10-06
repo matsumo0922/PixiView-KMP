@@ -20,6 +20,7 @@ import com.eygraber.compose.placeholder.PlaceholderHighlight
 import com.eygraber.compose.placeholder.material3.fade
 import com.eygraber.compose.placeholder.material3.shimmer
 import com.eygraber.compose.placeholder.placeholder
+import io.github.aakira.napier.Napier
 import io.github.alexzhirkevich.cupertino.adaptive.AdaptiveCircularProgressIndicator
 import io.github.alexzhirkevich.cupertino.adaptive.ExperimentalAdaptiveApi
 import me.matsumo.fanbox.core.model.fanbox.FanboxMetaData
@@ -54,6 +55,10 @@ fun ImageRequest.Builder.fanboxHeader(): ImageRequest.Builder {
                 }
             }
             .build(),
+    )
+
+    listener(
+        onError = { _, e -> Napier.e(e.throwable) { "ImageRequest error: $e" } },
     )
 
     return this

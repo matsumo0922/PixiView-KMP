@@ -61,8 +61,8 @@ billing = "6.1.0"
 koin = "4.0.0"
 
 # Others
-ktor = "2.3.12"
-coil3 = "3.0.0-alpha06"
+ktor = "3.0.0-rc-2"
+coil3 = "3.0.0-alpha10"
 ksoup = "0.1.2"
 composeWebView = "1.9.40-alpha01"
 windowSize = "0.3.2"
@@ -205,7 +205,7 @@ ktot-logging = { module = "io.ktor:ktor-client-logging", version.ref = "ktor" }
 
 # Others
 coil3-compose = { module = "io.coil-kt.coil3:coil-compose", version.ref = "coil3" }
-coil3-network = { module = "io.coil-kt.coil3:coil-network-ktor", version.ref = "coil3" }
+coil3-network = { module = "io.coil-kt.coil3:coil-network-ktor3", version.ref = "coil3" }
 coil3-gif = { module = "io.coil-kt.coil3:coil-gif", version.ref = "coil3" }
 ksoup = { module = "com.fleeksoft.ksoup:ksoup", version.ref = "ksoup" }
 webview-compose = { module = "io.github.kevinnzou:compose-webview-multiplatform", version.ref = "composeWebView" }

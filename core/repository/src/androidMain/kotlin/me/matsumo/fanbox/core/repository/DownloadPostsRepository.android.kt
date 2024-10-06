@@ -9,6 +9,7 @@ import android.provider.MediaStore
 import android.webkit.MimeTypeMap
 import io.ktor.client.call.body
 import io.ktor.utils.io.ByteReadChannel
+import io.ktor.utils.io.readRemaining
 import io.ktor.utils.io.streams.writePacket
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.async

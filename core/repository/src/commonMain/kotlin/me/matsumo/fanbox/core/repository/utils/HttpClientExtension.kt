@@ -56,7 +56,7 @@ fun HttpResponse.isSuccess(allowRange: IntRange = 200..299): Boolean {
     return (this.status.value in allowRange)
 }
 
-fun HttpResponse.requireSuccess(allowRange: IntRange = 200..299): HttpResponse {
-    if (!isSuccess(allowRange)) error("Request failed: ${this.status.value}")
+suspend fun HttpResponse.requireSuccess(allowRange: IntRange = 200..299): HttpResponse {
+    if (!isSuccess(allowRange)) error("Request failed: ${this.status.value}, ${this.bodyAsText()}")
     return this
 }

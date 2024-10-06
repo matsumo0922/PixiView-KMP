@@ -21,7 +21,7 @@ class CookiesStorage(
     }
 
     override suspend fun get(requestUrl: Url): List<Cookie> = mutex.withLock {
-        if (requestUrl.toString().contains("https://www.fanbox.cc")) return@withLock emptyList()
+        // if (requestUrl.toString().contains("https://www.fanbox.cc")) return@withLock emptyList()
         cookieDataStore.getCookies().map { parseServerSetCookieHeader(it) }
     }
 
