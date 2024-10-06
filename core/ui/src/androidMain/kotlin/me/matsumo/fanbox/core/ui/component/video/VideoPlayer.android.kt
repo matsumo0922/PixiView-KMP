@@ -35,6 +35,9 @@ import androidx.compose.ui.unit.DpSize
 import androidx.compose.ui.unit.IntSize
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.viewinterop.AndroidView
+import androidx.lifecycle.DefaultLifecycleObserver
+import androidx.lifecycle.LifecycleOwner
+import androidx.lifecycle.compose.LocalLifecycleOwner
 import androidx.media3.common.MediaItem
 import androidx.media3.common.Player
 import androidx.media3.common.util.UnstableApi
@@ -52,6 +55,7 @@ import me.matsumo.fanbox.core.ui.view.LoadingView
 @Composable
 actual fun VideoPlayer(url: String, modifier: Modifier) {
     val context = LocalContext.current
+    val lifecycleOwner = LocalLifecycleOwner.current
     val cookie = LocalFanboxCookie.current.cookie
 
     var playerSize by remember { mutableStateOf(IntSize.Zero) }
@@ -59,7 +63,7 @@ actual fun VideoPlayer(url: String, modifier: Modifier) {
     var isLoading by remember { mutableStateOf(true) }
     var isPlaying by remember { mutableStateOf(true) }
 
-    val exoPlayer = remember {
+    val exoPlayer = remember(context) {
         ExoPlayer.Builder(context)
             .setHandleAudioBecomingNoisy(true)
             .setMediaSourceFactory(getMediaSourceFactory(cookie))
@@ -79,6 +83,7 @@ actual fun VideoPlayer(url: String, modifier: Modifier) {
             }
         })
 
+        exoPlayer.volume = 0f
         exoPlayer.repeatMode = Player.REPEAT_MODE_ONE
         exoPlayer.playWhenReady = true
 
@@ -86,6 +91,17 @@ actual fun VideoPlayer(url: String, modifier: Modifier) {
             exoPlayer.pause()
             exoPlayer.release()
         }
+    }
+
+    DisposableEffect(lifecycleOwner) {
+        val observer = object : DefaultLifecycleObserver {
+            override fun onPause(owner: LifecycleOwner) {
+                exoPlayer.playWhenReady = false
+            }
+        }
+
+        lifecycleOwner.lifecycle.addObserver(observer)
+        onDispose { lifecycleOwner.lifecycle.removeObserver(observer) }
     }
 
     LaunchedEffect(isDisplayController) {
@@ -183,7 +199,8 @@ private fun IntSize.toDpSize(): DpSize {
 
 @OptIn(UnstableApi::class)
 private fun getMediaSourceFactory(cookie: String): MediaSource.Factory {
-    val userAgent = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/98.0.4758.102 Safari/537.36"
+    val userAgent =
+        "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/98.0.4758.102 Safari/537.36"
     val headers = mutableMapOf<String, String>().apply {
         put("origin", "https://www.fanbox.cc")
         put("referer", "https://www.fanbox.cc")

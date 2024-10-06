@@ -135,12 +135,12 @@ class PostDetailViewModel(
             (screenState.value as? ScreenState.Idle)?.also { data ->
                 _screenState.value = suspendRunCatching {
                     fanboxRepository.addComment(postId, body, rootCommentId, parentCommentId)
-                    fanboxRepository.getPost(postId)
+                    fanboxRepository.getPostComment(postId)
                 }.fold(
                     onSuccess = {
                         ScreenState.Idle(
                             data.data.copy(
-                                postDetail = it,
+                                comments = it,
                                 messageToast = Res.string.post_detail_comment_commented,
                             ),
                         )
@@ -157,17 +157,17 @@ class PostDetailViewModel(
         }
     }
 
-    fun commentDelete(commentId: CommentId) {
+    fun commentDelete(postId: PostId, commentId: CommentId) {
         viewModelScope.launch {
             (screenState.value as? ScreenState.Idle)?.also { data ->
                 _screenState.value = suspendRunCatching {
                     fanboxRepository.deleteComment(commentId)
-                    fanboxRepository.getPost(data.data.postDetail.id)
+                    fanboxRepository.getPostComment(postId)
                 }.fold(
                     onSuccess = {
                         ScreenState.Idle(
                             data.data.copy(
-                                postDetail = it,
+                                comments = it,
                                 messageToast = Res.string.post_detail_comment_delete_success,
                             ),
                         )

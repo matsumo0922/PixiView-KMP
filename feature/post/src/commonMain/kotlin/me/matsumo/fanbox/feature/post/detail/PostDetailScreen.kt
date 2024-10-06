@@ -15,7 +15,7 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.InsertDriveFile
+import androidx.compose.material.icons.automirrored.filled.InsertDriveFile
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
@@ -234,7 +234,7 @@ private fun PostDetailView(
                         commentId = it.value,
                     ).send()
 
-                    viewModel.commentDelete(it)
+                    viewModel.commentDelete(postId, it)
                 }
             },
             onClickTag = { navigateToPostSearch.invoke(it, uiState.postDetail.user.creatorId) },
@@ -534,7 +534,7 @@ private fun FileThumbnail(
     ) {
         Icon(
             modifier = Modifier.size(48.dp),
-            imageVector = Icons.Filled.InsertDriveFile,
+            imageVector = Icons.AutoMirrored.Filled.InsertDriveFile,
             tint = Color.White,
             contentDescription = null,
         )

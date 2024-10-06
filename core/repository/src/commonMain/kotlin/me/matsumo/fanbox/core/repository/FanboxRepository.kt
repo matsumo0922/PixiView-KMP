@@ -10,14 +10,12 @@ import io.github.aakira.napier.Napier
 import io.ktor.client.HttpClient
 import io.ktor.client.request.get
 import io.ktor.client.request.header
-import io.ktor.client.request.options
 import io.ktor.client.request.parameter
 import io.ktor.client.request.post
 import io.ktor.client.request.setBody
 import io.ktor.client.request.url
 import io.ktor.client.statement.HttpResponse
 import io.ktor.client.statement.bodyAsText
-import io.ktor.client.statement.request
 import io.ktor.http.ContentType
 import io.ktor.http.HttpMessageBuilder
 import io.ktor.http.content.TextContent
@@ -107,7 +105,12 @@ interface FanboxRepository {
 
     suspend fun getHomePosts(cursor: FanboxCursor?, loadSize: Int = cursor?.limit ?: 10): PageCursorInfo<FanboxPost>
     suspend fun getSupportedPosts(cursor: FanboxCursor?, loadSize: Int = cursor?.limit ?: 10): PageCursorInfo<FanboxPost>
-    suspend fun getCreatorPosts(creatorId: CreatorId, currentCursor: FanboxCursor, nextCursor: FanboxCursor?, loadSize: Int = currentCursor?.limit ?: 10): PageCursorInfo<FanboxPost>
+    suspend fun getCreatorPosts(
+        creatorId: CreatorId,
+        currentCursor: FanboxCursor,
+        nextCursor: FanboxCursor?,
+        loadSize: Int = currentCursor.limit ?: 10
+    ): PageCursorInfo<FanboxPost>
     suspend fun getCreatorPostsPaginate(creatorId: CreatorId): List<FanboxCursor>
     suspend fun getPost(postId: PostId): FanboxPostDetail
     suspend fun getPostCached(postId: PostId): FanboxPostDetail
@@ -502,10 +505,6 @@ class FanboxRepositoryImpl(
         bookmarkDataStore.remove(post)
     }
 
-    private suspend fun html(url: String): String {
-        return client.get(url).bodyAsText()
-    }
-
     private suspend fun get(dir: String, parameters: Map<String, String> = emptyMap()): HttpResponse {
         return client.get {
             url("$API/$dir")
@@ -535,8 +534,6 @@ class FanboxRepositoryImpl(
                     contentType = ContentType.Application.Json,
                 )
             )
-        }.also {
-            Napier.d { it.request.toString() }
         }
     }
 
