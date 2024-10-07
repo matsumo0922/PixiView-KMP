@@ -232,6 +232,12 @@
     <string name="setting_top_others_open_source_license_description">Displays the OSS library license.</string>
     <string name="setting_top_others_developer_mode">Development mode</string>
     <string name="setting_top_others_developer_mode_description">[Warning] Do not enable this mode if you are not a developer.</string>
+    <string name="setting_top_file">File</string>
+    <string name="setting_top_file_directory">File location</string>
+    <string name="setting_top_file_directory_description">Change the save destination for downloaded files.</string>
+    <string name="setting_top_file_directory_image">Image location</string>
+    <string name="setting_top_file_directory_file">File location</string>
+    <string name="setting_top_file_directory_post">Batch downloaded items location</string>
     <string name="setting_account">Account</string>
     <string name="setting_account_title">Account settings</string>
     <string name="setting_account_description">Change your account name, icon, etc.</string>

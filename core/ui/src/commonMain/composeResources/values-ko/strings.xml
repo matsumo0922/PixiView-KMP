@@ -216,6 +216,12 @@
     <string name="setting_top_others_open_source_license_description">오픈 소스 라이브러리의 라이선스를 표시합니다.</string>
     <string name="setting_top_others_developer_mode">개발자 모드</string>
     <string name="setting_top_others_developer_mode_description">[경고] 개발자가 아니라면 이 설정을 활성화하지 마세요.</string>
+    <string name="setting_top_file">파일</string>
+    <string name="setting_top_file_directory">파일 위치</string>
+    <string name="setting_top_file_directory_description">다운로드한 파일의 저장 위치를 변경합니다.</string>
+    <string name="setting_top_file_directory_image">이미지 위치</string>
+    <string name="settong_top_file_directory_file">파일 위치</string>
+    <string name="setting_top_file_directory_post">일괄 다운로드한 항목 위치</string>
     <string name="setting_account">계정</string>
     <string name="setting_account_title">계정 설정</string>
     <string name="setting_account_description">계정 이름, 아이콘 등을 바꿔보세요!</string>

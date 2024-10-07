@@ -1,6 +1,7 @@
 package me.matsumo.fanbox.core.ui.component.video
 
 import android.os.Build
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.annotation.OptIn
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.fadeIn

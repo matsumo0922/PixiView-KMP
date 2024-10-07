@@ -47,6 +47,8 @@ import me.matsumo.fanbox.feature.post.search.navigateToPostSearch
 import me.matsumo.fanbox.feature.post.search.postSearchScreen
 import me.matsumo.fanbox.feature.setting.developer.navigateToSettingDeveloper
 import me.matsumo.fanbox.feature.setting.developer.settingDeveloperDialog
+import me.matsumo.fanbox.feature.setting.directory.navigateToSettingDirectory
+import me.matsumo.fanbox.feature.setting.directory.settingDirectoryScreen
 import me.matsumo.fanbox.feature.setting.oss.navigateToSettingLicense
 import me.matsumo.fanbox.feature.setting.oss.settingLicenseScreen
 import me.matsumo.fanbox.feature.setting.theme.navigateToSettingTheme
@@ -186,6 +188,7 @@ private fun NavGraphBuilder.applyNavGraph(
 
     settingTopScreen(
         navigateToThemeSetting = { mainNavController.navigateToSettingTheme() },
+        navigateToDirectorySetting = { mainNavController.navigateToSettingDirectory() },
         navigateToBillingPlus = { mainNavController.navigateToBillingPlus(it) },
         navigateToSettingDeveloper = { mainNavController.navigateToSettingDeveloper() },
         navigateToLogoutDialog = { contents, onResult ->
@@ -203,6 +206,11 @@ private fun NavGraphBuilder.applyNavGraph(
     )
 
     settingLicenseScreen(
+        terminate = { mainNavController.popBackStack() },
+    )
+
+    settingDirectoryScreen(
+        navigateToBillingPlus = { mainNavController.navigateToBillingPlus(it) },
         terminate = { mainNavController.popBackStack() },
     )
 

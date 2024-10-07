@@ -232,6 +232,12 @@
     <string name="setting_top_others_open_source_license_description">显示开源软件库许可。</string>
     <string name="setting_top_others_developer_mode">开发者模式</string>
     <string name="setting_top_others_developer_mode_description">[警告] 如果您不是开发者，请不要启用此模式。</string>
+    <string name="setting_top_file">文件</string>
+    <string name="setting_top_file_directory">文件位置</string>
+    <string name="setting_top_file_directory_description">更改下载文件的保存目的地。</string>
+    <string name="setting_top_file_directory_image">图像位置</string>
+    <string name="setting_top_file_directory_file">文件位置</string>
+    <string name="setting_top_file_directory_post">批量下载项目的位置</string>
     <string name="setting_account">账号</string>
     <string name="setting_account_title">账号设置</string>
     <string name="setting_account_description">更改您的账号名称、头像等。</string>

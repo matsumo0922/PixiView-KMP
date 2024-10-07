@@ -4,6 +4,7 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -43,6 +44,7 @@ import me.matsumo.fanbox.core.ui.setting_top_others_logout_dialog_success
 import me.matsumo.fanbox.core.ui.view.SimpleAlertContents
 import me.matsumo.fanbox.feature.setting.SettingTheme
 import me.matsumo.fanbox.feature.setting.top.items.SettingTopAccountSection
+import me.matsumo.fanbox.feature.setting.top.items.SettingTopDirectorySection
 import me.matsumo.fanbox.feature.setting.top.items.SettingTopGeneralSection
 import me.matsumo.fanbox.feature.setting.top.items.SettingTopInformationSection
 import me.matsumo.fanbox.feature.setting.top.items.SettingTopOthersSection
@@ -54,6 +56,7 @@ import org.koin.compose.viewmodel.koinViewModel
 @Composable
 internal fun SettingTopRoute(
     navigateToThemeSetting: () -> Unit,
+    navigateToDirectorySetting: () -> Unit,
     navigateToBillingPlus: (String?) -> Unit,
     navigateToLogoutDialog: (SimpleAlertContents, () -> Unit) -> Unit,
     navigateToOpenSourceLicense: () -> Unit,
@@ -97,6 +100,7 @@ internal fun SettingTopRoute(
             fanboxSessionId = uiState.fanboxSessionId,
             config = uiState.config,
             onClickThemeSetting = navigateToThemeSetting,
+            onClickDirectory = navigateToDirectorySetting,
             onClickAccountSetting = {
                 navigatorExtension.navigateToWebPage("https://www.fanbox.cc/user/settings", SettingTopRoute)
             },
@@ -157,6 +161,7 @@ private fun SettingTopScreen(
     config: PixiViewConfig,
     onClickThemeSetting: () -> Unit,
     onClickAccountSetting: () -> Unit,
+    onClickDirectory: () -> Unit,
     onClickNotifySetting: () -> Unit,
     onClickAppLock: (Boolean) -> Unit,
     onClickFollowTabDefaultHome: (Boolean) -> Unit,
@@ -217,6 +222,13 @@ private fun SettingTopScreen(
                 SettingTopThemeSection(
                     modifier = Modifier.fillMaxWidth(),
                     onClickAppTheme = onClickThemeSetting,
+                )
+            }
+
+            item {
+                SettingTopDirectorySection(
+                    modifier = Modifier.fillMaxWidth(),
+                    onClickDirectory = onClickDirectory,
                 )
             }
 

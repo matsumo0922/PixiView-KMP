@@ -16,6 +16,7 @@ fun NavController.navigateToSettingTop() {
 
 fun NavGraphBuilder.settingTopScreen(
     navigateToThemeSetting: () -> Unit,
+    navigateToDirectorySetting: () -> Unit,
     navigateToBillingPlus: (String?) -> Unit,
     navigateToLogoutDialog: (SimpleAlertContents, () -> Unit) -> Unit,
     navigateToOpenSourceLicense: () -> Unit,
@@ -26,6 +27,7 @@ fun NavGraphBuilder.settingTopScreen(
         SettingTopRoute(
             modifier = Modifier.fillMaxSize(),
             navigateToThemeSetting = navigateToThemeSetting,
+            navigateToDirectorySetting = navigateToDirectorySetting,
             navigateToBillingPlus = navigateToBillingPlus,
             navigateToOpenSourceLicense = navigateToOpenSourceLicense,
             navigateToLogoutDialog = navigateToLogoutDialog,

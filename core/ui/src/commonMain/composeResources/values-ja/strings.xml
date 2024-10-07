@@ -233,6 +233,12 @@
     <string name="setting_top_others_open_source_license_description">OSSライブラリのライセンスを表示します。</string>
     <string name="setting_top_others_developer_mode">開発モード</string>
     <string name="setting_top_others_developer_mode_description">[Warning] Do not enable this mode if you are not a developer.</string>
+    <string name="setting_top_file">ファイル</string>
+    <string name="setting_top_file_directory">ファイルの保存先</string>
+    <string name="setting_top_file_directory_description">ダウンロードしたファイルの保存先を変更します。</string>
+    <string name="setting_top_file_directory_image">画像の保存先</string>
+    <string name="setting_top_file_directory_file">ファイルの保存先</string>
+    <string name="setting_top_file_directory_post">一括ダウンロードの保存先</string>
     <string name="setting_account">アカウント</string>
     <string name="setting_account_title">アカウント設定</string>
     <string name="setting_account_description">アカウント名やアイコン変更などを行います。</string>

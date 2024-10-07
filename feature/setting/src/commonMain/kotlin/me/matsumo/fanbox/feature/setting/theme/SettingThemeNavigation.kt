@@ -7,17 +7,17 @@ import androidx.navigation.NavGraphBuilder
 import androidx.navigation.compose.composable
 import me.matsumo.fanbox.core.ui.extensition.navigateWithLog
 
-const val SettingThemeDialogRoute = "SettingTheme"
+const val SettingThemeRoute = "SettingTheme"
 
 fun NavController.navigateToSettingTheme() {
-    this.navigateWithLog(SettingThemeDialogRoute)
+    this.navigateWithLog(SettingThemeRoute)
 }
 
 fun NavGraphBuilder.settingThemeScreen(
     navigateToBillingPlus: (String?) -> Unit,
     terminate: () -> Unit,
 ) {
-    composable(SettingThemeDialogRoute) {
+    composable(SettingThemeRoute) {
         SettingThemeRoute(
             modifier = Modifier.fillMaxSize(),
             navigateToBillingPlus = navigateToBillingPlus,

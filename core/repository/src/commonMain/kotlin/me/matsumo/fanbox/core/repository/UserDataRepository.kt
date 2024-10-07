@@ -20,6 +20,9 @@ interface UserDataRepository {
     suspend fun setAgreedTermsOfService(isAgreed: Boolean)
     suspend fun setThemeConfig(themeConfig: ThemeConfig)
     suspend fun setThemeColorConfig(themeColorConfig: ThemeColorConfig)
+    suspend fun setImageSaveDirectory(directory: String)
+    suspend fun setFileSaveDirectory(directory: String)
+    suspend fun setPostSaveDirectory(directory: String)
     suspend fun setUseDynamicColor(useDynamicColor: Boolean)
     suspend fun setUseAppLock(isAppLock: Boolean)
     suspend fun setUseGridMode(isGridMode: Boolean)
@@ -66,6 +69,18 @@ class UserDataRepositoryImpl(
 
     override suspend fun setThemeColorConfig(themeColorConfig: ThemeColorConfig) {
         pixiViewDataStore.setThemeColorConfig(themeColorConfig)
+    }
+
+    override suspend fun setImageSaveDirectory(directory: String) {
+        pixiViewDataStore.setImageSaveDirectory(directory)
+    }
+
+    override suspend fun setFileSaveDirectory(directory: String) {
+        pixiViewDataStore.setFileSaveDirectory(directory)
+    }
+
+    override suspend fun setPostSaveDirectory(directory: String) {
+        pixiViewDataStore.setPostSaveDirectory(directory)
     }
 
     override suspend fun setUseAppLock(isAppLock: Boolean) {

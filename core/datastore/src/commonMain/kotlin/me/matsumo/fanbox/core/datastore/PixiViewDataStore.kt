@@ -32,6 +32,9 @@ class PixiViewDataStore(
             setAgreedTermsOfService(data.isAgreedTermsOfService)
             setThemeConfig(data.themeConfig)
             setThemeColorConfig(data.themeColorConfig)
+            setImageSaveDirectory(data.imageSaveDirectory)
+            setFileSaveDirectory(data.fileSaveDirectory)
+            setPostSaveDirectory(data.postSaveDirectory)
             setUseDynamicColor(data.isUseDynamicColor)
             setUseAppLock(data.isUseAppLock)
             setUseGridMode(data.isUseGridMode)
@@ -114,6 +117,48 @@ class PixiViewDataStore(
 
         userPreference.edit {
             it[stringPreferencesKey(UserData::themeColorConfig.name)] = themeColorConfig.name
+        }
+    }
+
+    suspend fun setImageSaveDirectory(directory: String) = withContext(ioDispatcher) {
+        if (userData.first().imageSaveDirectory == directory) return@withContext
+
+        SettingsLog.update(
+            propertyName = "imageSaveDirectory",
+            oldValue = userData.first().imageSaveDirectory,
+            newValue = directory,
+        ).send()
+
+        userPreference.edit {
+            it[stringPreferencesKey(UserData::imageSaveDirectory.name)] = directory
+        }
+    }
+
+    suspend fun setFileSaveDirectory(directory: String) = withContext(ioDispatcher) {
+        if (userData.first().fileSaveDirectory == directory) return@withContext
+
+        SettingsLog.update(
+            propertyName = "fileSaveDirectory",
+            oldValue = userData.first().fileSaveDirectory,
+            newValue = directory,
+        ).send()
+
+        userPreference.edit {
+            it[stringPreferencesKey(UserData::fileSaveDirectory.name)] = directory
+        }
+    }
+
+    suspend fun setPostSaveDirectory(directory: String) = withContext(ioDispatcher) {
+        if (userData.first().postSaveDirectory == directory) return@withContext
+
+        SettingsLog.update(
+            propertyName = "postSaveDirectory",
+            oldValue = userData.first().postSaveDirectory,
+            newValue = directory,
+        ).send()
+
+        userPreference.edit {
+            it[stringPreferencesKey(UserData::postSaveDirectory.name)] = directory
         }
     }
 
