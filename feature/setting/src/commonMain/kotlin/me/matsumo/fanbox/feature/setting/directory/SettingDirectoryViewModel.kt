@@ -8,18 +8,21 @@ import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 import me.matsumo.fanbox.core.model.ScreenState
+import me.matsumo.fanbox.core.model.fanbox.FanboxDownloadItems
+import me.matsumo.fanbox.core.repository.DownloadPostsRepository
 import me.matsumo.fanbox.core.repository.UserDataRepository
 
 class SettingDirectoryViewModel(
     private val userDataRepository: UserDataRepository,
+    private val downloadPostsRepository: DownloadPostsRepository,
 ): ViewModel() {
 
     val screenState = userDataRepository.userData.map {
         ScreenState.Idle(
             SettingDirectoryUiState(
-                imageDirectory = it.imageSaveDirectory,
-                fileDirectory = it.fileSaveDirectory,
-                postDirectory = it.postSaveDirectory,
+                imageDirectory = downloadPostsRepository.getSaveDirectory(FanboxDownloadItems.RequestType.Image),
+                fileDirectory = downloadPostsRepository.getSaveDirectory(FanboxDownloadItems.RequestType.File),
+                postDirectory = downloadPostsRepository.getSaveDirectory(FanboxDownloadItems.RequestType.Post("\${creatorName}")),
             ),
         )
     }.stateIn(

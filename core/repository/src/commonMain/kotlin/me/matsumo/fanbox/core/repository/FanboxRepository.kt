@@ -8,6 +8,7 @@ import com.fleeksoft.ksoup.Ksoup
 import com.multiplatform.webview.cookie.WebViewCookieManager
 import io.github.aakira.napier.Napier
 import io.ktor.client.HttpClient
+import io.ktor.client.plugins.onDownload
 import io.ktor.client.request.get
 import io.ktor.client.request.header
 import io.ktor.client.request.parameter
@@ -20,7 +21,6 @@ import io.ktor.http.ContentType
 import io.ktor.http.HttpMessageBuilder
 import io.ktor.http.content.TextContent
 import io.ktor.http.contentType
-import io.ktor.utils.io.InternalAPI
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -163,7 +163,7 @@ interface FanboxRepository {
     suspend fun bookmarkPost(post: FanboxPost)
     suspend fun unbookmarkPost(post: FanboxPost)
 
-    suspend fun download(url: String): HttpResponse
+    suspend fun download(url: String, onDownload: (Float) -> Unit): HttpResponse
 }
 
 class FanboxRepositoryImpl(
@@ -516,7 +516,6 @@ class FanboxRepositoryImpl(
         }
     }
 
-    @OptIn(InternalAPI::class)
     private suspend fun post(dir: String, parameters: Map<String, String> = emptyMap()): HttpResponse {
         val requestBody = buildJsonObject {
             for ((key, value) in parameters) {
@@ -537,10 +536,14 @@ class FanboxRepositoryImpl(
         }
     }
 
-    override suspend fun download(url: String): HttpResponse {
+    override suspend fun download(url: String, onDownload: (Float) -> Unit): HttpResponse {
         return client.get {
             url(url)
             fanboxHeader()
+
+            onDownload { bytesSentTotal, contentLength ->
+                onDownload.invoke(contentLength?.let { bytesSentTotal.toFloat() / it } ?: 0f)
+            }
         }
     }
 

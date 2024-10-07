@@ -24,6 +24,7 @@ import me.matsumo.fanbox.core.logs.logger.LogConfigurator
 import me.matsumo.fanbox.core.model.ScreenState
 import me.matsumo.fanbox.core.model.UserData
 import me.matsumo.fanbox.core.model.fanbox.FanboxMetaData
+import me.matsumo.fanbox.core.repository.DownloadPostsRepository
 import me.matsumo.fanbox.core.repository.FanboxRepository
 import me.matsumo.fanbox.core.repository.UserDataRepository
 import me.matsumo.fanbox.core.ui.Res
@@ -38,6 +39,7 @@ import kotlin.uuid.Uuid
 class PixiViewViewModel(
     private val userDataRepository: UserDataRepository,
     private val fanboxRepository: FanboxRepository,
+    private val downloadPostsRepository: DownloadPostsRepository,
     private val launchLogDataStore: LaunchLogDataStore,
     private val pixiViewConfig: PixiViewConfig,
     private val billingStatus: BillingStatus,

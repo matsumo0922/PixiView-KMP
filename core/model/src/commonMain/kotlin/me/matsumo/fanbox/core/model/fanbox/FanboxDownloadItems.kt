@@ -14,6 +14,7 @@ data class FanboxDownloadItems(
         val originalUrl: String,
         val thumbnailUrl: String,
         val type: Type,
+        val progress: Float = 0f,
     ) {
         enum class Type {
             Image,

@@ -19,6 +19,7 @@ import kotlinx.coroutines.launch
 import me.matsumo.fanbox.core.common.util.suspendRunCatching
 import me.matsumo.fanbox.core.logs.category.PostsLog
 import me.matsumo.fanbox.core.logs.logger.send
+import me.matsumo.fanbox.core.model.DownloadState
 import me.matsumo.fanbox.core.model.fanbox.FanboxDownloadItems
 import me.matsumo.fanbox.core.model.fanbox.FanboxPostDetail
 import me.matsumo.fanbox.core.model.fanbox.id.PostId
@@ -40,17 +41,36 @@ class DownloadPostsRepositoryImpl(
 ) : DownloadPostsRepository {
 
     private var _reservingPosts = MutableStateFlow(emptyList<FanboxDownloadItems>())
+    private val _downloadState = MutableStateFlow<DownloadState>(DownloadState.None)
 
     override val reservingPosts: StateFlow<List<FanboxDownloadItems>> = _reservingPosts.asStateFlow()
+    override val downloadState: StateFlow<DownloadState> = _downloadState.asStateFlow()
 
     init {
         scope.launch {
             while (isActive) {
                 delay(500)
 
-                val downloadItems = _reservingPosts.getAndUpdate { it.drop(1) }.firstOrNull() ?: continue
-                val items = downloadItems.items.map {
-                    async { downloadItem(it) }
+                val downloadItems = _reservingPosts.getAndUpdate { it.drop(1) }.firstOrNull()
+
+                if (downloadItems == null) {
+                    _downloadState.value = DownloadState.None
+                    continue
+                } else {
+                    val remainingItems = downloadItems.items.size + reservingPosts.value.sumOf { it.items.size }
+                    _downloadState.value = DownloadState.Downloading(progress = 0f, remainingItems)
+                }
+
+                val itemProgresses = MutableList(downloadItems.items.size) { MutableStateFlow(0f) }
+                val items = downloadItems.items.mapIndexed { index, item ->
+                    async {
+                        downloadItem(item) { progress ->
+                            itemProgresses[index].value = progress
+
+                            val totalProgress = itemProgresses.sumOf { it.value.toDouble() }.toFloat() / downloadItems.items.size
+                            _downloadState.value = DownloadState.Downloading(totalProgress, downloadItems.items.size)
+                        }
+                    }
                 }
 
                 val results = items.awaitAll()
@@ -99,6 +119,10 @@ class DownloadPostsRepositoryImpl(
         _reservingPosts.update { it + items }
     }
 
+    override suspend fun getSaveDirectory(requestType: FanboxDownloadItems.RequestType): String {
+        return "Unknown"
+    }
+
     private fun FanboxPostDetail.ImageItem.toDownloadItem(): FanboxDownloadItems.Item {
         return FanboxDownloadItems.Item(
             postId = postId,
@@ -121,10 +145,14 @@ class DownloadPostsRepositoryImpl(
         )
     }
 
-    private suspend fun downloadItem(item: FanboxDownloadItems.Item): Pair<FanboxDownloadItems.Item, ByteArray>? {
+    private suspend fun downloadItem(item: FanboxDownloadItems.Item, onDownload: (Float) -> Unit): Pair<FanboxDownloadItems.Item, ByteArray>? {
         return suspendRunCatching {
             val url = if (item.extension.lowercase() == "gif") item.originalUrl else item.thumbnailUrl
-            item to fanboxRepository.download(url).body<ByteArray>()
+            val channel = fanboxRepository.download(url, onDownload).body<ByteArray>()
+
+            onDownload.invoke(1f)
+
+            item to channel
         }.also {
             PostsLog.download(
                 type = "unknown",
