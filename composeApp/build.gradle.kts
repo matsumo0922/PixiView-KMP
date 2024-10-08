@@ -127,6 +127,7 @@ kotlin {
                 implementation(project(":feature:about"))
                 implementation(project(":feature:post"))
                 implementation(project(":feature:creator"))
+                implementation(project(":feature:service"))
 
                 implementation(libs.moko.permissions)
                 implementation(libs.moko.permissions.compose)

@@ -12,7 +12,6 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
-import io.github.aakira.napier.Napier
 import me.matsumo.fanbox.MainUiState
 import me.matsumo.fanbox.feature.welcome.WelcomeNavHost
 
@@ -31,8 +30,6 @@ internal fun PixiViewScreen(
             onRequestInitPixiViewId.invoke()
         }
     }
-
-    Napier.d { "isShowWelcomeScreen: ${uiState.isLoggedIn}, $isAgreedTeams, $isAllowedPermission" }
 
     AnimatedContent(
         modifier = modifier,

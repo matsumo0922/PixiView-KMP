@@ -52,6 +52,11 @@
             </intent-filter>
         </activity>
 
+        <service
+            android:name=".feature.service.DownloadPostService"
+            android:exported="false"
+            android:foregroundServiceType="dataSync" />
+
         <provider
             android:name="com.google.firebase.provider.FirebaseInitProvider"
             android:authorities="${applicationId}.firebaseinitprovider"

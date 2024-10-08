@@ -1,5 +1,6 @@
 package me.matsumo.fanbox
 
+import android.content.Intent
 import android.graphics.Color
 import android.os.Bundle
 import androidx.activity.SystemBarStyle
@@ -30,6 +31,7 @@ import me.matsumo.fanbox.core.model.ThemeConfig
 import me.matsumo.fanbox.core.repository.DownloadPostsRepository
 import me.matsumo.fanbox.core.repository.UserDataRepository
 import me.matsumo.fanbox.core.ui.theme.shouldUseDarkTheme
+import me.matsumo.fanbox.feature.service.DownloadPostService
 import org.koin.compose.KoinContext
 import org.koin.core.component.KoinComponent
 import org.koin.core.component.inject
@@ -88,6 +90,8 @@ class MainActivity : FragmentActivity(), KoinComponent {
                 }
             }
         }
+
+        startService(Intent(this, DownloadPostService::class.java))
     }
 
     override fun onResume() {
