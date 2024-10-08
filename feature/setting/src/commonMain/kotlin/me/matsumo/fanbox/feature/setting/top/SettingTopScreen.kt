@@ -4,7 +4,6 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -29,6 +28,7 @@ import kotlinx.coroutines.launch
 import me.matsumo.fanbox.core.common.PixiViewConfig
 import me.matsumo.fanbox.core.logs.category.WelcomeLog
 import me.matsumo.fanbox.core.logs.logger.send
+import me.matsumo.fanbox.core.model.DownloadFileType
 import me.matsumo.fanbox.core.model.UserData
 import me.matsumo.fanbox.core.model.fanbox.FanboxMetaData
 import me.matsumo.fanbox.core.ui.AsyncLoadContents
@@ -44,7 +44,7 @@ import me.matsumo.fanbox.core.ui.setting_top_others_logout_dialog_success
 import me.matsumo.fanbox.core.ui.view.SimpleAlertContents
 import me.matsumo.fanbox.feature.setting.SettingTheme
 import me.matsumo.fanbox.feature.setting.top.items.SettingTopAccountSection
-import me.matsumo.fanbox.feature.setting.top.items.SettingTopDirectorySection
+import me.matsumo.fanbox.feature.setting.top.items.SettingTopFileSection
 import me.matsumo.fanbox.feature.setting.top.items.SettingTopGeneralSection
 import me.matsumo.fanbox.feature.setting.top.items.SettingTopInformationSection
 import me.matsumo.fanbox.feature.setting.top.items.SettingTopOthersSection
@@ -113,6 +113,7 @@ internal fun SettingTopRoute(
             onClickPrivacyPolicy = {
                 navigatorExtension.navigateToWebPage("https://www.matsumo.me/application/pixiview/privacy_policy", SettingTopRoute)
             },
+            onClickDownloadFileType = viewModel::setDownloadFileType,
             onClickOpenSourceLicense = navigateToOpenSourceLicense,
             onClickFollowTabDefaultHome = viewModel::setFollowTabDefaultHome,
             onClickHideAdultContents = viewModel::setHideAdultContents,
@@ -162,6 +163,7 @@ private fun SettingTopScreen(
     onClickThemeSetting: () -> Unit,
     onClickAccountSetting: () -> Unit,
     onClickDirectory: () -> Unit,
+    onClickDownloadFileType: (DownloadFileType) -> Unit,
     onClickNotifySetting: () -> Unit,
     onClickAppLock: (Boolean) -> Unit,
     onClickFollowTabDefaultHome: (Boolean) -> Unit,
@@ -226,9 +228,11 @@ private fun SettingTopScreen(
             }
 
             item {
-                SettingTopDirectorySection(
+                SettingTopFileSection(
                     modifier = Modifier.fillMaxWidth(),
+                    userData = userData,
                     onClickDirectory = onClickDirectory,
+                    onClickDownloadFileType = onClickDownloadFileType,
                 )
             }
 

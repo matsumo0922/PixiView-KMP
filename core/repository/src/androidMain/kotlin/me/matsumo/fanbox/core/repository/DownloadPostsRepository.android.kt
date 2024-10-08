@@ -23,10 +23,12 @@ import kotlinx.coroutines.flow.getAndUpdate
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.isActive
 import kotlinx.coroutines.launch
+import kotlinx.io.readByteArray
 import me.matsumo.fanbox.core.common.util.suspendRunCatching
 import me.matsumo.fanbox.core.datastore.PixiViewDataStore
 import me.matsumo.fanbox.core.logs.category.PostsLog
 import me.matsumo.fanbox.core.logs.logger.send
+import me.matsumo.fanbox.core.model.DownloadFileType
 import me.matsumo.fanbox.core.model.DownloadState
 import me.matsumo.fanbox.core.model.fanbox.FanboxDownloadItems
 import me.matsumo.fanbox.core.model.fanbox.FanboxPostDetail
@@ -76,18 +78,21 @@ class DownloadPostsRepositoryImpl(
                 val results = items.awaitAll()
                 val pathAndMime = mutableListOf<Pair<String, String>>()
 
-                for ((item, channel) in results.filterNotNull()) {
+                for ((item, tmpFile) in results.filterNotNull()) {
                     runCatching {
                         val mime = MimeTypeMap.getSingleton().getMimeTypeFromExtension(item.extension)
-                        val parent = getParentFile(downloadItems.requestType) ?: getOldParentFile(downloadItems.requestType, mime.orEmpty())
+                        val parent = getParentFile(downloadItems.requestType) ?: getOldParentFile(downloadItems.requestType)
                         val file = parent.createFile("${item.name}.${item.extension}")
-                        val outputStream = context.contentResolver.openOutputStream(file!!.uri)!!
 
-                        while (!channel.isClosedForRead) {
-                            outputStream.writePacket(channel.readRemaining(DEFAULT_BUFFER_SIZE.toLong()))
+                        context.contentResolver.openOutputStream(file!!.uri)!!.use {
+                            tmpFile.inputStream().use { input ->
+                                input.copyTo(it)
+                            }
                         }
 
+                        tmpFile.delete()
                         pathAndMime.add(file.uri.path.orEmpty() to mime.orEmpty())
+
                         delay(100)
                     }.onFailure {
                         Napier.e(it) { "Failed to download item: ${item.name}" }
@@ -146,13 +151,7 @@ class DownloadPostsRepositoryImpl(
     }
 
     override suspend fun getSaveDirectory(requestType: FanboxDownloadItems.RequestType): String {
-        val sampleMimeType = when (requestType) {
-            is FanboxDownloadItems.RequestType.Image -> "image/jpeg"
-            is FanboxDownloadItems.RequestType.File -> "application/octet-stream"
-            is FanboxDownloadItems.RequestType.Post -> "application/octet-stream"
-        }
-
-        return (getParentFile(requestType) ?: getOldParentFile(requestType, sampleMimeType)).filePath ?: "Unknown"
+        return (getParentFile(requestType) ?: getOldParentFile(requestType)).filePath ?: "Unknown"
     }
 
     private fun FanboxPostDetail.ImageItem.toDownloadItem(): FanboxDownloadItems.Item {
@@ -177,14 +176,28 @@ class DownloadPostsRepositoryImpl(
         )
     }
 
-    private suspend fun downloadItem(item: FanboxDownloadItems.Item, onDownload: (Float) -> Unit): Pair<FanboxDownloadItems.Item, ByteReadChannel>? {
+    private suspend fun downloadItem(item: FanboxDownloadItems.Item, onDownload: (Float) -> Unit): Pair<FanboxDownloadItems.Item, File>? {
         return suspendRunCatching {
-            val url = if (item.extension.lowercase() != "gif") item.originalUrl else item.thumbnailUrl
-            val channel = fanboxRepository.download(url, onDownload).body<ByteReadChannel>()
+            val fileType = userDataStore.userData.first().downloadFileType
+            val url = if (item.extension.lowercase() != "gif" || fileType == DownloadFileType.ORIGINAL) item.originalUrl else item.thumbnailUrl
 
-            onDownload.invoke(1f)
+            val tmpFile = File(context.cacheDir, "tmp-${item.name}.${item.extension}")
 
-            item to channel
+            fanboxRepository.download(url, onDownload).execute { response ->
+                val channel = response.body<ByteReadChannel>()
+
+                while (!channel.isClosedForRead) {
+                    val packet = channel.readRemaining(DEFAULT_BUFFER_SIZE.toLong())
+
+                    while (!packet.exhausted()) {
+                        tmpFile.appendBytes(packet.readByteArray())
+                    }
+                }
+
+                onDownload.invoke(1f)
+            }
+
+            item to tmpFile
         }.also {
             PostsLog.download(
                 type = "unknown",
@@ -196,7 +209,7 @@ class DownloadPostsRepositoryImpl(
         }.getOrNull()
     }
 
-    private fun getOldParentFile(requestType: FanboxDownloadItems.RequestType, mimeType: String): UniFile {
+    private fun getOldParentFile(requestType: FanboxDownloadItems.RequestType): UniFile {
         val child = when (requestType) {
             is FanboxDownloadItems.RequestType.Image -> "FANBOX"
             is FanboxDownloadItems.RequestType.File -> "FANBOX"

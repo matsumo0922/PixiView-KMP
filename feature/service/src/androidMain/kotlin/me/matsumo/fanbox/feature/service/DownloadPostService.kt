@@ -76,12 +76,13 @@ class DownloadPostService : Service() {
     ) {
         if (isForeground) {
             if (!this.isForeground) {
+                Napier.d { "DownloadPostService start" }
                 startForeground(notifyConfig.notifyId, createNotify(baseContext, title, message, subMessage, progress))
             } else {
                 manager.notify(notifyConfig.notifyId, createNotify(baseContext, title, message, subMessage, progress))
             }
         } else {
-            Napier.d { "setForeground false" }
+            Napier.d { "DownloadPostService stop" }
             stopForeground(STOP_FOREGROUND_REMOVE)
         }
 

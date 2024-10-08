@@ -12,6 +12,7 @@ import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 import me.matsumo.fanbox.core.common.PixiViewConfig
 import me.matsumo.fanbox.core.common.util.suspendRunCatching
+import me.matsumo.fanbox.core.model.DownloadFileType
 import me.matsumo.fanbox.core.model.ScreenState
 import me.matsumo.fanbox.core.model.UserData
 import me.matsumo.fanbox.core.model.fanbox.FanboxMetaData
@@ -58,6 +59,12 @@ class SettingTopViewModel(
     fun setAppLock(isAppLock: Boolean) {
         viewModelScope.launch {
             userDataRepository.setUseAppLock(isAppLock)
+        }
+    }
+
+    fun setDownloadFileType(downloadFileType: DownloadFileType) {
+        viewModelScope.launch {
+            userDataRepository.setDownloadFileType(downloadFileType)
         }
     }
 

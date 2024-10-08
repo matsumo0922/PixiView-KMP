@@ -10,6 +10,7 @@ import kotlinx.coroutines.withContext
 import kotlinx.serialization.json.Json
 import me.matsumo.fanbox.core.logs.category.SettingsLog
 import me.matsumo.fanbox.core.logs.logger.send
+import me.matsumo.fanbox.core.model.DownloadFileType
 import me.matsumo.fanbox.core.model.ThemeColorConfig
 import me.matsumo.fanbox.core.model.ThemeConfig
 import me.matsumo.fanbox.core.model.UserData
@@ -32,6 +33,7 @@ class PixiViewDataStore(
             setAgreedTermsOfService(data.isAgreedTermsOfService)
             setThemeConfig(data.themeConfig)
             setThemeColorConfig(data.themeColorConfig)
+            setDownloadFileType(data.downloadFileType)
             setImageSaveDirectory(data.imageSaveDirectory)
             setFileSaveDirectory(data.fileSaveDirectory)
             setPostSaveDirectory(data.postSaveDirectory)
@@ -117,6 +119,20 @@ class PixiViewDataStore(
 
         userPreference.edit {
             it[stringPreferencesKey(UserData::themeColorConfig.name)] = themeColorConfig.name
+        }
+    }
+
+    suspend fun setDownloadFileType(downloadFileType: DownloadFileType) = withContext(ioDispatcher) {
+        if (userData.first().downloadFileType == downloadFileType) return@withContext
+
+        SettingsLog.update(
+            propertyName = "downloadFileType",
+            oldValue = userData.first().downloadFileType.name,
+            newValue = downloadFileType.name,
+        ).send()
+
+        userPreference.edit {
+            it[stringPreferencesKey(UserData::downloadFileType.name)] = downloadFileType.name
         }
     }
 

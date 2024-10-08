@@ -1,6 +1,5 @@
 package me.matsumo.fanbox.core.repository
 
-import io.ktor.client.call.body
 import kotlinx.cinterop.BetaInteropApi
 import kotlinx.cinterop.ExperimentalForeignApi
 import kotlinx.cinterop.allocArrayOf
@@ -12,13 +11,18 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.getAndUpdate
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.isActive
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.sync.Semaphore
+import kotlinx.coroutines.sync.withPermit
 import me.matsumo.fanbox.core.common.util.suspendRunCatching
+import me.matsumo.fanbox.core.datastore.PixiViewDataStore
 import me.matsumo.fanbox.core.logs.category.PostsLog
 import me.matsumo.fanbox.core.logs.logger.send
+import me.matsumo.fanbox.core.model.DownloadFileType
 import me.matsumo.fanbox.core.model.DownloadState
 import me.matsumo.fanbox.core.model.fanbox.FanboxDownloadItems
 import me.matsumo.fanbox.core.model.fanbox.FanboxPostDetail
@@ -34,11 +38,14 @@ import platform.Foundation.writeData
 import platform.UIKit.UIImage
 import platform.UIKit.UIImageWriteToSavedPhotosAlbum
 
-@OptIn(ExperimentalForeignApi::class, BetaInteropApi::class)
+@OptIn(ExperimentalForeignApi::class)
 class DownloadPostsRepositoryImpl(
     private val fanboxRepository: FanboxRepository,
+    private val userDataStore: PixiViewDataStore,
     private val scope: CoroutineScope,
 ) : DownloadPostsRepository {
+
+    private val semaphore = Semaphore(2)
 
     private var _reservingPosts = MutableStateFlow(emptyList<FanboxDownloadItems>())
     private val _downloadState = MutableStateFlow<DownloadState>(DownloadState.None)
@@ -61,14 +68,16 @@ class DownloadPostsRepositoryImpl(
                 val itemProgresses = MutableList(downloadItems.items.size) { MutableStateFlow(0f) }
                 val items = downloadItems.items.mapIndexed { index, item ->
                     async {
-                        downloadItem(item) { progress ->
-                            itemProgresses[index].value = progress
+                        semaphore.withPermit {
+                            downloadItem(item) { progress ->
+                                itemProgresses[index].value = progress
 
-                            _downloadState.value = DownloadState.Downloading(
-                                title = downloadItems.title,
-                                progress = itemProgresses.sumOf { it.value.toDouble() }.toFloat() / downloadItems.items.size,
-                                remainingItems = downloadItems.items.size,
-                            )
+                                _downloadState.value = DownloadState.Downloading(
+                                    title = downloadItems.title,
+                                    progress = itemProgresses.sumOf { it.value.toDouble() }.toFloat() / downloadItems.items.size,
+                                    remainingItems = downloadItems.items.size,
+                                )
+                            }
                         }
                     }
                 }
@@ -150,7 +159,8 @@ class DownloadPostsRepositoryImpl(
 
     private suspend fun downloadItem(item: FanboxDownloadItems.Item, onDownload: (Float) -> Unit): Pair<FanboxDownloadItems.Item, ByteArray>? {
         return suspendRunCatching {
-            val url = if (item.extension.lowercase() == "gif") item.originalUrl else item.thumbnailUrl
+            val fileType = userDataStore.userData.first().downloadFileType
+            val url = if (item.extension.lowercase() != "gif" || fileType == DownloadFileType.ORIGINAL) item.originalUrl else item.thumbnailUrl
             val channel = fanboxRepository.download(url, onDownload).body<ByteArray>()
 
             onDownload.invoke(1f)
@@ -167,6 +177,7 @@ class DownloadPostsRepositoryImpl(
         }.getOrNull()
     }
 
+    @OptIn(BetaInteropApi::class)
     private fun saveItem(item: FanboxDownloadItems.Item, requestType: FanboxDownloadItems.RequestType, bytes: ByteArray) {
         runCatching {
             when (item.type) {
@@ -176,6 +187,7 @@ class DownloadPostsRepositoryImpl(
 
                     UIImageWriteToSavedPhotosAlbum(uiImage, null, null, null)
                 }
+
                 FanboxDownloadItems.Item.Type.File -> {
                     val path = NSHomeDirectory() + "/Documents/FANBOX/${getParentDirName(requestType)}"
                     val nsData = memScoped { NSData.create(bytes = allocArrayOf(bytes), length = bytes.size.toULong()) }

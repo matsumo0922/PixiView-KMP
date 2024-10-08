@@ -239,6 +239,8 @@
     <string name="setting_top_file_directory_image">画像の保存先</string>
     <string name="setting_top_file_directory_file">ファイルの保存先</string>
     <string name="setting_top_file_directory_post">一括ダウンロードの保存先</string>
+    <string name="setting_top_file_type">オリジナルサイズでダウンロードする</string>
+    <string name="setting_top_file_type_description">画像を常にオリジナルサイズでダウンロードします。</string>
     <string name="setting_account">アカウント</string>
     <string name="setting_account_title">アカウント設定</string>
     <string name="setting_account_description">アカウント名やアイコン変更などを行います。</string>

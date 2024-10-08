@@ -13,9 +13,11 @@ import io.ktor.client.request.get
 import io.ktor.client.request.header
 import io.ktor.client.request.parameter
 import io.ktor.client.request.post
+import io.ktor.client.request.prepareGet
 import io.ktor.client.request.setBody
 import io.ktor.client.request.url
 import io.ktor.client.statement.HttpResponse
+import io.ktor.client.statement.HttpStatement
 import io.ktor.client.statement.bodyAsText
 import io.ktor.http.ContentType
 import io.ktor.http.HttpMessageBuilder
@@ -163,7 +165,7 @@ interface FanboxRepository {
     suspend fun bookmarkPost(post: FanboxPost)
     suspend fun unbookmarkPost(post: FanboxPost)
 
-    suspend fun download(url: String, onDownload: (Float) -> Unit): HttpResponse
+    suspend fun download(url: String, onDownload: (Float) -> Unit): HttpStatement
 }
 
 class FanboxRepositoryImpl(
@@ -536,8 +538,8 @@ class FanboxRepositoryImpl(
         }
     }
 
-    override suspend fun download(url: String, onDownload: (Float) -> Unit): HttpResponse {
-        return client.get {
+    override suspend fun download(url: String, onDownload: (Float) -> Unit): HttpStatement {
+        return client.prepareGet {
             url(url)
             fanboxHeader()
 

@@ -5,6 +5,7 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.receiveAsFlow
 import me.matsumo.fanbox.core.datastore.PixiViewDataStore
+import me.matsumo.fanbox.core.model.DownloadFileType
 import me.matsumo.fanbox.core.model.ThemeColorConfig
 import me.matsumo.fanbox.core.model.ThemeConfig
 import me.matsumo.fanbox.core.model.UserData
@@ -20,6 +21,7 @@ interface UserDataRepository {
     suspend fun setAgreedTermsOfService(isAgreed: Boolean)
     suspend fun setThemeConfig(themeConfig: ThemeConfig)
     suspend fun setThemeColorConfig(themeColorConfig: ThemeColorConfig)
+    suspend fun setDownloadFileType(downloadFileType: DownloadFileType)
     suspend fun setImageSaveDirectory(directory: String)
     suspend fun setFileSaveDirectory(directory: String)
     suspend fun setPostSaveDirectory(directory: String)
@@ -69,6 +71,10 @@ class UserDataRepositoryImpl(
 
     override suspend fun setThemeColorConfig(themeColorConfig: ThemeColorConfig) {
         pixiViewDataStore.setThemeColorConfig(themeColorConfig)
+    }
+
+    override suspend fun setDownloadFileType(downloadFileType: DownloadFileType) {
+        pixiViewDataStore.setDownloadFileType(downloadFileType)
     }
 
     override suspend fun setImageSaveDirectory(directory: String) {

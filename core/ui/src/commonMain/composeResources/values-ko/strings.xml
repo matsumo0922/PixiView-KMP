@@ -222,6 +222,8 @@
     <string name="setting_top_file_directory_image">이미지 위치</string>
     <string name="settong_top_file_directory_file">파일 위치</string>
     <string name="setting_top_file_directory_post">일괄 다운로드한 항목 위치</string>
+    <string name="setting_top_file_type">원본 크기로 다운로드</string>
+    <string name="setting_top_file_type_description">항상 원본 크기로 이미지를 다운로드하세요.</string>
     <string name="setting_account">계정</string>
     <string name="setting_account_title">계정 설정</string>
     <string name="setting_account_description">계정 이름, 아이콘 등을 바꿔보세요!</string>
