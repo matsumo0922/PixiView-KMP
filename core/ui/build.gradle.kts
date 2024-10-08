@@ -46,6 +46,7 @@ kotlin {
 
                 api(libs.calf.ui)
                 api(libs.placeholder)
+                api(libs.rich.editor)
                 api(libs.play.service.ads)
             }
         }

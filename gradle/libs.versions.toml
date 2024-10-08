@@ -1,7 +1,7 @@
 [versions]
 # Application
-versionName = "2.1.6"
-versionCode = "42"
+versionName = "2.1.7"
+versionCode = "43"
 
 # SDK
 minSdk = "26"
@@ -65,9 +65,10 @@ ktor = "3.0.0-rc-2"
 coil3 = "3.0.0-alpha10"
 ksoup = "0.1.2"
 composeWebView = "1.9.40-alpha01"
+composeRichEditor = "1.0.0-rc09"
 windowSize = "0.3.2"
 detekt = "1.23.7"
-libraries = "11.1.4"
+libraries = "11.2.3"
 buildKonfig = "0.15.1"
 cupertino = "0.1.0-alpha04"
 twitterComposeRule = "0.0.26"
@@ -211,6 +212,7 @@ coil3-gif = { module = "io.coil-kt.coil3:coil-gif", version.ref = "coil3" }
 ksoup = { module = "com.fleeksoft.ksoup:ksoup", version.ref = "ksoup" }
 unifile = { module = "com.github.tachiyomiorg:unifile", version = "17bec43" }
 webview-compose = { module = "io.github.kevinnzou:compose-webview-multiplatform", version.ref = "composeWebView" }
+rich-editor = { module = "com.mohamedrejeb.richeditor:richeditor-compose", version.ref = "composeRichEditor" }
 window-size = { module = "dev.chrisbanes.material3:material3-window-size-class-multiplatform", version.ref = "windowSize" }
 desugar = { module = "com.android.tools:desugar_jdk_libs", version = "2.1.2" }
 placeholder = { module = "com.eygraber:compose-placeholder-material3", version = "1.0.7" }
