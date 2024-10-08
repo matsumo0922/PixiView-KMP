@@ -1,7 +1,7 @@
 [versions]
 # Application
 versionName = "2.1.7"
-versionCode = "43"
+versionCode = "44"
 
 # SDK
 minSdk = "26"
@@ -61,7 +61,7 @@ billing = "6.1.0"
 koin = "4.0.0"
 
 # Others
-ktor = "3.0.0-rc-2"
+ktor = "3.0.0-eap-1107"
 coil3 = "3.0.0-alpha10"
 ksoup = "0.1.2"
 composeWebView = "1.9.40-alpha01"

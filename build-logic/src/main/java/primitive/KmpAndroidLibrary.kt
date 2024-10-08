@@ -21,6 +21,7 @@ class KmpAndroidLibrary: Plugin<Project> {
 
             androidLibrary {
                 setupAndroid()
+
             }
 
             extensions.configure<LibraryExtension> {
