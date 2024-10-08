@@ -10,7 +10,6 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.core.net.toUri
-import me.matsumo.fanbox.core.model.UserData
 import me.matsumo.fanbox.core.ui.Res
 import me.matsumo.fanbox.core.ui.component.SettingTextItem
 import me.matsumo.fanbox.core.ui.setting_top_file_directory_file
@@ -29,7 +28,7 @@ internal actual fun SettingDirectoryContent(
     onSavePostDirectory: (String) -> Unit,
     onShowSnackbar: (StringResource) -> Unit,
     onTerminate: () -> Unit,
-    modifier: Modifier
+    modifier: Modifier,
 ) {
     val context = LocalContext.current
     val imageDirectoryUri = remember(imageDirectory) { imageDirectory.toUri() }

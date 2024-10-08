@@ -50,7 +50,7 @@ internal fun PixiViewContent(
                 .fillMaxWidth(),
             visible = downloadState is DownloadState.Downloading,
             enter = fadeIn() + slideInVertically(initialOffsetY = { it / 2 }),
-            exit = fadeOut()
+            exit = fadeOut(),
         ) {
             DownloadingItem(
                 modifier = Modifier

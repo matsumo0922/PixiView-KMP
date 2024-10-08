@@ -15,7 +15,7 @@ import me.matsumo.fanbox.core.repository.UserDataRepository
 class SettingDirectoryViewModel(
     private val userDataRepository: UserDataRepository,
     private val downloadPostsRepository: DownloadPostsRepository,
-): ViewModel() {
+) : ViewModel() {
 
     val screenState = userDataRepository.userData.map {
         ScreenState.Idle(

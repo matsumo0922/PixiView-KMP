@@ -14,5 +14,5 @@ internal expect fun SettingDirectoryContent(
     onSavePostDirectory: (String) -> Unit,
     onShowSnackbar: (StringResource) -> Unit,
     onTerminate: () -> Unit,
-    modifier: Modifier
+    modifier: Modifier = Modifier,
 )

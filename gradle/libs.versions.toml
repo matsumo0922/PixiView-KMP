@@ -66,6 +66,7 @@ coil3 = "3.0.0-alpha10"
 ksoup = "0.1.2"
 composeWebView = "1.9.40-alpha01"
 composeRichEditor = "1.0.0-rc09"
+autolink = "1.1.1"
 windowSize = "0.3.2"
 detekt = "1.23.7"
 libraries = "11.2.3"
@@ -213,6 +214,7 @@ ksoup = { module = "com.fleeksoft.ksoup:ksoup", version.ref = "ksoup" }
 unifile = { module = "com.github.tachiyomiorg:unifile", version = "17bec43" }
 webview-compose = { module = "io.github.kevinnzou:compose-webview-multiplatform", version.ref = "composeWebView" }
 rich-editor = { module = "com.mohamedrejeb.richeditor:richeditor-compose", version.ref = "composeRichEditor" }
+autolink = { module = "sh.calvin.autolinktext:autolinktext", version.ref = "autolink" }
 window-size = { module = "dev.chrisbanes.material3:material3-window-size-class-multiplatform", version.ref = "windowSize" }
 desugar = { module = "com.android.tools:desugar_jdk_libs", version = "2.1.2" }
 placeholder = { module = "com.eygraber:compose-placeholder-material3", version = "1.0.7" }

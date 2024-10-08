@@ -111,7 +111,7 @@ interface FanboxRepository {
         creatorId: CreatorId,
         currentCursor: FanboxCursor,
         nextCursor: FanboxCursor?,
-        loadSize: Int = currentCursor.limit ?: 10
+        loadSize: Int = currentCursor.limit ?: 10,
     ): PageCursorInfo<FanboxPost>
     suspend fun getCreatorPostsPaginate(creatorId: CreatorId): List<FanboxCursor>
     suspend fun getPost(postId: PostId): FanboxPostDetail
@@ -533,7 +533,7 @@ class FanboxRepositoryImpl(
                 TextContent(
                     text = requestBody.toString(),
                     contentType = ContentType.Application.Json,
-                )
+                ),
             )
         }
     }

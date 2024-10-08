@@ -10,7 +10,6 @@ import io.github.aakira.napier.Napier
 import io.ktor.client.call.body
 import io.ktor.utils.io.ByteReadChannel
 import io.ktor.utils.io.readRemaining
-import io.ktor.utils.io.streams.writePacket
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.async
 import kotlinx.coroutines.awaitAll

@@ -14,13 +14,11 @@ fun NavController.navigateToSettingDirectory() {
 }
 
 fun NavGraphBuilder.settingDirectoryScreen(
-    navigateToBillingPlus: (String?) -> Unit,
     terminate: () -> Unit,
 ) {
     composable(SettingDirectoryRoute) {
         SettingDirectoryRoute(
             modifier = Modifier.fillMaxSize(),
-            navigateToBillingPlus = navigateToBillingPlus,
             terminate = terminate,
         )
     }

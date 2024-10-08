@@ -28,14 +28,12 @@ import me.matsumo.fanbox.core.ui.component.PixiViewTopBar
 import me.matsumo.fanbox.core.ui.error_no_data
 import me.matsumo.fanbox.core.ui.error_no_data_message
 import me.matsumo.fanbox.core.ui.extensition.LocalNavigationType
-import me.matsumo.fanbox.core.ui.extensition.NavigatorExtension
 import me.matsumo.fanbox.core.ui.extensition.PixiViewNavigationType
 import me.matsumo.fanbox.core.ui.extensition.drawVerticalScrollbar
 import me.matsumo.fanbox.core.ui.library_navigation_message
 import me.matsumo.fanbox.core.ui.view.EmptyView
 import me.matsumo.fanbox.feature.library.message.items.LibraryMessageItem
 import org.jetbrains.compose.resources.stringResource
-import org.koin.compose.koinInject
 import org.koin.compose.viewmodel.koinViewModel
 
 @Composable
@@ -44,7 +42,6 @@ internal fun LibraryMessageRoute(
     navigateToCreatorPosts: (CreatorId) -> Unit,
     modifier: Modifier = Modifier,
     viewModel: LibraryMessageViewModel = koinViewModel(),
-    navigatorExtension: NavigatorExtension = koinInject(),
 ) {
     val screenState by viewModel.screenState.collectAsStateWithLifecycle()
 
@@ -58,7 +55,6 @@ internal fun LibraryMessageRoute(
             messages = uiState.messages.toImmutableList(),
             openDrawer = openDrawer,
             onClickCreator = navigateToCreatorPosts,
-            onClickLink = { navigatorExtension.navigateToWebPage(it, LibraryMessageRoute) },
         )
     }
 }
@@ -69,7 +65,6 @@ private fun LibraryMessageScreen(
     messages: ImmutableList<FanboxNewsLetter>,
     openDrawer: () -> Unit,
     onClickCreator: (CreatorId) -> Unit,
-    onClickLink: (String) -> Unit,
     modifier: Modifier = Modifier,
 ) {
     val navigationType = LocalNavigationType.current.type
@@ -109,7 +104,6 @@ private fun LibraryMessageScreen(
                             modifier = Modifier.fillMaxWidth(),
                             message = it,
                             onClickCreator = onClickCreator,
-                            onClickLink = onClickLink,
                         )
 
                         HorizontalDivider()

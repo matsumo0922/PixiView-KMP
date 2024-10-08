@@ -57,7 +57,7 @@ class PixiViewViewModel(
             downloadPostsRepository.downloadState,
             _isLoggedInFlow,
             _isAppLockedFlow,
-        )
+        ),
     ) { flows ->
         val userData = flows[0] as UserData
         val cookie = flows[1] as String
@@ -79,7 +79,7 @@ class PixiViewViewModel(
     }.stateIn(
         scope = viewModelScope,
         started = SharingStarted.WhileSubscribed(5000),
-        initialValue = ScreenState.Loading
+        initialValue = ScreenState.Loading,
     )
 
     init {

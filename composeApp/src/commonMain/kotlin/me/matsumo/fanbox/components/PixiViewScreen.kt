@@ -22,7 +22,9 @@ internal fun PixiViewScreen(
     onRequestUpdateState: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
-    var isAgreedTeams by remember(uiState.userData) { mutableStateOf(uiState.userData.isAgreedPrivacyPolicy && uiState.userData.isAgreedTermsOfService) }
+    var isAgreedTeams by remember(uiState.userData) {
+        mutableStateOf(uiState.userData.isAgreedPrivacyPolicy && uiState.userData.isAgreedTermsOfService)
+    }
     var isAllowedPermission by remember(uiState.userData, uiState.isLoggedIn) { mutableStateOf(true) }
 
     LaunchedEffect(true) {

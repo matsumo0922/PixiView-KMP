@@ -5,10 +5,13 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyListScope
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Text
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.text.SpanStyle
+import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.unit.dp
 import me.matsumo.fanbox.core.model.fanbox.FanboxPostDetail
+import sh.calvin.autolinktext.AutoLinkText
+import sh.calvin.autolinktext.TextRuleDefaults
 
 internal fun LazyListScope.postDetailFileHeader(
     isAutoImagePreview: Boolean,
@@ -39,11 +42,18 @@ internal fun LazyListScope.postDetailFileHeader(
 
     if (content.text.isNotBlank()) {
         item {
-            Text(
+            AutoLinkText(
                 modifier = Modifier.padding(16.dp),
                 text = content.text,
-                style = MaterialTheme.typography.bodyMedium,
-                color = MaterialTheme.colorScheme.onSurface,
+                style = MaterialTheme.typography.bodyMedium.copy(color = MaterialTheme.colorScheme.onSurface),
+                textRules = TextRuleDefaults.defaultList().map {
+                    it.copy(
+                        style = SpanStyle(
+                            color = MaterialTheme.colorScheme.primary,
+                            textDecoration = TextDecoration.Underline,
+                        ),
+                    )
+                },
             )
         }
     }

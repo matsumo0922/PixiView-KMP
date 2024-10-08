@@ -26,14 +26,11 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import io.github.alexzhirkevich.cupertino.adaptive.AdaptiveScaffold
 import io.github.alexzhirkevich.cupertino.adaptive.ExperimentalAdaptiveApi
 import kotlinx.coroutines.launch
-import me.matsumo.fanbox.core.model.UserData
 import me.matsumo.fanbox.core.ui.AsyncLoadContents
 import me.matsumo.fanbox.core.ui.Res
 import me.matsumo.fanbox.core.ui.extensition.LocalSnackbarHostState
 import me.matsumo.fanbox.core.ui.extensition.ToastExtension
-import me.matsumo.fanbox.core.ui.setting_theme_title
 import me.matsumo.fanbox.core.ui.setting_top_file
-import me.matsumo.fanbox.core.ui.setting_top_file_directory
 import me.matsumo.fanbox.feature.setting.SettingTheme
 import me.matsumo.fanbox.feature.setting.directory.items.SettingDirectoryContent
 import org.jetbrains.compose.resources.StringResource
@@ -43,7 +40,6 @@ import org.koin.compose.viewmodel.koinViewModel
 
 @Composable
 internal fun SettingDirectoryRoute(
-    navigateToBillingPlus: (String?) -> Unit,
     terminate: () -> Unit,
     modifier: Modifier = Modifier,
     viewModel: SettingDirectoryViewModel = koinViewModel(),
@@ -95,7 +91,7 @@ private fun SettingDirectoryScreen(
                     modifier = Modifier.fillMaxWidth(),
                     title = {
                         Text(
-                            text = stringResource(Res.string.setting_top_file)
+                            text = stringResource(Res.string.setting_top_file),
                         )
                     },
                     navigationIcon = {

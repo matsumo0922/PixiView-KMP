@@ -8,7 +8,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import me.matsumo.fanbox.core.model.UserData
 import me.matsumo.fanbox.core.ui.Res
 import me.matsumo.fanbox.core.ui.error_developing_feature
 import org.jetbrains.compose.resources.StringResource
@@ -24,11 +23,11 @@ internal actual fun SettingDirectoryContent(
     onSavePostDirectory: (String) -> Unit,
     onShowSnackbar: (StringResource) -> Unit,
     onTerminate: () -> Unit,
-    modifier: Modifier
+    modifier: Modifier,
 ) {
     Box(
         modifier = modifier.padding(24.dp),
-        contentAlignment = Alignment.Center
+        contentAlignment = Alignment.Center,
     ) {
         Text(
             text = stringResource(Res.string.error_developing_feature),

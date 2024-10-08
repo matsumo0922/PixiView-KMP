@@ -9,6 +9,8 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.text.SpanStyle
+import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.unit.dp
 import me.matsumo.fanbox.core.model.UserData
 import me.matsumo.fanbox.core.model.fanbox.FanboxPost
@@ -18,6 +20,8 @@ import me.matsumo.fanbox.core.model.fanbox.id.PostId
 import me.matsumo.fanbox.core.ui.component.AdultContentThumbnail
 import me.matsumo.fanbox.core.ui.component.PostItem
 import me.matsumo.fanbox.core.ui.extensition.LocalFanboxMetadata
+import sh.calvin.autolinktext.AutoLinkText
+import sh.calvin.autolinktext.TextRuleDefaults
 
 internal fun LazyListScope.postDetailArticleHeader(
     content: FanboxPostDetail.Body.Article,
@@ -105,11 +109,18 @@ private fun ArticleTextItem(
     item: FanboxPostDetail.Body.Article.Block.Text,
     modifier: Modifier = Modifier,
 ) {
-    Text(
+    AutoLinkText(
         modifier = modifier.padding(16.dp),
         text = item.text,
-        style = MaterialTheme.typography.bodyMedium,
-        color = MaterialTheme.colorScheme.onSurface,
+        style = MaterialTheme.typography.bodyMedium.copy(color = MaterialTheme.colorScheme.onSurface),
+        textRules = TextRuleDefaults.defaultList().map {
+            it.copy(
+                style = SpanStyle(
+                    color = MaterialTheme.colorScheme.primary,
+                    textDecoration = TextDecoration.Underline,
+                ),
+            )
+        },
     )
 }
 

@@ -20,9 +20,10 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.text.SpanStyle
+import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
-import coil3.annotation.ExperimentalCoilApi
 import coil3.compose.AsyncImage
 import coil3.compose.LocalPlatformContext
 import coil3.request.ImageRequest
@@ -30,17 +31,16 @@ import me.matsumo.fanbox.core.common.util.format
 import me.matsumo.fanbox.core.model.fanbox.FanboxNewsLetter
 import me.matsumo.fanbox.core.model.fanbox.id.CreatorId
 import me.matsumo.fanbox.core.ui.Res
-import me.matsumo.fanbox.core.ui.component.AutoLinkText
 import me.matsumo.fanbox.core.ui.extensition.asCoilImage
 import me.matsumo.fanbox.core.ui.im_default_user
 import me.matsumo.fanbox.core.ui.theme.bold
+import sh.calvin.autolinktext.AutoLinkText
+import sh.calvin.autolinktext.TextRuleDefaults
 
-@OptIn(ExperimentalCoilApi::class)
 @Composable
 internal fun LibraryMessageItem(
     message: FanboxNewsLetter,
     onClickCreator: (CreatorId) -> Unit,
-    onClickLink: (String) -> Unit,
     modifier: Modifier = Modifier,
 ) {
     var isShowBigBody by rememberSaveable { mutableStateOf(false) }
@@ -98,9 +98,15 @@ internal fun LibraryMessageItem(
                     .fillMaxWidth()
                     .padding(8.dp),
                 text = message.body,
-                style = MaterialTheme.typography.bodyMedium,
-                color = MaterialTheme.colorScheme.onSurface,
-                onClickLink = onClickLink,
+                style = MaterialTheme.typography.bodyMedium.copy(color = MaterialTheme.colorScheme.onSurface),
+                textRules = TextRuleDefaults.defaultList().map {
+                    it.copy(
+                        style = SpanStyle(
+                            color = MaterialTheme.colorScheme.primary,
+                            textDecoration = TextDecoration.Underline,
+                        ),
+                    )
+                },
             )
         } else {
             Text(

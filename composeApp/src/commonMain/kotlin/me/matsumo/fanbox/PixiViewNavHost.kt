@@ -210,7 +210,6 @@ private fun NavGraphBuilder.applyNavGraph(
     )
 
     settingDirectoryScreen(
-        navigateToBillingPlus = { mainNavController.navigateToBillingPlus(it) },
         terminate = { mainNavController.popBackStack() },
     )
 
