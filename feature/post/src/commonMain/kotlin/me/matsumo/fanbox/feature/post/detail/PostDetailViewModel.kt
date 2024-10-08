@@ -222,12 +222,12 @@ class PostDetailViewModel(
         }
     }
 
-    fun downloadImages(imageItems: List<FanboxPostDetail.ImageItem>, callback: () -> Unit) {
-        downloadPostsRepository.requestDownloadImages(imageItems, callback)
+    fun downloadImages(title: String, imageItems: List<FanboxPostDetail.ImageItem>, callback: () -> Unit) {
+        downloadPostsRepository.requestDownloadImages(title, imageItems, callback)
     }
 
-    fun downloadFiles(fileItems: List<FanboxPostDetail.FileItem>, callback: () -> Unit) {
-        downloadPostsRepository.requestDownloadFiles(fileItems, callback)
+    fun downloadFiles(title: String, fileItems: List<FanboxPostDetail.FileItem>, callback: () -> Unit) {
+        downloadPostsRepository.requestDownloadFiles(title, fileItems, callback)
     }
 }
 

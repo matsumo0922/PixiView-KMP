@@ -3,6 +3,7 @@ package me.matsumo.fanbox.core.model.fanbox
 import me.matsumo.fanbox.core.model.fanbox.id.PostId
 
 data class FanboxDownloadItems(
+    val title: String,
     val items: List<Item>,
     val requestType: RequestType,
     val callback: () -> Unit,

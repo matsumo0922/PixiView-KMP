@@ -1,6 +1,5 @@
 package me.matsumo.fanbox.feature.post.image
 
-import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
@@ -78,7 +77,7 @@ internal fun PostImageRoute(
             imageIndex = postImageIndex,
             postDetail = uiState.postDetail,
             onClickDownload = {
-                viewModel.downloadImages(it) {
+                viewModel.downloadImages(uiState.postDetail.title, it) {
                     scope.launch {
                         snackExtension.show(snackbarHostState, Res.string.common_downloaded)
                     }
@@ -89,7 +88,7 @@ internal fun PostImageRoute(
     }
 }
 
-@OptIn(ExperimentalMaterial3Api::class, ExperimentalFoundationApi::class)
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 private fun PostImageScreen(
     imageIndex: Int,

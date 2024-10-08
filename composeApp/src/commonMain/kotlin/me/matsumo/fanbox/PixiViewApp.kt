@@ -1,10 +1,8 @@
 package me.matsumo.fanbox
 
-import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
-import androidx.compose.animation.togetherWith
 import androidx.compose.foundation.background
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.fillMaxSize
@@ -15,10 +13,7 @@ import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.lifecycle.DefaultLifecycleObserver
 import androidx.lifecycle.LifecycleOwner
@@ -30,6 +25,7 @@ import io.github.aakira.napier.Napier
 import kotlinx.collections.immutable.ImmutableMap
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
+import me.matsumo.fanbox.components.PixiViewScreen
 import me.matsumo.fanbox.core.common.PixiViewConfig
 import me.matsumo.fanbox.core.model.ScreenState
 import me.matsumo.fanbox.core.model.ThemeConfig
@@ -46,7 +42,6 @@ import me.matsumo.fanbox.core.ui.theme.LightDefaultColorScheme
 import me.matsumo.fanbox.core.ui.theme.PixiViewTheme
 import me.matsumo.fanbox.core.ui.view.LoadingView
 import me.matsumo.fanbox.core.ui.view.NativeView
-import me.matsumo.fanbox.feature.welcome.WelcomeNavHost
 import org.koin.compose.koinInject
 import org.koin.compose.viewmodel.koinViewModel
 
@@ -145,49 +140,6 @@ fun PixiViewApp(
 
     LaunchedEffect(true) {
         viewModel.billingClientInitialize()
-    }
-}
-
-@Composable
-private fun PixiViewScreen(
-    uiState: MainUiState,
-    onRequestInitPixiViewId: () -> Unit,
-    onRequestUpdateState: () -> Unit,
-    modifier: Modifier = Modifier,
-) {
-    var isAgreedTeams by remember(uiState.userData) { mutableStateOf(uiState.userData.isAgreedPrivacyPolicy && uiState.userData.isAgreedTermsOfService) }
-    var isAllowedPermission by remember(uiState.userData, uiState.isLoggedIn) { mutableStateOf(true) }
-
-    LaunchedEffect(true) {
-        if (uiState.userData.pixiViewId.isBlank()) {
-            onRequestInitPixiViewId.invoke()
-        }
-    }
-
-    Napier.d { "isShowWelcomeScreen: ${uiState.isLoggedIn}, $isAgreedTeams, $isAllowedPermission" }
-
-    AnimatedContent(
-        modifier = modifier,
-        targetState = !isAgreedTeams || !uiState.isLoggedIn || !isAllowedPermission,
-        transitionSpec = { fadeIn().togetherWith(fadeOut()) },
-        label = "isShowWelcomeScreen",
-    ) {
-        if (it) {
-            WelcomeNavHost(
-                isAgreedTeams = isAgreedTeams,
-                isLoggedIn = uiState.isLoggedIn,
-                onComplete = {
-                    isAgreedTeams = true
-                    isAllowedPermission = true
-
-                    onRequestUpdateState.invoke()
-                },
-            )
-        } else {
-            PixiViewNavHost(
-                modifier = Modifier.fillMaxSize(),
-            )
-        }
     }
 }
 

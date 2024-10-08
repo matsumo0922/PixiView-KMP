@@ -38,8 +38,8 @@ class PostImageViewModel(
         }
     }
 
-    fun downloadImages(imageItems: List<FanboxPostDetail.ImageItem>, callback: () -> Unit) {
-        downloadPostsRepository.requestDownloadImages(imageItems, callback)
+    fun downloadImages(title: String, imageItems: List<FanboxPostDetail.ImageItem>, callback: () -> Unit) {
+        downloadPostsRepository.requestDownloadImages(title, imageItems, callback)
     }
 }
 

@@ -245,14 +245,14 @@ private fun PostDetailView(
                 }
             },
             onClickFile = {
-                viewModel.downloadFiles(listOf(it)) {
+                viewModel.downloadFiles(uiState.postDetail.title, listOf(it)) {
                     scope.launch {
                         snackExtension.show(snackbarHostState, Res.string.common_downloaded)
                     }
                 }
             },
             onClickDownloadImages = {
-                viewModel.downloadImages(it) {
+                viewModel.downloadImages(uiState.postDetail.title, it) {
                     scope.launch {
                         snackExtension.show(snackbarHostState, Res.string.common_downloaded)
                     }

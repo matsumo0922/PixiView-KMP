@@ -21,6 +21,7 @@ import me.matsumo.fanbox.core.common.PixiViewConfig
 import me.matsumo.fanbox.core.common.util.suspendRunCatching
 import me.matsumo.fanbox.core.datastore.LaunchLogDataStore
 import me.matsumo.fanbox.core.logs.logger.LogConfigurator
+import me.matsumo.fanbox.core.model.DownloadState
 import me.matsumo.fanbox.core.model.ScreenState
 import me.matsumo.fanbox.core.model.UserData
 import me.matsumo.fanbox.core.model.fanbox.FanboxMetaData
@@ -49,25 +50,36 @@ class PixiViewViewModel(
     private val _isAppLockedFlow: MutableStateFlow<Boolean> = MutableStateFlow(true)
 
     val screenState = combine(
-        userDataRepository.userData,
-        fanboxRepository.cookie,
-        fanboxRepository.metaData,
-        _isLoggedInFlow,
-        _isAppLockedFlow,
-    ) { userData, cookie, metadata, isLoggedIn, isAppLocked ->
+        listOf(
+            userDataRepository.userData,
+            fanboxRepository.cookie,
+            fanboxRepository.metaData,
+            downloadPostsRepository.downloadState,
+            _isLoggedInFlow,
+            _isAppLockedFlow,
+        )
+    ) { flows ->
+        val userData = flows[0] as UserData
+        val cookie = flows[1] as String
+        val metadata = flows[2] as FanboxMetaData
+        val downloadState = flows[3] as DownloadState
+        val isLoggedIn = flows[4] as Boolean
+        val isAppLocked = flows[5] as Boolean
+
         ScreenState.Idle(
             MainUiState(
                 userData = userData,
                 fanboxCookie = cookie,
                 fanboxMetadata = metadata,
+                downloadState = downloadState,
                 isLoggedIn = isLoggedIn,
                 isAppLocked = if (userData.isUseAppLock) isAppLocked else false,
             ),
         )
     }.stateIn(
         scope = viewModelScope,
-        started = SharingStarted.WhileSubscribed(5_000),
-        initialValue = ScreenState.Loading,
+        started = SharingStarted.WhileSubscribed(5000),
+        initialValue = ScreenState.Loading
     )
 
     init {
@@ -149,6 +161,7 @@ data class MainUiState(
     val userData: UserData,
     val fanboxCookie: String,
     val fanboxMetadata: FanboxMetaData,
+    val downloadState: DownloadState,
     val isLoggedIn: Boolean,
     val isAppLocked: Boolean,
 )

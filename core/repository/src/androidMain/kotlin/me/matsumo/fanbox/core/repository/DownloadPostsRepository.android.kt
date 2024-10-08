@@ -18,7 +18,6 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
-import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.getAndUpdate
 import kotlinx.coroutines.flow.update
@@ -57,9 +56,6 @@ class DownloadPostsRepositoryImpl(
                 if (downloadItems == null) {
                     _downloadState.value = DownloadState.None
                     continue
-                } else {
-                    val remainingItems = downloadItems.items.size + reservingPosts.value.sumOf { it.items.size }
-                    _downloadState.value = DownloadState.Downloading(progress = 0f, remainingItems)
                 }
 
                 val itemProgresses = MutableList(downloadItems.items.size) { MutableStateFlow(0f) }
@@ -68,8 +64,11 @@ class DownloadPostsRepositoryImpl(
                         downloadItem(item) { progress ->
                             itemProgresses[index].value = progress
 
-                            val totalProgress = itemProgresses.sumOf { it.value.toDouble() }.toFloat() / downloadItems.items.size
-                            _downloadState.value = DownloadState.Downloading(totalProgress, downloadItems.items.size)
+                            _downloadState.value = DownloadState.Downloading(
+                                title = downloadItems.title,
+                                progress = itemProgresses.sumOf { it.value.toDouble() }.toFloat() / downloadItems.items.size,
+                                remainingItems = downloadItems.items.size,
+                            )
                         }
                     }
                 }
@@ -106,16 +105,6 @@ class DownloadPostsRepositoryImpl(
                 downloadItems.callback.invoke()
             }
         }
-
-        scope.launch {
-            reservingPosts.collectLatest {
-                val currentDownloadState = downloadState.value
-
-                if (currentDownloadState is DownloadState.Downloading && it.size > currentDownloadState.remainingItems) {
-                    _downloadState.value = currentDownloadState.copy(remainingItems = it.size)
-                }
-            }
-        }
     }
 
     override fun requestDownloadPost(postId: PostId, callback: () -> Unit) {
@@ -124,6 +113,7 @@ class DownloadPostsRepositoryImpl(
             val images = postDetail.body.imageItems.map { it.toDownloadItem() }
             val files = postDetail.body.fileItems.map { it.toDownloadItem() }
             val items = FanboxDownloadItems(
+                title = postDetail.title,
                 items = images + files,
                 requestType = FanboxDownloadItems.RequestType.Post(postDetail.user.name),
                 callback = callback,
@@ -133,8 +123,9 @@ class DownloadPostsRepositoryImpl(
         }
     }
 
-    override fun requestDownloadImages(images: List<FanboxPostDetail.ImageItem>, callback: () -> Unit) {
+    override fun requestDownloadImages(title: String, images: List<FanboxPostDetail.ImageItem>, callback: () -> Unit) {
         val items = FanboxDownloadItems(
+            title = title,
             items = images.map { it.toDownloadItem() },
             requestType = FanboxDownloadItems.RequestType.Image,
             callback = callback,
@@ -143,8 +134,9 @@ class DownloadPostsRepositoryImpl(
         _reservingPosts.update { it + items }
     }
 
-    override fun requestDownloadFiles(files: List<FanboxPostDetail.FileItem>, callback: () -> Unit) {
+    override fun requestDownloadFiles(title: String, files: List<FanboxPostDetail.FileItem>, callback: () -> Unit) {
         val items = FanboxDownloadItems(
+            title = title,
             items = files.map { it.toDownloadItem() },
             requestType = FanboxDownloadItems.RequestType.File,
             callback = callback,
