@@ -150,7 +150,7 @@ class DownloadPostsRepositoryImpl(
     }
 
     override suspend fun getSaveDirectory(requestType: FanboxDownloadItems.RequestType): String {
-        return (getParentFile(requestType) ?: getOldParentFile(requestType)).filePath ?: "Unknown"
+        return (getParentFile(requestType) ?: getOldParentFile(requestType, true)).filePath ?: "Unknown"
     }
 
     private fun FanboxPostDetail.ImageItem.toDownloadItem(): FanboxDownloadItems.Item {
@@ -208,7 +208,7 @@ class DownloadPostsRepositoryImpl(
         }.getOrNull()
     }
 
-    private fun getOldParentFile(requestType: FanboxDownloadItems.RequestType): UniFile {
+    private fun getOldParentFile(requestType: FanboxDownloadItems.RequestType, isDryRun: Boolean = false): UniFile {
         val environmentDir = when (requestType) {
             is FanboxDownloadItems.RequestType.Image -> Environment.DIRECTORY_PICTURES
             is FanboxDownloadItems.RequestType.File -> Environment.DIRECTORY_DOWNLOADS
@@ -224,12 +224,14 @@ class DownloadPostsRepositoryImpl(
         val dir = File("${Environment.getExternalStorageDirectory().path}/$environmentDir", "FANBOX")
         val childDir = File(dir, child)
 
-        if (!dir.exists()) {
-            dir.mkdir()
-        }
+        if (!isDryRun) {
+            if (!dir.exists()) {
+                dir.mkdir()
+            }
 
-        if (child.isNotBlank() && !childDir.exists()) {
-            childDir.mkdir()
+            if (child.isNotBlank() && !childDir.exists()) {
+                childDir.mkdir()
+            }
         }
 
         return UniFile.fromFile(childDir)!!
