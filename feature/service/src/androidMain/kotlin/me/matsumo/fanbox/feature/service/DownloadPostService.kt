@@ -49,16 +49,14 @@ class DownloadPostService : Service() {
             createNotifyChannel()
 
             downloadState.collectLatest {
-                if (downloadPostsRepository.reservingPosts.value.isNotEmpty()) {
-                    if (it is DownloadState.Downloading) {
-                        setForegroundService(
-                            isForeground = true,
-                            title = getString(Res.string.post_detail_downloading),
-                            message = it.title,
-                            subMessage = "${(it.progress * 100).toInt()} %",
-                            progress = it.progress,
-                        )
-                    }
+                if (it is DownloadState.Downloading) {
+                    setForegroundService(
+                        isForeground = true,
+                        title = getString(Res.string.post_detail_downloading),
+                        message = it.title,
+                        subMessage = "${(it.progress * 100).toInt()} %",
+                        progress = it.progress,
+                    )
                 } else {
                     delay(3000)
                     setForegroundService(false)

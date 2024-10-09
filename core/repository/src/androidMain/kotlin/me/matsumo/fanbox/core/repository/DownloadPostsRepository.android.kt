@@ -209,13 +209,19 @@ class DownloadPostsRepositoryImpl(
     }
 
     private fun getOldParentFile(requestType: FanboxDownloadItems.RequestType): UniFile {
+        val environmentDir = when (requestType) {
+            is FanboxDownloadItems.RequestType.Image -> Environment.DIRECTORY_PICTURES
+            is FanboxDownloadItems.RequestType.File -> Environment.DIRECTORY_DOWNLOADS
+            is FanboxDownloadItems.RequestType.Post -> Environment.DIRECTORY_DOWNLOADS
+        }
+
         val child = when (requestType) {
             is FanboxDownloadItems.RequestType.Image -> "FANBOX"
             is FanboxDownloadItems.RequestType.File -> "FANBOX"
             is FanboxDownloadItems.RequestType.Post -> requestType.creatorName
         }
 
-        val dir = File(Environment.getExternalStorageDirectory().path + "/${Environment.DIRECTORY_PICTURES}", "FANBOX")
+        val dir = File("${Environment.getExternalStorageDirectory().path}/$environmentDir", "FANBOX")
         val childDir = File(dir, child)
 
         if (!dir.exists()) {
