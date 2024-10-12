@@ -1,6 +1,7 @@
 package me.matsumo.fanbox.core.ui.extensition
 
 import androidx.compose.runtime.Composable
+import io.github.aakira.napier.Napier
 import kotlinx.cinterop.ExperimentalForeignApi
 import me.matsumo.fanbox.core.logs.category.NavigationLog
 import me.matsumo.fanbox.core.logs.logger.send
@@ -17,7 +18,9 @@ class NavigatorExtensionImpl : NavigatorExtension {
             isSuccess = true,
         ).send()
 
-        UIApplication.sharedApplication.openURL(NSURL(string = url))
+        UIApplication.sharedApplication.openURL(NSURL(string = url), options = mapOf<Any?, Any?>()) {
+            if (!it) Napier.w { "Failed to open URL: $url" }
+        }
     }
 
     @OptIn(ExperimentalForeignApi::class)

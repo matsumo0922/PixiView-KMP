@@ -14,33 +14,20 @@ import androidx.compose.material3.NavigationRailItemDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import io.github.alexzhirkevich.cupertino.adaptive.AdaptiveNavigationBar
-import io.github.alexzhirkevich.cupertino.adaptive.ExperimentalAdaptiveApi
-import me.matsumo.fanbox.core.ui.extensition.Platform
-import me.matsumo.fanbox.core.ui.extensition.currentPlatform
 
-@OptIn(ExperimentalAdaptiveApi::class)
 @Composable
 fun PixiViewNavigationBar(
     modifier: Modifier = Modifier,
     content: @Composable RowScope.() -> Unit,
 ) {
-    if (currentPlatform == Platform.Android) {
-        NavigationBar(
-            modifier = modifier,
-            contentColor = PixiViewNavigationDefaults.navigationContentColor(),
-            tonalElevation = 0.dp,
-            content = content,
-        )
-    } else {
-        AdaptiveNavigationBar(
-            modifier = modifier,
-            content = content,
-        )
-    }
+    NavigationBar(
+        modifier = modifier,
+        contentColor = PixiViewNavigationDefaults.navigationContentColor(),
+        tonalElevation = 0.dp,
+        content = content,
+    )
 }
 
-@OptIn(ExperimentalAdaptiveApi::class)
 @Composable
 fun RowScope.PixiViewNavigationBarItem(
     icon: @Composable () -> Unit,

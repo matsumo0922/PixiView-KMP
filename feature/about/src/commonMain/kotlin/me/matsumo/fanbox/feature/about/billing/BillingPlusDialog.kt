@@ -141,7 +141,6 @@ internal fun BillingPlusRoute(
                     }
                 }
             },
-            onTerminate = terminate,
         )
 
         LaunchedEffect(uiState.isPlusMode) {
@@ -166,7 +165,6 @@ private fun BillingPlusDialog(
     onClickPurchase: (BillingPlusUiState.Type) -> Unit,
     onClickVerify: () -> Unit,
     onClickConsume: () -> Unit,
-    onTerminate: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
     var selectedPlan by remember { mutableStateOf(BillingPlusUiState.Type.MONTHLY) }
@@ -180,7 +178,7 @@ private fun BillingPlusDialog(
                 modifier = Modifier.weight(1f),
                 contentPadding = PaddingValues(24.dp, 16.dp),
             ) {
-                billingPlusTitleSection(onTerminate)
+                billingPlusTitleSection()
                 billingPlusDescriptionSection()
             }
 

@@ -7,6 +7,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.window.ComposeUIViewController
 import io.github.aakira.napier.Napier
 import kotlinx.collections.immutable.toImmutableMap
+import moe.tlaster.precompose.PreComposeApp
 import org.koin.compose.KoinContext
 import platform.UIKit.UIViewController
 
@@ -20,10 +21,12 @@ fun MainViewController(
     KoinContext {
         Napier.d { "MainViewController: ${iosUis.size}" }
 
-        PixiViewApp(
-            modifier = Modifier.fillMaxSize(),
-            windowSize = calculateWindowSizeClass().widthSizeClass,
-            nativeViews = iosUis.toImmutableMap(),
-        )
+        PreComposeApp {
+            PixiViewApp(
+                modifier = Modifier.fillMaxSize(),
+                windowSize = calculateWindowSizeClass().widthSizeClass,
+                nativeViews = iosUis.toImmutableMap(),
+            )
+        }
     }
 }

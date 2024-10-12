@@ -17,11 +17,10 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.text.AnnotatedString
-import androidx.compose.ui.text.fromHtml
 import androidx.compose.ui.unit.dp
 import com.mikepenz.aboutlibraries.entity.Library
 import com.mikepenz.aboutlibraries.ui.compose.util.htmlReadyLicenseContent
+import me.matsumo.fanbox.core.ui.extensition.toRichHtmlString
 import me.matsumo.fanbox.core.ui.theme.center
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -53,7 +52,7 @@ internal fun LicenseDialog(
                     .padding(top = 8.dp)
                     .weight(1f)
                     .verticalScroll(rememberScrollState()),
-                text = AnnotatedString.Companion.fromHtml(library.licenses.firstOrNull()?.htmlReadyLicenseContent.orEmpty()),
+                text = library.licenses.firstOrNull()?.htmlReadyLicenseContent.orEmpty().toRichHtmlString(),
                 style = MaterialTheme.typography.bodyMedium,
                 color = MaterialTheme.colorScheme.onSurfaceVariant,
             )

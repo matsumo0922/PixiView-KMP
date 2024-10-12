@@ -149,7 +149,7 @@ private fun BookmarkedPostsScreen(
                         ) { likedPost ->
                             PostItem(
                                 modifier = Modifier
-                                    .animateItemPlacement()
+                                    .animateItem()
                                     .fillMaxWidth(),
                                 post = likedPost,
                                 isHideAdultContents = userData.isHideAdultContents,

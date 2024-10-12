@@ -18,11 +18,13 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
+import kotlinx.coroutines.launch
 import me.matsumo.fanbox.core.ui.Res
 import me.matsumo.fanbox.core.ui.common_cancel
 import me.matsumo.fanbox.core.ui.common_ok
@@ -37,6 +39,8 @@ internal fun SettingDeveloperDialog(
     modifier: Modifier = Modifier,
     viewModel: SettingDeveloperViewModel = koinViewModel(),
 ) {
+    val scope = rememberCoroutineScope()
+
     var password by remember { mutableStateOf("") }
     var isPasswordError by remember { mutableStateOf(false) }
 
@@ -97,10 +101,12 @@ internal fun SettingDeveloperDialog(
                 modifier = Modifier.weight(1f),
                 shape = RoundedCornerShape(4.dp),
                 onClick = {
-                    if (viewModel.submitPassword(password)) {
-                        terminate.invoke()
-                    } else {
-                        isPasswordError = true
+                    scope.launch {
+                        if (viewModel.submitPassword(password)) {
+                            terminate.invoke()
+                        } else {
+                            isPasswordError = true
+                        }
                     }
                 },
                 enabled = password.isNotBlank() && !isPasswordError,

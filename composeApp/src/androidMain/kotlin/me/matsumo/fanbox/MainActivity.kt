@@ -32,6 +32,7 @@ import me.matsumo.fanbox.core.repository.DownloadPostsRepository
 import me.matsumo.fanbox.core.repository.UserDataRepository
 import me.matsumo.fanbox.core.ui.theme.shouldUseDarkTheme
 import me.matsumo.fanbox.feature.service.DownloadPostService
+import moe.tlaster.precompose.PreComposeApp
 import org.koin.compose.KoinContext
 import org.koin.core.component.KoinComponent
 import org.koin.core.component.inject
@@ -71,11 +72,13 @@ class MainActivity : FragmentActivity(), KoinComponent {
                     onDispose {}
                 }
 
-                PixiViewApp(
-                    modifier = Modifier.fillMaxSize(),
-                    windowSize = windowSize.widthSizeClass,
-                    nativeViews = persistentMapOf(),
-                )
+                PreComposeApp {
+                    PixiViewApp(
+                        modifier = Modifier.fillMaxSize(),
+                        windowSize = windowSize.widthSizeClass,
+                        nativeViews = persistentMapOf(),
+                    )
+                }
 
                 splashScreen.setKeepOnScreenCondition { userData == null }
             }

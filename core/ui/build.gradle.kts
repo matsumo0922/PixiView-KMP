@@ -47,6 +47,7 @@ kotlin {
                 api(libs.calf.ui)
                 api(libs.placeholder)
                 api(libs.rich.editor)
+                api(libs.precompose)
                 api(libs.autolink)
                 api(libs.play.service.ads)
             }
