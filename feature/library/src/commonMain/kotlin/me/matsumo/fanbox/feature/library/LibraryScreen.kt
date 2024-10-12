@@ -9,7 +9,6 @@ import androidx.compose.ui.Modifier
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavGraph.Companion.findStartDestination
 import androidx.navigation.NavHostController
-import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navOptions
 import me.matsumo.fanbox.core.model.fanbox.id.CreatorId
 import me.matsumo.fanbox.core.model.fanbox.id.PostId
@@ -30,6 +29,7 @@ import org.koin.compose.viewmodel.koinViewModel
 
 @Composable
 fun LibraryScreen(
+    navHostController: NavHostController,
     navigateToPostSearch: () -> Unit,
     navigateToPostDetailFromHome: (postId: PostId) -> Unit,
     navigateToPostDetailFromSupported: (postId: PostId) -> Unit,
@@ -46,7 +46,6 @@ fun LibraryScreen(
     modifier: Modifier = Modifier,
     viewModel: LibraryViewModel = koinViewModel(),
 ) {
-    val navController = rememberNavController()
     val drawerState = rememberDrawerState(DrawerValue.Closed)
 
     val snackbarHostState = LocalSnackbarHostState.current
@@ -64,7 +63,7 @@ fun LibraryScreen(
                     uiState = it,
                     drawerState = drawerState,
                     snackbarHostState = snackbarHostState,
-                    navController = navController,
+                    navController = navHostController,
                     navigateToPostSearch = navigateToPostSearch,
                     navigateToPostDetailFromHome = navigateToPostDetailFromHome,
                     navigateToPostDetailFromSupported = navigateToPostDetailFromSupported,
@@ -86,7 +85,7 @@ fun LibraryScreen(
                     uiState = it,
                     drawerState = drawerState,
                     snackbarHostState = snackbarHostState,
-                    navController = navController,
+                    navController = navHostController,
                     navigateToPostSearch = navigateToPostSearch,
                     navigateToPostDetailFromHome = navigateToPostDetailFromHome,
                     navigateToPostDetailFromSupported = navigateToPostDetailFromSupported,
@@ -108,7 +107,7 @@ fun LibraryScreen(
                     uiState = it,
                     drawerState = drawerState,
                     snackbarHostState = snackbarHostState,
-                    navController = navController,
+                    navController = navHostController,
                     navigateToPostSearch = navigateToPostSearch,
                     navigateToPostDetailFromHome = navigateToPostDetailFromHome,
                     navigateToPostDetailFromSupported = navigateToPostDetailFromSupported,

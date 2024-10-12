@@ -63,6 +63,7 @@ internal fun PixiViewNavHost(
 ) {
     val bottomSheetNavigator = rememberBottomSheetNavigator()
     val navController = rememberNavController(bottomSheetNavigator)
+    val bottomNavigationNavController = rememberNavController()
     val scope = rememberCoroutineScope()
 
     ModalBottomSheetLayout(bottomSheetNavigator) {
@@ -75,7 +76,11 @@ internal fun PixiViewNavHost(
             popEnterTransition = { NavigateAnimation.Horizontal.popEnter },
             popExitTransition = { NavigateAnimation.Horizontal.popExit },
         ) {
-            applyNavGraph(scope, navController)
+            applyNavGraph(
+                scope = scope,
+                mainNavController = navController,
+                bottomNavigationNavController = bottomNavigationNavController,
+            )
         }
     }
 }
@@ -93,12 +98,14 @@ internal fun PixiViewNavHost(
  */
 private fun NavGraphBuilder.applyNavGraph(
     scope: CoroutineScope,
+    bottomNavigationNavController: NavHostController,
     mainNavController: NavHostController,
     subNavController: NavHostController = mainNavController,
 ) {
     // composable
 
     libraryScreen(
+        navHostController = bottomNavigationNavController,
         navigateToPostSearch = { mainNavController.navigateToPostSearch() },
         navigateToPostDetailFromHome = { subNavController.navigateToPostDetail(it, PostDetailPagingType.Home) },
         navigateToPostDetailFromSupported = { subNavController.navigateToPostDetail(it, PostDetailPagingType.Supported) },

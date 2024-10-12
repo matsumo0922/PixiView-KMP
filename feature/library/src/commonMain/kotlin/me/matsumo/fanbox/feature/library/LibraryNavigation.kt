@@ -4,6 +4,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.ui.Modifier
 import androidx.navigation.NavController
 import androidx.navigation.NavGraphBuilder
+import androidx.navigation.NavHostController
 import androidx.navigation.compose.composable
 import me.matsumo.fanbox.core.model.fanbox.id.CreatorId
 import me.matsumo.fanbox.core.model.fanbox.id.PostId
@@ -17,6 +18,7 @@ fun NavController.navigateToLibrary() {
 }
 
 fun NavGraphBuilder.libraryScreen(
+    navHostController: NavHostController,
     navigateToPostSearch: () -> Unit,
     navigateToPostDetailFromHome: (postId: PostId) -> Unit,
     navigateToPostDetailFromSupported: (postId: PostId) -> Unit,
@@ -36,6 +38,7 @@ fun NavGraphBuilder.libraryScreen(
     ) {
         LibraryScreen(
             modifier = Modifier.fillMaxSize(),
+            navHostController = navHostController,
             navigateToPostSearch = navigateToPostSearch,
             navigateToPostDetailFromHome = navigateToPostDetailFromHome,
             navigateToPostDetailFromSupported = navigateToPostDetailFromSupported,
