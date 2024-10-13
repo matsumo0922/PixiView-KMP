@@ -43,6 +43,7 @@ class DownloadPostsRepositoryImpl(
 
     private val _reservingPosts = MutableStateFlow(emptyList<FanboxDownloadItems>())
     private val _downloadState = MutableStateFlow<DownloadState>(DownloadState.None)
+    private val _downloadedItems = MutableStateFlow(emptyList<DownloadedItems>())
 
     override val reservingPosts: StateFlow<List<FanboxDownloadItems>> = _reservingPosts.asStateFlow()
     override val downloadState: StateFlow<DownloadState> = _downloadState.asStateFlow()
@@ -53,7 +54,6 @@ class DownloadPostsRepositoryImpl(
                 delay(500)
 
                 val downloadItems = _reservingPosts.getAndUpdate { it.drop(1) }.firstOrNull()
-
                 if (downloadItems == null) {
                     _downloadState.value = DownloadState.None
                     continue
@@ -74,39 +74,20 @@ class DownloadPostsRepositoryImpl(
                     }
                 }
 
-                val results = items.awaitAll()
-                val pathAndMime = mutableListOf<Pair<String, String>>()
-
-                for ((item, tmpFile) in results.filterNotNull()) {
-                    runCatching {
-                        val mime = MimeTypeMap.getSingleton().getMimeTypeFromExtension(item.extension)
-                        val parent = getParentFile(downloadItems.requestType) ?: getOldParentFile(downloadItems.requestType)
-                        val file = parent.createFile("${item.name}.${item.extension}")
-
-                        context.contentResolver.openOutputStream(file!!.uri)!!.use {
-                            tmpFile.inputStream().use { input ->
-                                input.copyTo(it)
-                            }
-                        }
-
-                        tmpFile.delete()
-                        pathAndMime.add(file.uri.path.orEmpty() to mime.orEmpty())
-
-                        delay(100)
-                    }.onFailure {
-                        Napier.e(it) { "Failed to download item: ${item.name}" }
-                    }
-                }
-
-                MediaScannerConnection.scanFile(
-                    context,
-                    pathAndMime.map { it.first }.toTypedArray(),
-                    pathAndMime.map { it.second }.toTypedArray(),
-                ) { _, uri ->
-                    Napier.d { "MediaScannerConnection: $uri" }
-                }
-
+                _downloadedItems.update { it + DownloadedItems(downloadItems, items.awaitAll()) }
                 downloadItems.callback.invoke()
+            }
+        }
+
+        scope.launch {
+            while (isActive) {
+                val downloadedItems = _downloadedItems.getAndUpdate { it.drop(1) }.firstOrNull()
+                if (downloadedItems == null) {
+                    delay(1000)
+                    continue
+                }
+
+                saveFiles(downloadedItems.downloadItems, downloadedItems.results)
             }
         }
     }
@@ -258,4 +239,46 @@ class DownloadPostsRepositoryImpl(
             }
         }
     }
+
+    private suspend fun saveFiles(downloadItems: FanboxDownloadItems, results: List<Pair<FanboxDownloadItems.Item, File>?>) {
+        val pathAndMime = mutableListOf<Pair<String, String>>()
+
+        for ((item, tmpFile) in results.filterNotNull()) {
+            runCatching {
+                val mime = MimeTypeMap.getSingleton().getMimeTypeFromExtension(item.extension)
+                val parent = getParentFile(downloadItems.requestType) ?: getOldParentFile(downloadItems.requestType)
+                val file = parent.createFile("${item.name}.${item.extension}")
+                val modifiedTime = System.currentTimeMillis()
+
+                tmpFile.setLastModified(modifiedTime)
+                file.filePath?.let { File(it).setLastModified(modifiedTime) }
+
+                context.contentResolver.openOutputStream(file!!.uri)!!.use {
+                    tmpFile.inputStream().use { input ->
+                        input.copyTo(it)
+                    }
+                }
+
+                tmpFile.delete()
+                pathAndMime.add(file.uri.path.orEmpty() to mime.orEmpty())
+
+                delay(1000)
+            }.onFailure {
+                Napier.e(it) { "Failed to download item: ${item.name}" }
+            }
+        }
+
+        MediaScannerConnection.scanFile(
+            context,
+            pathAndMime.map { it.first }.toTypedArray(),
+            pathAndMime.map { it.second }.toTypedArray(),
+        ) { _, uri ->
+            Napier.d { "MediaScannerConnection: $uri" }
+        }
+    }
+
+    private data class DownloadedItems(
+        val downloadItems: FanboxDownloadItems,
+        val results: List<Pair<FanboxDownloadItems.Item, File>?>,
+    )
 }
