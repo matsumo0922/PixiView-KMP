@@ -173,5 +173,12 @@
     "date": "2024/10/10",
     "logJp": "・ダウンロード中のUIを改善\n・ダウンロードしたファイルの保存先を指定できるように変更\n・常にオリジナルサイズの画像をダウンロードできるオプションを用意\n・大きなファイルをダウンロードした際にアプリがクラッシュする問題を修正",
     "logEn": "・Improved the UI during downloading\n・Changed so that you can specify the destination to save downloaded files\n・Option to always download images in their original size\n・Fixed issue where app would crash when downloading large files"
+  },
+  {
+    "versionName": "2.1.8",
+    "versionCode": 48,
+    "date": "2024/10/14",
+    "logJp": "・一括ダウンロード中にアプリがクラッシュする問題を修正",
+    "logEn": "・Fixed an issue where the app would crash during bulk download."
   }
 ]

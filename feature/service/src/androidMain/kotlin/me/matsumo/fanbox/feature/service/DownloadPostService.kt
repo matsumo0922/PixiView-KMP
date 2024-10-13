@@ -75,7 +75,12 @@ class DownloadPostService : Service() {
         if (isForeground) {
             if (!this.isForeground) {
                 Napier.d { "DownloadPostService start" }
-                startForeground(notifyConfig.notifyId, createNotify(baseContext, title, message, subMessage, progress))
+
+                runCatching {
+                    startForeground(notifyConfig.notifyId, createNotify(baseContext, title, message, subMessage, progress))
+                }.onFailure {
+                    Napier.e(it) { "Failed to start foreground service. $title, $message" }
+                }
             } else {
                 manager.notify(notifyConfig.notifyId, createNotify(baseContext, title, message, subMessage, progress))
             }
