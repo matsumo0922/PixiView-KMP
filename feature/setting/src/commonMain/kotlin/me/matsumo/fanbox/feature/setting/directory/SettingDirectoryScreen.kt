@@ -52,6 +52,7 @@ internal fun SettingDirectoryRoute(
     AsyncLoadContents(
         modifier = modifier,
         screenState = screenState,
+        terminate = { terminate.invoke() },
     ) {
         SettingDirectoryScreen(
             modifier = Modifier.fillMaxSize(),

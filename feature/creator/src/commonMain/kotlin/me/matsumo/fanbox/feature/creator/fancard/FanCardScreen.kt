@@ -58,6 +58,7 @@ internal fun FanCardRoute(
         modifier = modifier,
         screenState = screenState,
         retryAction = { terminate.invoke() },
+        terminate = { terminate.invoke() },
     ) {
         FanCardScreen(
             modifier = Modifier.fillMaxWidth(),

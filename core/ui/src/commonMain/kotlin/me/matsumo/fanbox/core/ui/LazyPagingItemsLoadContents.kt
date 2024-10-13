@@ -59,6 +59,7 @@ fun <T : Any> LazyPagingItemsLoadContents(
                             ErrorView(
                                 errorState = ScreenState.Error(Res.string.error_no_data),
                                 retryAction = { lazyPagingItems.refresh() },
+                                terminate = null,
                             )
                         }
 

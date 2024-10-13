@@ -65,6 +65,7 @@ internal fun SettingThemeRoute(
     AsyncLoadContents(
         modifier = modifier,
         screenState = screenState,
+        terminate = { terminate.invoke() },
     ) {
         SettingThemeDialog(
             modifier = Modifier.background(MaterialTheme.colorScheme.surface),

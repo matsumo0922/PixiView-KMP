@@ -79,6 +79,7 @@ internal fun SettingTopRoute(
     AsyncLoadContents(
         modifier = modifier,
         screenState = screenState,
+        terminate = { terminate.invoke() },
     ) { uiState ->
         fun requirePlus(setting: Boolean, settingMethod: (Boolean) -> Unit, referrer: String) {
             if (setting) {

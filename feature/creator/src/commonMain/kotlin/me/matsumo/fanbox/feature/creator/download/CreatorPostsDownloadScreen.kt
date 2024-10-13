@@ -95,6 +95,7 @@ internal fun CreatorPostsDownloadRoute(
         otherModifier = Modifier.fillMaxSize(),
         screenState = screenState,
         retryAction = { viewModel.fetch(creatorId) },
+        terminate = { terminate.invoke() },
     ) { uiState ->
         CreatorPostsDownloadScreen(
             modifier = Modifier.fillMaxSize(),

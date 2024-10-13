@@ -62,6 +62,7 @@ internal fun FollowingCreatorsRoute(
         modifier = modifier,
         screenState = screenState,
         retryAction = { viewModel.fetch() },
+        terminate = { terminate.invoke() },
     ) { uiState ->
         FollowingCreatorsScreen(
             modifier = Modifier.fillMaxSize(),

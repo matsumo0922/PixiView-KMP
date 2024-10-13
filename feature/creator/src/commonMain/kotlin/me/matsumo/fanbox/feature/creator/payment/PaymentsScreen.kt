@@ -52,6 +52,7 @@ internal fun PaymentsRoute(
         modifier = modifier,
         screenState = screenState,
         retryAction = { viewModel.fetch() },
+        terminate = { terminate.invoke() },
     ) {
         PaymentsScreen(
             modifier = Modifier.fillMaxSize(),

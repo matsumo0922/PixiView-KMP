@@ -69,6 +69,7 @@ internal fun BookmarkedPostsRoute(
     AsyncLoadContents(
         modifier = modifier,
         screenState = screenState,
+        terminate = { terminate.invoke() },
     ) {
         BookmarkedPostsScreen(
             modifier = Modifier.fillMaxSize(),

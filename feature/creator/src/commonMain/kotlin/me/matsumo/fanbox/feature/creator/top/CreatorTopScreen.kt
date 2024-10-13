@@ -102,6 +102,7 @@ internal fun CreatorTopRoute(
         modifier = modifier,
         screenState = screenState,
         retryAction = { viewModel.fetch(creatorId) },
+        terminate = { terminate.invoke() },
     ) { uiState ->
         val creatorPostsPaging = uiState.creatorPostsPaging.collectAsLazyPagingItems()
 

@@ -13,18 +13,20 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import com.multiplatform.webview.cookie.WebViewCookieManager
 import com.multiplatform.webview.web.LoadingState
 import com.multiplatform.webview.web.WebView
 import com.multiplatform.webview.web.rememberWebViewState
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
 import me.matsumo.fanbox.core.ui.Res
 import me.matsumo.fanbox.core.ui.component.PixiViewTopBar
 import me.matsumo.fanbox.core.ui.view.SimpleAlertContents
 import me.matsumo.fanbox.core.ui.welcome_login_title
 import org.jetbrains.compose.resources.stringResource
 import org.koin.compose.viewmodel.koinViewModel
-import org.koin.core.annotation.KoinExperimentalAPI
 
-@OptIn(ExperimentalMaterial3Api::class, KoinExperimentalAPI::class)
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 internal fun WelcomeWebScreen(
     navigateToLoginAlert: (SimpleAlertContents) -> Unit,
@@ -50,6 +52,7 @@ internal fun WelcomeWebScreen(
 
     LaunchedEffect(true) {
         navigateToLoginAlert.invoke(SimpleAlertContents.Login)
+        withContext(Dispatchers.Main) { WebViewCookieManager().removeAllCookies() }
     }
 
     LaunchedEffect(webViewState.lastLoadedUrl) {

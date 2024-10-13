@@ -7,7 +7,6 @@ import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.animation.togetherWith
 import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.navigationBarsPadding
@@ -32,7 +31,8 @@ fun <T> AsyncLoadContents(
     otherModifier: Modifier = modifier,
     containerColor: Color = MaterialTheme.colorScheme.surface,
     cornerShape: RoundedCornerShape = RoundedCornerShape(0.dp),
-    retryAction: () -> Unit = {},
+    retryAction: (() -> Unit)? = null,
+    terminate: (() -> Unit)? = null,
     content: @Composable (T) -> Unit,
 ) {
     Scaffold(
@@ -72,75 +72,9 @@ fun <T> AsyncLoadContents(
                         modifier = otherModifier.fillMaxWidth(),
                         errorState = state,
                         retryAction = retryAction,
+                        terminate = terminate,
                     )
                 }
-            }
-        }
-    }
-}
-
-@Composable
-fun <T> AsyncLoadContentsWithoutAnimation(
-    screenState: ScreenState<T>,
-    modifier: Modifier = Modifier,
-    otherModifier: Modifier = Modifier,
-    containerColor: Color = MaterialTheme.colorScheme.surface,
-    cornerShape: RoundedCornerShape = RoundedCornerShape(0.dp),
-    retryAction: () -> Unit = {},
-    content: @Composable (T) -> Unit,
-) {
-    Box(
-        modifier = modifier
-            .clip(cornerShape)
-            .background(containerColor),
-    ) {
-        when (screenState) {
-            is ScreenState.Idle -> {
-                content.invoke(screenState.data)
-            }
-            is ScreenState.Loading -> {
-                LoadingView(
-                    modifier = otherModifier
-                        .fillMaxWidth()
-                        .background(Color.Black.copy(alpha = 0.2f)),
-                )
-            }
-            is ScreenState.Error -> {
-                ErrorView(
-                    modifier = otherModifier.fillMaxWidth(),
-                    errorState = screenState,
-                    retryAction = retryAction,
-                )
-            }
-        }
-    }
-}
-
-@Composable
-fun <T> AsyncNoLoadContents(
-    screenState: ScreenState<T>,
-    modifier: Modifier = Modifier,
-    otherModifier: Modifier = Modifier,
-    containerColor: Color = MaterialTheme.colorScheme.surface,
-    cornerShape: RoundedCornerShape = RoundedCornerShape(0.dp),
-    retryAction: () -> Unit = {},
-    content: @Composable (T?) -> Unit,
-) {
-    Box(
-        modifier = modifier
-            .clip(cornerShape)
-            .background(containerColor),
-    ) {
-        when (screenState) {
-            is ScreenState.Idle, is ScreenState.Loading -> {
-                content.invoke((screenState as? ScreenState.Idle)?.data)
-            }
-            is ScreenState.Error -> {
-                ErrorView(
-                    modifier = otherModifier.fillMaxWidth(),
-                    errorState = screenState,
-                    retryAction = retryAction,
-                )
             }
         }
     }

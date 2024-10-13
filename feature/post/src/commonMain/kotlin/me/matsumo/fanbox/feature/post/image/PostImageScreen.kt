@@ -71,6 +71,7 @@ internal fun PostImageRoute(
         modifier = modifier,
         screenState = screenState,
         retryAction = { viewModel.fetch(postId) },
+        terminate = { terminate.invoke() },
     ) { uiState ->
         PostImageScreen(
             modifier = Modifier.fillMaxSize(),

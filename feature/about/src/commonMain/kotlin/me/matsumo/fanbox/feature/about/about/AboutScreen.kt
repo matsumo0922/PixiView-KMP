@@ -54,6 +54,7 @@ internal fun AboutRoute(
     AsyncLoadContents(
         modifier = modifier,
         screenState = screenState,
+        terminate = { terminate.invoke() },
     ) { uiState ->
         AboutScreen(
             modifier = Modifier.background(MaterialTheme.colorScheme.surface),

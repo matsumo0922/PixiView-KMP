@@ -82,9 +82,8 @@ internal fun BillingPlusRoute(
     AsyncLoadContents(
         modifier = modifier,
         screenState = screenState,
-        retryAction = {
-            terminate.invoke()
-        },
+        retryAction = { terminate.invoke() },
+        terminate = { terminate.invoke() },
     ) { uiState ->
         BillingPlusDialog(
             modifier = Modifier.fillMaxSize(),

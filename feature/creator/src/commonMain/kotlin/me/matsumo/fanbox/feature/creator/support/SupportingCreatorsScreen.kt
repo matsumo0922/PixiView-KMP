@@ -58,6 +58,7 @@ internal fun SupportingCreatorsRoute(
         modifier = modifier,
         screenState = screenState,
         retryAction = { viewModel.fetch() },
+        terminate = { terminate.invoke() },
     ) { uiState ->
         SupportingCreatorsScreen(
             modifier = Modifier.fillMaxSize(),

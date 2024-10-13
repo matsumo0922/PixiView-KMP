@@ -161,6 +161,7 @@ internal fun PostDetailRoute(
             modifier = Modifier.fillMaxSize(),
             errorState = ScreenState.Error(Res.string.error_network),
             retryAction = { terminate.invoke() },
+            terminate = { terminate.invoke() },
         )
     }
 }
@@ -194,6 +195,7 @@ private fun PostDetailView(
         modifier = modifier,
         screenState = screenState,
         retryAction = { viewModel.fetch(postId) },
+        terminate = { terminate.invoke() },
     ) { uiState ->
         PostDetailScreen(
             modifier = Modifier.fillMaxSize(),
