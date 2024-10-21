@@ -24,8 +24,8 @@ import coil3.compose.SubcomposeAsyncImage
 import coil3.request.ImageRequest
 import coil3.size.Size
 import me.matsumo.fanbox.core.model.fanbox.FanboxPostDetail
-import me.matsumo.fanbox.core.ui.Res
-import me.matsumo.fanbox.core.ui.error_ios_gif_support
+import me.matsumo.fanbox.core.resources.Res
+import me.matsumo.fanbox.core.resources.error_ios_gif_support
 import me.matsumo.fanbox.core.ui.extensition.Platform
 import me.matsumo.fanbox.core.ui.extensition.SimmerPlaceHolder
 import me.matsumo.fanbox.core.ui.extensition.currentPlatform

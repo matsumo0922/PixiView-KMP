@@ -27,10 +27,10 @@ import io.github.alexzhirkevich.cupertino.adaptive.AdaptiveScaffold
 import io.github.alexzhirkevich.cupertino.adaptive.ExperimentalAdaptiveApi
 import kotlinx.coroutines.launch
 import me.matsumo.fanbox.core.ui.AsyncLoadContents
-import me.matsumo.fanbox.core.ui.Res
+import me.matsumo.fanbox.core.resources.Res
 import me.matsumo.fanbox.core.ui.extensition.LocalSnackbarHostState
 import me.matsumo.fanbox.core.ui.extensition.ToastExtension
-import me.matsumo.fanbox.core.ui.setting_top_file
+import me.matsumo.fanbox.core.resources.setting_top_file
 import me.matsumo.fanbox.feature.setting.SettingTheme
 import me.matsumo.fanbox.feature.setting.directory.items.SettingDirectoryContent
 import org.jetbrains.compose.resources.StringResource

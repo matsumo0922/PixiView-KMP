@@ -18,10 +18,10 @@ import me.matsumo.fanbox.core.model.UserData
 import me.matsumo.fanbox.core.model.fanbox.FanboxMetaData
 import me.matsumo.fanbox.core.repository.FanboxRepository
 import me.matsumo.fanbox.core.repository.UserDataRepository
-import me.matsumo.fanbox.core.ui.Res
-import me.matsumo.fanbox.core.ui.error_no_data
-import me.matsumo.fanbox.core.ui.home_app_lock_message
-import me.matsumo.fanbox.core.ui.home_app_lock_title
+import me.matsumo.fanbox.core.resources.Res
+import me.matsumo.fanbox.core.resources.error_no_data
+import me.matsumo.fanbox.core.resources.home_app_lock_message
+import me.matsumo.fanbox.core.resources.home_app_lock_title
 import org.jetbrains.compose.resources.getString
 
 class SettingTopViewModel(

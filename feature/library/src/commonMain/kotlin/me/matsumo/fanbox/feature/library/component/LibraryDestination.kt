@@ -12,11 +12,11 @@ import androidx.compose.material.icons.outlined.Search
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.navigation.NavDestination
 import androidx.navigation.NavDestination.Companion.hierarchy
-import me.matsumo.fanbox.core.ui.Res
-import me.matsumo.fanbox.core.ui.library_navigation_discovery
-import me.matsumo.fanbox.core.ui.library_navigation_home
-import me.matsumo.fanbox.core.ui.library_navigation_message
-import me.matsumo.fanbox.core.ui.library_navigation_notify
+import me.matsumo.fanbox.core.resources.Res
+import me.matsumo.fanbox.core.resources.library_navigation_discovery
+import me.matsumo.fanbox.core.resources.library_navigation_home
+import me.matsumo.fanbox.core.resources.library_navigation_message
+import me.matsumo.fanbox.core.resources.library_navigation_notify
 import org.jetbrains.compose.resources.StringResource
 
 enum class LibraryDestination(

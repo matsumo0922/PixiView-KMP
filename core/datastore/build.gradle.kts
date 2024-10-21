@@ -16,6 +16,7 @@ kotlin {
             implementation(project(":core:common"))
             implementation(project(":core:model"))
             implementation(project(":core:logs"))
+            implementation(project(":core:resources"))
 
             implementation(libs.androidx.datastore)
             implementation(libs.androidx.datastore.proto)

@@ -13,12 +13,6 @@ android {
     namespace = "me.matsumo.fanbox.core.ui"
 }
 
-compose.resources {
-    publicResClass = true
-    packageOfResClass = "me.matsumo.fanbox.core.ui"
-    generateResClass = always
-}
-
 kotlin {
     sourceSets {
         val commonMain by getting {
@@ -28,6 +22,7 @@ kotlin {
                 implementation(project(":core:repository"))
                 implementation(project(":core:datastore"))
                 implementation(project(":core:logs"))
+                implementation(project(":core:resources"))
 
                 api(libs.bundles.ui.common.api)
                 api(libs.bundles.cupertino)
@@ -42,7 +37,6 @@ kotlin {
                 api(compose.material3)
                 api(compose.ui)
                 api(compose.materialIconsExtended)
-                api(compose.components.resources)
 
                 api(libs.calf.ui)
                 api(libs.placeholder)

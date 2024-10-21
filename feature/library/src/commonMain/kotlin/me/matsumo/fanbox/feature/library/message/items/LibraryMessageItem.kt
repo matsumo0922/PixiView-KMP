@@ -30,9 +30,9 @@ import coil3.request.ImageRequest
 import me.matsumo.fanbox.core.common.util.format
 import me.matsumo.fanbox.core.model.fanbox.FanboxNewsLetter
 import me.matsumo.fanbox.core.model.fanbox.id.CreatorId
-import me.matsumo.fanbox.core.ui.Res
+import me.matsumo.fanbox.core.resources.Res
+import me.matsumo.fanbox.core.resources.im_default_user
 import me.matsumo.fanbox.core.ui.extensition.asCoilImage
-import me.matsumo.fanbox.core.ui.im_default_user
 import me.matsumo.fanbox.core.ui.theme.bold
 import sh.calvin.autolinktext.AutoLinkText
 import sh.calvin.autolinktext.TextRuleDefaults

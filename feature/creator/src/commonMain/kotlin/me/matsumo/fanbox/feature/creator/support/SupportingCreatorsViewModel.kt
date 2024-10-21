@@ -10,8 +10,8 @@ import me.matsumo.fanbox.core.common.util.suspendRunCatching
 import me.matsumo.fanbox.core.model.ScreenState
 import me.matsumo.fanbox.core.model.fanbox.FanboxCreatorPlan
 import me.matsumo.fanbox.core.repository.FanboxRepository
-import me.matsumo.fanbox.core.ui.Res
-import me.matsumo.fanbox.core.ui.error_network
+import me.matsumo.fanbox.core.resources.Res
+import me.matsumo.fanbox.core.resources.error_network
 
 class SupportingCreatorsViewModel(
     private val fanboxRepository: FanboxRepository,

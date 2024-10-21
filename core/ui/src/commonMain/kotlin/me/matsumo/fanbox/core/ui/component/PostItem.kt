@@ -48,19 +48,19 @@ import me.matsumo.fanbox.core.common.util.format
 import me.matsumo.fanbox.core.model.fanbox.FanboxPost
 import me.matsumo.fanbox.core.model.fanbox.id.CreatorId
 import me.matsumo.fanbox.core.model.fanbox.id.PostId
-import me.matsumo.fanbox.core.ui.Res
-import me.matsumo.fanbox.core.ui.error_restricted_post
-import me.matsumo.fanbox.core.ui.error_restricted_post_ios
+import me.matsumo.fanbox.core.resources.Res
+import me.matsumo.fanbox.core.resources.error_restricted_post
+import me.matsumo.fanbox.core.resources.error_restricted_post_ios
+import me.matsumo.fanbox.core.resources.fanbox_free_fee
+import me.matsumo.fanbox.core.resources.im_default_user
+import me.matsumo.fanbox.core.resources.unit_jpy
 import me.matsumo.fanbox.core.ui.extensition.FadePlaceHolder
 import me.matsumo.fanbox.core.ui.extensition.Platform
 import me.matsumo.fanbox.core.ui.extensition.asCoilImage
 import me.matsumo.fanbox.core.ui.extensition.currentPlatform
 import me.matsumo.fanbox.core.ui.extensition.fanboxHeader
-import me.matsumo.fanbox.core.ui.fanbox_free_fee
-import me.matsumo.fanbox.core.ui.im_default_user
 import me.matsumo.fanbox.core.ui.theme.bold
 import me.matsumo.fanbox.core.ui.theme.center
-import me.matsumo.fanbox.core.ui.unit_jpy
 import org.jetbrains.compose.resources.stringResource
 
 @Composable

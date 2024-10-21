@@ -52,14 +52,14 @@ import androidx.compose.ui.text.input.OffsetMapping
 import androidx.compose.ui.text.input.TransformedText
 import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.unit.dp
-import me.matsumo.fanbox.core.ui.Res
-import me.matsumo.fanbox.core.ui.post_search_placeholder
+import me.matsumo.fanbox.core.resources.Res
+import me.matsumo.fanbox.core.resources.post_search_placeholder
 import me.matsumo.fanbox.feature.post.search.PostSearchMode
 import me.matsumo.fanbox.feature.post.search.PostSearchQuery
 import me.matsumo.fanbox.feature.post.search.parseQuery
 import org.jetbrains.compose.resources.stringResource
 
-@OptIn(ExperimentalMaterial3Api::class, ExperimentalComposeUiApi::class)
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 internal fun PostSearchTopBar(
     query: String,

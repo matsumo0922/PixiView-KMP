@@ -55,14 +55,14 @@ import me.matsumo.fanbox.core.model.fanbox.FanboxPostDetail
 import me.matsumo.fanbox.core.model.fanbox.id.CommentId
 import me.matsumo.fanbox.core.model.fanbox.id.CreatorId
 import me.matsumo.fanbox.core.model.fanbox.id.PostId
+import me.matsumo.fanbox.core.resources.Res
+import me.matsumo.fanbox.core.resources.common_downloaded
+import me.matsumo.fanbox.core.resources.error_network
 import me.matsumo.fanbox.core.ui.AsyncLoadContents
 import me.matsumo.fanbox.core.ui.LazyPagingItemsLoadContents
-import me.matsumo.fanbox.core.ui.Res
 import me.matsumo.fanbox.core.ui.ads.NativeAdView
-import me.matsumo.fanbox.core.ui.common_downloaded
 import me.matsumo.fanbox.core.ui.component.pager.HorizontalPager
 import me.matsumo.fanbox.core.ui.component.pager.rememberPagerState
-import me.matsumo.fanbox.core.ui.error_network
 import me.matsumo.fanbox.core.ui.extensition.FadePlaceHolder
 import me.matsumo.fanbox.core.ui.extensition.LocalSnackbarHostState
 import me.matsumo.fanbox.core.ui.extensition.NavigatorExtension

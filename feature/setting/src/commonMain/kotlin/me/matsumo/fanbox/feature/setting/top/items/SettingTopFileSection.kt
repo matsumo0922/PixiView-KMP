@@ -6,14 +6,14 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import me.matsumo.fanbox.core.model.DownloadFileType
 import me.matsumo.fanbox.core.model.UserData
-import me.matsumo.fanbox.core.ui.Res
+import me.matsumo.fanbox.core.resources.Res
 import me.matsumo.fanbox.core.ui.component.SettingSwitchItem
 import me.matsumo.fanbox.core.ui.component.SettingTextItem
-import me.matsumo.fanbox.core.ui.setting_top_file
-import me.matsumo.fanbox.core.ui.setting_top_file_directory
-import me.matsumo.fanbox.core.ui.setting_top_file_directory_description
-import me.matsumo.fanbox.core.ui.setting_top_file_type
-import me.matsumo.fanbox.core.ui.setting_top_file_type_description
+import me.matsumo.fanbox.core.resources.setting_top_file
+import me.matsumo.fanbox.core.resources.setting_top_file_directory
+import me.matsumo.fanbox.core.resources.setting_top_file_directory_description
+import me.matsumo.fanbox.core.resources.setting_top_file_type
+import me.matsumo.fanbox.core.resources.setting_top_file_type_description
 
 @Composable
 internal fun SettingTopFileSection(

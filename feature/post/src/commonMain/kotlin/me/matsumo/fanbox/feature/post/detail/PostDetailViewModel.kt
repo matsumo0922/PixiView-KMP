@@ -23,12 +23,12 @@ import me.matsumo.fanbox.core.model.updateWhenIdle
 import me.matsumo.fanbox.core.repository.DownloadPostsRepository
 import me.matsumo.fanbox.core.repository.FanboxRepository
 import me.matsumo.fanbox.core.repository.UserDataRepository
-import me.matsumo.fanbox.core.ui.Res
-import me.matsumo.fanbox.core.ui.error_network
-import me.matsumo.fanbox.core.ui.post_detail_comment_comment_failed
-import me.matsumo.fanbox.core.ui.post_detail_comment_commented
-import me.matsumo.fanbox.core.ui.post_detail_comment_delete_failed
-import me.matsumo.fanbox.core.ui.post_detail_comment_delete_success
+import me.matsumo.fanbox.core.resources.Res
+import me.matsumo.fanbox.core.resources.error_network
+import me.matsumo.fanbox.core.resources.post_detail_comment_comment_failed
+import me.matsumo.fanbox.core.resources.post_detail_comment_commented
+import me.matsumo.fanbox.core.resources.post_detail_comment_delete_failed
+import me.matsumo.fanbox.core.resources.post_detail_comment_delete_success
 import org.jetbrains.compose.resources.StringResource
 
 class PostDetailViewModel(

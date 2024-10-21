@@ -9,13 +9,13 @@ import androidx.compose.ui.text.AnnotatedString
 import me.matsumo.fanbox.core.common.PixiViewConfig
 import me.matsumo.fanbox.core.model.UserData
 import me.matsumo.fanbox.core.model.fanbox.FanboxMetaData
-import me.matsumo.fanbox.core.ui.Res
+import me.matsumo.fanbox.core.resources.Res
 import me.matsumo.fanbox.core.ui.component.SettingTextItem
-import me.matsumo.fanbox.core.ui.setting_top_information
-import me.matsumo.fanbox.core.ui.setting_top_information_csrf_token
-import me.matsumo.fanbox.core.ui.setting_top_information_fanbox_session_id
-import me.matsumo.fanbox.core.ui.setting_top_information_id
-import me.matsumo.fanbox.core.ui.setting_top_information_version
+import me.matsumo.fanbox.core.resources.setting_top_information
+import me.matsumo.fanbox.core.resources.setting_top_information_csrf_token
+import me.matsumo.fanbox.core.resources.setting_top_information_fanbox_session_id
+import me.matsumo.fanbox.core.resources.setting_top_information_id
+import me.matsumo.fanbox.core.resources.setting_top_information_version
 import org.jetbrains.compose.resources.stringResource
 
 @Composable

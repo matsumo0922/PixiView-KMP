@@ -54,14 +54,14 @@ import me.matsumo.fanbox.core.model.fanbox.FanboxCreatorTag
 import me.matsumo.fanbox.core.model.fanbox.FanboxPost
 import me.matsumo.fanbox.core.model.fanbox.id.CreatorId
 import me.matsumo.fanbox.core.model.fanbox.id.PostId
+import me.matsumo.fanbox.core.resources.Res
+import me.matsumo.fanbox.core.resources.creator_tab_plans
+import me.matsumo.fanbox.core.resources.creator_tab_posts
 import me.matsumo.fanbox.core.ui.AsyncLoadContents
 import me.matsumo.fanbox.core.ui.LazyPagingItemsLoadContents
-import me.matsumo.fanbox.core.ui.Res
 import me.matsumo.fanbox.core.ui.component.CollapsingToolbarScaffold
 import me.matsumo.fanbox.core.ui.component.ScrollStrategy
 import me.matsumo.fanbox.core.ui.component.rememberCollapsingToolbarScaffoldState
-import me.matsumo.fanbox.core.ui.creator_tab_plans
-import me.matsumo.fanbox.core.ui.creator_tab_posts
 import me.matsumo.fanbox.core.ui.extensition.NavigatorExtension
 import me.matsumo.fanbox.core.ui.view.SimpleAlertContents
 import me.matsumo.fanbox.feature.creator.top.items.CreatorTopDescriptionDialog

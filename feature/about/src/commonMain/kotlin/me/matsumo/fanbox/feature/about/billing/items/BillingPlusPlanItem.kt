@@ -25,12 +25,12 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import me.matsumo.fanbox.core.ui.Res
-import me.matsumo.fanbox.core.ui.billing_plus_plan_monthly
-import me.matsumo.fanbox.core.ui.billing_plus_plan_yearly
+import me.matsumo.fanbox.core.resources.Res
+import me.matsumo.fanbox.core.resources.billing_plus_plan_monthly
+import me.matsumo.fanbox.core.resources.billing_plus_plan_yearly
+import me.matsumo.fanbox.core.resources.unit_month
+import me.matsumo.fanbox.core.resources.unit_year
 import me.matsumo.fanbox.core.ui.theme.bold
-import me.matsumo.fanbox.core.ui.unit_month
-import me.matsumo.fanbox.core.ui.unit_year
 import me.matsumo.fanbox.feature.about.billing.BillingPlusUiState
 import org.jetbrains.compose.resources.stringResource
 

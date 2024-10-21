@@ -11,9 +11,9 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.dp
-import me.matsumo.fanbox.core.ui.Res
+import me.matsumo.fanbox.core.resources.Res
+import me.matsumo.fanbox.core.resources.billing_plus_description
 import me.matsumo.fanbox.core.ui.appName
-import me.matsumo.fanbox.core.ui.billing_plus_description
 import me.matsumo.fanbox.core.ui.theme.bold
 import org.jetbrains.compose.resources.stringResource
 

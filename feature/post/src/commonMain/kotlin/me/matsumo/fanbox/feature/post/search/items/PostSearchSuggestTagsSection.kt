@@ -28,10 +28,10 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.unit.dp
 import kotlinx.collections.immutable.ImmutableList
 import me.matsumo.fanbox.core.model.FanboxTag
-import me.matsumo.fanbox.core.ui.Res
-import me.matsumo.fanbox.core.ui.common_see_more
+import me.matsumo.fanbox.core.resources.Res
+import me.matsumo.fanbox.core.resources.common_see_more
+import me.matsumo.fanbox.core.resources.unit_tag
 import me.matsumo.fanbox.core.ui.theme.bold
-import me.matsumo.fanbox.core.ui.unit_tag
 import org.jetbrains.compose.resources.stringResource
 
 @Composable

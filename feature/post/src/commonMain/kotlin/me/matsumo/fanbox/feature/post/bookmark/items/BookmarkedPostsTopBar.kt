@@ -41,11 +41,11 @@ import androidx.compose.ui.graphics.lerp
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.unit.dp
-import me.matsumo.fanbox.core.ui.Res
-import me.matsumo.fanbox.core.ui.bookmark_search_placeholder
+import me.matsumo.fanbox.core.resources.Res
+import me.matsumo.fanbox.core.resources.bookmark_search_placeholder
 import org.jetbrains.compose.resources.stringResource
 
-@OptIn(ExperimentalMaterial3Api::class, ExperimentalComposeUiApi::class)
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 internal fun BookmarkedPostsTopBar(
     scrollBehavior: TopAppBarScrollBehavior?,

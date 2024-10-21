@@ -31,8 +31,8 @@ import com.mikepenz.aboutlibraries.entity.Library
 import com.mikepenz.aboutlibraries.ui.compose.rememberLibraries
 import io.github.alexzhirkevich.cupertino.adaptive.AdaptiveScaffold
 import io.github.alexzhirkevich.cupertino.adaptive.ExperimentalAdaptiveApi
-import me.matsumo.fanbox.core.ui.Res
-import me.matsumo.fanbox.core.ui.setting_top_others_open_source_license
+import me.matsumo.fanbox.core.resources.Res
+import me.matsumo.fanbox.core.resources.setting_top_others_open_source_license
 import me.matsumo.fanbox.feature.setting.SettingTheme
 import me.matsumo.fanbox.feature.setting.oss.components.LibraryItem
 import me.matsumo.fanbox.feature.setting.oss.components.LicenseDialog

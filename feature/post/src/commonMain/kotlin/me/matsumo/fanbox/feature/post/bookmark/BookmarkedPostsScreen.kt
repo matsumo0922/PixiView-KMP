@@ -38,9 +38,9 @@ import me.matsumo.fanbox.core.model.fanbox.FanboxPost
 import me.matsumo.fanbox.core.model.fanbox.id.CreatorId
 import me.matsumo.fanbox.core.model.fanbox.id.PostId
 import me.matsumo.fanbox.core.ui.AsyncLoadContents
-import me.matsumo.fanbox.core.ui.Res
-import me.matsumo.fanbox.core.ui.bookmark_empty_description
-import me.matsumo.fanbox.core.ui.bookmark_empty_title
+import me.matsumo.fanbox.core.resources.Res
+import me.matsumo.fanbox.core.resources.bookmark_empty_description
+import me.matsumo.fanbox.core.resources.bookmark_empty_title
 import me.matsumo.fanbox.core.ui.component.PostItem
 import me.matsumo.fanbox.core.ui.extensition.LocalNavigationType
 import me.matsumo.fanbox.core.ui.extensition.PixiViewNavigationType

@@ -8,8 +8,8 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import me.matsumo.fanbox.core.ui.Res
-import me.matsumo.fanbox.core.ui.error_developing_feature
+import me.matsumo.fanbox.core.resources.Res
+import me.matsumo.fanbox.core.resources.error_developing_feature
 import org.jetbrains.compose.resources.StringResource
 import org.jetbrains.compose.resources.stringResource
 

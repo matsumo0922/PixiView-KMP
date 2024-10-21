@@ -33,12 +33,12 @@ import kotlinx.coroutines.launch
 import me.matsumo.fanbox.core.model.FanboxTag
 import me.matsumo.fanbox.core.model.fanbox.FanboxCreatorDetail
 import me.matsumo.fanbox.core.model.fanbox.id.CreatorId
+import me.matsumo.fanbox.core.resources.Res
+import me.matsumo.fanbox.core.resources.common_creator
+import me.matsumo.fanbox.core.resources.common_tag
+import me.matsumo.fanbox.core.resources.error_no_data_search
 import me.matsumo.fanbox.core.ui.LazyPagingItemsLoadContents
-import me.matsumo.fanbox.core.ui.Res
-import me.matsumo.fanbox.core.ui.common_creator
-import me.matsumo.fanbox.core.ui.common_tag
 import me.matsumo.fanbox.core.ui.component.CreatorItem
-import me.matsumo.fanbox.core.ui.error_no_data_search
 import me.matsumo.fanbox.core.ui.extensition.LocalNavigationType
 import me.matsumo.fanbox.core.ui.extensition.PixiViewNavigationType
 import me.matsumo.fanbox.core.ui.extensition.drawVerticalScrollbar

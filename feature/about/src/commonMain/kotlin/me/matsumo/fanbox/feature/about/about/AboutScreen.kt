@@ -20,11 +20,11 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import kotlinx.coroutines.launch
 import me.matsumo.fanbox.core.common.PixiViewConfig
 import me.matsumo.fanbox.core.model.UserData
+import me.matsumo.fanbox.core.resources.Res
+import me.matsumo.fanbox.core.resources.about_title
+import me.matsumo.fanbox.core.resources.error_developing_feature
 import me.matsumo.fanbox.core.ui.AsyncLoadContents
-import me.matsumo.fanbox.core.ui.Res
-import me.matsumo.fanbox.core.ui.about_title
 import me.matsumo.fanbox.core.ui.component.PixiViewTopBar
-import me.matsumo.fanbox.core.ui.error_developing_feature
 import me.matsumo.fanbox.core.ui.extensition.LocalSnackbarHostState
 import me.matsumo.fanbox.core.ui.extensition.NavigatorExtension
 import me.matsumo.fanbox.core.ui.extensition.Platform

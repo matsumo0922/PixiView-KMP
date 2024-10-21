@@ -13,9 +13,9 @@ import me.matsumo.fanbox.core.model.ScreenState
 import me.matsumo.fanbox.core.model.fanbox.FanboxCreatorPlanDetail
 import me.matsumo.fanbox.core.model.fanbox.id.CreatorId
 import me.matsumo.fanbox.core.repository.FanboxRepository
-import me.matsumo.fanbox.core.ui.Res
-import me.matsumo.fanbox.core.ui.common_back
-import me.matsumo.fanbox.core.ui.creator_fan_card_not_supported
+import me.matsumo.fanbox.core.resources.Res
+import me.matsumo.fanbox.core.resources.common_back
+import me.matsumo.fanbox.core.resources.creator_fan_card_not_supported
 
 class FanCardViewModel(
     private val fanboxRepository: FanboxRepository,

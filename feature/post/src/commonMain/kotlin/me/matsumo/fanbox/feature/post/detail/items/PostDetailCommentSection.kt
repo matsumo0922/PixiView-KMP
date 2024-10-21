@@ -49,21 +49,21 @@ import me.matsumo.fanbox.core.model.fanbox.FanboxMetaData
 import me.matsumo.fanbox.core.model.fanbox.FanboxPostDetail
 import me.matsumo.fanbox.core.model.fanbox.id.CommentId
 import me.matsumo.fanbox.core.model.fanbox.id.PostId
-import me.matsumo.fanbox.core.ui.Res
-import me.matsumo.fanbox.core.ui.common_delete
-import me.matsumo.fanbox.core.ui.common_see_more
+import me.matsumo.fanbox.core.resources.Res
+import me.matsumo.fanbox.core.resources.common_delete
+import me.matsumo.fanbox.core.resources.common_see_more
+import me.matsumo.fanbox.core.resources.im_default_user
+import me.matsumo.fanbox.core.resources.post_detail_comment_empty
+import me.matsumo.fanbox.core.resources.post_detail_comment_reply
+import me.matsumo.fanbox.core.resources.post_detail_comment_title
+import me.matsumo.fanbox.core.resources.unit_day_before
+import me.matsumo.fanbox.core.resources.unit_hour_before
+import me.matsumo.fanbox.core.resources.unit_minute_before
+import me.matsumo.fanbox.core.resources.unit_second_before
 import me.matsumo.fanbox.core.ui.extensition.asCoilImage
 import me.matsumo.fanbox.core.ui.extensition.padding
-import me.matsumo.fanbox.core.ui.im_default_user
-import me.matsumo.fanbox.core.ui.post_detail_comment_empty
-import me.matsumo.fanbox.core.ui.post_detail_comment_reply
-import me.matsumo.fanbox.core.ui.post_detail_comment_title
 import me.matsumo.fanbox.core.ui.theme.bold
 import me.matsumo.fanbox.core.ui.theme.center
-import me.matsumo.fanbox.core.ui.unit_day_before
-import me.matsumo.fanbox.core.ui.unit_hour_before
-import me.matsumo.fanbox.core.ui.unit_minute_before
-import me.matsumo.fanbox.core.ui.unit_second_before
 import org.jetbrains.compose.resources.stringResource
 
 internal fun LazyListScope.postDetailCommentItems(

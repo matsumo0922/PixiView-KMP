@@ -18,9 +18,9 @@ import me.matsumo.fanbox.core.common.util.format
 import me.matsumo.fanbox.core.common.util.suspendRunCatching
 import me.matsumo.fanbox.core.model.ScreenState
 import me.matsumo.fanbox.core.repository.UserDataRepository
-import me.matsumo.fanbox.core.ui.Res
-import me.matsumo.fanbox.core.ui.common_close
-import me.matsumo.fanbox.core.ui.error_billing
+import me.matsumo.fanbox.core.resources.Res
+import me.matsumo.fanbox.core.resources.common_close
+import me.matsumo.fanbox.core.resources.error_billing
 import platform.Foundation.NSNumber
 import platform.Foundation.NSNumberFormatter
 import platform.Foundation.NSNumberFormatterCurrencyStyle

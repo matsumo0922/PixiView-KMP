@@ -20,12 +20,12 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
-import me.matsumo.fanbox.core.ui.Res
-import me.matsumo.fanbox.core.ui.error_restricted_post
-import me.matsumo.fanbox.core.ui.error_restricted_post_ios
+import me.matsumo.fanbox.core.resources.Res
+import me.matsumo.fanbox.core.resources.error_restricted_post
+import me.matsumo.fanbox.core.resources.error_restricted_post_ios
+import me.matsumo.fanbox.core.resources.fanbox_plan_List
 import me.matsumo.fanbox.core.ui.extensition.Platform
 import me.matsumo.fanbox.core.ui.extensition.currentPlatform
-import me.matsumo.fanbox.core.ui.fanbox_plan_List
 import org.jetbrains.compose.resources.stringResource
 
 @Composable

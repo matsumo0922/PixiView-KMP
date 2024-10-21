@@ -17,8 +17,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import me.matsumo.fanbox.core.common.util.toFileSizeString
 import me.matsumo.fanbox.core.model.fanbox.FanboxPostDetail
-import me.matsumo.fanbox.core.ui.Res
-import me.matsumo.fanbox.core.ui.common_download
+import me.matsumo.fanbox.core.resources.Res
+import me.matsumo.fanbox.core.resources.common_download
 import me.matsumo.fanbox.core.ui.component.video.VideoPlayer
 import me.matsumo.fanbox.core.ui.theme.bold
 import me.matsumo.fanbox.core.ui.theme.center

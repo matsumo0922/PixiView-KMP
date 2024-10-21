@@ -25,11 +25,11 @@ import coil3.compose.SubcomposeAsyncImage
 import coil3.request.ImageRequest
 import kotlinx.collections.immutable.ImmutableList
 import me.matsumo.fanbox.core.model.fanbox.FanboxCreatorPlan
-import me.matsumo.fanbox.core.ui.Res
+import me.matsumo.fanbox.core.resources.Res
+import me.matsumo.fanbox.core.resources.unit_jpy
 import me.matsumo.fanbox.core.ui.extensition.SimmerPlaceHolder
 import me.matsumo.fanbox.core.ui.extensition.fanboxHeader
 import me.matsumo.fanbox.core.ui.theme.bold
-import me.matsumo.fanbox.core.ui.unit_jpy
 import org.jetbrains.compose.resources.stringResource
 
 @Composable

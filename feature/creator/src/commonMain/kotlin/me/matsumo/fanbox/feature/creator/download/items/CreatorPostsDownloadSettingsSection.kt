@@ -9,14 +9,14 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import me.matsumo.fanbox.core.ui.Res
+import me.matsumo.fanbox.core.resources.Res
+import me.matsumo.fanbox.core.resources.creator_posts_download_ignore_file
+import me.matsumo.fanbox.core.resources.creator_posts_download_ignore_file_description
+import me.matsumo.fanbox.core.resources.creator_posts_download_ignore_free
+import me.matsumo.fanbox.core.resources.creator_posts_download_ignore_free_description
+import me.matsumo.fanbox.core.resources.creator_posts_download_ignore_keyword_placeholder
+import me.matsumo.fanbox.core.resources.creator_posts_download_message
 import me.matsumo.fanbox.core.ui.component.SettingSwitchItem
-import me.matsumo.fanbox.core.ui.creator_posts_download_ignore_file
-import me.matsumo.fanbox.core.ui.creator_posts_download_ignore_file_description
-import me.matsumo.fanbox.core.ui.creator_posts_download_ignore_free
-import me.matsumo.fanbox.core.ui.creator_posts_download_ignore_free_description
-import me.matsumo.fanbox.core.ui.creator_posts_download_ignore_keyword_placeholder
-import me.matsumo.fanbox.core.ui.creator_posts_download_message
 import org.jetbrains.compose.resources.stringResource
 
 @Composable

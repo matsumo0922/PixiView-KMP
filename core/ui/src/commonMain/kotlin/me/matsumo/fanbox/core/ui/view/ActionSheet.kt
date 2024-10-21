@@ -18,8 +18,8 @@ import io.github.alexzhirkevich.cupertino.CupertinoActionSheet
 import io.github.alexzhirkevich.cupertino.ExperimentalCupertinoApi
 import io.github.alexzhirkevich.cupertino.cancel
 import io.github.alexzhirkevich.cupertino.default
-import me.matsumo.fanbox.core.ui.Res
-import me.matsumo.fanbox.core.ui.common_cancel
+import me.matsumo.fanbox.core.resources.Res
+import me.matsumo.fanbox.core.resources.common_cancel
 import me.matsumo.fanbox.core.ui.extensition.Platform
 import me.matsumo.fanbox.core.ui.extensition.currentPlatform
 import org.jetbrains.compose.resources.StringResource

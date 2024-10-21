@@ -29,13 +29,13 @@ import coil3.request.ImageRequest
 import me.matsumo.fanbox.core.model.fanbox.FanboxCreatorDetail
 import me.matsumo.fanbox.core.model.fanbox.FanboxPostDetail
 import me.matsumo.fanbox.core.model.fanbox.id.CreatorId
-import me.matsumo.fanbox.core.ui.Res
-import me.matsumo.fanbox.core.ui.common_follow
-import me.matsumo.fanbox.core.ui.common_supporting
-import me.matsumo.fanbox.core.ui.common_unfollow
+import me.matsumo.fanbox.core.resources.Res
+import me.matsumo.fanbox.core.resources.common_follow
+import me.matsumo.fanbox.core.resources.common_supporting
+import me.matsumo.fanbox.core.resources.common_unfollow
+import me.matsumo.fanbox.core.resources.im_default_user
+import me.matsumo.fanbox.core.resources.post_detail_creator
 import me.matsumo.fanbox.core.ui.extensition.asCoilImage
-import me.matsumo.fanbox.core.ui.im_default_user
-import me.matsumo.fanbox.core.ui.post_detail_creator
 import me.matsumo.fanbox.core.ui.theme.bold
 import org.jetbrains.compose.resources.stringResource
 

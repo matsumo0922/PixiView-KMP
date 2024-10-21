@@ -29,9 +29,9 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import me.matsumo.fanbox.PixiViewNavHost
 import me.matsumo.fanbox.core.model.DownloadState
-import me.matsumo.fanbox.core.ui.Res
+import me.matsumo.fanbox.core.resources.Res
 import me.matsumo.fanbox.core.ui.animation.NavigateAnimation.decelerateEasing
-import me.matsumo.fanbox.core.ui.post_detail_downloading
+import me.matsumo.fanbox.core.resources.post_detail_downloading
 import org.jetbrains.compose.resources.stringResource
 
 @Composable

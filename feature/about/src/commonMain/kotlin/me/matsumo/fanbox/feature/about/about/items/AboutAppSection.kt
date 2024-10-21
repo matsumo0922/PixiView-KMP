@@ -22,11 +22,11 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.unit.dp
 import me.matsumo.fanbox.core.common.PixiViewConfig
 import me.matsumo.fanbox.core.model.UserData
-import me.matsumo.fanbox.core.ui.Res
+import me.matsumo.fanbox.core.resources.Res
+import me.matsumo.fanbox.core.resources.ic_app_icon
 import me.matsumo.fanbox.core.ui.appName
 import me.matsumo.fanbox.core.ui.extensition.Platform
 import me.matsumo.fanbox.core.ui.extensition.currentPlatform
-import me.matsumo.fanbox.core.ui.ic_app_icon
 import me.matsumo.fanbox.core.ui.icon.Apple
 import me.matsumo.fanbox.core.ui.icon.Discord
 import me.matsumo.fanbox.core.ui.icon.GitHub

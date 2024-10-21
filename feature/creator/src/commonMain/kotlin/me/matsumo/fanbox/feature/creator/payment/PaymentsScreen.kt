@@ -26,13 +26,13 @@ import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.toImmutableList
 import me.matsumo.fanbox.core.common.util.format
 import me.matsumo.fanbox.core.model.fanbox.id.CreatorId
+import me.matsumo.fanbox.core.resources.Res
+import me.matsumo.fanbox.core.resources.error_no_data
+import me.matsumo.fanbox.core.resources.error_no_data_payments
+import me.matsumo.fanbox.core.resources.library_navigation_payments
 import me.matsumo.fanbox.core.ui.AsyncLoadContents
-import me.matsumo.fanbox.core.ui.Res
 import me.matsumo.fanbox.core.ui.component.PixiViewTopBar
-import me.matsumo.fanbox.core.ui.error_no_data
-import me.matsumo.fanbox.core.ui.error_no_data_payments
 import me.matsumo.fanbox.core.ui.extensition.drawVerticalScrollbar
-import me.matsumo.fanbox.core.ui.library_navigation_payments
 import me.matsumo.fanbox.core.ui.view.EmptyView
 import me.matsumo.fanbox.feature.creator.payment.items.MonthItem
 import me.matsumo.fanbox.feature.creator.payment.items.PaymentItem

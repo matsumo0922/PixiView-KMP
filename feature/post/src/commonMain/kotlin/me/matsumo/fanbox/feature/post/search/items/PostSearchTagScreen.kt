@@ -25,16 +25,15 @@ import me.matsumo.fanbox.core.model.UserData
 import me.matsumo.fanbox.core.model.fanbox.FanboxPost
 import me.matsumo.fanbox.core.model.fanbox.id.CreatorId
 import me.matsumo.fanbox.core.model.fanbox.id.PostId
+import me.matsumo.fanbox.core.resources.Res
+import me.matsumo.fanbox.core.resources.error_no_data_search
 import me.matsumo.fanbox.core.ui.LazyPagingItemsLoadContents
-import me.matsumo.fanbox.core.ui.Res
 import me.matsumo.fanbox.core.ui.component.PostItem
-import me.matsumo.fanbox.core.ui.error_no_data_search
 import me.matsumo.fanbox.core.ui.extensition.LocalNavigationType
 import me.matsumo.fanbox.core.ui.extensition.PixiViewNavigationType
 import me.matsumo.fanbox.core.ui.extensition.drawVerticalScrollbar
 import me.matsumo.fanbox.core.ui.view.PagingErrorSection
 
-@OptIn(ExperimentalComposeUiApi::class)
 @Composable
 internal fun PostSearchTagScreen(
     pagingAdapter: LazyPagingItems<FanboxPost>,

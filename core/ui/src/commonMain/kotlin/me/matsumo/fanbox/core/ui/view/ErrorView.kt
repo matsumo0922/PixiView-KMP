@@ -25,10 +25,10 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.unit.dp
 import me.matsumo.fanbox.core.model.ScreenState
-import me.matsumo.fanbox.core.ui.Res
-import me.matsumo.fanbox.core.ui.common_reload
-import me.matsumo.fanbox.core.ui.error_executed
-import me.matsumo.fanbox.core.ui.error_service_status
+import me.matsumo.fanbox.core.resources.Res
+import me.matsumo.fanbox.core.resources.common_reload
+import me.matsumo.fanbox.core.resources.error_executed
+import me.matsumo.fanbox.core.resources.error_service_status
 import me.matsumo.fanbox.core.ui.extensition.NavigatorExtension
 import me.matsumo.fanbox.core.ui.theme.bold
 import me.matsumo.fanbox.core.ui.theme.center

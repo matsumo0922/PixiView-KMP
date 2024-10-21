@@ -18,6 +18,7 @@ kotlin {
             implementation(project(":core:repository"))
             implementation(project(":core:datastore"))
             implementation(project(":core:logs"))
+            implementation(project(":core:resources"))
         }
 
         androidMain.dependencies {

@@ -23,13 +23,12 @@ import coil3.compose.LocalPlatformContext
 import coil3.compose.SubcomposeAsyncImage
 import coil3.request.ImageRequest
 import me.matsumo.fanbox.core.model.fanbox.FanboxCreatorDetail
-import me.matsumo.fanbox.core.ui.Res
+import me.matsumo.fanbox.core.resources.Res
+import me.matsumo.fanbox.core.resources.im_default_user
 import me.matsumo.fanbox.core.ui.extensition.FadePlaceHolder
 import me.matsumo.fanbox.core.ui.extensition.asCoilImage
-import me.matsumo.fanbox.core.ui.im_default_user
 import me.matsumo.fanbox.core.ui.theme.bold
 
-@OptIn(ExperimentalCoilApi::class)
 @Composable
 internal fun CreatorPostsDownloadUserSection(
     creatorDetail: FanboxCreatorDetail,

@@ -24,10 +24,10 @@ import androidx.compose.ui.unit.dp
 import coil3.compose.LocalPlatformContext
 import coil3.compose.SubcomposeAsyncImage
 import coil3.request.ImageRequest
-import me.matsumo.fanbox.core.ui.Res
-import me.matsumo.fanbox.core.ui.error_adult_content
-import me.matsumo.fanbox.core.ui.error_adult_content_description
-import me.matsumo.fanbox.core.ui.error_adult_content_test_user
+import me.matsumo.fanbox.core.resources.Res
+import me.matsumo.fanbox.core.resources.error_adult_content
+import me.matsumo.fanbox.core.resources.error_adult_content_description
+import me.matsumo.fanbox.core.resources.error_adult_content_test_user
 import me.matsumo.fanbox.core.ui.extensition.SimmerPlaceHolder
 import me.matsumo.fanbox.core.ui.extensition.fanboxHeader
 import me.matsumo.fanbox.core.ui.theme.center

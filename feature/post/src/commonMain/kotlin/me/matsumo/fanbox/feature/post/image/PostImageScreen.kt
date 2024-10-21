@@ -29,13 +29,13 @@ import kotlinx.coroutines.launch
 import me.matsumo.fanbox.core.model.ScreenState
 import me.matsumo.fanbox.core.model.fanbox.FanboxPostDetail
 import me.matsumo.fanbox.core.model.fanbox.id.PostId
+import me.matsumo.fanbox.core.resources.Res
+import me.matsumo.fanbox.core.resources.common_downloaded
+import me.matsumo.fanbox.core.resources.error_ios_gif_support
 import me.matsumo.fanbox.core.ui.AsyncLoadContents
-import me.matsumo.fanbox.core.ui.Res
 import me.matsumo.fanbox.core.ui.animation.Zoomable
 import me.matsumo.fanbox.core.ui.animation.rememberZoomableState
-import me.matsumo.fanbox.core.ui.common_downloaded
 import me.matsumo.fanbox.core.ui.component.PixiViewTopBar
-import me.matsumo.fanbox.core.ui.error_ios_gif_support
 import me.matsumo.fanbox.core.ui.extensition.IndicatorPlaceHolder
 import me.matsumo.fanbox.core.ui.extensition.LocalSnackbarHostState
 import me.matsumo.fanbox.core.ui.extensition.Platform

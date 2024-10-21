@@ -25,12 +25,12 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
-import me.matsumo.fanbox.core.ui.Res
-import me.matsumo.fanbox.core.ui.common_cancel
+import me.matsumo.fanbox.core.resources.Res
+import me.matsumo.fanbox.core.resources.common_cancel
 import me.matsumo.fanbox.core.ui.theme.bold
-import me.matsumo.fanbox.core.ui.welcome_login_other_message
-import me.matsumo.fanbox.core.ui.welcome_login_other_title
-import me.matsumo.fanbox.core.ui.welcome_login_title
+import me.matsumo.fanbox.core.resources.welcome_login_other_message
+import me.matsumo.fanbox.core.resources.welcome_login_other_title
+import me.matsumo.fanbox.core.resources.welcome_login_title
 import org.jetbrains.compose.resources.stringResource
 
 @Composable

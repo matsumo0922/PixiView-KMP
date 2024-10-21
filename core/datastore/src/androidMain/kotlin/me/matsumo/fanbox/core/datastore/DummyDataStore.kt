@@ -1,7 +1,11 @@
 package me.matsumo.fanbox.core.datastore
 
 import android.content.Context
+import io.github.aakira.napier.Napier
 import kotlinx.coroutines.flow.first
+import me.matsumo.fanbox.core.common.util.suspendRunCatching
+import me.matsumo.fanbox.core.resources.Res
+import org.jetbrains.compose.resources.ExperimentalResourceApi
 
 class DummyDataStoreImpl(
     private val context: Context,
@@ -16,16 +20,9 @@ class DummyDataStoreImpl(
         }
     }
 
+    @OptIn(ExperimentalResourceApi::class)
     override suspend fun getDummyData(key: String): String? {
-        val userData = userData.first()
-        val file = context.resources.getIdentifier(key, "raw", context.packageName)
-
-        if (!userData.isTestUser || file == 0) {
-            return null
-        }
-
-        val inputStream = context.resources.openRawResource(file)
-
-        return inputStream.bufferedReader().use { it.readText() }
+        if (!userData.first().isTestUser) return null
+        return suspendRunCatching { Res.readBytes("files/$key.json").decodeToString() }.getOrNull()
     }
 }

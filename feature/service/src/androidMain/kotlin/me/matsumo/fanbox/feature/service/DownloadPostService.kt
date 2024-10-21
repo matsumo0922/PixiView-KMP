@@ -18,10 +18,10 @@ import kotlinx.coroutines.launch
 import me.matsumo.fanbox.core.model.DownloadState
 import me.matsumo.fanbox.core.model.NotificationConfigs
 import me.matsumo.fanbox.core.repository.DownloadPostsRepository
-import me.matsumo.fanbox.core.ui.Res
-import me.matsumo.fanbox.core.ui.notify_download_channel_description
-import me.matsumo.fanbox.core.ui.notify_download_channel_name
-import me.matsumo.fanbox.core.ui.post_detail_downloading
+import me.matsumo.fanbox.core.resources.Res
+import me.matsumo.fanbox.core.resources.notify_download_channel_description
+import me.matsumo.fanbox.core.resources.notify_download_channel_name
+import me.matsumo.fanbox.core.resources.post_detail_downloading
 import org.jetbrains.compose.resources.getString
 import org.koin.android.ext.android.inject
 

@@ -21,6 +21,7 @@ kotlin {
             implementation(project(":core:billing"))
             implementation(project(":core:ui"))
             implementation(project(":core:logs"))
+            implementation(project(":core:resources"))
         }
     }
 }

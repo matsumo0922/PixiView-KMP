@@ -33,18 +33,18 @@ import kotlinx.datetime.Clock
 import kotlinx.datetime.Instant
 import me.matsumo.fanbox.core.model.fanbox.FanboxBell
 import me.matsumo.fanbox.core.model.fanbox.id.PostId
-import me.matsumo.fanbox.core.ui.Res
+import me.matsumo.fanbox.core.resources.Res
+import me.matsumo.fanbox.core.resources.im_default_user
+import me.matsumo.fanbox.core.resources.notify_title_comment
+import me.matsumo.fanbox.core.resources.notify_title_like
+import me.matsumo.fanbox.core.resources.notify_title_post_published
+import me.matsumo.fanbox.core.resources.unit_day_before
+import me.matsumo.fanbox.core.resources.unit_hour_before
+import me.matsumo.fanbox.core.resources.unit_minute_before
+import me.matsumo.fanbox.core.resources.unit_second_before
 import me.matsumo.fanbox.core.ui.extensition.FadePlaceHolder
 import me.matsumo.fanbox.core.ui.extensition.asCoilImage
 import me.matsumo.fanbox.core.ui.extensition.fanboxHeader
-import me.matsumo.fanbox.core.ui.im_default_user
-import me.matsumo.fanbox.core.ui.notify_title_comment
-import me.matsumo.fanbox.core.ui.notify_title_like
-import me.matsumo.fanbox.core.ui.notify_title_post_published
-import me.matsumo.fanbox.core.ui.unit_day_before
-import me.matsumo.fanbox.core.ui.unit_hour_before
-import me.matsumo.fanbox.core.ui.unit_minute_before
-import me.matsumo.fanbox.core.ui.unit_second_before
 import org.jetbrains.compose.resources.stringResource
 
 @Composable

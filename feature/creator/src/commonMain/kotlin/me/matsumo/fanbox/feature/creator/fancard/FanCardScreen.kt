@@ -19,12 +19,12 @@ import kotlinx.coroutines.flow.collectLatest
 import me.matsumo.fanbox.core.model.ScreenState
 import me.matsumo.fanbox.core.model.fanbox.FanboxCreatorPlanDetail
 import me.matsumo.fanbox.core.model.fanbox.id.CreatorId
+import me.matsumo.fanbox.core.resources.Res
+import me.matsumo.fanbox.core.resources.common_downloaded
+import me.matsumo.fanbox.core.resources.error_network
 import me.matsumo.fanbox.core.ui.AsyncLoadContents
-import me.matsumo.fanbox.core.ui.Res
 import me.matsumo.fanbox.core.ui.animation.Zoomable
-import me.matsumo.fanbox.core.ui.common_downloaded
 import me.matsumo.fanbox.core.ui.component.PixiViewTopBar
-import me.matsumo.fanbox.core.ui.error_network
 import me.matsumo.fanbox.core.ui.extensition.LocalSnackbarHostState
 import me.matsumo.fanbox.core.ui.extensition.ToastExtension
 import me.matsumo.fanbox.feature.creator.fancard.items.FanCardItem

@@ -25,11 +25,11 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import kotlinx.coroutines.launch
-import me.matsumo.fanbox.core.ui.Res
-import me.matsumo.fanbox.core.ui.common_cancel
-import me.matsumo.fanbox.core.ui.common_ok
-import me.matsumo.fanbox.core.ui.setting_developer_title
-import me.matsumo.fanbox.core.ui.setting_developer_warning
+import me.matsumo.fanbox.core.resources.Res
+import me.matsumo.fanbox.core.resources.common_cancel
+import me.matsumo.fanbox.core.resources.common_ok
+import me.matsumo.fanbox.core.resources.setting_developer_title
+import me.matsumo.fanbox.core.resources.setting_developer_warning
 import org.jetbrains.compose.resources.stringResource
 import org.koin.compose.viewmodel.koinViewModel
 

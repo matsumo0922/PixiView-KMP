@@ -20,6 +20,7 @@ kotlin {
             implementation(project(":core:datastore"))
             implementation(project(":core:ui"))
             implementation(project(":core:logs"))
+            implementation(project(":core:resources"))
 
             implementation(libs.libraries.ui)
             implementation(libs.moko.biometry)

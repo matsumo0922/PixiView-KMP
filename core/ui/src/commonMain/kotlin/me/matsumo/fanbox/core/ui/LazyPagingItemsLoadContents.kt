@@ -20,6 +20,9 @@ import androidx.paging.CombinedLoadStates
 import androidx.paging.LoadState
 import app.cash.paging.compose.LazyPagingItems
 import me.matsumo.fanbox.core.model.ScreenState
+import me.matsumo.fanbox.core.resources.Res
+import me.matsumo.fanbox.core.resources.error_executed
+import me.matsumo.fanbox.core.resources.error_no_data
 import me.matsumo.fanbox.core.ui.extensition.isEmpty
 import me.matsumo.fanbox.core.ui.view.EmptyView
 import me.matsumo.fanbox.core.ui.view.ErrorView

@@ -16,6 +16,8 @@ actual val dataStoreHelperModule: Module = module {
     }
 
     single<DummyDataStore> {
-        DummyDataStoreImpl()
+        DummyDataStoreImpl(
+            userDataStore = get(),
+        )
     }
 }

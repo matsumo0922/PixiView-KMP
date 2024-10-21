@@ -22,10 +22,10 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import me.matsumo.fanbox.core.model.ThemeColorConfig
 import me.matsumo.fanbox.core.model.ThemeConfig
-import me.matsumo.fanbox.core.ui.Res
+import me.matsumo.fanbox.core.resources.Res
 import me.matsumo.fanbox.core.ui.component.SettingTextItem
-import me.matsumo.fanbox.core.ui.setting_theme_color
-import me.matsumo.fanbox.core.ui.setting_theme_color_description
+import me.matsumo.fanbox.core.resources.setting_theme_color
+import me.matsumo.fanbox.core.resources.setting_theme_color_description
 import me.matsumo.fanbox.core.ui.theme.DarkDefaultColorScheme
 import me.matsumo.fanbox.core.ui.theme.LightDefaultColorScheme
 import me.matsumo.fanbox.core.ui.theme.color.DarkBlueColorScheme

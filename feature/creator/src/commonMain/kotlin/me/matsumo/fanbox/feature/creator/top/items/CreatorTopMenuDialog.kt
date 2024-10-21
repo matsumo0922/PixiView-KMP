@@ -1,8 +1,8 @@
 package me.matsumo.fanbox.feature.creator.top.items
 
 import androidx.compose.runtime.Composable
-import me.matsumo.fanbox.core.ui.Res
-import me.matsumo.fanbox.core.ui.common_block
+import me.matsumo.fanbox.core.resources.Res
+import me.matsumo.fanbox.core.resources.common_block
 import me.matsumo.fanbox.core.ui.view.Action
 import me.matsumo.fanbox.core.ui.view.ActionSheet
 

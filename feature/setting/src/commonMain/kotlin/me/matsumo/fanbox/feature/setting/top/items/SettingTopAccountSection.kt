@@ -4,13 +4,13 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import me.matsumo.fanbox.core.ui.Res
+import me.matsumo.fanbox.core.resources.Res
 import me.matsumo.fanbox.core.ui.component.SettingTextItem
-import me.matsumo.fanbox.core.ui.setting_account
-import me.matsumo.fanbox.core.ui.setting_account_description
-import me.matsumo.fanbox.core.ui.setting_account_title
-import me.matsumo.fanbox.core.ui.setting_notify_description
-import me.matsumo.fanbox.core.ui.setting_notify_title
+import me.matsumo.fanbox.core.resources.setting_account
+import me.matsumo.fanbox.core.resources.setting_account_description
+import me.matsumo.fanbox.core.resources.setting_account_title
+import me.matsumo.fanbox.core.resources.setting_notify_description
+import me.matsumo.fanbox.core.resources.setting_notify_title
 
 @Composable
 internal fun SettingTopAccountSection(
