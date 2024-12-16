@@ -18,6 +18,8 @@ import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
+import androidx.xr.compose.material3.EnableXrComponentOverrides
+import androidx.xr.compose.material3.ExperimentalMaterial3XrApi
 import com.google.android.play.core.review.ReviewManagerFactory
 import kotlinx.collections.immutable.persistentMapOf
 import kotlinx.coroutines.flow.first
@@ -47,7 +49,7 @@ class MainActivity : FragmentActivity(), KoinComponent {
 
     private var stayTime = 0L
 
-    @OptIn(ExperimentalMaterial3WindowSizeClassApi::class)
+    @OptIn(ExperimentalMaterial3WindowSizeClassApi::class, ExperimentalMaterial3XrApi::class)
     override fun onCreate(savedInstanceState: Bundle?) {
         val splashScreen = installSplashScreen()
 
@@ -72,7 +74,7 @@ class MainActivity : FragmentActivity(), KoinComponent {
                     onDispose {}
                 }
 
-                PreComposeApp {
+                EnableXrComponentOverrides {
                     PixiViewApp(
                         modifier = Modifier.fillMaxSize(),
                         windowSize = windowSize.widthSizeClass,

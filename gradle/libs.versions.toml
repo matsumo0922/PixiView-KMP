@@ -41,8 +41,9 @@ androidxPreference = "1.2.1"
 androidxDataStore = "1.1.1"
 androidxPalette = "1.0.0"
 androidxAnnotation = "1.8.2"
-androidxMedia3 = "1.4.1"
-androidxCompose = "2024.09.03"
+androidxMedia3 = "1.5.0"
+androidxCompose = "2024.12.01"
+androidxXR = "1.0.0-alpha01"
 
 # Google
 playReview = "2.0.1"
@@ -147,6 +148,10 @@ androidx-compose-ui = { module = "androidx.compose.ui:ui" }
 androidx-compose-ui-binding = { module = "androidx.compose.ui:ui-viewbinding" }
 androidx-compose-ui-tooling = { module = "androidx.compose.ui:ui-tooling" }
 androidx-compose-ui-tooling-preview = { module = "androidx.compose.ui:ui-tooling-preview" }
+
+# XR Compose
+androidx-xr-compose = { module = "androidx.xr.compose:compose", version.ref = "androidxXR" }
+androidx-xr-material3 = { module = "androidx.xr.compose.material3:material3", version.ref = "androidxXR" }
 
 # KMP
 kmp-lifecycle-runtime-compose = { module = "org.jetbrains.androidx.lifecycle:lifecycle-runtime-compose", version.ref = "kmpLifecycle" }
@@ -263,6 +268,8 @@ ui-android-api = [
     "androidx-compose-runtime",
     "androidx-compose-ui",
     "androidx-compose-ui-binding",
+    "androidx-xr-compose",
+    "androidx-xr-material3",
     "accompanist-systemuicontroller",
     "accompanist-compose-theme-adapter",
     "accompanist-compose-theme-adapter3",
