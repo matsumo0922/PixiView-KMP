@@ -89,6 +89,8 @@ import me.matsumo.fanbox.core.repository.paging.SupportedPostsPagingSource
 import me.matsumo.fanbox.core.repository.utils.parse
 import me.matsumo.fanbox.core.repository.utils.requireSuccess
 import me.matsumo.fanbox.core.repository.utils.translate
+import me.matsumo.fankt.Fanbox
+import me.matsumo.fankt.domain.model.id.FanboxPostId
 import org.koin.core.component.KoinComponent
 import kotlin.random.Random
 
@@ -113,6 +115,7 @@ interface FanboxRepository {
         nextCursor: FanboxCursor?,
         loadSize: Int = currentCursor.limit ?: 10,
     ): PageCursorInfo<FanboxPost>
+
     suspend fun getCreatorPostsPaginate(creatorId: CreatorId): List<FanboxCursor>
     suspend fun getPost(postId: PostId): FanboxPostDetail
     suspend fun getPostCached(postId: PostId): FanboxPostDetail
@@ -180,6 +183,7 @@ class FanboxRepositoryImpl(
 ) : FanboxRepository, KoinComponent {
 
     private val scope = CoroutineScope(SupervisorJob() + ioDispatcher)
+    private val fanbox = Fanbox()
 
     private val creatorCache = mutableMapOf<CreatorId, FanboxCreatorDetail>()
     private val postCache = mutableMapOf<PostId, FanboxPostDetail>()
@@ -218,6 +222,14 @@ class FanboxRepositoryImpl(
 
     override suspend fun updateCookie(cookie: String) {
         fanboxCookieDataStore.save(cookie)
+
+        cookie.split(";")
+            .find { it.startsWith("FANBOXSESSID") }
+            ?.split("=")
+            ?.getOrNull(1)
+            ?.let {
+                fanbox.setFanboxSessionId(it)
+            }
     }
 
     override suspend fun updateCsrfToken() = withContext(ioDispatcher) {
@@ -230,6 +242,8 @@ class FanboxRepositoryImpl(
         Napier.d { "updateCsrfToken: ${data.csrfToken}" }
 
         _metaData.emit(data)
+
+        fanbox.updateCsrfToken()
     }
 
     override suspend fun getHomePosts(cursor: FanboxCursor?, loadSize: Int): PageCursorInfo<FanboxPost> = withContext(ioDispatcher) {
@@ -296,6 +310,10 @@ class FanboxRepositoryImpl(
     }
 
     override suspend fun getPost(postId: PostId): FanboxPostDetail = withContext(ioDispatcher) {
+        fanbox.getPostDetail(FanboxPostId(postId.value)).also {
+            Napier.d { "getPost: $it" }
+        }
+
         get("post.info", mapOf("postId" to postId.value)).parse<FanboxPostDetailEntity>()!!.translate(bookmarkedPosts.first()).also {
             postCache[postId] = it
         }

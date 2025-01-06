@@ -55,7 +55,7 @@ val repositoryModule = module {
             useDefaultTransformers = false
 
             install(Logging) {
-                level = LogLevel.INFO
+                level = LogLevel.ALL
                 logger = object : Logger {
                     override fun log(message: String) {
                         Napier.d(message)

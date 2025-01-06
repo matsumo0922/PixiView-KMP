@@ -24,7 +24,6 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.window.ComposeUIViewController
 import com.mohamedrejeb.calf.ui.sheet.BottomSheetControllerDelegate
-import com.mohamedrejeb.calf.ui.sheet.BottomSheetTransitioningDelegate
 import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.CompletableDeferred
 import me.matsumo.fanbox.core.ui.extensition.LocalSnackbarHostState
@@ -118,8 +117,6 @@ private class BottomSheetManager(
         content.invoke()
     }
 
-    private val bottomSheetTransitioningDelegate = BottomSheetTransitioningDelegate()
-
     private val presentationControllerDelegate = BottomSheetControllerDelegate(
         onDismiss = {
             isPresented = false
@@ -133,7 +130,6 @@ private class BottomSheetManager(
         isAnimating = true
 
         bottomSheetUIViewController.modalPresentationStyle = UIModalPresentationPopover
-        bottomSheetUIViewController.transitioningDelegate = bottomSheetTransitioningDelegate
         bottomSheetUIViewController.presentationController?.setDelegate(presentationControllerDelegate)
 
         bottomSheetUIViewController.sheetPresentationController?.setDetents(
