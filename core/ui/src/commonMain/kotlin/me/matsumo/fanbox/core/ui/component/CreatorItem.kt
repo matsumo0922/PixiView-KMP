@@ -1,7 +1,6 @@
 package me.matsumo.fanbox.core.ui.component
 
 import androidx.compose.animation.animateContentSize
-import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -36,7 +35,6 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
-import coil3.annotation.ExperimentalCoilApi
 import coil3.compose.AsyncImage
 import coil3.compose.LocalPlatformContext
 import coil3.compose.SubcomposeAsyncImage
@@ -45,11 +43,11 @@ import me.matsumo.fanbox.core.resources.Res
 import me.matsumo.fanbox.core.resources.common_follow
 import me.matsumo.fanbox.core.resources.common_supporting
 import me.matsumo.fanbox.core.resources.common_unfollow
+import me.matsumo.fanbox.core.resources.im_default_user
 import me.matsumo.fanbox.core.ui.extensition.FadePlaceHolder
 import me.matsumo.fanbox.core.ui.extensition.SimmerPlaceHolder
 import me.matsumo.fanbox.core.ui.extensition.asCoilImage
 import me.matsumo.fanbox.core.ui.extensition.fanboxHeader
-import me.matsumo.fanbox.core.resources.im_default_user
 import me.matsumo.fanbox.core.ui.theme.bold
 import me.matsumo.fankt.fanbox.domain.model.FanboxCreatorDetail
 import me.matsumo.fankt.fanbox.domain.model.id.FanboxCreatorId

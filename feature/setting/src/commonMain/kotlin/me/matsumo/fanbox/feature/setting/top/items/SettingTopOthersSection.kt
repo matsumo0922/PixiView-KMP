@@ -6,8 +6,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import me.matsumo.fanbox.core.model.UserData
 import me.matsumo.fanbox.core.resources.Res
-import me.matsumo.fanbox.core.ui.component.SettingSwitchItem
-import me.matsumo.fanbox.core.ui.component.SettingTextItem
 import me.matsumo.fanbox.core.resources.setting_top_information_privacy_policy
 import me.matsumo.fanbox.core.resources.setting_top_information_team_of_service
 import me.matsumo.fanbox.core.resources.setting_top_others
@@ -17,6 +15,8 @@ import me.matsumo.fanbox.core.resources.setting_top_others_logout
 import me.matsumo.fanbox.core.resources.setting_top_others_logout_description
 import me.matsumo.fanbox.core.resources.setting_top_others_open_source_license
 import me.matsumo.fanbox.core.resources.setting_top_others_open_source_license_description
+import me.matsumo.fanbox.core.ui.component.SettingSwitchItem
+import me.matsumo.fanbox.core.ui.component.SettingTextItem
 import org.jetbrains.compose.resources.stringResource
 
 @Composable

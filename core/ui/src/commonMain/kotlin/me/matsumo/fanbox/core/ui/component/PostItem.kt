@@ -17,7 +17,6 @@ import androidx.compose.material.icons.filled.Bookmark
 import androidx.compose.material.icons.filled.Comment
 import androidx.compose.material.icons.filled.Favorite
 import androidx.compose.material.icons.filled.InsertDriveFile
-import androidx.compose.material.icons.filled.Lock
 import androidx.compose.material.icons.outlined.BookmarkBorder
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
@@ -45,18 +44,13 @@ import coil3.request.ImageRequest
 import io.github.aakira.napier.Napier
 import me.matsumo.fanbox.core.common.util.format
 import me.matsumo.fanbox.core.resources.Res
-import me.matsumo.fanbox.core.resources.error_restricted_post
-import me.matsumo.fanbox.core.resources.error_restricted_post_ios
 import me.matsumo.fanbox.core.resources.fanbox_free_fee
 import me.matsumo.fanbox.core.resources.im_default_user
 import me.matsumo.fanbox.core.resources.unit_jpy
 import me.matsumo.fanbox.core.ui.extensition.FadePlaceHolder
-import me.matsumo.fanbox.core.ui.extensition.Platform
 import me.matsumo.fanbox.core.ui.extensition.asCoilImage
-import me.matsumo.fanbox.core.ui.extensition.currentPlatform
 import me.matsumo.fanbox.core.ui.extensition.fanboxHeader
 import me.matsumo.fanbox.core.ui.theme.bold
-import me.matsumo.fanbox.core.ui.theme.center
 import me.matsumo.fankt.fanbox.domain.model.FanboxPost
 import me.matsumo.fankt.fanbox.domain.model.id.FanboxCreatorId
 import me.matsumo.fankt.fanbox.domain.model.id.FanboxPostId
@@ -97,7 +91,7 @@ fun PostItem(
                             .fillMaxWidth()
                             .aspectRatio(16f / 9),
                         feeRequired = post.feeRequired,
-                        coverImageUrl = post.cover?.url
+                        coverImageUrl = post.cover?.url,
                     )
                 }
 
@@ -273,10 +267,14 @@ private fun UserSection(
         ) {
             Text(
                 modifier = Modifier.padding(6.dp, 4.dp),
-                text = if (post.feeRequired == 0) stringResource(Res.string.fanbox_free_fee) else stringResource(
-                    Res.string.unit_jpy,
-                    post.feeRequired
-                ),
+                text = if (post.feeRequired == 0) {
+                    stringResource(Res.string.fanbox_free_fee)
+                } else {
+                    stringResource(
+                        Res.string.unit_jpy,
+                        post.feeRequired,
+                    )
+                },
                 style = MaterialTheme.typography.bodySmall,
                 color = MaterialTheme.colorScheme.onSurfaceVariant,
             )

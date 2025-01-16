@@ -7,7 +7,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
 import androidx.navigation.NavDestination
-import io.github.alexzhirkevich.cupertino.adaptive.ExperimentalAdaptiveApi
 import kotlinx.collections.immutable.ImmutableList
 import me.matsumo.fanbox.core.ui.component.PixiViewNavigationBar
 import me.matsumo.fanbox.core.ui.component.PixiViewNavigationBarItem

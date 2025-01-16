@@ -55,10 +55,10 @@ internal fun PostDetailCreatorSection(
     ) {
         Text(
             modifier = Modifier.padding(
-                    top = 16.dp,
-                    start = 16.dp,
-                    end = 16.dp,
-                ).fillMaxWidth(),
+                top = 16.dp,
+                start = 16.dp,
+                end = 16.dp,
+            ).fillMaxWidth(),
             text = stringResource(Res.string.post_detail_creator),
             style = MaterialTheme.typography.titleMedium,
             color = MaterialTheme.colorScheme.onSurface,
@@ -66,11 +66,11 @@ internal fun PostDetailCreatorSection(
 
         CreatorItem(
             modifier = Modifier.fillMaxWidth().clickable { postDetail.user?.creatorId?.let(onClickCreator) }.padding(
-                    top = 16.dp,
-                    start = 24.dp,
-                    end = 24.dp,
-                    bottom = 16.dp,
-                ),
+                top = 16.dp,
+                start = 24.dp,
+                end = 24.dp,
+                bottom = 16.dp,
+            ),
             postDetail = postDetail,
             creatorDetail = creatorDetail,
             onClickFollow = onClickFollow,

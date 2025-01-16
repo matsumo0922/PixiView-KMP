@@ -66,12 +66,12 @@ interface FanboxRepository {
 
     suspend fun getHomePosts(
         cursor: FanboxCursor?,
-        loadSize: Int = cursor?.limit ?: 10
+        loadSize: Int = cursor?.limit ?: 10,
     ): PageCursorInfo<FanboxPost>
 
     suspend fun getSupportedPosts(
         cursor: FanboxCursor?,
-        loadSize: Int = cursor?.limit ?: 10
+        loadSize: Int = cursor?.limit ?: 10,
     ): PageCursorInfo<FanboxPost>
 
     suspend fun getCreatorPosts(
@@ -86,51 +86,51 @@ interface FanboxRepository {
     suspend fun getPostDetailCached(postId: FanboxPostId): FanboxPostDetail
     suspend fun getPostComment(
         postId: FanboxPostId,
-        offset: Int = 0
+        offset: Int = 0,
     ): PageOffsetInfo<FanboxComment>
 
     suspend fun getPostFromQuery(
         query: String,
         creatorId: FanboxCreatorId? = null,
-        page: Int = 0
+        page: Int = 0,
     ): PageNumberInfo<FanboxPost>
 
     suspend fun getCreatorFromQuery(
         query: String,
-        page: Int = 0
+        page: Int = 0,
     ): PageNumberInfo<FanboxCreatorDetail>
 
     suspend fun getTagFromQuery(query: String): List<FanboxTag>
 
     suspend fun getHomePostsPager(
         loadSize: Int,
-        isHideRestricted: Boolean
+        isHideRestricted: Boolean,
     ): Flow<PagingData<FanboxPost>>
 
     suspend fun getHomePostsPagerCache(
         loadSize: Int,
-        isHideRestricted: Boolean
+        isHideRestricted: Boolean,
     ): Flow<PagingData<FanboxPost>>
 
     suspend fun getSupportedPostsPager(
         loadSize: Int,
-        isHideRestricted: Boolean
+        isHideRestricted: Boolean,
     ): Flow<PagingData<FanboxPost>>
 
     suspend fun getSupportedPostsPagerCache(
         loadSize: Int,
-        isHideRestricted: Boolean
+        isHideRestricted: Boolean,
     ): Flow<PagingData<FanboxPost>>
 
     suspend fun getCreatorPostsPager(
         creatorId: FanboxCreatorId,
-        loadSize: Int
+        loadSize: Int,
     ): Flow<PagingData<FanboxPost>>
 
     suspend fun getCreatorPostsPagerCache(): Flow<PagingData<FanboxPost>>?
     suspend fun getPostsFromQueryPager(
         query: String,
-        creatorId: FanboxCreatorId? = null
+        creatorId: FanboxCreatorId? = null,
     ): Flow<PagingData<FanboxPost>>
 
     suspend fun getPostsFromQueryPagerCache(): Flow<PagingData<FanboxPost>>?
@@ -161,7 +161,7 @@ interface FanboxRepository {
         postId: FanboxPostId,
         comment: String,
         rootCommentId: FanboxCommentId? = null,
-        parentCommentId: FanboxCommentId? = null
+        parentCommentId: FanboxCommentId? = null,
     )
 
     suspend fun deleteComment(commentId: FanboxCommentId)
@@ -232,14 +232,14 @@ class FanboxRepositoryImpl(
 
     override suspend fun getHomePosts(
         cursor: FanboxCursor?,
-        loadSize: Int
+        loadSize: Int,
     ): PageCursorInfo<FanboxPost> {
         return fanbox.getHomePosts(cursor)
     }
 
     override suspend fun getSupportedPosts(
         cursor: FanboxCursor?,
-        loadSize: Int
+        loadSize: Int,
     ): PageCursorInfo<FanboxPost> {
         return fanbox.getSupportedPosts(cursor)
     }
@@ -248,7 +248,7 @@ class FanboxRepositoryImpl(
         creatorId: FanboxCreatorId,
         currentCursor: FanboxCursor,
         nextCursor: FanboxCursor?,
-        loadSize: Int
+        loadSize: Int,
     ): PageCursorInfo<FanboxPost> {
         return fanbox.getCreatorPosts(creatorId, currentCursor, nextCursor)
     }
@@ -256,7 +256,7 @@ class FanboxRepositoryImpl(
     override suspend fun getPostFromQuery(
         query: String,
         creatorId: FanboxCreatorId?,
-        page: Int
+        page: Int,
     ): PageNumberInfo<FanboxPost> {
         return fanbox.getPostFromQuery(query, creatorId, page)
     }
@@ -267,7 +267,7 @@ class FanboxRepositoryImpl(
 
     override suspend fun getCreatorFromQuery(
         query: String,
-        page: Int
+        page: Int,
     ): PageNumberInfo<FanboxCreatorDetail> {
         return fanbox.searchCreators(query, page)
     }
@@ -287,14 +287,14 @@ class FanboxRepositoryImpl(
 
     override suspend fun getPostComment(
         postId: FanboxPostId,
-        offset: Int
+        offset: Int,
     ): PageOffsetInfo<FanboxComment> {
         return fanbox.getPostComment(postId, offset)
     }
 
     override suspend fun getHomePostsPager(
         loadSize: Int,
-        isHideRestricted: Boolean
+        isHideRestricted: Boolean,
     ): Flow<PagingData<FanboxPost>> {
         return Pager(
             config = PagingConfig(pageSize = loadSize),
@@ -310,14 +310,14 @@ class FanboxRepositoryImpl(
 
     override suspend fun getHomePostsPagerCache(
         loadSize: Int,
-        isHideRestricted: Boolean
+        isHideRestricted: Boolean,
     ): Flow<PagingData<FanboxPost>> {
         return homePostsPager ?: getHomePostsPager(loadSize, isHideRestricted)
     }
 
     override suspend fun getSupportedPostsPager(
         loadSize: Int,
-        isHideRestricted: Boolean
+        isHideRestricted: Boolean,
     ): Flow<PagingData<FanboxPost>> {
         return Pager(
             config = PagingConfig(pageSize = loadSize),
@@ -333,14 +333,14 @@ class FanboxRepositoryImpl(
 
     override suspend fun getSupportedPostsPagerCache(
         loadSize: Int,
-        isHideRestricted: Boolean
+        isHideRestricted: Boolean,
     ): Flow<PagingData<FanboxPost>> {
         return supportedPostsPager ?: getSupportedPostsPager(loadSize, isHideRestricted)
     }
 
     override suspend fun getCreatorPostsPager(
         creatorId: FanboxCreatorId,
-        loadSize: Int
+        loadSize: Int,
     ): Flow<PagingData<FanboxPost>> {
         val cursors = getCreatorPostsPagination(creatorId)
 
@@ -366,7 +366,7 @@ class FanboxRepositoryImpl(
 
     override suspend fun getPostsFromQueryPager(
         query: String,
-        creatorId: FanboxCreatorId?
+        creatorId: FanboxCreatorId?,
     ): Flow<PagingData<FanboxPost>> {
         return Pager(
             config = PagingConfig(pageSize = 10),
@@ -459,7 +459,7 @@ class FanboxRepositoryImpl(
         postId: FanboxPostId,
         comment: String,
         rootCommentId: FanboxCommentId?,
-        parentCommentId: FanboxCommentId?
+        parentCommentId: FanboxCommentId?,
     ) {
         fanbox.addComment(
             postId = postId,

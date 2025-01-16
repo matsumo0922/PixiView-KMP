@@ -113,7 +113,7 @@ fun getFanboxMetadataDummy() = FanboxMetaData(
             policyUrl = "https://search.yahoo.com/search?p=commodo",
             revisionHistoryUrl = "https://search.yahoo.com/search?p=lorem",
             shouldShowNotice = false,
-            updateDate = "vix"
+            updateDate = "vix",
         ),
         user = FanboxMetaData.Context.User(
             creatorId = null,
@@ -128,8 +128,8 @@ fun getFanboxMetadataDummy() = FanboxMetaData(
             name = "Eliseo Gilliam",
             planCount = 3061,
             showAdultContent = false,
-            userId = null
-        )
+            userId = null,
+        ),
     ),
     csrfToken = "doctus",
 )

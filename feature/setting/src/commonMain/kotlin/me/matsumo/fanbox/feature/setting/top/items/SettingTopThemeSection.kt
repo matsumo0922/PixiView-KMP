@@ -5,10 +5,10 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import me.matsumo.fanbox.core.resources.Res
-import me.matsumo.fanbox.core.ui.component.SettingTextItem
 import me.matsumo.fanbox.core.resources.setting_top_theme
 import me.matsumo.fanbox.core.resources.setting_top_theme_app
 import me.matsumo.fanbox.core.resources.setting_top_theme_app_description
+import me.matsumo.fanbox.core.ui.component.SettingTextItem
 
 @Composable
 internal fun SettingTopThemeSection(

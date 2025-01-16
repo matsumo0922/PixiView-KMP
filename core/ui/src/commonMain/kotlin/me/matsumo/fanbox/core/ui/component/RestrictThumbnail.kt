@@ -80,10 +80,14 @@ internal fun RestrictThumbnail(
 
             Text(
                 modifier = Modifier.fillMaxWidth(),
-                text = if (currentPlatform == Platform.Android) stringResource(
-                    Res.string.error_restricted_post,
-                    feeRequired
-                ) else stringResource(Res.string.error_restricted_post_ios),
+                text = if (currentPlatform == Platform.Android) {
+                    stringResource(
+                        Res.string.error_restricted_post,
+                        feeRequired,
+                    )
+                } else {
+                    stringResource(Res.string.error_restricted_post_ios)
+                },
                 style = MaterialTheme.typography.bodySmall.center(),
                 color = Color.White,
             )

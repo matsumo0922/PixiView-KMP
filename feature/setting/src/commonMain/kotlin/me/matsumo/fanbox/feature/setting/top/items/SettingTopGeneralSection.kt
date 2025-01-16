@@ -6,7 +6,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import me.matsumo.fanbox.core.model.UserData
 import me.matsumo.fanbox.core.resources.Res
-import me.matsumo.fanbox.core.ui.component.SettingSwitchItem
 import me.matsumo.fanbox.core.resources.setting_top_general
 import me.matsumo.fanbox.core.resources.setting_top_general_app_lock
 import me.matsumo.fanbox.core.resources.setting_top_general_app_lock_description
@@ -24,6 +23,7 @@ import me.matsumo.fanbox.core.resources.setting_top_general_infinity_post_detail
 import me.matsumo.fanbox.core.resources.setting_top_general_infinity_post_detail_description
 import me.matsumo.fanbox.core.resources.setting_top_general_override_adult_contents_setting
 import me.matsumo.fanbox.core.resources.setting_top_general_override_adult_contents_setting_description
+import me.matsumo.fanbox.core.ui.component.SettingSwitchItem
 
 @Composable
 internal fun SettingTopGeneralSection(

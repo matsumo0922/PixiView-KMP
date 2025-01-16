@@ -33,10 +33,10 @@ import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.toImmutableList
 import me.matsumo.fanbox.core.model.ScreenState
 import me.matsumo.fanbox.core.model.UserData
-import me.matsumo.fanbox.core.ui.AsyncLoadContents
 import me.matsumo.fanbox.core.resources.Res
 import me.matsumo.fanbox.core.resources.bookmark_empty_description
 import me.matsumo.fanbox.core.resources.bookmark_empty_title
+import me.matsumo.fanbox.core.ui.AsyncLoadContents
 import me.matsumo.fanbox.core.ui.component.PostItem
 import me.matsumo.fanbox.core.ui.extensition.LocalNavigationType
 import me.matsumo.fanbox.core.ui.extensition.PixiViewNavigationType

@@ -20,8 +20,8 @@ import me.matsumo.fanbox.core.common.PixiViewConfig
 import me.matsumo.fanbox.core.model.ThemeColorConfig
 import me.matsumo.fanbox.core.model.ThemeConfig
 import me.matsumo.fanbox.core.ui.extensition.FanboxSessionId
-import me.matsumo.fanbox.core.ui.extensition.LocalFanboxSessionId
 import me.matsumo.fanbox.core.ui.extensition.LocalFanboxMetadata
+import me.matsumo.fanbox.core.ui.extensition.LocalFanboxSessionId
 import me.matsumo.fanbox.core.ui.extensition.getFanboxMetadataDummy
 import me.matsumo.fanbox.core.ui.theme.color.DarkBlueColorScheme
 import me.matsumo.fanbox.core.ui.theme.color.DarkBrownColorScheme

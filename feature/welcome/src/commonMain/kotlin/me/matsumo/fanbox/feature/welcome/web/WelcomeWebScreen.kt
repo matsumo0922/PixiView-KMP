@@ -20,9 +20,9 @@ import com.multiplatform.webview.web.rememberWebViewState
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import me.matsumo.fanbox.core.resources.Res
+import me.matsumo.fanbox.core.resources.welcome_login_title
 import me.matsumo.fanbox.core.ui.component.PixiViewTopBar
 import me.matsumo.fanbox.core.ui.view.SimpleAlertContents
-import me.matsumo.fanbox.core.resources.welcome_login_title
 import org.jetbrains.compose.resources.stringResource
 import org.koin.compose.viewmodel.koinViewModel
 
