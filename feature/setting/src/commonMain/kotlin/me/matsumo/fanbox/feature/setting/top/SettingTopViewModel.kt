@@ -30,7 +30,7 @@ class SettingTopViewModel(
     private val pixiViewConfig: PixiViewConfig,
 ) : ViewModel() {
 
-    val screenState = combine(userDataRepository.userData, fanboxRepository.cookie, fanboxRepository.metaData, ::Triple).map { (userData, cookie, metaData) ->
+    val screenState = combine(userDataRepository.userData, fanboxRepository.sessionId, ::Pair).map { (userData, cookie) ->
         val cookieMap = cookie.split(";")
             .map { it.trim() }
             .filter { it.isNotBlank() }
@@ -39,7 +39,7 @@ class SettingTopViewModel(
         ScreenState.Idle(
             SettingTopUiState(
                 userData = userData,
-                metaData = metaData,
+                metaData = fanboxRepository.getPostDetail(),
                 fanboxSessionId = cookieMap["FANBOXSESSID"] ?: "unknown",
                 config = pixiViewConfig,
             ),

@@ -37,7 +37,7 @@ import kotlinx.collections.immutable.toImmutableList
 import kotlinx.coroutines.launch
 import me.matsumo.fanbox.core.model.ScreenState
 import me.matsumo.fanbox.core.model.fanbox.FanboxCreatorDetail
-import me.matsumo.fanbox.core.model.fanbox.id.CreatorId
+import me.matsumo.fanbox.core.model.fanbox.id.FanboxCreatorId
 import me.matsumo.fanbox.core.resources.Res
 import me.matsumo.fanbox.core.resources.creator_following_pixiv
 import me.matsumo.fanbox.core.resources.creator_recommended
@@ -58,7 +58,7 @@ import org.koin.compose.viewmodel.koinViewModel
 internal fun LibraryDiscoveryRoute(
     openDrawer: () -> Unit,
     navigateToPostSearch: () -> Unit,
-    navigateToCreatorPosts: (CreatorId) -> Unit,
+    navigateToCreatorPosts: (FanboxCreatorId) -> Unit,
     modifier: Modifier = Modifier,
     viewModel: LibraryDiscoveryViewModel = koinViewModel(),
     navigatorExtension: NavigatorExtension = koinInject(),
@@ -97,7 +97,7 @@ private fun LibraryDiscoveryScreen(
     followingPixivCreators: ImmutableList<FanboxCreatorDetail>,
     openDrawer: () -> Unit,
     onClickSearch: () -> Unit,
-    onClickCreator: (CreatorId) -> Unit,
+    onClickCreator: (FanboxCreatorId) -> Unit,
     onClickFollow: suspend (String) -> Result<Unit>,
     onClickUnfollow: suspend (String) -> Result<Unit>,
     onClickSupporting: (String) -> Unit,

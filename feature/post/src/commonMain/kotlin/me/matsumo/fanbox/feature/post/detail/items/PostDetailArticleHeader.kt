@@ -15,8 +15,8 @@ import androidx.compose.ui.unit.dp
 import me.matsumo.fanbox.core.model.UserData
 import me.matsumo.fanbox.core.model.fanbox.FanboxPost
 import me.matsumo.fanbox.core.model.fanbox.FanboxPostDetail
-import me.matsumo.fanbox.core.model.fanbox.id.CreatorId
-import me.matsumo.fanbox.core.model.fanbox.id.PostId
+import me.matsumo.fanbox.core.model.fanbox.id.FanboxCreatorId
+import me.matsumo.fanbox.core.model.fanbox.id.FanboxPostId
 import me.matsumo.fanbox.core.ui.component.AdultContentThumbnail
 import me.matsumo.fanbox.core.ui.component.PostItem
 import me.matsumo.fanbox.core.ui.extensition.LocalFanboxMetadata
@@ -28,10 +28,10 @@ internal fun LazyListScope.postDetailArticleHeader(
     userData: UserData,
     isAdultContents: Boolean,
     isAutoImagePreview: Boolean,
-    onClickPost: (PostId) -> Unit,
-    onClickPostLike: (PostId) -> Unit,
+    onClickPost: (FanboxPostId) -> Unit,
+    onClickPostLike: (FanboxPostId) -> Unit,
     onClickPostBookmark: (FanboxPost, Boolean) -> Unit,
-    onClickCreator: (CreatorId) -> Unit,
+    onClickCreator: (FanboxCreatorId) -> Unit,
     onClickImage: (FanboxPostDetail.ImageItem) -> Unit,
     onClickFile: (FanboxPostDetail.FileItem) -> Unit,
     onClickDownload: (List<FanboxPostDetail.ImageItem>) -> Unit,
@@ -130,10 +130,10 @@ private fun ArticleLinkItem(
     isHideAdultContents: Boolean,
     isOverrideAdultContents: Boolean,
     isTestUser: Boolean,
-    onClickPost: (PostId) -> Unit,
-    onClickPostLike: (PostId) -> Unit,
-    onClickPostBookmark: (PostId, Boolean) -> Unit,
-    onClickCreator: (CreatorId) -> Unit,
+    onClickPost: (FanboxPostId) -> Unit,
+    onClickPostLike: (FanboxPostId) -> Unit,
+    onClickPostBookmark: (FanboxPostId, Boolean) -> Unit,
+    onClickCreator: (FanboxCreatorId) -> Unit,
     modifier: Modifier = Modifier,
 ) {
     item.post?.also {

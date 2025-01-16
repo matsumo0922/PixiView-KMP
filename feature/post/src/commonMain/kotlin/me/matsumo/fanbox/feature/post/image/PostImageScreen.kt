@@ -28,7 +28,7 @@ import coil3.request.ImageRequest
 import kotlinx.coroutines.launch
 import me.matsumo.fanbox.core.model.ScreenState
 import me.matsumo.fanbox.core.model.fanbox.FanboxPostDetail
-import me.matsumo.fanbox.core.model.fanbox.id.PostId
+import me.matsumo.fanbox.core.model.fanbox.id.FanboxPostId
 import me.matsumo.fanbox.core.resources.Res
 import me.matsumo.fanbox.core.resources.common_downloaded
 import me.matsumo.fanbox.core.resources.error_ios_gif_support
@@ -50,7 +50,7 @@ import org.koin.compose.viewmodel.koinViewModel
 
 @Composable
 internal fun PostImageRoute(
-    postId: PostId,
+    postId: FanboxPostId,
     postImageIndex: Int,
     terminate: () -> Unit,
     modifier: Modifier = Modifier,

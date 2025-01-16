@@ -12,8 +12,8 @@ import me.matsumo.fanbox.core.model.ScreenState
 import me.matsumo.fanbox.core.model.fanbox.FanboxCreatorDetail
 import me.matsumo.fanbox.core.model.fanbox.FanboxCursor
 import me.matsumo.fanbox.core.model.fanbox.FanboxPost
-import me.matsumo.fanbox.core.model.fanbox.id.CreatorId
-import me.matsumo.fanbox.core.model.fanbox.id.PostId
+import me.matsumo.fanbox.core.model.fanbox.id.FanboxCreatorId
+import me.matsumo.fanbox.core.model.fanbox.id.FanboxPostId
 import me.matsumo.fanbox.core.model.updateWhenIdle
 import me.matsumo.fanbox.core.repository.DownloadPostsRepository
 import me.matsumo.fanbox.core.repository.FanboxRepository
@@ -30,12 +30,12 @@ class CreatorPostsDownloadViewModel(
 
     val screenState = _screenState.asStateFlow()
 
-    fun fetch(creatorId: CreatorId) {
+    fun fetch(creatorId: FanboxCreatorId) {
         viewModelScope.launch {
             _screenState.value = ScreenState.Loading
             _screenState.value = suspendRunCatching {
-                val creatorDetail = fanboxRepository.getCreator(creatorId)
-                val paginate = fanboxRepository.getCreatorPostsPaginate(creatorId)
+                val creatorDetail = fanboxRepository.getCreatorDetail(creatorId)
+                val paginate = fanboxRepository.getCreatorPostsPagination(creatorId)
 
                 CreatorPostsDownloadUiState(
                     creatorDetail = creatorDetail,
@@ -55,7 +55,7 @@ class CreatorPostsDownloadViewModel(
     }
 
     suspend fun fetchPosts(
-        creatorId: CreatorId,
+        creatorId: FanboxCreatorId,
         paginate: List<FanboxCursor>,
         updateCallback: (Float) -> Unit,
     ) {
@@ -87,7 +87,7 @@ class CreatorPostsDownloadViewModel(
         }
     }
 
-    suspend fun download(postId: PostId): Boolean = suspendCancellableCoroutine {
+    suspend fun download(postId: FanboxPostId): Boolean = suspendCancellableCoroutine {
         downloadPostsRepository.requestDownloadPost(postId) {
             it.resume(true)
         }

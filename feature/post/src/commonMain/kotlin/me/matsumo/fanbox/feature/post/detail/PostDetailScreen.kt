@@ -52,9 +52,9 @@ import me.matsumo.fanbox.core.model.fanbox.FanboxCreatorDetail
 import me.matsumo.fanbox.core.model.fanbox.FanboxMetaData
 import me.matsumo.fanbox.core.model.fanbox.FanboxPost
 import me.matsumo.fanbox.core.model.fanbox.FanboxPostDetail
-import me.matsumo.fanbox.core.model.fanbox.id.CommentId
-import me.matsumo.fanbox.core.model.fanbox.id.CreatorId
-import me.matsumo.fanbox.core.model.fanbox.id.PostId
+import me.matsumo.fanbox.core.model.fanbox.id.FanboxCommentId
+import me.matsumo.fanbox.core.model.fanbox.id.FanboxCreatorId
+import me.matsumo.fanbox.core.model.fanbox.id.FanboxPostId
 import me.matsumo.fanbox.core.resources.Res
 import me.matsumo.fanbox.core.resources.common_downloaded
 import me.matsumo.fanbox.core.resources.error_network
@@ -93,13 +93,13 @@ import kotlin.uuid.Uuid
 @OptIn(ExperimentalFoundationApi::class, ExperimentalUuidApi::class)
 @Composable
 internal fun PostDetailRoute(
-    postId: PostId,
+    postId: FanboxPostId,
     type: PostDetailPagingType,
-    navigateToPostSearch: (String, CreatorId) -> Unit,
-    navigateToPostDetail: (PostId) -> Unit,
-    navigateToPostImage: (PostId, Int) -> Unit,
-    navigateToCreatorPlans: (CreatorId) -> Unit,
-    navigateToCreatorPosts: (CreatorId) -> Unit,
+    navigateToPostSearch: (String, FanboxCreatorId) -> Unit,
+    navigateToPostDetail: (FanboxPostId) -> Unit,
+    navigateToPostImage: (FanboxPostId, Int) -> Unit,
+    navigateToCreatorPlans: (FanboxCreatorId) -> Unit,
+    navigateToCreatorPosts: (FanboxCreatorId) -> Unit,
     navigateToCommentDeleteDialog: (SimpleAlertContents, () -> Unit) -> Unit,
     terminate: () -> Unit,
     modifier: Modifier = Modifier,
@@ -168,12 +168,12 @@ internal fun PostDetailRoute(
 
 @Composable
 private fun PostDetailView(
-    postId: PostId,
-    navigateToPostSearch: (String, CreatorId) -> Unit,
-    navigateToPostDetail: (PostId) -> Unit,
-    navigateToPostImage: (PostId, Int) -> Unit,
-    navigateToCreatorPlans: (CreatorId) -> Unit,
-    navigateToCreatorPosts: (CreatorId) -> Unit,
+    postId: FanboxPostId,
+    navigateToPostSearch: (String, FanboxCreatorId) -> Unit,
+    navigateToPostDetail: (FanboxPostId) -> Unit,
+    navigateToPostImage: (FanboxPostId, Int) -> Unit,
+    navigateToCreatorPlans: (FanboxCreatorId) -> Unit,
+    navigateToCreatorPosts: (FanboxCreatorId) -> Unit,
     navigateToCommentDeleteDialog: (SimpleAlertContents, () -> Unit) -> Unit,
     terminate: () -> Unit,
     modifier: Modifier = Modifier,
@@ -223,8 +223,8 @@ private fun PostDetailView(
                 PostsLog.comment(
                     postId = postId.value,
                     comment = body,
-                    parentCommentId = parent.value,
-                    rootCommentId = root.value,
+                    parentFanboxCommentId = parent.value,
+                    rootFanboxCommentId = root.value,
                 ).send()
 
                 viewModel.commentReply(postId, body, parent, root)
@@ -282,20 +282,20 @@ private fun PostDetailScreen(
     creatorDetail: FanboxCreatorDetail,
     userData: UserData,
     metaData: FanboxMetaData,
-    onClickPost: (PostId) -> Unit,
-    onClickPostLike: (PostId) -> Unit,
+    onClickPost: (FanboxPostId) -> Unit,
+    onClickPostLike: (FanboxPostId) -> Unit,
     onClickPostBookmark: (FanboxPost, Boolean) -> Unit,
-    onClickCommentLoadMore: (PostId, Int) -> Unit,
-    onClickCommentLike: (CommentId) -> Unit,
-    onClickCommentReply: (String, CommentId, CommentId) -> Unit,
-    onClickCommentDelete: (CommentId) -> Unit,
+    onClickCommentLoadMore: (FanboxPostId, Int) -> Unit,
+    onClickCommentLike: (FanboxCommentId) -> Unit,
+    onClickCommentReply: (String, FanboxCommentId, FanboxCommentId) -> Unit,
+    onClickCommentDelete: (FanboxCommentId) -> Unit,
     onClickTag: (String) -> Unit,
-    onClickCreator: (CreatorId) -> Unit,
+    onClickCreator: (FanboxCreatorId) -> Unit,
     onClickImage: (FanboxPostDetail.ImageItem) -> Unit,
     onClickFile: (FanboxPostDetail.FileItem) -> Unit,
     onClickDownloadImages: (List<FanboxPostDetail.ImageItem>) -> Unit,
-    onClickCreatorPosts: (CreatorId) -> Unit,
-    onClickCreatorPlans: (CreatorId) -> Unit,
+    onClickCreatorPosts: (FanboxCreatorId) -> Unit,
+    onClickCreatorPlans: (FanboxCreatorId) -> Unit,
     onClickFollow: (String) -> Unit,
     onClickUnfollow: (String) -> Unit,
     onClickOpenBrowser: (String) -> Unit,

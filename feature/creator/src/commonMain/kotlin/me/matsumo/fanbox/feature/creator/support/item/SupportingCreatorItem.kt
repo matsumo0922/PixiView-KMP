@@ -30,7 +30,7 @@ import coil3.compose.SubcomposeAsyncImage
 import coil3.request.ImageRequest
 import me.matsumo.fanbox.core.model.fanbox.FanboxCreatorPlan
 import me.matsumo.fanbox.core.model.fanbox.PaymentMethod
-import me.matsumo.fanbox.core.model.fanbox.id.CreatorId
+import me.matsumo.fanbox.core.model.fanbox.id.FanboxCreatorId
 import me.matsumo.fanbox.core.resources.Res
 import me.matsumo.fanbox.core.resources.creator_supporting_fan_card
 import me.matsumo.fanbox.core.resources.creator_supporting_payment_method_card
@@ -50,8 +50,8 @@ import org.jetbrains.compose.resources.stringResource
 internal fun SupportingCreatorItem(
     supportingPlan: FanboxCreatorPlan,
     onClickPlanDetail: (String) -> Unit,
-    onClickFanCard: (CreatorId) -> Unit,
-    onClickCreatorPosts: (CreatorId) -> Unit,
+    onClickFanCard: (FanboxCreatorId) -> Unit,
+    onClickCreatorPosts: (FanboxCreatorId) -> Unit,
     modifier: Modifier = Modifier,
 ) {
     Card(
@@ -132,7 +132,7 @@ internal fun SupportingCreatorItem(
 @Composable
 private fun UserSection(
     plan: FanboxCreatorPlan,
-    onClickCreator: (CreatorId) -> Unit,
+    onClickCreator: (FanboxCreatorId) -> Unit,
     modifier: Modifier = Modifier,
 ) {
     Row(

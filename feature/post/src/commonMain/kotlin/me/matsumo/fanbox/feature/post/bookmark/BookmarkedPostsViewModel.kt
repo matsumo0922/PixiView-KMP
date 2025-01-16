@@ -12,7 +12,7 @@ import me.matsumo.fanbox.core.common.util.suspendRunCatching
 import me.matsumo.fanbox.core.model.ScreenState
 import me.matsumo.fanbox.core.model.UserData
 import me.matsumo.fanbox.core.model.fanbox.FanboxPost
-import me.matsumo.fanbox.core.model.fanbox.id.PostId
+import me.matsumo.fanbox.core.model.fanbox.id.FanboxPostId
 import me.matsumo.fanbox.core.model.updateWhenIdle
 import me.matsumo.fanbox.core.repository.FanboxRepository
 import me.matsumo.fanbox.core.repository.UserDataRepository
@@ -59,9 +59,9 @@ class BookmarkedPostsViewModel(
                     val isMatchBody = post.excerpt.contains(query, ignoreCase = true)
                     val isMatchTag = post.tags.any { tag -> tag.contains(query, ignoreCase = true) }
                     val isMatchCreatorName = post.user.name.contains(query, ignoreCase = true)
-                    val isMatchCreatorId = post.user.creatorId.value.contains(query, ignoreCase = true)
+                    val isMatchFanboxCreatorId = post.user.creatorId.value.contains(query, ignoreCase = true)
 
-                    isMatchTitle || isMatchBody || isMatchTag || isMatchCreatorName || isMatchCreatorId
+                    isMatchTitle || isMatchBody || isMatchTag || isMatchCreatorName || isMatchFanboxCreatorId
                 }
             }
 
@@ -69,7 +69,7 @@ class BookmarkedPostsViewModel(
         }
     }
 
-    fun postLike(postId: PostId) {
+    fun postLike(postId: FanboxPostId) {
         viewModelScope.launch {
             suspendRunCatching {
                 fanboxRepository.likePost(postId)

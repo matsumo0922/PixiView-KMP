@@ -17,8 +17,8 @@ import me.matsumo.fanbox.core.model.fanbox.FanboxCreatorDetail
 import me.matsumo.fanbox.core.model.fanbox.FanboxMetaData
 import me.matsumo.fanbox.core.model.fanbox.FanboxPost
 import me.matsumo.fanbox.core.model.fanbox.FanboxPostDetail
-import me.matsumo.fanbox.core.model.fanbox.id.CommentId
-import me.matsumo.fanbox.core.model.fanbox.id.PostId
+import me.matsumo.fanbox.core.model.fanbox.id.FanboxCommentId
+import me.matsumo.fanbox.core.model.fanbox.id.FanboxPostId
 import me.matsumo.fanbox.core.model.updateWhenIdle
 import me.matsumo.fanbox.core.repository.DownloadPostsRepository
 import me.matsumo.fanbox.core.repository.FanboxRepository
@@ -57,12 +57,12 @@ class PostDetailViewModel(
         }
     }
 
-    fun fetch(postId: PostId) {
+    fun fetch(postId: FanboxPostId) {
         viewModelScope.launch {
             _screenState.value = ScreenState.Loading
             _screenState.value = suspendRunCatching {
-                val postDetail = fanboxRepository.getPost(postId)
-                val creatorDetail = fanboxRepository.getCreatorCached(postDetail.user.creatorId)
+                val postDetail = fanboxRepository.getPostDetail(postId)
+                val creatorDetail = fanboxRepository.getCreatorDetailCached(postDetail.user.creatorId)
                 val comments = fanboxRepository.getPostComment(postId)
 
                 PostDetailUiState(
@@ -87,7 +87,7 @@ class PostDetailViewModel(
         }
     }
 
-    fun postLike(postId: PostId) {
+    fun postLike(postId: FanboxPostId) {
         viewModelScope.launch {
             suspendRunCatching {
                 fanboxRepository.likePost(postId)
@@ -107,7 +107,7 @@ class PostDetailViewModel(
         }
     }
 
-    fun loadMoreComment(postId: PostId, offset: Int) {
+    fun loadMoreComment(postId: FanboxPostId, offset: Int) {
         viewModelScope.launch {
             val comments = fanboxRepository.getPostComment(postId, offset)
 
@@ -122,7 +122,7 @@ class PostDetailViewModel(
         }
     }
 
-    fun commentLike(commentId: CommentId) {
+    fun commentLike(commentId: FanboxCommentId) {
         viewModelScope.launch {
             suspendRunCatching {
                 fanboxRepository.likeComment(commentId)
@@ -130,11 +130,11 @@ class PostDetailViewModel(
         }
     }
 
-    fun commentReply(postId: PostId, body: String, parentCommentId: CommentId, rootCommentId: CommentId) {
+    fun commentReply(postId: FanboxPostId, body: String, parentFanboxCommentId: FanboxCommentId, rootFanboxCommentId: FanboxCommentId) {
         viewModelScope.launch {
             (screenState.value as? ScreenState.Idle)?.also { data ->
                 _screenState.value = suspendRunCatching {
-                    fanboxRepository.addComment(postId, body, rootCommentId, parentCommentId)
+                    fanboxRepository.addComment(postId, body, rootFanboxCommentId, parentFanboxCommentId)
                     fanboxRepository.getPostComment(postId)
                 }.fold(
                     onSuccess = {
@@ -157,7 +157,7 @@ class PostDetailViewModel(
         }
     }
 
-    fun commentDelete(postId: PostId, commentId: CommentId) {
+    fun commentDelete(postId: FanboxPostId, commentId: FanboxCommentId) {
         viewModelScope.launch {
             (screenState.value as? ScreenState.Idle)?.also { data ->
                 _screenState.value = suspendRunCatching {

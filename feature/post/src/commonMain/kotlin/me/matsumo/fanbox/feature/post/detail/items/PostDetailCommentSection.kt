@@ -47,8 +47,8 @@ import me.matsumo.fanbox.core.model.PageOffsetInfo
 import me.matsumo.fanbox.core.model.fanbox.FanboxComments
 import me.matsumo.fanbox.core.model.fanbox.FanboxMetaData
 import me.matsumo.fanbox.core.model.fanbox.FanboxPostDetail
-import me.matsumo.fanbox.core.model.fanbox.id.CommentId
-import me.matsumo.fanbox.core.model.fanbox.id.PostId
+import me.matsumo.fanbox.core.model.fanbox.id.FanboxCommentId
+import me.matsumo.fanbox.core.model.fanbox.id.FanboxPostId
 import me.matsumo.fanbox.core.resources.Res
 import me.matsumo.fanbox.core.resources.common_delete
 import me.matsumo.fanbox.core.resources.common_see_more
@@ -71,10 +71,10 @@ internal fun LazyListScope.postDetailCommentItems(
     postDetail: FanboxPostDetail,
     comments: PageOffsetInfo<FanboxComments.Item>,
     metaData: FanboxMetaData,
-    onClickLoadMore: (PostId, Int) -> Unit,
-    onClickCommentLike: (CommentId) -> Unit,
-    onClickCommentReply: (String, CommentId, CommentId) -> Unit,
-    onClickCommentDelete: (CommentId) -> Unit,
+    onClickLoadMore: (FanboxPostId, Int) -> Unit,
+    onClickCommentLike: (FanboxCommentId) -> Unit,
+    onClickCommentReply: (String, FanboxCommentId, FanboxCommentId) -> Unit,
+    onClickCommentDelete: (FanboxCommentId) -> Unit,
     onClickShowCommentEditor: (Boolean) -> Unit,
 ) {
     item {
@@ -111,11 +111,11 @@ internal fun LazyListScope.postDetailCommentItems(
                         .padding(top = 24.dp)
                         .padding(horizontal = 8.dp)
                         .fillMaxWidth(),
-                    parentCommentId = CommentId("0"),
-                    rootCommentId = CommentId("0"),
+                    parentFanboxCommentId = FanboxCommentId("0"),
+                    rootFanboxCommentId = FanboxCommentId("0"),
                     metaData = metaData,
-                    onClickCommentReply = { body, parentCommentId, rootCommentId ->
-                        onClickCommentReply.invoke(body, parentCommentId, rootCommentId)
+                    onClickCommentReply = { body, parentFanboxCommentId, rootFanboxCommentId ->
+                        onClickCommentReply.invoke(body, parentFanboxCommentId, rootFanboxCommentId)
                     },
                 )
             }
@@ -134,8 +134,8 @@ internal fun LazyListScope.postDetailCommentItems(
                 metaData = metaData,
                 comment = it,
                 onClickCommentLike = onClickCommentLike,
-                onClickCommentReply = { body, parentCommentId, rootCommentId ->
-                    onClickCommentReply.invoke(body, parentCommentId, rootCommentId)
+                onClickCommentReply = { body, parentFanboxCommentId, rootFanboxCommentId ->
+                    onClickCommentReply.invoke(body, parentFanboxCommentId, rootFanboxCommentId)
                 },
                 onClickCommentDelete = onClickCommentDelete,
             )
@@ -198,9 +198,9 @@ internal fun LazyListScope.postDetailCommentItems(
 private fun CommentItem(
     comment: FanboxComments.Item,
     metaData: FanboxMetaData,
-    onClickCommentLike: (CommentId) -> Unit,
-    onClickCommentReply: (String, CommentId, CommentId) -> Unit,
-    onClickCommentDelete: (CommentId) -> Unit,
+    onClickCommentLike: (FanboxCommentId) -> Unit,
+    onClickCommentReply: (String, FanboxCommentId, FanboxCommentId) -> Unit,
+    onClickCommentDelete: (FanboxCommentId) -> Unit,
     modifier: Modifier = Modifier,
 ) {
     var isShowReplyEditor by rememberSaveable(comment) { mutableStateOf(false) }
@@ -346,8 +346,8 @@ private fun CommentItem(
                         .animateContentSize()
                         .padding(top = 8.dp)
                         .fillMaxWidth(),
-                    parentCommentId = comment.id,
-                    rootCommentId = comment.rootCommentId,
+                    parentFanboxCommentId = comment.id,
+                    rootFanboxCommentId = comment.rootFanboxCommentId,
                     metaData = metaData,
                     onClickCommentReply = onClickCommentReply,
                 )
@@ -359,10 +359,10 @@ private fun CommentItem(
 @OptIn(ExperimentalCoilApi::class)
 @Composable
 private fun CommentEditor(
-    parentCommentId: CommentId,
-    rootCommentId: CommentId,
+    parentFanboxCommentId: FanboxCommentId,
+    rootFanboxCommentId: FanboxCommentId,
     metaData: FanboxMetaData,
-    onClickCommentReply: (String, CommentId, CommentId) -> Unit,
+    onClickCommentReply: (String, FanboxCommentId, FanboxCommentId) -> Unit,
     modifier: Modifier = Modifier,
 ) {
     var isError by rememberSaveable { mutableStateOf(false) }
@@ -405,7 +405,7 @@ private fun CommentEditor(
                 modifier = Modifier.align(Alignment.End),
                 enabled = !isError,
                 onClick = {
-                    onClickCommentReply.invoke(value, parentCommentId, if (rootCommentId.value != "0") rootCommentId else parentCommentId)
+                    onClickCommentReply.invoke(value, parentFanboxCommentId, if (rootFanboxCommentId.value != "0") rootFanboxCommentId else parentFanboxCommentId)
                 },
             ) {
                 Text(text = stringResource(Res.string.post_detail_comment_reply))

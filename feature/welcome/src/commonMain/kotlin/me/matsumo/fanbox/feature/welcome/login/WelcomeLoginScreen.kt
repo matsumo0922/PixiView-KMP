@@ -96,7 +96,7 @@ internal fun WelcomeLoginScreen(
                 },
                 navigateToHome = navigateToHome,
                 navigateToHelp = { navigatorExtension.navigateToWebPage(it, WelcomeLoginRoute) },
-                onSetCookie = viewModel::setCookie,
+                onSetSessionId = viewModel::setSessionId,
             )
         }
     } else {
@@ -124,7 +124,7 @@ internal fun WelcomeLoginScreen(
                     },
                     navigateToHome = navigateToHome,
                     navigateToHelp = { navigatorExtension.navigateToWebPage(it, WelcomeLoginRoute) },
-                    onSetCookie = viewModel::setCookie,
+                    onSetSessionId = viewModel::setSessionId,
                 )
             }
         }
@@ -149,7 +149,7 @@ private fun FirstSection(
 @Composable
 private fun SecondSection(
     isLoggedIn: Boolean,
-    onSetCookie: (String) -> Unit,
+    onSetSessionId: (String) -> Unit,
     navigateToLoginScreen: () -> Unit,
     navigateToHome: () -> Unit,
     navigateToHelp: (String) -> Unit,
@@ -228,7 +228,7 @@ private fun SecondSection(
             onDismissRequest = { isShowLoginDialog = false },
             onClickHelp = navigateToHelp,
             onClickLogin = { sessionId ->
-                onSetCookie.invoke(sessionId)
+                onSetSessionId.invoke(sessionId)
                 isShowLoginDialog = false
             },
         )

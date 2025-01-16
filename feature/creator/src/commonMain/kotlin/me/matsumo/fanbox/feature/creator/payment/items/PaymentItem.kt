@@ -29,7 +29,7 @@ import kotlinx.datetime.Instant
 import me.matsumo.fanbox.core.common.util.format
 import me.matsumo.fanbox.core.model.fanbox.FanboxPaidRecord
 import me.matsumo.fanbox.core.model.fanbox.PaymentMethod
-import me.matsumo.fanbox.core.model.fanbox.id.CreatorId
+import me.matsumo.fanbox.core.model.fanbox.id.FanboxCreatorId
 import me.matsumo.fanbox.core.resources.Res
 import me.matsumo.fanbox.core.resources.creator_supporting_payment_method_card
 import me.matsumo.fanbox.core.resources.creator_supporting_payment_method_cvs
@@ -45,7 +45,7 @@ import org.jetbrains.compose.resources.stringResource
 @Composable
 internal fun PaymentItem(
     payment: Payment,
-    onClickCreator: (CreatorId) -> Unit,
+    onClickCreator: (FanboxCreatorId) -> Unit,
     modifier: Modifier = Modifier,
 ) {
     Card(
@@ -118,7 +118,7 @@ private fun TitleItem(
 @Composable
 private fun PaidItem(
     paidRecord: FanboxPaidRecord,
-    onClickCreator: (CreatorId) -> Unit,
+    onClickCreator: (FanboxCreatorId) -> Unit,
     modifier: Modifier = Modifier,
 ) {
     Row(

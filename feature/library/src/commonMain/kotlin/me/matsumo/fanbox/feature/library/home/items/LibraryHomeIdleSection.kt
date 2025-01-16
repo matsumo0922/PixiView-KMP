@@ -7,8 +7,8 @@ import app.cash.paging.compose.LazyPagingItems
 import kotlinx.collections.immutable.ImmutableList
 import me.matsumo.fanbox.core.model.UserData
 import me.matsumo.fanbox.core.model.fanbox.FanboxPost
-import me.matsumo.fanbox.core.model.fanbox.id.CreatorId
-import me.matsumo.fanbox.core.model.fanbox.id.PostId
+import me.matsumo.fanbox.core.model.fanbox.id.FanboxCreatorId
+import me.matsumo.fanbox.core.model.fanbox.id.FanboxPostId
 import me.matsumo.fanbox.core.ui.extensition.LocalNavigationType
 import me.matsumo.fanbox.core.ui.extensition.PixiViewNavigationType
 import me.matsumo.fanbox.core.ui.extensition.Platform
@@ -18,12 +18,12 @@ import me.matsumo.fanbox.core.ui.extensition.currentPlatform
 internal fun LibraryHomeIdleSection(
     pagingAdapter: LazyPagingItems<FanboxPost>,
     userData: UserData,
-    bookmarkedPosts: ImmutableList<PostId>,
-    onClickPost: (PostId) -> Unit,
-    onClickPostLike: (PostId) -> Unit,
+    bookmarkedPosts: ImmutableList<FanboxPostId>,
+    onClickPost: (FanboxPostId) -> Unit,
+    onClickPostLike: (FanboxPostId) -> Unit,
     onClickPostBookmark: (FanboxPost, Boolean) -> Unit,
-    onClickCreator: (CreatorId) -> Unit,
-    onClickPlanList: (CreatorId) -> Unit,
+    onClickCreator: (FanboxCreatorId) -> Unit,
+    onClickPlanList: (FanboxCreatorId) -> Unit,
     modifier: Modifier = Modifier,
 ) {
     val state = rememberLazyGridState()

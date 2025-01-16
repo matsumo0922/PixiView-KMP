@@ -46,8 +46,8 @@ import kotlinx.collections.immutable.ImmutableList
 import me.matsumo.fanbox.core.model.UserData
 import me.matsumo.fanbox.core.model.fanbox.FanboxCreatorTag
 import me.matsumo.fanbox.core.model.fanbox.FanboxPost
-import me.matsumo.fanbox.core.model.fanbox.id.CreatorId
-import me.matsumo.fanbox.core.model.fanbox.id.PostId
+import me.matsumo.fanbox.core.model.fanbox.id.FanboxCreatorId
+import me.matsumo.fanbox.core.model.fanbox.id.FanboxPostId
 import me.matsumo.fanbox.core.ui.ads.NativeAdView
 import me.matsumo.fanbox.core.ui.component.PostGridItem
 import me.matsumo.fanbox.core.ui.component.PostItem
@@ -64,15 +64,15 @@ import me.matsumo.fanbox.core.ui.view.PagingErrorSection
 @Composable
 internal fun CreatorTopPostsScreen(
     userData: UserData,
-    bookmarkedPosts: ImmutableList<PostId>,
+    bookmarkedPosts: ImmutableList<FanboxPostId>,
     pagingAdapter: LazyPagingItems<FanboxPost>,
     creatorTags: ImmutableList<FanboxCreatorTag>,
-    onClickPost: (PostId) -> Unit,
+    onClickPost: (FanboxPostId) -> Unit,
     onClickPostBookmark: (FanboxPost, Boolean) -> Unit,
-    onClickCreator: (CreatorId) -> Unit,
+    onClickCreator: (FanboxCreatorId) -> Unit,
     onClickTag: (FanboxCreatorTag) -> Unit,
-    onClickPostLike: (PostId) -> Unit,
-    onClickPlanList: (CreatorId) -> Unit,
+    onClickPostLike: (FanboxPostId) -> Unit,
+    onClickPlanList: (FanboxCreatorId) -> Unit,
     modifier: Modifier = Modifier,
 ) {
     val state = rememberLazyGridState()
@@ -131,16 +131,16 @@ private fun PagingItems(
     adOffset: Int,
     adInterval: Int,
     userData: UserData,
-    bookmarkedPosts: ImmutableList<PostId>,
+    bookmarkedPosts: ImmutableList<FanboxPostId>,
     pagingAdapter: LazyPagingItems<FanboxPost>,
     creatorTags: ImmutableList<FanboxCreatorTag>,
     isGridMode: Boolean,
-    onClickPost: (PostId) -> Unit,
+    onClickPost: (FanboxPostId) -> Unit,
     onClickPostBookmark: (FanboxPost, Boolean) -> Unit,
-    onClickCreator: (CreatorId) -> Unit,
+    onClickCreator: (FanboxCreatorId) -> Unit,
     onClickTag: (FanboxCreatorTag) -> Unit,
-    onClickPostLike: (PostId) -> Unit,
-    onClickPlanList: (CreatorId) -> Unit,
+    onClickPostLike: (FanboxPostId) -> Unit,
+    onClickPlanList: (FanboxCreatorId) -> Unit,
     modifier: Modifier = Modifier,
 ) {
     LazyVerticalGrid(

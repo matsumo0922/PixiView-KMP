@@ -26,7 +26,7 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.toImmutableList
 import me.matsumo.fanbox.core.model.fanbox.FanboxCreatorPlan
-import me.matsumo.fanbox.core.model.fanbox.id.CreatorId
+import me.matsumo.fanbox.core.model.fanbox.id.FanboxCreatorId
 import me.matsumo.fanbox.core.resources.Res
 import me.matsumo.fanbox.core.resources.error_no_data
 import me.matsumo.fanbox.core.resources.error_no_data_supported
@@ -45,8 +45,8 @@ import org.koin.compose.viewmodel.koinViewModel
 
 @Composable
 internal fun SupportingCreatorsRoute(
-    navigateToCreatorPosts: (CreatorId) -> Unit,
-    navigateToFanCard: (CreatorId) -> Unit,
+    navigateToCreatorPosts: (FanboxCreatorId) -> Unit,
+    navigateToFanCard: (FanboxCreatorId) -> Unit,
     terminate: () -> Unit,
     modifier: Modifier = Modifier,
     viewModel: SupportingCreatorsViewModel = koinViewModel(),
@@ -76,8 +76,8 @@ internal fun SupportingCreatorsRoute(
 private fun SupportingCreatorsScreen(
     supportedCreators: ImmutableList<FanboxCreatorPlan>,
     onClickPlanDetail: (String) -> Unit,
-    onClickFanCard: (CreatorId) -> Unit,
-    onClickCreatorPosts: (CreatorId) -> Unit,
+    onClickFanCard: (FanboxCreatorId) -> Unit,
+    onClickCreatorPosts: (FanboxCreatorId) -> Unit,
     terminate: () -> Unit,
     modifier: Modifier = Modifier,
 ) {

@@ -17,8 +17,8 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.currentBackStackEntryAsState
 import kotlinx.collections.immutable.toImmutableList
 import kotlinx.coroutines.launch
-import me.matsumo.fanbox.core.model.fanbox.id.CreatorId
-import me.matsumo.fanbox.core.model.fanbox.id.PostId
+import me.matsumo.fanbox.core.model.fanbox.id.FanboxCreatorId
+import me.matsumo.fanbox.core.model.fanbox.id.FanboxPostId
 import me.matsumo.fanbox.core.ui.extensition.LocalSnackbarHostState
 import me.matsumo.fanbox.core.ui.view.SimpleAlertContents
 import me.matsumo.fanbox.feature.library.LibraryNavHost
@@ -32,10 +32,10 @@ internal fun LibraryCompactScreen(
     snackbarHostState: SnackbarHostState,
     navController: NavHostController,
     navigateToPostSearch: () -> Unit,
-    navigateToPostDetailFromHome: (postId: PostId) -> Unit,
-    navigateToPostDetailFromSupported: (postId: PostId) -> Unit,
-    navigateToCreatorPosts: (creatorId: CreatorId) -> Unit,
-    navigateToCreatorPlans: (creatorId: CreatorId) -> Unit,
+    navigateToPostDetailFromHome: (postId: FanboxPostId) -> Unit,
+    navigateToPostDetailFromSupported: (postId: FanboxPostId) -> Unit,
+    navigateToCreatorPosts: (creatorId: FanboxCreatorId) -> Unit,
+    navigateToCreatorPlans: (creatorId: FanboxCreatorId) -> Unit,
     navigateToBookmarkedPosts: () -> Unit,
     navigateToFollowerCreators: () -> Unit,
     navigateToSupportingCreators: () -> Unit,

@@ -39,15 +39,11 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
-import coil3.annotation.ExperimentalCoilApi
 import coil3.compose.LocalPlatformContext
 import coil3.compose.SubcomposeAsyncImage
 import coil3.request.ImageRequest
 import io.github.aakira.napier.Napier
 import me.matsumo.fanbox.core.common.util.format
-import me.matsumo.fanbox.core.model.fanbox.FanboxPost
-import me.matsumo.fanbox.core.model.fanbox.id.CreatorId
-import me.matsumo.fanbox.core.model.fanbox.id.PostId
 import me.matsumo.fanbox.core.resources.Res
 import me.matsumo.fanbox.core.resources.error_restricted_post
 import me.matsumo.fanbox.core.resources.error_restricted_post_ios
@@ -61,22 +57,25 @@ import me.matsumo.fanbox.core.ui.extensition.currentPlatform
 import me.matsumo.fanbox.core.ui.extensition.fanboxHeader
 import me.matsumo.fanbox.core.ui.theme.bold
 import me.matsumo.fanbox.core.ui.theme.center
+import me.matsumo.fankt.fanbox.domain.model.FanboxPost
+import me.matsumo.fankt.fanbox.domain.model.id.FanboxCreatorId
+import me.matsumo.fankt.fanbox.domain.model.id.FanboxPostId
 import org.jetbrains.compose.resources.stringResource
 
 @Composable
 fun PostItem(
     post: FanboxPost,
-    onClickPost: (PostId) -> Unit,
-    onClickCreator: (CreatorId) -> Unit,
-    onClickPlanList: (CreatorId) -> Unit,
-    onClickLike: (PostId) -> Unit,
-    onClickBookmark: (PostId, Boolean) -> Unit,
+    onClickPost: (FanboxPostId) -> Unit,
+    onClickCreator: (FanboxCreatorId) -> Unit,
+    onClickPlanList: (FanboxCreatorId) -> Unit,
+    onClickLike: (FanboxPostId) -> Unit,
+    onClickBookmark: (FanboxPostId, Boolean) -> Unit,
     isHideAdultContents: Boolean,
     isOverrideAdultContents: Boolean,
     isTestUser: Boolean,
     modifier: Modifier = Modifier,
 ) {
-    var isPostBookmarked by remember(post.isBookmarked) { mutableStateOf(post.isBookmarked) }
+    var isPostBookmarked = false // TODO
     var isPostLiked by rememberSaveable(post.isLiked) { mutableStateOf(post.isLiked) }
     var isHideAdultContent by remember { mutableStateOf(isHideAdultContents) }
 
@@ -144,7 +143,9 @@ fun PostItem(
                     .padding(horizontal = 8.dp)
                     .fillMaxWidth(),
                 post = post,
-                onClickCreator = onClickCreator,
+                onClickCreator = {
+                    it?.let(onClickCreator)
+                },
             )
 
             Text(
@@ -170,7 +171,7 @@ fun PostItem(
                         .fillMaxWidth(),
                     backgroundColor = MaterialTheme.colorScheme.secondaryContainer,
                     feeRequired = post.feeRequired,
-                    onClickPlanList = { onClickPlanList.invoke(post.user.creatorId) },
+                    onClickPlanList = { post.user?.creatorId?.let(onClickCreator) },
                 )
             } else {
                 if (post.excerpt.isNotBlank()) {
@@ -212,11 +213,10 @@ fun PostItem(
     }
 }
 
-@OptIn(ExperimentalCoilApi::class)
 @Composable
 private fun UserSection(
     post: FanboxPost,
-    onClickCreator: (CreatorId) -> Unit,
+    onClickCreator: (FanboxCreatorId?) -> Unit,
     modifier: Modifier = Modifier,
 ) {
     Row(
@@ -228,7 +228,7 @@ private fun UserSection(
             modifier = Modifier
                 .weight(1f)
                 .clip(RoundedCornerShape(4.dp))
-                .clickable { onClickCreator.invoke(post.user.creatorId) }
+                .clickable { onClickCreator.invoke(post.user?.creatorId) }
                 .padding(8.dp),
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.spacedBy(12.dp),
@@ -239,7 +239,7 @@ private fun UserSection(
                     .clip(CircleShape),
                 model = ImageRequest.Builder(LocalPlatformContext.current)
                     .error(Res.drawable.im_default_user.asCoilImage())
-                    .data(post.user.iconUrl)
+                    .data(post.user?.iconUrl)
                     .build(),
                 loading = {
                     FadePlaceHolder()
@@ -253,7 +253,7 @@ private fun UserSection(
             ) {
                 Text(
                     modifier = Modifier.fillMaxWidth(),
-                    text = post.user.name,
+                    text = post.user?.name ?: "Unknown",
                     style = MaterialTheme.typography.bodyMedium.bold(),
                     color = MaterialTheme.colorScheme.onSurface,
                 )
@@ -273,7 +273,10 @@ private fun UserSection(
         ) {
             Text(
                 modifier = Modifier.padding(6.dp, 4.dp),
-                text = if (post.feeRequired == 0) stringResource(Res.string.fanbox_free_fee) else stringResource(Res.string.unit_jpy, post.feeRequired),
+                text = if (post.feeRequired == 0) stringResource(Res.string.fanbox_free_fee) else stringResource(
+                    Res.string.unit_jpy,
+                    post.feeRequired
+                ),
                 style = MaterialTheme.typography.bodySmall,
                 color = MaterialTheme.colorScheme.onSurfaceVariant,
             )
@@ -305,7 +308,10 @@ private fun RestrictThumbnail(
 
         Text(
             modifier = Modifier.fillMaxWidth(),
-            text = if (currentPlatform == Platform.Android) stringResource(Res.string.error_restricted_post, feeRequired) else stringResource(Res.string.error_restricted_post_ios),
+            text = if (currentPlatform == Platform.Android) stringResource(
+                Res.string.error_restricted_post,
+                feeRequired
+            ) else stringResource(Res.string.error_restricted_post_ios),
             style = MaterialTheme.typography.bodySmall.center(),
             color = Color.White,
         )

@@ -12,12 +12,11 @@ import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
 import kotlinx.serialization.Serializable
 import me.matsumo.fanbox.core.common.util.suspendRunCatching
-import me.matsumo.fanbox.core.model.FanboxTag
 import me.matsumo.fanbox.core.model.UserData
 import me.matsumo.fanbox.core.model.fanbox.FanboxCreatorDetail
 import me.matsumo.fanbox.core.model.fanbox.FanboxPost
-import me.matsumo.fanbox.core.model.fanbox.id.CreatorId
-import me.matsumo.fanbox.core.model.fanbox.id.PostId
+import me.matsumo.fanbox.core.model.fanbox.id.FanboxCreatorId
+import me.matsumo.fanbox.core.model.fanbox.id.FanboxPostId
 import me.matsumo.fanbox.core.repository.FanboxRepository
 import me.matsumo.fanbox.core.repository.UserDataRepository
 import me.matsumo.fanbox.core.ui.extensition.emptyPaging
@@ -105,7 +104,7 @@ class PostSearchViewModel(
         }
     }
 
-    fun postLike(postId: PostId) {
+    fun postLike(postId: FanboxPostId) {
         viewModelScope.launch {
             suspendRunCatching {
                 fanboxRepository.likePost(postId)
@@ -130,7 +129,7 @@ class PostSearchViewModel(
 data class PostSearchUiState(
     val query: String,
     val userData: UserData,
-    val bookmarkedPosts: List<PostId>,
+    val bookmarkedPosts: List<FanboxPostId>,
     val suggestTags: List<FanboxTag>,
     val creatorPaging: Flow<PagingData<FanboxCreatorDetail>>,
     val tagPaging: Flow<PagingData<FanboxPost>>,
@@ -147,7 +146,7 @@ enum class PostSearchMode {
 @Serializable
 data class PostSearchQuery(
     val mode: PostSearchMode,
-    val creatorId: CreatorId?,
+    val creatorId: FanboxCreatorId?,
     val creatorQuery: String?,
     val postQuery: String?,
     val tag: String?,

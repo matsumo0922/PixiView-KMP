@@ -4,9 +4,9 @@ import androidx.paging.PagingSource
 import androidx.paging.PagingState
 import kotlinx.coroutines.flow.first
 import me.matsumo.fanbox.core.common.util.suspendRunCatching
-import me.matsumo.fanbox.core.model.fanbox.FanboxCursor
-import me.matsumo.fanbox.core.model.fanbox.FanboxPost
 import me.matsumo.fanbox.core.repository.FanboxRepository
+import me.matsumo.fankt.fanbox.domain.FanboxCursor
+import me.matsumo.fankt.fanbox.domain.model.FanboxPost
 
 class HomePostsPagingSource(
     private val fanboxRepository: FanboxRepository,
@@ -27,7 +27,7 @@ class HomePostsPagingSource(
                 }
 
                 for (blockedCreator in fanboxRepository.blockedCreators.first()) {
-                    contents.removeAll { it.user.creatorId == blockedCreator }
+                    contents.removeAll { it.user?.creatorId == blockedCreator }
                 }
 
                 LoadResult.Page(

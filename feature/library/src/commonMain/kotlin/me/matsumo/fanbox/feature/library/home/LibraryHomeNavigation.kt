@@ -6,8 +6,8 @@ import androidx.navigation.NavController
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.NavOptions
 import androidx.navigation.compose.composable
-import me.matsumo.fanbox.core.model.fanbox.id.CreatorId
-import me.matsumo.fanbox.core.model.fanbox.id.PostId
+import me.matsumo.fanbox.core.model.fanbox.id.FanboxCreatorId
+import me.matsumo.fanbox.core.model.fanbox.id.FanboxPostId
 import me.matsumo.fanbox.core.ui.extensition.navigateWithLog
 import me.matsumo.fanbox.core.ui.view.SimpleAlertContents
 
@@ -19,10 +19,10 @@ fun NavController.navigateToLibraryHome(navOptions: NavOptions? = null) {
 
 fun NavGraphBuilder.libraryHomeScreen(
     openDrawer: () -> Unit,
-    navigateToPostDetailFromHome: (PostId) -> Unit,
-    navigateToPostDetailFromSupported: (PostId) -> Unit,
-    navigateToCreatorPosts: (CreatorId) -> Unit,
-    navigateToCreatorPlans: (CreatorId) -> Unit,
+    navigateToPostDetailFromHome: (FanboxPostId) -> Unit,
+    navigateToPostDetailFromSupported: (FanboxPostId) -> Unit,
+    navigateToCreatorPosts: (FanboxCreatorId) -> Unit,
+    navigateToCreatorPlans: (FanboxCreatorId) -> Unit,
     navigateToSimpleAlert: (SimpleAlertContents) -> Unit,
 ) {
     composable(

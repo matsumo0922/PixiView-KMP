@@ -34,9 +34,6 @@ import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.toImmutableList
 import me.matsumo.fanbox.core.model.ScreenState
 import me.matsumo.fanbox.core.model.UserData
-import me.matsumo.fanbox.core.model.fanbox.FanboxPost
-import me.matsumo.fanbox.core.model.fanbox.id.CreatorId
-import me.matsumo.fanbox.core.model.fanbox.id.PostId
 import me.matsumo.fanbox.core.ui.AsyncLoadContents
 import me.matsumo.fanbox.core.resources.Res
 import me.matsumo.fanbox.core.resources.bookmark_empty_description
@@ -47,13 +44,16 @@ import me.matsumo.fanbox.core.ui.extensition.PixiViewNavigationType
 import me.matsumo.fanbox.core.ui.extensition.drawVerticalScrollbar
 import me.matsumo.fanbox.core.ui.view.ErrorView
 import me.matsumo.fanbox.feature.post.bookmark.items.BookmarkedPostsTopBar
+import me.matsumo.fankt.fanbox.domain.model.FanboxPost
+import me.matsumo.fankt.fanbox.domain.model.id.FanboxCreatorId
+import me.matsumo.fankt.fanbox.domain.model.id.FanboxPostId
 import org.koin.compose.viewmodel.koinViewModel
 
 @Composable
 internal fun BookmarkedPostsRoute(
-    navigateToPostDetail: (PostId) -> Unit,
-    navigateToCreatorPosts: (CreatorId) -> Unit,
-    navigateToCreatorPlans: (CreatorId) -> Unit,
+    navigateToPostDetail: (FanboxPostId) -> Unit,
+    navigateToCreatorPosts: (FanboxCreatorId) -> Unit,
+    navigateToCreatorPlans: (FanboxCreatorId) -> Unit,
     terminate: () -> Unit,
     modifier: Modifier = Modifier,
     viewModel: BookmarkedPostsViewModel = koinViewModel(),
@@ -86,17 +86,17 @@ internal fun BookmarkedPostsRoute(
     }
 }
 
-@OptIn(ExperimentalMaterial3Api::class, ExperimentalFoundationApi::class)
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 private fun BookmarkedPostsScreen(
     userData: UserData,
     bookmarkedPosts: ImmutableList<FanboxPost>,
     onSearch: (String) -> Unit,
-    onClickPost: (PostId) -> Unit,
-    onCLickPostLike: (PostId) -> Unit,
+    onClickPost: (FanboxPostId) -> Unit,
+    onCLickPostLike: (FanboxPostId) -> Unit,
     onClickPostBookmark: (FanboxPost, Boolean) -> Unit,
-    onClickCreatorPosts: (CreatorId) -> Unit,
-    onClickCreatorPlans: (CreatorId) -> Unit,
+    onClickCreatorPosts: (FanboxCreatorId) -> Unit,
+    onClickCreatorPlans: (FanboxCreatorId) -> Unit,
     onTerminate: () -> Unit,
     modifier: Modifier = Modifier,
 ) {

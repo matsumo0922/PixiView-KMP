@@ -9,7 +9,7 @@ import kotlinx.coroutines.launch
 import me.matsumo.fanbox.core.common.util.suspendRunCatching
 import me.matsumo.fanbox.core.model.ScreenState
 import me.matsumo.fanbox.core.model.fanbox.FanboxPostDetail
-import me.matsumo.fanbox.core.model.fanbox.id.PostId
+import me.matsumo.fanbox.core.model.fanbox.id.FanboxPostId
 import me.matsumo.fanbox.core.repository.DownloadPostsRepository
 import me.matsumo.fanbox.core.repository.FanboxRepository
 import me.matsumo.fanbox.core.resources.Res
@@ -24,12 +24,12 @@ class PostImageViewModel(
 
     val screenState = _screenState.asStateFlow()
 
-    fun fetch(postId: PostId) {
+    fun fetch(postId: FanboxPostId) {
         viewModelScope.launch {
             _screenState.value = ScreenState.Loading
             _screenState.value = suspendRunCatching {
                 PostImageUiState(
-                    postDetail = fanboxRepository.getPostCached(postId),
+                    postDetail = fanboxRepository.getPostDetailCached(postId),
                 )
             }.fold(
                 onSuccess = { ScreenState.Idle(it) },

@@ -17,8 +17,8 @@ import me.matsumo.fanbox.core.model.fanbox.FanboxCreatorDetail
 import me.matsumo.fanbox.core.model.fanbox.FanboxCreatorPlan
 import me.matsumo.fanbox.core.model.fanbox.FanboxCreatorTag
 import me.matsumo.fanbox.core.model.fanbox.FanboxPost
-import me.matsumo.fanbox.core.model.fanbox.id.CreatorId
-import me.matsumo.fanbox.core.model.fanbox.id.PostId
+import me.matsumo.fanbox.core.model.fanbox.id.FanboxCreatorId
+import me.matsumo.fanbox.core.model.fanbox.id.FanboxPostId
 import me.matsumo.fanbox.core.model.updateWhenIdle
 import me.matsumo.fanbox.core.repository.FanboxRepository
 import me.matsumo.fanbox.core.repository.RewardRepository
@@ -58,7 +58,7 @@ class CreatorTopViewModel(
         }
     }
 
-    fun fetch(creatorId: CreatorId) {
+    fun fetch(creatorId: FanboxCreatorId) {
         viewModelScope.launch {
             _screenState.value = ScreenState.Loading
             _screenState.value = suspendRunCatching {
@@ -70,7 +70,7 @@ class CreatorTopViewModel(
                     bookmarkedPosts = fanboxRepository.bookmarkedPosts.first(),
                     isBlocked = fanboxRepository.blockedCreators.first().contains(creatorId),
                     isAbleToReward = rewardRepository.isAbleToReward(),
-                    creatorDetail = fanboxRepository.getCreator(creatorId),
+                    creatorDetail = fanboxRepository.getCreatorDetail(creatorId),
                     creatorPlans = fanboxRepository.getCreatorPlans(creatorId),
                     creatorTags = fanboxRepository.getCreatorTags(creatorId),
                     creatorPostsPaging = postsPagingCache ?: fanboxRepository.getCreatorPostsPager(creatorId, loadSize).also {
@@ -96,7 +96,7 @@ class CreatorTopViewModel(
         }
     }
 
-    fun postLike(postId: PostId) {
+    fun postLike(postId: FanboxPostId) {
         viewModelScope.launch {
             suspendRunCatching {
                 fanboxRepository.likePost(postId)
@@ -116,13 +116,13 @@ class CreatorTopViewModel(
         }
     }
 
-    suspend fun blockCreator(creatorId: CreatorId) {
+    suspend fun blockCreator(creatorId: FanboxCreatorId) {
         suspendRunCatching {
             fanboxRepository.blockCreator(creatorId)
         }
     }
 
-    suspend fun unblockCreator(creatorId: CreatorId) {
+    suspend fun unblockCreator(creatorId: FanboxCreatorId) {
         suspendRunCatching {
             fanboxRepository.unblockCreator(creatorId)
         }
@@ -138,7 +138,7 @@ class CreatorTopViewModel(
 @Stable
 data class CreatorTopUiState(
     val userData: UserData,
-    val bookmarkedPosts: List<PostId>,
+    val bookmarkedPosts: List<FanboxPostId>,
     val creatorDetail: FanboxCreatorDetail,
     val creatorPlans: List<FanboxCreatorPlan>,
     val creatorTags: List<FanboxCreatorTag>,

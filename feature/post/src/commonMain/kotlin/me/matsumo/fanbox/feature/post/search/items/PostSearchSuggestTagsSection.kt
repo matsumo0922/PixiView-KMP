@@ -27,7 +27,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.unit.dp
 import kotlinx.collections.immutable.ImmutableList
-import me.matsumo.fanbox.core.model.FanboxTag
 import me.matsumo.fanbox.core.resources.Res
 import me.matsumo.fanbox.core.resources.common_see_more
 import me.matsumo.fanbox.core.resources.unit_tag

@@ -54,7 +54,7 @@ import kotlinx.coroutines.launch
 import me.matsumo.fanbox.core.common.util.format
 import me.matsumo.fanbox.core.model.ScreenState
 import me.matsumo.fanbox.core.model.fanbox.FanboxCreatorDetail
-import me.matsumo.fanbox.core.model.fanbox.id.CreatorId
+import me.matsumo.fanbox.core.model.fanbox.id.FanboxCreatorId
 import me.matsumo.fanbox.core.resources.Res
 import me.matsumo.fanbox.core.resources.common_completed
 import me.matsumo.fanbox.core.resources.creator_posts_download_button
@@ -73,7 +73,7 @@ import org.koin.compose.viewmodel.koinViewModel
 
 @Composable
 internal fun CreatorPostsDownloadRoute(
-    creatorId: CreatorId,
+    creatorId: FanboxCreatorId,
     navigateToCancelDownloadAlert: (SimpleAlertContents, () -> Unit) -> Unit,
     terminate: () -> Unit,
     modifier: Modifier = Modifier,

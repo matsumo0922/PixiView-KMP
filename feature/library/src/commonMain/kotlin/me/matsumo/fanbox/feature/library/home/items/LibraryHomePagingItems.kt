@@ -19,8 +19,8 @@ import app.cash.paging.compose.itemKey
 import kotlinx.collections.immutable.ImmutableList
 import me.matsumo.fanbox.core.model.UserData
 import me.matsumo.fanbox.core.model.fanbox.FanboxPost
-import me.matsumo.fanbox.core.model.fanbox.id.CreatorId
-import me.matsumo.fanbox.core.model.fanbox.id.PostId
+import me.matsumo.fanbox.core.model.fanbox.id.FanboxCreatorId
+import me.matsumo.fanbox.core.model.fanbox.id.FanboxPostId
 import me.matsumo.fanbox.core.ui.ads.NativeAdView
 import me.matsumo.fanbox.core.ui.component.PostGridItem
 import me.matsumo.fanbox.core.ui.component.PostItem
@@ -35,13 +35,13 @@ internal fun LibraryHomePagingItems(
     adInterval: Int,
     pagingAdapter: LazyPagingItems<FanboxPost>,
     userData: UserData,
-    bookmarkedPosts: ImmutableList<PostId>,
+    bookmarkedPosts: ImmutableList<FanboxPostId>,
     isGridMode: Boolean,
-    onClickPost: (PostId) -> Unit,
-    onClickPostLike: (PostId) -> Unit,
+    onClickPost: (FanboxPostId) -> Unit,
+    onClickPostLike: (FanboxPostId) -> Unit,
     onClickPostBookmark: (FanboxPost, Boolean) -> Unit,
-    onClickCreator: (CreatorId) -> Unit,
-    onClickPlanList: (CreatorId) -> Unit,
+    onClickCreator: (FanboxCreatorId) -> Unit,
+    onClickPlanList: (FanboxCreatorId) -> Unit,
     modifier: Modifier = Modifier,
 ) {
     LazyVerticalGrid(

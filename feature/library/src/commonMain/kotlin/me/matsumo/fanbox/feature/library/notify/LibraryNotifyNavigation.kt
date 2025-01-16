@@ -8,7 +8,7 @@ import androidx.navigation.NavController
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.NavOptions
 import androidx.navigation.compose.composable
-import me.matsumo.fanbox.core.model.fanbox.id.PostId
+import me.matsumo.fanbox.core.model.fanbox.id.FanboxPostId
 import me.matsumo.fanbox.core.ui.extensition.navigateWithLog
 
 const val LibraryNotifyRoute = "libraryNotify"
@@ -19,7 +19,7 @@ fun NavController.navigateToLibraryNotify(navOptions: NavOptions? = null) {
 
 fun NavGraphBuilder.libraryNotifyScreen(
     openDrawer: () -> Unit,
-    navigateToPostDetail: (PostId) -> Unit,
+    navigateToPostDetail: (FanboxPostId) -> Unit,
 ) {
     composable(
         route = LibraryNotifyRoute,

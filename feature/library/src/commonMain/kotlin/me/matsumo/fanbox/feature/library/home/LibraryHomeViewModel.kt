@@ -12,7 +12,7 @@ import kotlinx.coroutines.launch
 import me.matsumo.fanbox.core.common.util.suspendRunCatching
 import me.matsumo.fanbox.core.model.UserData
 import me.matsumo.fanbox.core.model.fanbox.FanboxPost
-import me.matsumo.fanbox.core.model.fanbox.id.PostId
+import me.matsumo.fanbox.core.model.fanbox.id.FanboxPostId
 import me.matsumo.fanbox.core.repository.FanboxRepository
 import me.matsumo.fanbox.core.repository.UserDataRepository
 import me.matsumo.fanbox.core.ui.extensition.emptyPaging
@@ -55,7 +55,7 @@ class LibraryHomeViewModel(
         }
     }
 
-    fun postLike(postId: PostId) {
+    fun postLike(postId: FanboxPostId) {
         viewModelScope.launch {
             suspendRunCatching {
                 fanboxRepository.likePost(postId)
@@ -79,7 +79,7 @@ class LibraryHomeViewModel(
 @Stable
 data class LibraryUiState(
     val userData: UserData,
-    val bookmarkedPosts: List<PostId>,
+    val bookmarkedPosts: List<FanboxPostId>,
     val homePaging: Flow<PagingData<FanboxPost>>,
     val supportedPaging: Flow<PagingData<FanboxPost>>,
 )

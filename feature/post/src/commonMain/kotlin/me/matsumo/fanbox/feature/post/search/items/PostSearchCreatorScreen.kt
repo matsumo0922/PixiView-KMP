@@ -30,9 +30,8 @@ import app.cash.paging.compose.itemContentType
 import app.cash.paging.compose.itemKey
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.coroutines.launch
-import me.matsumo.fanbox.core.model.FanboxTag
 import me.matsumo.fanbox.core.model.fanbox.FanboxCreatorDetail
-import me.matsumo.fanbox.core.model.fanbox.id.CreatorId
+import me.matsumo.fanbox.core.model.fanbox.id.FanboxCreatorId
 import me.matsumo.fanbox.core.resources.Res
 import me.matsumo.fanbox.core.resources.common_creator
 import me.matsumo.fanbox.core.resources.common_tag
@@ -51,7 +50,7 @@ import org.jetbrains.compose.resources.stringResource
 internal fun PostSearchCreatorScreen(
     pagingAdapter: LazyPagingItems<FanboxCreatorDetail>,
     suggestTags: ImmutableList<FanboxTag>,
-    onClickCreator: (CreatorId) -> Unit,
+    onClickCreator: (FanboxCreatorId) -> Unit,
     onClickTag: (String) -> Unit,
     onClickFollow: suspend (String) -> Result<Unit>,
     onClickUnfollow: suspend (String) -> Result<Unit>,

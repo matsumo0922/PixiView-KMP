@@ -52,8 +52,8 @@ import me.matsumo.fanbox.core.model.fanbox.FanboxCreatorDetail
 import me.matsumo.fanbox.core.model.fanbox.FanboxCreatorPlan
 import me.matsumo.fanbox.core.model.fanbox.FanboxCreatorTag
 import me.matsumo.fanbox.core.model.fanbox.FanboxPost
-import me.matsumo.fanbox.core.model.fanbox.id.CreatorId
-import me.matsumo.fanbox.core.model.fanbox.id.PostId
+import me.matsumo.fanbox.core.model.fanbox.id.FanboxCreatorId
+import me.matsumo.fanbox.core.model.fanbox.id.FanboxPostId
 import me.matsumo.fanbox.core.resources.Res
 import me.matsumo.fanbox.core.resources.creator_tab_plans
 import me.matsumo.fanbox.core.resources.creator_tab_posts
@@ -77,11 +77,11 @@ import org.koin.compose.viewmodel.koinViewModel
 
 @Composable
 internal fun CreatorTopRoute(
-    creatorId: CreatorId,
+    creatorId: FanboxCreatorId,
     isPosts: Boolean,
-    navigateToPostDetail: (PostId) -> Unit,
-    navigateToPostSearch: (String, CreatorId) -> Unit,
-    navigateToDownloadAll: (CreatorId) -> Unit,
+    navigateToPostDetail: (FanboxPostId) -> Unit,
+    navigateToPostSearch: (String, FanboxCreatorId) -> Unit,
+    navigateToDownloadAll: (FanboxCreatorId) -> Unit,
     navigateToBillingPlus: (String?) -> Unit,
     navigateToAlertDialog: (SimpleAlertContents, () -> Unit, () -> Unit) -> Unit,
     terminate: () -> Unit,
@@ -165,14 +165,14 @@ private fun CreatorTopScreen(
     isAbleToReward: Boolean,
     creatorDetail: FanboxCreatorDetail,
     userData: UserData,
-    bookmarkedPosts: ImmutableList<PostId>,
+    bookmarkedPosts: ImmutableList<FanboxPostId>,
     creatorPlans: ImmutableList<FanboxCreatorPlan>,
     creatorTags: ImmutableList<FanboxCreatorTag>,
     creatorPostsPaging: LazyPagingItems<FanboxPost>,
-    onClickAllDownload: (CreatorId) -> Unit,
+    onClickAllDownload: (FanboxCreatorId) -> Unit,
     onClickBillingPlus: () -> Unit,
-    onClickPost: (PostId) -> Unit,
-    onClickPostLike: (PostId) -> Unit,
+    onClickPost: (FanboxPostId) -> Unit,
+    onClickPostLike: (FanboxPostId) -> Unit,
     onClickPostBookmark: (FanboxPost, Boolean) -> Unit,
     onClickPlan: (FanboxCreatorPlan) -> Unit,
     onClickTag: (FanboxCreatorTag) -> Unit,

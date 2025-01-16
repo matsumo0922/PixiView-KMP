@@ -7,13 +7,13 @@ import androidx.compose.material3.surfaceColorAtElevation
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import me.matsumo.fanbox.core.model.fanbox.FanboxPostDetail
-import me.matsumo.fanbox.core.model.fanbox.id.CreatorId
+import me.matsumo.fanbox.core.model.fanbox.id.FanboxCreatorId
 import me.matsumo.fanbox.core.ui.component.RestrictCardItem
 import me.matsumo.fanbox.core.ui.extensition.padding
 
 internal fun LazyListScope.postDetailCardSection(
     postDetail: FanboxPostDetail,
-    onClickCreatorPlans: (CreatorId) -> Unit,
+    onClickCreatorPlans: (FanboxCreatorId) -> Unit,
     onClickDownloadImages: (List<FanboxPostDetail.ImageItem>) -> Unit,
 ) {
     if (postDetail.isRestricted) {

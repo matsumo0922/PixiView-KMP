@@ -57,16 +57,11 @@ internal fun WelcomeWebScreen(
 
     LaunchedEffect(webViewState.lastLoadedUrl) {
         if (webViewState.lastLoadedUrl == fanboxRedirectUrl) {
-            val oauthCookies = webViewState.cookieManager.getCookies("https://oauth.secure.pixiv.net").associate {
-                it.name to it.value
-            }
-            val fanboxCookies = webViewState.cookieManager.getCookies("https://www.fanbox.cc").associate { it.name to it.value }
-            val cookieString = (fanboxCookies + oauthCookies)
-                .filterKeys { listOf("__cf_bm", "cf_clearance", "FANBOXSESSID").contains(it) }
-                .map { "${it.key}=${it.value}" }
-                .joinToString(";")
+            val oauthCookies = webViewState.cookieManager.getCookies("https://oauth.secure.pixiv.net")
+            val fanboxCookies = webViewState.cookieManager.getCookies("https://www.fanbox.cc")
+            val sessionId = (fanboxCookies + oauthCookies).find { it.name == "FANBOXSESSID" }
 
-            viewModel.saveCookie(cookieString)
+            viewModel.saveSessionId(sessionId?.value.orEmpty())
             terminate.invoke()
         }
     }

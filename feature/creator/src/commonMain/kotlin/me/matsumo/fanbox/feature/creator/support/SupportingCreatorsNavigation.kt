@@ -6,7 +6,7 @@ import androidx.navigation.NavController
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.NavOptions
 import androidx.navigation.compose.composable
-import me.matsumo.fanbox.core.model.fanbox.id.CreatorId
+import me.matsumo.fanbox.core.model.fanbox.id.FanboxCreatorId
 import me.matsumo.fanbox.core.ui.extensition.navigateWithLog
 
 const val SupportingCreatorsRoute = "supportingCreators"
@@ -16,8 +16,8 @@ fun NavController.navigateToSupportingCreators(navOptions: NavOptions? = null) {
 }
 
 fun NavGraphBuilder.supportingCreatorsScreen(
-    navigateToCreatorPosts: (CreatorId) -> Unit,
-    navigateToFanCard: (CreatorId) -> Unit,
+    navigateToCreatorPosts: (FanboxCreatorId) -> Unit,
+    navigateToFanCard: (FanboxCreatorId) -> Unit,
     terminate: () -> Unit,
 ) {
     composable(SupportingCreatorsRoute) {

@@ -7,14 +7,14 @@ import androidx.navigation.NavGraphBuilder
 import androidx.navigation.NavType
 import androidx.navigation.compose.composable
 import androidx.navigation.navArgument
-import me.matsumo.fanbox.core.model.fanbox.id.PostId
+import me.matsumo.fanbox.core.model.fanbox.id.FanboxPostId
 import me.matsumo.fanbox.core.ui.extensition.navigateWithLog
 
 const val PostImageId = "postImageId"
 const val PostImageIndex = "postImageIndex"
 const val PostImageRoute = "postImage/{$PostImageId}/{$PostImageIndex}"
 
-fun NavController.navigateToPostImage(postId: PostId, index: Int) {
+fun NavController.navigateToPostImage(postId: FanboxPostId, index: Int) {
     this.navigateWithLog("postImage/$postId/$index")
 }
 
@@ -30,7 +30,7 @@ fun NavGraphBuilder.postImageScreen(
     ) {
         PostImageRoute(
             modifier = Modifier.fillMaxSize(),
-            postId = PostId(it.arguments?.getString(PostImageId).orEmpty()),
+            postId = FanboxPostId(it.arguments?.getString(PostImageId).orEmpty()),
             postImageIndex = it.arguments?.getInt(PostImageIndex) ?: 0,
             terminate = terminate,
         )

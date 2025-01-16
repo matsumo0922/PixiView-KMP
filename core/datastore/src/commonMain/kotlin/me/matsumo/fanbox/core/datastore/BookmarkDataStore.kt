@@ -9,8 +9,8 @@ import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.firstOrNull
 import kotlinx.coroutines.launch
 import kotlinx.serialization.json.Json
-import me.matsumo.fanbox.core.model.fanbox.FanboxPost
-import me.matsumo.fanbox.core.model.fanbox.id.PostId
+import me.matsumo.fankt.fanbox.domain.model.FanboxPost
+import me.matsumo.fankt.fanbox.domain.model.id.FanboxPostId
 
 class BookmarkDataStore(
     private val preferenceHelper: PreferenceHelper,
@@ -19,7 +19,7 @@ class BookmarkDataStore(
     private val cookiePreference = preferenceHelper.create(PreferencesName.FANBOX_BOOKMARK)
     private val scope = CoroutineScope(ioDispatcher)
 
-    private val _data = MutableSharedFlow<List<PostId>>(replay = 1)
+    private val _data = MutableSharedFlow<List<FanboxPostId>>(replay = 1)
 
     val data = _data.asSharedFlow()
 

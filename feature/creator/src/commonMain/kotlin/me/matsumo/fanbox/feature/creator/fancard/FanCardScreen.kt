@@ -18,7 +18,7 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import kotlinx.coroutines.flow.collectLatest
 import me.matsumo.fanbox.core.model.ScreenState
 import me.matsumo.fanbox.core.model.fanbox.FanboxCreatorPlanDetail
-import me.matsumo.fanbox.core.model.fanbox.id.CreatorId
+import me.matsumo.fanbox.core.model.fanbox.id.FanboxCreatorId
 import me.matsumo.fanbox.core.resources.Res
 import me.matsumo.fanbox.core.resources.common_downloaded
 import me.matsumo.fanbox.core.resources.error_network
@@ -33,7 +33,7 @@ import org.koin.compose.viewmodel.koinViewModel
 
 @Composable
 internal fun FanCardRoute(
-    creatorId: CreatorId,
+    creatorId: FanboxCreatorId,
     terminate: () -> Unit,
     modifier: Modifier = Modifier,
     viewModel: FanCardViewModel = koinViewModel(),

@@ -28,7 +28,7 @@ import coil3.compose.LocalPlatformContext
 import coil3.request.ImageRequest
 import me.matsumo.fanbox.core.model.fanbox.FanboxCreatorDetail
 import me.matsumo.fanbox.core.model.fanbox.FanboxPostDetail
-import me.matsumo.fanbox.core.model.fanbox.id.CreatorId
+import me.matsumo.fanbox.core.model.fanbox.id.FanboxCreatorId
 import me.matsumo.fanbox.core.resources.Res
 import me.matsumo.fanbox.core.resources.common_follow
 import me.matsumo.fanbox.core.resources.common_supporting
@@ -43,7 +43,7 @@ import org.jetbrains.compose.resources.stringResource
 internal fun PostDetailCreatorSection(
     postDetail: FanboxPostDetail,
     creatorDetail: FanboxCreatorDetail,
-    onClickCreator: (CreatorId) -> Unit,
+    onClickCreator: (FanboxCreatorId) -> Unit,
     onClickFollow: (String) -> Unit,
     onClickUnfollow: (String) -> Unit,
     onClickSupporting: (String) -> Unit,

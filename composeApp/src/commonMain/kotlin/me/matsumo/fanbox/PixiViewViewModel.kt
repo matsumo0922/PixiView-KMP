@@ -52,7 +52,7 @@ class PixiViewViewModel(
     val screenState = combine(
         listOf(
             userDataRepository.userData,
-            fanboxRepository.cookie,
+            fanboxRepository.sessionId,
             fanboxRepository.metaData,
             downloadPostsRepository.downloadState,
             _isLoggedInFlow,

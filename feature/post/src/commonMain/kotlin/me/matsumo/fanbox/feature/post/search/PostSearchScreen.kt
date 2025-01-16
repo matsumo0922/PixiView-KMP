@@ -16,12 +16,11 @@ import app.cash.paging.compose.LazyPagingItems
 import app.cash.paging.compose.collectAsLazyPagingItems
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.toImmutableList
-import me.matsumo.fanbox.core.model.FanboxTag
 import me.matsumo.fanbox.core.model.UserData
 import me.matsumo.fanbox.core.model.fanbox.FanboxCreatorDetail
 import me.matsumo.fanbox.core.model.fanbox.FanboxPost
-import me.matsumo.fanbox.core.model.fanbox.id.CreatorId
-import me.matsumo.fanbox.core.model.fanbox.id.PostId
+import me.matsumo.fanbox.core.model.fanbox.id.FanboxCreatorId
+import me.matsumo.fanbox.core.model.fanbox.id.FanboxPostId
 import me.matsumo.fanbox.core.ui.extensition.NavigatorExtension
 import me.matsumo.fanbox.feature.post.search.items.PostSearchCreatorScreen
 import me.matsumo.fanbox.feature.post.search.items.PostSearchTagScreen
@@ -32,10 +31,10 @@ import org.koin.compose.viewmodel.koinViewModel
 @Composable
 internal fun PostSearchRoute(
     query: String,
-    navigateToPostSearch: (CreatorId?, String?, String?) -> Unit,
-    navigateToPostDetail: (PostId) -> Unit,
-    navigateToCreatorPosts: (CreatorId) -> Unit,
-    navigateToCreatorPlans: (CreatorId) -> Unit,
+    navigateToPostSearch: (FanboxCreatorId?, String?, String?) -> Unit,
+    navigateToPostDetail: (FanboxPostId) -> Unit,
+    navigateToCreatorPosts: (FanboxCreatorId) -> Unit,
+    navigateToCreatorPlans: (FanboxCreatorId) -> Unit,
     terminate: () -> Unit,
     modifier: Modifier = Modifier,
     viewModel: PostSearchViewModel = koinViewModel(),
@@ -85,17 +84,17 @@ private fun PostSearchScreen(
     query: String,
     initialQuery: String,
     userData: UserData,
-    bookmarkedPosts: ImmutableList<PostId>,
+    bookmarkedPosts: ImmutableList<FanboxPostId>,
     suggestTags: ImmutableList<FanboxTag>,
     creatorPaging: LazyPagingItems<FanboxCreatorDetail>,
     tagPaging: LazyPagingItems<FanboxPost>,
     onSearch: (PostSearchQuery) -> Unit,
     onTerminate: () -> Unit,
-    onClickPost: (PostId) -> Unit,
-    onClickPostLike: (PostId) -> Unit,
+    onClickPost: (FanboxPostId) -> Unit,
+    onClickPostLike: (FanboxPostId) -> Unit,
     onClickPostBookmark: (FanboxPost, Boolean) -> Unit,
-    onClickCreatorPosts: (CreatorId) -> Unit,
-    onClickCreatorPlans: (CreatorId) -> Unit,
+    onClickCreatorPosts: (FanboxCreatorId) -> Unit,
+    onClickCreatorPlans: (FanboxCreatorId) -> Unit,
     onClickFollow: suspend (String) -> Result<Unit>,
     onClickUnfollow: suspend (String) -> Result<Unit>,
     onClickSupporting: (String) -> Unit,
@@ -156,7 +155,7 @@ private fun PostSearchScreen(
 }
 
 internal fun buildQuery(
-    creatorId: CreatorId?,
+    creatorId: FanboxCreatorId?,
     creatorQuery: String?,
     tag: String?,
 ): String {
@@ -189,7 +188,7 @@ internal fun parseQuery(query: String): PostSearchQuery {
     val queryList = query.split(" ").filter { it.isNotBlank() }
 
     var mode = PostSearchMode.Unknown
-    var creatorId: CreatorId? = null
+    var creatorId: FanboxCreatorId? = null
     var creatorQuery: String? = null
     var tag: String? = null
 
@@ -197,7 +196,7 @@ internal fun parseQuery(query: String): PostSearchQuery {
         when {
             it.startsWith("from:@") -> {
                 mode = PostSearchMode.Tag
-                creatorId = CreatorId(it.removePrefix("from:@"))
+                creatorId = FanboxCreatorId(it.removePrefix("from:@"))
             }
 
             it.startsWith("#") -> {

@@ -24,14 +24,14 @@ import coil3.compose.LocalPlatformContext
 import coil3.compose.SubcomposeAsyncImage
 import coil3.request.ImageRequest
 import me.matsumo.fanbox.core.model.fanbox.FanboxPost
-import me.matsumo.fanbox.core.model.fanbox.id.PostId
+import me.matsumo.fanbox.core.model.fanbox.id.FanboxPostId
 import me.matsumo.fanbox.core.ui.extensition.SimmerPlaceHolder
 import me.matsumo.fanbox.core.ui.extensition.fanboxHeader
 
 @Composable
 fun PostGridItem(
     post: FanboxPost,
-    onClickPost: (PostId) -> Unit,
+    onClickPost: (FanboxPostId) -> Unit,
     isHideAdultContents: Boolean,
     isOverrideAdultContents: Boolean,
     modifier: Modifier = Modifier,

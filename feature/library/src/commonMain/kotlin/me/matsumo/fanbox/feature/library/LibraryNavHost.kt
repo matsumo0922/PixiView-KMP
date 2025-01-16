@@ -6,8 +6,8 @@ import androidx.navigation.NavGraphBuilder
 import androidx.navigation.NavHost
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
-import me.matsumo.fanbox.core.model.fanbox.id.CreatorId
-import me.matsumo.fanbox.core.model.fanbox.id.PostId
+import me.matsumo.fanbox.core.model.fanbox.id.FanboxCreatorId
+import me.matsumo.fanbox.core.model.fanbox.id.FanboxPostId
 import me.matsumo.fanbox.core.ui.animation.NavigateAnimation
 import me.matsumo.fanbox.core.ui.view.SimpleAlertContents
 import me.matsumo.fanbox.feature.library.discovery.LibraryDiscoveryRoute
@@ -24,10 +24,10 @@ fun LibraryNavHost(
     navController: NavHostController,
     openDrawer: () -> Unit,
     navigateToPostSearch: () -> Unit,
-    navigateToPostDetailFromHome: (postId: PostId) -> Unit,
-    navigateToPostDetailFromSupported: (postId: PostId) -> Unit,
-    navigateToCreatorPosts: (creatorId: CreatorId) -> Unit,
-    navigateToCreatorPlans: (creatorId: CreatorId) -> Unit,
+    navigateToPostDetailFromHome: (postId: FanboxPostId) -> Unit,
+    navigateToPostDetailFromSupported: (postId: FanboxPostId) -> Unit,
+    navigateToCreatorPosts: (creatorId: FanboxCreatorId) -> Unit,
+    navigateToCreatorPlans: (creatorId: FanboxCreatorId) -> Unit,
     navigateToSimpleAlert: (SimpleAlertContents) -> Unit,
     modifier: Modifier = Modifier,
     startDestination: String = LibraryHomeRoute,

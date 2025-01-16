@@ -31,8 +31,8 @@ import app.cash.paging.compose.collectAsLazyPagingItems
 import kotlinx.collections.immutable.toImmutableList
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
-import me.matsumo.fanbox.core.model.fanbox.id.CreatorId
-import me.matsumo.fanbox.core.model.fanbox.id.PostId
+import me.matsumo.fanbox.core.model.fanbox.id.FanboxCreatorId
+import me.matsumo.fanbox.core.model.fanbox.id.FanboxPostId
 import me.matsumo.fanbox.core.resources.Res
 import me.matsumo.fanbox.core.resources.error_no_data_following
 import me.matsumo.fanbox.core.resources.error_no_data_supported
@@ -53,10 +53,10 @@ import org.koin.compose.viewmodel.koinViewModel
 @Composable
 internal fun LibraryHomeScreen(
     openDrawer: () -> Unit,
-    navigateToPostDetailFromHome: (PostId) -> Unit,
-    navigateToPostDetailFromSupported: (PostId) -> Unit,
-    navigateToCreatorPlans: (CreatorId) -> Unit,
-    navigateToCreatorPosts: (CreatorId) -> Unit,
+    navigateToPostDetailFromHome: (FanboxPostId) -> Unit,
+    navigateToPostDetailFromSupported: (FanboxPostId) -> Unit,
+    navigateToCreatorPlans: (FanboxCreatorId) -> Unit,
+    navigateToCreatorPosts: (FanboxCreatorId) -> Unit,
     navigateToSimpleAlert: (SimpleAlertContents) -> Unit,
     modifier: Modifier = Modifier,
     viewModel: LibraryHomeViewModel = koinViewModel(),
