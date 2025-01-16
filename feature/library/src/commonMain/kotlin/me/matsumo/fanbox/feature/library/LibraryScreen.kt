@@ -10,8 +10,6 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavGraph.Companion.findStartDestination
 import androidx.navigation.NavHostController
 import androidx.navigation.navOptions
-import me.matsumo.fanbox.core.model.fanbox.id.CreatorId
-import me.matsumo.fanbox.core.model.fanbox.id.PostId
 import me.matsumo.fanbox.core.ui.AsyncLoadContents
 import me.matsumo.fanbox.core.ui.extensition.LocalNavigationType
 import me.matsumo.fanbox.core.ui.extensition.LocalSnackbarHostState
@@ -25,16 +23,18 @@ import me.matsumo.fanbox.feature.library.discovery.navigateToLibraryDiscovery
 import me.matsumo.fanbox.feature.library.home.navigateToLibraryHome
 import me.matsumo.fanbox.feature.library.message.navigateToLibraryMessage
 import me.matsumo.fanbox.feature.library.notify.navigateToLibraryNotify
+import me.matsumo.fankt.fanbox.domain.model.id.FanboxCreatorId
+import me.matsumo.fankt.fanbox.domain.model.id.FanboxPostId
 import org.koin.compose.viewmodel.koinViewModel
 
 @Composable
 fun LibraryScreen(
     navHostController: NavHostController,
     navigateToPostSearch: () -> Unit,
-    navigateToPostDetailFromHome: (postId: PostId) -> Unit,
-    navigateToPostDetailFromSupported: (postId: PostId) -> Unit,
-    navigateToCreatorPosts: (creatorId: CreatorId) -> Unit,
-    navigateToCreatorPlans: (creatorId: CreatorId) -> Unit,
+    navigateToPostDetailFromHome: (postId: FanboxPostId) -> Unit,
+    navigateToPostDetailFromSupported: (postId: FanboxPostId) -> Unit,
+    navigateToCreatorPosts: (creatorId: FanboxCreatorId) -> Unit,
+    navigateToCreatorPlans: (creatorId: FanboxCreatorId) -> Unit,
     navigateToBookmarkedPosts: () -> Unit,
     navigateToFollowerCreators: () -> Unit,
     navigateToSupportingCreators: () -> Unit,

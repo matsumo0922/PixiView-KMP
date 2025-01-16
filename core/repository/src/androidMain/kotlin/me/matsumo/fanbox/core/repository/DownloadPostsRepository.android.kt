@@ -29,9 +29,9 @@ import me.matsumo.fanbox.core.logs.category.PostsLog
 import me.matsumo.fanbox.core.logs.logger.send
 import me.matsumo.fanbox.core.model.DownloadFileType
 import me.matsumo.fanbox.core.model.DownloadState
-import me.matsumo.fanbox.core.model.fanbox.FanboxDownloadItems
-import me.matsumo.fanbox.core.model.fanbox.FanboxPostDetail
-import me.matsumo.fanbox.core.model.fanbox.id.PostId
+import me.matsumo.fanbox.core.model.FanboxDownloadItems
+import me.matsumo.fankt.fanbox.domain.model.FanboxPostDetail
+import me.matsumo.fankt.fanbox.domain.model.id.FanboxPostId
 import java.io.File
 
 class DownloadPostsRepositoryImpl(
@@ -92,15 +92,15 @@ class DownloadPostsRepositoryImpl(
         }
     }
 
-    override fun requestDownloadPost(postId: PostId, callback: () -> Unit) {
+    override fun requestDownloadPost(postId: FanboxPostId, callback: () -> Unit) {
         scope.launch {
-            val postDetail = fanboxRepository.getPost(postId)
+            val postDetail = fanboxRepository.getPostDetail(postId)
             val images = postDetail.body.imageItems.map { it.toDownloadItem() }
             val files = postDetail.body.fileItems.map { it.toDownloadItem() }
             val items = FanboxDownloadItems(
                 title = postDetail.title,
                 items = images + files,
-                requestType = FanboxDownloadItems.RequestType.Post(postDetail.user.name),
+                requestType = FanboxDownloadItems.RequestType.Post(postDetail.user?.name.orEmpty()),
                 callback = callback,
             )
 
@@ -137,6 +137,7 @@ class DownloadPostsRepositoryImpl(
     private fun FanboxPostDetail.ImageItem.toDownloadItem(): FanboxDownloadItems.Item {
         return FanboxDownloadItems.Item(
             postId = postId,
+            itemId = id,
             name = "image-$postId-$id",
             extension = extension,
             originalUrl = originalUrl,
@@ -148,6 +149,7 @@ class DownloadPostsRepositoryImpl(
     private fun FanboxPostDetail.FileItem.toDownloadItem(): FanboxDownloadItems.Item {
         return FanboxDownloadItems.Item(
             postId = postId,
+            itemId = id,
             name = "file-$postId-$id",
             extension = extension,
             originalUrl = url,

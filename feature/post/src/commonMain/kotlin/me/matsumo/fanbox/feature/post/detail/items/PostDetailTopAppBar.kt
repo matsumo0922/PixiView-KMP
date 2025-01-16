@@ -22,7 +22,7 @@ import androidx.compose.runtime.snapshotFlow
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
-import me.matsumo.fanbox.core.model.fanbox.FanboxPostDetail
+import me.matsumo.fankt.fanbox.domain.model.FanboxPostDetail
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable

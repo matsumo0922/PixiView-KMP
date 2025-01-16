@@ -27,10 +27,10 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
 import me.matsumo.fanbox.core.resources.Res
 import me.matsumo.fanbox.core.resources.common_cancel
-import me.matsumo.fanbox.core.ui.theme.bold
 import me.matsumo.fanbox.core.resources.welcome_login_other_message
 import me.matsumo.fanbox.core.resources.welcome_login_other_title
 import me.matsumo.fanbox.core.resources.welcome_login_title
+import me.matsumo.fanbox.core.ui.theme.bold
 import org.jetbrains.compose.resources.stringResource
 
 @Composable

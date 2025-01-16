@@ -9,25 +9,25 @@ import androidx.navigation.NavGraphBuilder
 import androidx.navigation.NavType
 import androidx.navigation.compose.composable
 import androidx.navigation.navArgument
-import me.matsumo.fanbox.core.model.fanbox.id.CreatorId
-import me.matsumo.fanbox.core.model.fanbox.id.PostId
 import me.matsumo.fanbox.core.ui.extensition.navigateWithLog
 import me.matsumo.fanbox.core.ui.view.SimpleAlertContents
+import me.matsumo.fankt.fanbox.domain.model.id.FanboxCreatorId
+import me.matsumo.fankt.fanbox.domain.model.id.FanboxPostId
 
 const val PostDetailId = "postDetailId"
 const val PostDetailType = "postDetailPagingType"
 const val PostDetailRoute = "postDetail/{$PostDetailId}/{$PostDetailType}"
 
-fun NavController.navigateToPostDetail(postId: PostId, pagingType: PostDetailPagingType) {
+fun NavController.navigateToPostDetail(postId: FanboxPostId, pagingType: PostDetailPagingType) {
     this.navigateWithLog("postDetail/$postId/${pagingType.name}")
 }
 
 fun NavGraphBuilder.postDetailScreen(
-    navigateToPostSearch: (String, CreatorId) -> Unit,
-    navigateToPostDetail: (PostId) -> Unit,
-    navigateToPostImage: (PostId, Int) -> Unit,
-    navigateToCreatorPosts: (CreatorId) -> Unit,
-    navigateToCreatorPlans: (CreatorId) -> Unit,
+    navigateToPostSearch: (String, FanboxCreatorId) -> Unit,
+    navigateToPostDetail: (FanboxPostId) -> Unit,
+    navigateToPostImage: (FanboxPostId, Int) -> Unit,
+    navigateToCreatorPosts: (FanboxCreatorId) -> Unit,
+    navigateToCreatorPlans: (FanboxCreatorId) -> Unit,
     navigateToCommentDeleteDialog: (SimpleAlertContents, () -> Unit) -> Unit,
     terminate: () -> Unit,
 ) {
@@ -40,7 +40,7 @@ fun NavGraphBuilder.postDetailScreen(
     ) {
         PostDetailRoute(
             modifier = Modifier.fillMaxSize(),
-            postId = PostId(it.arguments?.getString(PostDetailId).orEmpty()),
+            postId = FanboxPostId(it.arguments?.getString(PostDetailId).orEmpty()),
             type = PostDetailPagingType.valueOf(it.arguments?.getString(PostDetailType) ?: PostDetailPagingType.Unknown.name),
             navigateToPostSearch = navigateToPostSearch,
             navigateToPostDetail = navigateToPostDetail,

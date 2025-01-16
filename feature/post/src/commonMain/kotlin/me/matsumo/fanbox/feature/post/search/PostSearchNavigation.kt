@@ -7,14 +7,14 @@ import androidx.navigation.compose.composable
 import androidx.navigation.navArgument
 import io.ktor.http.decodeURLPart
 import io.ktor.http.encodeURLPathPart
-import me.matsumo.fanbox.core.model.fanbox.id.CreatorId
-import me.matsumo.fanbox.core.model.fanbox.id.PostId
 import me.matsumo.fanbox.core.ui.extensition.navigateWithLog
+import me.matsumo.fankt.fanbox.domain.model.id.FanboxCreatorId
+import me.matsumo.fankt.fanbox.domain.model.id.FanboxPostId
 
 const val PostSearchQueryStr = "postSearchQuery"
 const val PostSearchRoute = "postSearch/{$PostSearchQueryStr}"
 
-fun NavController.navigateToPostSearch(creatorId: CreatorId? = null, creatorQuery: String? = null, tag: String? = null) {
+fun NavController.navigateToPostSearch(creatorId: FanboxCreatorId? = null, creatorQuery: String? = null, tag: String? = null) {
     val query = buildQuery(creatorId, creatorQuery, tag).encodeURLPathPart()
     val encodedQuery = query.encodeURLPathPart()
     val route = if (parseQuery(query).mode != PostSearchMode.Unknown) "postSearch/$encodedQuery" else "postSearch/pixiViewUnknown"
@@ -23,10 +23,10 @@ fun NavController.navigateToPostSearch(creatorId: CreatorId? = null, creatorQuer
 }
 
 fun NavGraphBuilder.postSearchScreen(
-    navigateToPostSearch: (CreatorId?, String?, String?) -> Unit,
-    navigateToPostDetail: (PostId) -> Unit,
-    navigateToCreatorPosts: (CreatorId) -> Unit,
-    navigateToCreatorPlans: (CreatorId) -> Unit,
+    navigateToPostSearch: (FanboxCreatorId?, String?, String?) -> Unit,
+    navigateToPostDetail: (FanboxPostId) -> Unit,
+    navigateToCreatorPosts: (FanboxCreatorId) -> Unit,
+    navigateToCreatorPlans: (FanboxCreatorId) -> Unit,
     terminate: () -> Unit,
 ) {
     composable(

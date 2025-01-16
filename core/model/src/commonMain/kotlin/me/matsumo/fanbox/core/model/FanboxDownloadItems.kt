@@ -1,6 +1,7 @@
-package me.matsumo.fanbox.core.model.fanbox
+package me.matsumo.fanbox.core.model
 
-import me.matsumo.fanbox.core.model.fanbox.id.PostId
+import me.matsumo.fankt.fanbox.domain.model.id.FanboxPostId
+import me.matsumo.fankt.fanbox.domain.model.id.FanboxPostItemId
 
 data class FanboxDownloadItems(
     val title: String,
@@ -9,7 +10,8 @@ data class FanboxDownloadItems(
     val callback: () -> Unit,
 ) {
     data class Item(
-        val postId: PostId,
+        val postId: FanboxPostId,
+        val itemId: FanboxPostItemId,
         val name: String,
         val extension: String,
         val originalUrl: String,

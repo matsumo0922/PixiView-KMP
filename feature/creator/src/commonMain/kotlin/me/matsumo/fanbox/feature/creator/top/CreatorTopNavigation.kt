@@ -7,24 +7,24 @@ import androidx.navigation.NavGraphBuilder
 import androidx.navigation.NavType
 import androidx.navigation.compose.composable
 import androidx.navigation.navArgument
-import me.matsumo.fanbox.core.model.fanbox.id.CreatorId
-import me.matsumo.fanbox.core.model.fanbox.id.PostId
 import me.matsumo.fanbox.core.ui.extensition.navigateWithLog
 import me.matsumo.fanbox.core.ui.view.SimpleAlertContents
+import me.matsumo.fankt.fanbox.domain.model.id.FanboxCreatorId
+import me.matsumo.fankt.fanbox.domain.model.id.FanboxPostId
 
 const val CreatorTopId = "creatorTopId"
 const val CreatorTopIsPosts = "creatorTopIsPosts"
 const val CreatorTopRoute = "creatorTop/{$CreatorTopId}/{$CreatorTopIsPosts}"
 
-fun NavController.navigateToCreatorTop(creatorId: CreatorId, isPosts: Boolean = false) {
+fun NavController.navigateToCreatorTop(creatorId: FanboxCreatorId, isPosts: Boolean = false) {
     this.navigateWithLog("creatorTop/$creatorId/$isPosts")
 }
 
 fun NavGraphBuilder.creatorTopScreen(
-    navigateToPostDetail: (PostId) -> Unit,
-    navigateToPostSearch: (String, CreatorId) -> Unit,
+    navigateToPostDetail: (FanboxPostId) -> Unit,
+    navigateToPostSearch: (String, FanboxCreatorId) -> Unit,
     navigateToBillingPlus: (String?) -> Unit,
-    navigateToDownloadAll: (CreatorId) -> Unit,
+    navigateToDownloadAll: (FanboxCreatorId) -> Unit,
     navigateToAlertDialog: (SimpleAlertContents, () -> Unit, () -> Unit) -> Unit,
     terminate: () -> Unit,
 ) {
@@ -37,7 +37,7 @@ fun NavGraphBuilder.creatorTopScreen(
     ) {
         CreatorTopRoute(
             modifier = Modifier.fillMaxSize(),
-            creatorId = CreatorId(it.arguments?.getString(CreatorTopId).orEmpty()),
+            creatorId = FanboxCreatorId(it.arguments?.getString(CreatorTopId).orEmpty()),
             isPosts = it.arguments?.getBoolean(CreatorTopIsPosts) ?: false,
             navigateToPostDetail = navigateToPostDetail,
             navigateToPostSearch = navigateToPostSearch,

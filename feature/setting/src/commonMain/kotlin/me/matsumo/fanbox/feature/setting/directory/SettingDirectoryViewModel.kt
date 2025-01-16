@@ -7,8 +7,8 @@ import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
+import me.matsumo.fanbox.core.model.FanboxDownloadItems
 import me.matsumo.fanbox.core.model.ScreenState
-import me.matsumo.fanbox.core.model.fanbox.FanboxDownloadItems
 import me.matsumo.fanbox.core.repository.DownloadPostsRepository
 import me.matsumo.fanbox.core.repository.UserDataRepository
 

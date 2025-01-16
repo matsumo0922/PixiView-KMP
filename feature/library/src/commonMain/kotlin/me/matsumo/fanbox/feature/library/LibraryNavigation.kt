@@ -6,10 +6,10 @@ import androidx.navigation.NavController
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.composable
-import me.matsumo.fanbox.core.model.fanbox.id.CreatorId
-import me.matsumo.fanbox.core.model.fanbox.id.PostId
 import me.matsumo.fanbox.core.ui.extensition.navigateWithLog
 import me.matsumo.fanbox.core.ui.view.SimpleAlertContents
+import me.matsumo.fankt.fanbox.domain.model.id.FanboxCreatorId
+import me.matsumo.fankt.fanbox.domain.model.id.FanboxPostId
 
 const val LibraryRoute = "library"
 
@@ -20,10 +20,10 @@ fun NavController.navigateToLibrary() {
 fun NavGraphBuilder.libraryScreen(
     navHostController: NavHostController,
     navigateToPostSearch: () -> Unit,
-    navigateToPostDetailFromHome: (postId: PostId) -> Unit,
-    navigateToPostDetailFromSupported: (postId: PostId) -> Unit,
-    navigateToCreatorPosts: (creatorId: CreatorId) -> Unit,
-    navigateToCreatorPlans: (creatorId: CreatorId) -> Unit,
+    navigateToPostDetailFromHome: (postId: FanboxPostId) -> Unit,
+    navigateToPostDetailFromSupported: (postId: FanboxPostId) -> Unit,
+    navigateToCreatorPosts: (creatorId: FanboxCreatorId) -> Unit,
+    navigateToCreatorPlans: (creatorId: FanboxCreatorId) -> Unit,
     navigateToBookmarkedPosts: () -> Unit,
     navigateToFollowerCreators: () -> Unit,
     navigateToSupportingCreators: () -> Unit,

@@ -33,7 +33,6 @@ import platform.UIKit.UISheetPresentationControllerDetentIdentifierLarge
 import platform.UIKit.UISheetPresentationControllerDetentIdentifierMedium
 import platform.UIKit.presentationController
 import platform.UIKit.sheetPresentationController
-import platform.UIKit.transitioningDelegate
 import kotlin.concurrent.Volatile
 
 @Suppress("UnstableCollections", "ModifierMissing")

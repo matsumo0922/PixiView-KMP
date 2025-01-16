@@ -18,14 +18,14 @@ import app.cash.paging.compose.LazyPagingItems
 import app.cash.paging.compose.itemKey
 import kotlinx.collections.immutable.ImmutableList
 import me.matsumo.fanbox.core.model.UserData
-import me.matsumo.fanbox.core.model.fanbox.FanboxPost
-import me.matsumo.fanbox.core.model.fanbox.id.CreatorId
-import me.matsumo.fanbox.core.model.fanbox.id.PostId
 import me.matsumo.fanbox.core.ui.ads.NativeAdView
 import me.matsumo.fanbox.core.ui.component.PostGridItem
 import me.matsumo.fanbox.core.ui.component.PostItem
 import me.matsumo.fanbox.core.ui.extensition.drawVerticalScrollbar
 import me.matsumo.fanbox.core.ui.view.PagingErrorSection
+import me.matsumo.fankt.fanbox.domain.model.FanboxPost
+import me.matsumo.fankt.fanbox.domain.model.id.FanboxCreatorId
+import me.matsumo.fankt.fanbox.domain.model.id.FanboxPostId
 
 @Composable
 internal fun LibraryHomePagingItems(
@@ -35,13 +35,13 @@ internal fun LibraryHomePagingItems(
     adInterval: Int,
     pagingAdapter: LazyPagingItems<FanboxPost>,
     userData: UserData,
-    bookmarkedPosts: ImmutableList<PostId>,
+    bookmarkedPostsIds: ImmutableList<FanboxPostId>,
     isGridMode: Boolean,
-    onClickPost: (PostId) -> Unit,
-    onClickPostLike: (PostId) -> Unit,
+    onClickPost: (FanboxPostId) -> Unit,
+    onClickPostLike: (FanboxPostId) -> Unit,
     onClickPostBookmark: (FanboxPost, Boolean) -> Unit,
-    onClickCreator: (CreatorId) -> Unit,
-    onClickPlanList: (CreatorId) -> Unit,
+    onClickCreator: (FanboxCreatorId) -> Unit,
+    onClickPlanList: (FanboxCreatorId) -> Unit,
     modifier: Modifier = Modifier,
 ) {
     LazyVerticalGrid(
@@ -72,19 +72,20 @@ internal fun LibraryHomePagingItems(
                     if (isGridMode) {
                         PostGridItem(
                             modifier = Modifier.fillMaxWidth(),
-                            post = post.copy(isBookmarked = bookmarkedPosts.contains(post.id)),
+                            post = post,
                             isHideAdultContents = userData.isHideAdultContents,
                             isOverrideAdultContents = userData.isAllowedShowAdultContents,
-                            onClickPost = { if (!post.isRestricted) onClickPost.invoke(it) },
+                            onClickPost = onClickPost,
                         )
                     } else {
                         PostItem(
                             modifier = Modifier.fillMaxSize(),
-                            post = post.copy(isBookmarked = bookmarkedPosts.contains(post.id)),
+                            post = post,
+                            isBookmarked = bookmarkedPostsIds.contains(post.id),
                             isHideAdultContents = userData.isHideAdultContents,
                             isOverrideAdultContents = userData.isAllowedShowAdultContents,
                             isTestUser = userData.isTestUser,
-                            onClickPost = { if (!post.isRestricted) onClickPost.invoke(it) },
+                            onClickPost = onClickPost,
                             onClickCreator = onClickCreator,
                             onClickPlanList = onClickPlanList,
                             onClickLike = onClickPostLike,

@@ -26,13 +26,6 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import me.matsumo.fanbox.core.logs.category.WelcomeLog
 import me.matsumo.fanbox.core.resources.Res
-import me.matsumo.fanbox.core.ui.extensition.LocalNavigationType
-import me.matsumo.fanbox.core.ui.extensition.LocalSnackbarHostState
-import me.matsumo.fanbox.core.ui.extensition.NavigatorExtension
-import me.matsumo.fanbox.core.ui.extensition.PixiViewNavigationType
-import me.matsumo.fanbox.core.ui.extensition.ToastExtension
-import me.matsumo.fanbox.core.ui.theme.bold
-import me.matsumo.fanbox.core.ui.theme.center
 import me.matsumo.fanbox.core.resources.vec_welcome_plus
 import me.matsumo.fanbox.core.resources.welcome_login_button_login
 import me.matsumo.fanbox.core.resources.welcome_login_button_next
@@ -42,6 +35,13 @@ import me.matsumo.fanbox.core.resources.welcome_login_ready_message
 import me.matsumo.fanbox.core.resources.welcome_login_ready_title
 import me.matsumo.fanbox.core.resources.welcome_login_title
 import me.matsumo.fanbox.core.resources.welcome_login_toast_failed
+import me.matsumo.fanbox.core.ui.extensition.LocalNavigationType
+import me.matsumo.fanbox.core.ui.extensition.LocalSnackbarHostState
+import me.matsumo.fanbox.core.ui.extensition.NavigatorExtension
+import me.matsumo.fanbox.core.ui.extensition.PixiViewNavigationType
+import me.matsumo.fanbox.core.ui.extensition.ToastExtension
+import me.matsumo.fanbox.core.ui.theme.bold
+import me.matsumo.fanbox.core.ui.theme.center
 import me.matsumo.fanbox.feature.welcome.WelcomeIndicatorItem
 import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.resources.stringResource
@@ -96,7 +96,7 @@ internal fun WelcomeLoginScreen(
                 },
                 navigateToHome = navigateToHome,
                 navigateToHelp = { navigatorExtension.navigateToWebPage(it, WelcomeLoginRoute) },
-                onSetCookie = viewModel::setCookie,
+                onSetSessionId = viewModel::setSessionId,
             )
         }
     } else {
@@ -124,7 +124,7 @@ internal fun WelcomeLoginScreen(
                     },
                     navigateToHome = navigateToHome,
                     navigateToHelp = { navigatorExtension.navigateToWebPage(it, WelcomeLoginRoute) },
-                    onSetCookie = viewModel::setCookie,
+                    onSetSessionId = viewModel::setSessionId,
                 )
             }
         }
@@ -149,7 +149,7 @@ private fun FirstSection(
 @Composable
 private fun SecondSection(
     isLoggedIn: Boolean,
-    onSetCookie: (String) -> Unit,
+    onSetSessionId: (String) -> Unit,
     navigateToLoginScreen: () -> Unit,
     navigateToHome: () -> Unit,
     navigateToHelp: (String) -> Unit,
@@ -228,7 +228,7 @@ private fun SecondSection(
             onDismissRequest = { isShowLoginDialog = false },
             onClickHelp = navigateToHelp,
             onClickLogin = { sessionId ->
-                onSetCookie.invoke(sessionId)
+                onSetSessionId.invoke(sessionId)
                 isShowLoginDialog = false
             },
         )

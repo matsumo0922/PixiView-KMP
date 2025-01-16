@@ -25,7 +25,6 @@ import me.matsumo.fanbox.core.resources.creator_posts_download_alert_stop
 import me.matsumo.fanbox.core.resources.creator_posts_download_alert_title
 import me.matsumo.fanbox.core.resources.creator_unblock_dialog_message
 import me.matsumo.fanbox.core.resources.creator_unblock_dialog_title
-import me.matsumo.fanbox.core.ui.extensition.navigateForResult
 import me.matsumo.fanbox.core.resources.post_detail_comment_delete_message
 import me.matsumo.fanbox.core.resources.post_detail_comment_delete_title
 import me.matsumo.fanbox.core.resources.setting_top_others_logout
@@ -34,6 +33,7 @@ import me.matsumo.fanbox.core.resources.welcome_login_debug_dialog_message
 import me.matsumo.fanbox.core.resources.welcome_login_debug_dialog_title
 import me.matsumo.fanbox.core.resources.welcome_login_dialog_message
 import me.matsumo.fanbox.core.resources.welcome_login_dialog_title
+import me.matsumo.fanbox.core.ui.extensition.navigateForResult
 import org.jetbrains.compose.resources.StringResource
 import org.jetbrains.compose.resources.stringResource
 

@@ -6,8 +6,8 @@ import androidx.navigation.NavController
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.NavOptions
 import androidx.navigation.compose.composable
-import me.matsumo.fanbox.core.model.fanbox.id.CreatorId
 import me.matsumo.fanbox.core.ui.extensition.navigateWithLog
+import me.matsumo.fankt.fanbox.domain.model.id.FanboxCreatorId
 
 const val LibraryDiscoveryRoute = "libraryDiscovery"
 
@@ -18,7 +18,7 @@ fun NavController.navigateToLibraryDiscovery(navOptions: NavOptions? = null) {
 fun NavGraphBuilder.libraryDiscoveryScreen(
     openDrawer: () -> Unit,
     navigateToPostSearch: () -> Unit,
-    navigateToCreatorPosts: (CreatorId) -> Unit,
+    navigateToCreatorPosts: (FanboxCreatorId) -> Unit,
 ) {
     composable(
         route = LibraryDiscoveryRoute,

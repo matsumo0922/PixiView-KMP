@@ -4,133 +4,135 @@ import androidx.paging.Pager
 import androidx.paging.PagingConfig
 import androidx.paging.PagingData
 import androidx.paging.cachedIn
-import com.fleeksoft.ksoup.Ksoup
 import com.multiplatform.webview.cookie.WebViewCookieManager
-import io.github.aakira.napier.Napier
-import io.ktor.client.HttpClient
 import io.ktor.client.plugins.onDownload
-import io.ktor.client.request.get
-import io.ktor.client.request.header
-import io.ktor.client.request.parameter
-import io.ktor.client.request.post
 import io.ktor.client.request.prepareGet
-import io.ktor.client.request.setBody
 import io.ktor.client.request.url
-import io.ktor.client.statement.HttpResponse
 import io.ktor.client.statement.HttpStatement
-import io.ktor.client.statement.bodyAsText
-import io.ktor.http.ContentType
-import io.ktor.http.HttpMessageBuilder
-import io.ktor.http.content.TextContent
-import io.ktor.http.contentType
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharedFlow
-import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.asStateFlow
-import kotlinx.coroutines.flow.first
-import kotlinx.coroutines.flow.firstOrNull
+import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
-import kotlinx.serialization.json.Json
-import kotlinx.serialization.json.buildJsonObject
-import kotlinx.serialization.json.put
 import me.matsumo.fanbox.core.datastore.BlockDataStore
 import me.matsumo.fanbox.core.datastore.BookmarkDataStore
-import me.matsumo.fanbox.core.datastore.FanboxCookieDataStore
 import me.matsumo.fanbox.core.datastore.PixiViewDataStore
-import me.matsumo.fanbox.core.model.FanboxTag
-import me.matsumo.fanbox.core.model.PageCursorInfo
-import me.matsumo.fanbox.core.model.PageNumberInfo
-import me.matsumo.fanbox.core.model.PageOffsetInfo
-import me.matsumo.fanbox.core.model.fanbox.FanboxBell
-import me.matsumo.fanbox.core.model.fanbox.FanboxComments
-import me.matsumo.fanbox.core.model.fanbox.FanboxCreatorDetail
-import me.matsumo.fanbox.core.model.fanbox.FanboxCreatorPlan
-import me.matsumo.fanbox.core.model.fanbox.FanboxCreatorPlanDetail
-import me.matsumo.fanbox.core.model.fanbox.FanboxCreatorTag
-import me.matsumo.fanbox.core.model.fanbox.FanboxCursor
-import me.matsumo.fanbox.core.model.fanbox.FanboxMetaData
-import me.matsumo.fanbox.core.model.fanbox.FanboxNewsLetter
-import me.matsumo.fanbox.core.model.fanbox.FanboxPaidRecord
-import me.matsumo.fanbox.core.model.fanbox.FanboxPost
-import me.matsumo.fanbox.core.model.fanbox.FanboxPostDetail
-import me.matsumo.fanbox.core.model.fanbox.entity.FanboxBellItemsEntity
-import me.matsumo.fanbox.core.model.fanbox.entity.FanboxCreatorEntity
-import me.matsumo.fanbox.core.model.fanbox.entity.FanboxCreatorItemsEntity
-import me.matsumo.fanbox.core.model.fanbox.entity.FanboxCreatorPlanEntity
-import me.matsumo.fanbox.core.model.fanbox.entity.FanboxCreatorPlansEntity
-import me.matsumo.fanbox.core.model.fanbox.entity.FanboxCreatorPostItemsEntity
-import me.matsumo.fanbox.core.model.fanbox.entity.FanboxCreatorPostsPaginateEntity
-import me.matsumo.fanbox.core.model.fanbox.entity.FanboxCreatorSearchEntity
-import me.matsumo.fanbox.core.model.fanbox.entity.FanboxCreatorTagsEntity
-import me.matsumo.fanbox.core.model.fanbox.entity.FanboxMetaDataEntity
-import me.matsumo.fanbox.core.model.fanbox.entity.FanboxNewsLettersEntity
-import me.matsumo.fanbox.core.model.fanbox.entity.FanboxPaidRecordEntity
-import me.matsumo.fanbox.core.model.fanbox.entity.FanboxPostCommentItemsEntity
-import me.matsumo.fanbox.core.model.fanbox.entity.FanboxPostDetailEntity
-import me.matsumo.fanbox.core.model.fanbox.entity.FanboxPostItemsEntity
-import me.matsumo.fanbox.core.model.fanbox.entity.FanboxPostSearchEntity
-import me.matsumo.fanbox.core.model.fanbox.entity.FanboxTagsEntity
-import me.matsumo.fanbox.core.model.fanbox.id.CommentId
-import me.matsumo.fanbox.core.model.fanbox.id.CreatorId
-import me.matsumo.fanbox.core.model.fanbox.id.PostId
 import me.matsumo.fanbox.core.repository.paging.CreatorPostsPagingSource
 import me.matsumo.fanbox.core.repository.paging.HomePostsPagingSource
 import me.matsumo.fanbox.core.repository.paging.SearchCreatorsPagingSource
 import me.matsumo.fanbox.core.repository.paging.SearchPostsPagingSource
 import me.matsumo.fanbox.core.repository.paging.SupportedPostsPagingSource
-import me.matsumo.fanbox.core.repository.utils.parse
-import me.matsumo.fanbox.core.repository.utils.requireSuccess
-import me.matsumo.fanbox.core.repository.utils.translate
-import me.matsumo.fankt.Fanbox
-import me.matsumo.fankt.domain.model.id.FanboxPostId
+import me.matsumo.fankt.fanbox.Fanbox
+import me.matsumo.fankt.fanbox.domain.FanboxCursor
+import me.matsumo.fankt.fanbox.domain.PageCursorInfo
+import me.matsumo.fankt.fanbox.domain.PageNumberInfo
+import me.matsumo.fankt.fanbox.domain.PageOffsetInfo
+import me.matsumo.fankt.fanbox.domain.model.FanboxBell
+import me.matsumo.fankt.fanbox.domain.model.FanboxComment
+import me.matsumo.fankt.fanbox.domain.model.FanboxCreatorDetail
+import me.matsumo.fankt.fanbox.domain.model.FanboxCreatorPlan
+import me.matsumo.fankt.fanbox.domain.model.FanboxCreatorPlanDetail
+import me.matsumo.fankt.fanbox.domain.model.FanboxMetaData
+import me.matsumo.fankt.fanbox.domain.model.FanboxNewsLetter
+import me.matsumo.fankt.fanbox.domain.model.FanboxPaidRecord
+import me.matsumo.fankt.fanbox.domain.model.FanboxPost
+import me.matsumo.fankt.fanbox.domain.model.FanboxPostDetail
+import me.matsumo.fankt.fanbox.domain.model.FanboxTag
+import me.matsumo.fankt.fanbox.domain.model.id.FanboxCommentId
+import me.matsumo.fankt.fanbox.domain.model.id.FanboxCreatorId
+import me.matsumo.fankt.fanbox.domain.model.id.FanboxPostId
+import me.matsumo.fankt.fanbox.domain.model.id.FanboxUserId
 import org.koin.core.component.KoinComponent
 import kotlin.random.Random
 
 interface FanboxRepository {
-    val metaData: StateFlow<FanboxMetaData>
-    val bookmarkedPosts: SharedFlow<List<PostId>>
-    val blockedCreators: SharedFlow<Set<CreatorId>>
-    val cookie: Flow<String>
+    val bookmarkedPostsIds: SharedFlow<List<FanboxPostId>>
+    val blockedCreators: SharedFlow<Set<FanboxCreatorId>>
+    val sessionId: Flow<String?>
+    val csrfToken: Flow<String?>
     val logoutTrigger: Flow<Long>
 
     suspend fun logout()
 
-    suspend fun isCookieValid(): Boolean
-    suspend fun updateCookie(cookie: String)
+    suspend fun setSessionId(sessionId: String)
     suspend fun updateCsrfToken()
+    suspend fun getMetadata(): FanboxMetaData
 
-    suspend fun getHomePosts(cursor: FanboxCursor?, loadSize: Int = cursor?.limit ?: 10): PageCursorInfo<FanboxPost>
-    suspend fun getSupportedPosts(cursor: FanboxCursor?, loadSize: Int = cursor?.limit ?: 10): PageCursorInfo<FanboxPost>
+    suspend fun getHomePosts(
+        cursor: FanboxCursor?,
+        loadSize: Int = cursor?.limit ?: 10,
+    ): PageCursorInfo<FanboxPost>
+
+    suspend fun getSupportedPosts(
+        cursor: FanboxCursor?,
+        loadSize: Int = cursor?.limit ?: 10,
+    ): PageCursorInfo<FanboxPost>
+
     suspend fun getCreatorPosts(
-        creatorId: CreatorId,
+        creatorId: FanboxCreatorId,
         currentCursor: FanboxCursor,
         nextCursor: FanboxCursor?,
         loadSize: Int = currentCursor.limit ?: 10,
     ): PageCursorInfo<FanboxPost>
 
-    suspend fun getCreatorPostsPaginate(creatorId: CreatorId): List<FanboxCursor>
-    suspend fun getPost(postId: PostId): FanboxPostDetail
-    suspend fun getPostCached(postId: PostId): FanboxPostDetail
-    suspend fun getPostComment(postId: PostId, offset: Int = 0): PageOffsetInfo<FanboxComments.Item>
-    suspend fun getPostFromQuery(query: String, creatorId: CreatorId? = null, page: Int = 0): PageNumberInfo<FanboxPost>
-    suspend fun getCreatorFromQuery(query: String, page: Int = 0): PageNumberInfo<FanboxCreatorDetail>
+    suspend fun getCreatorPostsPagination(creatorId: FanboxCreatorId): List<FanboxCursor>
+    suspend fun getPostDetail(postId: FanboxPostId): FanboxPostDetail
+    suspend fun getPostDetailCached(postId: FanboxPostId): FanboxPostDetail
+    suspend fun getPostComment(
+        postId: FanboxPostId,
+        offset: Int = 0,
+    ): PageOffsetInfo<FanboxComment>
+
+    suspend fun getPostFromQuery(
+        query: String,
+        creatorId: FanboxCreatorId? = null,
+        page: Int = 0,
+    ): PageNumberInfo<FanboxPost>
+
+    suspend fun getCreatorFromQuery(
+        query: String,
+        page: Int = 0,
+    ): PageNumberInfo<FanboxCreatorDetail>
+
     suspend fun getTagFromQuery(query: String): List<FanboxTag>
 
-    suspend fun getHomePostsPager(loadSize: Int, isHideRestricted: Boolean): Flow<PagingData<FanboxPost>>
-    suspend fun getHomePostsPagerCache(loadSize: Int, isHideRestricted: Boolean): Flow<PagingData<FanboxPost>>
-    suspend fun getSupportedPostsPager(loadSize: Int, isHideRestricted: Boolean): Flow<PagingData<FanboxPost>>
-    suspend fun getSupportedPostsPagerCache(loadSize: Int, isHideRestricted: Boolean): Flow<PagingData<FanboxPost>>
-    suspend fun getCreatorPostsPager(creatorId: CreatorId, loadSize: Int): Flow<PagingData<FanboxPost>>
+    suspend fun getHomePostsPager(
+        loadSize: Int,
+        isHideRestricted: Boolean,
+    ): Flow<PagingData<FanboxPost>>
+
+    suspend fun getHomePostsPagerCache(
+        loadSize: Int,
+        isHideRestricted: Boolean,
+    ): Flow<PagingData<FanboxPost>>
+
+    suspend fun getSupportedPostsPager(
+        loadSize: Int,
+        isHideRestricted: Boolean,
+    ): Flow<PagingData<FanboxPost>>
+
+    suspend fun getSupportedPostsPagerCache(
+        loadSize: Int,
+        isHideRestricted: Boolean,
+    ): Flow<PagingData<FanboxPost>>
+
+    suspend fun getCreatorPostsPager(
+        creatorId: FanboxCreatorId,
+        loadSize: Int,
+    ): Flow<PagingData<FanboxPost>>
+
     suspend fun getCreatorPostsPagerCache(): Flow<PagingData<FanboxPost>>?
-    suspend fun getPostsFromQueryPager(query: String, creatorId: CreatorId? = null): Flow<PagingData<FanboxPost>>
+    suspend fun getPostsFromQueryPager(
+        query: String,
+        creatorId: FanboxCreatorId? = null,
+    ): Flow<PagingData<FanboxPost>>
+
     suspend fun getPostsFromQueryPagerCache(): Flow<PagingData<FanboxPost>>?
     suspend fun getCreatorsFromQueryPager(query: String): Flow<PagingData<FanboxCreatorDetail>>
 
@@ -138,13 +140,13 @@ interface FanboxRepository {
     suspend fun getFollowingPixivCreators(): List<FanboxCreatorDetail>
     suspend fun getRecommendedCreators(): List<FanboxCreatorDetail>
 
-    suspend fun getCreator(creatorId: CreatorId): FanboxCreatorDetail
-    suspend fun getCreatorCached(creatorId: CreatorId): FanboxCreatorDetail
-    suspend fun getCreatorTags(creatorId: CreatorId): List<FanboxCreatorTag>
+    suspend fun getCreatorDetail(creatorId: FanboxCreatorId): FanboxCreatorDetail
+    suspend fun getCreatorDetailCached(creatorId: FanboxCreatorId): FanboxCreatorDetail
+    suspend fun getCreatorTags(creatorId: FanboxCreatorId): List<FanboxTag>
 
     suspend fun getSupportedPlans(): List<FanboxCreatorPlan>
-    suspend fun getCreatorPlans(creatorId: CreatorId): List<FanboxCreatorPlan>
-    suspend fun getCreatorPlan(creatorId: CreatorId): FanboxCreatorPlanDetail
+    suspend fun getCreatorPlans(creatorId: FanboxCreatorId): List<FanboxCreatorPlan>
+    suspend fun getCreatorPlan(creatorId: FanboxCreatorId): FanboxCreatorPlanDetail
 
     suspend fun getPaidRecords(): List<FanboxPaidRecord>
     suspend fun getUnpaidRecords(): List<FanboxPaidRecord>
@@ -152,17 +154,23 @@ interface FanboxRepository {
     suspend fun getNewsLetters(): List<FanboxNewsLetter>
     suspend fun getBells(page: Int = 0): PageNumberInfo<FanboxBell>
 
-    suspend fun likePost(postId: PostId)
-    suspend fun likeComment(commentId: CommentId)
+    suspend fun likePost(postId: FanboxPostId)
+    suspend fun likeComment(commentId: FanboxCommentId)
 
-    suspend fun addComment(postId: PostId, comment: String, rootCommentId: CommentId? = null, parentCommentId: CommentId? = null)
-    suspend fun deleteComment(commentId: CommentId)
+    suspend fun addComment(
+        postId: FanboxPostId,
+        comment: String,
+        rootCommentId: FanboxCommentId? = null,
+        parentCommentId: FanboxCommentId? = null,
+    )
 
-    suspend fun followCreator(creatorUserId: String)
-    suspend fun unfollowCreator(creatorUserId: String)
+    suspend fun deleteComment(commentId: FanboxCommentId)
 
-    suspend fun blockCreator(creatorId: CreatorId)
-    suspend fun unblockCreator(creatorId: CreatorId)
+    suspend fun followCreator(creatorUserId: FanboxUserId)
+    suspend fun unfollowCreator(creatorUserId: FanboxUserId)
+
+    suspend fun blockCreator(creatorId: FanboxCreatorId)
+    suspend fun unblockCreator(creatorId: FanboxCreatorId)
 
     suspend fun getBookmarkedPosts(): List<FanboxPost>
     suspend fun bookmarkPost(post: FanboxPost)
@@ -172,10 +180,6 @@ interface FanboxRepository {
 }
 
 class FanboxRepositoryImpl(
-    private val client: HttpClient,
-    private val defaultClient: HttpClient,
-    private val formatter: Json,
-    private val fanboxCookieDataStore: FanboxCookieDataStore,
     private val bookmarkDataStore: BookmarkDataStore,
     private val blockDataStore: BlockDataStore,
     private val userDataStore: PixiViewDataStore,
@@ -185,28 +189,26 @@ class FanboxRepositoryImpl(
     private val scope = CoroutineScope(SupervisorJob() + ioDispatcher)
     private val fanbox = Fanbox()
 
-    private val creatorCache = mutableMapOf<CreatorId, FanboxCreatorDetail>()
-    private val postCache = mutableMapOf<PostId, FanboxPostDetail>()
+    private val creatorCache = mutableMapOf<FanboxCreatorId, FanboxCreatorDetail>()
+    private val postCache = mutableMapOf<FanboxPostId, FanboxPostDetail>()
     private var homePostsPager: Flow<PagingData<FanboxPost>>? = null
     private var supportedPostsPager: Flow<PagingData<FanboxPost>>? = null
     private var creatorPostsPager: Flow<PagingData<FanboxPost>>? = null
     private var searchPostsPager: Flow<PagingData<FanboxPost>>? = null
 
-    private val _metaData = MutableStateFlow(FanboxMetaData.dummy())
     private val _logoutTrigger = Channel<Long>()
 
-    override val metaData: StateFlow<FanboxMetaData> = _metaData.asStateFlow()
-    override val cookie: Flow<String> = fanboxCookieDataStore.data
+    override val sessionId: Flow<String?> = fanbox.cookies.map { list -> list.find { it.name == "FANBOXSESSID" }?.value }
+    override val csrfToken: Flow<String?> = fanbox.csrfToken
     override val logoutTrigger: Flow<Long> = _logoutTrigger.receiveAsFlow()
 
-    override val bookmarkedPosts: SharedFlow<List<PostId>> = bookmarkDataStore.data
-    override val blockedCreators: SharedFlow<Set<CreatorId>> = blockDataStore.data
+    override val bookmarkedPostsIds: SharedFlow<List<FanboxPostId>> = bookmarkDataStore.data
+    override val blockedCreators: SharedFlow<Set<FanboxCreatorId>> = blockDataStore.data
 
     override suspend fun logout() {
         CoroutineScope(ioDispatcher).launch {
             withContext(Dispatchers.Main) { WebViewCookieManager().removeAllCookies() }
 
-            fanboxCookieDataStore.save("")
             bookmarkDataStore.clear()
             blockDataStore.clear()
             userDataStore.setTestUser(false)
@@ -216,119 +218,84 @@ class FanboxRepositoryImpl(
         }
     }
 
-    override suspend fun isCookieValid(): Boolean {
-        return !fanboxCookieDataStore.data.firstOrNull().isNullOrBlank()
+    override suspend fun setSessionId(sessionId: String) {
+        fanbox.setFanboxSessionId(sessionId)
     }
 
-    override suspend fun updateCookie(cookie: String) {
-        fanboxCookieDataStore.save(cookie)
-
-        cookie.split(";")
-            .find { it.startsWith("FANBOXSESSID") }
-            ?.split("=")
-            ?.getOrNull(1)
-            ?.let {
-                fanbox.setFanboxSessionId(it)
-            }
-    }
-
-    override suspend fun updateCsrfToken() = withContext(ioDispatcher) {
-        val response = client.get("https://www.fanbox.cc/")
-        val html = response.bodyAsText()
-        val doc = Ksoup.parse(html)
-        val meta = doc.select("meta[name=metadata]").first()?.attr("content")
-        val data = formatter.decodeFromString(FanboxMetaDataEntity.serializer(), meta!!).translate()
-
-        Napier.d { "updateCsrfToken: ${data.csrfToken}" }
-
-        _metaData.emit(data)
-
+    override suspend fun updateCsrfToken() {
         fanbox.updateCsrfToken()
     }
 
-    override suspend fun getHomePosts(cursor: FanboxCursor?, loadSize: Int): PageCursorInfo<FanboxPost> = withContext(ioDispatcher) {
-        buildMap {
-            put("limit", loadSize.toString())
-
-            if (cursor != null) {
-                put("maxPublishedDatetime", cursor.maxPublishedDatetime)
-                put("maxId", cursor.maxId)
-            }
-        }.let {
-            get("post.listHome", it).parse<FanboxPostItemsEntity>()!!.translate(bookmarkedPosts.first())
-        }
+    override suspend fun getMetadata(): FanboxMetaData {
+        return fanbox.getMetadata()
     }
 
-    override suspend fun getSupportedPosts(cursor: FanboxCursor?, loadSize: Int): PageCursorInfo<FanboxPost> = withContext(ioDispatcher) {
-        buildMap {
-            put("limit", loadSize.toString())
-
-            if (cursor != null) {
-                put("maxPublishedDatetime", cursor.maxPublishedDatetime)
-                put("maxId", cursor.maxId)
-            }
-        }.let {
-            get("post.listSupporting", it).parse<FanboxPostItemsEntity>()!!.translate(bookmarkedPosts.first())
-        }
+    override suspend fun getHomePosts(
+        cursor: FanboxCursor?,
+        loadSize: Int,
+    ): PageCursorInfo<FanboxPost> {
+        return fanbox.getHomePosts(cursor)
     }
 
-    override suspend fun getCreatorPosts(creatorId: CreatorId, currentCursor: FanboxCursor, nextCursor: FanboxCursor?, loadSize: Int): PageCursorInfo<FanboxPost> =
+    override suspend fun getSupportedPosts(
+        cursor: FanboxCursor?,
+        loadSize: Int,
+    ): PageCursorInfo<FanboxPost> {
+        return fanbox.getSupportedPosts(cursor)
+    }
+
+    override suspend fun getCreatorPosts(
+        creatorId: FanboxCreatorId,
+        currentCursor: FanboxCursor,
+        nextCursor: FanboxCursor?,
+        loadSize: Int,
+    ): PageCursorInfo<FanboxPost> {
+        return fanbox.getCreatorPosts(creatorId, currentCursor, nextCursor)
+    }
+
+    override suspend fun getPostFromQuery(
+        query: String,
+        creatorId: FanboxCreatorId?,
+        page: Int,
+    ): PageNumberInfo<FanboxPost> {
+        return fanbox.getPostFromQuery(query, creatorId, page)
+    }
+
+    override suspend fun getCreatorPostsPagination(creatorId: FanboxCreatorId): List<FanboxCursor> {
+        return fanbox.getCreatorPostsPagination(creatorId)
+    }
+
+    override suspend fun getCreatorFromQuery(
+        query: String,
+        page: Int,
+    ): PageNumberInfo<FanboxCreatorDetail> {
+        return fanbox.searchCreators(query, page)
+    }
+
+    override suspend fun getTagFromQuery(query: String): List<FanboxTag> {
+        return fanbox.searchTags(query)
+    }
+
+    override suspend fun getPostDetail(postId: FanboxPostId): FanboxPostDetail {
+        return fanbox.getPostDetail(postId)
+    }
+
+    override suspend fun getPostDetailCached(postId: FanboxPostId): FanboxPostDetail =
         withContext(ioDispatcher) {
-            buildMap {
-                put("creatorId", creatorId.value)
-                put("limit", loadSize.toString())
-                put("maxPublishedDatetime", currentCursor.maxPublishedDatetime)
-                put("maxId", currentCursor.maxId)
-            }.let {
-                get("post.listCreator", it).parse<FanboxCreatorPostItemsEntity>()!!.translate(bookmarkedPosts.first(), nextCursor)
-            }
+            postCache.getOrPut(postId) { getPostDetail(postId) }
         }
 
-    override suspend fun getPostFromQuery(query: String, creatorId: CreatorId?, page: Int): PageNumberInfo<FanboxPost> = withContext(ioDispatcher) {
-        buildMap {
-            put("tag", query)
-            put("page", page.toString())
-
-            if (creatorId != null) {
-                put("creatorId", creatorId.value)
-            }
-        }.let {
-            get("post.listTagged", it).parse<FanboxPostSearchEntity>()!!.translate(bookmarkedPosts.first())
-        }
+    override suspend fun getPostComment(
+        postId: FanboxPostId,
+        offset: Int,
+    ): PageOffsetInfo<FanboxComment> {
+        return fanbox.getPostComment(postId, offset)
     }
 
-    override suspend fun getCreatorPostsPaginate(creatorId: CreatorId): List<FanboxCursor> = withContext(ioDispatcher) {
-        get("post.paginateCreator", mapOf("creatorId" to creatorId.value)).parse<FanboxCreatorPostsPaginateEntity>()!!.translate()
-    }
-
-    override suspend fun getCreatorFromQuery(query: String, page: Int): PageNumberInfo<FanboxCreatorDetail> = withContext(ioDispatcher) {
-        get("creator.search", mapOf("q" to query, "page" to page.toString())).parse<FanboxCreatorSearchEntity>()!!.translate()
-    }
-
-    override suspend fun getTagFromQuery(query: String): List<FanboxTag> = withContext(ioDispatcher) {
-        get("tag.search", mapOf("q" to query)).parse<FanboxTagsEntity>()!!.translate()
-    }
-
-    override suspend fun getPost(postId: PostId): FanboxPostDetail = withContext(ioDispatcher) {
-        fanbox.getPostDetail(FanboxPostId(postId.value)).also {
-            Napier.d { "getPost: $it" }
-        }
-
-        get("post.info", mapOf("postId" to postId.value)).parse<FanboxPostDetailEntity>()!!.translate(bookmarkedPosts.first()).also {
-            postCache[postId] = it
-        }
-    }
-
-    override suspend fun getPostCached(postId: PostId): FanboxPostDetail = withContext(ioDispatcher) {
-        postCache.getOrPut(postId) { getPost(postId) }
-    }
-
-    override suspend fun getPostComment(postId: PostId, offset: Int): PageOffsetInfo<FanboxComments.Item> =
-        withContext(ioDispatcher) {
-            get("post.listComments", mapOf("postId" to postId.value, "offset" to offset.toString(), "limit" to "10")).parse<FanboxPostCommentItemsEntity>()!!.translate()
-        }
-
-    override suspend fun getHomePostsPager(loadSize: Int, isHideRestricted: Boolean): Flow<PagingData<FanboxPost>> {
+    override suspend fun getHomePostsPager(
+        loadSize: Int,
+        isHideRestricted: Boolean,
+    ): Flow<PagingData<FanboxPost>> {
         return Pager(
             config = PagingConfig(pageSize = loadSize),
             initialKey = null,
@@ -341,11 +308,17 @@ class FanboxRepositoryImpl(
             .also { homePostsPager = it }
     }
 
-    override suspend fun getHomePostsPagerCache(loadSize: Int, isHideRestricted: Boolean): Flow<PagingData<FanboxPost>> {
+    override suspend fun getHomePostsPagerCache(
+        loadSize: Int,
+        isHideRestricted: Boolean,
+    ): Flow<PagingData<FanboxPost>> {
         return homePostsPager ?: getHomePostsPager(loadSize, isHideRestricted)
     }
 
-    override suspend fun getSupportedPostsPager(loadSize: Int, isHideRestricted: Boolean): Flow<PagingData<FanboxPost>> {
+    override suspend fun getSupportedPostsPager(
+        loadSize: Int,
+        isHideRestricted: Boolean,
+    ): Flow<PagingData<FanboxPost>> {
         return Pager(
             config = PagingConfig(pageSize = loadSize),
             initialKey = null,
@@ -358,12 +331,18 @@ class FanboxRepositoryImpl(
             .also { supportedPostsPager = it }
     }
 
-    override suspend fun getSupportedPostsPagerCache(loadSize: Int, isHideRestricted: Boolean): Flow<PagingData<FanboxPost>> {
+    override suspend fun getSupportedPostsPagerCache(
+        loadSize: Int,
+        isHideRestricted: Boolean,
+    ): Flow<PagingData<FanboxPost>> {
         return supportedPostsPager ?: getSupportedPostsPager(loadSize, isHideRestricted)
     }
 
-    override suspend fun getCreatorPostsPager(creatorId: CreatorId, loadSize: Int): Flow<PagingData<FanboxPost>> {
-        val cursors = getCreatorPostsPaginate(creatorId)
+    override suspend fun getCreatorPostsPager(
+        creatorId: FanboxCreatorId,
+        loadSize: Int,
+    ): Flow<PagingData<FanboxPost>> {
+        val cursors = getCreatorPostsPagination(creatorId)
 
         return Pager(
             config = PagingConfig(pageSize = loadSize),
@@ -385,7 +364,10 @@ class FanboxRepositoryImpl(
         return creatorPostsPager
     }
 
-    override suspend fun getPostsFromQueryPager(query: String, creatorId: CreatorId?): Flow<PagingData<FanboxPost>> {
+    override suspend fun getPostsFromQueryPager(
+        query: String,
+        creatorId: FanboxCreatorId?,
+    ): Flow<PagingData<FanboxPost>> {
         return Pager(
             config = PagingConfig(pageSize = 10),
             initialKey = null,
@@ -412,170 +394,119 @@ class FanboxRepositoryImpl(
         ).flow
     }
 
-    override suspend fun getFollowingCreators(): List<FanboxCreatorDetail> = withContext(ioDispatcher) {
-        get("creator.listFollowing").parse<FanboxCreatorItemsEntity>()!!.translate()
+    override suspend fun getFollowingCreators(): List<FanboxCreatorDetail> {
+        return fanbox.getFollowingCreators()
     }
 
-    override suspend fun getFollowingPixivCreators(): List<FanboxCreatorDetail> = withContext(ioDispatcher) {
-        get("creator.listPixiv").parse<FanboxCreatorItemsEntity>()!!.translate()
+    override suspend fun getFollowingPixivCreators(): List<FanboxCreatorDetail> {
+        return fanbox.getFollowingPixivCreators()
     }
 
-    override suspend fun getRecommendedCreators(): List<FanboxCreatorDetail> = withContext(ioDispatcher) {
-        get("creator.listRecommended", mapOf("limit" to PAGE_LIMIT)).parse<FanboxCreatorItemsEntity>()!!.translate()
+    override suspend fun getRecommendedCreators(): List<FanboxCreatorDetail> {
+        return fanbox.getRecommendedCreators()
     }
 
-    override suspend fun getCreator(creatorId: CreatorId): FanboxCreatorDetail = withContext(ioDispatcher) {
-        get("creator.get", mapOf("creatorId" to creatorId.value)).parse<FanboxCreatorEntity>()!!.translate().also {
-            creatorCache[creatorId] = it
-        }
+    override suspend fun getCreatorDetail(creatorId: FanboxCreatorId): FanboxCreatorDetail {
+        return fanbox.getCreatorDetail(creatorId)
     }
 
-    override suspend fun getCreatorCached(creatorId: CreatorId): FanboxCreatorDetail = withContext(ioDispatcher) {
-        creatorCache.getOrPut(creatorId) { getCreator(creatorId) }
-    }
-
-    override suspend fun getCreatorTags(creatorId: CreatorId): List<FanboxCreatorTag> = withContext(ioDispatcher) {
-        get("tag.getFeatured", mapOf("creatorId" to creatorId.value)).parse<FanboxCreatorTagsEntity>()!!.translate()
-    }
-
-    override suspend fun getSupportedPlans(): List<FanboxCreatorPlan> = withContext(ioDispatcher) {
-        get("plan.listSupporting").parse<FanboxCreatorPlansEntity>()!!.translate()
-    }
-
-    override suspend fun getCreatorPlans(creatorId: CreatorId): List<FanboxCreatorPlan> = withContext(ioDispatcher) {
-        get("plan.listCreator", mapOf("creatorId" to creatorId.value)).parse<FanboxCreatorPlansEntity>()!!.translate()
-    }
-
-    override suspend fun getCreatorPlan(creatorId: CreatorId): FanboxCreatorPlanDetail = withContext(ioDispatcher) {
-        get("legacy/support/creator", mapOf("creatorId" to creatorId.value)).parse<FanboxCreatorPlanEntity>()!!.translate()
-    }
-
-    override suspend fun getPaidRecords(): List<FanboxPaidRecord> = withContext(ioDispatcher) {
-        get("payment.listPaid").parse<FanboxPaidRecordEntity>()!!.translate()
-    }
-
-    override suspend fun getUnpaidRecords(): List<FanboxPaidRecord> = withContext(ioDispatcher) {
-        get("payment.listUnpaid").parse<FanboxPaidRecordEntity>()!!.translate()
-    }
-
-    override suspend fun getNewsLetters(): List<FanboxNewsLetter> = withContext(ioDispatcher) {
-        get("newsletter.list").parse<FanboxNewsLettersEntity>()!!.translate()
-    }
-
-    override suspend fun getBells(page: Int): PageNumberInfo<FanboxBell> = withContext(ioDispatcher) {
-        buildMap {
-            put("page", page.toString())
-            put("skipConvertUnreadNotification", "0")
-            put("commentOnly", "0")
-        }.let {
-            get("bell.list", it).parse<FanboxBellItemsEntity>()!!.translate()
-        }
-    }
-
-    override suspend fun likePost(postId: PostId): Unit = withContext(ioDispatcher) {
-        post("post.likePost", mapOf("postId" to postId.value)).requireSuccess()
-    }
-
-    override suspend fun likeComment(commentId: CommentId): Unit = withContext(ioDispatcher) {
-        post("post.likeComment", mapOf("commentId" to commentId.value)).requireSuccess()
-    }
-
-    override suspend fun addComment(postId: PostId, comment: String, rootCommentId: CommentId?, parentCommentId: CommentId?): Unit =
+    override suspend fun getCreatorDetailCached(creatorId: FanboxCreatorId): FanboxCreatorDetail =
         withContext(ioDispatcher) {
-            post(
-                dir = "post.addComment",
-                parameters = mapOf(
-                    "postId" to postId.value,
-                    "rootCommentId" to rootCommentId?.value.orEmpty(),
-                    "parentCommentId" to parentCommentId?.value.orEmpty(),
-                    "body" to comment,
-                ),
-            ).requireSuccess()
+            creatorCache.getOrPut(creatorId) { getCreatorDetail(creatorId) }
         }
 
-    override suspend fun deleteComment(commentId: CommentId): Unit = withContext(ioDispatcher) {
-        post("post.deleteComment", mapOf("commentId" to commentId.value)).requireSuccess()
+    override suspend fun getCreatorTags(creatorId: FanboxCreatorId): List<FanboxTag> {
+        return fanbox.getCreatorTags(creatorId)
     }
 
-    override suspend fun followCreator(creatorUserId: String): Unit = withContext(ioDispatcher) {
-        post("follow.create", mapOf("creatorUserId" to creatorUserId)).requireSuccess()
+    override suspend fun getSupportedPlans(): List<FanboxCreatorPlan> {
+        return fanbox.getSupportedPlans()
     }
 
-    override suspend fun unfollowCreator(creatorUserId: String): Unit = withContext(ioDispatcher) {
-        post("follow.delete", mapOf("creatorUserId" to creatorUserId)).requireSuccess()
+    override suspend fun getCreatorPlans(creatorId: FanboxCreatorId): List<FanboxCreatorPlan> {
+        return fanbox.getCreatorPlans(creatorId)
     }
 
-    override suspend fun blockCreator(creatorId: CreatorId) {
+    override suspend fun getCreatorPlan(creatorId: FanboxCreatorId): FanboxCreatorPlanDetail {
+        return fanbox.getCreatorPlanDetail(creatorId)
+    }
+
+    override suspend fun getPaidRecords(): List<FanboxPaidRecord> {
+        return fanbox.getPaidRecords()
+    }
+
+    override suspend fun getUnpaidRecords(): List<FanboxPaidRecord> {
+        return fanbox.getUnpaidRecords()
+    }
+
+    override suspend fun getNewsLetters(): List<FanboxNewsLetter> {
+        return fanbox.getNewsLetters()
+    }
+
+    override suspend fun getBells(page: Int): PageNumberInfo<FanboxBell> {
+        return fanbox.getBells(page)
+    }
+
+    override suspend fun likePost(postId: FanboxPostId) {
+        fanbox.likePost(postId)
+    }
+
+    override suspend fun likeComment(commentId: FanboxCommentId) {
+        fanbox.likeComment(commentId)
+    }
+
+    override suspend fun addComment(
+        postId: FanboxPostId,
+        comment: String,
+        rootCommentId: FanboxCommentId?,
+        parentCommentId: FanboxCommentId?,
+    ) {
+        fanbox.addComment(
+            postId = postId,
+            rootCommentId = rootCommentId ?: FanboxCommentId.EMPTY,
+            parentCommentId = parentCommentId ?: FanboxCommentId.EMPTY,
+            body = comment,
+        )
+    }
+
+    override suspend fun deleteComment(commentId: FanboxCommentId) {
+        fanbox.deleteComment(commentId)
+    }
+
+    override suspend fun followCreator(creatorUserId: FanboxUserId) {
+        fanbox.followCreator(creatorUserId)
+    }
+
+    override suspend fun unfollowCreator(creatorUserId: FanboxUserId) {
+        fanbox.unfollowCreator(creatorUserId)
+    }
+
+    override suspend fun blockCreator(creatorId: FanboxCreatorId) {
         blockDataStore.blockCreator(creatorId)
     }
 
-    override suspend fun unblockCreator(creatorId: CreatorId) {
+    override suspend fun unblockCreator(creatorId: FanboxCreatorId) {
         blockDataStore.unblockCreator(creatorId)
     }
 
     override suspend fun getBookmarkedPosts(): List<FanboxPost> = withContext(ioDispatcher) {
-        bookmarkDataStore.get().map { it.copy(isBookmarked = true) }
+        bookmarkDataStore.get()
     }
 
     override suspend fun bookmarkPost(post: FanboxPost) = withContext(ioDispatcher) {
-        bookmarkDataStore.save(post.copy(isBookmarked = true))
+        bookmarkDataStore.save(post)
     }
 
     override suspend fun unbookmarkPost(post: FanboxPost) {
         bookmarkDataStore.remove(post)
     }
 
-    private suspend fun get(dir: String, parameters: Map<String, String> = emptyMap()): HttpResponse {
-        return client.get {
-            url("$API/$dir")
-            fanboxHeader()
-
-            for ((key, value) in parameters) {
-                parameter(key, value)
-            }
-        }
-    }
-
-    private suspend fun post(dir: String, parameters: Map<String, String> = emptyMap()): HttpResponse {
-        val requestBody = buildJsonObject {
-            for ((key, value) in parameters) {
-                put(key, value)
-            }
-        }
-
-        return defaultClient.post {
-            url("$API/$dir")
-            fanboxHeader()
-            contentType(ContentType.Application.Json)
-            setBody(
-                TextContent(
-                    text = requestBody.toString(),
-                    contentType = ContentType.Application.Json,
-                ),
-            )
-        }
-    }
-
     override suspend fun download(url: String, onDownload: (Float) -> Unit): HttpStatement {
-        return client.prepareGet {
+        return fanbox.getHttpClient().prepareGet {
             url(url)
-            fanboxHeader()
-
             onDownload { bytesSentTotal, contentLength ->
                 onDownload.invoke(contentLength?.let { bytesSentTotal.toFloat() / it } ?: 0f)
             }
         }
-    }
-
-    private suspend fun HttpMessageBuilder.fanboxHeader() {
-        header("origin", "https://www.fanbox.cc")
-        header("referer", "https://www.fanbox.cc/")
-        header("user-agent", "Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Mobile Safari/537.36")
-        header("x-csrf-token", metaData.first().csrfToken)
-    }
-
-    companion object {
-        private const val API = "https://api.fanbox.cc"
-        private const val PAGE_LIMIT = "10"
     }
 }

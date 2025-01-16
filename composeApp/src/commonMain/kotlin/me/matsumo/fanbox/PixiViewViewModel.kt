@@ -24,7 +24,6 @@ import me.matsumo.fanbox.core.logs.logger.LogConfigurator
 import me.matsumo.fanbox.core.model.DownloadState
 import me.matsumo.fanbox.core.model.ScreenState
 import me.matsumo.fanbox.core.model.UserData
-import me.matsumo.fanbox.core.model.fanbox.FanboxMetaData
 import me.matsumo.fanbox.core.repository.DownloadPostsRepository
 import me.matsumo.fanbox.core.repository.FanboxRepository
 import me.matsumo.fanbox.core.repository.UserDataRepository
@@ -32,6 +31,7 @@ import me.matsumo.fanbox.core.resources.Res
 import me.matsumo.fanbox.core.resources.error_no_data
 import me.matsumo.fanbox.core.resources.home_app_lock_message
 import me.matsumo.fanbox.core.resources.home_app_lock_title
+import me.matsumo.fankt.fanbox.domain.model.FanboxMetaData
 import org.jetbrains.compose.resources.getString
 import kotlin.time.Duration.Companion.minutes
 import kotlin.uuid.ExperimentalUuidApi
@@ -52,25 +52,23 @@ class PixiViewViewModel(
     val screenState = combine(
         listOf(
             userDataRepository.userData,
-            fanboxRepository.cookie,
-            fanboxRepository.metaData,
+            fanboxRepository.sessionId,
             downloadPostsRepository.downloadState,
             _isLoggedInFlow,
             _isAppLockedFlow,
         ),
     ) { flows ->
         val userData = flows[0] as UserData
-        val cookie = flows[1] as String
-        val metadata = flows[2] as FanboxMetaData
-        val downloadState = flows[3] as DownloadState
-        val isLoggedIn = flows[4] as Boolean
-        val isAppLocked = flows[5] as Boolean
+        val sessionId = flows[1] as String
+        val downloadState = flows[2] as DownloadState
+        val isLoggedIn = flows[3] as Boolean
+        val isAppLocked = flows[4] as Boolean
 
         ScreenState.Idle(
             MainUiState(
                 userData = userData,
-                fanboxCookie = cookie,
-                fanboxMetadata = metadata,
+                sessionId = sessionId,
+                fanboxMetadata = fanboxRepository.getMetadata(),
                 downloadState = downloadState,
                 isLoggedIn = isLoggedIn,
                 isAppLocked = if (userData.isUseAppLock) isAppLocked else false,
@@ -159,7 +157,7 @@ class PixiViewViewModel(
 @Stable
 data class MainUiState(
     val userData: UserData,
-    val fanboxCookie: String,
+    val sessionId: String,
     val fanboxMetadata: FanboxMetaData,
     val downloadState: DownloadState,
     val isLoggedIn: Boolean,

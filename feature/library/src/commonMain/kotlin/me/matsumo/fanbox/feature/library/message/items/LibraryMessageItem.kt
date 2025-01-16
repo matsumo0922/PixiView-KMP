@@ -28,19 +28,19 @@ import coil3.compose.AsyncImage
 import coil3.compose.LocalPlatformContext
 import coil3.request.ImageRequest
 import me.matsumo.fanbox.core.common.util.format
-import me.matsumo.fanbox.core.model.fanbox.FanboxNewsLetter
-import me.matsumo.fanbox.core.model.fanbox.id.CreatorId
 import me.matsumo.fanbox.core.resources.Res
 import me.matsumo.fanbox.core.resources.im_default_user
 import me.matsumo.fanbox.core.ui.extensition.asCoilImage
 import me.matsumo.fanbox.core.ui.theme.bold
+import me.matsumo.fankt.fanbox.domain.model.FanboxNewsLetter
+import me.matsumo.fankt.fanbox.domain.model.id.FanboxCreatorId
 import sh.calvin.autolinktext.AutoLinkText
 import sh.calvin.autolinktext.TextRuleDefaults
 
 @Composable
 internal fun LibraryMessageItem(
     message: FanboxNewsLetter,
-    onClickCreator: (CreatorId) -> Unit,
+    onClickCreator: (FanboxCreatorId) -> Unit,
     modifier: Modifier = Modifier,
 ) {
     var isShowBigBody by rememberSaveable { mutableStateOf(false) }
@@ -71,14 +71,14 @@ internal fun LibraryMessageItem(
                         .size(36.dp),
                     model = ImageRequest.Builder(LocalPlatformContext.current)
                         .error(Res.drawable.im_default_user.asCoilImage())
-                        .data(message.creator.user.iconUrl)
+                        .data(message.creator.user?.iconUrl)
                         .build(),
                     contentDescription = null,
                 )
 
                 Text(
                     modifier = Modifier.weight(1f),
-                    text = message.creator.user.name,
+                    text = message.creator.user?.name.orEmpty(),
                     style = MaterialTheme.typography.bodyMedium.bold(),
                     color = MaterialTheme.colorScheme.onSurface,
                 )

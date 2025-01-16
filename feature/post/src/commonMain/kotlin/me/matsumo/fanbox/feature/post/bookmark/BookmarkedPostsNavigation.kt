@@ -5,9 +5,9 @@ import androidx.compose.ui.Modifier
 import androidx.navigation.NavController
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.compose.composable
-import me.matsumo.fanbox.core.model.fanbox.id.CreatorId
-import me.matsumo.fanbox.core.model.fanbox.id.PostId
 import me.matsumo.fanbox.core.ui.extensition.navigateWithLog
+import me.matsumo.fankt.fanbox.domain.model.id.FanboxCreatorId
+import me.matsumo.fankt.fanbox.domain.model.id.FanboxPostId
 
 const val BookmarkedPostsRoute = "bookmarkedPosts"
 
@@ -16,9 +16,9 @@ fun NavController.navigateToBookmarkedPosts() {
 }
 
 fun NavGraphBuilder.bookmarkedPostsScreen(
-    navigateToPostDetail: (PostId) -> Unit,
-    navigateToCreatorPosts: (CreatorId) -> Unit,
-    navigateToCreatorPlans: (CreatorId) -> Unit,
+    navigateToPostDetail: (FanboxPostId) -> Unit,
+    navigateToCreatorPosts: (FanboxCreatorId) -> Unit,
+    navigateToCreatorPlans: (FanboxCreatorId) -> Unit,
     terminate: () -> Unit,
 ) {
     composable(BookmarkedPostsRoute) {

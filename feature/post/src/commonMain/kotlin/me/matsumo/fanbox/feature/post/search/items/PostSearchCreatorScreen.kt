@@ -20,7 +20,6 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.runtime.snapshotFlow
-import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.unit.dp
@@ -30,9 +29,6 @@ import app.cash.paging.compose.itemContentType
 import app.cash.paging.compose.itemKey
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.coroutines.launch
-import me.matsumo.fanbox.core.model.FanboxTag
-import me.matsumo.fanbox.core.model.fanbox.FanboxCreatorDetail
-import me.matsumo.fanbox.core.model.fanbox.id.CreatorId
 import me.matsumo.fanbox.core.resources.Res
 import me.matsumo.fanbox.core.resources.common_creator
 import me.matsumo.fanbox.core.resources.common_tag
@@ -44,17 +40,20 @@ import me.matsumo.fanbox.core.ui.extensition.PixiViewNavigationType
 import me.matsumo.fanbox.core.ui.extensition.drawVerticalScrollbar
 import me.matsumo.fanbox.core.ui.theme.bold
 import me.matsumo.fanbox.core.ui.view.PagingErrorSection
+import me.matsumo.fankt.fanbox.domain.model.FanboxCreatorDetail
+import me.matsumo.fankt.fanbox.domain.model.FanboxTag
+import me.matsumo.fankt.fanbox.domain.model.id.FanboxCreatorId
+import me.matsumo.fankt.fanbox.domain.model.id.FanboxUserId
 import org.jetbrains.compose.resources.stringResource
 
-@OptIn(ExperimentalComposeUiApi::class)
 @Composable
 internal fun PostSearchCreatorScreen(
     pagingAdapter: LazyPagingItems<FanboxCreatorDetail>,
     suggestTags: ImmutableList<FanboxTag>,
-    onClickCreator: (CreatorId) -> Unit,
+    onClickCreator: (FanboxCreatorId) -> Unit,
     onClickTag: (String) -> Unit,
-    onClickFollow: suspend (String) -> Result<Unit>,
-    onClickUnfollow: suspend (String) -> Result<Unit>,
+    onClickFollow: suspend (FanboxUserId) -> Result<Unit>,
+    onClickUnfollow: suspend (FanboxUserId) -> Result<Unit>,
     onClickSupporting: (String) -> Unit,
     modifier: Modifier = Modifier,
 ) {

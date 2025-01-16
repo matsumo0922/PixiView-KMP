@@ -12,7 +12,6 @@ import androidx.compose.foundation.lazy.grid.rememberLazyGridState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.snapshotFlow
-import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.unit.dp
@@ -22,9 +21,6 @@ import app.cash.paging.compose.itemContentType
 import app.cash.paging.compose.itemKey
 import kotlinx.collections.immutable.ImmutableList
 import me.matsumo.fanbox.core.model.UserData
-import me.matsumo.fanbox.core.model.fanbox.FanboxPost
-import me.matsumo.fanbox.core.model.fanbox.id.CreatorId
-import me.matsumo.fanbox.core.model.fanbox.id.PostId
 import me.matsumo.fanbox.core.resources.Res
 import me.matsumo.fanbox.core.resources.error_no_data_search
 import me.matsumo.fanbox.core.ui.LazyPagingItemsLoadContents
@@ -33,17 +29,20 @@ import me.matsumo.fanbox.core.ui.extensition.LocalNavigationType
 import me.matsumo.fanbox.core.ui.extensition.PixiViewNavigationType
 import me.matsumo.fanbox.core.ui.extensition.drawVerticalScrollbar
 import me.matsumo.fanbox.core.ui.view.PagingErrorSection
+import me.matsumo.fankt.fanbox.domain.model.FanboxPost
+import me.matsumo.fankt.fanbox.domain.model.id.FanboxCreatorId
+import me.matsumo.fankt.fanbox.domain.model.id.FanboxPostId
 
 @Composable
 internal fun PostSearchTagScreen(
     pagingAdapter: LazyPagingItems<FanboxPost>,
     userData: UserData,
-    bookmarkedPosts: ImmutableList<PostId>,
-    onClickPost: (PostId) -> Unit,
-    onClickPostLike: (PostId) -> Unit,
+    bookmarkedPosts: ImmutableList<FanboxPostId>,
+    onClickPost: (FanboxPostId) -> Unit,
+    onClickPostLike: (FanboxPostId) -> Unit,
     onClickPostBookmark: (FanboxPost, Boolean) -> Unit,
-    onClickCreator: (CreatorId) -> Unit,
-    onClickPlanList: (CreatorId) -> Unit,
+    onClickCreator: (FanboxCreatorId) -> Unit,
+    onClickPlanList: (FanboxCreatorId) -> Unit,
     modifier: Modifier = Modifier,
 ) {
     val keyboardController = LocalSoftwareKeyboardController.current
@@ -83,11 +82,12 @@ internal fun PostSearchTagScreen(
                 pagingAdapter[index]?.let { post ->
                     PostItem(
                         modifier = Modifier.fillMaxWidth(),
-                        post = post.copy(isBookmarked = bookmarkedPosts.contains(post.id)),
+                        post = post,
+                        isBookmarked = bookmarkedPosts.contains(post.id),
                         isHideAdultContents = userData.isHideAdultContents,
                         isOverrideAdultContents = userData.isAllowedShowAdultContents,
                         isTestUser = userData.isTestUser,
-                        onClickPost = { if (!post.isRestricted) onClickPost.invoke(it) },
+                        onClickPost = onClickPost,
                         onClickLike = onClickPostLike,
                         onClickBookmark = { _, isLiked -> onClickPostBookmark.invoke(post, isLiked) },
                         onClickCreator = onClickCreator,

@@ -37,16 +37,16 @@ sealed class PostsLog : LogCategory {
 
     class Comment internal constructor(
         private val postId: String,
-        private val parentCommentId: String,
-        private val rootCommentId: String,
+        private val parentFanboxCommentId: String,
+        private val rootFanboxCommentId: String,
         private val comment: String,
     ) : PostsLog() {
         override val properties: JsonObject = buildJsonObject {
             put("event_category", "posts")
             put("event_name", "comment")
             put("post_id", postId)
-            put("parent_comment_id", parentCommentId)
-            put("root_comment_id", rootCommentId)
+            put("parent_comment_id", parentFanboxCommentId)
+            put("root_comment_id", rootFanboxCommentId)
             put("comment", comment)
         }
     }
@@ -93,10 +93,10 @@ sealed class PostsLog : LogCategory {
         // 投稿にコメントをした際のログ
         fun comment(
             postId: String,
-            parentCommentId: String,
-            rootCommentId: String,
+            parentFanboxCommentId: String,
+            rootFanboxCommentId: String,
             comment: String,
-        ) = Comment(postId, parentCommentId, rootCommentId, comment)
+        ) = Comment(postId, parentFanboxCommentId, rootFanboxCommentId, comment)
 
         // コメントにいいねをした際のログ
         fun likeComment(

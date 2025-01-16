@@ -1,7 +1,6 @@
 package me.matsumo.fanbox.core.datastore
 
 import android.content.Context
-import io.github.aakira.napier.Napier
 import kotlinx.coroutines.flow.first
 import me.matsumo.fanbox.core.common.util.suspendRunCatching
 import me.matsumo.fanbox.core.resources.Res

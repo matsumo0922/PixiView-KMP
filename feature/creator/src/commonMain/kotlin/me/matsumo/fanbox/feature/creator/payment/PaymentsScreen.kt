@@ -25,7 +25,6 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.toImmutableList
 import me.matsumo.fanbox.core.common.util.format
-import me.matsumo.fanbox.core.model.fanbox.id.CreatorId
 import me.matsumo.fanbox.core.resources.Res
 import me.matsumo.fanbox.core.resources.error_no_data
 import me.matsumo.fanbox.core.resources.error_no_data_payments
@@ -36,12 +35,13 @@ import me.matsumo.fanbox.core.ui.extensition.drawVerticalScrollbar
 import me.matsumo.fanbox.core.ui.view.EmptyView
 import me.matsumo.fanbox.feature.creator.payment.items.MonthItem
 import me.matsumo.fanbox.feature.creator.payment.items.PaymentItem
+import me.matsumo.fankt.fanbox.domain.model.id.FanboxCreatorId
 import org.jetbrains.compose.resources.stringResource
 import org.koin.compose.viewmodel.koinViewModel
 
 @Composable
 internal fun PaymentsRoute(
-    navigateToCreatorPosts: (CreatorId) -> Unit,
+    navigateToCreatorPosts: (FanboxCreatorId) -> Unit,
     terminate: () -> Unit,
     modifier: Modifier = Modifier,
     viewModel: PaymentsViewModel = koinViewModel(),
@@ -66,7 +66,7 @@ internal fun PaymentsRoute(
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 private fun PaymentsScreen(
-    onClickCreatorPosts: (CreatorId) -> Unit,
+    onClickCreatorPosts: (FanboxCreatorId) -> Unit,
     onTerminate: () -> Unit,
     payments: ImmutableList<Payment>,
     modifier: Modifier = Modifier,

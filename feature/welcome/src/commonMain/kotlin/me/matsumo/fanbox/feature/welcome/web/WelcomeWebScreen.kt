@@ -20,9 +20,9 @@ import com.multiplatform.webview.web.rememberWebViewState
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import me.matsumo.fanbox.core.resources.Res
+import me.matsumo.fanbox.core.resources.welcome_login_title
 import me.matsumo.fanbox.core.ui.component.PixiViewTopBar
 import me.matsumo.fanbox.core.ui.view.SimpleAlertContents
-import me.matsumo.fanbox.core.resources.welcome_login_title
 import org.jetbrains.compose.resources.stringResource
 import org.koin.compose.viewmodel.koinViewModel
 
@@ -57,16 +57,11 @@ internal fun WelcomeWebScreen(
 
     LaunchedEffect(webViewState.lastLoadedUrl) {
         if (webViewState.lastLoadedUrl == fanboxRedirectUrl) {
-            val oauthCookies = webViewState.cookieManager.getCookies("https://oauth.secure.pixiv.net").associate {
-                it.name to it.value
-            }
-            val fanboxCookies = webViewState.cookieManager.getCookies("https://www.fanbox.cc").associate { it.name to it.value }
-            val cookieString = (fanboxCookies + oauthCookies)
-                .filterKeys { listOf("__cf_bm", "cf_clearance", "FANBOXSESSID").contains(it) }
-                .map { "${it.key}=${it.value}" }
-                .joinToString(";")
+            val oauthCookies = webViewState.cookieManager.getCookies("https://oauth.secure.pixiv.net")
+            val fanboxCookies = webViewState.cookieManager.getCookies("https://www.fanbox.cc")
+            val sessionId = (fanboxCookies + oauthCookies).find { it.name == "FANBOXSESSID" }
 
-            viewModel.saveCookie(cookieString)
+            viewModel.saveSessionId(sessionId?.value.orEmpty())
             terminate.invoke()
         }
     }

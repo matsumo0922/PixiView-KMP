@@ -20,8 +20,6 @@ import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.toImmutableList
-import me.matsumo.fanbox.core.model.fanbox.FanboxNewsLetter
-import me.matsumo.fanbox.core.model.fanbox.id.CreatorId
 import me.matsumo.fanbox.core.resources.Res
 import me.matsumo.fanbox.core.resources.error_no_data
 import me.matsumo.fanbox.core.resources.error_no_data_message
@@ -33,13 +31,15 @@ import me.matsumo.fanbox.core.ui.extensition.PixiViewNavigationType
 import me.matsumo.fanbox.core.ui.extensition.drawVerticalScrollbar
 import me.matsumo.fanbox.core.ui.view.EmptyView
 import me.matsumo.fanbox.feature.library.message.items.LibraryMessageItem
+import me.matsumo.fankt.fanbox.domain.model.FanboxNewsLetter
+import me.matsumo.fankt.fanbox.domain.model.id.FanboxCreatorId
 import org.jetbrains.compose.resources.stringResource
 import org.koin.compose.viewmodel.koinViewModel
 
 @Composable
 internal fun LibraryMessageRoute(
     openDrawer: () -> Unit,
-    navigateToCreatorPosts: (CreatorId) -> Unit,
+    navigateToCreatorPosts: (FanboxCreatorId) -> Unit,
     modifier: Modifier = Modifier,
     viewModel: LibraryMessageViewModel = koinViewModel(),
 ) {
@@ -64,7 +64,7 @@ internal fun LibraryMessageRoute(
 private fun LibraryMessageScreen(
     messages: ImmutableList<FanboxNewsLetter>,
     openDrawer: () -> Unit,
-    onClickCreator: (CreatorId) -> Unit,
+    onClickCreator: (FanboxCreatorId) -> Unit,
     modifier: Modifier = Modifier,
 ) {
     val navigationType = LocalNavigationType.current.type

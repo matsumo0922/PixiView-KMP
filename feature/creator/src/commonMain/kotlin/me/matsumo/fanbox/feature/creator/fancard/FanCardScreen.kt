@@ -17,8 +17,6 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import kotlinx.coroutines.flow.collectLatest
 import me.matsumo.fanbox.core.model.ScreenState
-import me.matsumo.fanbox.core.model.fanbox.FanboxCreatorPlanDetail
-import me.matsumo.fanbox.core.model.fanbox.id.CreatorId
 import me.matsumo.fanbox.core.resources.Res
 import me.matsumo.fanbox.core.resources.common_downloaded
 import me.matsumo.fanbox.core.resources.error_network
@@ -28,12 +26,14 @@ import me.matsumo.fanbox.core.ui.component.PixiViewTopBar
 import me.matsumo.fanbox.core.ui.extensition.LocalSnackbarHostState
 import me.matsumo.fanbox.core.ui.extensition.ToastExtension
 import me.matsumo.fanbox.feature.creator.fancard.items.FanCardItem
+import me.matsumo.fankt.fanbox.domain.model.FanboxCreatorPlanDetail
+import me.matsumo.fankt.fanbox.domain.model.id.FanboxCreatorId
 import org.koin.compose.koinInject
 import org.koin.compose.viewmodel.koinViewModel
 
 @Composable
 internal fun FanCardRoute(
-    creatorId: CreatorId,
+    creatorId: FanboxCreatorId,
     terminate: () -> Unit,
     modifier: Modifier = Modifier,
     viewModel: FanCardViewModel = koinViewModel(),

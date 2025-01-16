@@ -3,8 +3,8 @@ package me.matsumo.fanbox.feature.library.notify.paging
 import androidx.paging.PagingSource
 import androidx.paging.PagingState
 import me.matsumo.fanbox.core.common.util.suspendRunCatching
-import me.matsumo.fanbox.core.model.fanbox.FanboxBell
 import me.matsumo.fanbox.core.repository.FanboxRepository
+import me.matsumo.fankt.fanbox.domain.model.FanboxBell
 
 class LibraryNotifyPagingSource(
     private val fanboxRepository: FanboxRepository,

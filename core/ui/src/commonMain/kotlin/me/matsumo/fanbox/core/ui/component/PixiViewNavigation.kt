@@ -13,7 +13,6 @@ import androidx.compose.material3.NavigationRailItem
 import androidx.compose.material3.NavigationRailItemDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.unit.dp
 
 @Composable
 fun PixiViewNavigationBar(
@@ -22,8 +21,8 @@ fun PixiViewNavigationBar(
 ) {
     NavigationBar(
         modifier = modifier,
+        containerColor = PixiViewNavigationDefaults.navigationContainerColor(),
         contentColor = PixiViewNavigationDefaults.navigationContentColor(),
-        tonalElevation = 0.dp,
         content = content,
     )
 }
@@ -60,6 +59,7 @@ fun PixiViewNavigationRail(
 ) {
     NavigationRail(
         modifier = modifier,
+        containerColor = PixiViewNavigationDefaults.navigationContainerColor(),
         contentColor = PixiViewNavigationDefaults.navigationContentColor(),
         content = content,
     )
@@ -91,6 +91,9 @@ fun ColumnScope.PixiViewNavigationRailItem(
 }
 
 object PixiViewNavigationDefaults {
+    @Composable
+    fun navigationContainerColor() = MaterialTheme.colorScheme.surface
+
     @Composable
     fun navigationContentColor() = MaterialTheme.colorScheme.onSurfaceVariant
 

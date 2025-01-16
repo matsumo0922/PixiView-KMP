@@ -27,8 +27,6 @@ import coil3.compose.SubcomposeAsyncImage
 import coil3.request.ImageRequest
 import kotlinx.coroutines.launch
 import me.matsumo.fanbox.core.model.ScreenState
-import me.matsumo.fanbox.core.model.fanbox.FanboxPostDetail
-import me.matsumo.fanbox.core.model.fanbox.id.PostId
 import me.matsumo.fanbox.core.resources.Res
 import me.matsumo.fanbox.core.resources.common_downloaded
 import me.matsumo.fanbox.core.resources.error_ios_gif_support
@@ -44,13 +42,15 @@ import me.matsumo.fanbox.core.ui.extensition.currentPlatform
 import me.matsumo.fanbox.core.ui.extensition.fanboxHeader
 import me.matsumo.fanbox.core.ui.theme.center
 import me.matsumo.fanbox.feature.post.image.items.PostImageMenuDialog
+import me.matsumo.fankt.fanbox.domain.model.FanboxPostDetail
+import me.matsumo.fankt.fanbox.domain.model.id.FanboxPostId
 import org.jetbrains.compose.resources.stringResource
 import org.koin.compose.koinInject
 import org.koin.compose.viewmodel.koinViewModel
 
 @Composable
 internal fun PostImageRoute(
-    postId: PostId,
+    postId: FanboxPostId,
     postImageIndex: Int,
     terminate: () -> Unit,
     modifier: Modifier = Modifier,

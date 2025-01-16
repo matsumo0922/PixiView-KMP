@@ -23,14 +23,10 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.unit.dp
-import coil3.annotation.ExperimentalCoilApi
 import coil3.compose.AsyncImage
 import coil3.compose.LocalPlatformContext
 import coil3.compose.SubcomposeAsyncImage
 import coil3.request.ImageRequest
-import me.matsumo.fanbox.core.model.fanbox.FanboxCreatorPlan
-import me.matsumo.fanbox.core.model.fanbox.PaymentMethod
-import me.matsumo.fanbox.core.model.fanbox.id.CreatorId
 import me.matsumo.fanbox.core.resources.Res
 import me.matsumo.fanbox.core.resources.creator_supporting_fan_card
 import me.matsumo.fanbox.core.resources.creator_supporting_payment_method_card
@@ -44,20 +40,23 @@ import me.matsumo.fanbox.core.ui.extensition.SimmerPlaceHolder
 import me.matsumo.fanbox.core.ui.extensition.asCoilImage
 import me.matsumo.fanbox.core.ui.extensition.fanboxHeader
 import me.matsumo.fanbox.core.ui.theme.bold
+import me.matsumo.fankt.fanbox.domain.model.FanboxCreatorPlan
+import me.matsumo.fankt.fanbox.domain.model.FanboxPaymentMethod
+import me.matsumo.fankt.fanbox.domain.model.id.FanboxCreatorId
 import org.jetbrains.compose.resources.stringResource
 
 @Composable
 internal fun SupportingCreatorItem(
     supportingPlan: FanboxCreatorPlan,
     onClickPlanDetail: (String) -> Unit,
-    onClickFanCard: (CreatorId) -> Unit,
-    onClickCreatorPosts: (CreatorId) -> Unit,
+    onClickFanCard: (FanboxCreatorId) -> Unit,
+    onClickCreatorPosts: (FanboxCreatorId) -> Unit,
     modifier: Modifier = Modifier,
 ) {
     Card(
         modifier = modifier
             .clip(RoundedCornerShape(8.dp))
-            .clickable { onClickCreatorPosts.invoke(supportingPlan.user.creatorId) },
+            .clickable { supportingPlan.user?.creatorId?.let(onClickCreatorPosts) },
         shape = RoundedCornerShape(8.dp),
         colors = CardDefaults.cardColors(MaterialTheme.colorScheme.surfaceColorAtElevation(2.dp)),
     ) {
@@ -112,7 +111,7 @@ internal fun SupportingCreatorItem(
             ) {
                 Button(
                     modifier = Modifier.weight(1f),
-                    onClick = { onClickFanCard.invoke(supportingPlan.user.creatorId) },
+                    onClick = { supportingPlan.user?.creatorId?.let(onClickFanCard) },
                 ) {
                     Text(text = stringResource(Res.string.creator_supporting_fan_card))
                 }
@@ -128,11 +127,10 @@ internal fun SupportingCreatorItem(
     }
 }
 
-@OptIn(ExperimentalCoilApi::class)
 @Composable
 private fun UserSection(
     plan: FanboxCreatorPlan,
-    onClickCreator: (CreatorId) -> Unit,
+    onClickCreator: (FanboxCreatorId) -> Unit,
     modifier: Modifier = Modifier,
 ) {
     Row(
@@ -144,7 +142,7 @@ private fun UserSection(
             modifier = Modifier
                 .weight(1f)
                 .clip(RoundedCornerShape(4.dp))
-                .clickable { onClickCreator.invoke(plan.user.creatorId) }
+                .clickable { plan.user?.creatorId?.let(onClickCreator) }
                 .padding(8.dp),
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.spacedBy(12.dp),
@@ -155,7 +153,7 @@ private fun UserSection(
                     .clip(CircleShape),
                 model = ImageRequest.Builder(LocalPlatformContext.current)
                     .error(Res.drawable.im_default_user.asCoilImage())
-                    .data(plan.user.iconUrl)
+                    .data(plan.user?.iconUrl)
                     .build(),
                 contentDescription = null,
             )
@@ -166,7 +164,7 @@ private fun UserSection(
             ) {
                 Text(
                     modifier = Modifier.fillMaxWidth(),
-                    text = plan.user.name,
+                    text = plan.user?.name.orEmpty(),
                     style = MaterialTheme.typography.bodyMedium.bold(),
                     color = MaterialTheme.colorScheme.onSurface,
                 )
@@ -174,10 +172,10 @@ private fun UserSection(
                 Text(
                     modifier = Modifier.fillMaxWidth(),
                     text = when (plan.paymentMethod) {
-                        PaymentMethod.CARD -> stringResource(Res.string.creator_supporting_payment_method_card)
-                        PaymentMethod.PAYPAL -> stringResource(Res.string.creator_supporting_payment_method_paypal)
-                        PaymentMethod.CVS -> stringResource(Res.string.creator_supporting_payment_method_cvs)
-                        PaymentMethod.UNKNOWN -> stringResource(Res.string.creator_supporting_payment_method_unknown)
+                        FanboxPaymentMethod.CARD -> stringResource(Res.string.creator_supporting_payment_method_card)
+                        FanboxPaymentMethod.PAYPAL -> stringResource(Res.string.creator_supporting_payment_method_paypal)
+                        FanboxPaymentMethod.CVS -> stringResource(Res.string.creator_supporting_payment_method_cvs)
+                        FanboxPaymentMethod.UNKNOWN -> stringResource(Res.string.creator_supporting_payment_method_unknown)
                     },
                     style = MaterialTheme.typography.bodySmall,
                     color = MaterialTheme.colorScheme.onSurfaceVariant,

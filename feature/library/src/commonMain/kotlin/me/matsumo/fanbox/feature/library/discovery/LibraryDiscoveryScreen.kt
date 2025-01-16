@@ -36,8 +36,6 @@ import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.toImmutableList
 import kotlinx.coroutines.launch
 import me.matsumo.fanbox.core.model.ScreenState
-import me.matsumo.fanbox.core.model.fanbox.FanboxCreatorDetail
-import me.matsumo.fanbox.core.model.fanbox.id.CreatorId
 import me.matsumo.fanbox.core.resources.Res
 import me.matsumo.fanbox.core.resources.creator_following_pixiv
 import me.matsumo.fanbox.core.resources.creator_recommended
@@ -50,6 +48,9 @@ import me.matsumo.fanbox.core.ui.extensition.NavigatorExtension
 import me.matsumo.fanbox.core.ui.extensition.PixiViewNavigationType
 import me.matsumo.fanbox.core.ui.extensition.drawVerticalScrollbar
 import me.matsumo.fanbox.core.ui.theme.bold
+import me.matsumo.fankt.fanbox.domain.model.FanboxCreatorDetail
+import me.matsumo.fankt.fanbox.domain.model.id.FanboxCreatorId
+import me.matsumo.fankt.fanbox.domain.model.id.FanboxUserId
 import org.jetbrains.compose.resources.stringResource
 import org.koin.compose.koinInject
 import org.koin.compose.viewmodel.koinViewModel
@@ -58,7 +59,7 @@ import org.koin.compose.viewmodel.koinViewModel
 internal fun LibraryDiscoveryRoute(
     openDrawer: () -> Unit,
     navigateToPostSearch: () -> Unit,
-    navigateToCreatorPosts: (CreatorId) -> Unit,
+    navigateToCreatorPosts: (FanboxCreatorId) -> Unit,
     modifier: Modifier = Modifier,
     viewModel: LibraryDiscoveryViewModel = koinViewModel(),
     navigatorExtension: NavigatorExtension = koinInject(),
@@ -97,9 +98,9 @@ private fun LibraryDiscoveryScreen(
     followingPixivCreators: ImmutableList<FanboxCreatorDetail>,
     openDrawer: () -> Unit,
     onClickSearch: () -> Unit,
-    onClickCreator: (CreatorId) -> Unit,
-    onClickFollow: suspend (String) -> Result<Unit>,
-    onClickUnfollow: suspend (String) -> Result<Unit>,
+    onClickCreator: (FanboxCreatorId) -> Unit,
+    onClickFollow: suspend (FanboxUserId) -> Result<Unit>,
+    onClickUnfollow: suspend (FanboxUserId) -> Result<Unit>,
     onClickSupporting: (String) -> Unit,
     modifier: Modifier = Modifier,
 ) {

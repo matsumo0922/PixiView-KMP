@@ -35,14 +35,14 @@ calf = "0.5.5"
 androidxCore = "1.15.0"
 androidxCoreSplash = "1.0.1"
 androidxAppCompat = "1.7.0"
-androidxActivity = "1.9.3"
+androidxActivity = "1.10.0"
 androidxFragment = "1.8.5"
 androidxPreference = "1.2.1"
-androidxDataStore = "1.1.1"
+androidxDataStore = "1.1.2"
 androidxPalette = "1.0.0"
 androidxAnnotation = "1.9.1"
 androidxMedia3 = "1.5.1"
-androidxCompose = "2024.12.01"
+androidxCompose = "2025.01.00"
 
 # Google
 playReview = "2.0.2"
@@ -61,7 +61,7 @@ billing = "6.1.0"
 koin = "4.0.0"
 
 # matsumo
-fankt = "0.0.2"
+fankt = "0.0.6"
 
 # Others
 ktor = "3.0.1"
@@ -213,7 +213,7 @@ ktor-serialization-json = { module = "io.ktor:ktor-serialization-kotlinx-json", 
 ktot-logging = { module = "io.ktor:ktor-client-logging", version.ref = "ktor" }
 
 # matsumo
-fankt = { module = "me.matsumo:fankt", version.ref = "fankt" }
+fankt-fanbox = { module = "me.matsumo.fankt:fanbox", version.ref = "fankt" }
 
 # Others
 coil3-compose = { module = "io.coil-kt.coil3:coil-compose", version.ref = "coil3" }

@@ -48,12 +48,6 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import me.matsumo.fanbox.core.model.ScreenState
 import me.matsumo.fanbox.core.model.UserData
-import me.matsumo.fanbox.core.model.fanbox.FanboxCreatorDetail
-import me.matsumo.fanbox.core.model.fanbox.FanboxCreatorPlan
-import me.matsumo.fanbox.core.model.fanbox.FanboxCreatorTag
-import me.matsumo.fanbox.core.model.fanbox.FanboxPost
-import me.matsumo.fanbox.core.model.fanbox.id.CreatorId
-import me.matsumo.fanbox.core.model.fanbox.id.PostId
 import me.matsumo.fanbox.core.resources.Res
 import me.matsumo.fanbox.core.resources.creator_tab_plans
 import me.matsumo.fanbox.core.resources.creator_tab_posts
@@ -70,6 +64,13 @@ import me.matsumo.fanbox.feature.creator.top.items.CreatorTopMenuDialog
 import me.matsumo.fanbox.feature.creator.top.items.CreatorTopPlansScreen
 import me.matsumo.fanbox.feature.creator.top.items.CreatorTopPostsScreen
 import me.matsumo.fanbox.feature.creator.top.items.CreatorTopRewardAdDialog
+import me.matsumo.fankt.fanbox.domain.model.FanboxCreatorDetail
+import me.matsumo.fankt.fanbox.domain.model.FanboxCreatorPlan
+import me.matsumo.fankt.fanbox.domain.model.FanboxPost
+import me.matsumo.fankt.fanbox.domain.model.FanboxTag
+import me.matsumo.fankt.fanbox.domain.model.id.FanboxCreatorId
+import me.matsumo.fankt.fanbox.domain.model.id.FanboxPostId
+import me.matsumo.fankt.fanbox.domain.model.id.FanboxUserId
 import org.jetbrains.compose.resources.StringResource
 import org.jetbrains.compose.resources.stringResource
 import org.koin.compose.koinInject
@@ -77,11 +78,11 @@ import org.koin.compose.viewmodel.koinViewModel
 
 @Composable
 internal fun CreatorTopRoute(
-    creatorId: CreatorId,
+    creatorId: FanboxCreatorId,
     isPosts: Boolean,
-    navigateToPostDetail: (PostId) -> Unit,
-    navigateToPostSearch: (String, CreatorId) -> Unit,
-    navigateToDownloadAll: (CreatorId) -> Unit,
+    navigateToPostDetail: (FanboxPostId) -> Unit,
+    navigateToPostSearch: (String, FanboxCreatorId) -> Unit,
+    navigateToDownloadAll: (FanboxCreatorId) -> Unit,
     navigateToBillingPlus: (String?) -> Unit,
     navigateToAlertDialog: (SimpleAlertContents, () -> Unit, () -> Unit) -> Unit,
     terminate: () -> Unit,
@@ -112,7 +113,7 @@ internal fun CreatorTopRoute(
             isBlocked = uiState.isBlocked,
             isAbleToReward = uiState.isAbleToReward,
             userData = uiState.userData,
-            bookmarkedPosts = uiState.bookmarkedPosts.toImmutableList(),
+            bookmarkedPostsIds = uiState.bookmarkedPostsIds.toImmutableList(),
             creatorDetail = uiState.creatorDetail,
             creatorPlans = uiState.creatorPlans.toImmutableList(),
             creatorTags = uiState.creatorTags.toImmutableList(),
@@ -165,20 +166,20 @@ private fun CreatorTopScreen(
     isAbleToReward: Boolean,
     creatorDetail: FanboxCreatorDetail,
     userData: UserData,
-    bookmarkedPosts: ImmutableList<PostId>,
+    bookmarkedPostsIds: ImmutableList<FanboxPostId>,
     creatorPlans: ImmutableList<FanboxCreatorPlan>,
-    creatorTags: ImmutableList<FanboxCreatorTag>,
+    creatorTags: ImmutableList<FanboxTag>,
     creatorPostsPaging: LazyPagingItems<FanboxPost>,
-    onClickAllDownload: (CreatorId) -> Unit,
+    onClickAllDownload: (FanboxCreatorId) -> Unit,
     onClickBillingPlus: () -> Unit,
-    onClickPost: (PostId) -> Unit,
-    onClickPostLike: (PostId) -> Unit,
+    onClickPost: (FanboxPostId) -> Unit,
+    onClickPostLike: (FanboxPostId) -> Unit,
     onClickPostBookmark: (FanboxPost, Boolean) -> Unit,
     onClickPlan: (FanboxCreatorPlan) -> Unit,
-    onClickTag: (FanboxCreatorTag) -> Unit,
+    onClickTag: (FanboxTag) -> Unit,
     onClickLink: (String) -> Unit,
-    onClickFollow: suspend (String) -> Result<Unit>,
-    onClickUnfollow: suspend (String) -> Result<Unit>,
+    onClickFollow: suspend (FanboxUserId) -> Result<Unit>,
+    onClickUnfollow: suspend (FanboxUserId) -> Result<Unit>,
     onShowBlockDialog: (SimpleAlertContents) -> Unit,
     onShowUnblockDialog: (SimpleAlertContents) -> Unit,
     onRewarded: () -> Unit,
@@ -290,7 +291,7 @@ private fun CreatorTopScreen(
                                 CreatorTopPostsScreen(
                                     modifier = Modifier.fillMaxSize(),
                                     userData = userData,
-                                    bookmarkedPosts = bookmarkedPosts.toImmutableList(),
+                                    bookmarkedPostsIds = bookmarkedPostsIds.toImmutableList(),
                                     pagingAdapter = creatorPostsPaging,
                                     creatorTags = creatorTags,
                                     onClickPost = onClickPost,

@@ -7,13 +7,13 @@ import androidx.navigation.NavGraphBuilder
 import androidx.navigation.NavType
 import androidx.navigation.compose.composable
 import androidx.navigation.navArgument
-import me.matsumo.fanbox.core.model.fanbox.id.CreatorId
 import me.matsumo.fanbox.core.ui.extensition.navigateWithLog
+import me.matsumo.fankt.fanbox.domain.model.id.FanboxCreatorId
 
 const val FanCardId = "fanCardId"
 const val FanCardRoute = "fanCard/{$FanCardId}"
 
-fun NavController.navigateToFanCard(creatorId: CreatorId) {
+fun NavController.navigateToFanCard(creatorId: FanboxCreatorId) {
     this.navigateWithLog("fanCard/$creatorId")
 }
 
@@ -26,7 +26,7 @@ fun NavGraphBuilder.fanCardScreen(
     ) {
         FanCardRoute(
             modifier = Modifier.fillMaxSize(),
-            creatorId = CreatorId(it.arguments?.getString(FanCardId).orEmpty()),
+            creatorId = FanboxCreatorId(it.arguments?.getString(FanCardId).orEmpty()),
             terminate = terminate,
         )
     }

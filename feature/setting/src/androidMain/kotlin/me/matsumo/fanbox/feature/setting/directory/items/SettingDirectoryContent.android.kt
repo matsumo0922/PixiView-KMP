@@ -11,10 +11,10 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.core.net.toUri
 import me.matsumo.fanbox.core.resources.Res
-import me.matsumo.fanbox.core.ui.component.SettingTextItem
 import me.matsumo.fanbox.core.resources.setting_top_file_directory_file
 import me.matsumo.fanbox.core.resources.setting_top_file_directory_image
 import me.matsumo.fanbox.core.resources.setting_top_file_directory_post
+import me.matsumo.fanbox.core.ui.component.SettingTextItem
 import org.jetbrains.compose.resources.StringResource
 import org.jetbrains.compose.resources.stringResource
 

@@ -1,7 +1,6 @@
 package me.matsumo.fanbox.core.ui.component
 
 import androidx.compose.animation.animateContentSize
-import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -36,32 +35,31 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
-import coil3.annotation.ExperimentalCoilApi
 import coil3.compose.AsyncImage
 import coil3.compose.LocalPlatformContext
 import coil3.compose.SubcomposeAsyncImage
 import coil3.request.ImageRequest
-import me.matsumo.fanbox.core.model.fanbox.FanboxCreatorDetail
-import me.matsumo.fanbox.core.model.fanbox.id.CreatorId
 import me.matsumo.fanbox.core.resources.Res
 import me.matsumo.fanbox.core.resources.common_follow
 import me.matsumo.fanbox.core.resources.common_supporting
 import me.matsumo.fanbox.core.resources.common_unfollow
+import me.matsumo.fanbox.core.resources.im_default_user
 import me.matsumo.fanbox.core.ui.extensition.FadePlaceHolder
 import me.matsumo.fanbox.core.ui.extensition.SimmerPlaceHolder
 import me.matsumo.fanbox.core.ui.extensition.asCoilImage
 import me.matsumo.fanbox.core.ui.extensition.fanboxHeader
-import me.matsumo.fanbox.core.resources.im_default_user
 import me.matsumo.fanbox.core.ui.theme.bold
+import me.matsumo.fankt.fanbox.domain.model.FanboxCreatorDetail
+import me.matsumo.fankt.fanbox.domain.model.id.FanboxCreatorId
+import me.matsumo.fankt.fanbox.domain.model.id.FanboxUserId
 import org.jetbrains.compose.resources.stringResource
 
-@OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun CreatorItem(
     creatorDetail: FanboxCreatorDetail,
-    onClickCreator: (CreatorId) -> Unit,
-    onClickFollow: (String) -> Unit,
-    onClickUnfollow: (String) -> Unit,
+    onClickCreator: (FanboxCreatorId) -> Unit,
+    onClickFollow: (FanboxUserId) -> Unit,
+    onClickUnfollow: (FanboxUserId) -> Unit,
     onClickSupporting: (String) -> Unit,
     modifier: Modifier = Modifier,
     isFollowed: Boolean = creatorDetail.isFollowed,
@@ -164,13 +162,12 @@ fun CreatorItem(
     }
 }
 
-@OptIn(ExperimentalCoilApi::class)
 @Composable
 private fun UserSection(
     creatorDetail: FanboxCreatorDetail,
     isFollowed: Boolean,
-    onClickFollow: (String) -> Unit,
-    onClickUnfollow: (String) -> Unit,
+    onClickFollow: (FanboxUserId) -> Unit,
+    onClickUnfollow: (FanboxUserId) -> Unit,
     onClickSupporting: (String) -> Unit,
     modifier: Modifier = Modifier,
 ) {
@@ -185,7 +182,7 @@ private fun UserSection(
                 .clip(CircleShape),
             model = ImageRequest.Builder(LocalPlatformContext.current)
                 .error(Res.drawable.im_default_user.asCoilImage())
-                .data(creatorDetail.user.iconUrl)
+                .data(creatorDetail.user?.iconUrl)
                 .build(),
             contentDescription = null,
         )
@@ -196,14 +193,14 @@ private fun UserSection(
         ) {
             Text(
                 modifier = Modifier.fillMaxWidth(),
-                text = creatorDetail.user.name,
+                text = creatorDetail.user?.name.orEmpty(),
                 style = MaterialTheme.typography.titleMedium.bold(),
                 color = MaterialTheme.colorScheme.primary,
             )
 
             Text(
                 modifier = Modifier.fillMaxWidth(),
-                text = "@${creatorDetail.user.creatorId}",
+                text = "@${creatorDetail.user?.creatorId ?: "Unknown"}",
                 style = MaterialTheme.typography.bodySmall,
                 color = MaterialTheme.colorScheme.onSurfaceVariant,
             )
@@ -217,13 +214,13 @@ private fun UserSection(
             }
 
             isFollowed -> {
-                OutlinedButton(onClick = { onClickUnfollow.invoke(creatorDetail.user.userId) }) {
+                OutlinedButton(onClick = { creatorDetail.user?.userId?.let(onClickUnfollow) }) {
                     Text(stringResource(Res.string.common_unfollow))
                 }
             }
 
             else -> {
-                Button(onClick = { onClickFollow.invoke(creatorDetail.user.userId) }) {
+                Button(onClick = { creatorDetail.user?.userId?.let(onClickFollow) }) {
                     Text(stringResource(Res.string.common_follow))
                 }
             }

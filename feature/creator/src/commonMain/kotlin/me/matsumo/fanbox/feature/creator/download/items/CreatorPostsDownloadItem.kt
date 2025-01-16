@@ -46,13 +46,13 @@ import coil3.compose.SubcomposeAsyncImage
 import coil3.request.ImageRequest
 import io.github.aakira.napier.Napier
 import kotlinx.coroutines.delay
-import me.matsumo.fanbox.core.model.fanbox.FanboxPost
 import me.matsumo.fanbox.core.resources.Res
 import me.matsumo.fanbox.core.resources.fanbox_free_fee
 import me.matsumo.fanbox.core.resources.unit_jpy
 import me.matsumo.fanbox.core.ui.extensition.fanboxHeader
 import me.matsumo.fanbox.core.ui.theme.bold
 import me.matsumo.fanbox.feature.creator.download.CreatorPostsDownloadData
+import me.matsumo.fankt.fanbox.domain.model.FanboxPost
 import org.jetbrains.compose.resources.stringResource
 import kotlin.random.Random
 

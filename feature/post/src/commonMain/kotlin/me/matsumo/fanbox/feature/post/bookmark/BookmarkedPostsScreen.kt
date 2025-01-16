@@ -4,7 +4,6 @@ import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.animation.togetherWith
-import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.PaddingValues
@@ -34,26 +33,26 @@ import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.toImmutableList
 import me.matsumo.fanbox.core.model.ScreenState
 import me.matsumo.fanbox.core.model.UserData
-import me.matsumo.fanbox.core.model.fanbox.FanboxPost
-import me.matsumo.fanbox.core.model.fanbox.id.CreatorId
-import me.matsumo.fanbox.core.model.fanbox.id.PostId
-import me.matsumo.fanbox.core.ui.AsyncLoadContents
 import me.matsumo.fanbox.core.resources.Res
 import me.matsumo.fanbox.core.resources.bookmark_empty_description
 import me.matsumo.fanbox.core.resources.bookmark_empty_title
+import me.matsumo.fanbox.core.ui.AsyncLoadContents
 import me.matsumo.fanbox.core.ui.component.PostItem
 import me.matsumo.fanbox.core.ui.extensition.LocalNavigationType
 import me.matsumo.fanbox.core.ui.extensition.PixiViewNavigationType
 import me.matsumo.fanbox.core.ui.extensition.drawVerticalScrollbar
 import me.matsumo.fanbox.core.ui.view.ErrorView
 import me.matsumo.fanbox.feature.post.bookmark.items.BookmarkedPostsTopBar
+import me.matsumo.fankt.fanbox.domain.model.FanboxPost
+import me.matsumo.fankt.fanbox.domain.model.id.FanboxCreatorId
+import me.matsumo.fankt.fanbox.domain.model.id.FanboxPostId
 import org.koin.compose.viewmodel.koinViewModel
 
 @Composable
 internal fun BookmarkedPostsRoute(
-    navigateToPostDetail: (PostId) -> Unit,
-    navigateToCreatorPosts: (CreatorId) -> Unit,
-    navigateToCreatorPlans: (CreatorId) -> Unit,
+    navigateToPostDetail: (FanboxPostId) -> Unit,
+    navigateToCreatorPosts: (FanboxCreatorId) -> Unit,
+    navigateToCreatorPlans: (FanboxCreatorId) -> Unit,
     terminate: () -> Unit,
     modifier: Modifier = Modifier,
     viewModel: BookmarkedPostsViewModel = koinViewModel(),
@@ -74,7 +73,8 @@ internal fun BookmarkedPostsRoute(
         BookmarkedPostsScreen(
             modifier = Modifier.fillMaxSize(),
             userData = it.userData,
-            bookmarkedPosts = it.bookmarkedPosts.toImmutableList(),
+            posts = it.posts.toImmutableList(),
+            bookmarkedPostIds = it.bookmarkedPostIds.toImmutableList(),
             onSearch = viewModel::search,
             onClickPost = navigateToPostDetail,
             onCLickPostLike = viewModel::postLike,
@@ -86,17 +86,18 @@ internal fun BookmarkedPostsRoute(
     }
 }
 
-@OptIn(ExperimentalMaterial3Api::class, ExperimentalFoundationApi::class)
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 private fun BookmarkedPostsScreen(
     userData: UserData,
-    bookmarkedPosts: ImmutableList<FanboxPost>,
+    posts: ImmutableList<FanboxPost>,
+    bookmarkedPostIds: ImmutableList<FanboxPostId>,
     onSearch: (String) -> Unit,
-    onClickPost: (PostId) -> Unit,
-    onCLickPostLike: (PostId) -> Unit,
+    onClickPost: (FanboxPostId) -> Unit,
+    onCLickPostLike: (FanboxPostId) -> Unit,
     onClickPostBookmark: (FanboxPost, Boolean) -> Unit,
-    onClickCreatorPosts: (CreatorId) -> Unit,
-    onClickCreatorPlans: (CreatorId) -> Unit,
+    onClickCreatorPosts: (FanboxCreatorId) -> Unit,
+    onClickCreatorPlans: (FanboxCreatorId) -> Unit,
     onTerminate: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
@@ -131,7 +132,7 @@ private fun BookmarkedPostsScreen(
                 .fillMaxSize(),
         ) {
             AnimatedContent(
-                targetState = bookmarkedPosts.isNotEmpty(),
+                targetState = posts.isNotEmpty(),
                 transitionSpec = { fadeIn().togetherWith(fadeOut()) },
                 label = "BookmarkedPostsScreen",
             ) { targetState ->
@@ -145,7 +146,7 @@ private fun BookmarkedPostsScreen(
                         horizontalArrangement = Arrangement.spacedBy(16.dp),
                     ) {
                         items(
-                            items = bookmarkedPosts,
+                            items = posts,
                             key = { it.id.uniqueValue },
                         ) { likedPost ->
                             PostItem(
@@ -156,7 +157,8 @@ private fun BookmarkedPostsScreen(
                                 isHideAdultContents = userData.isHideAdultContents,
                                 isOverrideAdultContents = userData.isAllowedShowAdultContents,
                                 isTestUser = userData.isTestUser,
-                                onClickPost = { if (!likedPost.isRestricted) onClickPost.invoke(it) },
+                                isBookmarked = bookmarkedPostIds.contains(likedPost.id),
+                                onClickPost = onClickPost,
                                 onClickBookmark = { _, isBookmarked -> onClickPostBookmark.invoke(likedPost, isBookmarked) },
                                 onClickCreator = onClickCreatorPosts,
                                 onClickLike = onCLickPostLike,
