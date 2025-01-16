@@ -1,6 +1,5 @@
 package me.matsumo.fanbox.feature.post.detail
 
-import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -39,22 +38,14 @@ import app.cash.paging.compose.collectAsLazyPagingItems
 import coil3.compose.LocalPlatformContext
 import coil3.compose.SubcomposeAsyncImage
 import coil3.request.ImageRequest
+import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.toImmutableList
 import kotlinx.coroutines.launch
 import me.matsumo.fanbox.core.common.util.format
 import me.matsumo.fanbox.core.logs.category.PostsLog
 import me.matsumo.fanbox.core.logs.logger.send
-import me.matsumo.fanbox.core.model.PageOffsetInfo
 import me.matsumo.fanbox.core.model.ScreenState
 import me.matsumo.fanbox.core.model.UserData
-import me.matsumo.fanbox.core.model.fanbox.FanboxComments
-import me.matsumo.fanbox.core.model.fanbox.FanboxCreatorDetail
-import me.matsumo.fanbox.core.model.fanbox.FanboxMetaData
-import me.matsumo.fanbox.core.model.fanbox.FanboxPost
-import me.matsumo.fanbox.core.model.fanbox.FanboxPostDetail
-import me.matsumo.fanbox.core.model.fanbox.id.FanboxCommentId
-import me.matsumo.fanbox.core.model.fanbox.id.FanboxCreatorId
-import me.matsumo.fanbox.core.model.fanbox.id.FanboxPostId
 import me.matsumo.fanbox.core.resources.Res
 import me.matsumo.fanbox.core.resources.common_downloaded
 import me.matsumo.fanbox.core.resources.error_network
@@ -85,12 +76,23 @@ import me.matsumo.fanbox.feature.post.detail.items.postDetailCardSection
 import me.matsumo.fanbox.feature.post.detail.items.postDetailCommentItems
 import me.matsumo.fanbox.feature.post.detail.items.postDetailItems
 import me.matsumo.fanbox.feature.post.detail.items.postDetailTagsSection
+import me.matsumo.fankt.fanbox.domain.PageOffsetInfo
+import me.matsumo.fankt.fanbox.domain.model.FanboxComment
+import me.matsumo.fankt.fanbox.domain.model.FanboxCover
+import me.matsumo.fankt.fanbox.domain.model.FanboxCreatorDetail
+import me.matsumo.fankt.fanbox.domain.model.FanboxMetaData
+import me.matsumo.fankt.fanbox.domain.model.FanboxPost
+import me.matsumo.fankt.fanbox.domain.model.FanboxPostDetail
+import me.matsumo.fankt.fanbox.domain.model.id.FanboxCommentId
+import me.matsumo.fankt.fanbox.domain.model.id.FanboxCreatorId
+import me.matsumo.fankt.fanbox.domain.model.id.FanboxPostId
+import me.matsumo.fankt.fanbox.domain.model.id.FanboxUserId
 import org.koin.compose.koinInject
 import org.koin.compose.viewmodel.koinViewModel
 import kotlin.uuid.ExperimentalUuidApi
 import kotlin.uuid.Uuid
 
-@OptIn(ExperimentalFoundationApi::class, ExperimentalUuidApi::class)
+@OptIn(ExperimentalUuidApi::class)
 @Composable
 internal fun PostDetailRoute(
     postId: FanboxPostId,
@@ -204,6 +206,7 @@ private fun PostDetailView(
             creatorDetail = uiState.creatorDetail,
             userData = uiState.userData,
             metaData = uiState.metaData,
+            bookmarkedPostIds = uiState.bookmarkedPostIds.toImmutableList(),
             onClickPost = navigateToPostDetail,
             onClickPostLike = {
                 PostsLog.like(postId.value).send()
@@ -239,9 +242,12 @@ private fun PostDetailView(
                     viewModel.commentDelete(postId, it)
                 }
             },
-            onClickTag = { navigateToPostSearch.invoke(it, uiState.postDetail.user.creatorId) },
+            onClickTag = { tag ->
+                uiState.postDetail.user?.creatorId?.let { navigateToPostSearch.invoke(tag, it) }
+            },
             onClickCreator = navigateToCreatorPlans,
             onClickImage = { item ->
+                uiState.postDetail
                 uiState.postDetail.body.imageItems.indexOf(item).let { index ->
                     navigateToPostImage.invoke(postId, index)
                 }
@@ -278,8 +284,9 @@ private fun PostDetailView(
 @Composable
 private fun PostDetailScreen(
     postDetail: FanboxPostDetail,
-    comments: PageOffsetInfo<FanboxComments.Item>,
+    comments: PageOffsetInfo<FanboxComment>,
     creatorDetail: FanboxCreatorDetail,
+    bookmarkedPostIds: ImmutableList<FanboxPostId>,
     userData: UserData,
     metaData: FanboxMetaData,
     onClickPost: (FanboxPostId) -> Unit,
@@ -296,8 +303,8 @@ private fun PostDetailScreen(
     onClickDownloadImages: (List<FanboxPostDetail.ImageItem>) -> Unit,
     onClickCreatorPosts: (FanboxCreatorId) -> Unit,
     onClickCreatorPlans: (FanboxCreatorId) -> Unit,
-    onClickFollow: (String) -> Unit,
-    onClickUnfollow: (String) -> Unit,
+    onClickFollow: (FanboxUserId) -> Unit,
+    onClickUnfollow: (FanboxUserId) -> Unit,
     onClickOpenBrowser: (String) -> Unit,
     onTerminate: () -> Unit,
     modifier: Modifier = Modifier,
@@ -306,7 +313,7 @@ private fun PostDetailScreen(
 
     var isShowMenu by remember { mutableStateOf(false) }
     var isPostLiked by rememberSaveable(postDetail.isLiked) { mutableStateOf(postDetail.isLiked) }
-    var isBookmarked by remember(postDetail.isBookmarked) { mutableStateOf(postDetail.isBookmarked) }
+    val isBookmarked by remember(bookmarkedPostIds) { mutableStateOf(bookmarkedPostIds.contains(postDetail.id)) }
 
     var isShowCommentEditor by remember { mutableStateOf(false) }
     var latestComment by remember { mutableStateOf("") }
@@ -314,7 +321,7 @@ private fun PostDetailScreen(
     LaunchedEffect(comments) {
         if (isShowCommentEditor) {
             val commentItems = comments.contents.flatMap { comment -> listOf(comment) + comment.replies }
-            isShowCommentEditor = !commentItems.any { comment -> comment.user.name == metaData.context.user.name && comment.body == latestComment }
+            isShowCommentEditor = !commentItems.any { comment -> comment.user?.name == metaData.context.user.name && comment.body == latestComment }
         }
     }
 
@@ -346,6 +353,7 @@ private fun PostDetailScreen(
             postDetailItems(
                 post = postDetail,
                 userData = userData,
+                isBookmarked = isBookmarked,
                 onClickCreator = onClickCreator,
                 onClickPost = onClickPost,
                 onClickPostLike = onClickPostLike,
@@ -374,8 +382,7 @@ private fun PostDetailScreen(
                         onClickPostLike.invoke(postDetail.id)
                     },
                     onClickBookmark = {
-                        isBookmarked = it
-                        onClickPostBookmark.invoke(postDetail.asPost(), isBookmarked)
+                        onClickPostBookmark.invoke(postDetail.adPost(), !isBookmarked)
                     },
                 )
             }
@@ -541,4 +548,26 @@ private fun FileThumbnail(
             contentDescription = null,
         )
     }
+}
+
+private fun FanboxPostDetail.adPost(): FanboxPost {
+    return FanboxPost(
+        id = id,
+        title = title,
+        excerpt = excerpt,
+        cover = FanboxCover(
+            url = coverImageUrl ?: body.imageItems.firstOrNull()?.thumbnailUrl.orEmpty(),
+            type = "From Detail",
+        ),
+        hasAdultContent = hasAdultContent,
+        isLiked = isLiked,
+        isRestricted = isRestricted,
+        likeCount = likeCount,
+        commentCount = commentCount,
+        updatedDatetime = updatedDatetime,
+        publishedDatetime = publishedDatetime,
+        feeRequired = feeRequired,
+        user = user,
+        tags = tags,
+    )
 }

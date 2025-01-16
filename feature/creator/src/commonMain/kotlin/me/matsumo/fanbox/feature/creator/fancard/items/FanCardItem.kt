@@ -28,12 +28,12 @@ import coil3.compose.LocalPlatformContext
 import coil3.compose.SubcomposeAsyncImage
 import coil3.request.ImageRequest
 import me.matsumo.fanbox.core.common.util.format
-import me.matsumo.fanbox.core.model.fanbox.FanboxCreatorPlanDetail
 import me.matsumo.fanbox.core.resources.Res
 import me.matsumo.fanbox.core.resources.im_fanbox_logo_dark
 import me.matsumo.fanbox.core.resources.im_fanbox_logo_light
 import me.matsumo.fanbox.core.ui.extensition.FadePlaceHolder
 import me.matsumo.fanbox.core.ui.extensition.fanboxHeader
+import me.matsumo.fankt.fanbox.domain.model.FanboxCreatorPlanDetail
 import org.jetbrains.compose.resources.painterResource
 
 @Composable

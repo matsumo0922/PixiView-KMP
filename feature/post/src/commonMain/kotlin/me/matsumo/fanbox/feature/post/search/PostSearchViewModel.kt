@@ -13,13 +13,15 @@ import kotlinx.coroutines.launch
 import kotlinx.serialization.Serializable
 import me.matsumo.fanbox.core.common.util.suspendRunCatching
 import me.matsumo.fanbox.core.model.UserData
-import me.matsumo.fanbox.core.model.fanbox.FanboxCreatorDetail
-import me.matsumo.fanbox.core.model.fanbox.FanboxPost
-import me.matsumo.fanbox.core.model.fanbox.id.FanboxCreatorId
-import me.matsumo.fanbox.core.model.fanbox.id.FanboxPostId
 import me.matsumo.fanbox.core.repository.FanboxRepository
 import me.matsumo.fanbox.core.repository.UserDataRepository
 import me.matsumo.fanbox.core.ui.extensition.emptyPaging
+import me.matsumo.fankt.fanbox.domain.model.FanboxCreatorDetail
+import me.matsumo.fankt.fanbox.domain.model.FanboxPost
+import me.matsumo.fankt.fanbox.domain.model.FanboxTag
+import me.matsumo.fankt.fanbox.domain.model.id.FanboxCreatorId
+import me.matsumo.fankt.fanbox.domain.model.id.FanboxPostId
+import me.matsumo.fankt.fanbox.domain.model.id.FanboxUserId
 
 class PostSearchViewModel(
     private val userDataRepository: UserDataRepository,
@@ -48,7 +50,7 @@ class PostSearchViewModel(
         }
 
         viewModelScope.launch {
-            fanboxRepository.bookmarkedPosts.collectLatest { data ->
+            fanboxRepository.bookmarkedPostsIds.collectLatest { data ->
                 _uiState.value = uiState.value.copy(bookmarkedPosts = data)
             }
         }
@@ -92,13 +94,13 @@ class PostSearchViewModel(
         }
     }
 
-    suspend fun follow(creatorUserId: String): Result<Unit> {
+    suspend fun follow(creatorUserId: FanboxUserId): Result<Unit> {
         return suspendRunCatching {
             fanboxRepository.followCreator(creatorUserId)
         }
     }
 
-    suspend fun unfollow(creatorUserId: String): Result<Unit> {
+    suspend fun unfollow(creatorUserId: FanboxUserId): Result<Unit> {
         return suspendRunCatching {
             fanboxRepository.unfollowCreator(creatorUserId)
         }

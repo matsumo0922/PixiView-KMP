@@ -4,6 +4,7 @@ package me.matsumo.fanbox.core.ui.component
 
 import androidx.compose.foundation.layout.ColumnScope
 import androidx.compose.foundation.layout.RowScope
+import androidx.compose.material.BottomNavigation
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.NavigationBar
 import androidx.compose.material3.NavigationBarItem
@@ -22,8 +23,8 @@ fun PixiViewNavigationBar(
 ) {
     NavigationBar(
         modifier = modifier,
+        containerColor = PixiViewNavigationDefaults.navigationContainerColor(),
         contentColor = PixiViewNavigationDefaults.navigationContentColor(),
-        tonalElevation = 0.dp,
         content = content,
     )
 }
@@ -60,6 +61,7 @@ fun PixiViewNavigationRail(
 ) {
     NavigationRail(
         modifier = modifier,
+        containerColor = PixiViewNavigationDefaults.navigationContainerColor(),
         contentColor = PixiViewNavigationDefaults.navigationContentColor(),
         content = content,
     )
@@ -91,6 +93,9 @@ fun ColumnScope.PixiViewNavigationRailItem(
 }
 
 object PixiViewNavigationDefaults {
+    @Composable
+    fun navigationContainerColor() = MaterialTheme.colorScheme.surface
+
     @Composable
     fun navigationContentColor() = MaterialTheme.colorScheme.onSurfaceVariant
 

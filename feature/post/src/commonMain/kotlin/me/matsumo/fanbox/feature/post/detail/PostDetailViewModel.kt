@@ -9,16 +9,8 @@ import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
 import me.matsumo.fanbox.core.common.util.suspendRunCatching
-import me.matsumo.fanbox.core.model.PageOffsetInfo
 import me.matsumo.fanbox.core.model.ScreenState
 import me.matsumo.fanbox.core.model.UserData
-import me.matsumo.fanbox.core.model.fanbox.FanboxComments
-import me.matsumo.fanbox.core.model.fanbox.FanboxCreatorDetail
-import me.matsumo.fanbox.core.model.fanbox.FanboxMetaData
-import me.matsumo.fanbox.core.model.fanbox.FanboxPost
-import me.matsumo.fanbox.core.model.fanbox.FanboxPostDetail
-import me.matsumo.fanbox.core.model.fanbox.id.FanboxCommentId
-import me.matsumo.fanbox.core.model.fanbox.id.FanboxPostId
 import me.matsumo.fanbox.core.model.updateWhenIdle
 import me.matsumo.fanbox.core.repository.DownloadPostsRepository
 import me.matsumo.fanbox.core.repository.FanboxRepository
@@ -29,6 +21,15 @@ import me.matsumo.fanbox.core.resources.post_detail_comment_comment_failed
 import me.matsumo.fanbox.core.resources.post_detail_comment_commented
 import me.matsumo.fanbox.core.resources.post_detail_comment_delete_failed
 import me.matsumo.fanbox.core.resources.post_detail_comment_delete_success
+import me.matsumo.fankt.fanbox.domain.PageOffsetInfo
+import me.matsumo.fankt.fanbox.domain.model.FanboxComment
+import me.matsumo.fankt.fanbox.domain.model.FanboxCreatorDetail
+import me.matsumo.fankt.fanbox.domain.model.FanboxMetaData
+import me.matsumo.fankt.fanbox.domain.model.FanboxPost
+import me.matsumo.fankt.fanbox.domain.model.FanboxPostDetail
+import me.matsumo.fankt.fanbox.domain.model.id.FanboxCommentId
+import me.matsumo.fankt.fanbox.domain.model.id.FanboxPostId
+import me.matsumo.fankt.fanbox.domain.model.id.FanboxUserId
 import org.jetbrains.compose.resources.StringResource
 
 class PostDetailViewModel(
@@ -49,9 +50,9 @@ class PostDetailViewModel(
         }
 
         viewModelScope.launch {
-            fanboxRepository.bookmarkedPosts.collectLatest { bookmarkedPosts ->
+            fanboxRepository.bookmarkedPostsIds.collectLatest { bookmarkedPostsIds ->
                 _screenState.value = screenState.updateWhenIdle {
-                    it.copy(postDetail = it.postDetail.copy(isBookmarked = it.postDetail.id in bookmarkedPosts))
+                    it.copy(bookmarkedPostIds = bookmarkedPostsIds)
                 }
             }
         }
@@ -62,12 +63,13 @@ class PostDetailViewModel(
             _screenState.value = ScreenState.Loading
             _screenState.value = suspendRunCatching {
                 val postDetail = fanboxRepository.getPostDetail(postId)
-                val creatorDetail = fanboxRepository.getCreatorDetailCached(postDetail.user.creatorId)
+                val creatorDetail = fanboxRepository.getCreatorDetailCached(postDetail.user!!.creatorId!!)
                 val comments = fanboxRepository.getPostComment(postId)
 
                 PostDetailUiState(
                     userData = userDataRepository.userData.first(),
-                    metaData = fanboxRepository.metaData.first(),
+                    metaData = fanboxRepository.getMetadata(),
+                    bookmarkedPostIds = fanboxRepository.bookmarkedPostsIds.first(),
                     postDetail = postDetail,
                     creatorDetail = creatorDetail,
                     comments = comments,
@@ -79,7 +81,7 @@ class PostDetailViewModel(
         }
 
         viewModelScope.launch {
-            fanboxRepository.bookmarkedPosts.collectLatest { bookmarkedPosts ->
+            fanboxRepository.bookmarkedPostsIds.collectLatest { bookmarkedPosts ->
                 _screenState.value = screenState.updateWhenIdle {
                     it.copy(postDetail = it.postDetail.copy(isBookmarked = it.postDetail.id in bookmarkedPosts))
                 }
@@ -184,7 +186,7 @@ class PostDetailViewModel(
         }
     }
 
-    fun follow(creatorUserId: String) {
+    fun follow(creatorUserId: FanboxUserId) {
         viewModelScope.launch {
             (screenState.value as? ScreenState.Idle)?.also { data ->
                 val creatorDetail = suspendRunCatching {
@@ -199,7 +201,7 @@ class PostDetailViewModel(
         }
     }
 
-    fun unfollow(creatorUserId: String) {
+    fun unfollow(creatorUserId: FanboxUserId) {
         viewModelScope.launch {
             (screenState.value as? ScreenState.Idle)?.also { data ->
                 val creatorDetail = suspendRunCatching {
@@ -235,8 +237,9 @@ class PostDetailViewModel(
 data class PostDetailUiState(
     val userData: UserData,
     val metaData: FanboxMetaData,
+    val bookmarkedPostIds: List<FanboxPostId>,
     val creatorDetail: FanboxCreatorDetail,
     val postDetail: FanboxPostDetail,
-    val comments: PageOffsetInfo<FanboxComments.Item>,
+    val comments: PageOffsetInfo<FanboxComment>,
     val messageToast: StringResource? = null,
 )

@@ -16,13 +16,12 @@ import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.SharedFlow
-import kotlinx.coroutines.flow.firstOrNull
+import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import me.matsumo.fanbox.core.datastore.BlockDataStore
 import me.matsumo.fanbox.core.datastore.BookmarkDataStore
-import me.matsumo.fanbox.core.datastore.FanboxCookieDataStore
 import me.matsumo.fanbox.core.datastore.PixiViewDataStore
 import me.matsumo.fanbox.core.repository.paging.CreatorPostsPagingSource
 import me.matsumo.fanbox.core.repository.paging.HomePostsPagingSource
@@ -48,25 +47,21 @@ import me.matsumo.fankt.fanbox.domain.model.FanboxTag
 import me.matsumo.fankt.fanbox.domain.model.id.FanboxCommentId
 import me.matsumo.fankt.fanbox.domain.model.id.FanboxCreatorId
 import me.matsumo.fankt.fanbox.domain.model.id.FanboxPostId
-import me.matsumo.fankt.fanbox.domain.model.id.FanboxPostItemId
 import me.matsumo.fankt.fanbox.domain.model.id.FanboxUserId
 import org.koin.core.component.KoinComponent
 import kotlin.random.Random
 
 interface FanboxRepository {
-
-    val bookmarkedPosts: SharedFlow<List<FanboxPostId>>
+    val bookmarkedPostsIds: SharedFlow<List<FanboxPostId>>
     val blockedCreators: SharedFlow<Set<FanboxCreatorId>>
-    val sessionId: Flow<String>
+    val sessionId: Flow<String?>
     val csrfToken: Flow<String?>
     val logoutTrigger: Flow<Long>
 
     suspend fun logout()
 
-    suspend fun isCookieValid(): Boolean
-    suspend fun setSessionId(cookie: String)
+    suspend fun setSessionId(sessionId: String)
     suspend fun updateCsrfToken()
-
     suspend fun getMetadata(): FanboxMetaData
 
     suspend fun getHomePosts(
@@ -185,7 +180,6 @@ interface FanboxRepository {
 }
 
 class FanboxRepositoryImpl(
-    private val fanboxCookieDataStore: FanboxCookieDataStore,
     private val bookmarkDataStore: BookmarkDataStore,
     private val blockDataStore: BlockDataStore,
     private val userDataStore: PixiViewDataStore,
@@ -204,18 +198,17 @@ class FanboxRepositoryImpl(
 
     private val _logoutTrigger = Channel<Long>()
 
-    override val sessionId: Flow<String> = fanboxCookieDataStore.data
+    override val sessionId: Flow<String?> = fanbox.cookies.map { list -> list.find { it.name == "FANBOXSESSID" }?.value }
     override val csrfToken: Flow<String?> = fanbox.csrfToken
     override val logoutTrigger: Flow<Long> = _logoutTrigger.receiveAsFlow()
 
-    override val bookmarkedPosts: SharedFlow<List<FanboxPostId>> = bookmarkDataStore.data
+    override val bookmarkedPostsIds: SharedFlow<List<FanboxPostId>> = bookmarkDataStore.data
     override val blockedCreators: SharedFlow<Set<FanboxCreatorId>> = blockDataStore.data
 
     override suspend fun logout() {
         CoroutineScope(ioDispatcher).launch {
             withContext(Dispatchers.Main) { WebViewCookieManager().removeAllCookies() }
 
-            fanboxCookieDataStore.save("")
             bookmarkDataStore.clear()
             blockDataStore.clear()
             userDataStore.setTestUser(false)
@@ -223,10 +216,6 @@ class FanboxRepositoryImpl(
 
             _logoutTrigger.send(Random.nextLong())
         }
-    }
-
-    override suspend fun isCookieValid(): Boolean {
-        return !fanboxCookieDataStore.data.firstOrNull().isNullOrBlank()
     }
 
     override suspend fun setSessionId(sessionId: String) {
@@ -501,7 +490,7 @@ class FanboxRepositoryImpl(
     }
 
     override suspend fun getBookmarkedPosts(): List<FanboxPost> = withContext(ioDispatcher) {
-        bookmarkDataStore.get().map { it.copy(isBookmarked = true) }
+        bookmarkDataStore.get()
     }
 
     override suspend fun bookmarkPost(post: FanboxPost) = withContext(ioDispatcher) {

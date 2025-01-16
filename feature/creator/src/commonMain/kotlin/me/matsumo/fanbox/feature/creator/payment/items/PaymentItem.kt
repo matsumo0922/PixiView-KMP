@@ -27,9 +27,6 @@ import coil3.compose.LocalPlatformContext
 import coil3.request.ImageRequest
 import kotlinx.datetime.Instant
 import me.matsumo.fanbox.core.common.util.format
-import me.matsumo.fanbox.core.model.fanbox.FanboxPaidRecord
-import me.matsumo.fanbox.core.model.fanbox.PaymentMethod
-import me.matsumo.fanbox.core.model.fanbox.id.FanboxCreatorId
 import me.matsumo.fanbox.core.resources.Res
 import me.matsumo.fanbox.core.resources.creator_supporting_payment_method_card
 import me.matsumo.fanbox.core.resources.creator_supporting_payment_method_cvs
@@ -40,6 +37,9 @@ import me.matsumo.fanbox.core.resources.unit_jpy
 import me.matsumo.fanbox.core.ui.extensition.asCoilImage
 import me.matsumo.fanbox.core.ui.theme.bold
 import me.matsumo.fanbox.feature.creator.payment.Payment
+import me.matsumo.fankt.fanbox.domain.model.FanboxPaidRecord
+import me.matsumo.fankt.fanbox.domain.model.FanboxPaymentMethod
+import me.matsumo.fankt.fanbox.domain.model.id.FanboxCreatorId
 import org.jetbrains.compose.resources.stringResource
 
 @Composable
@@ -114,7 +114,6 @@ private fun TitleItem(
     }
 }
 
-@OptIn(ExperimentalCoilApi::class)
 @Composable
 private fun PaidItem(
     paidRecord: FanboxPaidRecord,
@@ -131,8 +130,8 @@ private fun PaidItem(
                 .weight(1f)
                 .clip(RoundedCornerShape(4.dp))
                 .clickable {
-                    if (paidRecord.creator.user.creatorId.value.isNotBlank()) {
-                        onClickCreator.invoke(paidRecord.creator.user.creatorId)
+                    if (!paidRecord.creator.user?.creatorId?.value.isNullOrBlank()) {
+                        onClickCreator.invoke(paidRecord.creator.user!!.creatorId!!)
                     }
                 }
                 .padding(8.dp),
@@ -145,7 +144,7 @@ private fun PaidItem(
                     .clip(CircleShape),
                 model = ImageRequest.Builder(LocalPlatformContext.current)
                     .error(Res.drawable.im_default_user.asCoilImage())
-                    .data(paidRecord.creator.user.iconUrl)
+                    .data(paidRecord.creator.user?.iconUrl)
                     .build(),
                 contentDescription = null,
             )
@@ -156,7 +155,7 @@ private fun PaidItem(
             ) {
                 Text(
                     modifier = Modifier.fillMaxWidth(),
-                    text = paidRecord.creator.user.name,
+                    text = paidRecord.creator.user?.name.orEmpty(),
                     style = MaterialTheme.typography.bodyMedium.bold(),
                     color = MaterialTheme.colorScheme.onSurface,
                 )
@@ -164,10 +163,10 @@ private fun PaidItem(
                 Text(
                     modifier = Modifier.fillMaxWidth(),
                     text = when (paidRecord.paymentMethod) {
-                        PaymentMethod.CARD -> stringResource(Res.string.creator_supporting_payment_method_card)
-                        PaymentMethod.PAYPAL -> stringResource(Res.string.creator_supporting_payment_method_paypal)
-                        PaymentMethod.CVS -> stringResource(Res.string.creator_supporting_payment_method_cvs)
-                        PaymentMethod.UNKNOWN -> stringResource(Res.string.creator_supporting_payment_method_unknown)
+                        FanboxPaymentMethod.CARD -> stringResource(Res.string.creator_supporting_payment_method_card)
+                        FanboxPaymentMethod.PAYPAL -> stringResource(Res.string.creator_supporting_payment_method_paypal)
+                        FanboxPaymentMethod.CVS -> stringResource(Res.string.creator_supporting_payment_method_cvs)
+                        FanboxPaymentMethod.UNKNOWN -> stringResource(Res.string.creator_supporting_payment_method_unknown)
                     },
                     style = MaterialTheme.typography.bodySmall,
                     color = MaterialTheme.colorScheme.onSurfaceVariant,

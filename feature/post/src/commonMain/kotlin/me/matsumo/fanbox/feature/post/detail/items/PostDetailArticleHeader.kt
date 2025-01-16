@@ -13,13 +13,13 @@ import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.unit.dp
 import me.matsumo.fanbox.core.model.UserData
-import me.matsumo.fanbox.core.model.fanbox.FanboxPost
-import me.matsumo.fanbox.core.model.fanbox.FanboxPostDetail
-import me.matsumo.fanbox.core.model.fanbox.id.FanboxCreatorId
-import me.matsumo.fanbox.core.model.fanbox.id.FanboxPostId
 import me.matsumo.fanbox.core.ui.component.AdultContentThumbnail
 import me.matsumo.fanbox.core.ui.component.PostItem
 import me.matsumo.fanbox.core.ui.extensition.LocalFanboxMetadata
+import me.matsumo.fankt.fanbox.domain.model.FanboxPost
+import me.matsumo.fankt.fanbox.domain.model.FanboxPostDetail
+import me.matsumo.fankt.fanbox.domain.model.id.FanboxCreatorId
+import me.matsumo.fankt.fanbox.domain.model.id.FanboxPostId
 import sh.calvin.autolinktext.AutoLinkText
 import sh.calvin.autolinktext.TextRuleDefaults
 
@@ -28,6 +28,7 @@ internal fun LazyListScope.postDetailArticleHeader(
     userData: UserData,
     isAdultContents: Boolean,
     isAutoImagePreview: Boolean,
+    isBookmarked: Boolean,
     onClickPost: (FanboxPostId) -> Unit,
     onClickPostLike: (FanboxPostId) -> Unit,
     onClickPostBookmark: (FanboxPost, Boolean) -> Unit,
@@ -94,6 +95,7 @@ internal fun LazyListScope.postDetailArticleHeader(
                     isHideAdultContents = userData.isHideAdultContents,
                     isOverrideAdultContents = userData.isAllowedShowAdultContents,
                     isTestUser = userData.isTestUser,
+                    isBookmarked = isBookmarked,
                     onClickPost = onClickPost,
                     onClickPostLike = onClickPostLike,
                     onClickPostBookmark = { _, isLiked -> it.post?.let { onClickPostBookmark.invoke(it, isLiked) } },
@@ -130,6 +132,7 @@ private fun ArticleLinkItem(
     isHideAdultContents: Boolean,
     isOverrideAdultContents: Boolean,
     isTestUser: Boolean,
+    isBookmarked: Boolean,
     onClickPost: (FanboxPostId) -> Unit,
     onClickPostLike: (FanboxPostId) -> Unit,
     onClickPostBookmark: (FanboxPostId, Boolean) -> Unit,
@@ -143,6 +146,7 @@ private fun ArticleLinkItem(
             isHideAdultContents = isHideAdultContents,
             isOverrideAdultContents = isOverrideAdultContents,
             isTestUser = isTestUser,
+            isBookmarked = isBookmarked,
             onClickPost = onClickPost,
             onClickCreator = onClickCreator,
             onClickPlanList = {},

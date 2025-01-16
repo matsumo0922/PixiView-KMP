@@ -73,9 +73,9 @@ fun PostItem(
     isHideAdultContents: Boolean,
     isOverrideAdultContents: Boolean,
     isTestUser: Boolean,
+    isBookmarked: Boolean,
     modifier: Modifier = Modifier,
 ) {
-    var isPostBookmarked = false // TODO
     var isPostLiked by rememberSaveable(post.isLiked) { mutableStateOf(post.isLiked) }
     var isHideAdultContent by remember { mutableStateOf(isHideAdultContents) }
 
@@ -97,6 +97,7 @@ fun PostItem(
                             .fillMaxWidth()
                             .aspectRatio(16f / 9),
                         feeRequired = post.feeRequired,
+                        coverImageUrl = post.cover?.url
                     )
                 }
 
@@ -171,7 +172,7 @@ fun PostItem(
                         .fillMaxWidth(),
                     backgroundColor = MaterialTheme.colorScheme.secondaryContainer,
                     feeRequired = post.feeRequired,
-                    onClickPlanList = { post.user?.creatorId?.let(onClickCreator) },
+                    onClickPlanList = { post.user?.creatorId?.let(onClickPlanList) },
                 )
             } else {
                 if (post.excerpt.isNotBlank()) {
@@ -197,14 +198,13 @@ fun PostItem(
                         ),
                     commentCount = post.commentCount,
                     likeCount = post.likeCount + if (isPostLiked) 1 else 0,
-                    isBookmarked = isPostBookmarked,
+                    isBookmarked = isBookmarked,
                     isLiked = isPostLiked,
                     onClickLike = {
                         isPostLiked = true
                         onClickLike.invoke(post.id)
                     },
                     onClickBookmark = {
-                        isPostBookmarked = it
                         onClickBookmark.invoke(post.id, it)
                     },
                 )
@@ -281,40 +281,6 @@ private fun UserSection(
                 color = MaterialTheme.colorScheme.onSurfaceVariant,
             )
         }
-    }
-}
-
-@Composable
-private fun RestrictThumbnail(
-    feeRequired: Int,
-    modifier: Modifier = Modifier,
-) {
-    Column(
-        modifier = modifier
-            .background(Color.DarkGray)
-            .padding(16.dp),
-        horizontalAlignment = Alignment.CenterHorizontally,
-        verticalArrangement = Arrangement.spacedBy(
-            space = 16.dp,
-            alignment = Alignment.CenterVertically,
-        ),
-    ) {
-        Icon(
-            modifier = Modifier.size(48.dp),
-            imageVector = Icons.Default.Lock,
-            tint = Color.White,
-            contentDescription = null,
-        )
-
-        Text(
-            modifier = Modifier.fillMaxWidth(),
-            text = if (currentPlatform == Platform.Android) stringResource(
-                Res.string.error_restricted_post,
-                feeRequired
-            ) else stringResource(Res.string.error_restricted_post_ios),
-            style = MaterialTheme.typography.bodySmall.center(),
-            color = Color.White,
-        )
     }
 }
 

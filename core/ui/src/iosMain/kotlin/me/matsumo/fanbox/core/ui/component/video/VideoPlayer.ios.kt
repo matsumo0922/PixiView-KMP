@@ -29,7 +29,7 @@ import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.viewinterop.UIKitView
 import kotlinx.coroutines.delay
-import me.matsumo.fanbox.core.ui.extensition.LocalFanboxCookie
+import me.matsumo.fanbox.core.ui.extensition.LocalFanboxSessionId
 import platform.AVFoundation.AVPlayer
 import platform.AVFoundation.AVPlayerItem
 import platform.AVFoundation.AVPlayerLayer
@@ -41,9 +41,9 @@ import platform.Foundation.NSURL
 
 @Composable
 actual fun VideoPlayer(url: String, modifier: Modifier) {
-    val cookie = LocalFanboxCookie.current.cookie
+    val sessionId = LocalFanboxSessionId.current.value
 
-    val player = remember { getAVPlayerItem(url, cookie)?.let { AVPlayer(it) } }
+    val player = remember { getAVPlayerItem(url, sessionId)?.let { AVPlayer(it) } }
     val playerLayer = remember { AVPlayerLayer() }
     val avPlayerViewController = remember { AVPlayerViewController() }
 
@@ -133,15 +133,15 @@ private fun ControllerView(
     }
 }
 
-private fun getAVPlayerItem(url: String, cookie: String): AVPlayerItem? {
+private fun getAVPlayerItem(url: String, sessionId: String): AVPlayerItem? {
     val nsUrl = NSURL.URLWithString(url) ?: return null
     val headers = mutableMapOf<String, String>().apply {
         put("origin", "https://www.fanbox.cc")
         put("referer", "https://www.fanbox.cc")
         put("user-agent", "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/98.0.4758.102 Safari/537.36")
 
-        if (cookie.isNotBlank()) {
-            set("Cookie", cookie)
+        if (sessionId.isNotBlank()) {
+            set("Cookie", "FANBOXSESSID=$sessionId")
         }
     }
     val asset = AVURLAsset.URLAssetWithURL(nsUrl, headers.toMap())

@@ -1,7 +1,7 @@
 package me.matsumo.fanbox.core.model.contract
 
-import me.matsumo.fanbox.core.model.fanbox.FanboxPost
-import me.matsumo.fanbox.core.model.fanbox.FanboxPostDetail
+import me.matsumo.fankt.fanbox.domain.model.FanboxPost
+import me.matsumo.fankt.fanbox.domain.model.FanboxPostDetail
 
 interface PostDownloader {
     fun onDownloadImages(imageItems: List<FanboxPostDetail.ImageItem>)

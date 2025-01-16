@@ -31,8 +31,6 @@ import app.cash.paging.compose.collectAsLazyPagingItems
 import kotlinx.collections.immutable.toImmutableList
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
-import me.matsumo.fanbox.core.model.fanbox.id.FanboxCreatorId
-import me.matsumo.fanbox.core.model.fanbox.id.FanboxPostId
 import me.matsumo.fanbox.core.resources.Res
 import me.matsumo.fanbox.core.resources.error_no_data_following
 import me.matsumo.fanbox.core.resources.error_no_data_supported
@@ -45,6 +43,8 @@ import me.matsumo.fanbox.core.ui.extensition.PixiViewNavigationType
 import me.matsumo.fanbox.core.ui.view.SimpleAlertContents
 import me.matsumo.fanbox.feature.library.home.items.LibraryHomeIdleSection
 import me.matsumo.fanbox.feature.library.home.items.LibrarySupportedIdleSection
+import me.matsumo.fankt.fanbox.domain.model.id.FanboxCreatorId
+import me.matsumo.fankt.fanbox.domain.model.id.FanboxPostId
 import org.jetbrains.compose.resources.StringResource
 import org.jetbrains.compose.resources.stringResource
 import org.koin.compose.viewmodel.koinViewModel
@@ -143,7 +143,7 @@ internal fun LibraryHomeScreen(
                                 modifier = Modifier.fillMaxSize(),
                                 pagingAdapter = homePager,
                                 userData = uiState.userData,
-                                bookmarkedPosts = uiState.bookmarkedPosts.toImmutableList(),
+                                bookmarkedPostsIds = uiState.bookmarkedPostsIds.toImmutableList(),
                                 onClickPost = navigateToPostDetailFromHome,
                                 onClickPostLike = viewModel::postLike,
                                 onClickPostBookmark = viewModel::postBookmark,
@@ -162,7 +162,7 @@ internal fun LibraryHomeScreen(
                                 modifier = Modifier.fillMaxSize(),
                                 pagingAdapter = supportedPager,
                                 userData = uiState.userData,
-                                bookmarkedPosts = uiState.bookmarkedPosts.toImmutableList(),
+                                bookmarkedPostsIds = uiState.bookmarkedPostsIds.toImmutableList(),
                                 onClickPost = navigateToPostDetailFromSupported,
                                 onClickPostLike = viewModel::postLike,
                                 onClickPostBookmark = viewModel::postBookmark,

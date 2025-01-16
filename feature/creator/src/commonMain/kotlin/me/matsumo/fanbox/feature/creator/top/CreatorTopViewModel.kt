@@ -13,18 +13,19 @@ import kotlinx.coroutines.launch
 import me.matsumo.fanbox.core.common.util.suspendRunCatching
 import me.matsumo.fanbox.core.model.ScreenState
 import me.matsumo.fanbox.core.model.UserData
-import me.matsumo.fanbox.core.model.fanbox.FanboxCreatorDetail
-import me.matsumo.fanbox.core.model.fanbox.FanboxCreatorPlan
-import me.matsumo.fanbox.core.model.fanbox.FanboxCreatorTag
-import me.matsumo.fanbox.core.model.fanbox.FanboxPost
-import me.matsumo.fanbox.core.model.fanbox.id.FanboxCreatorId
-import me.matsumo.fanbox.core.model.fanbox.id.FanboxPostId
 import me.matsumo.fanbox.core.model.updateWhenIdle
 import me.matsumo.fanbox.core.repository.FanboxRepository
 import me.matsumo.fanbox.core.repository.RewardRepository
 import me.matsumo.fanbox.core.repository.UserDataRepository
 import me.matsumo.fanbox.core.resources.Res
 import me.matsumo.fanbox.core.resources.error_network
+import me.matsumo.fankt.fanbox.domain.model.FanboxCreatorDetail
+import me.matsumo.fankt.fanbox.domain.model.FanboxCreatorPlan
+import me.matsumo.fankt.fanbox.domain.model.FanboxPost
+import me.matsumo.fankt.fanbox.domain.model.FanboxTag
+import me.matsumo.fankt.fanbox.domain.model.id.FanboxCreatorId
+import me.matsumo.fankt.fanbox.domain.model.id.FanboxPostId
+import me.matsumo.fankt.fanbox.domain.model.id.FanboxUserId
 
 class CreatorTopViewModel(
     private val userDataRepository: UserDataRepository,
@@ -46,8 +47,8 @@ class CreatorTopViewModel(
         }
 
         viewModelScope.launch {
-            fanboxRepository.bookmarkedPosts.collectLatest { data ->
-                _screenState.value = screenState.updateWhenIdle { it.copy(bookmarkedPosts = data) }
+            fanboxRepository.bookmarkedPostsIds.collectLatest { data ->
+                _screenState.value = screenState.updateWhenIdle { it.copy(bookmarkedPostsIds = data) }
             }
         }
 
@@ -67,7 +68,7 @@ class CreatorTopViewModel(
 
                 CreatorTopUiState(
                     userData = userData,
-                    bookmarkedPosts = fanboxRepository.bookmarkedPosts.first(),
+                    bookmarkedPostsIds = fanboxRepository.bookmarkedPostsIds.first(),
                     isBlocked = fanboxRepository.blockedCreators.first().contains(creatorId),
                     isAbleToReward = rewardRepository.isAbleToReward(),
                     creatorDetail = fanboxRepository.getCreatorDetail(creatorId),
@@ -84,13 +85,13 @@ class CreatorTopViewModel(
         }
     }
 
-    suspend fun follow(creatorUserId: String): Result<Unit> {
+    suspend fun follow(creatorUserId: FanboxUserId): Result<Unit> {
         return suspendRunCatching {
             fanboxRepository.followCreator(creatorUserId)
         }
     }
 
-    suspend fun unfollow(creatorUserId: String): Result<Unit> {
+    suspend fun unfollow(creatorUserId: FanboxUserId): Result<Unit> {
         return suspendRunCatching {
             fanboxRepository.unfollowCreator(creatorUserId)
         }
@@ -138,10 +139,10 @@ class CreatorTopViewModel(
 @Stable
 data class CreatorTopUiState(
     val userData: UserData,
-    val bookmarkedPosts: List<FanboxPostId>,
+    val bookmarkedPostsIds: List<FanboxPostId>,
     val creatorDetail: FanboxCreatorDetail,
     val creatorPlans: List<FanboxCreatorPlan>,
-    val creatorTags: List<FanboxCreatorTag>,
+    val creatorTags: List<FanboxTag>,
     val creatorPostsPaging: Flow<PagingData<FanboxPost>>,
     val isBlocked: Boolean,
     val isAbleToReward: Boolean,

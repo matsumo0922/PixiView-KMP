@@ -48,7 +48,6 @@ import coil3.request.ImageRequest
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.toImmutableList
 import kotlinx.coroutines.launch
-import me.matsumo.fanbox.core.model.fanbox.FanboxCreatorDetail
 import me.matsumo.fanbox.core.resources.Res
 import me.matsumo.fanbox.core.resources.common_follow
 import me.matsumo.fanbox.core.resources.common_supporting
@@ -74,6 +73,8 @@ import me.matsumo.fanbox.core.ui.extensition.FadePlaceHolder
 import me.matsumo.fanbox.core.ui.extensition.asCoilImage
 import me.matsumo.fanbox.core.ui.extensition.fanboxHeader
 import me.matsumo.fanbox.core.ui.theme.bold
+import me.matsumo.fankt.fanbox.domain.model.FanboxCreatorDetail
+import me.matsumo.fankt.fanbox.domain.model.id.FanboxUserId
 import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.resources.stringResource
 
@@ -84,8 +85,8 @@ internal fun CreatorTopHeader(
     onClickTerminate: () -> Unit,
     onClickLink: (String) -> Unit,
     onClickDescription: (String) -> Unit,
-    onClickFollow: suspend (String) -> Result<Unit>,
-    onClickUnfollow: suspend (String) -> Result<Unit>,
+    onClickFollow: suspend (FanboxUserId) -> Result<Unit>,
+    onClickUnfollow: suspend (FanboxUserId) -> Result<Unit>,
     onClickSupporting: (String) -> Unit,
     onClickAction: () -> Unit,
     modifier: Modifier = Modifier,
@@ -105,13 +106,13 @@ internal fun CreatorTopHeader(
                 onClickFollow = {
                     scope.launch {
                         isFollowed = true
-                        isFollowed = onClickFollow.invoke(creatorDetail.user.userId).isSuccess
+                        isFollowed = creatorDetail.user?.userId?.let { onClickFollow.invoke(it) }?.isSuccess ?: false
                     }
                 },
                 onClickUnfollow = {
                     scope.launch {
                         isFollowed = false
-                        isFollowed = !onClickUnfollow.invoke(creatorDetail.user.userId).isSuccess
+                        isFollowed = creatorDetail.user?.userId?.let { onClickUnfollow.invoke(it) }?.isSuccess ?: true
                     }
                 },
                 onClickLink = { onClickLink.invoke(it) },
@@ -123,7 +124,7 @@ internal fun CreatorTopHeader(
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(horizontal = 16.dp),
-                text = creatorDetail.user.name,
+                text = creatorDetail.user?.name.orEmpty(),
                 style = MaterialTheme.typography.titleLarge.bold(),
                 color = MaterialTheme.colorScheme.onSurface,
             )
@@ -265,7 +266,6 @@ private fun ProfileLinkItem(
     }
 }
 
-@OptIn(ExperimentalCoilApi::class)
 @Composable
 private fun HeaderTop(
     creatorDetail: FanboxCreatorDetail,
@@ -286,7 +286,7 @@ private fun HeaderTop(
                     .aspectRatio(5 / 2f),
                 model = ImageRequest.Builder(LocalPlatformContext.current)
                     .fanboxHeader()
-                    .data(creatorDetail.coverImageUrl ?: creatorDetail.user.iconUrl)
+                    .data(creatorDetail.coverImageUrl ?: creatorDetail.user?.iconUrl)
                     .build(),
                 loading = {
                     FadePlaceHolder()
@@ -308,7 +308,7 @@ private fun HeaderTop(
                 model = ImageRequest.Builder(LocalPlatformContext.current)
                     .fanboxHeader()
                     .error(Res.drawable.im_default_user.asCoilImage())
-                    .data(creatorDetail.user.iconUrl)
+                    .data(creatorDetail.user?.iconUrl)
                     .build(),
                 loading = {
                     FadePlaceHolder()

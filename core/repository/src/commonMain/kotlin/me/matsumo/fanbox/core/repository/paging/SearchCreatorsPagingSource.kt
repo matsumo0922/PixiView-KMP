@@ -3,8 +3,8 @@ package me.matsumo.fanbox.core.repository.paging
 import androidx.paging.PagingSource
 import androidx.paging.PagingState
 import me.matsumo.fanbox.core.common.util.suspendRunCatching
-import me.matsumo.fanbox.core.model.fanbox.FanboxCreatorDetail
 import me.matsumo.fanbox.core.repository.FanboxRepository
+import me.matsumo.fankt.fanbox.domain.model.FanboxCreatorDetail
 
 class SearchCreatorsPagingSource(
     private val fanboxRepository: FanboxRepository,

@@ -11,9 +11,9 @@ class WelcomeWebViewModel(
     private val userDataRepository: UserDataRepository,
 ) : ViewModel() {
 
-    fun saveSessionId(cookie: String) {
+    fun saveSessionId(sessionId: String) {
         viewModelScope.launch {
-            fanboxRepository.setSessionId(cookie)
+            fanboxRepository.setSessionId(sessionId)
         }
     }
 

@@ -14,7 +14,6 @@ import me.matsumo.fanbox.core.ui.component.PixiViewNavigationBarItem
 import me.matsumo.fanbox.core.ui.component.PixiViewNavigationDefaults
 import org.jetbrains.compose.resources.stringResource
 
-@OptIn(ExperimentalAdaptiveApi::class)
 @Composable
 internal fun LibraryBottomBar(
     destinations: ImmutableList<LibraryDestination>,

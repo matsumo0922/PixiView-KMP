@@ -15,13 +15,13 @@ import me.matsumo.fanbox.core.common.util.suspendRunCatching
 import me.matsumo.fanbox.core.model.DownloadFileType
 import me.matsumo.fanbox.core.model.ScreenState
 import me.matsumo.fanbox.core.model.UserData
-import me.matsumo.fanbox.core.model.fanbox.FanboxMetaData
 import me.matsumo.fanbox.core.repository.FanboxRepository
 import me.matsumo.fanbox.core.repository.UserDataRepository
 import me.matsumo.fanbox.core.resources.Res
 import me.matsumo.fanbox.core.resources.error_no_data
 import me.matsumo.fanbox.core.resources.home_app_lock_message
 import me.matsumo.fanbox.core.resources.home_app_lock_title
+import me.matsumo.fankt.fanbox.domain.model.FanboxMetaData
 import org.jetbrains.compose.resources.getString
 
 class SettingTopViewModel(
@@ -30,17 +30,12 @@ class SettingTopViewModel(
     private val pixiViewConfig: PixiViewConfig,
 ) : ViewModel() {
 
-    val screenState = combine(userDataRepository.userData, fanboxRepository.sessionId, ::Pair).map { (userData, cookie) ->
-        val cookieMap = cookie.split(";")
-            .map { it.trim() }
-            .filter { it.isNotBlank() }
-            .associate { it.split("=", limit = 2).let { item -> item[0] to item[1] } }
-
+    val screenState = combine(userDataRepository.userData, fanboxRepository.sessionId, ::Pair).map { (userData, sessionId) ->
         ScreenState.Idle(
             SettingTopUiState(
                 userData = userData,
-                metaData = fanboxRepository.getPostDetail(),
-                fanboxSessionId = cookieMap["FANBOXSESSID"] ?: "unknown",
+                metaData = fanboxRepository.getMetadata(),
+                fanboxSessionId = sessionId ?: "unknown",
                 config = pixiViewConfig,
             ),
         )

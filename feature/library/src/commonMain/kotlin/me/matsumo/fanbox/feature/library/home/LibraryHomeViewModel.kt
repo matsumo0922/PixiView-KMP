@@ -11,11 +11,11 @@ import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 import me.matsumo.fanbox.core.common.util.suspendRunCatching
 import me.matsumo.fanbox.core.model.UserData
-import me.matsumo.fanbox.core.model.fanbox.FanboxPost
-import me.matsumo.fanbox.core.model.fanbox.id.FanboxPostId
 import me.matsumo.fanbox.core.repository.FanboxRepository
 import me.matsumo.fanbox.core.repository.UserDataRepository
 import me.matsumo.fanbox.core.ui.extensition.emptyPaging
+import me.matsumo.fankt.fanbox.domain.model.FanboxPost
+import me.matsumo.fankt.fanbox.domain.model.id.FanboxPostId
 
 class LibraryHomeViewModel(
     private val userDataRepository: UserDataRepository,
@@ -25,7 +25,7 @@ class LibraryHomeViewModel(
     private val _uiState = MutableStateFlow(
         LibraryUiState(
             userData = UserData.default(),
-            bookmarkedPosts = emptyList(),
+            bookmarkedPostsIds = emptyList(),
             homePaging = emptyPaging(),
             supportedPaging = emptyPaging(),
         ),
@@ -49,8 +49,8 @@ class LibraryHomeViewModel(
         }
 
         viewModelScope.launch {
-            fanboxRepository.bookmarkedPosts.collectLatest {
-                _uiState.value = uiState.value.copy(bookmarkedPosts = it)
+            fanboxRepository.bookmarkedPostsIds.collectLatest {
+                _uiState.value = uiState.value.copy(bookmarkedPostsIds = it)
             }
         }
     }
@@ -79,7 +79,7 @@ class LibraryHomeViewModel(
 @Stable
 data class LibraryUiState(
     val userData: UserData,
-    val bookmarkedPosts: List<FanboxPostId>,
+    val bookmarkedPostsIds: List<FanboxPostId>,
     val homePaging: Flow<PagingData<FanboxPost>>,
     val supportedPaging: Flow<PagingData<FanboxPost>>,
 )

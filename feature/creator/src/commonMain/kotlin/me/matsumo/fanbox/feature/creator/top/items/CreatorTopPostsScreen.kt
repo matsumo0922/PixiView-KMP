@@ -44,10 +44,6 @@ import coil3.compose.SubcomposeAsyncImage
 import coil3.request.ImageRequest
 import kotlinx.collections.immutable.ImmutableList
 import me.matsumo.fanbox.core.model.UserData
-import me.matsumo.fanbox.core.model.fanbox.FanboxCreatorTag
-import me.matsumo.fanbox.core.model.fanbox.FanboxPost
-import me.matsumo.fanbox.core.model.fanbox.id.FanboxCreatorId
-import me.matsumo.fanbox.core.model.fanbox.id.FanboxPostId
 import me.matsumo.fanbox.core.ui.ads.NativeAdView
 import me.matsumo.fanbox.core.ui.component.PostGridItem
 import me.matsumo.fanbox.core.ui.component.PostItem
@@ -60,17 +56,21 @@ import me.matsumo.fanbox.core.ui.extensition.drawVerticalScrollbar
 import me.matsumo.fanbox.core.ui.extensition.fanboxHeader
 import me.matsumo.fanbox.core.ui.theme.bold
 import me.matsumo.fanbox.core.ui.view.PagingErrorSection
+import me.matsumo.fankt.fanbox.domain.model.FanboxPost
+import me.matsumo.fankt.fanbox.domain.model.FanboxTag
+import me.matsumo.fankt.fanbox.domain.model.id.FanboxCreatorId
+import me.matsumo.fankt.fanbox.domain.model.id.FanboxPostId
 
 @Composable
 internal fun CreatorTopPostsScreen(
     userData: UserData,
-    bookmarkedPosts: ImmutableList<FanboxPostId>,
+    bookmarkedPostsIds: ImmutableList<FanboxPostId>,
     pagingAdapter: LazyPagingItems<FanboxPost>,
-    creatorTags: ImmutableList<FanboxCreatorTag>,
+    creatorTags: ImmutableList<FanboxTag>,
     onClickPost: (FanboxPostId) -> Unit,
     onClickPostBookmark: (FanboxPost, Boolean) -> Unit,
     onClickCreator: (FanboxCreatorId) -> Unit,
-    onClickTag: (FanboxCreatorTag) -> Unit,
+    onClickTag: (FanboxTag) -> Unit,
     onClickPostLike: (FanboxPostId) -> Unit,
     onClickPlanList: (FanboxCreatorId) -> Unit,
     modifier: Modifier = Modifier,
@@ -113,7 +113,7 @@ internal fun CreatorTopPostsScreen(
         pagingAdapter = pagingAdapter,
         userData = userData,
         creatorTags = creatorTags,
-        bookmarkedPosts = bookmarkedPosts,
+        bookmarkedPostIds = bookmarkedPostsIds,
         isGridMode = userData.isUseGridMode,
         onClickPost = onClickPost,
         onClickPostLike = onClickPostLike,
@@ -131,14 +131,14 @@ private fun PagingItems(
     adOffset: Int,
     adInterval: Int,
     userData: UserData,
-    bookmarkedPosts: ImmutableList<FanboxPostId>,
+    bookmarkedPostIds: ImmutableList<FanboxPostId>,
     pagingAdapter: LazyPagingItems<FanboxPost>,
-    creatorTags: ImmutableList<FanboxCreatorTag>,
+    creatorTags: ImmutableList<FanboxTag>,
     isGridMode: Boolean,
     onClickPost: (FanboxPostId) -> Unit,
     onClickPostBookmark: (FanboxPost, Boolean) -> Unit,
     onClickCreator: (FanboxCreatorId) -> Unit,
-    onClickTag: (FanboxCreatorTag) -> Unit,
+    onClickTag: (FanboxTag) -> Unit,
     onClickPostLike: (FanboxPostId) -> Unit,
     onClickPlanList: (FanboxCreatorId) -> Unit,
     modifier: Modifier = Modifier,
@@ -190,19 +190,20 @@ private fun PagingItems(
                     if (isGridMode) {
                         PostGridItem(
                             modifier = Modifier.fillMaxWidth(),
-                            post = post.copy(isBookmarked = bookmarkedPosts.contains(post.id)),
+                            post = post,
                             isHideAdultContents = userData.isHideAdultContents,
                             isOverrideAdultContents = userData.isAllowedShowAdultContents,
-                            onClickPost = { if (!post.isRestricted) onClickPost.invoke(it) },
+                            onClickPost = onClickPost,
                         )
                     } else {
                         PostItem(
                             modifier = Modifier.fillMaxSize(),
-                            post = post.copy(isBookmarked = bookmarkedPosts.contains(post.id)),
+                            post = post,
+                            isBookmarked = bookmarkedPostIds.contains(post.id),
                             isHideAdultContents = userData.isHideAdultContents,
                             isOverrideAdultContents = userData.isAllowedShowAdultContents,
                             isTestUser = userData.isTestUser,
-                            onClickPost = { if (!post.isRestricted) onClickPost.invoke(it) },
+                            onClickPost = onClickPost,
                             onClickCreator = onClickCreator,
                             onClickPlanList = onClickPlanList,
                             onClickLike = onClickPostLike,
@@ -232,8 +233,8 @@ private fun PagingItems(
 
 @Composable
 private fun TagItem(
-    tag: FanboxCreatorTag,
-    onClickTag: (FanboxCreatorTag) -> Unit,
+    tag: FanboxTag,
+    onClickTag: (FanboxTag) -> Unit,
     modifier: Modifier = Modifier,
 ) {
     Box(

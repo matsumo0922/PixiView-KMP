@@ -11,11 +11,11 @@ import kotlinx.coroutines.launch
 import me.matsumo.fanbox.core.common.util.suspendRunCatching
 import me.matsumo.fanbox.core.model.ScreenState
 import me.matsumo.fanbox.core.model.UserData
-import me.matsumo.fanbox.core.model.fanbox.FanboxPost
-import me.matsumo.fanbox.core.model.fanbox.id.FanboxPostId
 import me.matsumo.fanbox.core.model.updateWhenIdle
 import me.matsumo.fanbox.core.repository.FanboxRepository
 import me.matsumo.fanbox.core.repository.UserDataRepository
+import me.matsumo.fankt.fanbox.domain.model.FanboxPost
+import me.matsumo.fankt.fanbox.domain.model.id.FanboxPostId
 
 class BookmarkedPostsViewModel(
     private val userDataRepository: UserDataRepository,
@@ -28,9 +28,9 @@ class BookmarkedPostsViewModel(
 
     init {
         viewModelScope.launch {
-            fanboxRepository.bookmarkedPosts.collectLatest { bookmarkedPosts ->
+            fanboxRepository.bookmarkedPostsIds.collectLatest {
                 _screenState.value = screenState.updateWhenIdle { data ->
-                    data.copy(bookmarkedPosts = data.bookmarkedPosts.map { it.copy(isBookmarked = it.id in bookmarkedPosts) })
+                    data.copy(bookmarkedPostIds = it)
                 }
             }
         }
@@ -42,7 +42,8 @@ class BookmarkedPostsViewModel(
             _screenState.value = ScreenState.Idle(
                 LikedPostsUiState(
                     userData = userDataRepository.userData.first(),
-                    bookmarkedPosts = fanboxRepository.getBookmarkedPosts(),
+                    posts = fanboxRepository.getBookmarkedPosts(),
+                    bookmarkedPostIds = fanboxRepository.bookmarkedPostsIds.first(),
                 ),
             )
         }
@@ -58,14 +59,14 @@ class BookmarkedPostsViewModel(
                     val isMatchTitle = post.title.contains(query, ignoreCase = true)
                     val isMatchBody = post.excerpt.contains(query, ignoreCase = true)
                     val isMatchTag = post.tags.any { tag -> tag.contains(query, ignoreCase = true) }
-                    val isMatchCreatorName = post.user.name.contains(query, ignoreCase = true)
-                    val isMatchFanboxCreatorId = post.user.creatorId.value.contains(query, ignoreCase = true)
+                    val isMatchCreatorName = post.user?.name.orEmpty().contains(query, ignoreCase = true)
+                    val isMatchFanboxCreatorId = post.user?.creatorId?.value.orEmpty().contains(query, ignoreCase = true)
 
                     isMatchTitle || isMatchBody || isMatchTag || isMatchCreatorName || isMatchFanboxCreatorId
                 }
             }
 
-            _screenState.value = screenState.updateWhenIdle { it.copy(bookmarkedPosts = result) }
+            _screenState.value = screenState.updateWhenIdle { it.copy(posts = result) }
         }
     }
 
@@ -93,5 +94,6 @@ class BookmarkedPostsViewModel(
 @Stable
 data class LikedPostsUiState(
     val userData: UserData,
-    val bookmarkedPosts: List<FanboxPost>,
+    val posts: List<FanboxPost>,
+    val bookmarkedPostIds: List<FanboxPostId>,
 )

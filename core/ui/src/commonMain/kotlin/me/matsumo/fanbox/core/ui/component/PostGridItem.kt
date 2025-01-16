@@ -23,10 +23,10 @@ import androidx.compose.ui.unit.dp
 import coil3.compose.LocalPlatformContext
 import coil3.compose.SubcomposeAsyncImage
 import coil3.request.ImageRequest
-import me.matsumo.fanbox.core.model.fanbox.FanboxPost
-import me.matsumo.fanbox.core.model.fanbox.id.FanboxPostId
 import me.matsumo.fanbox.core.ui.extensition.SimmerPlaceHolder
 import me.matsumo.fanbox.core.ui.extensition.fanboxHeader
+import me.matsumo.fankt.fanbox.domain.model.FanboxPost
+import me.matsumo.fankt.fanbox.domain.model.id.FanboxPostId
 
 @Composable
 fun PostGridItem(
@@ -40,7 +40,10 @@ fun PostGridItem(
         when {
             post.isRestricted -> {
                 RestrictThumbnail(
-                    modifier = Modifier.fillMaxSize(),
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .clickable { onClickPost.invoke(post.id) },
+                    coverImageUrl = post.cover?.url,
                 )
             }
 
@@ -84,20 +87,36 @@ fun PostGridItem(
 
 @Composable
 private fun RestrictThumbnail(
+    coverImageUrl: String?,
     modifier: Modifier = Modifier,
 ) {
-    Column(
-        modifier = modifier
-            .background(Color.DarkGray)
-            .padding(16.dp),
-        horizontalAlignment = Alignment.CenterHorizontally,
-        verticalArrangement = Arrangement.spacedBy(
-            space = 16.dp,
-            alignment = Alignment.CenterVertically,
-        ),
-    ) {
+    Box(modifier) {
+        SubcomposeAsyncImage(
+            modifier = Modifier
+                .fillMaxSize()
+                .blur(20.dp),
+            model = ImageRequest.Builder(LocalPlatformContext.current)
+                .fanboxHeader()
+                .data(coverImageUrl)
+                .build(),
+            loading = {
+                SimmerPlaceHolder()
+            },
+            contentScale = ContentScale.Crop,
+            contentDescription = null,
+        )
+
+        Box(
+            modifier = Modifier
+                .fillMaxSize()
+                .background(Color.Black.copy(alpha = 0.5f)),
+        )
+
         Icon(
-            modifier = Modifier.size(40.dp),
+            modifier = Modifier
+                .align(Alignment.Center)
+                .padding(16.dp)
+                .size(40.dp),
             imageVector = Icons.Default.Lock,
             tint = Color.White,
             contentDescription = null,

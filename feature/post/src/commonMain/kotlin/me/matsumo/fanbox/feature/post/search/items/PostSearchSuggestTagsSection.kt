@@ -31,6 +31,7 @@ import me.matsumo.fanbox.core.resources.Res
 import me.matsumo.fanbox.core.resources.common_see_more
 import me.matsumo.fanbox.core.resources.unit_tag
 import me.matsumo.fanbox.core.ui.theme.bold
+import me.matsumo.fankt.fanbox.domain.model.FanboxTag
 import org.jetbrains.compose.resources.stringResource
 
 @Composable

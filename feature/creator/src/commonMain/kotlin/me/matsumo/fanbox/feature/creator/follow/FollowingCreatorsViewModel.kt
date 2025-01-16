@@ -8,10 +8,11 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 import me.matsumo.fanbox.core.common.util.suspendRunCatching
 import me.matsumo.fanbox.core.model.ScreenState
-import me.matsumo.fanbox.core.model.fanbox.FanboxCreatorDetail
 import me.matsumo.fanbox.core.repository.FanboxRepository
 import me.matsumo.fanbox.core.resources.Res
 import me.matsumo.fanbox.core.resources.error_network
+import me.matsumo.fankt.fanbox.domain.model.FanboxCreatorDetail
+import me.matsumo.fankt.fanbox.domain.model.id.FanboxUserId
 
 class FollowingCreatorsViewModel(
     private val fanboxRepository: FanboxRepository,
@@ -39,13 +40,13 @@ class FollowingCreatorsViewModel(
         }
     }
 
-    suspend fun follow(creatorUserId: String): Result<Unit> {
+    suspend fun follow(creatorUserId: FanboxUserId): Result<Unit> {
         return suspendRunCatching {
             fanboxRepository.unfollowCreator(creatorUserId)
         }
     }
 
-    suspend fun unfollow(creatorUserId: String): Result<Unit> {
+    suspend fun unfollow(creatorUserId: FanboxUserId): Result<Unit> {
         return suspendRunCatching {
             fanboxRepository.unfollowCreator(creatorUserId)
         }

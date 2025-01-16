@@ -10,7 +10,6 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
 import me.matsumo.fanbox.core.model.UserData
-import me.matsumo.fanbox.core.model.fanbox.FanboxPost
 import me.matsumo.fanbox.core.repository.FanboxRepository
 import me.matsumo.fanbox.core.repository.UserDataRepository
 import me.matsumo.fanbox.core.ui.extensition.emptyPaging
@@ -19,6 +18,7 @@ import me.matsumo.fanbox.feature.post.detail.PostDetailPagingType.Home
 import me.matsumo.fanbox.feature.post.detail.PostDetailPagingType.Search
 import me.matsumo.fanbox.feature.post.detail.PostDetailPagingType.Supported
 import me.matsumo.fanbox.feature.post.detail.PostDetailPagingType.Unknown
+import me.matsumo.fankt.fanbox.domain.model.FanboxPost
 
 class PostDetailRootViewModel(
     private val userDataRepository: UserDataRepository,

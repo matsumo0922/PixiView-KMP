@@ -48,7 +48,7 @@ import androidx.media3.exoplayer.source.MediaSource
 import androidx.media3.ui.AspectRatioFrameLayout
 import androidx.media3.ui.PlayerView
 import kotlinx.coroutines.delay
-import me.matsumo.fanbox.core.ui.extensition.LocalFanboxCookie
+import me.matsumo.fanbox.core.ui.extensition.LocalFanboxSessionId
 import me.matsumo.fanbox.core.ui.view.LoadingView
 
 @OptIn(UnstableApi::class)
@@ -56,7 +56,7 @@ import me.matsumo.fanbox.core.ui.view.LoadingView
 actual fun VideoPlayer(url: String, modifier: Modifier) {
     val context = LocalContext.current
     val lifecycleOwner = LocalLifecycleOwner.current
-    val cookie = LocalFanboxCookie.current.cookie
+    val sessionId = LocalFanboxSessionId.current.value
 
     var playerSize by remember { mutableStateOf(IntSize.Zero) }
     var isDisplayController by remember { mutableStateOf(false) }
@@ -66,7 +66,7 @@ actual fun VideoPlayer(url: String, modifier: Modifier) {
     val exoPlayer = remember(context) {
         ExoPlayer.Builder(context)
             .setHandleAudioBecomingNoisy(true)
-            .setMediaSourceFactory(getMediaSourceFactory(cookie))
+            .setMediaSourceFactory(getMediaSourceFactory(sessionId))
             .build()
     }
 
@@ -198,16 +198,15 @@ private fun IntSize.toDpSize(): DpSize {
 }
 
 @OptIn(UnstableApi::class)
-private fun getMediaSourceFactory(cookie: String): MediaSource.Factory {
-    val userAgent =
-        "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/98.0.4758.102 Safari/537.36"
+private fun getMediaSourceFactory(sessionId: String): MediaSource.Factory {
+    val userAgent = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/98.0.4758.102 Safari/537.36"
     val headers = mutableMapOf<String, String>().apply {
         put("origin", "https://www.fanbox.cc")
         put("referer", "https://www.fanbox.cc")
         put("user-agent", userAgent)
 
-        if (cookie.isNotBlank()) {
-            set("Cookie", cookie)
+        if (sessionId.isNotBlank()) {
+            set("Cookie", "FANBOXSESSID=$sessionId")
         }
     }
 

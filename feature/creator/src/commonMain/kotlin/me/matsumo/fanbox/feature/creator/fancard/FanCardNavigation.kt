@@ -7,8 +7,8 @@ import androidx.navigation.NavGraphBuilder
 import androidx.navigation.NavType
 import androidx.navigation.compose.composable
 import androidx.navigation.navArgument
-import me.matsumo.fanbox.core.model.fanbox.id.FanboxCreatorId
 import me.matsumo.fanbox.core.ui.extensition.navigateWithLog
+import me.matsumo.fankt.fanbox.domain.model.id.FanboxCreatorId
 
 const val FanCardId = "fanCardId"
 const val FanCardRoute = "fanCard/{$FanCardId}"

@@ -22,13 +22,9 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
-import coil3.annotation.ExperimentalCoilApi
 import coil3.compose.AsyncImage
 import coil3.compose.LocalPlatformContext
 import coil3.request.ImageRequest
-import me.matsumo.fanbox.core.model.fanbox.FanboxCreatorDetail
-import me.matsumo.fanbox.core.model.fanbox.FanboxPostDetail
-import me.matsumo.fanbox.core.model.fanbox.id.FanboxCreatorId
 import me.matsumo.fanbox.core.resources.Res
 import me.matsumo.fanbox.core.resources.common_follow
 import me.matsumo.fanbox.core.resources.common_supporting
@@ -37,6 +33,10 @@ import me.matsumo.fanbox.core.resources.im_default_user
 import me.matsumo.fanbox.core.resources.post_detail_creator
 import me.matsumo.fanbox.core.ui.extensition.asCoilImage
 import me.matsumo.fanbox.core.ui.theme.bold
+import me.matsumo.fankt.fanbox.domain.model.FanboxCreatorDetail
+import me.matsumo.fankt.fanbox.domain.model.FanboxPostDetail
+import me.matsumo.fankt.fanbox.domain.model.id.FanboxCreatorId
+import me.matsumo.fankt.fanbox.domain.model.id.FanboxUserId
 import org.jetbrains.compose.resources.stringResource
 
 @Composable
@@ -44,8 +44,8 @@ internal fun PostDetailCreatorSection(
     postDetail: FanboxPostDetail,
     creatorDetail: FanboxCreatorDetail,
     onClickCreator: (FanboxCreatorId) -> Unit,
-    onClickFollow: (String) -> Unit,
-    onClickUnfollow: (String) -> Unit,
+    onClickFollow: (FanboxUserId) -> Unit,
+    onClickUnfollow: (FanboxUserId) -> Unit,
     onClickSupporting: (String) -> Unit,
     modifier: Modifier = Modifier,
 ) {
@@ -54,23 +54,18 @@ internal fun PostDetailCreatorSection(
         verticalArrangement = Arrangement.spacedBy(8.dp),
     ) {
         Text(
-            modifier = Modifier
-                .padding(
+            modifier = Modifier.padding(
                     top = 16.dp,
                     start = 16.dp,
                     end = 16.dp,
-                )
-                .fillMaxWidth(),
+                ).fillMaxWidth(),
             text = stringResource(Res.string.post_detail_creator),
             style = MaterialTheme.typography.titleMedium,
             color = MaterialTheme.colorScheme.onSurface,
         )
 
         CreatorItem(
-            modifier = Modifier
-                .fillMaxWidth()
-                .clickable { onClickCreator.invoke(postDetail.user.creatorId) }
-                .padding(
+            modifier = Modifier.fillMaxWidth().clickable { postDetail.user?.creatorId?.let(onClickCreator) }.padding(
                     top = 16.dp,
                     start = 24.dp,
                     end = 24.dp,
@@ -85,13 +80,12 @@ internal fun PostDetailCreatorSection(
     }
 }
 
-@OptIn(ExperimentalCoilApi::class)
 @Composable
 private fun CreatorItem(
     postDetail: FanboxPostDetail,
     creatorDetail: FanboxCreatorDetail,
-    onClickFollow: (String) -> Unit,
-    onClickUnfollow: (String) -> Unit,
+    onClickFollow: (FanboxUserId) -> Unit,
+    onClickUnfollow: (FanboxUserId) -> Unit,
     onClickSupporting: (String) -> Unit,
     modifier: Modifier = Modifier,
 ) {
@@ -103,13 +97,8 @@ private fun CreatorItem(
         horizontalArrangement = Arrangement.spacedBy(16.dp),
     ) {
         AsyncImage(
-            modifier = Modifier
-                .clip(CircleShape)
-                .size(36.dp),
-            model = ImageRequest.Builder(LocalPlatformContext.current)
-                .error(Res.drawable.im_default_user.asCoilImage())
-                .data(postDetail.user.iconUrl)
-                .build(),
+            modifier = Modifier.clip(CircleShape).size(36.dp),
+            model = ImageRequest.Builder(LocalPlatformContext.current).error(Res.drawable.im_default_user.asCoilImage()).data(postDetail.user?.iconUrl).build(),
             contentDescription = null,
         )
 
@@ -119,7 +108,7 @@ private fun CreatorItem(
         ) {
             Text(
                 modifier = Modifier.fillMaxWidth(),
-                text = postDetail.user.name,
+                text = postDetail.user?.name.orEmpty(),
                 style = MaterialTheme.typography.bodyLarge.bold(),
                 color = MaterialTheme.colorScheme.onSurface,
                 maxLines = 1,
@@ -128,7 +117,7 @@ private fun CreatorItem(
 
             Text(
                 modifier = Modifier.fillMaxWidth(),
-                text = "@${postDetail.user.creatorId.value}",
+                text = "@${postDetail.user?.creatorId?.value ?: "Unknown"}",
                 style = MaterialTheme.typography.bodySmall,
                 color = MaterialTheme.colorScheme.onSurfaceVariant,
             )
@@ -145,7 +134,7 @@ private fun CreatorItem(
                 OutlinedButton(
                     onClick = {
                         isFollowed = false
-                        onClickUnfollow.invoke(creatorDetail.user.userId)
+                        creatorDetail.user?.userId?.let(onClickUnfollow)
                     },
                 ) {
                     Text(stringResource(Res.string.common_unfollow))
@@ -156,7 +145,7 @@ private fun CreatorItem(
                 Button(
                     onClick = {
                         isFollowed = true
-                        onClickFollow.invoke(creatorDetail.user.userId)
+                        creatorDetail.user?.userId?.let(onClickFollow)
                     },
                 ) {
                     Text(stringResource(Res.string.common_follow))

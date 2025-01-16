@@ -19,10 +19,10 @@ import kotlinx.collections.immutable.persistentMapOf
 import me.matsumo.fanbox.core.common.PixiViewConfig
 import me.matsumo.fanbox.core.model.ThemeColorConfig
 import me.matsumo.fanbox.core.model.ThemeConfig
-import me.matsumo.fanbox.core.model.fanbox.FanboxMetaData
-import me.matsumo.fanbox.core.ui.extensition.FanboxCookie
-import me.matsumo.fanbox.core.ui.extensition.LocalFanboxCookie
+import me.matsumo.fanbox.core.ui.extensition.FanboxSessionId
+import me.matsumo.fanbox.core.ui.extensition.LocalFanboxSessionId
 import me.matsumo.fanbox.core.ui.extensition.LocalFanboxMetadata
+import me.matsumo.fanbox.core.ui.extensition.getFanboxMetadataDummy
 import me.matsumo.fanbox.core.ui.theme.color.DarkBlueColorScheme
 import me.matsumo.fanbox.core.ui.theme.color.DarkBrownColorScheme
 import me.matsumo.fanbox.core.ui.theme.color.DarkGreenColorScheme
@@ -36,6 +36,7 @@ import me.matsumo.fanbox.core.ui.theme.color.LightPurpleColorScheme
 import me.matsumo.fanbox.core.ui.view.LocalNativeViewsProvider
 import me.matsumo.fanbox.core.ui.view.NativeView
 import me.matsumo.fanbox.core.ui.view.NativeViews
+import me.matsumo.fankt.fanbox.domain.model.FanboxMetaData
 
 typealias ColorSchemeIOS = io.github.alexzhirkevich.cupertino.theme.ColorScheme
 
@@ -102,8 +103,8 @@ val LocalColorScheme = staticCompositionLocalOf { LightDefaultColorScheme }
 @OptIn(ExperimentalAdaptiveApi::class)
 @Composable
 fun PixiViewTheme(
-    fanboxCookie: String = "",
-    fanboxMetadata: FanboxMetaData = FanboxMetaData.dummy(),
+    sessionId: String = "",
+    fanboxMetadata: FanboxMetaData = getFanboxMetadataDummy(),
     pixiViewConfig: PixiViewConfig = PixiViewConfig.dummy(),
     themeConfig: ThemeConfig = ThemeConfig.System,
     themeColorConfig: ThemeColorConfig = ThemeColorConfig.Red,
@@ -131,7 +132,7 @@ fun PixiViewTheme(
     CompositionLocalProvider(
         LocalPixiViewConfig provides pixiViewConfig,
         LocalColorScheme provides colorScheme,
-        LocalFanboxCookie provides FanboxCookie(fanboxCookie),
+        LocalFanboxSessionId provides FanboxSessionId(sessionId),
         LocalFanboxMetadata provides fanboxMetadata,
         LocalBackgroundTheme provides backgroundTheme,
         LocalTintTheme provides tintTheme,

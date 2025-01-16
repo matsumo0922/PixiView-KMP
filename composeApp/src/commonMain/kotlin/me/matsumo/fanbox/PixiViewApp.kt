@@ -77,7 +77,7 @@ fun PixiViewApp(
             containerColor = if (shouldUseDarkTheme) DarkDefaultColorScheme.surface else LightDefaultColorScheme.surface,
         ) {
             PixiViewTheme(
-                fanboxCookie = it.fanboxCookie,
+                sessionId = it.sessionId,
                 fanboxMetadata = it.fanboxMetadata,
                 themeConfig = it.userData.themeConfig,
                 themeColorConfig = it.userData.themeColorConfig,

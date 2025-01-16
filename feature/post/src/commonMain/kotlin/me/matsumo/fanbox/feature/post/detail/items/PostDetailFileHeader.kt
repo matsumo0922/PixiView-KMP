@@ -9,7 +9,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.unit.dp
-import me.matsumo.fanbox.core.model.fanbox.FanboxPostDetail
+import me.matsumo.fankt.fanbox.domain.model.FanboxPostDetail
 import sh.calvin.autolinktext.AutoLinkText
 import sh.calvin.autolinktext.TextRuleDefaults
 

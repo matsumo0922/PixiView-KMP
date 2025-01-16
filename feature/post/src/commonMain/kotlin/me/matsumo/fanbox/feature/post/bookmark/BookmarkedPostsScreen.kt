@@ -4,7 +4,6 @@ import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.animation.togetherWith
-import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.PaddingValues
@@ -74,7 +73,8 @@ internal fun BookmarkedPostsRoute(
         BookmarkedPostsScreen(
             modifier = Modifier.fillMaxSize(),
             userData = it.userData,
-            bookmarkedPosts = it.bookmarkedPosts.toImmutableList(),
+            posts = it.posts.toImmutableList(),
+            bookmarkedPostIds = it.bookmarkedPostIds.toImmutableList(),
             onSearch = viewModel::search,
             onClickPost = navigateToPostDetail,
             onCLickPostLike = viewModel::postLike,
@@ -90,7 +90,8 @@ internal fun BookmarkedPostsRoute(
 @Composable
 private fun BookmarkedPostsScreen(
     userData: UserData,
-    bookmarkedPosts: ImmutableList<FanboxPost>,
+    posts: ImmutableList<FanboxPost>,
+    bookmarkedPostIds: ImmutableList<FanboxPostId>,
     onSearch: (String) -> Unit,
     onClickPost: (FanboxPostId) -> Unit,
     onCLickPostLike: (FanboxPostId) -> Unit,
@@ -131,7 +132,7 @@ private fun BookmarkedPostsScreen(
                 .fillMaxSize(),
         ) {
             AnimatedContent(
-                targetState = bookmarkedPosts.isNotEmpty(),
+                targetState = posts.isNotEmpty(),
                 transitionSpec = { fadeIn().togetherWith(fadeOut()) },
                 label = "BookmarkedPostsScreen",
             ) { targetState ->
@@ -145,7 +146,7 @@ private fun BookmarkedPostsScreen(
                         horizontalArrangement = Arrangement.spacedBy(16.dp),
                     ) {
                         items(
-                            items = bookmarkedPosts,
+                            items = posts,
                             key = { it.id.uniqueValue },
                         ) { likedPost ->
                             PostItem(
@@ -156,7 +157,8 @@ private fun BookmarkedPostsScreen(
                                 isHideAdultContents = userData.isHideAdultContents,
                                 isOverrideAdultContents = userData.isAllowedShowAdultContents,
                                 isTestUser = userData.isTestUser,
-                                onClickPost = { if (!likedPost.isRestricted) onClickPost.invoke(it) },
+                                isBookmarked = bookmarkedPostIds.contains(likedPost.id),
+                                onClickPost = onClickPost,
                                 onClickBookmark = { _, isBookmarked -> onClickPostBookmark.invoke(likedPost, isBookmarked) },
                                 onClickCreator = onClickCreatorPosts,
                                 onClickLike = onCLickPostLike,

@@ -13,10 +13,10 @@ import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
 import me.matsumo.fanbox.core.model.ScreenState
 import me.matsumo.fanbox.core.model.UserData
-import me.matsumo.fanbox.core.model.fanbox.FanboxBell
 import me.matsumo.fanbox.core.repository.FanboxRepository
 import me.matsumo.fanbox.core.repository.UserDataRepository
 import me.matsumo.fanbox.feature.library.notify.paging.LibraryNotifyPagingSource
+import me.matsumo.fankt.fanbox.domain.model.FanboxBell
 
 class LibraryNotifyViewModel(
     private val fanboxRepository: FanboxRepository,

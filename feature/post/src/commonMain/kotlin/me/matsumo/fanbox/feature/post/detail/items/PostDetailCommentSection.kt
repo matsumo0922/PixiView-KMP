@@ -43,12 +43,6 @@ import coil3.compose.LocalPlatformContext
 import coil3.request.ImageRequest
 import kotlinx.datetime.Clock
 import kotlinx.datetime.Instant
-import me.matsumo.fanbox.core.model.PageOffsetInfo
-import me.matsumo.fanbox.core.model.fanbox.FanboxComments
-import me.matsumo.fanbox.core.model.fanbox.FanboxMetaData
-import me.matsumo.fanbox.core.model.fanbox.FanboxPostDetail
-import me.matsumo.fanbox.core.model.fanbox.id.FanboxCommentId
-import me.matsumo.fanbox.core.model.fanbox.id.FanboxPostId
 import me.matsumo.fanbox.core.resources.Res
 import me.matsumo.fanbox.core.resources.common_delete
 import me.matsumo.fanbox.core.resources.common_see_more
@@ -64,12 +58,18 @@ import me.matsumo.fanbox.core.ui.extensition.asCoilImage
 import me.matsumo.fanbox.core.ui.extensition.padding
 import me.matsumo.fanbox.core.ui.theme.bold
 import me.matsumo.fanbox.core.ui.theme.center
+import me.matsumo.fankt.fanbox.domain.PageOffsetInfo
+import me.matsumo.fankt.fanbox.domain.model.FanboxComment
+import me.matsumo.fankt.fanbox.domain.model.FanboxMetaData
+import me.matsumo.fankt.fanbox.domain.model.FanboxPostDetail
+import me.matsumo.fankt.fanbox.domain.model.id.FanboxCommentId
+import me.matsumo.fankt.fanbox.domain.model.id.FanboxPostId
 import org.jetbrains.compose.resources.stringResource
 
 internal fun LazyListScope.postDetailCommentItems(
     isShowCommentEditor: Boolean,
     postDetail: FanboxPostDetail,
-    comments: PageOffsetInfo<FanboxComments.Item>,
+    comments: PageOffsetInfo<FanboxComment>,
     metaData: FanboxMetaData,
     onClickLoadMore: (FanboxPostId, Int) -> Unit,
     onClickCommentLike: (FanboxCommentId) -> Unit,
@@ -193,10 +193,9 @@ internal fun LazyListScope.postDetailCommentItems(
     }
 }
 
-@OptIn(ExperimentalCoilApi::class)
 @Composable
 private fun CommentItem(
-    comment: FanboxComments.Item,
+    comment: FanboxComment,
     metaData: FanboxMetaData,
     onClickCommentLike: (FanboxCommentId) -> Unit,
     onClickCommentReply: (String, FanboxCommentId, FanboxCommentId) -> Unit,
@@ -217,7 +216,7 @@ private fun CommentItem(
                 .size(36.dp),
             model = ImageRequest.Builder(LocalPlatformContext.current)
                 .error(Res.drawable.im_default_user.asCoilImage())
-                .data(comment.user.iconUrl)
+                .data(comment.user?.iconUrl)
                 .build(),
             contentDescription = null,
         )
@@ -228,7 +227,7 @@ private fun CommentItem(
                 .fillMaxWidth(),
         ) {
             Text(
-                text = comment.user.name,
+                text = comment.user?.name.orEmpty(),
                 style = MaterialTheme.typography.bodyMedium.bold(),
                 color = MaterialTheme.colorScheme.onSurface,
             )
@@ -347,7 +346,7 @@ private fun CommentItem(
                         .padding(top = 8.dp)
                         .fillMaxWidth(),
                     parentFanboxCommentId = comment.id,
-                    rootFanboxCommentId = comment.rootFanboxCommentId,
+                    rootFanboxCommentId = comment.rootCommentId,
                     metaData = metaData,
                     onClickCommentReply = onClickCommentReply,
                 )

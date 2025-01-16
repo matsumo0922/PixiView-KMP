@@ -22,9 +22,6 @@ import app.cash.paging.compose.itemContentType
 import app.cash.paging.compose.itemKey
 import kotlinx.collections.immutable.ImmutableList
 import me.matsumo.fanbox.core.model.UserData
-import me.matsumo.fanbox.core.model.fanbox.FanboxPost
-import me.matsumo.fanbox.core.model.fanbox.id.FanboxCreatorId
-import me.matsumo.fanbox.core.model.fanbox.id.FanboxPostId
 import me.matsumo.fanbox.core.resources.Res
 import me.matsumo.fanbox.core.resources.error_no_data_search
 import me.matsumo.fanbox.core.ui.LazyPagingItemsLoadContents
@@ -33,6 +30,9 @@ import me.matsumo.fanbox.core.ui.extensition.LocalNavigationType
 import me.matsumo.fanbox.core.ui.extensition.PixiViewNavigationType
 import me.matsumo.fanbox.core.ui.extensition.drawVerticalScrollbar
 import me.matsumo.fanbox.core.ui.view.PagingErrorSection
+import me.matsumo.fankt.fanbox.domain.model.FanboxPost
+import me.matsumo.fankt.fanbox.domain.model.id.FanboxCreatorId
+import me.matsumo.fankt.fanbox.domain.model.id.FanboxPostId
 
 @Composable
 internal fun PostSearchTagScreen(
@@ -83,11 +83,12 @@ internal fun PostSearchTagScreen(
                 pagingAdapter[index]?.let { post ->
                     PostItem(
                         modifier = Modifier.fillMaxWidth(),
-                        post = post.copy(isBookmarked = bookmarkedPosts.contains(post.id)),
+                        post = post,
+                        isBookmarked = bookmarkedPosts.contains(post.id),
                         isHideAdultContents = userData.isHideAdultContents,
                         isOverrideAdultContents = userData.isAllowedShowAdultContents,
                         isTestUser = userData.isTestUser,
-                        onClickPost = { if (!post.isRestricted) onClickPost.invoke(it) },
+                        onClickPost = onClickPost,
                         onClickLike = onClickPostLike,
                         onClickBookmark = { _, isLiked -> onClickPostBookmark.invoke(post, isLiked) },
                         onClickCreator = onClickCreator,
