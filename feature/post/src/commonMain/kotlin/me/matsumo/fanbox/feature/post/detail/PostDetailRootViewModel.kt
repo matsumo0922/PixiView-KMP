@@ -7,8 +7,10 @@ import androidx.paging.PagingData
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
+import me.matsumo.fanbox.core.common.util.suspendRunCatching
 import me.matsumo.fanbox.core.model.UserData
 import me.matsumo.fanbox.core.repository.FanboxRepository
 import me.matsumo.fanbox.core.repository.UserDataRepository
@@ -19,6 +21,7 @@ import me.matsumo.fanbox.feature.post.detail.PostDetailPagingType.Search
 import me.matsumo.fanbox.feature.post.detail.PostDetailPagingType.Supported
 import me.matsumo.fanbox.feature.post.detail.PostDetailPagingType.Unknown
 import me.matsumo.fankt.fanbox.domain.model.FanboxPost
+import me.matsumo.fankt.fanbox.domain.model.id.FanboxPostId
 
 class PostDetailRootViewModel(
     private val userDataRepository: UserDataRepository,
@@ -29,10 +32,19 @@ class PostDetailRootViewModel(
         PostDetailRootUiState(
             paging = null,
             userData = UserData.default(),
+            bookmarkedPostIds = emptyList(),
         ),
     )
 
     val uiState = _uiState.asStateFlow()
+
+    init {
+        viewModelScope.launch {
+            fanboxRepository.bookmarkedPostsIds.collectLatest {
+                _uiState.value = _uiState.value.copy(bookmarkedPostIds = it)
+            }
+        }
+    }
 
     fun fetch(type: PostDetailPagingType) {
         viewModelScope.launch {
@@ -49,7 +61,20 @@ class PostDetailRootViewModel(
                     Unknown -> emptyPaging()
                 },
                 userData = userData,
+                bookmarkedPostIds = fanboxRepository.bookmarkedPostsIds.first(),
             )
+        }
+    }
+
+    fun postBookmark(post: FanboxPost, isBookmarked: Boolean) {
+        viewModelScope.launch {
+            suspendRunCatching {
+                if (isBookmarked) {
+                    fanboxRepository.bookmarkPost(post)
+                } else {
+                    fanboxRepository.unbookmarkPost(post)
+                }
+            }
         }
     }
 }
@@ -58,4 +83,5 @@ class PostDetailRootViewModel(
 data class PostDetailRootUiState(
     val paging: Flow<PagingData<FanboxPost>>?,
     val userData: UserData,
+    val bookmarkedPostIds: List<FanboxPostId>,
 )

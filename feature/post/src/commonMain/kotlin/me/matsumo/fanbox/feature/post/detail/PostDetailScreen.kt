@@ -1,6 +1,5 @@
 package me.matsumo.fanbox.feature.post.detail
 
-import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -14,19 +13,23 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.rememberLazyListState
+import androidx.compose.material.Scaffold
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.InsertDriveFile
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
+import androidx.compose.material3.surfaceColorAtElevation
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateMapOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
+import androidx.compose.runtime.snapshotFlow
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Brush
@@ -39,7 +42,6 @@ import app.cash.paging.compose.collectAsLazyPagingItems
 import coil3.compose.LocalPlatformContext
 import coil3.compose.SubcomposeAsyncImage
 import coil3.request.ImageRequest
-import io.github.alexzhirkevich.cupertino.section.stickySection
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.toImmutableList
 import kotlinx.coroutines.launch
@@ -53,6 +55,7 @@ import me.matsumo.fanbox.core.resources.common_downloaded
 import me.matsumo.fanbox.core.resources.error_network
 import me.matsumo.fanbox.core.ui.AsyncLoadContents
 import me.matsumo.fanbox.core.ui.LazyPagingItemsLoadContents
+import me.matsumo.fanbox.core.ui.ads.BannerAdView
 import me.matsumo.fanbox.core.ui.ads.NativeAdView
 import me.matsumo.fanbox.core.ui.component.pager.HorizontalPager
 import me.matsumo.fanbox.core.ui.component.pager.rememberPagerState
@@ -113,61 +116,101 @@ internal fun PostDetailRoute(
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
     val paging = uiState.paging?.collectAsLazyPagingItems()
 
+    val postDetailMap = remember { mutableStateMapOf<FanboxPostId, FanboxPostDetail>() }
+    var currentPostId by remember { mutableStateOf(postId) }
+
     LaunchedEffect(true) {
         if (paging == null) {
             viewModel.fetch(type)
         }
     }
 
-    if (paging != null && !paging.isNullOrEmpty() && uiState.userData.isUseInfinityPostDetail) {
-        LazyPagingItemsLoadContents(
-            modifier = modifier,
-            lazyPagingItems = paging,
-            isSwipeEnabled = false,
-        ) {
-            val initIndex = remember { paging.itemSnapshotList.indexOfFirst { it?.id == postId } }
-            val pagerState = rememberPagerState(if (initIndex != -1) initIndex else 0)
-
-            HorizontalPager(
-                modifier = Modifier.fillMaxSize(),
-                state = pagerState,
-                count = paging.itemCount,
-                key = { paging[it]?.id?.uniqueValue ?: Uuid.random().toString() },
+    Scaffold(
+        modifier = modifier,
+        bottomBar = {
+            Column(
+                modifier = Modifier.background(MaterialTheme.colorScheme.surfaceColorAtElevation(1.dp))
             ) {
-                paging[it]?.let { post ->
-                    PostDetailView(
-                        modifier = Modifier.fillMaxSize(),
-                        postId = post.id,
-                        navigateToPostSearch = navigateToPostSearch,
-                        navigateToPostDetail = navigateToPostDetail,
-                        navigateToPostImage = navigateToPostImage,
-                        navigateToCreatorPlans = navigateToCreatorPlans,
-                        navigateToCreatorPosts = navigateToCreatorPosts,
-                        navigateToCommentDeleteDialog = navigateToCommentDeleteDialog,
-                        terminate = terminate,
+                if (!uiState.userData.hasPrivilege) {
+                    BannerAdView(
+                        modifier = Modifier.fillMaxWidth(),
                     )
                 }
+
+                PostDetailBottomBar(
+                    modifier = Modifier.fillMaxWidth(),
+                    postDetail = postDetailMap[currentPostId],
+                    isBookmarked = uiState.bookmarkedPostIds.contains(currentPostId),
+                    onCreatorClicked = navigateToCreatorPosts,
+                    onBookmarkClicked = { isBookmarked ->
+                        postDetailMap[currentPostId]?.let { viewModel.postBookmark(it.adPost(), isBookmarked) }
+                    },
+                )
             }
         }
-    } else if (paging != null) {
-        PostDetailView(
-            modifier = Modifier.fillMaxSize(),
-            postId = postId,
-            navigateToPostSearch = navigateToPostSearch,
-            navigateToPostDetail = navigateToPostDetail,
-            navigateToPostImage = navigateToPostImage,
-            navigateToCreatorPlans = navigateToCreatorPlans,
-            navigateToCreatorPosts = navigateToCreatorPosts,
-            navigateToCommentDeleteDialog = navigateToCommentDeleteDialog,
-            terminate = terminate,
-        )
-    } else {
-        ErrorView(
-            modifier = Modifier.fillMaxSize(),
-            errorState = ScreenState.Error(Res.string.error_network),
-            retryAction = { terminate.invoke() },
-            terminate = { terminate.invoke() },
-        )
+    ) { padding ->
+        if (paging != null && !paging.isNullOrEmpty() && uiState.userData.isUseInfinityPostDetail) {
+            LazyPagingItemsLoadContents(
+                modifier = Modifier.padding(padding),
+                lazyPagingItems = paging,
+                isSwipeEnabled = false,
+            ) {
+                val initIndex = remember { paging.itemSnapshotList.indexOfFirst { it?.id == postId } }
+                val pagerState = rememberPagerState(if (initIndex != -1) initIndex else 0)
+
+                LaunchedEffect(pagerState) {
+                    snapshotFlow { pagerState.currentPage }.collect { index ->
+                        paging[index]?.id?.let { currentPostId = it }
+                    }
+                }
+
+                HorizontalPager(
+                    modifier = Modifier.fillMaxSize(),
+                    state = pagerState,
+                    count = paging.itemCount,
+                    key = { index -> paging[index]?.id?.uniqueValue ?: Uuid.random().toString() },
+                ) { index ->
+                    paging[index]?.let { post ->
+                        PostDetailView(
+                            modifier = Modifier.fillMaxSize(),
+                            postId = post.id,
+                            navigateToPostSearch = navigateToPostSearch,
+                            navigateToPostDetail = navigateToPostDetail,
+                            navigateToPostImage = navigateToPostImage,
+                            navigateToCreatorPlans = navigateToCreatorPlans,
+                            navigateToCreatorPosts = navigateToCreatorPosts,
+                            navigateToCommentDeleteDialog = navigateToCommentDeleteDialog,
+                            onPostDetailFetched = { postDetailMap[post.id] = it },
+                            terminate = terminate,
+                        )
+                    }
+                }
+            }
+        } else if (paging != null) {
+            PostDetailView(
+                modifier = Modifier
+                    .padding(padding)
+                    .fillMaxSize(),
+                postId = postId,
+                navigateToPostSearch = navigateToPostSearch,
+                navigateToPostDetail = navigateToPostDetail,
+                navigateToPostImage = navigateToPostImage,
+                navigateToCreatorPlans = navigateToCreatorPlans,
+                navigateToCreatorPosts = navigateToCreatorPosts,
+                navigateToCommentDeleteDialog = navigateToCommentDeleteDialog,
+                onPostDetailFetched = { postDetailMap[postId] = it },
+                terminate = terminate,
+            )
+        } else {
+            ErrorView(
+                modifier = Modifier
+                    .padding(padding)
+                    .fillMaxSize(),
+                errorState = ScreenState.Error(Res.string.error_network),
+                retryAction = { terminate.invoke() },
+                terminate = { terminate.invoke() },
+            )
+        }
     }
 }
 
@@ -180,6 +223,7 @@ private fun PostDetailView(
     navigateToCreatorPlans: (FanboxCreatorId) -> Unit,
     navigateToCreatorPosts: (FanboxCreatorId) -> Unit,
     navigateToCommentDeleteDialog: (SimpleAlertContents, () -> Unit) -> Unit,
+    onPostDetailFetched: (FanboxPostDetail) -> Unit,
     terminate: () -> Unit,
     modifier: Modifier = Modifier,
     viewModel: PostDetailViewModel = koinViewModel(key = postId.value),
@@ -281,6 +325,10 @@ private fun PostDetailView(
             uiState.messageToast?.let { scope.launch { snackExtension.show(snackbarHostState, it) } }
             viewModel.consumeToast()
         }
+
+        LaunchedEffect(uiState.postDetail) {
+            onPostDetailFetched.invoke(uiState.postDetail)
+        }
     }
 }
 
@@ -338,120 +386,108 @@ private fun PostDetailScreen(
     }.getOrDefault(true)
 
     Box(modifier) {
-        Column {
-            LazyColumn(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .weight(1f),
-                state = state,
-            ) {
-                if (isShowHeader) {
-                    item {
-                        PostDetailHeader(
-                            modifier = Modifier
-                                .padding(bottom = 16.dp)
-                                .fillMaxWidth(),
-                            post = postDetail,
-                        )
-                    }
-                }
-
-                postDetailItems(
-                    post = postDetail,
-                    userData = userData,
-                    isBookmarked = isBookmarked,
-                    onClickCreator = onClickCreator,
-                    onClickPost = onClickPost,
-                    onClickPostLike = onClickPostLike,
-                    onClickPostBookmark = onClickPostBookmark,
-                    onClickImage = onClickImage,
-                    onClickFile = onClickFile,
-                    onClickDownload = onClickDownloadImages,
-                )
-
-                postDetailTagsSection(
-                    tags = postDetail.tags.toImmutableList(),
-                    onClickTag = onClickTag,
-                )
-
+        LazyColumn(
+            modifier = Modifier.fillMaxSize(),
+            state = state,
+        ) {
+            if (isShowHeader) {
                 item {
-                    PostDetailCommentLikeButton(
+                    PostDetailHeader(
                         modifier = Modifier
-                            .padding(horizontal = 16.dp, top = 16.dp)
+                            .padding(bottom = 16.dp)
                             .fillMaxWidth(),
-                        isLiked = isPostLiked,
-                        isBookmarked = isBookmarked,
-                        likeCount = postDetail.likeCount,
-                        commentCount = postDetail.commentCount,
-                        onClickLike = {
-                            isPostLiked = true
-                            onClickPostLike.invoke(postDetail.id)
-                        },
-                        onClickBookmark = {
-                            onClickPostBookmark.invoke(postDetail.adPost(), !isBookmarked)
-                        },
+                        post = postDetail,
                     )
-                }
-
-                postDetailCardSection(
-                    postDetail = postDetail,
-                    onClickCreatorPlans = onClickCreatorPlans,
-                    onClickDownloadImages = onClickDownloadImages,
-                )
-
-                // Android は NativeAds なので下部に置く
-                if (!userData.hasPrivilege && currentPlatform == Platform.Android) {
-                    item {
-                        NativeAdView(
-                            modifier = Modifier
-                                .padding(horizontal = 16.dp, top = 16.dp)
-                                .fillMaxWidth(),
-                            key = creatorDetail.creatorId.value,
-                        )
-                    }
-                }
-
-                item {
-                    PostDetailCreatorSection(
-                        modifier = Modifier
-                            .padding(top = 16.dp)
-                            .fillMaxWidth(),
-                        postDetail = postDetail,
-                        creatorDetail = creatorDetail,
-                        onClickCreator = { onClickCreatorPosts.invoke(it) },
-                        onClickFollow = onClickFollow,
-                        onClickUnfollow = onClickUnfollow,
-                        onClickSupporting = onClickOpenBrowser,
-                    )
-                }
-
-                postDetailCommentItems(
-                    postDetail = postDetail,
-                    comments = comments,
-                    metaData = metaData,
-                    isShowCommentEditor = isShowCommentEditor,
-                    onClickLoadMore = onClickCommentLoadMore,
-                    onClickCommentLike = onClickCommentLike,
-                    onClickCommentReply = { body, parent, root ->
-                        latestComment = body
-                        onClickCommentReply.invoke(body, parent, root)
-                    },
-                    onClickCommentDelete = onClickCommentDelete,
-                    onClickShowCommentEditor = { isShowCommentEditor = it },
-                )
-
-                item {
-                    Spacer(modifier = Modifier.height(128.dp))
                 }
             }
 
-            PostDetailBottomBar(
-                modifier = Modifier.fillMaxWidth(),
-                postDetail = postDetail,
+            postDetailItems(
+                post = postDetail,
+                userData = userData,
                 isBookmarked = isBookmarked,
-                onCreatorClicked = onClickCreator,
-                onBookmarkClicked = { onClickPostBookmark.invoke(postDetail.adPost(), it) },
+                onClickCreator = onClickCreator,
+                onClickPost = onClickPost,
+                onClickPostLike = onClickPostLike,
+                onClickPostBookmark = onClickPostBookmark,
+                onClickImage = onClickImage,
+                onClickFile = onClickFile,
+                onClickDownload = onClickDownloadImages,
             )
+
+            postDetailTagsSection(
+                tags = postDetail.tags.toImmutableList(),
+                onClickTag = onClickTag,
+            )
+
+            item {
+                PostDetailCommentLikeButton(
+                    modifier = Modifier
+                        .padding(horizontal = 16.dp, top = 16.dp)
+                        .fillMaxWidth(),
+                    isLiked = isPostLiked,
+                    isBookmarked = isBookmarked,
+                    likeCount = postDetail.likeCount,
+                    commentCount = postDetail.commentCount,
+                    onClickLike = {
+                        isPostLiked = true
+                        onClickPostLike.invoke(postDetail.id)
+                    },
+                    onClickBookmark = {
+                        onClickPostBookmark.invoke(postDetail.adPost(), !isBookmarked)
+                    },
+                )
+            }
+
+            postDetailCardSection(
+                postDetail = postDetail,
+                onClickCreatorPlans = onClickCreatorPlans,
+                onClickDownloadImages = onClickDownloadImages,
+            )
+
+            // Android は NativeAds なので下部に置く
+            if (!userData.hasPrivilege && currentPlatform == Platform.Android) {
+                item {
+                    NativeAdView(
+                        modifier = Modifier
+                            .padding(horizontal = 16.dp, top = 16.dp)
+                            .fillMaxWidth(),
+                        key = creatorDetail.creatorId.value,
+                    )
+                }
+            }
+
+            item {
+                PostDetailCreatorSection(
+                    modifier = Modifier
+                        .padding(top = 16.dp)
+                        .fillMaxWidth(),
+                    postDetail = postDetail,
+                    creatorDetail = creatorDetail,
+                    onClickCreator = { onClickCreatorPosts.invoke(it) },
+                    onClickFollow = onClickFollow,
+                    onClickUnfollow = onClickUnfollow,
+                    onClickSupporting = onClickOpenBrowser,
+                )
+            }
+
+            postDetailCommentItems(
+                postDetail = postDetail,
+                comments = comments,
+                metaData = metaData,
+                isShowCommentEditor = isShowCommentEditor,
+                onClickLoadMore = onClickCommentLoadMore,
+                onClickCommentLike = onClickCommentLike,
+                onClickCommentReply = { body, parent, root ->
+                    latestComment = body
+                    onClickCommentReply.invoke(body, parent, root)
+                },
+                onClickCommentDelete = onClickCommentDelete,
+                onClickShowCommentEditor = { isShowCommentEditor = it },
+            )
+
+            item {
+                Spacer(modifier = Modifier.height(128.dp))
+            }
         }
 
         PostDetailTopAppBar(

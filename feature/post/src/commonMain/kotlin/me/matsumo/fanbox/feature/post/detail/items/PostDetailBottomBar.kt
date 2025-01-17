@@ -1,5 +1,9 @@
 package me.matsumo.fanbox.feature.post.detail.items
 
+import androidx.compose.animation.AnimatedContent
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
+import androidx.compose.animation.togetherWith
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -37,7 +41,7 @@ import me.matsumo.fankt.fanbox.domain.model.id.FanboxCreatorId
 
 @Composable
 internal fun PostDetailBottomBar(
-    postDetail: FanboxPostDetail,
+    postDetail: FanboxPostDetail?,
     isBookmarked: Boolean,
     onCreatorClicked: (FanboxCreatorId) -> Unit,
     onBookmarkClicked: (Boolean) -> Unit,
@@ -45,52 +49,58 @@ internal fun PostDetailBottomBar(
 ) {
     val bookmarkColor = if (isBookmarked) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.onSurfaceVariant
 
-    Row(
+    AnimatedContent(
         modifier = modifier
-            .background(MaterialTheme.colorScheme.surfaceColorAtElevation(1.dp))
             .navigationBarsPadding()
             .padding(16.dp, 8.dp),
-        verticalAlignment = Alignment.CenterVertically,
-        horizontalArrangement = Arrangement.spacedBy(16.dp),
+        targetState = postDetail,
+        transitionSpec = { fadeIn().togetherWith(fadeOut()) },
     ) {
-        AsyncImage(
-            modifier = Modifier
-                .clip(CircleShape)
-                .size(36.dp)
-                .clickable { postDetail.user?.creatorId?.let(onCreatorClicked) },
-            model = ImageRequest.Builder(LocalPlatformContext.current).error(Res.drawable.im_default_user.asCoilImage()).data(postDetail.user?.iconUrl).build(),
-            contentDescription = null,
-        )
-
-        Column(
-            modifier = Modifier.weight(1f),
-            verticalArrangement = Arrangement.spacedBy(4.dp),
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.spacedBy(16.dp),
         ) {
-            Text(
-                modifier = Modifier.fillMaxWidth(),
-                text = postDetail.title,
-                style = MaterialTheme.typography.bodyLarge.bold(),
-                color = MaterialTheme.colorScheme.onSurface,
-                maxLines = 1,
-                overflow = TextOverflow.Ellipsis,
-            )
-
-            Text(
-                modifier = Modifier.fillMaxWidth(),
-                text = postDetail.user?.name.orEmpty(),
-                style = MaterialTheme.typography.bodySmall,
-                color = MaterialTheme.colorScheme.onSurfaceVariant,
-            )
-        }
-
-        IconButton(
-            onClick = { onBookmarkClicked.invoke(!isBookmarked) },
-        ) {
-            Icon(
-                imageVector = if (isBookmarked) Icons.Default.Bookmark else Icons.Outlined.BookmarkBorder,
-                tint = bookmarkColor,
+            AsyncImage(
+                modifier = Modifier
+                    .clip(CircleShape)
+                    .size(36.dp)
+                    .clickable { it?.user?.creatorId?.let(onCreatorClicked) },
+                model = ImageRequest.Builder(LocalPlatformContext.current).error(Res.drawable.im_default_user.asCoilImage())
+                    .data(it?.user?.iconUrl).build(),
                 contentDescription = null,
             )
+
+            Column(
+                modifier = Modifier.weight(1f),
+                verticalArrangement = Arrangement.spacedBy(4.dp),
+            ) {
+                Text(
+                    modifier = Modifier.fillMaxWidth(),
+                    text = it?.title.orEmpty(),
+                    style = MaterialTheme.typography.bodyLarge.bold(),
+                    color = MaterialTheme.colorScheme.onSurface,
+                    maxLines = 1,
+                    overflow = TextOverflow.Ellipsis,
+                )
+
+                Text(
+                    modifier = Modifier.fillMaxWidth(),
+                    text = it?.user?.name.orEmpty(),
+                    style = MaterialTheme.typography.bodySmall,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                )
+            }
+
+            IconButton(
+                onClick = { onBookmarkClicked.invoke(!isBookmarked) },
+            ) {
+                Icon(
+                    imageVector = if (isBookmarked) Icons.Default.Bookmark else Icons.Outlined.BookmarkBorder,
+                    tint = bookmarkColor,
+                    contentDescription = null,
+                )
+            }
         }
     }
 }
