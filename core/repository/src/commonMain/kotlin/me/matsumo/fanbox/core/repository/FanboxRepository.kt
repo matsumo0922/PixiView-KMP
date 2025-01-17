@@ -5,6 +5,7 @@ import androidx.paging.PagingConfig
 import androidx.paging.PagingData
 import androidx.paging.cachedIn
 import com.multiplatform.webview.cookie.WebViewCookieManager
+import io.ktor.client.plugins.logging.LogLevel
 import io.ktor.client.plugins.onDownload
 import io.ktor.client.request.prepareGet
 import io.ktor.client.request.url
@@ -187,7 +188,11 @@ class FanboxRepositoryImpl(
 ) : FanboxRepository, KoinComponent {
 
     private val scope = CoroutineScope(SupervisorJob() + ioDispatcher)
-    private val fanbox = Fanbox()
+
+    private val fanbox = Fanbox(
+        logLevel = LogLevel.NONE,
+        ioDispatcher = ioDispatcher,
+    )
 
     private val creatorCache = mutableMapOf<FanboxCreatorId, FanboxCreatorDetail>()
     private val postCache = mutableMapOf<FanboxPostId, FanboxPostDetail>()

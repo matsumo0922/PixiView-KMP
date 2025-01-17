@@ -29,6 +29,7 @@ class DownloadPostService : Service() {
 
     private val downloadPostsRepository by inject<DownloadPostsRepository>()
     private val downloadState = downloadPostsRepository.downloadState
+    private val reservingPosts = downloadPostsRepository.reservingPosts
 
     private val manager by lazy { baseContext.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager }
     private val notifyConfig = NotificationConfigs.download
@@ -52,12 +53,12 @@ class DownloadPostService : Service() {
                 if (it is DownloadState.Downloading) {
                     setForegroundService(
                         isForeground = true,
-                        title = getString(Res.string.post_detail_downloading),
+                        title = getString(Res.string.post_detail_downloading, reservingPosts.value.size),
                         message = it.title,
                         subMessage = "${(it.progress * 100).toInt()} %",
                         progress = it.progress,
                     )
-                } else {
+                } else if (reservingPosts.value.isEmpty()) {
                     delay(3000)
                     setForegroundService(false)
                 }

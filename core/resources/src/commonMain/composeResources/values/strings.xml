@@ -182,7 +182,7 @@
     <string name="post_detail_oldest_post">No previous post</string>
     <string name="post_detail_newest_post">There are no next posts</string>
     <string name="post_detail_all_posts">See all posts</string>
-    <string name="post_detail_downloading">Downloading…</string>
+    <string name="post_detail_downloading">Downloading… (%1$d remaining)</string>
     <string name="post_detail_open_browser">Open in browser</string>
     <string name="post_image_download">Download this image</string>
     <string name="post_image_all_download">Download all images</string>

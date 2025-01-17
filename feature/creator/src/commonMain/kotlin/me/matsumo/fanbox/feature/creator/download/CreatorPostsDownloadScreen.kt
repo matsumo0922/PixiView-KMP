@@ -16,6 +16,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -49,6 +50,7 @@ import androidx.compose.ui.window.DialogProperties
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.toImmutableList
+import kotlinx.coroutines.NonCancellable.isCompleted
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import me.matsumo.fanbox.core.common.util.format
@@ -81,8 +83,6 @@ internal fun CreatorPostsDownloadRoute(
 ) {
     val scope = rememberCoroutineScope()
     val screenState by viewModel.screenState.collectAsStateWithLifecycle()
-    var targetIndex by remember { mutableIntStateOf(-1) }
-    var isCompleted by remember { mutableStateOf(false) }
 
     LaunchedEffect(true) {
         if (screenState !is ScreenState.Idle) {
@@ -101,8 +101,6 @@ internal fun CreatorPostsDownloadRoute(
             modifier = Modifier.fillMaxSize(),
             creatorDetail = uiState.creatorDetail,
             posts = uiState.targetPosts.toImmutableList(),
-            targetIndex = targetIndex,
-            isCompleted = isCompleted,
             isIgnoreFreePosts = uiState.isIgnoreFreePosts,
             isIgnoreFiles = uiState.isIgnoreFiles,
             isPrepared = uiState.isPrepared,
@@ -110,30 +108,8 @@ internal fun CreatorPostsDownloadRoute(
             onUpdateIgnoreKeyword = viewModel::updateIgnoreKeyword,
             onClickIgnoreFreePosts = viewModel::updateIgnoreFreePosts,
             onClickIgnoreFiles = viewModel::updateIgnoreFiles,
-            onClickDownload = {
-                scope.launch {
-                    for ((index, post) in uiState.targetPosts.toList().withIndex()) {
-                        targetIndex = index
-                        viewModel.download(postId = post.post.id)
-
-                        delay(1000)
-                    }
-
-                    targetIndex += 1
-                    isCompleted = true
-                }
-            },
-            terminate = {
-                if (isCompleted || targetIndex == -1) {
-                    terminate.invoke()
-                } else {
-                    scope.launch {
-                        navigateToCancelDownloadAlert(SimpleAlertContents.CancelDownload) {
-                            terminate.invoke()
-                        }
-                    }
-                }
-            },
+            onClickDownload = { viewModel.download(uiState.targetPosts.map { it.post.id }) },
+            terminate = terminate,
         )
 
         if (!uiState.isPrepared) {
@@ -160,9 +136,7 @@ internal fun CreatorPostsDownloadRoute(
 @Composable
 private fun CreatorPostsDownloadScreen(
     creatorDetail: FanboxCreatorDetail,
-    targetIndex: Int,
     posts: ImmutableList<CreatorPostsDownloadData>,
-    isCompleted: Boolean,
     isIgnoreFreePosts: Boolean,
     isIgnoreFiles: Boolean,
     isPrepared: Boolean,
@@ -176,17 +150,6 @@ private fun CreatorPostsDownloadScreen(
 ) {
     val state = rememberLazyListState()
     val scrollBehavior = TopAppBarDefaults.pinnedScrollBehavior()
-    var isDisplaySettings by remember { mutableStateOf(false) }
-
-    LaunchedEffect(targetIndex) {
-        if (targetIndex > 0) {
-            state.animateScrollToItem(targetIndex + 1)
-        }
-    }
-
-    BackHandler(!isCompleted) {
-        terminate.invoke()
-    }
 
     Scaffold(
         modifier = modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
@@ -206,7 +169,7 @@ private fun CreatorPostsDownloadScreen(
                     .fillMaxWidth()
                     .navigationBarsPadding()
                     .padding(16.dp),
-                onClick = { if (targetIndex == -1) onClickDownload.invoke() },
+                onClick = onClickDownload,
                 contentPadding = ButtonDefaults.ButtonWithIconContentPadding,
                 enabled = isPrepared,
             ) {
@@ -218,11 +181,7 @@ private fun CreatorPostsDownloadScreen(
 
                 Text(
                     modifier = Modifier.padding(start = 8.dp),
-                    text = when {
-                        isCompleted -> stringResource(Res.string.common_completed)
-                        targetIndex == -1 -> stringResource(Res.string.creator_posts_download_button, posts.size)
-                        else -> stringResource(Res.string.creator_posts_download_button_downloading, targetIndex, posts.size)
-                    },
+                    text = stringResource(Res.string.creator_posts_download_button, posts.size)
                 )
             }
         },
@@ -245,35 +204,30 @@ private fun CreatorPostsDownloadScreen(
                     CreatorPostsDownloadUserSection(
                         modifier = Modifier.fillMaxWidth(),
                         creatorDetail = creatorDetail,
-                        onClickSettings = { isDisplaySettings = !isDisplaySettings },
                     )
 
-                    AnimatedVisibility(isDisplaySettings) {
-                        CreatorPostsDownloadSettingsSection(
-                            modifier = Modifier.fillMaxWidth(),
-                            ignoreKeyword = ignoreKeyword,
-                            isIgnoreFreePosts = isIgnoreFreePosts,
-                            isIgnoreFiles = isIgnoreFiles,
-                            onUpdateIgnoreKeyword = onUpdateIgnoreKeyword,
-                            onClickIgnoreFreePosts = onClickIgnoreFreePosts,
-                            onClickIgnoreFiles = onClickIgnoreFiles,
-                        )
-                    }
+                    CreatorPostsDownloadSettingsSection(
+                        modifier = Modifier.fillMaxWidth(),
+                        ignoreKeyword = ignoreKeyword,
+                        isIgnoreFreePosts = isIgnoreFreePosts,
+                        isIgnoreFiles = isIgnoreFiles,
+                        onUpdateIgnoreKeyword = onUpdateIgnoreKeyword,
+                        onClickIgnoreFreePosts = onClickIgnoreFreePosts,
+                        onClickIgnoreFiles = onClickIgnoreFiles,
+                    )
                 }
             }
 
-            itemsIndexed(
+            items(
                 items = posts,
-                key = { _, post -> post.post.id.uniqueValue },
-            ) { index, data ->
+                key = { it.post.id.uniqueValue },
+            ) {
                 CreatorPostsDownloadItem(
                     modifier = Modifier
                         .animateContentSize()
                         .fillMaxWidth()
                         .padding(horizontal = 16.dp),
-                    data = data,
-                    isTarget = (index == targetIndex),
-                    isDownloaded = (index < targetIndex),
+                    data = it,
                 )
             }
         }

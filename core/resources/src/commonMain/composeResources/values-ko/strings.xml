@@ -168,7 +168,7 @@
     <string name="post_detail_oldest_post">이전 포스트가 없습니다</string>
     <string name="post_detail_newest_post">다음 포스트가 없습니다</string>
     <string name="post_detail_all_posts">모든 포스트 보기</string>
-    <string name="post_detail_downloading">다운로드 중...</string>
+    <string name="post_detail_downloading">다운로드 중... (남은 %1$d개)</string>
     <string name="post_detail_open_browser">브라우저로 열기</string>
     <string name="post_image_download">이미지 다운로드</string>
     <string name="post_image_all_download">모든 이미지 다운로드</string>

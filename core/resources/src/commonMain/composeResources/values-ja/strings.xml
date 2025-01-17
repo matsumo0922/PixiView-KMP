@@ -181,7 +181,7 @@
     <string name="post_detail_oldest_post">前の投稿はありません</string>
     <string name="post_detail_newest_post">次の投稿はありません</string>
     <string name="post_detail_all_posts">すべての投稿を見る</string>
-    <string name="post_detail_downloading">ダウンロード中…</string>
+    <string name="post_detail_downloading">ダウンロード中… (残り%1$d件)</string>
     <string name="post_detail_open_browser">ブラウザで開く</string>
     <string name="post_image_download">この画像をダウンロード</string>
     <string name="post_image_all_download">すべての画像をダウンロード</string>

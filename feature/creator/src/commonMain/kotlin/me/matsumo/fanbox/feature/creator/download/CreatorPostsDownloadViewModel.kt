@@ -87,9 +87,9 @@ class CreatorPostsDownloadViewModel(
         }
     }
 
-    suspend fun download(postId: FanboxPostId): Boolean = suspendCancellableCoroutine {
-        downloadPostsRepository.requestDownloadPost(postId) {
-            it.resume(true)
+    fun download(postIds: List<FanboxPostId>) {
+        for (postId in postIds) {
+            downloadPostsRepository.requestDownloadPost(postId)
         }
     }
 

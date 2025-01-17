@@ -1,9 +1,14 @@
 package me.matsumo.fanbox.core.repository
 
+import android.content.ContentValues
 import android.content.Context
 import android.media.MediaScannerConnection
+import android.net.Uri
+import android.os.Build
 import android.os.Environment
+import android.provider.MediaStore
 import android.webkit.MimeTypeMap
+import androidx.annotation.RequiresApi
 import androidx.core.net.toUri
 import com.hippo.unifile.UniFile
 import io.github.aakira.napier.Napier
@@ -22,6 +27,7 @@ import kotlinx.coroutines.flow.getAndUpdate
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.isActive
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.suspendCancellableCoroutine
 import kotlinx.io.readByteArray
 import me.matsumo.fanbox.core.common.util.suspendRunCatching
 import me.matsumo.fanbox.core.datastore.PixiViewDataStore
@@ -33,6 +39,8 @@ import me.matsumo.fanbox.core.model.FanboxDownloadItems
 import me.matsumo.fankt.fanbox.domain.model.FanboxPostDetail
 import me.matsumo.fankt.fanbox.domain.model.id.FanboxPostId
 import java.io.File
+import kotlin.coroutines.resume
+import kotlin.coroutines.resumeWithException
 
 class DownloadPostsRepositoryImpl(
     private val context: Context,
@@ -43,7 +51,6 @@ class DownloadPostsRepositoryImpl(
 
     private val _reservingPosts = MutableStateFlow(emptyList<FanboxDownloadItems>())
     private val _downloadState = MutableStateFlow<DownloadState>(DownloadState.None)
-    private val _downloadedItems = MutableStateFlow(emptyList<DownloadedItems>())
 
     override val reservingPosts: StateFlow<List<FanboxDownloadItems>> = _reservingPosts.asStateFlow()
     override val downloadState: StateFlow<DownloadState> = _downloadState.asStateFlow()
@@ -74,20 +81,10 @@ class DownloadPostsRepositoryImpl(
                     }
                 }
 
-                _downloadedItems.update { it + DownloadedItems(downloadItems, items.awaitAll()) }
+                val results = items.awaitAll()
+
+                saveFiles(downloadItems, results.filterNotNull())
                 downloadItems.callback.invoke()
-            }
-        }
-
-        scope.launch {
-            while (isActive) {
-                val downloadedItems = _downloadedItems.getAndUpdate { it.drop(1) }.firstOrNull()
-                if (downloadedItems == null) {
-                    delay(1000)
-                    continue
-                }
-
-                saveFiles(downloadedItems.downloadItems, downloadedItems.results)
             }
         }
     }
@@ -131,7 +128,7 @@ class DownloadPostsRepositoryImpl(
     }
 
     override suspend fun getSaveDirectory(requestType: FanboxDownloadItems.RequestType): String {
-        return (getParentFile(requestType) ?: getOldParentFile(requestType, true)).filePath ?: "Unknown"
+        return (getParentFile(requestType) ?: getOldParentFile(requestType, true))?.filePath ?: "Unknown"
     }
 
     private fun FanboxPostDetail.ImageItem.toDownloadItem(): FanboxDownloadItems.Item {
@@ -180,6 +177,8 @@ class DownloadPostsRepositoryImpl(
             }
 
             item to tmpFile
+        }.onFailure {
+            Napier.e(it) { "Failed to download item: ${item.name}" }
         }.also {
             PostsLog.download(
                 type = "unknown",
@@ -191,7 +190,7 @@ class DownloadPostsRepositoryImpl(
         }.getOrNull()
     }
 
-    private fun getOldParentFile(requestType: FanboxDownloadItems.RequestType, isDryRun: Boolean = false): UniFile {
+    private fun getOldParentFile(requestType: FanboxDownloadItems.RequestType, isDryRun: Boolean = false): UniFile? {
         val environmentDir = when (requestType) {
             is FanboxDownloadItems.RequestType.Image -> Environment.DIRECTORY_PICTURES
             is FanboxDownloadItems.RequestType.File -> Environment.DIRECTORY_DOWNLOADS
@@ -209,11 +208,15 @@ class DownloadPostsRepositoryImpl(
 
         if (!isDryRun) {
             if (!dir.exists()) {
-                dir.mkdir()
+                if (!dir.mkdir()) {
+                    return null
+                }
             }
 
             if (child.isNotBlank() && !childDir.exists()) {
-                childDir.mkdir()
+                if (!childDir.mkdir()) {
+                    return null
+                }
             }
         }
 
@@ -243,44 +246,91 @@ class DownloadPostsRepositoryImpl(
     }
 
     private suspend fun saveFiles(downloadItems: FanboxDownloadItems, results: List<Pair<FanboxDownloadItems.Item, File>?>) {
-        val pathAndMime = mutableListOf<Pair<String, String>>()
-
         for ((item, tmpFile) in results.filterNotNull()) {
             runCatching {
-                val mime = MimeTypeMap.getSingleton().getMimeTypeFromExtension(item.extension)
-                val parent = getParentFile(downloadItems.requestType) ?: getOldParentFile(downloadItems.requestType)
-                val file = parent.createFile("${item.name}.${item.extension}")
-                val modifiedTime = System.currentTimeMillis()
+                val mimeType = MimeTypeMap.getSingleton().getMimeTypeFromExtension(item.extension)
+                val selectedLocation = getParentFile(downloadItems.requestType) ?: getOldParentFile(downloadItems.requestType)
+                val name = "${item.name}.${item.extension}"
 
-                tmpFile.setLastModified(modifiedTime)
-                file.filePath?.let { File(it).setLastModified(modifiedTime) }
+                when {
+                    selectedLocation != null -> {
+                        saveFileToSelectedLocation(name, tmpFile, selectedLocation, mimeType)
+                    }
 
-                context.contentResolver.openOutputStream(file!!.uri)!!.use {
-                    tmpFile.inputStream().use { input ->
-                        input.copyTo(it)
+                    Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q -> {
+                        saveFileAfterSdkQ(name, tmpFile, mimeType, downloadItems.requestType)
                     }
                 }
 
                 tmpFile.delete()
-                pathAndMime.add(file.uri.path.orEmpty() to mime.orEmpty())
-
                 delay(1000)
             }.onFailure {
                 Napier.e(it) { "Failed to download item: ${item.name}" }
             }
         }
+    }
 
-        MediaScannerConnection.scanFile(
-            context,
-            pathAndMime.map { it.first }.toTypedArray(),
-            pathAndMime.map { it.second }.toTypedArray(),
-        ) { _, uri ->
-            Napier.d { "MediaScannerConnection: $uri" }
+    private suspend fun saveFileToSelectedLocation(
+        name: String,
+        tmpFile: File,
+        parentFile: UniFile,
+        mimeType: String?
+    ) = suspendCancellableCoroutine<Uri> {
+        val file = parentFile.createFile(name).filePath?.let { File(it) }
+        val modifiedTime = System.currentTimeMillis()
+
+        if (file == null) {
+            it.resumeWithException(NullPointerException("Failed to create file."))
+            return@suspendCancellableCoroutine
+        }
+
+        tmpFile.setLastModified(modifiedTime)
+        file.setLastModified(modifiedTime)
+
+        context.contentResolver.openOutputStream(file.toUri())!!.use {
+            tmpFile.inputStream().use { input ->
+                input.copyTo(it)
+            }
+        }
+
+        MediaScannerConnection.scanFile(context, arrayOf(parentFile.filePath), arrayOf(mimeType)) { _, uri ->
+            it.resume(uri)
         }
     }
 
-    private data class DownloadedItems(
-        val downloadItems: FanboxDownloadItems,
-        val results: List<Pair<FanboxDownloadItems.Item, File>?>,
-    )
+    @RequiresApi(Build.VERSION_CODES.Q)
+    private suspend fun saveFileAfterSdkQ(
+        fileName: String,
+        tmpFile: File,
+        mimeType: String?,
+        requestType: FanboxDownloadItems.RequestType,
+    ) = suspendCancellableCoroutine {
+        val path = getOldParentFile(requestType, true)?.filePath
+        val values = ContentValues().apply {
+            put(MediaStore.Images.Media.DISPLAY_NAME, fileName)
+            put(MediaStore.Images.Media.MIME_TYPE, mimeType)
+            put(MediaStore.Images.Media.RELATIVE_PATH, path)
+            put(MediaStore.Images.Media.IS_PENDING, 1)
+        }
+
+        val resolver = context.contentResolver
+        val collection = MediaStore.Images.Media.getContentUri(MediaStore.VOLUME_EXTERNAL_PRIMARY)
+        val itemUri = resolver.insert(collection, values)
+
+        if (itemUri != null) {
+            resolver.openOutputStream(itemUri)?.use {
+                tmpFile.inputStream().use { input ->
+                    input.copyTo(it)
+                }
+            }
+
+            values.clear()
+            values.put(MediaStore.Images.Media.IS_PENDING, 0)
+            resolver.update(itemUri, values, null, null)
+
+            it.resume(itemUri)
+        } else {
+            error("Failed to save file.")
+        }
+    }
 }

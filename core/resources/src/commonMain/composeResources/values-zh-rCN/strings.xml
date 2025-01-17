@@ -182,7 +182,7 @@
     <string name="post_detail_oldest_post">没有上一个投稿</string>
     <string name="post_detail_newest_post">没有下一个投稿</string>
     <string name="post_detail_all_posts">查看全部投稿</string>
-    <string name="post_detail_downloading">下载中…</string>
+    <string name="post_detail_downloading">下载中… (剩余 %1$d)</string>
     <string name="post_detail_open_browser">在浏览器打开</string>
     <string name="post_image_download">下载该图片</string>
     <string name="post_image_all_download">下载所有图片</string>

@@ -31,63 +31,43 @@ import me.matsumo.fankt.fanbox.domain.model.FanboxCreatorDetail
 @Composable
 internal fun CreatorPostsDownloadUserSection(
     creatorDetail: FanboxCreatorDetail,
-    onClickSettings: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
     Row(
-        modifier = modifier,
+        modifier = modifier.padding(horizontal = 16.dp),
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.spacedBy(12.dp),
     ) {
-        Row(
+        SubcomposeAsyncImage(
             modifier = Modifier
-                .padding(start = 16.dp)
-                .weight(1f)
-                .padding(8.dp),
-            verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.spacedBy(12.dp),
+                .size(40.dp)
+                .clip(CircleShape),
+            model = ImageRequest.Builder(LocalPlatformContext.current)
+                .error(Res.drawable.im_default_user.asCoilImage())
+                .data(creatorDetail.user?.iconUrl)
+                .build(),
+            loading = {
+                FadePlaceHolder()
+            },
+            contentDescription = null,
+        )
+
+        Column(
+            modifier = Modifier.weight(1f),
+            verticalArrangement = Arrangement.spacedBy(4.dp),
         ) {
-            SubcomposeAsyncImage(
-                modifier = Modifier
-                    .size(40.dp)
-                    .clip(CircleShape),
-                model = ImageRequest.Builder(LocalPlatformContext.current)
-                    .error(Res.drawable.im_default_user.asCoilImage())
-                    .data(creatorDetail.user?.iconUrl)
-                    .build(),
-                loading = {
-                    FadePlaceHolder()
-                },
-                contentDescription = null,
+            Text(
+                modifier = Modifier.fillMaxWidth(),
+                text = creatorDetail.user?.name.orEmpty(),
+                style = MaterialTheme.typography.bodyLarge.bold(),
+                color = MaterialTheme.colorScheme.onSurface,
             )
 
-            Column(
-                modifier = Modifier.weight(1f),
-                verticalArrangement = Arrangement.spacedBy(4.dp),
-            ) {
-                Text(
-                    modifier = Modifier.fillMaxWidth(),
-                    text = creatorDetail.user?.name.orEmpty(),
-                    style = MaterialTheme.typography.bodyLarge.bold(),
-                    color = MaterialTheme.colorScheme.onSurface,
-                )
-
-                Text(
-                    modifier = Modifier.fillMaxWidth(),
-                    text = "@${creatorDetail.user?.creatorId?.value ?: "Unknown"}",
-                    style = MaterialTheme.typography.bodyMedium,
-                    color = MaterialTheme.colorScheme.onSurfaceVariant,
-                )
-            }
-        }
-
-        IconButton(
-            modifier = Modifier.padding(end = 8.dp),
-            onClick = onClickSettings,
-        ) {
-            Icon(
-                imageVector = Icons.Default.Settings,
-                contentDescription = null,
+            Text(
+                modifier = Modifier.fillMaxWidth(),
+                text = "@${creatorDetail.user?.creatorId?.value ?: "Unknown"}",
+                style = MaterialTheme.typography.bodyMedium,
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
             )
         }
     }

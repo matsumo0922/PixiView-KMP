@@ -61,7 +61,7 @@ billing = "6.1.0"
 koin = "4.0.0"
 
 # matsumo
-fankt = "0.0.6"
+fankt = "0.0.8"
 
 # Others
 ktor = "3.0.1"
