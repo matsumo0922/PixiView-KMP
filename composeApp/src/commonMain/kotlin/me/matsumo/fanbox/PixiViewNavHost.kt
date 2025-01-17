@@ -43,6 +43,8 @@ import me.matsumo.fanbox.feature.post.detail.navigateToPostDetail
 import me.matsumo.fanbox.feature.post.detail.postDetailScreen
 import me.matsumo.fanbox.feature.post.image.navigateToPostImage
 import me.matsumo.fanbox.feature.post.image.postImageScreen
+import me.matsumo.fanbox.feature.post.queue.downloadQueueScreen
+import me.matsumo.fanbox.feature.post.queue.navigateToDownloadQueue
 import me.matsumo.fanbox.feature.post.search.navigateToPostSearch
 import me.matsumo.fanbox.feature.post.search.postSearchScreen
 import me.matsumo.fanbox.feature.setting.developer.navigateToSettingDeveloper
@@ -115,6 +117,7 @@ private fun NavGraphBuilder.applyNavGraph(
         navigateToFollowerCreators = { mainNavController.navigateToFollowingCreators() },
         navigateToSupportingCreators = { mainNavController.navigateToSupportingCreators() },
         navigateToPayments = { subNavController.navigateToPayments() },
+        navigateToDownloadQueue = { subNavController.navigateToDownloadQueue() },
         navigateToSettingTop = { subNavController.navigateToSettingTop() },
         navigateToAbout = { subNavController.navigateToAbout() },
         navigateToBillingPlus = { mainNavController.navigateToBillingPlus(it) },
@@ -127,6 +130,7 @@ private fun NavGraphBuilder.applyNavGraph(
         navigateToPostImage = { postId, index -> subNavController.navigateToPostImage(postId, index) },
         navigateToCreatorPosts = { mainNavController.navigateToCreatorTop(it, isPosts = true) },
         navigateToCreatorPlans = { mainNavController.navigateToCreatorTop(it) },
+        navigateToDownloadQueue = { subNavController.navigateToDownloadQueue() },
         navigateToCommentDeleteDialog = { contents, onResult ->
             scope.launch {
                 mainNavController.navigateToSimpleAlertDialog(contents, onResult)
@@ -136,6 +140,7 @@ private fun NavGraphBuilder.applyNavGraph(
     )
 
     postImageScreen(
+        navigateToDownloadQueue = { subNavController.navigateToDownloadQueue() },
         terminate = { subNavController.popBackStack() },
     )
 
@@ -187,6 +192,11 @@ private fun NavGraphBuilder.applyNavGraph(
         terminate = { subNavController.popBackStack() },
     )
 
+    downloadQueueScreen(
+        navigateToPostDetail = { subNavController.navigateToPostDetail(it, PostDetailPagingType.Unknown) },
+        terminate = { subNavController.popBackStack() },
+    )
+
     aboutScreen(
         navigateToVersionHistory = { mainNavController.navigateToVersionHistory() },
         navigateToDonate = { mainNavController.navigateToBillingPlus("donate") },
@@ -227,11 +237,7 @@ private fun NavGraphBuilder.applyNavGraph(
     )
 
     creatorPostsDownloadDialog(
-        navigateToCancelDownloadAlert = { contents, onResult ->
-            scope.launch {
-                mainNavController.navigateToSimpleAlertDialog(contents, onResult)
-            }
-        },
+        navigateToDownloadQueue = { subNavController.navigateToDownloadQueue() },
         terminate = { mainNavController.popBackStack() },
     )
 

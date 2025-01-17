@@ -10,9 +10,11 @@ interface DownloadPostsRepository {
     val reservingPosts: StateFlow<List<FanboxDownloadItems>>
     val downloadState: StateFlow<DownloadState>
 
+    fun cancelDownload(key: String)
+
     fun requestDownloadPost(postId: FanboxPostId, callback: () -> Unit = {})
-    fun requestDownloadImages(title: String, images: List<FanboxPostDetail.ImageItem>, callback: () -> Unit = {})
-    fun requestDownloadFiles(title: String, files: List<FanboxPostDetail.FileItem>, callback: () -> Unit = {})
+    fun requestDownloadImages(postId: FanboxPostId, title: String, images: List<FanboxPostDetail.ImageItem>, callback: () -> Unit = {})
+    fun requestDownloadFiles(postId: FanboxPostId, title: String, files: List<FanboxPostDetail.FileItem>, callback: () -> Unit = {})
 
     suspend fun getSaveDirectory(requestType: FanboxDownloadItems.RequestType): String
 }

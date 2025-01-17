@@ -4,9 +4,11 @@ import me.matsumo.fankt.fanbox.domain.model.id.FanboxPostId
 import me.matsumo.fankt.fanbox.domain.model.id.FanboxPostItemId
 
 data class FanboxDownloadItems(
+    val postId: FanboxPostId,
     val title: String,
     val items: List<Item>,
     val requestType: RequestType,
+    val key: String,
     val callback: () -> Unit,
 ) {
     data class Item(

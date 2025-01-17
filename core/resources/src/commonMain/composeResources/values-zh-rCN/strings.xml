@@ -87,6 +87,7 @@
     <string name="library_navigation_following">正在关注</string>
     <string name="library_navigation_supporting">正在赞助</string>
     <string name="library_navigation_payments">历史支付记录</string>
+    <string name="library_navigation_queue">下载队列</string>
     <string name="library_navigation_setting">设置</string>
     <string name="library_navigation_about">关于此应用</string>
     <string name="library_navigation_plus_description">以一杯咖啡的价格获得所有功能！</string>
@@ -164,6 +165,12 @@
     <string name="bookmark_search_placeholder">搜索收藏</string>
     <string name="bookmark_empty_title">无收藏</string>
     <string name="bookmark_empty_description">查找并收藏您喜欢的投稿！</string>
+
+    <!-- Queue -->
+    <string name="queue_empty_title">您的下载队列是空的</string>
+    <string name="queue_empty_description">当您选择下载时，它将排队并按顺序下载。</string>
+    <string name="queue_added">已添加到下载队列</string>
+    <string name="queue_added_action">确认</string>
 
     <!-- PostDetail -->
     <string name="post_detail_title">投稿详细信息</string>

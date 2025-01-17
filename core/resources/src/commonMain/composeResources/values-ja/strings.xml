@@ -87,6 +87,7 @@
     <string name="library_navigation_following">フォロー中</string>
     <string name="library_navigation_supporting">支援中</string>
     <string name="library_navigation_payments">決済履歴</string>
+    <string name="library_navigation_queue">ダウンロード</string>
     <string name="library_navigation_setting">設定</string>
     <string name="library_navigation_about">アプリについて</string>
     <string name="library_navigation_plus_description">コーヒー1杯程度の金額で、全ての機能にアクセスできるようになります！</string>
@@ -163,6 +164,12 @@
     <string name="bookmark_search_placeholder">ブックマークを検索</string>
     <string name="bookmark_empty_title">ブックマークはありません</string>
     <string name="bookmark_empty_description">お気に入りの投稿を見つけてブックマークしよう！</string>
+
+    <!-- Queue -->
+    <string name="queue_empty_title">キューは空です</string>
+    <string name="queue_empty_description">ダウンロードを選択するとキューに入れられ、順次ダウンロードされます。</string>
+    <string name="queue_added">ダウンロードキューに追加しました</string>
+    <string name="queue_added_action">確認</string>
 
     <!-- PostDetail -->
     <string name="post_detail_title">投稿詳細</string>

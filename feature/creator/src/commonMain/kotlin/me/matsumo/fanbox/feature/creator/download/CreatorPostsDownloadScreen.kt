@@ -1,6 +1,5 @@
 package me.matsumo.fanbox.feature.creator.download
 
-import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.animateContentSize
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.tween
@@ -17,7 +16,6 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
-import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.Text
@@ -31,11 +29,13 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.LinearProgressIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.SnackbarHost
+import androidx.compose.material3.SnackbarHostState
+import androidx.compose.material3.SnackbarResult
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
@@ -50,20 +50,18 @@ import androidx.compose.ui.window.DialogProperties
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.toImmutableList
-import kotlinx.coroutines.NonCancellable.isCompleted
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import me.matsumo.fanbox.core.common.util.format
 import me.matsumo.fanbox.core.model.ScreenState
 import me.matsumo.fanbox.core.resources.Res
-import me.matsumo.fanbox.core.resources.common_completed
 import me.matsumo.fanbox.core.resources.creator_posts_download_button
-import me.matsumo.fanbox.core.resources.creator_posts_download_button_downloading
 import me.matsumo.fanbox.core.resources.creator_posts_download_dialog_title
 import me.matsumo.fanbox.core.resources.creator_posts_download_title
+import me.matsumo.fanbox.core.resources.queue_added
+import me.matsumo.fanbox.core.resources.queue_added_action
 import me.matsumo.fanbox.core.ui.AsyncLoadContents
 import me.matsumo.fanbox.core.ui.component.PixiViewTopBar
-import me.matsumo.fanbox.core.ui.extensition.BackHandler
+import me.matsumo.fanbox.core.ui.extensition.ToastExtension
 import me.matsumo.fanbox.core.ui.view.SimpleAlertContents
 import me.matsumo.fanbox.feature.creator.download.items.CreatorPostsDownloadItem
 import me.matsumo.fanbox.feature.creator.download.items.CreatorPostsDownloadSettingsSection
@@ -71,17 +69,17 @@ import me.matsumo.fanbox.feature.creator.download.items.CreatorPostsDownloadUser
 import me.matsumo.fankt.fanbox.domain.model.FanboxCreatorDetail
 import me.matsumo.fankt.fanbox.domain.model.id.FanboxCreatorId
 import org.jetbrains.compose.resources.stringResource
+import org.koin.compose.koinInject
 import org.koin.compose.viewmodel.koinViewModel
 
 @Composable
 internal fun CreatorPostsDownloadRoute(
     creatorId: FanboxCreatorId,
-    navigateToCancelDownloadAlert: (SimpleAlertContents, () -> Unit) -> Unit,
+    navigateToDownloadQueue: () -> Unit,
     terminate: () -> Unit,
     modifier: Modifier = Modifier,
     viewModel: CreatorPostsDownloadViewModel = koinViewModel(),
 ) {
-    val scope = rememberCoroutineScope()
     val screenState by viewModel.screenState.collectAsStateWithLifecycle()
 
     LaunchedEffect(true) {
@@ -109,6 +107,7 @@ internal fun CreatorPostsDownloadRoute(
             onClickIgnoreFreePosts = viewModel::updateIgnoreFreePosts,
             onClickIgnoreFiles = viewModel::updateIgnoreFiles,
             onClickDownload = { viewModel.download(uiState.targetPosts.map { it.post.id }) },
+            onClickCheckQueue = navigateToDownloadQueue,
             terminate = terminate,
         )
 
@@ -145,11 +144,15 @@ private fun CreatorPostsDownloadScreen(
     onClickIgnoreFreePosts: (Boolean) -> Unit,
     onClickIgnoreFiles: (Boolean) -> Unit,
     onClickDownload: () -> Unit,
+    onClickCheckQueue: () -> Unit,
     terminate: () -> Unit,
     modifier: Modifier = Modifier,
+    snackExtension: ToastExtension = koinInject(),
 ) {
+    val scope = rememberCoroutineScope()
     val state = rememberLazyListState()
     val scrollBehavior = TopAppBarDefaults.pinnedScrollBehavior()
+    val snackbarHostState = remember { SnackbarHostState() }
 
     Scaffold(
         modifier = modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
@@ -169,7 +172,21 @@ private fun CreatorPostsDownloadScreen(
                     .fillMaxWidth()
                     .navigationBarsPadding()
                     .padding(16.dp),
-                onClick = onClickDownload,
+                onClick = {
+                    scope.launch {
+                        onClickDownload.invoke()
+                        snackExtension.show(
+                            snackbarHostState = snackbarHostState,
+                            message = Res.string.queue_added,
+                            label = Res.string.queue_added_action,
+                            callback = {
+                                if (it == SnackbarResult.ActionPerformed) {
+                                    onClickCheckQueue.invoke()
+                                }
+                            }
+                        )
+                    }
+                },
                 contentPadding = ButtonDefaults.ButtonWithIconContentPadding,
                 enabled = isPrepared,
             ) {
@@ -184,6 +201,11 @@ private fun CreatorPostsDownloadScreen(
                     text = stringResource(Res.string.creator_posts_download_button, posts.size)
                 )
             }
+        },
+        snackbarHost = {
+            SnackbarHost(
+                hostState = snackbarHostState,
+            )
         },
         contentWindowInsets = WindowInsets(0, 0, 0, 0),
     ) { padding ->

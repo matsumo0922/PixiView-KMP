@@ -28,6 +28,7 @@ fun NavGraphBuilder.postDetailScreen(
     navigateToPostImage: (FanboxPostId, Int) -> Unit,
     navigateToCreatorPosts: (FanboxCreatorId) -> Unit,
     navigateToCreatorPlans: (FanboxCreatorId) -> Unit,
+    navigateToDownloadQueue: () -> Unit,
     navigateToCommentDeleteDialog: (SimpleAlertContents, () -> Unit) -> Unit,
     terminate: () -> Unit,
 ) {
@@ -47,6 +48,7 @@ fun NavGraphBuilder.postDetailScreen(
             navigateToPostImage = navigateToPostImage,
             navigateToCreatorPosts = navigateToCreatorPosts,
             navigateToCreatorPlans = navigateToCreatorPlans,
+            navigateToDownloadQueue = navigateToDownloadQueue,
             navigateToCommentDeleteDialog = navigateToCommentDeleteDialog,
             terminate = terminate,
         )

@@ -7,8 +7,7 @@ sealed interface DownloadState {
     data object None : DownloadState
 
     data class Downloading(
-        val title: String,
+        val items: FanboxDownloadItems,
         val progress: Float,
-        val remainingItems: Int,
     ) : DownloadState
 }

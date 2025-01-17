@@ -175,6 +175,7 @@ private fun BookmarkedPostsScreen(
                         modifier = Modifier.fillMaxSize(),
                         title = Res.string.bookmark_empty_title,
                         message = Res.string.bookmark_empty_description,
+                        serviceStatus = false,
                     )
                 }
             }

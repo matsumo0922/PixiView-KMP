@@ -9,6 +9,7 @@ import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.SnackbarResult
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -30,6 +31,8 @@ import me.matsumo.fanbox.core.model.ScreenState
 import me.matsumo.fanbox.core.resources.Res
 import me.matsumo.fanbox.core.resources.common_downloaded
 import me.matsumo.fanbox.core.resources.error_ios_gif_support
+import me.matsumo.fanbox.core.resources.queue_added
+import me.matsumo.fanbox.core.resources.queue_added_action
 import me.matsumo.fanbox.core.ui.AsyncLoadContents
 import me.matsumo.fanbox.core.ui.animation.Zoomable
 import me.matsumo.fanbox.core.ui.animation.rememberZoomableState
@@ -52,6 +55,7 @@ import org.koin.compose.viewmodel.koinViewModel
 internal fun PostImageRoute(
     postId: FanboxPostId,
     postImageIndex: Int,
+    navigateToDownloadQueue: () -> Unit,
     terminate: () -> Unit,
     modifier: Modifier = Modifier,
     viewModel: PostImageViewModel = koinViewModel(),
@@ -78,10 +82,18 @@ internal fun PostImageRoute(
             imageIndex = postImageIndex,
             postDetail = uiState.postDetail,
             onClickDownload = {
-                viewModel.downloadImages(uiState.postDetail.title, it) {
-                    scope.launch {
-                        snackExtension.show(snackbarHostState, Res.string.common_downloaded)
-                    }
+                scope.launch {
+                    viewModel.downloadImages(uiState.postDetail.id, uiState.postDetail.title, it)
+                    snackExtension.show(
+                        snackbarHostState = snackbarHostState,
+                        message = Res.string.queue_added,
+                        label = Res.string.queue_added_action,
+                        callback = { result ->
+                            if (result == SnackbarResult.ActionPerformed) {
+                                navigateToDownloadQueue.invoke()
+                            }
+                        }
+                    )
                 }
             },
             onTerminate = terminate,

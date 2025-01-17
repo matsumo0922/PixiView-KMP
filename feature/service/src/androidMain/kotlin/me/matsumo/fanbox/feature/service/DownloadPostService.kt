@@ -54,7 +54,7 @@ class DownloadPostService : Service() {
                     setForegroundService(
                         isForeground = true,
                         title = getString(Res.string.post_detail_downloading, reservingPosts.value.size),
-                        message = it.title,
+                        message = it.items.title,
                         subMessage = "${(it.progress * 100).toInt()} %",
                         progress = it.progress,
                     )

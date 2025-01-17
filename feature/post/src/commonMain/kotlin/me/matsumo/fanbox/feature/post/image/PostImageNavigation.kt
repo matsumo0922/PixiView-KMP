@@ -19,6 +19,7 @@ fun NavController.navigateToPostImage(postId: FanboxPostId, index: Int) {
 }
 
 fun NavGraphBuilder.postImageScreen(
+    navigateToDownloadQueue: () -> Unit,
     terminate: () -> Unit,
 ) {
     composable(
@@ -32,6 +33,7 @@ fun NavGraphBuilder.postImageScreen(
             modifier = Modifier.fillMaxSize(),
             postId = FanboxPostId(it.arguments?.getString(PostImageId).orEmpty()),
             postImageIndex = it.arguments?.getInt(PostImageIndex) ?: 0,
+            navigateToDownloadQueue = navigateToDownloadQueue,
             terminate = terminate,
         )
     }

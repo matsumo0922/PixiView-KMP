@@ -37,8 +37,10 @@ import platform.Foundation.fileHandleForWritingAtPath
 import platform.Foundation.writeData
 import platform.UIKit.UIImage
 import platform.UIKit.UIImageWriteToSavedPhotosAlbum
+import kotlin.uuid.ExperimentalUuidApi
+import kotlin.uuid.Uuid
 
-@OptIn(ExperimentalForeignApi::class)
+@OptIn(ExperimentalForeignApi::class, ExperimentalUuidApi::class)
 class DownloadPostsRepositoryImpl(
     private val fanboxRepository: FanboxRepository,
     private val userDataStore: PixiViewDataStore,
@@ -73,9 +75,8 @@ class DownloadPostsRepositoryImpl(
                                 itemProgresses[index].value = progress
 
                                 _downloadState.value = DownloadState.Downloading(
-                                    title = downloadItems.title,
+                                    items = downloadItems,
                                     progress = itemProgresses.sumOf { it.value.toDouble() }.toFloat() / downloadItems.items.size,
-                                    remainingItems = downloadItems.items.size,
                                 )
                             }
                         }
@@ -93,15 +94,23 @@ class DownloadPostsRepositoryImpl(
         }
     }
 
+    override fun cancelDownload(key: String) {
+        _reservingPosts.update { posts ->
+            posts.filter { it.key != key }
+        }
+    }
+
     override fun requestDownloadPost(postId: FanboxPostId, callback: () -> Unit) {
         scope.launch {
             val postDetail = fanboxRepository.getPostDetail(postId)
             val images = postDetail.body.imageItems.map { it.toDownloadItem() }
             val files = postDetail.body.fileItems.map { it.toDownloadItem() }
             val items = FanboxDownloadItems(
+                postId = postDetail.id,
                 title = postDetail.title,
                 items = images + files,
                 requestType = FanboxDownloadItems.RequestType.Post(postDetail.user?.name.orEmpty()),
+                key = Uuid.random().toHexString(),
                 callback = callback,
             )
 
@@ -109,22 +118,26 @@ class DownloadPostsRepositoryImpl(
         }
     }
 
-    override fun requestDownloadImages(title: String, images: List<FanboxPostDetail.ImageItem>, callback: () -> Unit) {
+    override fun requestDownloadImages(postId: FanboxPostId, title: String, images: List<FanboxPostDetail.ImageItem>, callback: () -> Unit) {
         val items = FanboxDownloadItems(
+            postId = postId,
             title = title,
             items = images.map { it.toDownloadItem() },
             requestType = FanboxDownloadItems.RequestType.Image,
+            key = Uuid.random().toHexString(),
             callback = callback,
         )
 
         _reservingPosts.update { it + items }
     }
 
-    override fun requestDownloadFiles(title: String, files: List<FanboxPostDetail.FileItem>, callback: () -> Unit) {
+    override fun requestDownloadFiles(postId: FanboxPostId, title: String, files: List<FanboxPostDetail.FileItem>, callback: () -> Unit) {
         val items = FanboxDownloadItems(
+            postId = postId,
             title = title,
             items = files.map { it.toDownloadItem() },
             requestType = FanboxDownloadItems.RequestType.File,
+            key = Uuid.random().toHexString(),
             callback = callback,
         )
 

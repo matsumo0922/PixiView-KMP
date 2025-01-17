@@ -83,6 +83,7 @@
     <string name="library_navigation_following">팔로우</string>
     <string name="library_navigation_supporting">지원</string>
     <string name="library_navigation_payments">결제 기록</string>
+    <string name="library_navigation_queue">다운로드 대기열</string>
     <string name="library_navigation_setting">설정</string>
     <string name="library_navigation_about">이 앱에 대하여</string>
     <string name="library_navigation_plus_description">커피 한 잔의 가격으로 전체 기능을 즐겨보세요!</string>
@@ -150,6 +151,12 @@
     <string name="bookmark_search_placeholder">북마크 검색</string>
     <string name="bookmark_empty_title">북마크가 없습니다</string>
     <string name="bookmark_empty_description">좋아하는 포스트를 찾아 북마크해보세요!</string>
+
+    <!-- Queue -->
+    <string name="queue_empty_title">다운로드 큐가 비어 있습니다.</string>
+    <string name="queue_empty_description">다운로드를 선택하면 대기열에 넣고 순차적으로 다운로드됩니다.</string>
+    <string name="queue_added">다운로드 대기열에 추가됨</string>
+    <string name="queue_added_action">확인</string>
 
     <!-- PostDetail -->
     <string name="post_detail_title">포스트 상세정보</string>

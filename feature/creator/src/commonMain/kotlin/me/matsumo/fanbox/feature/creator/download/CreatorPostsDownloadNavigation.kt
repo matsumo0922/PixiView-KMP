@@ -8,7 +8,6 @@ import androidx.navigation.NavType
 import androidx.navigation.compose.composable
 import androidx.navigation.navArgument
 import me.matsumo.fanbox.core.ui.extensition.navigateWithLog
-import me.matsumo.fanbox.core.ui.view.SimpleAlertContents
 import me.matsumo.fankt.fanbox.domain.model.id.FanboxCreatorId
 
 const val CreatorPostsDownloadId = "creatorPostsDownloadId"
@@ -19,7 +18,7 @@ fun NavController.navigateToCreatorPostsDownload(creatorId: FanboxCreatorId) {
 }
 
 fun NavGraphBuilder.creatorPostsDownloadDialog(
-    navigateToCancelDownloadAlert: (SimpleAlertContents, () -> Unit) -> Unit,
+    navigateToDownloadQueue: () -> Unit,
     terminate: () -> Unit,
 ) {
     composable(
@@ -29,7 +28,7 @@ fun NavGraphBuilder.creatorPostsDownloadDialog(
         CreatorPostsDownloadRoute(
             modifier = Modifier.fillMaxSize(),
             creatorId = FanboxCreatorId(it.arguments?.getString(CreatorPostsDownloadId).orEmpty()),
-            navigateToCancelDownloadAlert = navigateToCancelDownloadAlert,
+            navigateToDownloadQueue = navigateToDownloadQueue,
             terminate = terminate,
         )
     }

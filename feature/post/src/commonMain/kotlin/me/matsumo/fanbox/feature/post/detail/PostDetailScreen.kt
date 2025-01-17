@@ -9,6 +9,7 @@ import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
@@ -18,6 +19,9 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.InsertDriveFile
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.SnackbarHost
+import androidx.compose.material3.SnackbarHostState
+import androidx.compose.material3.SnackbarResult
 import androidx.compose.material3.Text
 import androidx.compose.material3.surfaceColorAtElevation
 import androidx.compose.runtime.Composable
@@ -53,6 +57,8 @@ import me.matsumo.fanbox.core.model.UserData
 import me.matsumo.fanbox.core.resources.Res
 import me.matsumo.fanbox.core.resources.common_downloaded
 import me.matsumo.fanbox.core.resources.error_network
+import me.matsumo.fanbox.core.resources.queue_added
+import me.matsumo.fanbox.core.resources.queue_added_action
 import me.matsumo.fanbox.core.ui.AsyncLoadContents
 import me.matsumo.fanbox.core.ui.LazyPagingItemsLoadContents
 import me.matsumo.fanbox.core.ui.ads.BannerAdView
@@ -109,6 +115,7 @@ internal fun PostDetailRoute(
     navigateToCreatorPlans: (FanboxCreatorId) -> Unit,
     navigateToCreatorPosts: (FanboxCreatorId) -> Unit,
     navigateToCommentDeleteDialog: (SimpleAlertContents, () -> Unit) -> Unit,
+    navigateToDownloadQueue: () -> Unit,
     terminate: () -> Unit,
     modifier: Modifier = Modifier,
     viewModel: PostDetailRootViewModel = koinViewModel(),
@@ -118,6 +125,8 @@ internal fun PostDetailRoute(
 
     val postDetailMap = remember { mutableStateMapOf<FanboxPostId, FanboxPostDetail>() }
     var currentPostId by remember { mutableStateOf(postId) }
+
+    val snackbarHostState = remember { SnackbarHostState() }
 
     LaunchedEffect(true) {
         if (paging == null) {
@@ -147,7 +156,12 @@ internal fun PostDetailRoute(
                     },
                 )
             }
-        }
+        },
+        snackbarHost = {
+            SnackbarHost(
+                hostState = snackbarHostState,
+            )
+        },
     ) { padding ->
         if (paging != null && !paging.isNullOrEmpty() && uiState.userData.isUseInfinityPostDetail) {
             LazyPagingItemsLoadContents(
@@ -174,12 +188,14 @@ internal fun PostDetailRoute(
                         PostDetailView(
                             modifier = Modifier.fillMaxSize(),
                             postId = post.id,
+                            snackbarHostState = snackbarHostState,
                             navigateToPostSearch = navigateToPostSearch,
                             navigateToPostDetail = navigateToPostDetail,
                             navigateToPostImage = navigateToPostImage,
                             navigateToCreatorPlans = navigateToCreatorPlans,
                             navigateToCreatorPosts = navigateToCreatorPosts,
                             navigateToCommentDeleteDialog = navigateToCommentDeleteDialog,
+                            navigateToDownloadQueue = navigateToDownloadQueue,
                             onPostDetailFetched = { postDetailMap[post.id] = it },
                             terminate = terminate,
                         )
@@ -192,12 +208,14 @@ internal fun PostDetailRoute(
                     .padding(padding)
                     .fillMaxSize(),
                 postId = postId,
+                snackbarHostState = snackbarHostState,
                 navigateToPostSearch = navigateToPostSearch,
                 navigateToPostDetail = navigateToPostDetail,
                 navigateToPostImage = navigateToPostImage,
                 navigateToCreatorPlans = navigateToCreatorPlans,
                 navigateToCreatorPosts = navigateToCreatorPosts,
                 navigateToCommentDeleteDialog = navigateToCommentDeleteDialog,
+                navigateToDownloadQueue = navigateToDownloadQueue,
                 onPostDetailFetched = { postDetailMap[postId] = it },
                 terminate = terminate,
             )
@@ -217,12 +235,14 @@ internal fun PostDetailRoute(
 @Composable
 private fun PostDetailView(
     postId: FanboxPostId,
+    snackbarHostState: SnackbarHostState,
     navigateToPostSearch: (String, FanboxCreatorId) -> Unit,
     navigateToPostDetail: (FanboxPostId) -> Unit,
     navigateToPostImage: (FanboxPostId, Int) -> Unit,
     navigateToCreatorPlans: (FanboxCreatorId) -> Unit,
     navigateToCreatorPosts: (FanboxCreatorId) -> Unit,
     navigateToCommentDeleteDialog: (SimpleAlertContents, () -> Unit) -> Unit,
+    navigateToDownloadQueue: () -> Unit,
     onPostDetailFetched: (FanboxPostDetail) -> Unit,
     terminate: () -> Unit,
     modifier: Modifier = Modifier,
@@ -231,7 +251,6 @@ private fun PostDetailView(
     snackExtension: ToastExtension = koinInject(),
 ) {
     val screenState by viewModel.screenState.collectAsStateWithLifecycle()
-    val snackbarHostState = LocalSnackbarHostState.current
     val scope = rememberCoroutineScope()
 
     LaunchedEffect(postId) {
@@ -300,17 +319,33 @@ private fun PostDetailView(
                 }
             },
             onClickFile = {
-                viewModel.downloadFiles(uiState.postDetail.title, listOf(it)) {
-                    scope.launch {
-                        snackExtension.show(snackbarHostState, Res.string.common_downloaded)
-                    }
+                scope.launch {
+                    viewModel.downloadFiles(uiState.postDetail.id, uiState.postDetail.title, listOf(it))
+                    snackExtension.show(
+                        snackbarHostState = snackbarHostState,
+                        message = Res.string.queue_added,
+                        label = Res.string.queue_added_action,
+                        callback = { result ->
+                            if (result == SnackbarResult.ActionPerformed) {
+                                navigateToDownloadQueue.invoke()
+                            }
+                        }
+                    )
                 }
             },
             onClickDownloadImages = {
-                viewModel.downloadImages(uiState.postDetail.title, it) {
-                    scope.launch {
-                        snackExtension.show(snackbarHostState, Res.string.common_downloaded)
-                    }
+                scope.launch {
+                    viewModel.downloadImages(uiState.postDetail.id, uiState.postDetail.title, it)
+                    snackExtension.show(
+                        snackbarHostState = snackbarHostState,
+                        message = Res.string.queue_added,
+                        label = Res.string.queue_added_action,
+                        callback = { result ->
+                            if (result == SnackbarResult.ActionPerformed) {
+                                navigateToDownloadQueue.invoke()
+                            }
+                        }
+                    )
                 }
             },
             onClickCreatorPosts = navigateToCreatorPosts,

@@ -42,6 +42,7 @@ fun ErrorView(
     title: StringResource,
     message: StringResource,
     modifier: Modifier = Modifier,
+    serviceStatus: Boolean = true,
     retryTitle: StringResource? = null,
     retryAction: (() -> Unit)? = null,
     terminate: (() -> Unit)? = null,
@@ -103,29 +104,31 @@ fun ErrorView(
                 }
             }
 
-            TextButton(
-                modifier = Modifier.padding(top = 24.dp),
-                onClick = {
-                    navigatorExtension.navigateToWebPage(
-                        url = "https://github.com/matsumo0922/PixiView-KMP/blob/master/STATUS.md",
-                        referrer = "ErrorView",
+            if (serviceStatus) {
+                TextButton(
+                    modifier = Modifier.padding(top = 24.dp),
+                    onClick = {
+                        navigatorExtension.navigateToWebPage(
+                            url = "https://github.com/matsumo0922/PixiView-KMP/blob/master/STATUS.md",
+                            referrer = "ErrorView",
+                        )
+                    },
+                ) {
+                    Icon(
+                        modifier = Modifier.size(14.dp),
+                        imageVector = Icons.Outlined.Info,
+                        contentDescription = null,
+                        tint = MaterialTheme.colorScheme.onSurfaceVariant,
                     )
-                },
-            ) {
-                Icon(
-                    modifier = Modifier.size(14.dp),
-                    imageVector = Icons.Outlined.Info,
-                    contentDescription = null,
-                    tint = MaterialTheme.colorScheme.onSurfaceVariant,
-                )
 
-                Text(
-                    modifier = Modifier.padding(start = 4.dp),
-                    text = stringResource(Res.string.error_service_status),
-                    style = MaterialTheme.typography.bodySmall,
-                    color = MaterialTheme.colorScheme.onSurfaceVariant,
-                    textDecoration = TextDecoration.Underline,
-                )
+                    Text(
+                        modifier = Modifier.padding(start = 4.dp),
+                        text = stringResource(Res.string.error_service_status),
+                        style = MaterialTheme.typography.bodySmall,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant,
+                        textDecoration = TextDecoration.Underline,
+                    )
+                }
             }
         }
     }

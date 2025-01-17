@@ -19,12 +19,15 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.AutoAwesome
+import androidx.compose.material.icons.filled.Download
 import androidx.compose.material.icons.filled.Home
 import androidx.compose.material.icons.filled.Mail
 import androidx.compose.material.icons.filled.Notifications
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material.icons.outlined.Bookmark
+import androidx.compose.material.icons.outlined.Download
+import androidx.compose.material.icons.outlined.Downloading
 import androidx.compose.material.icons.outlined.Group
 import androidx.compose.material.icons.outlined.Home
 import androidx.compose.material.icons.outlined.Info
@@ -68,6 +71,7 @@ import me.matsumo.fanbox.core.resources.library_navigation_notify
 import me.matsumo.fanbox.core.resources.library_navigation_payments
 import me.matsumo.fanbox.core.resources.library_navigation_plus_description
 import me.matsumo.fanbox.core.resources.library_navigation_plus_purchased_description
+import me.matsumo.fanbox.core.resources.library_navigation_queue
 import me.matsumo.fanbox.core.resources.library_navigation_setting
 import me.matsumo.fanbox.core.resources.library_navigation_supporting
 import me.matsumo.fanbox.core.ui.appName
@@ -87,6 +91,7 @@ fun DrawerContent(
     navigateToFollowingCreators: () -> Unit,
     navigateToSupportingCreators: () -> Unit,
     navigateToPayments: () -> Unit,
+    navigateToDownloadQueue: () -> Unit,
     navigateToSetting: () -> Unit,
     navigateToAbout: () -> Unit,
     navigateToBillingPlus: (String?) -> Unit,
@@ -174,6 +179,13 @@ fun DrawerContent(
             label = stringResource(Res.string.library_navigation_payments),
             icon = Icons.Outlined.Payment,
             onClick = navigateToPayments,
+        )
+
+        NavigationDrawerItem(
+            state = state,
+            label = stringResource(Res.string.library_navigation_queue),
+            icon = Icons.Filled.Download,
+            onClick = navigateToDownloadQueue,
         )
 
         HorizontalDivider(

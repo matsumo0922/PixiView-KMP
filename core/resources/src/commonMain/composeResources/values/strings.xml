@@ -87,6 +87,7 @@
     <string name="library_navigation_following">Following</string>
     <string name="library_navigation_supporting">Supporting</string>
     <string name="library_navigation_payments">Payment history</string>
+    <string name="library_navigation_queue">Download queue</string>
     <string name="library_navigation_setting">Settings</string>
     <string name="library_navigation_about">About the app</string>
     <string name="library_navigation_plus_description">Get access to all features for the price of a cup of coffee!</string>
@@ -164,6 +165,12 @@
     <string name="bookmark_search_placeholder">Search bookmark</string>
     <string name="bookmark_empty_title">No bookmarks</string>
     <string name="bookmark_empty_description">Find and bookmark your favorite posts!</string>
+
+    <!-- Queue -->
+    <string name="queue_empty_title">Download Queue is empty.</string>
+    <string name="queue_empty_description">If you select download, it will be placed in a queue and downloaded one by one.</string>
+    <string name="queue_added">Added to download queue</string>
+    <string name="queue_added_action">Check</string>
 
     <!-- PostDetail -->
     <string name="post_detail_title">Post details</string>

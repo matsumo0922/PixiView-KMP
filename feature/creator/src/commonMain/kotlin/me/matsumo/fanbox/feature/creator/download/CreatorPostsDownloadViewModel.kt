@@ -71,6 +71,7 @@ class CreatorPostsDownloadViewModel(
 
         val data = posts
             .distinctBy { post -> post.id }
+            .filter { !it.isRestricted }
             .map { post ->
                 CreatorPostsDownloadData(
                     post = post,

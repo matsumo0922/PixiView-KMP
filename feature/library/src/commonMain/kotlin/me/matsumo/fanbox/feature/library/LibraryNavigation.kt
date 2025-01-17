@@ -28,14 +28,13 @@ fun NavGraphBuilder.libraryScreen(
     navigateToFollowerCreators: () -> Unit,
     navigateToSupportingCreators: () -> Unit,
     navigateToPayments: () -> Unit,
+    navigateToDownloadQueue: () -> Unit,
     navigateToSettingTop: () -> Unit,
     navigateToAbout: () -> Unit,
     navigateToBillingPlus: (String?) -> Unit,
     navigateToCancelPlus: (SimpleAlertContents) -> Unit,
 ) {
-    composable(
-        route = LibraryRoute,
-    ) {
+    composable(LibraryRoute) {
         LibraryScreen(
             modifier = Modifier.fillMaxSize(),
             navHostController = navHostController,
@@ -48,6 +47,7 @@ fun NavGraphBuilder.libraryScreen(
             navigateToSupportingCreators = navigateToSupportingCreators,
             navigateToBookmarkedPosts = navigateToBookmarkedPosts,
             navigateToPayments = navigateToPayments,
+            navigateToDownloadQueue = navigateToDownloadQueue,
             navigateToSettingTop = navigateToSettingTop,
             navigateToAbout = navigateToAbout,
             navigateToBillingPlus = navigateToBillingPlus,
