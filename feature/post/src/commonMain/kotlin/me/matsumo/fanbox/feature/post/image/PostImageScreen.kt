@@ -29,7 +29,6 @@ import coil3.request.ImageRequest
 import kotlinx.coroutines.launch
 import me.matsumo.fanbox.core.model.ScreenState
 import me.matsumo.fanbox.core.resources.Res
-import me.matsumo.fanbox.core.resources.common_downloaded
 import me.matsumo.fanbox.core.resources.error_ios_gif_support
 import me.matsumo.fanbox.core.resources.queue_added
 import me.matsumo.fanbox.core.resources.queue_added_action
@@ -92,7 +91,7 @@ internal fun PostImageRoute(
                             if (result == SnackbarResult.ActionPerformed) {
                                 navigateToDownloadQueue.invoke()
                             }
-                        }
+                        },
                     )
                 }
             },

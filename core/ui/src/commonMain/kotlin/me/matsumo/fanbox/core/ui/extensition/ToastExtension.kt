@@ -14,7 +14,7 @@ interface ToastExtension {
         label: StringResource? = null,
         callback: (SnackbarResult) -> Unit = {},
         isSnackbar: Boolean = label != null,
-        isOverride: Boolean = true
+        isOverride: Boolean = true,
     )
 
     suspend fun show(
@@ -23,6 +23,6 @@ interface ToastExtension {
         label: String? = null,
         callback: (SnackbarResult) -> Unit = {},
         isSnackbar: Boolean = label != null,
-        isOverride: Boolean = true
+        isOverride: Boolean = true,
     )
 }

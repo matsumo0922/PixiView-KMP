@@ -13,7 +13,7 @@ class ToastExtensionImpl : ToastExtension {
         label: StringResource?,
         callback: (SnackbarResult) -> Unit,
         isSnackbar: Boolean,
-        isOverride: Boolean
+        isOverride: Boolean,
     ) {
         show(
             snackbarHostState = snackbarHostState,
@@ -31,7 +31,7 @@ class ToastExtensionImpl : ToastExtension {
         label: String?,
         callback: (SnackbarResult) -> Unit,
         isSnackbar: Boolean,
-        isOverride: Boolean
+        isOverride: Boolean,
     ) {
         snackbarHostState.currentSnackbarData?.dismiss()
         snackbarHostState.showSnackbar(message, label).run(callback)

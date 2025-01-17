@@ -53,7 +53,6 @@ internal fun PixiViewScreen(
         } else {
             PixiViewContent(
                 modifier = Modifier.fillMaxSize(),
-                downloadState = uiState.downloadState,
             )
         }
     }

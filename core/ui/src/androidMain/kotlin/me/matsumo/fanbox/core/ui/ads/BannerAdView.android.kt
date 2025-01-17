@@ -2,15 +2,14 @@ package me.matsumo.fanbox.core.ui.ads
 
 import android.annotation.SuppressLint
 import android.content.res.Resources
-import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.viewinterop.AndroidView
@@ -44,10 +43,10 @@ actual fun BannerAdView(modifier: Modifier) {
     Box(
         modifier = modifier
             .fillMaxWidth()
-            .height(with(density) { adSizeHeight.toDp() })
+            .height(with(density) { adSizeHeight.toDp() }),
     ) {
         AndroidView(
-            modifier = modifier,
+            modifier = Modifier.fillMaxSize(),
             factory = { adManagerAdView },
         )
     }

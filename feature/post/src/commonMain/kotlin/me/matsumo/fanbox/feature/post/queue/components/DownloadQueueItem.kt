@@ -90,7 +90,7 @@ internal fun DownloadQueueItem(
                 modifier = Modifier
                     .fillMaxHeight()
                     .aspectRatio(1f),
-                items = thumbnailItems.toImmutableList()
+                items = thumbnailItems.toImmutableList(),
             )
 
             Column(
@@ -205,7 +205,7 @@ private fun Grid(
                     modifier = Modifier
                         .weight(1f)
                         .fillMaxHeight(),
-                    content = { it() }
+                    content = { it() },
                 )
             }
 
@@ -214,7 +214,7 @@ private fun Grid(
                     modifier = Modifier
                         .weight(1f)
                         .fillMaxHeight(),
-                    content = { it() }
+                    content = { it() },
                 )
             }
         }
@@ -229,7 +229,7 @@ private fun Grid(
                         modifier = Modifier
                             .weight(1f)
                             .fillMaxHeight(),
-                        content = { it() }
+                        content = { it() },
                     )
                 }
 
@@ -238,7 +238,7 @@ private fun Grid(
                         modifier = Modifier
                             .weight(1f)
                             .fillMaxHeight(),
-                        content = { it() }
+                        content = { it() },
                     )
                 }
             }

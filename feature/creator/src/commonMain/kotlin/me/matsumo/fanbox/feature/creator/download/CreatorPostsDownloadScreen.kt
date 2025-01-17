@@ -62,7 +62,6 @@ import me.matsumo.fanbox.core.resources.queue_added_action
 import me.matsumo.fanbox.core.ui.AsyncLoadContents
 import me.matsumo.fanbox.core.ui.component.PixiViewTopBar
 import me.matsumo.fanbox.core.ui.extensition.ToastExtension
-import me.matsumo.fanbox.core.ui.view.SimpleAlertContents
 import me.matsumo.fanbox.feature.creator.download.items.CreatorPostsDownloadItem
 import me.matsumo.fanbox.feature.creator.download.items.CreatorPostsDownloadSettingsSection
 import me.matsumo.fanbox.feature.creator.download.items.CreatorPostsDownloadUserSection
@@ -183,7 +182,7 @@ private fun CreatorPostsDownloadScreen(
                                 if (it == SnackbarResult.ActionPerformed) {
                                     onClickCheckQueue.invoke()
                                 }
-                            }
+                            },
                         )
                     }
                 },
@@ -198,7 +197,7 @@ private fun CreatorPostsDownloadScreen(
 
                 Text(
                     modifier = Modifier.padding(start = 8.dp),
-                    text = stringResource(Res.string.creator_posts_download_button, posts.size)
+                    text = stringResource(Res.string.creator_posts_download_button, posts.size),
                 )
             }
         },

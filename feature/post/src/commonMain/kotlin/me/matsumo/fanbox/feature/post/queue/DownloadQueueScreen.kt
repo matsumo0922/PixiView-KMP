@@ -1,7 +1,6 @@
 package me.matsumo.fanbox.feature.post.queue
 
 import androidx.compose.animation.AnimatedContent
-import androidx.compose.animation.animateContentSize
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.animation.togetherWith
@@ -57,13 +56,13 @@ internal fun DownloadQueueScreen(
                 onClickNavigation = terminate,
                 scrollBehavior = scrollBehavior,
             )
-        }
+        },
     ) { padding ->
         AnimatedContent(
             modifier = Modifier.fillMaxSize(),
             targetState = downloadState,
             contentKey = { it::class.simpleName },
-            transitionSpec = { fadeIn().togetherWith(fadeOut()) }
+            transitionSpec = { fadeIn().togetherWith(fadeOut()) },
         ) { currentState ->
             when (currentState) {
                 is DownloadState.Downloading -> {

@@ -9,7 +9,6 @@ import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
@@ -55,7 +54,6 @@ import me.matsumo.fanbox.core.logs.logger.send
 import me.matsumo.fanbox.core.model.ScreenState
 import me.matsumo.fanbox.core.model.UserData
 import me.matsumo.fanbox.core.resources.Res
-import me.matsumo.fanbox.core.resources.common_downloaded
 import me.matsumo.fanbox.core.resources.error_network
 import me.matsumo.fanbox.core.resources.queue_added
 import me.matsumo.fanbox.core.resources.queue_added_action
@@ -66,7 +64,6 @@ import me.matsumo.fanbox.core.ui.ads.NativeAdView
 import me.matsumo.fanbox.core.ui.component.pager.HorizontalPager
 import me.matsumo.fanbox.core.ui.component.pager.rememberPagerState
 import me.matsumo.fanbox.core.ui.extensition.FadePlaceHolder
-import me.matsumo.fanbox.core.ui.extensition.LocalSnackbarHostState
 import me.matsumo.fanbox.core.ui.extensition.NavigatorExtension
 import me.matsumo.fanbox.core.ui.extensition.Platform
 import me.matsumo.fanbox.core.ui.extensition.ToastExtension
@@ -138,7 +135,7 @@ internal fun PostDetailRoute(
         modifier = modifier,
         bottomBar = {
             Column(
-                modifier = Modifier.background(MaterialTheme.colorScheme.surfaceColorAtElevation(1.dp))
+                modifier = Modifier.background(MaterialTheme.colorScheme.surfaceColorAtElevation(1.dp)),
             ) {
                 if (!uiState.userData.hasPrivilege) {
                     BannerAdView(
@@ -329,7 +326,7 @@ private fun PostDetailView(
                             if (result == SnackbarResult.ActionPerformed) {
                                 navigateToDownloadQueue.invoke()
                             }
-                        }
+                        },
                     )
                 }
             },
@@ -344,7 +341,7 @@ private fun PostDetailView(
                             if (result == SnackbarResult.ActionPerformed) {
                                 navigateToDownloadQueue.invoke()
                             }
-                        }
+                        },
                     )
                 }
             },

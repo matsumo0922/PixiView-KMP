@@ -8,7 +8,6 @@ import androidx.navigation.compose.composable
 import me.matsumo.fanbox.core.ui.extensition.navigateWithLog
 import me.matsumo.fankt.fanbox.domain.model.id.FanboxPostId
 
-
 const val DownloadQueueRoute = "downloadQueue"
 
 fun NavController.navigateToDownloadQueue() {
