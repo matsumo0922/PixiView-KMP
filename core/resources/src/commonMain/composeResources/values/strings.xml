@@ -158,7 +158,7 @@
     <string name="creator_recommended">Recommended creators</string>
     <string name="creator_following_pixiv">Following on pixiv</string>
     <string name="creator_download_require_plus_title">Download posts in bulk</string>
-    <string name="creator_download_require_plus_message">Bulk download is a %1$s+ exclusive feature. \n\nYou can temporarily use the feature by purchasing %1$s+ or by watching ads only 3 times a day.</string>
+    <string name="creator_download_require_plus_message">Bulk download is a %1$s+ exclusive feature. \n\nYou can temporarily use the feature by purchasing %1$s+ or by watching ads only 1 time a day.</string>
     <string name="creator_download_require_plus_button">Purchase %1$s+</string>
     <string name="creator_download_require_plus_button_ad">See Ad</string>
     <string name="creator_download_require_plus_button_ad_over">Ad watched</string>
@@ -196,6 +196,9 @@
     <string name="post_image_download">Download this image</string>
     <string name="post_image_all_download">Download all images</string>
     <string name="post_search_placeholder">Search creator tag</string>
+
+    <!-- Search -->
+    <string name="search_post_by_creator">Search posts by creators</string>
 
     <!-- Settings -->
     <string name="setting_title">Settings</string>

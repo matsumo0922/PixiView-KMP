@@ -47,6 +47,6 @@ class RewardRepositoryImpl(
     }
 
     companion object {
-        const val MAX_REWARD_COUNT = 3
+        const val MAX_REWARD_COUNT = 1
     }
 }

@@ -5,6 +5,7 @@ import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.grid.GridCells
@@ -21,6 +22,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBarDefaults
+import androidx.compose.material3.pulltorefresh.PullToRefreshBox
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -40,6 +42,7 @@ import me.matsumo.fanbox.core.resources.Res
 import me.matsumo.fanbox.core.resources.creator_following_pixiv
 import me.matsumo.fanbox.core.resources.creator_recommended
 import me.matsumo.fanbox.core.resources.library_navigation_discovery
+import me.matsumo.fanbox.core.resources.search_post_by_creator
 import me.matsumo.fanbox.core.ui.AsyncLoadContents
 import me.matsumo.fanbox.core.ui.component.CreatorItem
 import me.matsumo.fanbox.core.ui.component.PixiViewTopBar
@@ -48,6 +51,7 @@ import me.matsumo.fanbox.core.ui.extensition.NavigatorExtension
 import me.matsumo.fanbox.core.ui.extensition.PixiViewNavigationType
 import me.matsumo.fanbox.core.ui.extensition.drawVerticalScrollbar
 import me.matsumo.fanbox.core.ui.theme.bold
+import me.matsumo.fanbox.feature.library.discovery.components.LibraryDiscoverySearchPostCreatorItem
 import me.matsumo.fankt.fanbox.domain.model.FanboxCreatorDetail
 import me.matsumo.fankt.fanbox.domain.model.id.FanboxCreatorId
 import me.matsumo.fankt.fanbox.domain.model.id.FanboxUserId
@@ -79,9 +83,11 @@ internal fun LibraryDiscoveryRoute(
     ) { uiState ->
         LibraryDiscoveryScreen(
             modifier = Modifier.fillMaxSize(),
+            followingCreators = uiState.followingCreators.toImmutableList(),
             recommendedCreators = uiState.recommendedCreators.toImmutableList(),
             followingPixivCreators = uiState.followingPixivCreators.toImmutableList(),
             openDrawer = openDrawer,
+            fetch = viewModel::fetch,
             onClickSearch = navigateToPostSearch,
             onClickCreator = navigateToCreatorPosts,
             onClickFollow = viewModel::follow,
@@ -94,9 +100,11 @@ internal fun LibraryDiscoveryRoute(
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 private fun LibraryDiscoveryScreen(
+    followingCreators: ImmutableList<FanboxCreatorDetail>,
     recommendedCreators: ImmutableList<FanboxCreatorDetail>,
     followingPixivCreators: ImmutableList<FanboxCreatorDetail>,
     openDrawer: () -> Unit,
+    fetch: () -> Unit,
     onClickSearch: () -> Unit,
     onClickCreator: (FanboxCreatorId) -> Unit,
     onClickFollow: suspend (FanboxUserId) -> Result<Unit>,
@@ -133,90 +141,123 @@ private fun LibraryDiscoveryScreen(
             HorizontalDivider()
         },
     ) { padding ->
-        LazyVerticalGrid(
-            modifier = Modifier
-                .padding(padding)
-                .drawVerticalScrollbar(state, columns),
-            state = state,
-            columns = GridCells.Fixed(columns),
-            contentPadding = PaddingValues(16.dp),
-            verticalArrangement = Arrangement.spacedBy(16.dp),
-            horizontalArrangement = Arrangement.spacedBy(16.dp),
+        PullToRefreshBox(
+            modifier = Modifier.padding(padding),
+            onRefresh = fetch,
+            isRefreshing = false
         ) {
-            if (followingPixivCreators.isNotEmpty()) {
+            LazyVerticalGrid(
+                modifier = Modifier.drawVerticalScrollbar(state, columns),
+                state = state,
+                columns = GridCells.Fixed(columns),
+                contentPadding = PaddingValues(16.dp),
+                verticalArrangement = Arrangement.spacedBy(16.dp),
+                horizontalArrangement = Arrangement.spacedBy(16.dp),
+            ) {
+                if (followingCreators.isNotEmpty()) {
+                    item(span = { GridItemSpan(maxLineSpan) }) {
+                        TitleItem(
+                            modifier = Modifier.fillMaxWidth(),
+                            title = stringResource(Res.string.search_post_by_creator),
+                        )
+                    }
+
+                    items(
+                        items = followingCreators.take(5),
+                        key = { item -> "search-${item.creatorId.value}" },
+                        span = { GridItemSpan(maxLineSpan) },
+                    ) {
+                        LibraryDiscoverySearchPostCreatorItem(
+                            modifier = Modifier.fillMaxWidth(),
+                            creatorDetail = it,
+                            onSearchPostClicked = onClickCreator,
+                        )
+                    }
+
+                    item {
+                        Spacer(modifier = Modifier.height(8.dp))
+                    }
+                }
+
+                if (followingPixivCreators.isNotEmpty()) {
+                    item(span = { GridItemSpan(maxLineSpan) }) {
+                        TitleItem(
+                            modifier = Modifier.fillMaxWidth(),
+                            title = stringResource(Res.string.creator_following_pixiv),
+                        )
+                    }
+
+                    items(
+                        items = followingPixivCreators.take(6),
+                        key = { item -> "pixiv-${item.creatorId.value}" },
+                    ) {
+                        var isFollowed by rememberSaveable { mutableStateOf(it.isFollowed) }
+
+                        CreatorItem(
+                            modifier = Modifier.fillMaxWidth(),
+                            creatorDetail = it,
+                            isFollowed = isFollowed,
+                            onClickCreator = onClickCreator,
+                            onClickFollow = {
+                                scope.launch {
+                                    isFollowed = true
+                                    isFollowed = onClickFollow.invoke(it).isSuccess
+                                }
+                            },
+                            onClickUnfollow = {
+                                scope.launch {
+                                    isFollowed = false
+                                    isFollowed = !onClickUnfollow.invoke(it).isSuccess
+                                }
+                            },
+                            onClickSupporting = onClickSupporting,
+                        )
+                    }
+
+                    item {
+                        Spacer(modifier = Modifier.height(8.dp))
+                    }
+                }
+
+                if (recommendedCreators.isNotEmpty()) {
+                    item(span = { GridItemSpan(maxLineSpan) }) {
+                        TitleItem(
+                            modifier = Modifier.fillMaxWidth(),
+                            title = stringResource(Res.string.creator_recommended),
+                        )
+                    }
+
+                    items(
+                        items = recommendedCreators,
+                        key = { item -> "recommended-${item.creatorId.value}" },
+                    ) {
+                        var isFollowed by rememberSaveable { mutableStateOf(it.isFollowed) }
+
+                        CreatorItem(
+                            modifier = Modifier.fillMaxWidth(),
+                            creatorDetail = it,
+                            isFollowed = isFollowed,
+                            onClickCreator = onClickCreator,
+                            onClickFollow = {
+                                scope.launch {
+                                    isFollowed = true
+                                    isFollowed = onClickFollow.invoke(it).isSuccess
+                                }
+                            },
+                            onClickUnfollow = {
+                                scope.launch {
+                                    isFollowed = false
+                                    isFollowed = !onClickUnfollow.invoke(it).isSuccess
+                                }
+                            },
+                            onClickSupporting = onClickSupporting,
+                        )
+                    }
+                }
+
                 item(span = { GridItemSpan(maxLineSpan) }) {
-                    TitleItem(
-                        modifier = Modifier.fillMaxWidth(),
-                        title = stringResource(Res.string.creator_following_pixiv),
-                    )
+                    Spacer(modifier = Modifier.navigationBarsPadding())
                 }
-
-                items(
-                    items = followingPixivCreators,
-                    key = { item -> "pixiv-${item.creatorId.value}" },
-                ) {
-                    var isFollowed by rememberSaveable { mutableStateOf(it.isFollowed) }
-
-                    CreatorItem(
-                        modifier = Modifier.fillMaxWidth(),
-                        creatorDetail = it,
-                        isFollowed = isFollowed,
-                        onClickCreator = onClickCreator,
-                        onClickFollow = {
-                            scope.launch {
-                                isFollowed = true
-                                isFollowed = onClickFollow.invoke(it).isSuccess
-                            }
-                        },
-                        onClickUnfollow = {
-                            scope.launch {
-                                isFollowed = false
-                                isFollowed = !onClickUnfollow.invoke(it).isSuccess
-                            }
-                        },
-                        onClickSupporting = onClickSupporting,
-                    )
-                }
-            }
-
-            if (recommendedCreators.isNotEmpty()) {
-                item(span = { GridItemSpan(maxLineSpan) }) {
-                    TitleItem(
-                        modifier = Modifier.fillMaxWidth(),
-                        title = stringResource(Res.string.creator_recommended),
-                    )
-                }
-
-                items(
-                    items = recommendedCreators,
-                    key = { item -> "recommended-${item.creatorId.value}" },
-                ) {
-                    var isFollowed by rememberSaveable { mutableStateOf(it.isFollowed) }
-
-                    CreatorItem(
-                        modifier = Modifier.fillMaxWidth(),
-                        creatorDetail = it,
-                        isFollowed = isFollowed,
-                        onClickCreator = onClickCreator,
-                        onClickFollow = {
-                            scope.launch {
-                                isFollowed = true
-                                isFollowed = onClickFollow.invoke(it).isSuccess
-                            }
-                        },
-                        onClickUnfollow = {
-                            scope.launch {
-                                isFollowed = false
-                                isFollowed = !onClickUnfollow.invoke(it).isSuccess
-                            }
-                        },
-                        onClickSupporting = onClickSupporting,
-                    )
-                }
-            }
-
-            item(span = { GridItemSpan(maxLineSpan) }) {
-                Spacer(modifier = Modifier.navigationBarsPadding())
             }
         }
     }

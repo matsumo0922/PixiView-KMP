@@ -1,5 +1,6 @@
 package me.matsumo.fanbox.feature.creator.top.items
 
+import androidx.activity.compose.LocalActivity
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -47,7 +48,7 @@ actual fun CreatorTopRewardAdDialog(
     onClickShowPlus: () -> Unit,
     onDismissRequest: () -> Unit,
 ) {
-    val activity = LocalContext.current as FragmentActivity
+    val activity = LocalActivity.current as FragmentActivity
 
     val rewardAdLoader = koinInject<RewardAdLoader>()
     val rewardAd by rewardAdLoader.rewardAd.collectAsStateWithLifecycle()

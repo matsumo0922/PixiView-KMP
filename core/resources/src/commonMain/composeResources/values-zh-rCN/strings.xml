@@ -158,7 +158,7 @@
     <string name="creator_recommended">推荐的创作者</string>
     <string name="creator_following_pixiv">在pixiv上正在关注的作者</string>
     <string name="creator_download_require_plus_title">批量下载投稿</string>
-    <string name="creator_download_require_plus_message">批量下载是 %1$s+ 的独家功能。\n\n您可以通过购买 %1$s+ 或每天观看3次广告来暂时使用该功能。</string>
+    <string name="creator_download_require_plus_message">批量下载是 %1$s+ 的独家功能。\n\n您可以通过购买 %1$s+ 或每天观看1次广告来暂时使用该功能。</string>
     <string name="creator_download_require_plus_button">购买 %1$s+</string>
     <string name="creator_download_require_plus_button_ad">观看广告</string>
     <string name="creator_download_require_plus_button_ad_over">已观看广告</string>
@@ -196,6 +196,9 @@
     <string name="post_image_download">下载该图片</string>
     <string name="post_image_all_download">下载所有图片</string>
     <string name="post_search_placeholder">搜索创作者标签</string>
+
+    <!-- Search -->
+    <string name="search_post_by_creator">搜索创作者帖子</string>
 
     <!-- Settings -->
     <string name="setting_title">设置</string>

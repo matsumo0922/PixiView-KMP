@@ -1,5 +1,8 @@
 package me.matsumo.fanbox.core.ui.component
 
+import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.material.icons.Icons
@@ -9,6 +12,7 @@ import androidx.compose.material3.CenterAlignedTopAppBar
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.IconButtonDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
@@ -28,7 +32,9 @@ fun PixiViewTopBar(
     actionsIcon: ImageVector? = Icons.Default.MoreVert,
     windowInsets: WindowInsets = TopAppBarDefaults.windowInsets,
     scrollBehavior: TopAppBarScrollBehavior? = null,
+    highlightColor: Color = MaterialTheme.colorScheme.surface,
     isTransparent: Boolean = false,
+    isShowTitle: Boolean = true,
     onClickNavigation: (() -> Unit)? = null,
     onClickActions: (() -> Unit)? = null,
 ) {
@@ -47,17 +53,26 @@ fun PixiViewTopBar(
         windowInsets = windowInsets,
         title = {
             if (title != null) {
-                Text(
-                    modifier = Modifier.fillMaxWidth(),
-                    text = title,
-                    style = MaterialTheme.typography.titleMedium,
-                    color = MaterialTheme.colorScheme.onSurface,
-                )
+                AnimatedVisibility(
+                    visible = isShowTitle,
+                    enter = fadeIn(),
+                    exit = fadeOut(),
+                ) {
+                    Text(
+                        modifier = Modifier.fillMaxWidth(),
+                        text = title,
+                        style = MaterialTheme.typography.titleMedium,
+                        color = MaterialTheme.colorScheme.onSurface,
+                    )
+                }
             }
         },
         navigationIcon = {
             if (onClickNavigation != null) {
-                IconButton(onClick = onClickNavigation) {
+                IconButton(
+                    colors = IconButtonDefaults.iconButtonColors(highlightColor.copy(alpha = 0.5f)),
+                    onClick = onClickNavigation,
+                ) {
                     navigationIcon?.let {
                         Icon(
                             imageVector = it,
@@ -69,7 +84,10 @@ fun PixiViewTopBar(
         },
         actions = {
             if (onClickActions != null) {
-                IconButton(onClick = onClickActions) {
+                IconButton(
+                    colors = IconButtonDefaults.iconButtonColors(highlightColor.copy(alpha = 0.5f)),
+                    onClick = onClickActions,
+                ) {
                     actionsIcon?.let {
                         Icon(
                             imageVector = it,

@@ -70,9 +70,10 @@ private class CollapsingToolbarScaffoldStateSaver : Saver<CollapsingToolbarScaff
 @Composable
 fun rememberCollapsingToolbarScaffoldState(
     toolbarState: CollapsingToolbarState = rememberCollapsingToolbarState(),
+    initialOffsetY: Int = 0,
 ): CollapsingToolbarScaffoldState {
-    return rememberSaveable(toolbarState, saver = CollapsingToolbarScaffoldStateSaver()) {
-        CollapsingToolbarScaffoldState(toolbarState)
+    return rememberSaveable(toolbarState, initialOffsetY, saver = CollapsingToolbarScaffoldStateSaver()) {
+        CollapsingToolbarScaffoldState(toolbarState, initialOffsetY)
     }
 }
 

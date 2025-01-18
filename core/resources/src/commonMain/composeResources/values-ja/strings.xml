@@ -30,7 +30,7 @@
     <string name="common_see_more">もっと見る</string>
     <string name="common_tag">タグ</string>
     <string name="common_post">投稿</string>
-    <string name="common_creator">投稿</string>
+    <string name="common_creator">クリエイター</string>
     <string name="common_block">ブロック</string>
     <string name="common_unblock">解除</string>
 
@@ -157,7 +157,7 @@
     <string name="creator_recommended">おすすめのクリエイター</string>
     <string name="creator_following_pixiv">Pixivでフォロー中のクリエイター</string>
     <string name="creator_download_require_plus_title">投稿を一括ダウンロード</string>
-    <string name="creator_download_require_plus_message">一括ダウンロードは%1$s+専用機能です。\n\n%1$s+を購入するか、1日3回のみ広告を見ることで一時的に機能を使用することができます。</string>
+    <string name="creator_download_require_plus_message">一括ダウンロードは%1$s+専用機能です。\n\n%1$s+を購入するか、1日1回のみ広告を見ることで一時的に機能を使用することができます。</string>
     <string name="creator_download_require_plus_button">%1$s+を購入</string>
     <string name="creator_download_require_plus_button_ad">広告を見る</string>
     <string name="creator_download_require_plus_button_ad_over">広告視聴済み</string>
@@ -195,6 +195,9 @@
     <string name="post_image_download">この画像をダウンロード</string>
     <string name="post_image_all_download">すべての画像をダウンロード</string>
     <string name="post_search_placeholder">クリエイター・タグを検索</string>
+
+    <!-- Search -->
+    <string name="search_post_by_creator">クリエイターの投稿を検索</string>
 
     <!-- Settings -->
     <string name="setting_title">設定</string>

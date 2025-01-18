@@ -61,7 +61,7 @@ actual fun VideoPlayer(url: String, modifier: Modifier) {
     var playerSize by remember { mutableStateOf(IntSize.Zero) }
     var isDisplayController by remember { mutableStateOf(false) }
     var isLoading by remember { mutableStateOf(true) }
-    var isPlaying by remember { mutableStateOf(true) }
+    var isPlaying by remember { mutableStateOf(false) }
 
     val exoPlayer = remember(context) {
         ExoPlayer.Builder(context)
@@ -85,7 +85,7 @@ actual fun VideoPlayer(url: String, modifier: Modifier) {
 
         exoPlayer.volume = 0f
         exoPlayer.repeatMode = Player.REPEAT_MODE_ONE
-        exoPlayer.playWhenReady = true
+        exoPlayer.playWhenReady = false
 
         onDispose {
             exoPlayer.pause()

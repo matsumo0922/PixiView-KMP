@@ -8,8 +8,10 @@ import androidx.compose.animation.scaleOut
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.statusBarsPadding
@@ -21,6 +23,7 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Download
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
@@ -37,6 +40,8 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.graphicsLayer
+import androidx.compose.ui.layout.onGloballyPositioned
+import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
@@ -54,6 +59,7 @@ import me.matsumo.fanbox.core.resources.creator_tab_posts
 import me.matsumo.fanbox.core.ui.AsyncLoadContents
 import me.matsumo.fanbox.core.ui.LazyPagingItemsLoadContents
 import me.matsumo.fanbox.core.ui.component.CollapsingToolbarScaffold
+import me.matsumo.fanbox.core.ui.component.PixiViewTopBar
 import me.matsumo.fanbox.core.ui.component.ScrollStrategy
 import me.matsumo.fanbox.core.ui.component.rememberCollapsingToolbarScaffoldState
 import me.matsumo.fanbox.core.ui.extensition.NavigatorExtension
@@ -159,6 +165,7 @@ internal fun CreatorTopRoute(
     }
 }
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 private fun CreatorTopScreen(
     isPosts: Boolean,
@@ -186,14 +193,16 @@ private fun CreatorTopScreen(
     onTerminate: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
+    val density = LocalDensity.current
+
     val state = rememberCollapsingToolbarScaffoldState()
     val pagerState = rememberPagerState(initialPage = if (isPosts) 0 else 1) { 2 }
     val scope = rememberCoroutineScope()
 
-    val postsListState = rememberLazyListState()
     val postsGridState = rememberLazyGridState()
     val plansListState = rememberLazyListState()
 
+    var topAppBarHeight by remember { mutableStateOf(0.dp) }
     var isShowRewardAdDialog by remember { mutableStateOf(false) }
     var isShowDescriptionDialog by remember { mutableStateOf(false) }
     var isShowMenuDialog by remember { mutableStateOf(false) }
@@ -219,7 +228,9 @@ private fun CreatorTopScreen(
         CollapsingToolbarScaffold(
             modifier = Modifier.fillMaxSize(),
             state = state,
-            toolbarModifier = Modifier.verticalScroll(rememberScrollState()),
+            toolbarModifier = Modifier
+                .heightIn(min = topAppBarHeight + 4.dp)
+                .verticalScroll(rememberScrollState()),
             toolbar = {
                 Spacer(
                     modifier = Modifier
@@ -235,13 +246,11 @@ private fun CreatorTopScreen(
                             alpha = state.toolbarState.progress * 10
                         },
                     creatorDetail = creatorDetail,
-                    onClickTerminate = onTerminate,
                     onClickLink = onClickLink,
                     onClickFollow = onClickFollow,
                     onClickUnfollow = onClickUnfollow,
                     onClickSupporting = onClickLink,
                     onClickDescription = { isShowDescriptionDialog = true },
-                    onClickAction = { isShowMenuDialog = true },
                 )
             },
             scrollStrategy = ScrollStrategy.ExitUntilCollapsed,
@@ -261,14 +270,8 @@ private fun CreatorTopScreen(
                                         pagerState.animateScrollToPage(index)
                                     } else {
                                         when (tabs[index]) {
-                                            CreatorTab.POSTS -> {
-                                                postsListState.animateScrollToItem(0)
-                                                postsGridState.animateScrollToItem(0)
-                                            }
-
-                                            CreatorTab.PLANS -> {
-                                                plansListState.animateScrollToItem(0)
-                                            }
+                                            CreatorTab.POSTS -> postsGridState.animateScrollToItem(0)
+                                            CreatorTab.PLANS -> plansListState.animateScrollToItem(0)
                                         }
                                     }
                                 }
@@ -290,6 +293,7 @@ private fun CreatorTopScreen(
                             ) {
                                 CreatorTopPostsScreen(
                                     modifier = Modifier.fillMaxSize(),
+                                    state = postsGridState,
                                     userData = userData,
                                     bookmarkedPostsIds = bookmarkedPostsIds.toImmutableList(),
                                     pagingAdapter = creatorPostsPaging,
@@ -325,6 +329,22 @@ private fun CreatorTopScreen(
                 }
             }
         }
+
+        PixiViewTopBar(
+            modifier = Modifier
+                .fillMaxWidth()
+                .statusBarsPadding()
+                .onGloballyPositioned {
+                    topAppBarHeight = with(density) { it.size.height.toDp() }
+                },
+            title = creatorDetail.user?.name.orEmpty(),
+            isTransparent = true,
+            isShowTitle = state.toolbarState.progress == 0f,
+            windowInsets = WindowInsets(0, 0, 0, 0),
+            highlightColor = MaterialTheme.colorScheme.surface,
+            onClickNavigation = onTerminate,
+            onClickActions = { isShowMenuDialog = true },
+        )
 
         AnimatedVisibility(
             modifier = Modifier

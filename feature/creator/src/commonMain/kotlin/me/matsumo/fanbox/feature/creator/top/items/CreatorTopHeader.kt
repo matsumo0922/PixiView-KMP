@@ -2,23 +2,19 @@ package me.matsumo.fanbox.feature.creator.top.items
 
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.KeyboardArrowDown
 import androidx.compose.material3.Button
-import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
@@ -66,7 +62,6 @@ import me.matsumo.fanbox.core.resources.vec_tumblr
 import me.matsumo.fanbox.core.resources.vec_twitter
 import me.matsumo.fanbox.core.resources.vec_unknown_link
 import me.matsumo.fanbox.core.resources.vec_youtube
-import me.matsumo.fanbox.core.ui.component.PixiViewTopBar
 import me.matsumo.fanbox.core.ui.component.TagItems
 import me.matsumo.fanbox.core.ui.extensition.FadePlaceHolder
 import me.matsumo.fanbox.core.ui.extensition.asCoilImage
@@ -77,107 +72,92 @@ import me.matsumo.fankt.fanbox.domain.model.id.FanboxUserId
 import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.resources.stringResource
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 internal fun CreatorTopHeader(
     creatorDetail: FanboxCreatorDetail,
-    onClickTerminate: () -> Unit,
     onClickLink: (String) -> Unit,
     onClickDescription: (String) -> Unit,
     onClickFollow: suspend (FanboxUserId) -> Result<Unit>,
     onClickUnfollow: suspend (FanboxUserId) -> Result<Unit>,
     onClickSupporting: (String) -> Unit,
-    onClickAction: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
     val scope = rememberCoroutineScope()
     val tagItems = createTags(creatorDetail)
     var isFollowed by remember(creatorDetail.isFollowed) { mutableStateOf(creatorDetail.isFollowed) }
 
-    Box(modifier) {
-        Column(Modifier.fillMaxWidth()) {
-            HeaderTop(
-                modifier = Modifier.fillMaxWidth(),
-                creatorDetail = creatorDetail,
-                isSupported = creatorDetail.isSupported,
-                isFollowed = isFollowed,
-                onClickSupport = { onClickSupporting.invoke(creatorDetail.supportingBrowserUrl) },
-                onClickFollow = {
-                    scope.launch {
-                        isFollowed = true
-                        isFollowed = creatorDetail.user?.userId?.let { onClickFollow.invoke(it) }?.isSuccess ?: false
-                    }
-                },
-                onClickUnfollow = {
-                    scope.launch {
-                        isFollowed = false
-                        isFollowed = creatorDetail.user?.userId?.let { onClickUnfollow.invoke(it) }?.isSuccess ?: true
-                    }
-                },
-                onClickLink = { onClickLink.invoke(it) },
-            )
+    Column(modifier) {
+        HeaderTop(
+            modifier = Modifier.fillMaxWidth(),
+            creatorDetail = creatorDetail,
+            isSupported = creatorDetail.isSupported,
+            isFollowed = isFollowed,
+            onClickSupport = { onClickSupporting.invoke(creatorDetail.supportingBrowserUrl) },
+            onClickFollow = {
+                scope.launch {
+                    isFollowed = true
+                    isFollowed = creatorDetail.user?.userId?.let { onClickFollow.invoke(it) }?.isSuccess ?: false
+                }
+            },
+            onClickUnfollow = {
+                scope.launch {
+                    isFollowed = false
+                    isFollowed = creatorDetail.user?.userId?.let { onClickUnfollow.invoke(it) }?.isSuccess ?: true
+                }
+            },
+            onClickLink = { onClickLink.invoke(it) },
+        )
 
-            Spacer(modifier = Modifier.size(16.dp))
+        Spacer(modifier = Modifier.size(16.dp))
 
-            Text(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(horizontal = 16.dp),
-                text = creatorDetail.user?.name.orEmpty(),
-                style = MaterialTheme.typography.titleLarge.bold(),
-                color = MaterialTheme.colorScheme.onSurface,
-            )
+        Text(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(horizontal = 16.dp),
+            text = creatorDetail.user?.name.orEmpty(),
+            style = MaterialTheme.typography.titleLarge.bold(),
+            color = MaterialTheme.colorScheme.onSurface,
+        )
 
-            Spacer(modifier = Modifier.size(4.dp))
+        Spacer(modifier = Modifier.size(4.dp))
 
-            Text(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(horizontal = 16.dp),
-                text = "@${creatorDetail.creatorId}",
-                style = MaterialTheme.typography.bodyMedium,
-                color = MaterialTheme.colorScheme.onSurfaceVariant,
-            )
+        Text(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(horizontal = 16.dp),
+            text = "@${creatorDetail.creatorId}",
+            style = MaterialTheme.typography.bodyMedium,
+            color = MaterialTheme.colorScheme.onSurfaceVariant,
+        )
 
-            DescriptionItem(
+        DescriptionItem(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(
+                    top = 16.dp,
+                    start = 16.dp,
+                    end = 16.dp,
+                    bottom = if (tagItems.isEmpty()) 16.dp else 0.dp,
+                ),
+            description = creatorDetail.description,
+            onClickShowDescription = onClickDescription,
+        )
+
+        if (tagItems.isNotEmpty()) {
+            TagItems(
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(
                         top = 16.dp,
                         start = 16.dp,
                         end = 16.dp,
-                        bottom = if (tagItems.isEmpty()) 16.dp else 0.dp,
+                        bottom = 24.dp,
                     ),
-                description = creatorDetail.description,
-                onClickShowDescription = onClickDescription,
+                tags = tagItems.toImmutableList(),
+                textStyle = MaterialTheme.typography.bodySmall,
+                onClickTag = { /* do nothing */ },
             )
-
-            if (tagItems.isNotEmpty()) {
-                TagItems(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(
-                            top = 16.dp,
-                            start = 16.dp,
-                            end = 16.dp,
-                            bottom = 24.dp,
-                        ),
-                    tags = tagItems.toImmutableList(),
-                    textStyle = MaterialTheme.typography.bodySmall,
-                    onClickTag = { /* do nothing */ },
-                )
-            }
         }
-
-        PixiViewTopBar(
-            modifier = Modifier
-                .fillMaxWidth()
-                .statusBarsPadding(),
-            isTransparent = true,
-            windowInsets = WindowInsets(0, 0, 0, 0),
-            onClickNavigation = onClickTerminate,
-            onClickActions = onClickAction,
-        )
     }
 }
 

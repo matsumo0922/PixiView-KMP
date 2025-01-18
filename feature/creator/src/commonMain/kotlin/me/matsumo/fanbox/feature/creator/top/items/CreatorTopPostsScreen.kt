@@ -63,6 +63,7 @@ import me.matsumo.fankt.fanbox.domain.model.id.FanboxPostId
 
 @Composable
 internal fun CreatorTopPostsScreen(
+    state: LazyGridState,
     userData: UserData,
     bookmarkedPostsIds: ImmutableList<FanboxPostId>,
     pagingAdapter: LazyPagingItems<FanboxPost>,
@@ -75,8 +76,6 @@ internal fun CreatorTopPostsScreen(
     onClickPlanList: (FanboxCreatorId) -> Unit,
     modifier: Modifier = Modifier,
 ) {
-    val state = rememberLazyGridState()
-
     val adOffset: Int
     val adInterval: Int
 

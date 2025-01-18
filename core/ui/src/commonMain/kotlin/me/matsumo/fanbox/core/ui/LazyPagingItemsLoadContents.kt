@@ -4,17 +4,13 @@ import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.animation.togetherWith
-import androidx.compose.foundation.layout.Box
-import androidx.compose.material.ExperimentalMaterialApi
-import androidx.compose.material.pullrefresh.PullRefreshIndicator
-import androidx.compose.material.pullrefresh.pullRefresh
-import androidx.compose.material.pullrefresh.rememberPullRefreshState
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Surface
+import androidx.compose.material3.pulltorefresh.PullToRefreshBox
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.paging.CombinedLoadStates
 import androidx.paging.LoadState
@@ -27,9 +23,10 @@ import me.matsumo.fanbox.core.ui.extensition.isEmpty
 import me.matsumo.fanbox.core.ui.view.EmptyView
 import me.matsumo.fanbox.core.ui.view.ErrorView
 import me.matsumo.fanbox.core.ui.view.LoadingView
+import me.matsumo.fanbox.core.ui.view.PullToRefreshWrapper
 import org.jetbrains.compose.resources.StringResource
 
-@OptIn(ExperimentalMaterialApi::class)
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun <T : Any> LazyPagingItemsLoadContents(
     lazyPagingItems: LazyPagingItems<T>,
@@ -70,19 +67,13 @@ fun <T : Any> LazyPagingItemsLoadContents(
                             val isRefreshing by remember(lazyPagingItems.loadState) {
                                 derivedStateOf { lazyPagingItems.loadState.refresh is LoadState.Loading }
                             }
-                            val refreshState = rememberPullRefreshState(
-                                refreshing = isRefreshing,
+
+                            PullToRefreshWrapper(
                                 onRefresh = { lazyPagingItems.refresh() },
-                            )
-
-                            Box(Modifier.pullRefresh(refreshState, isSwipeEnabled)) {
-                                content.invoke(loadState)
-
-                                PullRefreshIndicator(
-                                    refreshing = isRefreshing,
-                                    state = refreshState,
-                                    modifier = Modifier.align(Alignment.TopCenter),
-                                )
+                                isRefreshing = isRefreshing,
+                                enabled = isSwipeEnabled,
+                            ) {
+                                content.invoke(lazyPagingItems.loadState)
                             }
                         }
                     }

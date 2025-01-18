@@ -27,6 +27,7 @@ class LibraryDiscoveryViewModel(
             _screenState.value = ScreenState.Loading
             _screenState.value = suspendRunCatching {
                 LibraryDiscoveryUiState(
+                    followingCreators = fanboxRepository.getFollowingCreators().shuffled(),
                     recommendedCreators = fanboxRepository.getRecommendedCreators(),
                     followingPixivCreators = fanboxRepository.getFollowingPixivCreators(),
                 )
@@ -52,6 +53,7 @@ class LibraryDiscoveryViewModel(
 
 @Stable
 data class LibraryDiscoveryUiState(
+    val followingCreators: List<FanboxCreatorDetail>,
     val recommendedCreators: List<FanboxCreatorDetail>,
     val followingPixivCreators: List<FanboxCreatorDetail>,
 )
