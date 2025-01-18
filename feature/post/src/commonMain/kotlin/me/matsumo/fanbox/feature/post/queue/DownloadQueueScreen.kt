@@ -6,6 +6,7 @@ import androidx.compose.animation.fadeOut
 import androidx.compose.animation.togetherWith
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
@@ -27,6 +28,7 @@ import me.matsumo.fanbox.core.resources.library_navigation_queue
 import me.matsumo.fanbox.core.resources.queue_empty_description
 import me.matsumo.fanbox.core.resources.queue_empty_title
 import me.matsumo.fanbox.core.ui.component.PixiViewTopBar
+import me.matsumo.fanbox.core.ui.extensition.plus
 import me.matsumo.fanbox.core.ui.view.ErrorView
 import me.matsumo.fanbox.feature.post.queue.components.DownloadQueueItem
 import me.matsumo.fankt.fanbox.domain.model.id.FanboxPostId
@@ -70,7 +72,7 @@ internal fun DownloadQueueScreen(
                         modifier = Modifier.fillMaxSize(),
                         state = state,
                         verticalArrangement = Arrangement.spacedBy(16.dp),
-                        contentPadding = padding,
+                        contentPadding = padding + PaddingValues(16.dp),
                     ) {
                         items(
                             items = listOf(currentState.items, *reservingPosts.toTypedArray()),
@@ -80,8 +82,7 @@ internal fun DownloadQueueScreen(
                                 modifier = Modifier
                                     .animateItem()
                                     .fillMaxWidth()
-                                    .clickable { navigateToPostDetail.invoke(items.postId) }
-                                    .padding(horizontal = 16.dp),
+                                    .clickable { navigateToPostDetail.invoke(items.postId) },
                                 items = items,
                                 progress = currentState.progress.takeIf { items.key == currentState.items.key } ?: -1f,
                                 onCancelClicked = { viewModel.cancelDownload(it) },

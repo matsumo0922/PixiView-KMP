@@ -9,7 +9,7 @@ targetSdk = "35"
 compileSdk = "35"
 
 # Gradle
-gradle = "8.4.2"
+gradle = "8.8.0"
 
 # Kotlin
 kotlin = "2.1.0"
@@ -21,11 +21,11 @@ kotlinxSerializationJson = "1.7.3"
 kotlinxImmutable = "0.3.7"
 
 # KMP
-kmpCompose = "1.7.0"
+kmpCompose = "1.7.3"
 kmpComplete = "1.1.0"
 kmpSwiftKlib = "0.6.3"
-kmpLifecycle = "2.8.3"
-kmpNavigation = "2.8.0-alpha10"
+kmpLifecycle = "2.8.4"
+kmpNavigation = "2.8.0-alpha11"
 kmpPaging = "3.3.0-alpha02-0.5.1"
 mokoPermissions = "0.18.0"
 mokoBiometry = "0.4.0"

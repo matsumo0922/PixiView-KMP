@@ -59,6 +59,8 @@
     <string name="error_adult_content_description">Show</string>
     <string name="error_ios_gif_support">GIF preview on iOS is currently in development</string>
     <string name="error_service_status">Service operation status</string>
+    <string name="error_ad_load_failed">Failed to load ads.</string>
+    <string name="error_ad_load_failed_description">We display advertisements to maintain the quality of our service.</string>
 
     <!-- Common Unit -->
     <string name="unit_day_before">%1$d days ago</string>

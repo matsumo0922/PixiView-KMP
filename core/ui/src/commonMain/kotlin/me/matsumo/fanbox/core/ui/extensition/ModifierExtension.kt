@@ -30,6 +30,9 @@ import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.ScrollState
 import androidx.compose.foundation.basicMarquee
 import androidx.compose.foundation.gestures.Orientation
+import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.calculateEndPadding
+import androidx.compose.foundation.layout.calculateStartPadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.lazy.grid.LazyGridState
@@ -87,6 +90,18 @@ fun Modifier.padding(
         end = end,
     ),
 )
+
+@Composable
+operator fun PaddingValues.plus(value: PaddingValues): PaddingValues {
+    val layoutDirection = LocalLayoutDirection.current
+
+    return PaddingValues(
+        top = calculateTopPadding() + value.calculateTopPadding(),
+        bottom = calculateBottomPadding() + value.calculateBottomPadding(),
+        start = calculateStartPadding(layoutDirection) + value.calculateStartPadding(layoutDirection),
+        end = calculateEndPadding(layoutDirection) + value.calculateEndPadding(layoutDirection),
+    )
+}
 
 fun Modifier.drawHorizontalScrollbar(
     state: ScrollState,
