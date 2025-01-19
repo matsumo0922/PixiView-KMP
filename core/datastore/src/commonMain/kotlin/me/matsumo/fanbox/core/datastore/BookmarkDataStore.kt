@@ -54,9 +54,12 @@ class BookmarkDataStore(
     }
 
     suspend fun get(): List<FanboxPost> {
-        return cookiePreference.data.firstOrNull()?.asMap()?.values?.map {
-            Json.decodeFromString(FanboxPost.serializer(), it.toString())
-        } ?: emptyList()
+        val map = cookiePreference.data.firstOrNull()?.asMap() ?: return emptyList()
+        val values = map.values.mapNotNull {
+            runCatching { Json.decodeFromString(FanboxPost.serializer(), it.toString()) }.getOrNull()
+        }
+
+        return values
     }
 
     private suspend fun notify() {

@@ -41,7 +41,6 @@ import me.matsumo.fankt.fanbox.domain.model.FanboxPostDetail
 import me.matsumo.fankt.fanbox.domain.model.id.FanboxPostId
 import java.io.File
 import kotlin.coroutines.resume
-import kotlin.coroutines.resumeWithException
 import kotlin.uuid.ExperimentalUuidApi
 import kotlin.uuid.Uuid
 
