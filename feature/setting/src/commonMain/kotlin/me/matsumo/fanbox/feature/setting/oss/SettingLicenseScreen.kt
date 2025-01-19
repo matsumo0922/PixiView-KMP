@@ -81,8 +81,8 @@ internal fun SettingLicenseScreen(
             }
         },
     ) { paddingValues ->
-        // ./gradlew exportLibraryDefinitions -PexportPath="../core/ui/src/commonMain/composeResources/files" (for Windows)
-        // ./gradlew exportLibraryDefinitions -PaboutLibraries.exportPath=../core/ui/src/commonMain/composeResources/files (for Mac)
+        // ./gradlew exportLibraryDefinitions -PexportPath="../core/resources/src/commonMain/composeResources/files" (for Windows)
+        // ./gradlew exportLibraryDefinitions -PaboutLibraries.exportPath=../core/resources/src/commonMain/composeResources/files (for Mac)
 
         LazyColumn(
             modifier = Modifier.fillMaxSize(),
