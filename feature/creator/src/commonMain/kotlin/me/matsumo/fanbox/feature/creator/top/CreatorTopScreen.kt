@@ -63,6 +63,7 @@ import kotlinx.coroutines.launch
 import me.matsumo.fanbox.core.model.ScreenState
 import me.matsumo.fanbox.core.model.UserData
 import me.matsumo.fanbox.core.resources.Res
+import me.matsumo.fanbox.core.resources.billing_plus_toast_require_plus
 import me.matsumo.fanbox.core.resources.creator_tab_plans
 import me.matsumo.fanbox.core.resources.creator_tab_posts
 import me.matsumo.fanbox.core.resources.reveal_creator_top_fab
@@ -75,8 +76,10 @@ import me.matsumo.fanbox.core.ui.component.ScrollStrategy
 import me.matsumo.fanbox.core.ui.component.rememberCollapsingToolbarScaffoldState
 import me.matsumo.fanbox.core.ui.extensition.BackHandler
 import me.matsumo.fanbox.core.ui.extensition.LocalRevealCanvasState
+import me.matsumo.fanbox.core.ui.extensition.LocalSnackbarHostState
 import me.matsumo.fanbox.core.ui.extensition.NavigatorExtension
 import me.matsumo.fanbox.core.ui.extensition.OverlayText
+import me.matsumo.fanbox.core.ui.extensition.ToastExtension
 import me.matsumo.fanbox.core.ui.extensition.revealByStep
 import me.matsumo.fanbox.core.ui.view.SimpleAlertContents
 import me.matsumo.fanbox.feature.creator.top.items.CreatorTopDescriptionDialog
@@ -117,6 +120,7 @@ internal fun CreatorTopRoute(
     modifier: Modifier = Modifier,
     viewModel: CreatorTopViewModel = koinViewModel(),
     navigatorExtension: NavigatorExtension = koinInject(),
+    toastExtension: ToastExtension = koinInject(),
 ) {
     val screenState by viewModel.screenState.collectAsStateWithLifecycle()
     val scope = rememberCoroutineScope()
@@ -125,6 +129,9 @@ internal fun CreatorTopRoute(
     val revealState = rememberRevealState()
     val revealOverlayContainerColor = MaterialTheme.colorScheme.tertiaryContainer
     val revealOverlayContentColor = MaterialTheme.colorScheme.onTertiaryContainer
+
+    val snackbarHostState = LocalSnackbarHostState.current
+    val requirePlus = stringResource(Res.string.billing_plus_toast_require_plus, appName)
 
     LaunchedEffect(creatorId) {
         if (screenState !is ScreenState.Idle) {
@@ -162,7 +169,6 @@ internal fun CreatorTopRoute(
                 creatorPostsPaging = creatorPostsPaging,
                 onClickSearch = navigateToPostByCreatorSearch,
                 onClickAllDownload = navigateToDownloadAll,
-                onClickBillingPlus = { navigateToBillingPlus.invoke(it) },
                 onClickPost = navigateToPostDetail,
                 onClickPlan = { navigatorExtension.navigateToWebPage(it.planBrowserUrl, CreatorTopRoute) },
                 onClickTag = { navigateToPostSearch.invoke(it.name, uiState.creatorDetail.creatorId) },
@@ -171,6 +177,10 @@ internal fun CreatorTopRoute(
                 onClickFollow = viewModel::follow,
                 onClickUnfollow = viewModel::unfollow,
                 onClickPostBookmark = viewModel::postBookmark,
+                onClickBillingPlus = {
+                    scope.launch { toastExtension.show(snackbarHostState, requirePlus) }
+                    navigateToBillingPlus.invoke(it)
+                },
                 onShowBlockDialog = {
                     navigateToAlertDialog.invoke(
                         SimpleAlertContents.CreatorBlock,

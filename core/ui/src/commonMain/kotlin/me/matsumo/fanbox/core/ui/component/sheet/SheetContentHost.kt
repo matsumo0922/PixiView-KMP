@@ -14,7 +14,6 @@ import androidx.navigation.compose.LocalOwnersProvider
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.drop
 
-@OptIn(ExperimentalMaterialApi::class)
 @Composable
 internal fun ColumnScope.SheetContentHost(
     backStackEntry: NavBackStackEntry?,

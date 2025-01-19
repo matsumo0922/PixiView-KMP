@@ -180,5 +180,12 @@
     "date": "2024/10/14",
     "logJp": "・一括ダウンロード中にアプリがクラッシュする問題を修正",
     "logEn": "・Fixed an issue where the app would crash during bulk download."
+  },
+  {
+    "versionName": "2.2.0",
+    "versionCode": 50,
+    "date": "2025/01/20",
+    "logJp": "・クリエイターの投稿をキーワードから検索できる機能を追加\n・ダウンロードキュー画面を追加\n・Android App Links に対応\n・UIの調整\n・投稿詳細画面にバナー広告を追加（アプリ維持費のためです。ごめんなさい！）",
+    "logEn": "・Added the ability to search creators' posts by keyword\n・Added a download queue screen\n・Supports Android App Links\n・Added banner ads to the post details screen (to cover app maintenance costs. Sorry!)"
   }
 ]

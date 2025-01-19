@@ -40,16 +40,20 @@ import kotlinx.coroutines.launch
 import me.matsumo.fanbox.core.model.ScreenState
 import me.matsumo.fanbox.core.model.UserData
 import me.matsumo.fanbox.core.resources.Res
+import me.matsumo.fanbox.core.resources.billing_plus_toast_require_plus
 import me.matsumo.fanbox.core.resources.creator_following_pixiv
 import me.matsumo.fanbox.core.resources.creator_recommended
 import me.matsumo.fanbox.core.resources.library_navigation_discovery
 import me.matsumo.fanbox.core.resources.search_post_by_creator
 import me.matsumo.fanbox.core.ui.AsyncLoadContents
+import me.matsumo.fanbox.core.ui.appName
 import me.matsumo.fanbox.core.ui.component.CreatorItem
 import me.matsumo.fanbox.core.ui.component.PixiViewTopBar
 import me.matsumo.fanbox.core.ui.extensition.LocalNavigationType
+import me.matsumo.fanbox.core.ui.extensition.LocalSnackbarHostState
 import me.matsumo.fanbox.core.ui.extensition.NavigatorExtension
 import me.matsumo.fanbox.core.ui.extensition.PixiViewNavigationType
+import me.matsumo.fanbox.core.ui.extensition.ToastExtension
 import me.matsumo.fanbox.core.ui.extensition.drawVerticalScrollbar
 import me.matsumo.fanbox.core.ui.theme.bold
 import me.matsumo.fanbox.feature.library.discovery.components.LibraryDiscoverySearchPostCreatorItem
@@ -70,8 +74,13 @@ internal fun LibraryDiscoveryRoute(
     modifier: Modifier = Modifier,
     viewModel: LibraryDiscoveryViewModel = koinViewModel(),
     navigatorExtension: NavigatorExtension = koinInject(),
+    toastExtension: ToastExtension = koinInject(),
 ) {
     val screenState by viewModel.screenState.collectAsStateWithLifecycle()
+
+    val scope = rememberCoroutineScope()
+    val snackbarHostState = LocalSnackbarHostState.current
+    val requirePlus = stringResource(Res.string.billing_plus_toast_require_plus, appName)
 
     LaunchedEffect(true) {
         if (screenState !is ScreenState.Idle) {
@@ -98,7 +107,10 @@ internal fun LibraryDiscoveryRoute(
             onClickFollow = viewModel::follow,
             onClickUnfollow = viewModel::unfollow,
             onClickSupporting = { navigatorExtension.navigateToWebPage(it, LibraryDiscoveryRoute) },
-            onClickBillingPlus = navigateToBillingPlus,
+            onClickBillingPlus = {
+                scope.launch { toastExtension.show(snackbarHostState, requirePlus) }
+                navigateToBillingPlus.invoke(it)
+            },
         )
     }
 }

@@ -294,18 +294,9 @@ class DownloadPostsRepositoryImpl(
         parentFile: UniFile,
         mimeType: String?,
     ) = suspendCancellableCoroutine<Uri> {
-        val file = parentFile.createFile(name).filePath?.let { File(it) }
-        val modifiedTime = System.currentTimeMillis()
+        val file = parentFile.createFile(name)
 
-        if (file == null) {
-            it.resumeWithException(NullPointerException("Failed to create file."))
-            return@suspendCancellableCoroutine
-        }
-
-        tmpFile.setLastModified(modifiedTime)
-        file.setLastModified(modifiedTime)
-
-        context.contentResolver.openOutputStream(file.toUri())!!.use {
+        context.contentResolver.openOutputStream(file.uri)!!.use {
             tmpFile.inputStream().use { input ->
                 input.copyTo(it)
             }

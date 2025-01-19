@@ -20,6 +20,7 @@ import me.matsumo.fanbox.core.billing.BillingStatus
 import me.matsumo.fanbox.core.common.PixiViewConfig
 import me.matsumo.fanbox.core.common.util.suspendRunCatching
 import me.matsumo.fanbox.core.datastore.LaunchLogDataStore
+import me.matsumo.fanbox.core.datastore.OldCookieDataStore
 import me.matsumo.fanbox.core.logs.logger.LogConfigurator
 import me.matsumo.fanbox.core.model.DownloadState
 import me.matsumo.fanbox.core.model.ScreenState
@@ -42,6 +43,7 @@ class PixiViewViewModel(
     private val fanboxRepository: FanboxRepository,
     private val downloadPostsRepository: DownloadPostsRepository,
     private val launchLogDataStore: LaunchLogDataStore,
+    private val oldCookieDataStore: OldCookieDataStore,
     private val pixiViewConfig: PixiViewConfig,
     private val billingStatus: BillingStatus,
 ) : ViewModel() {
@@ -125,6 +127,14 @@ class PixiViewViewModel(
         viewModelScope.launch {
             suspendRunCatching {
                 if (!userDataRepository.userData.first().isTestUser) {
+                    val oldCookies = oldCookieDataStore.getCookies()
+                    val sessionId = oldCookies.map { it.split("=") }.firstOrNull { it.first() == "FANBOXSESSID" }?.get(1)
+
+                    if (sessionId != null) {
+                        fanboxRepository.setSessionId(sessionId)
+                        oldCookieDataStore.save("")
+                    }
+
                     fanboxRepository.updateCsrfToken()
                     fanboxRepository.getNewsLetters()
                 }
