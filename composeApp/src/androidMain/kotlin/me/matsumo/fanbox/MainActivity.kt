@@ -1,8 +1,6 @@
 package me.matsumo.fanbox
 
-import android.content.Context
 import android.content.Intent
-import android.content.pm.verify.domain.DomainVerificationManager
 import android.graphics.Color
 import android.os.Bundle
 import androidx.activity.SystemBarStyle
@@ -99,7 +97,6 @@ class MainActivity : FragmentActivity(), KoinComponent {
 
     override fun onNewIntent(intent: Intent) {
         super.onNewIntent(intent)
-
     }
 
     override fun onResume() {

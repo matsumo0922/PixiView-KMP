@@ -43,7 +43,7 @@ fun NavGraphBuilder.creatorTopScreen(
             navDeepLink { uriPattern = "https://www.fanbox.cc/@{$CreatorTopId}" },
             navDeepLink { uriPattern = "https://{$CreatorTopId}.fanbox.cc/" },
             navDeepLink { uriPattern = "https://{$CreatorTopId}.fanbox.cc" },
-        )
+        ),
     ) {
         CreatorTopRoute(
             modifier = Modifier.fillMaxSize(),

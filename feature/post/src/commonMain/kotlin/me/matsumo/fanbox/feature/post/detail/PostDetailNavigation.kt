@@ -44,7 +44,7 @@ fun NavGraphBuilder.postDetailScreen(
         ),
         deepLinks = listOf(
             navDeepLink { uriPattern = "https://{creatorId}.fanbox.cc/posts/{$PostDetailId}" },
-        )
+        ),
     ) {
         PostDetailRoute(
             modifier = Modifier.fillMaxSize(),

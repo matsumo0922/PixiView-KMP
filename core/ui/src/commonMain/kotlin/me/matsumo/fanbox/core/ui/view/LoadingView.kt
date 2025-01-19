@@ -38,6 +38,7 @@ fun LoadingView(
     }
 }
 
+@Suppress("ModifierMissing")
 @Composable
 fun LoadingDialog(
     progress: Float,

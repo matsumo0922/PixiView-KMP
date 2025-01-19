@@ -87,7 +87,7 @@ internal fun DownloadQueueItem(
                         modifier = Modifier.fillMaxWidth(),
                         url = type.post?.cover?.url,
                     )
-                }
+                },
             )
         }
     }

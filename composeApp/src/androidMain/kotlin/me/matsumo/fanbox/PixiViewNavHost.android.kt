@@ -12,16 +12,13 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.wrapContentHeight
-import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Button
 import androidx.compose.material3.Checkbox
 import androidx.compose.material3.MaterialTheme
@@ -89,7 +86,9 @@ private fun RequestDomainVerification(
     LaunchedEffect(Unit) {
         val manager = activity.getSystemService(DomainVerificationManager::class.java)
         val userState = manager.getDomainVerificationUserState(activity.packageName)
-        val selectedDomains = userState?.hostToStateMap?.filterValues { it == DomainVerificationUserState.DOMAIN_STATE_SELECTED }
+        val selectedDomains = userState?.hostToStateMap?.filterValues {
+            it == DomainVerificationUserState.DOMAIN_STATE_SELECTED
+        }
         val enable = userState?.isLinkHandlingAllowed
 
         val flag = flagRepository.getFlag(Flag.SHOULD_REQUEST_DOMAIN_VERIFICATION, true)
