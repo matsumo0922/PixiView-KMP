@@ -13,9 +13,11 @@ import kotlinx.coroutines.launch
 import me.matsumo.fanbox.core.common.PixiViewConfig
 import me.matsumo.fanbox.core.common.util.suspendRunCatching
 import me.matsumo.fanbox.core.model.DownloadFileType
+import me.matsumo.fanbox.core.model.Flag
 import me.matsumo.fanbox.core.model.ScreenState
 import me.matsumo.fanbox.core.model.UserData
 import me.matsumo.fanbox.core.repository.FanboxRepository
+import me.matsumo.fanbox.core.repository.FlagRepository
 import me.matsumo.fanbox.core.repository.UserDataRepository
 import me.matsumo.fanbox.core.resources.Res
 import me.matsumo.fanbox.core.resources.error_no_data
@@ -27,6 +29,7 @@ import org.jetbrains.compose.resources.getString
 class SettingTopViewModel(
     private val userDataRepository: UserDataRepository,
     private val fanboxRepository: FanboxRepository,
+    private val flagRepository: FlagRepository,
     private val pixiViewConfig: PixiViewConfig,
 ) : ViewModel() {
 
@@ -102,6 +105,12 @@ class SettingTopViewModel(
     fun setAutoImagePreview(isAutoImagePreview: Boolean) {
         viewModelScope.launch {
             userDataRepository.setAutoImagePreview(isAutoImagePreview)
+        }
+    }
+
+    fun setReshowReveal() {
+        viewModelScope.launch {
+            flagRepository.setFlag(Flag.REVEAL_CREATOR_TOP, true)
         }
     }
 

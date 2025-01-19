@@ -11,10 +11,12 @@ import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
 import me.matsumo.fanbox.core.common.util.suspendRunCatching
+import me.matsumo.fanbox.core.model.Flag
 import me.matsumo.fanbox.core.model.ScreenState
 import me.matsumo.fanbox.core.model.UserData
 import me.matsumo.fanbox.core.model.updateWhenIdle
 import me.matsumo.fanbox.core.repository.FanboxRepository
+import me.matsumo.fanbox.core.repository.FlagRepository
 import me.matsumo.fanbox.core.repository.RewardRepository
 import me.matsumo.fanbox.core.repository.UserDataRepository
 import me.matsumo.fanbox.core.resources.Res
@@ -31,6 +33,7 @@ class CreatorTopViewModel(
     private val userDataRepository: UserDataRepository,
     private val fanboxRepository: FanboxRepository,
     private val rewardRepository: RewardRepository,
+    private val flagRepository: FlagRepository,
 ) : ViewModel() {
 
     private val _screenState = MutableStateFlow<ScreenState<CreatorTopUiState>>(ScreenState.Loading)
@@ -71,6 +74,7 @@ class CreatorTopViewModel(
                     bookmarkedPostsIds = fanboxRepository.bookmarkedPostsIds.first(),
                     isBlocked = fanboxRepository.blockedCreators.first().contains(creatorId),
                     isAbleToReward = rewardRepository.isAbleToReward(),
+                    shouldShowReveal = flagRepository.getFlag(Flag.REVEAL_CREATOR_TOP, true),
                     creatorDetail = fanboxRepository.getCreatorDetail(creatorId),
                     creatorPlans = fanboxRepository.getCreatorPlans(creatorId),
                     creatorTags = fanboxRepository.getCreatorTags(creatorId),
@@ -82,6 +86,16 @@ class CreatorTopViewModel(
                 onSuccess = { ScreenState.Idle(it) },
                 onFailure = { ScreenState.Error(Res.string.error_network) },
             )
+        }
+    }
+
+    fun finishReveal() {
+        viewModelScope.launch {
+            flagRepository.setFlag(Flag.REVEAL_CREATOR_TOP, false)
+
+            _screenState.updateWhenIdle {
+                it.copy(shouldShowReveal = false)
+            }
         }
     }
 
@@ -146,4 +160,5 @@ data class CreatorTopUiState(
     val creatorPostsPaging: Flow<PagingData<FanboxPost>>,
     val isBlocked: Boolean,
     val isAbleToReward: Boolean,
+    val shouldShowReveal: Boolean,
 )

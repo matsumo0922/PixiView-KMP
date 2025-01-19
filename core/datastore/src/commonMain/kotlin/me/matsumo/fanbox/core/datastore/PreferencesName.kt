@@ -7,4 +7,5 @@ object PreferencesName {
     const val FANBOX_COOKIE = "fanbox_cookie"
     const val FANBOX_BOOKMARK = "fanbox_bookmark"
     const val FANBOX_BLOCK = "fanbox_block"
+    const val FLAG = "flag"
 }

@@ -8,6 +8,7 @@ import androidx.compose.material.icons.filled.MoreVert
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.IconButtonDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
@@ -73,7 +74,10 @@ internal fun PostDetailTopAppBar(
         modifier = modifier,
         title = { /* no title */ },
         navigationIcon = {
-            IconButton(onClickNavigateUp) {
+            IconButton(
+                onClick = onClickNavigateUp,
+                colors = IconButtonDefaults.iconButtonColors(scrolledContainerColor.copy(alpha = 0.3f)),
+            ) {
                 Icon(
                     imageVector = Icons.AutoMirrored.Filled.ArrowBack,
                     contentDescription = null,
@@ -81,7 +85,10 @@ internal fun PostDetailTopAppBar(
             }
         },
         actions = {
-            IconButton(onClickMenu) {
+            IconButton(
+                onClick = onClickMenu,
+                colors = IconButtonDefaults.iconButtonColors(scrolledContainerColor.copy(alpha = 0.3f)),
+            ) {
                 Icon(
                     imageVector = Icons.Default.MoreVert,
                     contentDescription = null,

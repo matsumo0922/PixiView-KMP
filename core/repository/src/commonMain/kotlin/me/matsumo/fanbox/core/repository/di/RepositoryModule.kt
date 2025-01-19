@@ -3,12 +3,15 @@ package me.matsumo.fanbox.core.repository.di
 import kotlinx.serialization.json.Json
 import me.matsumo.fanbox.core.repository.FanboxRepository
 import me.matsumo.fanbox.core.repository.FanboxRepositoryImpl
+import me.matsumo.fanbox.core.repository.FlagRepository
+import me.matsumo.fanbox.core.repository.FlagRepositoryImpl
 import me.matsumo.fanbox.core.repository.RewardRepository
 import me.matsumo.fanbox.core.repository.RewardRepositoryImpl
 import me.matsumo.fanbox.core.repository.UserDataRepository
 import me.matsumo.fanbox.core.repository.UserDataRepositoryImpl
 import org.koin.core.module.Module
 import org.koin.dsl.module
+import kotlin.math.sin
 
 val json = Json {
     isLenient = true
@@ -45,6 +48,12 @@ val repositoryModule = module {
         RewardRepositoryImpl(
             rewardLogDataStore = get(),
             ioDispatcher = get(),
+        )
+    }
+
+    single<FlagRepository> {
+        FlagRepositoryImpl(
+            flagDataStore = get(),
         )
     }
 }

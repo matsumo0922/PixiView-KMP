@@ -74,6 +74,10 @@
     <string name="unit_month">Month</string>
     <string name="unit_day">Day</string>
 
+    <!-- Reveal -->
+    <string name="reveal_creator_top_search">Search for creators' posts by title, text, etc.\n(%1$s+ exclusive feature)</string>
+    <string name="reveal_creator_top_fab">Download all of a creator's posts at once.\n(%1$s+ exclusive feature)</string>
+
     <!-- Notify -->
     <string name="notify_download_channel_name">Download</string>
     <string name="notify_download_channel_description">Notify download progress</string>
@@ -242,6 +246,8 @@
     <string name="setting_top_others_delete_account_description">Delete your FANBOX account</string>
     <string name="setting_top_others_open_source_license">Open source license</string>
     <string name="setting_top_others_open_source_license_description">Displays the OSS library license.</string>
+    <string name="setting_top_others_reshow_reveal">Revisit tutorial</string>
+    <string name="setting_top_others_reshow_reveal_description">Redisplays the tutorial that was shown when the feature was first displayed.</string>
     <string name="setting_top_others_developer_mode">Development mode</string>
     <string name="setting_top_others_developer_mode_description">[Warning] Do not enable this mode if you are not a developer.</string>
     <string name="setting_top_file">File</string>

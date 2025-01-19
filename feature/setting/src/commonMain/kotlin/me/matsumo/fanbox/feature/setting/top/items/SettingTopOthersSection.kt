@@ -15,6 +15,8 @@ import me.matsumo.fanbox.core.resources.setting_top_others_logout
 import me.matsumo.fanbox.core.resources.setting_top_others_logout_description
 import me.matsumo.fanbox.core.resources.setting_top_others_open_source_license
 import me.matsumo.fanbox.core.resources.setting_top_others_open_source_license_description
+import me.matsumo.fanbox.core.resources.setting_top_others_reshow_reveal
+import me.matsumo.fanbox.core.resources.setting_top_others_reshow_reveal_description
 import me.matsumo.fanbox.core.ui.component.SettingSwitchItem
 import me.matsumo.fanbox.core.ui.component.SettingTextItem
 import org.jetbrains.compose.resources.stringResource
@@ -24,6 +26,7 @@ internal fun SettingTopOthersSection(
     userData: UserData,
     onClickTeamsOfService: () -> Unit,
     onClickPrivacyPolicy: () -> Unit,
+    onClickReshowReveal: () -> Unit,
     onClickLogout: () -> Unit,
     onClickOpenSourceLicense: () -> Unit,
     onClickDeveloperMode: (Boolean) -> Unit,
@@ -45,6 +48,13 @@ internal fun SettingTopOthersSection(
             modifier = Modifier.fillMaxWidth(),
             title = stringResource(Res.string.setting_top_information_privacy_policy),
             onClick = onClickPrivacyPolicy,
+        )
+
+        SettingTextItem(
+            modifier = Modifier.fillMaxWidth(),
+            title = Res.string.setting_top_others_reshow_reveal,
+            description = Res.string.setting_top_others_reshow_reveal_description,
+            onClick = { onClickReshowReveal.invoke() },
         )
 
         SettingTextItem(

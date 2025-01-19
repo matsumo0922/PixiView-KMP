@@ -10,6 +10,9 @@ import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.staticCompositionLocalOf
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
+import com.svenjacobs.reveal.RevealCanvas
+import com.svenjacobs.reveal.RevealCanvasState
+import com.svenjacobs.reveal.rememberRevealCanvasState
 import io.github.alexzhirkevich.cupertino.adaptive.AdaptiveTheme
 import io.github.alexzhirkevich.cupertino.adaptive.ExperimentalAdaptiveApi
 import io.github.alexzhirkevich.cupertino.adaptive.Theme
@@ -22,6 +25,7 @@ import me.matsumo.fanbox.core.model.ThemeConfig
 import me.matsumo.fanbox.core.ui.extensition.FanboxSessionId
 import me.matsumo.fanbox.core.ui.extensition.LocalFanboxMetadata
 import me.matsumo.fanbox.core.ui.extensition.LocalFanboxSessionId
+import me.matsumo.fanbox.core.ui.extensition.LocalRevealCanvasState
 import me.matsumo.fanbox.core.ui.extensition.getFanboxMetadataDummy
 import me.matsumo.fanbox.core.ui.theme.color.DarkBlueColorScheme
 import me.matsumo.fanbox.core.ui.theme.color.DarkBrownColorScheme
@@ -109,6 +113,7 @@ fun PixiViewTheme(
     themeConfig: ThemeConfig = ThemeConfig.System,
     themeColorConfig: ThemeColorConfig = ThemeColorConfig.Red,
     nativeViews: ImmutableMap<String, () -> NativeView?> = persistentMapOf(),
+    revealCanvasState: RevealCanvasState = rememberRevealCanvasState(),
     content: @Composable () -> Unit,
 ) {
     val shouldUseDarkTheme = shouldUseDarkTheme(themeConfig)
@@ -137,6 +142,7 @@ fun PixiViewTheme(
         LocalBackgroundTheme provides backgroundTheme,
         LocalTintTheme provides tintTheme,
         LocalNativeViewsProvider provides NativeViews(nativeViews),
+        LocalRevealCanvasState provides revealCanvasState,
     ) {
         AdaptiveTheme(
             material = {

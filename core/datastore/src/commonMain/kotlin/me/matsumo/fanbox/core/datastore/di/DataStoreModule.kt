@@ -2,6 +2,7 @@ package me.matsumo.fanbox.core.datastore.di
 
 import me.matsumo.fanbox.core.datastore.BlockDataStore
 import me.matsumo.fanbox.core.datastore.BookmarkDataStore
+import me.matsumo.fanbox.core.datastore.FlagDataStore
 import me.matsumo.fanbox.core.datastore.LaunchLogDataStore
 import me.matsumo.fanbox.core.datastore.PixiViewDataStore
 import me.matsumo.fanbox.core.datastore.RewardLogDataStore
@@ -45,6 +46,12 @@ val dataStoreModule = module {
         RewardLogDataStore(
             preferenceHelper = get(),
             ioDispatcher = get(),
+        )
+    }
+
+    single {
+        FlagDataStore(
+            preferenceHelper = get(),
         )
     }
 }

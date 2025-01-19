@@ -6,7 +6,7 @@ import androidx.compose.animation.fadeOut
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.ArrowBack
+import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.MoreVert
 import androidx.compose.material3.CenterAlignedTopAppBar
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -28,7 +28,7 @@ import androidx.compose.ui.graphics.vector.ImageVector
 fun PixiViewTopBar(
     modifier: Modifier = Modifier,
     title: String? = null,
-    navigationIcon: ImageVector? = Icons.Filled.ArrowBack,
+    navigationIcon: ImageVector? = Icons.AutoMirrored.Filled.ArrowBack,
     actionsIcon: ImageVector? = Icons.Default.MoreVert,
     windowInsets: WindowInsets = TopAppBarDefaults.windowInsets,
     scrollBehavior: TopAppBarScrollBehavior? = null,
@@ -70,12 +70,13 @@ fun PixiViewTopBar(
         navigationIcon = {
             if (onClickNavigation != null) {
                 IconButton(
-                    colors = IconButtonDefaults.iconButtonColors(highlightColor.copy(alpha = 0.5f)),
+                    colors = IconButtonDefaults.iconButtonColors(highlightColor.copy(alpha = 0.4f)),
                     onClick = onClickNavigation,
                 ) {
                     navigationIcon?.let {
                         Icon(
                             imageVector = it,
+                            tint = MaterialTheme.colorScheme.onSurface,
                             contentDescription = null,
                         )
                     }
@@ -85,12 +86,13 @@ fun PixiViewTopBar(
         actions = {
             if (onClickActions != null) {
                 IconButton(
-                    colors = IconButtonDefaults.iconButtonColors(highlightColor.copy(alpha = 0.5f)),
+                    colors = IconButtonDefaults.iconButtonColors(highlightColor.copy(alpha = 0.4f)),
                     onClick = onClickActions,
                 ) {
                     actionsIcon?.let {
                         Icon(
                             imageVector = it,
+                            tint = MaterialTheme.colorScheme.onSurface,
                             contentDescription = null,
                         )
                     }
@@ -106,7 +108,7 @@ fun PixiViewTopBar(
 fun PixiViewCenterAlignedTopBar(
     modifier: Modifier = Modifier,
     title: String? = null,
-    navigationIcon: ImageVector = Icons.Filled.ArrowBack,
+    navigationIcon: ImageVector = Icons.AutoMirrored.Filled.ArrowBack,
     actionsIcon: ImageVector = Icons.Default.MoreVert,
     windowInsets: WindowInsets = TopAppBarDefaults.windowInsets,
     scrollBehavior: TopAppBarScrollBehavior? = null,

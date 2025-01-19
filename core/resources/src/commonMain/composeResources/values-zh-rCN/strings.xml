@@ -74,6 +74,10 @@
     <string name="unit_month">月</string>
     <string name="unit_day">日</string>
 
+    <!-- Reveal -->
+    <string name="reveal_creator_top_search">按标题、文本等搜索创作者的帖子\n（%1$s+ 独有功能）</string>
+    <string name="reveal_creator_top_fab">一次性下载创作者的所有帖子\n%1$s+ 独有功能）</string>
+
     <!-- Notify -->
     <string name="notify_download_channel_name">下载</string>
     <string name="notify_download_channel_description">通知下载进度</string>
@@ -242,6 +246,8 @@
     <string name="setting_top_others_delete_account_description">删除您的FANBOX账号</string>
     <string name="setting_top_others_open_source_license">开源许可</string>
     <string name="setting_top_others_open_source_license_description">显示开源软件库许可。</string>
+    <string name="setting_top_others_reshow_reveal">重新访问教程</string>
+    <string name="setting_top_others_reshow_reveal_description">重新显示该功能首次显示时显示的教程。</string>
     <string name="setting_top_others_developer_mode">开发者模式</string>
     <string name="setting_top_others_developer_mode_description">[警告] 如果您不是开发者，请不要启用此模式。</string>
     <string name="setting_top_file">文件</string>

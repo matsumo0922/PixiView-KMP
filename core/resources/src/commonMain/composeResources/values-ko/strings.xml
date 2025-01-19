@@ -70,6 +70,10 @@
     <string name="unit_month">월</string>
     <string name="unit_day">일</string>
 
+    <!-- Reveal -->
+    <string name="reveal_creator_top_search">크리에이터의 투고를 타이틀·본문등에서 검색\n(%1$s+ 전용 기능)</string>
+    <string name="reveal_creator_top_fab">크리에이터의 게시물을 일괄로 모두 다운로드\n(%1$s+ 전용 기능)</string>
+
     <!-- Notify -->
     <string name="notify_download_channel_name">다운로드</string>
     <string name="notify_download_channel_description">알림창에서 다운로드 상태를 확인하세요</string>
@@ -226,6 +230,8 @@
     <string name="setting_top_others_logout_dialog_failed">로그아웃에 실패했습니다</string>
     <string name="setting_top_others_open_source_license">오픈 소스 라이선스</string>
     <string name="setting_top_others_open_source_license_description">오픈 소스 라이브러리의 라이선스를 표시합니다.</string>
+    <string name="setting_top_others_reshow_reveal">자습서 다시 표시</string>
+    <string name="setting_top_others_reshow_reveal_description">기능을 처음 표시할 때 튜토리얼을 다시 표시합니다.</string>
     <string name="setting_top_others_developer_mode">개발자 모드</string>
     <string name="setting_top_others_developer_mode_description">[경고] 개발자가 아니라면 이 설정을 활성화하지 마세요.</string>
     <string name="setting_top_file">파일</string>

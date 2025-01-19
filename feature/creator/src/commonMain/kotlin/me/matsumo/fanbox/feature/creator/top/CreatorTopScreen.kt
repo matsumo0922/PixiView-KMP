@@ -23,7 +23,6 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Download
-import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
@@ -39,6 +38,7 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.layout.onGloballyPositioned
 import androidx.compose.ui.platform.LocalDensity
@@ -47,6 +47,15 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import app.cash.paging.compose.LazyPagingItems
 import app.cash.paging.compose.collectAsLazyPagingItems
+import com.svenjacobs.reveal.Key
+import com.svenjacobs.reveal.Reveal
+import com.svenjacobs.reveal.RevealOverlayArrangement
+import com.svenjacobs.reveal.RevealOverlayScope
+import com.svenjacobs.reveal.RevealShape
+import com.svenjacobs.reveal.RevealState
+import com.svenjacobs.reveal.rememberRevealState
+import com.svenjacobs.reveal.revealable
+import com.svenjacobs.reveal.shapes.balloon.Arrow
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.toImmutableList
 import kotlinx.coroutines.delay
@@ -56,13 +65,19 @@ import me.matsumo.fanbox.core.model.UserData
 import me.matsumo.fanbox.core.resources.Res
 import me.matsumo.fanbox.core.resources.creator_tab_plans
 import me.matsumo.fanbox.core.resources.creator_tab_posts
+import me.matsumo.fanbox.core.resources.reveal_creator_top_fab
+import me.matsumo.fanbox.core.resources.reveal_creator_top_search
 import me.matsumo.fanbox.core.ui.AsyncLoadContents
 import me.matsumo.fanbox.core.ui.LazyPagingItemsLoadContents
+import me.matsumo.fanbox.core.ui.appName
 import me.matsumo.fanbox.core.ui.component.CollapsingToolbarScaffold
-import me.matsumo.fanbox.core.ui.component.PixiViewTopBar
 import me.matsumo.fanbox.core.ui.component.ScrollStrategy
 import me.matsumo.fanbox.core.ui.component.rememberCollapsingToolbarScaffoldState
+import me.matsumo.fanbox.core.ui.extensition.BackHandler
+import me.matsumo.fanbox.core.ui.extensition.LocalRevealCanvasState
 import me.matsumo.fanbox.core.ui.extensition.NavigatorExtension
+import me.matsumo.fanbox.core.ui.extensition.OverlayText
+import me.matsumo.fanbox.core.ui.extensition.revealByStep
 import me.matsumo.fanbox.core.ui.view.SimpleAlertContents
 import me.matsumo.fanbox.feature.creator.top.items.CreatorTopDescriptionDialog
 import me.matsumo.fanbox.feature.creator.top.items.CreatorTopHeader
@@ -70,6 +85,7 @@ import me.matsumo.fanbox.feature.creator.top.items.CreatorTopMenuDialog
 import me.matsumo.fanbox.feature.creator.top.items.CreatorTopPlansScreen
 import me.matsumo.fanbox.feature.creator.top.items.CreatorTopPostsScreen
 import me.matsumo.fanbox.feature.creator.top.items.CreatorTopRewardAdDialog
+import me.matsumo.fanbox.feature.creator.top.items.CreatorTopTopAppBar
 import me.matsumo.fankt.fanbox.domain.model.FanboxCreatorDetail
 import me.matsumo.fankt.fanbox.domain.model.FanboxCreatorPlan
 import me.matsumo.fankt.fanbox.domain.model.FanboxPost
@@ -81,6 +97,11 @@ import org.jetbrains.compose.resources.StringResource
 import org.jetbrains.compose.resources.stringResource
 import org.koin.compose.koinInject
 import org.koin.compose.viewmodel.koinViewModel
+
+internal enum class CreatorTopRevealKeys {
+    Search,
+    Fab;
+}
 
 @Composable
 internal fun CreatorTopRoute(
@@ -99,6 +120,11 @@ internal fun CreatorTopRoute(
     val screenState by viewModel.screenState.collectAsStateWithLifecycle()
     val scope = rememberCoroutineScope()
 
+    val revealCanvasState = LocalRevealCanvasState.current
+    val revealState = rememberRevealState()
+    val revealOverlayContainerColor = MaterialTheme.colorScheme.tertiaryContainer
+    val revealOverlayContentColor = MaterialTheme.colorScheme.onTertiaryContainer
+
     LaunchedEffect(creatorId) {
         if (screenState !is ScreenState.Idle) {
             viewModel.fetch(creatorId)
@@ -113,64 +139,76 @@ internal fun CreatorTopRoute(
     ) { uiState ->
         val creatorPostsPaging = uiState.creatorPostsPaging.collectAsLazyPagingItems()
 
-        CreatorTopScreen(
+        Reveal(
             modifier = Modifier.fillMaxSize(),
-            isPosts = isPosts,
-            isBlocked = uiState.isBlocked,
-            isAbleToReward = uiState.isAbleToReward,
-            userData = uiState.userData,
-            bookmarkedPostsIds = uiState.bookmarkedPostsIds.toImmutableList(),
-            creatorDetail = uiState.creatorDetail,
-            creatorPlans = uiState.creatorPlans.toImmutableList(),
-            creatorTags = uiState.creatorTags.toImmutableList(),
-            creatorPostsPaging = creatorPostsPaging,
-            onClickAllDownload = navigateToDownloadAll,
-            onClickBillingPlus = { navigateToBillingPlus.invoke("all_download") },
-            onClickPost = navigateToPostDetail,
-            onClickPlan = { navigatorExtension.navigateToWebPage(it.planBrowserUrl, CreatorTopRoute) },
-            onClickTag = { navigateToPostSearch.invoke(it.name, uiState.creatorDetail.creatorId) },
-            onTerminate = terminate,
-            onClickLink = { navigatorExtension.navigateToWebPage(it, CreatorTopRoute) },
-            onClickFollow = viewModel::follow,
-            onClickUnfollow = viewModel::unfollow,
-            onClickPostBookmark = viewModel::postBookmark,
-            onShowBlockDialog = {
-                navigateToAlertDialog.invoke(
-                    SimpleAlertContents.CreatorBlock,
-                    {
-                        scope.launch {
-                            viewModel.blockCreator(creatorId)
-                            terminate.invoke()
-                        }
-                    },
-                    { /* do nothing */ },
-                )
-            },
-            onShowUnblockDialog = {
-                navigateToAlertDialog.invoke(
-                    SimpleAlertContents.CreatorUnblock,
-                    {
-                        scope.launch {
-                            viewModel.unblockCreator(creatorId)
-                            viewModel.fetch(creatorId)
-                            creatorPostsPaging.refresh()
-                        }
-                    },
-                    { terminate.invoke() },
-                )
-            },
-            onRewarded = viewModel::rewarded,
-            onClickPostLike = viewModel::postLike,
-        )
+            onOverlayClick = { scope.launch { revealState.hide() } },
+            revealCanvasState = revealCanvasState,
+            revealState = revealState,
+            overlayContent = { key -> RevealOverlayContent(key, revealOverlayContainerColor, revealOverlayContentColor) },
+        ) {
+            CreatorTopScreen(
+                modifier = Modifier.fillMaxSize(),
+                revealState = revealState,
+                shouldShowReveal = uiState.shouldShowReveal,
+                isPosts = isPosts,
+                isBlocked = uiState.isBlocked,
+                isAbleToReward = uiState.isAbleToReward,
+                userData = uiState.userData,
+                bookmarkedPostsIds = uiState.bookmarkedPostsIds.toImmutableList(),
+                creatorDetail = uiState.creatorDetail,
+                creatorPlans = uiState.creatorPlans.toImmutableList(),
+                creatorTags = uiState.creatorTags.toImmutableList(),
+                creatorPostsPaging = creatorPostsPaging,
+                onClickAllDownload = navigateToDownloadAll,
+                onClickBillingPlus = { navigateToBillingPlus.invoke("all_download") },
+                onClickPost = navigateToPostDetail,
+                onClickPlan = { navigatorExtension.navigateToWebPage(it.planBrowserUrl, CreatorTopRoute) },
+                onClickTag = { navigateToPostSearch.invoke(it.name, uiState.creatorDetail.creatorId) },
+                onTerminate = terminate,
+                onClickLink = { navigatorExtension.navigateToWebPage(it, CreatorTopRoute) },
+                onClickFollow = viewModel::follow,
+                onClickUnfollow = viewModel::unfollow,
+                onClickPostBookmark = viewModel::postBookmark,
+                onShowBlockDialog = {
+                    navigateToAlertDialog.invoke(
+                        SimpleAlertContents.CreatorBlock,
+                        {
+                            scope.launch {
+                                viewModel.blockCreator(creatorId)
+                                terminate.invoke()
+                            }
+                        },
+                        { /* do nothing */ },
+                    )
+                },
+                onShowUnblockDialog = {
+                    navigateToAlertDialog.invoke(
+                        SimpleAlertContents.CreatorUnblock,
+                        {
+                            scope.launch {
+                                viewModel.unblockCreator(creatorId)
+                                viewModel.fetch(creatorId)
+                                creatorPostsPaging.refresh()
+                            }
+                        },
+                        { terminate.invoke() },
+                    )
+                },
+                onRevealCompleted = viewModel::finishReveal,
+                onRewarded = viewModel::rewarded,
+                onClickPostLike = viewModel::postLike,
+            )
+        }
     }
 }
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 private fun CreatorTopScreen(
+    revealState: RevealState,
     isPosts: Boolean,
     isBlocked: Boolean,
     isAbleToReward: Boolean,
+    shouldShowReveal: Boolean,
     creatorDetail: FanboxCreatorDetail,
     userData: UserData,
     bookmarkedPostsIds: ImmutableList<FanboxPostId>,
@@ -189,6 +227,7 @@ private fun CreatorTopScreen(
     onClickUnfollow: suspend (FanboxUserId) -> Result<Unit>,
     onShowBlockDialog: (SimpleAlertContents) -> Unit,
     onShowUnblockDialog: (SimpleAlertContents) -> Unit,
+    onRevealCompleted: () -> Unit,
     onRewarded: () -> Unit,
     onTerminate: () -> Unit,
     modifier: Modifier = Modifier,
@@ -213,6 +252,10 @@ private fun CreatorTopScreen(
         CreatorTab.PLANS,
     )
 
+    BackHandler(revealState.isVisible) {
+        // do nothing
+    }
+
     LaunchedEffect(true) {
         isVisibleFAB = true
     }
@@ -221,6 +264,19 @@ private fun CreatorTopScreen(
         if (isBlocked) {
             delay(1000)
             onShowUnblockDialog.invoke(SimpleAlertContents.CreatorUnblock)
+        }
+    }
+
+    if (shouldShowReveal) {
+        LaunchedEffect(shouldShowReveal) {
+            delay(500)
+            revealState.revealByStep(
+                keys = listOf(
+                    CreatorTopRevealKeys.Search,
+                    CreatorTopRevealKeys.Fab,
+                ),
+                onCompleted = onRevealCompleted,
+            )
         }
     }
 
@@ -330,7 +386,7 @@ private fun CreatorTopScreen(
             }
         }
 
-        PixiViewTopBar(
+        CreatorTopTopAppBar(
             modifier = Modifier
                 .fillMaxWidth()
                 .statusBarsPadding()
@@ -338,11 +394,11 @@ private fun CreatorTopScreen(
                     topAppBarHeight = with(density) { it.size.height.toDp() }
                 },
             title = creatorDetail.user?.name.orEmpty(),
-            isTransparent = true,
             isShowTitle = state.toolbarState.progress == 0f,
             windowInsets = WindowInsets(0, 0, 0, 0),
-            highlightColor = MaterialTheme.colorScheme.surface,
+            revealState = revealState,
             onClickNavigation = onTerminate,
+            onClickSearch = { /* do nothing */ },
             onClickActions = { isShowMenuDialog = true },
         )
 
@@ -356,6 +412,11 @@ private fun CreatorTopScreen(
             exit = fadeOut() + scaleOut(),
         ) {
             FloatingActionButton(
+                modifier = Modifier.revealable(
+                    key = CreatorTopRevealKeys.Fab,
+                    state = revealState,
+                    shape = RevealShape.RoundRect(8.dp),
+                ),
                 containerColor = MaterialTheme.colorScheme.primaryContainer,
                 onClick = {
                     if (userData.hasPrivilege) {
@@ -424,6 +485,40 @@ private fun CreatorTab(
         selected = isSelected,
         onClick = onClick,
     )
+}
+
+@Composable
+private fun RevealOverlayScope.RevealOverlayContent(
+    key: Key,
+    containerColor: Color,
+    contentColor: Color,
+) {
+    when (key) {
+        CreatorTopRevealKeys.Search -> {
+            OverlayText(
+                modifier = Modifier.align(
+                    horizontalAlignment = Alignment.End,
+                    verticalArrangement = RevealOverlayArrangement.Bottom
+                ),
+                text = stringResource(Res.string.reveal_creator_top_search, appName),
+                arrow = Arrow.top(horizontalAlignment = Alignment.End),
+                containerColor = containerColor,
+                contentColor = contentColor,
+            )
+        }
+
+        CreatorTopRevealKeys.Fab -> {
+            OverlayText(
+                modifier = Modifier.align(
+                    horizontalArrangement = RevealOverlayArrangement.Start,
+                ),
+                text = stringResource(Res.string.reveal_creator_top_fab, appName),
+                arrow = Arrow.end(),
+                containerColor = containerColor,
+                contentColor = contentColor,
+            )
+        }
+    }
 }
 
 private enum class CreatorTab(val titleRes: StringResource) {

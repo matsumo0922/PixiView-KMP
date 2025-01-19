@@ -71,6 +71,7 @@ composeWebView = "1.9.40-alpha03"
 composeRichEditor = "1.0.0-rc10"
 autolink = "1.1.1"
 windowSize = "0.3.2"
+reveal = "3.1.1"
 detekt = "1.23.7"
 libraries = "11.2.3"
 buildKonfig = "0.15.1"
@@ -212,6 +213,10 @@ ktor-content-negotiation = { module = "io.ktor:ktor-client-content-negotiation",
 ktor-serialization-json = { module = "io.ktor:ktor-serialization-kotlinx-json", version.ref = "ktor" }
 ktot-logging = { module = "io.ktor:ktor-client-logging", version.ref = "ktor" }
 
+# Reveal
+reveal-core = { module = "com.svenjacobs.reveal:reveal-core", version.ref = "reveal" }
+reveal-shapes = { module = "com.svenjacobs.reveal:reveal-shapes", version.ref = "reveal" }
+
 # matsumo
 fankt-fanbox = { module = "me.matsumo.fankt:fanbox", version.ref = "fankt" }
 
@@ -281,6 +286,8 @@ ui-common-api = [
     "coil3-network",
     "coil3-gif",
     "window-size",
+    "reveal-core",
+    "reveal-shapes",
 ]
 
 billing = [

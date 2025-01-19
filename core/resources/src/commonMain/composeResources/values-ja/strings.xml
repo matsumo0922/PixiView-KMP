@@ -74,6 +74,10 @@
     <string name="unit_month">月</string>
     <string name="unit_day">日</string>
 
+    <!-- Reveal -->
+    <string name="reveal_creator_top_search">クリエイターの投稿をタイトル・本文などから検索\n（%1$s+ 専用機能）</string>
+    <string name="reveal_creator_top_fab">クリエイターの投稿を一括で全てダウンロード\n（%1$s+ 専用機能）</string>
+
     <!-- Notify -->
     <string name="notify_download_channel_name">ダウンロード</string>
     <string name="notify_download_channel_description">ダウンロードの進捗状況を通知します</string>
@@ -243,6 +247,8 @@
     <string name="setting_top_others_delete_account_description">FANBOXアカウントを削除します</string>
     <string name="setting_top_others_open_source_license">オープンソースライセンス</string>
     <string name="setting_top_others_open_source_license_description">OSSライブラリのライセンスを表示します。</string>
+    <string name="setting_top_others_reshow_reveal">チュートリアルを再表示</string>
+    <string name="setting_top_others_reshow_reveal_description">機能の初回表示時のチュートリアルを再表示します。</string>
     <string name="setting_top_others_developer_mode">開発モード</string>
     <string name="setting_top_others_developer_mode_description">[Warning] Do not enable this mode if you are not a developer.</string>
     <string name="setting_top_file">ファイル</string>

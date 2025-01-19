@@ -124,6 +124,7 @@ internal fun SettingTopRoute(
             onClickHideRestricted = { requirePlus(it, viewModel::setHideRestricted, "isHideRestricted") },
             onClickAppLock = { requirePlus(it, viewModel::setAppLock, "isUseAppLock") },
             onClickAutoImagePreview = { requirePlus(it, viewModel::setAutoImagePreview, "isAutoImagePreview") },
+            onClickReshowReveal = viewModel::setReshowReveal,
             onClickLogout = {
                 navigateToLogoutDialog(SimpleAlertContents.Logout) {
                     scope.launch {
@@ -176,6 +177,7 @@ private fun SettingTopScreen(
     onClickAutoImagePreview: (Boolean) -> Unit,
     onClickTeamsOfService: () -> Unit,
     onClickPrivacyPolicy: () -> Unit,
+    onClickReshowReveal: () -> Unit,
     onClickLogout: () -> Unit,
     onClickOpenSourceLicense: () -> Unit,
     onClickDeveloperMode: (Boolean) -> Unit,
@@ -268,6 +270,7 @@ private fun SettingTopScreen(
                     userData = userData,
                     onClickTeamsOfService = onClickTeamsOfService,
                     onClickPrivacyPolicy = onClickPrivacyPolicy,
+                    onClickReshowReveal = onClickReshowReveal,
                     onClickLogout = onClickLogout,
                     onClickOpenSourceLicense = onClickOpenSourceLicense,
                     onClickDeveloperMode = onClickDeveloperMode,

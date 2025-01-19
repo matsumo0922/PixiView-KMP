@@ -19,6 +19,8 @@ import androidx.lifecycle.DefaultLifecycleObserver
 import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.compose.LocalLifecycleOwner
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.svenjacobs.reveal.RevealCanvas
+import com.svenjacobs.reveal.rememberRevealCanvasState
 import dev.icerock.moko.biometry.compose.BindBiometryAuthenticatorEffect
 import dev.icerock.moko.biometry.compose.rememberBiometryAuthenticatorFactory
 import io.github.aakira.napier.Napier
@@ -40,6 +42,7 @@ import me.matsumo.fanbox.core.ui.extensition.currentPlatform
 import me.matsumo.fanbox.core.ui.theme.DarkDefaultColorScheme
 import me.matsumo.fanbox.core.ui.theme.LightDefaultColorScheme
 import me.matsumo.fanbox.core.ui.theme.PixiViewTheme
+import me.matsumo.fanbox.core.ui.theme.shouldUseDarkTheme
 import me.matsumo.fanbox.core.ui.view.LoadingView
 import me.matsumo.fanbox.core.ui.view.NativeView
 import org.koin.compose.koinInject
@@ -58,6 +61,7 @@ fun PixiViewApp(
     val screenState by viewModel.screenState.collectAsStateWithLifecycle()
     val lifecycleOwner = LocalLifecycleOwner.current
     val shouldUseDarkTheme = shouldUseDarkTheme(screenState)
+    val revealCanvasState = rememberRevealCanvasState()
 
     val biometryAuthenticatorFactory = rememberBiometryAuthenticatorFactory()
     val biometryAuthenticator = biometryAuthenticatorFactory.createBiometryAuthenticator()
@@ -71,69 +75,72 @@ fun PixiViewApp(
     BindBiometryAuthenticatorEffect(biometryAuthenticator)
 
     CompositionLocalProvider(LocalNavigationType provides NavigationType(navigationType)) {
-        AsyncLoadContents(
-            modifier = Modifier.fillMaxSize(),
-            screenState = screenState,
-            containerColor = if (shouldUseDarkTheme) DarkDefaultColorScheme.surface else LightDefaultColorScheme.surface,
-        ) {
-            PixiViewTheme(
-                sessionId = it.sessionId,
-                fanboxMetadata = it.fanboxMetadata,
-                themeConfig = it.userData.themeConfig,
-                themeColorConfig = it.userData.themeColorConfig,
-                pixiViewConfig = pixiViewConfig,
-                nativeViews = nativeViews,
+        RevealCanvas(revealCanvasState) {
+            AsyncLoadContents(
+                modifier = Modifier.fillMaxSize(),
+                screenState = screenState,
+                containerColor = if (shouldUseDarkTheme) DarkDefaultColorScheme.surface else LightDefaultColorScheme.surface,
             ) {
-                PixiViewBackground(modifier) {
-                    PixiViewScreen(
-                        modifier = Modifier.fillMaxSize(),
-                        uiState = it,
-                        onRequestInitPixiViewId = viewModel::initPixiViewId,
-                        onRequestUpdateState = viewModel::updateState,
-                    )
-
-                    AnimatedVisibility(
-                        visible = it.isAppLocked,
-                        enter = fadeIn(),
-                        exit = fadeOut(),
-                    ) {
-                        LoadingView(
-                            modifier = Modifier
-                                .fillMaxSize()
-                                .background(MaterialTheme.colorScheme.surface),
+                PixiViewTheme(
+                    sessionId = it.sessionId,
+                    fanboxMetadata = it.fanboxMetadata,
+                    themeConfig = it.userData.themeConfig,
+                    themeColorConfig = it.userData.themeColorConfig,
+                    pixiViewConfig = pixiViewConfig,
+                    nativeViews = nativeViews,
+                    revealCanvasState = revealCanvasState,
+                ) {
+                    PixiViewBackground(modifier) {
+                        PixiViewScreen(
+                            modifier = Modifier.fillMaxSize(),
+                            uiState = it,
+                            onRequestInitPixiViewId = viewModel::initPixiViewId,
+                            onRequestUpdateState = viewModel::updateState,
                         )
-                    }
 
-                    if (it.isAppLocked) {
-                        scope.launch {
-                            if (currentPlatform == Platform.Android) {
-                                // Wait for the bind fragment manager.
-                                delay(1000)
-                            }
+                        AnimatedVisibility(
+                            visible = it.isAppLocked,
+                            enter = fadeIn(),
+                            exit = fadeOut(),
+                        ) {
+                            LoadingView(
+                                modifier = Modifier
+                                    .fillMaxSize()
+                                    .background(MaterialTheme.colorScheme.surface),
+                            )
+                        }
 
-                            if (viewModel.tryToAuthenticate(biometryAuthenticator)) {
-                                viewModel.setAppLock(false)
-                            } else {
-                                navigatorExtension.killApp()
+                        if (it.isAppLocked) {
+                            scope.launch {
+                                if (currentPlatform == Platform.Android) {
+                                    // Wait for the bind fragment manager.
+                                    delay(1000)
+                                }
+
+                                if (viewModel.tryToAuthenticate(biometryAuthenticator)) {
+                                    viewModel.setAppLock(false)
+                                } else {
+                                    navigatorExtension.killApp()
+                                }
                             }
                         }
                     }
                 }
-            }
 
-            DisposableEffect(lifecycleOwner) {
-                val observer = object : DefaultLifecycleObserver {
-                    override fun onResume(owner: LifecycleOwner) {
-                        Napier.d { "onResume" }
+                DisposableEffect(lifecycleOwner) {
+                    val observer = object : DefaultLifecycleObserver {
+                        override fun onResume(owner: LifecycleOwner) {
+                            Napier.d { "onResume" }
 
-                        viewModel.setAppLock(true)
-                        viewModel.billingClientUpdate()
+                            viewModel.setAppLock(true)
+                            viewModel.billingClientUpdate()
+                        }
                     }
+
+                    lifecycleOwner.lifecycle.addObserver(observer)
+
+                    onDispose { lifecycleOwner.lifecycle.removeObserver(observer) }
                 }
-
-                lifecycleOwner.lifecycle.addObserver(observer)
-
-                onDispose { lifecycleOwner.lifecycle.removeObserver(observer) }
             }
         }
     }

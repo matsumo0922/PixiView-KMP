@@ -5,6 +5,7 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -35,6 +36,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.runtime.snapshotFlow
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
@@ -135,7 +137,9 @@ internal fun PostDetailRoute(
         modifier = modifier,
         bottomBar = {
             Column(
-                modifier = Modifier.background(MaterialTheme.colorScheme.surfaceColorAtElevation(1.dp)),
+                modifier = Modifier
+                    .shadow(8.dp)
+                    .background(MaterialTheme.colorScheme.surfaceColorAtElevation(1.dp)),
             ) {
                 if (!uiState.userData.hasPrivilege) {
                     BannerAdView(
@@ -159,6 +163,7 @@ internal fun PostDetailRoute(
                 hostState = snackbarHostState,
             )
         },
+        contentWindowInsets = WindowInsets(0, 0, 0, 0)
     ) { padding ->
         if (paging != null && !paging.isNullOrEmpty() && uiState.userData.isUseInfinityPostDetail) {
             LazyPagingItemsLoadContents(
