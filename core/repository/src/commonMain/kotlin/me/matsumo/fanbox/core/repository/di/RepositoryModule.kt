@@ -11,7 +11,6 @@ import me.matsumo.fanbox.core.repository.UserDataRepository
 import me.matsumo.fanbox.core.repository.UserDataRepositoryImpl
 import org.koin.core.module.Module
 import org.koin.dsl.module
-import kotlin.math.sin
 
 val json = Json {
     isLenient = true

@@ -83,7 +83,7 @@ class PostByCreatorSearchViewModel(
             posts.addAll(
                 withContext(ioDispatcher) {
                     fanboxRepository.getCreatorPosts(creatorId, cursor, null).contents
-                }
+                },
             )
 
             _screenState.updateWhenIdle { it.copy(progress = posts.size.toFloat() / max) }

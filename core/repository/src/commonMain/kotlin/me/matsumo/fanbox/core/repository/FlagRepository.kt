@@ -9,7 +9,7 @@ interface FlagRepository {
 }
 
 internal class FlagRepositoryImpl(
-    private val flagDataStore: FlagDataStore
+    private val flagDataStore: FlagDataStore,
 ) : FlagRepository {
 
     override suspend fun setFlag(key: Flag, value: Boolean) {

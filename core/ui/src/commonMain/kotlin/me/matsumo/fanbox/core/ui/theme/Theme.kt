@@ -10,7 +10,6 @@ import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.staticCompositionLocalOf
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
-import com.svenjacobs.reveal.RevealCanvas
 import com.svenjacobs.reveal.RevealCanvasState
 import com.svenjacobs.reveal.rememberRevealCanvasState
 import io.github.alexzhirkevich.cupertino.adaptive.AdaptiveTheme

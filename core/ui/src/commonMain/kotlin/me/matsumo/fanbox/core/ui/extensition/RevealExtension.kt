@@ -1,7 +1,6 @@
 package me.matsumo.fanbox.core.ui.extensition
 
 import androidx.compose.foundation.layout.padding
-import androidx.compose.material3.contentColorFor
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -43,7 +42,7 @@ fun OverlayText(
     arrow: Arrow,
     containerColor: Color,
     contentColor: Color,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
 ) {
     Balloon(
         modifier = modifier.padding(8.dp),

@@ -117,7 +117,7 @@ internal fun CreatorPostsDownloadRoute(
 
             LoadingDialog(
                 progress = progressAnimation,
-                text = Res.string.creator_posts_download_dialog_title
+                text = Res.string.creator_posts_download_dialog_title,
             )
         }
     }

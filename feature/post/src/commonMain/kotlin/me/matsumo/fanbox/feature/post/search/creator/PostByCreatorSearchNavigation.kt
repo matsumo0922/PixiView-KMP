@@ -8,8 +8,6 @@ import androidx.navigation.NavType
 import androidx.navigation.compose.composable
 import androidx.navigation.navArgument
 import me.matsumo.fanbox.core.ui.extensition.navigateWithLog
-import me.matsumo.fanbox.feature.post.detail.PostDetailPagingType
-import me.matsumo.fanbox.feature.post.detail.PostDetailType
 import me.matsumo.fankt.fanbox.domain.model.id.FanboxCreatorId
 import me.matsumo.fankt.fanbox.domain.model.id.FanboxPostId
 

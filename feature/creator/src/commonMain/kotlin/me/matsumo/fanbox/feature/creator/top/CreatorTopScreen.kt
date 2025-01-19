@@ -100,7 +100,7 @@ import org.koin.compose.viewmodel.koinViewModel
 
 internal enum class CreatorTopRevealKeys {
     Search,
-    Fab;
+    Fab,
 }
 
 @Composable
@@ -507,7 +507,7 @@ private fun RevealOverlayScope.RevealOverlayContent(
             OverlayText(
                 modifier = Modifier.align(
                     horizontalAlignment = Alignment.End,
-                    verticalArrangement = RevealOverlayArrangement.Bottom
+                    verticalArrangement = RevealOverlayArrangement.Bottom,
                 ),
                 text = stringResource(Res.string.reveal_creator_top_search, appName),
                 arrow = Arrow.top(horizontalAlignment = Alignment.End),

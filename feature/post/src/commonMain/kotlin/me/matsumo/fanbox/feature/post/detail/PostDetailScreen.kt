@@ -163,7 +163,7 @@ internal fun PostDetailRoute(
                 hostState = snackbarHostState,
             )
         },
-        contentWindowInsets = WindowInsets(0, 0, 0, 0)
+        contentWindowInsets = WindowInsets(0, 0, 0, 0),
     ) { padding ->
         if (paging != null && !paging.isNullOrEmpty() && uiState.userData.isUseInfinityPostDetail) {
             LazyPagingItemsLoadContents(

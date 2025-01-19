@@ -31,7 +31,6 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -69,7 +68,7 @@ internal fun PostSearchTopBar(
     onClickTerminate: () -> Unit,
     onClickSearch: (PostSearchQuery) -> Unit,
     modifier: Modifier = Modifier,
-    onQueryChanged: (String) -> Unit = {}
+    onQueryChanged: (String) -> Unit = {},
 ) {
     val keyboardController = LocalSoftwareKeyboardController.current
     val focusManager = LocalFocusManager.current
@@ -80,7 +79,7 @@ internal fun PostSearchTopBar(
             TextFieldValue(
                 text = query,
                 selection = TextRange(query.length),
-            )
+            ),
         )
     }
 

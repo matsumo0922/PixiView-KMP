@@ -29,7 +29,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import io.github.aakira.napier.Napier
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.toImmutableList
 import kotlinx.coroutines.launch
@@ -45,9 +44,7 @@ import me.matsumo.fanbox.core.ui.component.PostItem
 import me.matsumo.fanbox.core.ui.extensition.NavigatorExtension
 import me.matsumo.fanbox.core.ui.extensition.plus
 import me.matsumo.fanbox.core.ui.theme.bold
-import me.matsumo.fanbox.core.ui.theme.center
 import me.matsumo.fanbox.core.ui.view.ErrorView
-import me.matsumo.fanbox.core.ui.view.LoadingView
 import me.matsumo.fanbox.feature.post.search.common.items.PostSearchTopBar
 import me.matsumo.fankt.fanbox.domain.model.FanboxCreatorDetail
 import me.matsumo.fankt.fanbox.domain.model.FanboxPost
@@ -209,7 +206,7 @@ private fun PostByCreatorSearchScreen(
                         modifier = Modifier.fillMaxWidth(),
                         title = Res.string.error_no_data,
                         message = Res.string.error_no_data_search,
-                        serviceStatus = false
+                        serviceStatus = false,
                     )
                 }
             }
@@ -240,7 +237,7 @@ private fun LoadingItem(
 
         AnimatedContent(
             targetState = progress,
-            transitionSpec = { fadeIn().togetherWith(fadeOut()) }
+            transitionSpec = { fadeIn().togetherWith(fadeOut()) },
         ) {
             Text(
                 text = "%.2f %%".format(it * 100),

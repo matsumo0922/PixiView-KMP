@@ -1,10 +1,8 @@
 package me.matsumo.fanbox.core.common.util
 
 import io.github.aakira.napier.Napier
-import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.ensureActive
-import kotlinx.coroutines.isActive
 import kotlin.coroutines.cancellation.CancellationException
 import kotlin.coroutines.coroutineContext
 

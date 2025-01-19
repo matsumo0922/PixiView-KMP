@@ -2,7 +2,6 @@ package me.matsumo.fanbox.core.model
 
 import androidx.compose.runtime.Stable
 import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.update
 import org.jetbrains.compose.resources.StringResource
 

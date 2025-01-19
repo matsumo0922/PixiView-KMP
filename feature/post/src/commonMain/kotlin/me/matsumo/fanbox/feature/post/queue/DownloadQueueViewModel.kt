@@ -13,4 +13,10 @@ class DownloadQueueViewModel(
     fun cancelDownload(key: String) {
         downloadPostsRepository.cancelDownload(key)
     }
+
+    fun clearQueue() {
+        for (post in reservingPosts.value) {
+            downloadPostsRepository.cancelDownload(post.key)
+        }
+    }
 }

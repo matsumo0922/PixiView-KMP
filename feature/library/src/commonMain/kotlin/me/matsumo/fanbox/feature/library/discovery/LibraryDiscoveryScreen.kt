@@ -153,7 +153,7 @@ private fun LibraryDiscoveryScreen(
         PullToRefreshBox(
             modifier = Modifier.padding(padding),
             onRefresh = fetch,
-            isRefreshing = false
+            isRefreshing = false,
         ) {
             LazyVerticalGrid(
                 modifier = Modifier.drawVerticalScrollbar(state, columns),
