@@ -1,5 +1,6 @@
 package me.matsumo.fanbox.core.model
 
+import me.matsumo.fankt.fanbox.domain.model.FanboxPost
 import me.matsumo.fankt.fanbox.domain.model.id.FanboxPostId
 import me.matsumo.fankt.fanbox.domain.model.id.FanboxPostItemId
 
@@ -9,7 +10,6 @@ data class FanboxDownloadItems(
     val items: List<Item>,
     val requestType: RequestType,
     val key: String,
-    val callback: () -> Unit,
 ) {
     data class Item(
         val postId: FanboxPostId,
@@ -30,6 +30,9 @@ data class FanboxDownloadItems(
     sealed interface RequestType {
         data object Image : RequestType
         data object File : RequestType
-        data class Post(val creatorName: String) : RequestType
+        data class Post(
+            val post: FanboxPost?,
+            val isIgnoreFiles: Boolean,
+        ) : RequestType
     }
 }

@@ -95,7 +95,7 @@ internal fun CreatorPostsDownloadRoute(
             onUpdateIgnoreKeyword = viewModel::updateIgnoreKeyword,
             onClickIgnoreFreePosts = viewModel::updateIgnoreFreePosts,
             onClickIgnoreFiles = viewModel::updateIgnoreFiles,
-            onClickDownload = { viewModel.download(uiState.targetPosts.map { it.post.id }) },
+            onClickDownload = viewModel::download,
             onClickCheckQueue = navigateToDownloadQueue,
             terminate = terminate,
         )

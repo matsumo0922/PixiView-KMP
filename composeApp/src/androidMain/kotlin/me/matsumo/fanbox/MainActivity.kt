@@ -1,6 +1,8 @@
 package me.matsumo.fanbox
 
+import android.content.Context
 import android.content.Intent
+import android.content.pm.verify.domain.DomainVerificationManager
 import android.graphics.Color
 import android.os.Bundle
 import androidx.activity.SystemBarStyle
@@ -20,6 +22,7 @@ import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import com.google.android.play.core.review.ReviewManagerFactory
 import kotlinx.collections.immutable.persistentMapOf
+import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
 import me.matsumo.fanbox.core.datastore.LaunchLogDataStore
@@ -83,7 +86,7 @@ class MainActivity : FragmentActivity(), KoinComponent {
 
         lifecycleScope.launch {
             lifecycle.repeatOnLifecycle(Lifecycle.State.STARTED) {
-                downloadPostsRepository.reservingPosts.collect {
+                downloadPostsRepository.reservingPosts.collectLatest {
                     if (it.isNotEmpty()) {
                         requestReview()
                     }
@@ -92,6 +95,11 @@ class MainActivity : FragmentActivity(), KoinComponent {
         }
 
         startService(Intent(this, DownloadPostService::class.java))
+    }
+
+    override fun onNewIntent(intent: Intent) {
+        super.onNewIntent(intent)
+
     }
 
     override fun onResume() {

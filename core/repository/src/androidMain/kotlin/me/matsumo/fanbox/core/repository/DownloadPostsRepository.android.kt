@@ -36,6 +36,7 @@ import me.matsumo.fanbox.core.logs.logger.send
 import me.matsumo.fanbox.core.model.DownloadFileType
 import me.matsumo.fanbox.core.model.DownloadState
 import me.matsumo.fanbox.core.model.FanboxDownloadItems
+import me.matsumo.fankt.fanbox.domain.model.FanboxPost
 import me.matsumo.fankt.fanbox.domain.model.FanboxPostDetail
 import me.matsumo.fankt.fanbox.domain.model.id.FanboxPostId
 import java.io.File
@@ -69,24 +70,33 @@ class DownloadPostsRepositoryImpl(
                     continue
                 }
 
-                val itemProgresses = MutableList(downloadItems.items.size) { MutableStateFlow(0f) }
-                val items = downloadItems.items.mapIndexed { index, item ->
+                val items = when (val type = downloadItems.requestType) {
+                    FanboxDownloadItems.RequestType.File -> downloadItems.items
+                    FanboxDownloadItems.RequestType.Image -> downloadItems.items
+                    is FanboxDownloadItems.RequestType.Post -> {
+                        val postDetail = fanboxRepository.getPostDetail(downloadItems.postId)
+                        val images = postDetail.body.imageItems.map { it.toDownloadItem() }
+                        val files = postDetail.body.fileItems.map { it.toDownloadItem() }
+
+                        images + if (type.isIgnoreFiles) emptyList() else files
+                    }
+                }
+
+                val itemProgresses = MutableList(items.size) { MutableStateFlow(0f) }
+                val data = items.mapIndexed { index, item ->
                     async {
                         downloadItem(item) { progress ->
                             itemProgresses[index].value = progress
 
                             _downloadState.value = DownloadState.Downloading(
                                 items = downloadItems,
-                                progress = itemProgresses.sumOf { it.value.toDouble() }.toFloat() / downloadItems.items.size,
+                                progress = itemProgresses.sumOf { it.value.toDouble() }.toFloat() / items.size,
                             )
                         }
                     }
                 }
 
-                val results = items.awaitAll()
-
-                saveFiles(downloadItems, results.filterNotNull())
-                downloadItems.callback.invoke()
+                saveFiles(downloadItems, data.awaitAll().filterNotNull())
             }
         }
     }
@@ -97,45 +107,39 @@ class DownloadPostsRepositoryImpl(
         }
     }
 
-    override fun requestDownloadPost(postId: FanboxPostId, callback: () -> Unit) {
+    override fun requestDownloadPost(post: FanboxPost, isIgnoreFiles: Boolean) {
         scope.launch {
-            val postDetail = fanboxRepository.getPostDetail(postId)
-            val images = postDetail.body.imageItems.map { it.toDownloadItem() }
-            val files = postDetail.body.fileItems.map { it.toDownloadItem() }
             val items = FanboxDownloadItems(
-                postId = postDetail.id,
-                title = postDetail.title,
-                items = images + files,
-                requestType = FanboxDownloadItems.RequestType.Post(postDetail.user?.name.orEmpty()),
+                postId = post.id,
+                title = post.title,
+                items = emptyList(),
+                requestType = FanboxDownloadItems.RequestType.Post(post, isIgnoreFiles),
                 key = Uuid.random().toHexString(),
-                callback = callback,
             )
 
             _reservingPosts.update { it + items }
         }
     }
 
-    override fun requestDownloadImages(postId: FanboxPostId, title: String, images: List<FanboxPostDetail.ImageItem>, callback: () -> Unit) {
+    override fun requestDownloadImages(postId: FanboxPostId, title: String, images: List<FanboxPostDetail.ImageItem>) {
         val items = FanboxDownloadItems(
             postId = postId,
             title = title,
             items = images.map { it.toDownloadItem() },
             requestType = FanboxDownloadItems.RequestType.Image,
             key = Uuid.random().toHexString(),
-            callback = callback,
         )
 
         _reservingPosts.update { it + items }
     }
 
-    override fun requestDownloadFiles(postId: FanboxPostId, title: String, files: List<FanboxPostDetail.FileItem>, callback: () -> Unit) {
+    override fun requestDownloadFiles(postId: FanboxPostId, title: String, files: List<FanboxPostDetail.FileItem>) {
         val items = FanboxDownloadItems(
             postId = postId,
             title = title,
             items = files.map { it.toDownloadItem() },
             requestType = FanboxDownloadItems.RequestType.File,
             key = Uuid.random().toHexString(),
-            callback = callback,
         )
 
         _reservingPosts.update { it + items }
@@ -214,7 +218,7 @@ class DownloadPostsRepositoryImpl(
         val child = when (requestType) {
             is FanboxDownloadItems.RequestType.Image -> "FANBOX"
             is FanboxDownloadItems.RequestType.File -> "FANBOX"
-            is FanboxDownloadItems.RequestType.Post -> requestType.creatorName
+            is FanboxDownloadItems.RequestType.Post -> requestType.post?.user?.name ?: "UnknownCreator"
         }
 
         val dir = File("${Environment.getExternalStorageDirectory().path}/$environmentDir", "FANBOX")
@@ -254,7 +258,7 @@ class DownloadPostsRepositoryImpl(
             is FanboxDownloadItems.RequestType.Post -> {
                 if (userData.postSaveDirectory.isBlank()) return null
                 val parentFile = UniFile.fromUri(context, userData.postSaveDirectory.toUri())
-                parentFile.createDirectory(requestType.creatorName)
+                parentFile.createDirectory(requestType.post?.user?.name ?: "UnknownCreator")
             }
         }
     }

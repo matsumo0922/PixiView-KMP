@@ -110,21 +110,13 @@ fun PixiViewTheme(
     fanboxMetadata: FanboxMetaData = getFanboxMetadataDummy(),
     pixiViewConfig: PixiViewConfig = PixiViewConfig.dummy(),
     themeConfig: ThemeConfig = ThemeConfig.System,
-    themeColorConfig: ThemeColorConfig = ThemeColorConfig.Red,
+    themeColorConfig: ThemeColorConfig = ThemeColorConfig.Blue,
     nativeViews: ImmutableMap<String, () -> NativeView?> = persistentMapOf(),
     revealCanvasState: RevealCanvasState = rememberRevealCanvasState(),
     content: @Composable () -> Unit,
 ) {
     val shouldUseDarkTheme = shouldUseDarkTheme(themeConfig)
-
-    val colorScheme = when (themeColorConfig) {
-        ThemeColorConfig.Blue -> if (shouldUseDarkTheme) DarkBlueColorScheme else LightBlueColorScheme
-        ThemeColorConfig.Brown -> if (shouldUseDarkTheme) DarkBrownColorScheme else LightBrownColorScheme
-        ThemeColorConfig.Green -> if (shouldUseDarkTheme) DarkGreenColorScheme else LightGreenColorScheme
-        ThemeColorConfig.Purple -> if (shouldUseDarkTheme) DarkPurpleColorScheme else LightPurpleColorScheme
-        ThemeColorConfig.Pink -> if (shouldUseDarkTheme) DarkPinkColorScheme else LightPinckColorScheme
-        else -> if (shouldUseDarkTheme) DarkDefaultColorScheme else LightDefaultColorScheme
-    }
+    val colorScheme = getColorTheme(themeColorConfig, shouldUseDarkTheme)
 
     val backgroundTheme = BackgroundTheme(
         color = colorScheme.surface,
@@ -219,4 +211,13 @@ fun shouldUseDarkTheme(themeConfig: ThemeConfig): Boolean {
         ThemeConfig.Light -> false
         ThemeConfig.Dark -> true
     }
+}
+
+fun getColorTheme(themeColorConfig: ThemeColorConfig, shouldUseDarkTheme: Boolean) = when (themeColorConfig) {
+    ThemeColorConfig.Blue -> if (shouldUseDarkTheme) DarkBlueColorScheme else LightBlueColorScheme
+    ThemeColorConfig.Brown -> if (shouldUseDarkTheme) DarkBrownColorScheme else LightBrownColorScheme
+    ThemeColorConfig.Green -> if (shouldUseDarkTheme) DarkGreenColorScheme else LightGreenColorScheme
+    ThemeColorConfig.Purple -> if (shouldUseDarkTheme) DarkPurpleColorScheme else LightPurpleColorScheme
+    ThemeColorConfig.Pink -> if (shouldUseDarkTheme) DarkPinkColorScheme else LightPinckColorScheme
+    else -> if (shouldUseDarkTheme) DarkDefaultColorScheme else LightDefaultColorScheme
 }

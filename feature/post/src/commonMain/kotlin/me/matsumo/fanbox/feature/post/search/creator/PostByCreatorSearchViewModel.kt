@@ -75,9 +75,15 @@ class PostByCreatorSearchViewModel(
     }
 
     private suspend fun fetchPosts() {
+        fanboxRepository.getCreatorAllPostsCache(creatorId)?.let { cachedPosts ->
+            _allPosts.emit(cachedPosts)
+            _screenState.updateWhenIdle { it.copy(progress = 1f, isPrepared = true) }
+            return
+        }
+
+        val posts = mutableListOf<FanboxPost>()
         val paginate = withContext(ioDispatcher) { fanboxRepository.getCreatorPostsPagination(creatorId) }
         val max = paginate.sumOf { it.limit ?: 10 }
-        val posts = mutableListOf<FanboxPost>()
 
         for (cursor in paginate) {
             posts.addAll(
@@ -89,7 +95,11 @@ class PostByCreatorSearchViewModel(
             _screenState.updateWhenIdle { it.copy(progress = posts.size.toFloat() / max) }
         }
 
-        _allPosts.emit(posts.distinctBy { post -> post.id })
+        val data = posts.distinctBy { post -> post.id }
+
+        fanboxRepository.setCreatorAllPostsCache(creatorId, data)
+
+        _allPosts.emit(data)
         _screenState.updateWhenIdle {
             it.copy(
                 progress = 1f,

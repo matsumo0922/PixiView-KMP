@@ -39,8 +39,11 @@ import coil3.request.ImageRequest
 import io.github.aakira.napier.Napier
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.toImmutableList
+import me.matsumo.fanbox.core.common.util.format
 import me.matsumo.fanbox.core.model.FanboxDownloadItems
 import me.matsumo.fanbox.core.resources.Res
+import me.matsumo.fanbox.core.resources.queue_item_post
+import me.matsumo.fanbox.core.resources.queue_saving
 import me.matsumo.fanbox.core.resources.unit_tag
 import me.matsumo.fanbox.core.ui.extensition.fanboxHeader
 import me.matsumo.fanbox.core.ui.theme.bold
@@ -74,6 +77,21 @@ internal fun DownloadQueueItem(
         }
     }
 
+    val actualThumbnailItems: List<@Composable () -> Unit> = when (val type = items.requestType) {
+        FanboxDownloadItems.RequestType.File -> thumbnailItems
+        FanboxDownloadItems.RequestType.Image -> thumbnailItems
+        is FanboxDownloadItems.RequestType.Post -> {
+            listOf(
+                {
+                    CoverThumbnail(
+                        modifier = Modifier.fillMaxWidth(),
+                        url = type.post?.cover?.url,
+                    )
+                }
+            )
+        }
+    }
+
     Card(
         modifier = modifier,
         shape = RoundedCornerShape(8.dp),
@@ -90,7 +108,7 @@ internal fun DownloadQueueItem(
                 modifier = Modifier
                     .fillMaxHeight()
                     .aspectRatio(1f),
-                items = thumbnailItems.toImmutableList(),
+                items = actualThumbnailItems.toImmutableList(),
             )
 
             Column(
@@ -108,7 +126,23 @@ internal fun DownloadQueueItem(
 
                 Text(
                     modifier = Modifier.fillMaxWidth(),
-                    text = stringResource(Res.string.unit_tag, items.items.size),
+                    text = when {
+                        progress == 1f -> {
+                            stringResource(Res.string.queue_saving)
+                        }
+
+                        else -> {
+                            if (items.requestType is FanboxDownloadItems.RequestType.Post) {
+                                stringResource(Res.string.queue_item_post)
+                            } else {
+                                stringResource(Res.string.unit_tag, items.items.size)
+                            } + if (progress != -1f) {
+                                " - (%.2f %%)".format(progress * 100)
+                            } else {
+                                ""
+                            }
+                        }
+                    },
                     style = MaterialTheme.typography.bodySmall,
                     color = MaterialTheme.colorScheme.onSurfaceVariant,
                     overflow = TextOverflow.Ellipsis,
@@ -128,10 +162,10 @@ internal fun DownloadQueueItem(
         if (progress >= 0f) {
             val progressAnimation by animateFloatAsState(
                 targetValue = progress,
-                animationSpec = tween(300),
+                animationSpec = tween(100),
             )
 
-            if (progress == 0f) {
+            if (progress == 0f || progress == 1f) {
                 LinearProgressIndicator(
                     modifier = Modifier.fillMaxWidth(),
                 )

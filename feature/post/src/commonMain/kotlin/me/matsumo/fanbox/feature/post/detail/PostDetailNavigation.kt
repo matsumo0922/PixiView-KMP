@@ -9,6 +9,7 @@ import androidx.navigation.NavGraphBuilder
 import androidx.navigation.NavType
 import androidx.navigation.compose.composable
 import androidx.navigation.navArgument
+import androidx.navigation.navDeepLink
 import me.matsumo.fanbox.core.ui.extensition.navigateWithLog
 import me.matsumo.fanbox.core.ui.view.SimpleAlertContents
 import me.matsumo.fankt.fanbox.domain.model.id.FanboxCreatorId
@@ -36,8 +37,14 @@ fun NavGraphBuilder.postDetailScreen(
         route = PostDetailRoute,
         arguments = listOf(
             navArgument(PostDetailId) { type = NavType.StringType },
-            navArgument(PostDetailType) { type = NavType.StringType },
+            navArgument(PostDetailType) {
+                type = NavType.StringType
+                defaultValue = PostDetailPagingType.Unknown.name
+            },
         ),
+        deepLinks = listOf(
+            navDeepLink { uriPattern = "https://{creatorId}.fanbox.cc/posts/{$PostDetailId}" },
+        )
     ) {
         PostDetailRoute(
             modifier = Modifier.fillMaxSize(),

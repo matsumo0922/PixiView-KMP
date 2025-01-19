@@ -3,6 +3,7 @@ package me.matsumo.fanbox
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
+import androidx.navigation.NavController
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
@@ -69,6 +70,8 @@ internal fun PixiViewNavHost(
     val navController = rememberNavController(bottomSheetNavigator)
     val bottomNavigationNavController = rememberNavController()
     val scope = rememberCoroutineScope()
+
+    HandleDeepLink(navController)
 
     ModalBottomSheetLayout(bottomSheetNavigator) {
         NavHost(
@@ -270,3 +273,6 @@ private fun NavGraphBuilder.applyNavGraph(
 
     emptyDetailScreen()
 }
+
+@Composable
+expect fun HandleDeepLink(navController: NavController)

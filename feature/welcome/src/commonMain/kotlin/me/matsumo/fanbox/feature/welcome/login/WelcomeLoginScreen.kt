@@ -75,6 +75,7 @@ internal fun WelcomeLoginScreen(
     if (isLoggedIn) {
         LaunchedEffect(isLoggedIn) {
             WelcomeLog.loggedIn()
+            navigateToHome.invoke()
         }
     }
 

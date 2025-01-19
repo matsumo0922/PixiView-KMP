@@ -78,6 +78,12 @@
     <string name="reveal_creator_top_search">Search for creators' posts by title, text, etc.\n(%1$s+ exclusive feature)</string>
     <string name="reveal_creator_top_fab">Download all of a creator's posts at once.\n(%1$s+ exclusive feature)</string>
 
+    <!-- Domain Validation -->
+    <string name="domain_validation_request_title">Open by default</string>
+    <string name="domain_validation_request_message">To open links to FANBOX with this app, additional settings are required.\n\nTurn on "Open by default" in settings and add the "*.fanbox.cc" link.</string>
+    <string name="domain_validation_request_button">Open setting</string>
+    <string name="domain_validation_request_never_ask">Never ask again</string>
+
     <!-- Notify -->
     <string name="notify_download_channel_name">Download</string>
     <string name="notify_download_channel_description">Notify download progress</string>
@@ -177,6 +183,8 @@
     <string name="queue_empty_description">If you select download, it will be placed in a queue and downloaded one by one.</string>
     <string name="queue_added">Added to download queue</string>
     <string name="queue_added_action">Check</string>
+    <string name="queue_saving">Saving…</string>
+    <string name="queue_item_post">Post</string>
 
     <!-- PostDetail -->
     <string name="post_detail_title">Post details</string>

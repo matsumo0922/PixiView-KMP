@@ -74,6 +74,12 @@
     <string name="reveal_creator_top_search">크리에이터의 투고를 타이틀·본문등에서 검색\n(%1$s+ 전용 기능)</string>
     <string name="reveal_creator_top_fab">크리에이터의 게시물을 일괄로 모두 다운로드\n(%1$s+ 전용 기능)</string>
 
+    <!-- Domain Validation -->
+    <string name="domain_validation_request_title">기본적으로 열림</string>
+    <string name="domain_validation_request_message">이 앱으로 FANBOX 링크를 열려면 추가 설정이 필요합니다.\n\n설정에서 "기본으로 열기"를 켜고 "*.fanbox.cc" 링크를 추가하세요.</string>
+    <string name="domain_validation_request_button">오픈 세팅</string>
+    <string name="domain_validation_request_never_ask">다시는 묻지 마세요</string>
+
     <!-- Notify -->
     <string name="notify_download_channel_name">다운로드</string>
     <string name="notify_download_channel_description">알림창에서 다운로드 상태를 확인하세요</string>
@@ -163,6 +169,8 @@
     <string name="queue_empty_description">다운로드를 선택하면 대기열에 넣고 순차적으로 다운로드됩니다.</string>
     <string name="queue_added">다운로드 대기열에 추가됨</string>
     <string name="queue_added_action">확인</string>
+    <string name="queue_saving">저장 중…</string>
+    <string name="queue_item_post">전체 게시물</string>
 
     <!-- PostDetail -->
     <string name="post_detail_title">포스트 상세정보</string>

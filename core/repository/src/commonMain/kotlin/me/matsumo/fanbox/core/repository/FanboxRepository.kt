@@ -60,7 +60,6 @@ interface FanboxRepository {
     val logoutTrigger: Flow<Long>
 
     suspend fun logout()
-
     suspend fun setSessionId(sessionId: String)
     suspend fun updateCsrfToken()
     suspend fun getMetadata(): FanboxMetaData
@@ -177,6 +176,9 @@ interface FanboxRepository {
     suspend fun bookmarkPost(post: FanboxPost)
     suspend fun unbookmarkPost(post: FanboxPost)
 
+    suspend fun setCreatorAllPostsCache(creatorId: FanboxCreatorId, posts: List<FanboxPost>)
+    suspend fun getCreatorAllPostsCache(creatorId: FanboxCreatorId): List<FanboxPost>?
+
     suspend fun download(url: String, onDownload: (Float) -> Unit): HttpStatement
 }
 
@@ -196,6 +198,7 @@ class FanboxRepositoryImpl(
 
     private val creatorCache = mutableMapOf<FanboxCreatorId, FanboxCreatorDetail>()
     private val postCache = mutableMapOf<FanboxPostId, FanboxPostDetail>()
+    private val creatorAllPostsCache = mutableMapOf<FanboxCreatorId, List<FanboxPost>>()
     private var homePostsPager: Flow<PagingData<FanboxPost>>? = null
     private var supportedPostsPager: Flow<PagingData<FanboxPost>>? = null
     private var creatorPostsPager: Flow<PagingData<FanboxPost>>? = null
@@ -214,6 +217,7 @@ class FanboxRepositoryImpl(
         CoroutineScope(ioDispatcher).launch {
             withContext(Dispatchers.Main) { WebViewCookieManager().removeAllCookies() }
 
+            setSessionId("")
             bookmarkDataStore.clear()
             blockDataStore.clear()
             userDataStore.setTestUser(false)
@@ -504,6 +508,14 @@ class FanboxRepositoryImpl(
 
     override suspend fun unbookmarkPost(post: FanboxPost) {
         bookmarkDataStore.remove(post)
+    }
+
+    override suspend fun setCreatorAllPostsCache(creatorId: FanboxCreatorId, posts: List<FanboxPost>) {
+        creatorAllPostsCache[creatorId] = posts
+    }
+
+    override suspend fun getCreatorAllPostsCache(creatorId: FanboxCreatorId): List<FanboxPost>? {
+        return creatorAllPostsCache[creatorId]
     }
 
     override suspend fun download(url: String, onDownload: (Float) -> Unit): HttpStatement {

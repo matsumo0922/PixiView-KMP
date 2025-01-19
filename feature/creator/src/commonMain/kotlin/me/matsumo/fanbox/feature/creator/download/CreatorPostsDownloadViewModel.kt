@@ -86,9 +86,11 @@ class CreatorPostsDownloadViewModel(
         }
     }
 
-    fun download(postIds: List<FanboxPostId>) {
-        for (postId in postIds) {
-            downloadPostsRepository.requestDownloadPost(postId)
+    fun download() {
+        val data = (screenState.value as? ScreenState.Idle)?.data ?: return
+
+        for (post in data.targetPosts) {
+            downloadPostsRepository.requestDownloadPost(post.post, data.isIgnoreFiles)
         }
     }
 

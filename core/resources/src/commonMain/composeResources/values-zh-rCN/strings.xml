@@ -74,6 +74,12 @@
     <string name="unit_month">月</string>
     <string name="unit_day">日</string>
 
+    <!-- Domain Validation -->
+    <string name="domain_validation_request_title">默认打开</string>
+    <string name="domain_validation_request_message">要使用此应用打开 FANBOX 的链接，需要进行其他设置。\n\n在设置中开启“默认打开”并添加“*.fanbox.cc”链接。</string>
+    <string name="domain_validation_request_button">打开设置</string>
+    <string name="domain_validation_request_never_ask">不再询问</string>
+
     <!-- Reveal -->
     <string name="reveal_creator_top_search">按标题、文本等搜索创作者的帖子\n（%1$s+ 独有功能）</string>
     <string name="reveal_creator_top_fab">一次性下载创作者的所有帖子\n%1$s+ 独有功能）</string>
@@ -177,6 +183,8 @@
     <string name="queue_empty_description">当您选择下载时，它将排队并按顺序下载。</string>
     <string name="queue_added">已添加到下载队列</string>
     <string name="queue_added_action">确认</string>
+    <string name="queue_saving">保存…</string>
+    <string name="queue_item_post">整篇文章</string>
 
     <!-- PostDetail -->
     <string name="post_detail_title">投稿详细信息</string>

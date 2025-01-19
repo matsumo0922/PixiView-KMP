@@ -7,6 +7,7 @@ import androidx.navigation.NavGraphBuilder
 import androidx.navigation.NavType
 import androidx.navigation.compose.composable
 import androidx.navigation.navArgument
+import androidx.navigation.navDeepLink
 import me.matsumo.fanbox.core.ui.extensition.navigateWithLog
 import me.matsumo.fanbox.core.ui.view.SimpleAlertContents
 import me.matsumo.fankt.fanbox.domain.model.id.FanboxCreatorId
@@ -33,8 +34,16 @@ fun NavGraphBuilder.creatorTopScreen(
         route = CreatorTopRoute,
         arguments = listOf(
             navArgument(CreatorTopId) { type = NavType.StringType },
-            navArgument(CreatorTopIsPosts) { type = NavType.BoolType },
+            navArgument(CreatorTopIsPosts) {
+                type = NavType.BoolType
+                defaultValue = true
+            },
         ),
+        deepLinks = listOf(
+            navDeepLink { uriPattern = "https://www.fanbox.cc/@{$CreatorTopId}" },
+            navDeepLink { uriPattern = "https://{$CreatorTopId}.fanbox.cc/" },
+            navDeepLink { uriPattern = "https://{$CreatorTopId}.fanbox.cc" },
+        )
     ) {
         CreatorTopRoute(
             modifier = Modifier.fillMaxSize(),

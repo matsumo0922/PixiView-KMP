@@ -63,14 +63,30 @@
                 <data android:host="matsumo0922.github.io" />
             </intent-filter>
 
-            <intent-filter android:autoVerify="true">
+            <intent-filter android:autoVerify="false">
                 <action android:name="android.intent.action.VIEW" />
 
                 <category android:name="android.intent.category.DEFAULT" />
                 <category android:name="android.intent.category.BROWSABLE" />
 
-                <data android:scheme="https" />
-                <data android:host="*.fanbox.cc" />
+                <!-- パターン1: https://{any}.fanbox.cc/posts/{$PostDetailId} -->
+                <data android:scheme="https"/>
+                <data android:host="*.fanbox.cc"/>
+                <data android:pathPattern="/posts/.*"/>
+
+                <!-- パターン2: https://www.fanbox.cc/@{$CreatorTopId} -->
+                <data android:scheme="https"/>
+                <data android:host="*.fanbox.cc"/>
+                <data android:pathPattern="/@.*"/>
+
+                <!-- パターン3: https://{$CreatorTopId}.fanbox.cc/ -->
+                <data android:scheme="https"/>
+                <data android:host="*.fanbox.cc"/>
+                <data android:pathPattern="/"/>
+
+                <!-- パターン4: https://{$CreatorTopId}.fanbox.cc -->
+                <data android:scheme="https"/>
+                <data android:host="*.fanbox.cc"/>
             </intent-filter>
         </activity>
 

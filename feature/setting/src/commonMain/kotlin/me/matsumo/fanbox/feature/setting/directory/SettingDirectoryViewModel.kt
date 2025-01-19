@@ -22,7 +22,7 @@ class SettingDirectoryViewModel(
             SettingDirectoryUiState(
                 imageDirectory = downloadPostsRepository.getSaveDirectory(FanboxDownloadItems.RequestType.Image),
                 fileDirectory = downloadPostsRepository.getSaveDirectory(FanboxDownloadItems.RequestType.File),
-                postDirectory = downloadPostsRepository.getSaveDirectory(FanboxDownloadItems.RequestType.Post("\${creatorName}")),
+                postDirectory = downloadPostsRepository.getSaveDirectory(FanboxDownloadItems.RequestType.Post(null, false)),
             ),
         )
     }.stateIn(
