@@ -45,8 +45,10 @@ import me.matsumo.fanbox.feature.post.image.navigateToPostImage
 import me.matsumo.fanbox.feature.post.image.postImageScreen
 import me.matsumo.fanbox.feature.post.queue.downloadQueueScreen
 import me.matsumo.fanbox.feature.post.queue.navigateToDownloadQueue
-import me.matsumo.fanbox.feature.post.search.navigateToPostSearch
-import me.matsumo.fanbox.feature.post.search.postSearchScreen
+import me.matsumo.fanbox.feature.post.search.common.navigateToPostSearch
+import me.matsumo.fanbox.feature.post.search.common.postSearchScreen
+import me.matsumo.fanbox.feature.post.search.creator.navigateToPostByCreatorSearch
+import me.matsumo.fanbox.feature.post.search.creator.postByCreatorSearchScreen
 import me.matsumo.fanbox.feature.setting.developer.navigateToSettingDeveloper
 import me.matsumo.fanbox.feature.setting.developer.settingDeveloperDialog
 import me.matsumo.fanbox.feature.setting.directory.navigateToSettingDirectory
@@ -109,6 +111,7 @@ private fun NavGraphBuilder.applyNavGraph(
     libraryScreen(
         navHostController = bottomNavigationNavController,
         navigateToPostSearch = { mainNavController.navigateToPostSearch() },
+        navigateToPostByCreatorSearch = { mainNavController.navigateToPostByCreatorSearch(it) },
         navigateToPostDetailFromHome = { subNavController.navigateToPostDetail(it, PostDetailPagingType.Home) },
         navigateToPostDetailFromSupported = { subNavController.navigateToPostDetail(it, PostDetailPagingType.Supported) },
         navigateToCreatorPosts = { mainNavController.navigateToCreatorTop(it, isPosts = true) },
@@ -152,6 +155,13 @@ private fun NavGraphBuilder.applyNavGraph(
         terminate = { mainNavController.popBackStack() },
     )
 
+    postByCreatorSearchScreen(
+        navigateToPostDetail = { subNavController.navigateToPostDetail(it, PostDetailPagingType.Creator) },
+        navigateToCreatorPosts = { mainNavController.navigateToCreatorTop(it, isPosts = true) },
+        navigateToCreatorPlans = { mainNavController.navigateToCreatorTop(it) },
+        terminate = { mainNavController.popBackStack() },
+    )
+
     bookmarkedPostsScreen(
         navigateToPostDetail = { subNavController.navigateToPostDetail(it, PostDetailPagingType.Unknown) },
         navigateToCreatorPosts = { mainNavController.navigateToCreatorTop(it, isPosts = true) },
@@ -163,6 +173,7 @@ private fun NavGraphBuilder.applyNavGraph(
         navigateToPostDetail = { subNavController.navigateToPostDetail(it, PostDetailPagingType.Creator) },
         navigateToPostSearch = { query, creatorId -> mainNavController.navigateToPostSearch(tag = query, creatorId = creatorId) },
         navigateToBillingPlus = { mainNavController.navigateToBillingPlus(it) },
+        navigateToPostByCreatorSearch = { mainNavController.navigateToPostByCreatorSearch(it) },
         navigateToDownloadAll = { mainNavController.navigateToCreatorPostsDownload(it) },
         navigateToAlertDialog = { contents, onPositive, onNegative ->
             scope.launch {

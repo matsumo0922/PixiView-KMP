@@ -1,4 +1,4 @@
-package me.matsumo.fanbox.feature.post.search
+package me.matsumo.fanbox.feature.post.search.common
 
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
@@ -18,9 +18,9 @@ import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.toImmutableList
 import me.matsumo.fanbox.core.model.UserData
 import me.matsumo.fanbox.core.ui.extensition.NavigatorExtension
-import me.matsumo.fanbox.feature.post.search.items.PostSearchCreatorScreen
-import me.matsumo.fanbox.feature.post.search.items.PostSearchTagScreen
-import me.matsumo.fanbox.feature.post.search.items.PostSearchTopBar
+import me.matsumo.fanbox.feature.post.search.common.items.PostSearchCreatorScreen
+import me.matsumo.fanbox.feature.post.search.common.items.PostSearchTagScreen
+import me.matsumo.fanbox.feature.post.search.common.items.PostSearchTopBar
 import me.matsumo.fankt.fanbox.domain.model.FanboxCreatorDetail
 import me.matsumo.fankt.fanbox.domain.model.FanboxPost
 import me.matsumo.fankt.fanbox.domain.model.FanboxTag

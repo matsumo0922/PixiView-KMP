@@ -1,4 +1,4 @@
-package me.matsumo.fanbox.feature.post.search.paging
+package me.matsumo.fanbox.feature.post.search.common.paging
 
 import androidx.paging.PagingSource
 import androidx.paging.PagingState

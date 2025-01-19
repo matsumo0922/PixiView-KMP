@@ -45,13 +45,13 @@ class PostDetailViewModel(
     init {
         viewModelScope.launch {
             userDataRepository.userData.collectLatest { data ->
-                _screenState.value = screenState.updateWhenIdle { it.copy(userData = data) }
+                _screenState.updateWhenIdle { it.copy(userData = data) }
             }
         }
 
         viewModelScope.launch {
             fanboxRepository.bookmarkedPostsIds.collectLatest { bookmarkedPostsIds ->
-                _screenState.value = screenState.updateWhenIdle {
+                _screenState.updateWhenIdle {
                     it.copy(bookmarkedPostIds = bookmarkedPostsIds)
                 }
             }
@@ -82,7 +82,7 @@ class PostDetailViewModel(
 
         viewModelScope.launch {
             fanboxRepository.bookmarkedPostsIds.collectLatest { bookmarkedPosts ->
-                _screenState.value = screenState.updateWhenIdle {
+                _screenState.updateWhenIdle {
                     it.copy(postDetail = it.postDetail.copy(isBookmarked = it.postDetail.id in bookmarkedPosts))
                 }
             }
@@ -113,7 +113,7 @@ class PostDetailViewModel(
         viewModelScope.launch {
             val comments = fanboxRepository.getPostComment(postId, offset)
 
-            _screenState.value = screenState.updateWhenIdle {
+            _screenState.updateWhenIdle {
                 it.copy(
                     comments = PageOffsetInfo(
                         contents = it.comments.contents + comments.contents,

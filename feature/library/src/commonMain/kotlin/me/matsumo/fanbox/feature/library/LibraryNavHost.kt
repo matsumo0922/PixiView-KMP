@@ -23,11 +23,13 @@ fun LibraryNavHost(
     navController: NavHostController,
     openDrawer: () -> Unit,
     navigateToPostSearch: () -> Unit,
+    navigateToPostByCreatorSearch: (FanboxCreatorId) -> Unit,
     navigateToPostDetailFromHome: (postId: FanboxPostId) -> Unit,
     navigateToPostDetailFromSupported: (postId: FanboxPostId) -> Unit,
     navigateToCreatorPosts: (creatorId: FanboxCreatorId) -> Unit,
     navigateToCreatorPlans: (creatorId: FanboxCreatorId) -> Unit,
     navigateToSimpleAlert: (SimpleAlertContents) -> Unit,
+    navigateToBillingPlus: (String?) -> Unit,
     modifier: Modifier = Modifier,
     startDestination: String = LibraryHomeRoute,
     applyOtherRoutes: NavGraphBuilder.() -> Unit = {},
@@ -51,7 +53,9 @@ fun LibraryNavHost(
         libraryDiscoveryScreen(
             openDrawer = openDrawer,
             navigateToPostSearch = navigateToPostSearch,
+            navigateToPostByCreatorSearch = navigateToPostByCreatorSearch,
             navigateToCreatorPosts = navigateToCreatorPosts,
+            navigateToBillingPlus = navigateToBillingPlus,
         )
 
         libraryNotifyScreen(

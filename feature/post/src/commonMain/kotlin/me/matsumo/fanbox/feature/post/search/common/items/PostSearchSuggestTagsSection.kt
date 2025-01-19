@@ -1,4 +1,4 @@
-package me.matsumo.fanbox.feature.post.search.items
+package me.matsumo.fanbox.feature.post.search.common.items
 
 import androidx.compose.animation.animateContentSize
 import androidx.compose.foundation.clickable

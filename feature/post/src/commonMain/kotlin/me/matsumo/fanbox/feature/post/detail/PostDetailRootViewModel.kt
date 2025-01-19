@@ -30,7 +30,7 @@ class PostDetailRootViewModel(
 
     private val _uiState = MutableStateFlow(
         PostDetailRootUiState(
-            paging = null,
+            paging = emptyPaging(),
             userData = UserData.default(),
             bookmarkedPostIds = emptyList(),
         ),

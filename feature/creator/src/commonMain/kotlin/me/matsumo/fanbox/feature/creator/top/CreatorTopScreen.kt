@@ -109,6 +109,7 @@ internal fun CreatorTopRoute(
     isPosts: Boolean,
     navigateToPostDetail: (FanboxPostId) -> Unit,
     navigateToPostSearch: (String, FanboxCreatorId) -> Unit,
+    navigateToPostByCreatorSearch: (FanboxCreatorId) -> Unit,
     navigateToDownloadAll: (FanboxCreatorId) -> Unit,
     navigateToBillingPlus: (String?) -> Unit,
     navigateToAlertDialog: (SimpleAlertContents, () -> Unit, () -> Unit) -> Unit,
@@ -159,8 +160,9 @@ internal fun CreatorTopRoute(
                 creatorPlans = uiState.creatorPlans.toImmutableList(),
                 creatorTags = uiState.creatorTags.toImmutableList(),
                 creatorPostsPaging = creatorPostsPaging,
+                onClickSearch = navigateToPostByCreatorSearch,
                 onClickAllDownload = navigateToDownloadAll,
-                onClickBillingPlus = { navigateToBillingPlus.invoke("all_download") },
+                onClickBillingPlus = { navigateToBillingPlus.invoke(it) },
                 onClickPost = navigateToPostDetail,
                 onClickPlan = { navigatorExtension.navigateToWebPage(it.planBrowserUrl, CreatorTopRoute) },
                 onClickTag = { navigateToPostSearch.invoke(it.name, uiState.creatorDetail.creatorId) },
@@ -215,8 +217,9 @@ private fun CreatorTopScreen(
     creatorPlans: ImmutableList<FanboxCreatorPlan>,
     creatorTags: ImmutableList<FanboxTag>,
     creatorPostsPaging: LazyPagingItems<FanboxPost>,
+    onClickSearch: (FanboxCreatorId) -> Unit,
     onClickAllDownload: (FanboxCreatorId) -> Unit,
-    onClickBillingPlus: () -> Unit,
+    onClickBillingPlus: (String?) -> Unit,
     onClickPost: (FanboxPostId) -> Unit,
     onClickPostLike: (FanboxPostId) -> Unit,
     onClickPostBookmark: (FanboxPost, Boolean) -> Unit,
@@ -398,8 +401,14 @@ private fun CreatorTopScreen(
             windowInsets = WindowInsets(0, 0, 0, 0),
             revealState = revealState,
             onClickNavigation = onTerminate,
-            onClickSearch = { /* do nothing */ },
             onClickActions = { isShowMenuDialog = true },
+            onClickSearch = {
+                if (userData.hasPrivilege) {
+                    onClickSearch.invoke(creatorDetail.creatorId)
+                } else {
+                    onClickBillingPlus.invoke("search_post_by_creator")
+                }
+            },
         )
 
         AnimatedVisibility(
@@ -443,7 +452,7 @@ private fun CreatorTopScreen(
                 isShowRewardAdDialog = false
             },
             onClickShowPlus = {
-                onClickBillingPlus.invoke()
+                onClickBillingPlus.invoke("all_download")
                 isShowRewardAdDialog = false
             },
             onDismissRequest = { isShowRewardAdDialog = false },

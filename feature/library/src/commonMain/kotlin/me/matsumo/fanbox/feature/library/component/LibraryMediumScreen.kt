@@ -32,6 +32,7 @@ internal fun LibraryMediumScreen(
     snackbarHostState: SnackbarHostState,
     navController: NavHostController,
     navigateToPostSearch: () -> Unit,
+    navigateToPostByCreatorSearch: (FanboxCreatorId) -> Unit,
     navigateToPostDetailFromHome: (postId: FanboxPostId) -> Unit,
     navigateToPostDetailFromSupported: (postId: FanboxPostId) -> Unit,
     navigateToCreatorPosts: (creatorId: FanboxCreatorId) -> Unit,
@@ -96,11 +97,13 @@ internal fun LibraryMediumScreen(
                             }
                         },
                         navigateToPostSearch = navigateToPostSearch,
+                        navigateToPostByCreatorSearch = navigateToPostByCreatorSearch,
                         navigateToPostDetailFromHome = navigateToPostDetailFromHome,
                         navigateToPostDetailFromSupported = navigateToPostDetailFromSupported,
                         navigateToCreatorPosts = navigateToCreatorPosts,
                         navigateToCreatorPlans = navigateToCreatorPlans,
                         navigateToSimpleAlert = navigateToCancelPlus,
+                        navigateToBillingPlus = navigateToBillingPlus,
                     )
                 }
             }

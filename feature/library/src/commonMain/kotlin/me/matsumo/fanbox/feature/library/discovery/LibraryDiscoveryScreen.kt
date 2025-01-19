@@ -38,6 +38,7 @@ import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.toImmutableList
 import kotlinx.coroutines.launch
 import me.matsumo.fanbox.core.model.ScreenState
+import me.matsumo.fanbox.core.model.UserData
 import me.matsumo.fanbox.core.resources.Res
 import me.matsumo.fanbox.core.resources.creator_following_pixiv
 import me.matsumo.fanbox.core.resources.creator_recommended
@@ -63,7 +64,9 @@ import org.koin.compose.viewmodel.koinViewModel
 internal fun LibraryDiscoveryRoute(
     openDrawer: () -> Unit,
     navigateToPostSearch: () -> Unit,
+    navigateToPostByCreatorSearch: (FanboxCreatorId) -> Unit,
     navigateToCreatorPosts: (FanboxCreatorId) -> Unit,
+    navigateToBillingPlus: (String?) -> Unit,
     modifier: Modifier = Modifier,
     viewModel: LibraryDiscoveryViewModel = koinViewModel(),
     navigatorExtension: NavigatorExtension = koinInject(),
@@ -83,16 +86,19 @@ internal fun LibraryDiscoveryRoute(
     ) { uiState ->
         LibraryDiscoveryScreen(
             modifier = Modifier.fillMaxSize(),
+            userData = uiState.userData,
             followingCreators = uiState.followingCreators.toImmutableList(),
             recommendedCreators = uiState.recommendedCreators.toImmutableList(),
             followingPixivCreators = uiState.followingPixivCreators.toImmutableList(),
             openDrawer = openDrawer,
             fetch = viewModel::fetch,
             onClickSearch = navigateToPostSearch,
+            onClickPostByCreatorSearch = navigateToPostByCreatorSearch,
             onClickCreator = navigateToCreatorPosts,
             onClickFollow = viewModel::follow,
             onClickUnfollow = viewModel::unfollow,
             onClickSupporting = { navigatorExtension.navigateToWebPage(it, LibraryDiscoveryRoute) },
+            onClickBillingPlus = navigateToBillingPlus,
         )
     }
 }
@@ -100,16 +106,19 @@ internal fun LibraryDiscoveryRoute(
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 private fun LibraryDiscoveryScreen(
+    userData: UserData,
     followingCreators: ImmutableList<FanboxCreatorDetail>,
     recommendedCreators: ImmutableList<FanboxCreatorDetail>,
     followingPixivCreators: ImmutableList<FanboxCreatorDetail>,
     openDrawer: () -> Unit,
     fetch: () -> Unit,
     onClickSearch: () -> Unit,
+    onClickPostByCreatorSearch: (FanboxCreatorId) -> Unit,
     onClickCreator: (FanboxCreatorId) -> Unit,
     onClickFollow: suspend (FanboxUserId) -> Result<Unit>,
     onClickUnfollow: suspend (FanboxUserId) -> Result<Unit>,
     onClickSupporting: (String) -> Unit,
+    onClickBillingPlus: (String?) -> Unit,
     modifier: Modifier = Modifier,
 ) {
     val navigationType = LocalNavigationType.current.type
@@ -166,11 +175,17 @@ private fun LibraryDiscoveryScreen(
                         items = followingCreators.take(5),
                         key = { item -> "search-${item.creatorId.value}" },
                         span = { GridItemSpan(maxLineSpan) },
-                    ) {
+                    ) { creatorDetail ->
                         LibraryDiscoverySearchPostCreatorItem(
                             modifier = Modifier.fillMaxWidth(),
-                            creatorDetail = it,
-                            onSearchPostClicked = onClickCreator,
+                            creatorDetail = creatorDetail,
+                            onSearchPostClicked = {
+                                if (userData.hasPrivilege) {
+                                    onClickPostByCreatorSearch.invoke(it)
+                                } else {
+                                    onClickBillingPlus.invoke("search_post_by_creator")
+                                }
+                            },
                         )
                     }
 

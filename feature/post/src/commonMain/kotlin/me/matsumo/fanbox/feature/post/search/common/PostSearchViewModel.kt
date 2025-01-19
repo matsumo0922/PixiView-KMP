@@ -1,4 +1,4 @@
-package me.matsumo.fanbox.feature.post.search
+package me.matsumo.fanbox.feature.post.search.common
 
 import androidx.compose.runtime.Stable
 import androidx.lifecycle.ViewModel

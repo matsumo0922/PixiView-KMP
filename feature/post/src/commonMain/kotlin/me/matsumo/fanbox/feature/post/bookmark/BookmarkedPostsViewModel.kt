@@ -29,7 +29,7 @@ class BookmarkedPostsViewModel(
     init {
         viewModelScope.launch {
             fanboxRepository.bookmarkedPostsIds.collectLatest {
-                _screenState.value = screenState.updateWhenIdle { data ->
+                _screenState.updateWhenIdle { data ->
                     data.copy(bookmarkedPostIds = it)
                 }
             }
@@ -66,7 +66,7 @@ class BookmarkedPostsViewModel(
                 }
             }
 
-            _screenState.value = screenState.updateWhenIdle { it.copy(posts = result) }
+            _screenState.updateWhenIdle { it.copy(posts = result) }
         }
     }
 

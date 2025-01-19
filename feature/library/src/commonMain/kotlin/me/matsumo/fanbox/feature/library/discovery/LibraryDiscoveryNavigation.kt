@@ -18,7 +18,9 @@ fun NavController.navigateToLibraryDiscovery(navOptions: NavOptions? = null) {
 fun NavGraphBuilder.libraryDiscoveryScreen(
     openDrawer: () -> Unit,
     navigateToPostSearch: () -> Unit,
+    navigateToPostByCreatorSearch: (FanboxCreatorId) -> Unit,
     navigateToCreatorPosts: (FanboxCreatorId) -> Unit,
+    navigateToBillingPlus: (String?) -> Unit,
 ) {
     composable(
         route = LibraryDiscoveryRoute,
@@ -27,7 +29,9 @@ fun NavGraphBuilder.libraryDiscoveryScreen(
             modifier = Modifier.fillMaxSize(),
             openDrawer = openDrawer,
             navigateToPostSearch = navigateToPostSearch,
+            navigateToPostByCreatorSearch = navigateToPostByCreatorSearch,
             navigateToCreatorPosts = navigateToCreatorPosts,
+            navigateToBillingPlus = navigateToBillingPlus,
         )
     }
 }

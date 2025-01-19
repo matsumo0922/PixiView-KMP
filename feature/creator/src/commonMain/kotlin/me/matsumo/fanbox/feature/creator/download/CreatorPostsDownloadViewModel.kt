@@ -77,7 +77,7 @@ class CreatorPostsDownloadViewModel(
                 )
             }
 
-        _screenState.value = _screenState.updateWhenIdle {
+        _screenState.updateWhenIdle {
             it.copy(
                 posts = data,
                 targetPosts = data,
@@ -95,7 +95,7 @@ class CreatorPostsDownloadViewModel(
     fun updateIgnoreKeyword(ignoreKeyword: String) {
         val keywords = ignoreKeyword.split(",").map { it.trim() }.filter { it.isNotBlank() }
 
-        _screenState.value = _screenState.updateWhenIdle {
+        _screenState.updateWhenIdle {
             it.copy(
                 targetPosts = it.posts.filter { post ->
                     keywords.none { keyword -> (post.post.title + post.post.excerpt).contains(keyword, ignoreCase = true) }
@@ -106,7 +106,7 @@ class CreatorPostsDownloadViewModel(
     }
 
     fun updateIgnoreFreePosts(isIgnoreFreePosts: Boolean) {
-        _screenState.value = _screenState.updateWhenIdle {
+        _screenState.updateWhenIdle {
             it.copy(
                 targetPosts = it.posts.filter { post -> post.post.feeRequired != 0 },
                 isIgnoreFreePosts = isIgnoreFreePosts,
@@ -115,7 +115,7 @@ class CreatorPostsDownloadViewModel(
     }
 
     fun updateIgnoreFiles(isIgnoreFiles: Boolean) {
-        _screenState.value = _screenState.updateWhenIdle {
+        _screenState.updateWhenIdle {
             it.copy(
                 targetPosts = it.posts.filter { post -> post.post.cover != null },
                 isIgnoreFiles = isIgnoreFiles,

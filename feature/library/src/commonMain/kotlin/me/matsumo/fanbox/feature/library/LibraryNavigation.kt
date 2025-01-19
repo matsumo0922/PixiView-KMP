@@ -20,6 +20,7 @@ fun NavController.navigateToLibrary() {
 fun NavGraphBuilder.libraryScreen(
     navHostController: NavHostController,
     navigateToPostSearch: () -> Unit,
+    navigateToPostByCreatorSearch: (FanboxCreatorId) -> Unit,
     navigateToPostDetailFromHome: (postId: FanboxPostId) -> Unit,
     navigateToPostDetailFromSupported: (postId: FanboxPostId) -> Unit,
     navigateToCreatorPosts: (creatorId: FanboxCreatorId) -> Unit,
@@ -39,6 +40,7 @@ fun NavGraphBuilder.libraryScreen(
             modifier = Modifier.fillMaxSize(),
             navHostController = navHostController,
             navigateToPostSearch = navigateToPostSearch,
+            navigateToPostByCreatorSearch = navigateToPostByCreatorSearch,
             navigateToPostDetailFromHome = navigateToPostDetailFromHome,
             navigateToPostDetailFromSupported = navigateToPostDetailFromSupported,
             navigateToCreatorPosts = navigateToCreatorPosts,

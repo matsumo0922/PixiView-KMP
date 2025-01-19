@@ -28,6 +28,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -63,9 +64,11 @@ fun CreatorItem(
     onClickSupporting: (String) -> Unit,
     modifier: Modifier = Modifier,
     isFollowed: Boolean = creatorDetail.isFollowed,
+    isShowCoverImage: Boolean = true,
+    isShowDescription: Boolean = true,
 ) {
-    var isEllipsized by remember { mutableStateOf(false) }
-    var isDisplayedAll by remember { mutableStateOf(false) }
+    var isEllipsized by rememberSaveable { mutableStateOf(false) }
+    var isDisplayedAll by rememberSaveable { mutableStateOf(false) }
 
     Card(
         modifier = modifier
@@ -74,42 +77,44 @@ fun CreatorItem(
         shape = RoundedCornerShape(8.dp),
         colors = CardDefaults.cardColors(MaterialTheme.colorScheme.surfaceColorAtElevation(2.dp)),
     ) {
-        if (creatorDetail.coverImageUrl != null) {
-            SubcomposeAsyncImage(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .aspectRatio(16 / 9f)
-                    .clip(RoundedCornerShape(4.dp)),
-                model = ImageRequest.Builder(LocalPlatformContext.current)
-                    .fanboxHeader()
-                    .data(creatorDetail.coverImageUrl)
-                    .build(),
-                loading = {
-                    SimmerPlaceHolder()
-                },
-                contentScale = ContentScale.Crop,
-                contentDescription = null,
-            )
-        } else if (creatorDetail.profileItems.isNotEmpty()) {
-            HorizontalPager(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .aspectRatio(16 / 9f)
-                    .clip(RoundedCornerShape(4.dp)),
-                state = rememberPagerState { creatorDetail.profileItems.size },
-            ) {
+        if (isShowCoverImage) {
+            if (creatorDetail.coverImageUrl != null) {
                 SubcomposeAsyncImage(
-                    modifier = Modifier.fillMaxWidth(),
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .aspectRatio(16 / 9f)
+                        .clip(RoundedCornerShape(4.dp)),
                     model = ImageRequest.Builder(LocalPlatformContext.current)
                         .fanboxHeader()
-                        .data(creatorDetail.profileItems[it].thumbnailUrl)
+                        .data(creatorDetail.coverImageUrl)
                         .build(),
                     loading = {
-                        FadePlaceHolder()
+                        SimmerPlaceHolder()
                     },
                     contentScale = ContentScale.Crop,
                     contentDescription = null,
                 )
+            } else if (creatorDetail.profileItems.isNotEmpty()) {
+                HorizontalPager(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .aspectRatio(16 / 9f)
+                        .clip(RoundedCornerShape(4.dp)),
+                    state = rememberPagerState { creatorDetail.profileItems.size },
+                ) {
+                    SubcomposeAsyncImage(
+                        modifier = Modifier.fillMaxWidth(),
+                        model = ImageRequest.Builder(LocalPlatformContext.current)
+                            .fanboxHeader()
+                            .data(creatorDetail.profileItems[it].thumbnailUrl)
+                            .build(),
+                        loading = {
+                            FadePlaceHolder()
+                        },
+                        contentScale = ContentScale.Crop,
+                        contentDescription = null,
+                    )
+                }
             }
         }
 
@@ -128,7 +133,7 @@ fun CreatorItem(
                 onClickSupporting = onClickSupporting,
             )
 
-            if (creatorDetail.description.isNotBlank()) {
+            if (creatorDetail.description.isNotBlank() && isShowDescription) {
                 Row(
                     modifier = Modifier.fillMaxWidth(),
                     verticalAlignment = Alignment.CenterVertically,

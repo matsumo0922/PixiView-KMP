@@ -1,7 +1,9 @@
 package me.matsumo.fanbox.core.model
 
 import androidx.compose.runtime.Stable
+import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.update
 import org.jetbrains.compose.resources.StringResource
 
 @Stable
@@ -19,9 +21,14 @@ sealed class ScreenState<out T> {
 }
 
 fun <T> ScreenState<T>.updateWhenIdle(action: (T) -> T): ScreenState<T> {
-    return if (this is ScreenState.Idle) ScreenState.Idle(action(data)) else this
+    return if (this is ScreenState.Idle) {
+        val newData = action(data)
+        ScreenState.Idle(newData)
+    } else {
+        this
+    }
 }
 
-fun <T> StateFlow<ScreenState<T>>.updateWhenIdle(action: (T) -> T): ScreenState<T> {
-    return this.value.updateWhenIdle(action)
+fun <T> MutableStateFlow<ScreenState<T>>.updateWhenIdle(action: (T) -> T) {
+    update { this.value.updateWhenIdle(action) }
 }

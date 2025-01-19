@@ -1,4 +1,4 @@
-package me.matsumo.fanbox.feature.post.search.items
+package me.matsumo.fanbox.feature.post.search.common.items
 
 import androidx.compose.animation.animateColorAsState
 import androidx.compose.animation.core.FastOutLinearInEasing
@@ -45,17 +45,19 @@ import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.SpanStyle
+import androidx.compose.ui.text.TextRange
 import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.OffsetMapping
+import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.text.input.TransformedText
 import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.unit.dp
 import me.matsumo.fanbox.core.resources.Res
 import me.matsumo.fanbox.core.resources.post_search_placeholder
-import me.matsumo.fanbox.feature.post.search.PostSearchMode
-import me.matsumo.fanbox.feature.post.search.PostSearchQuery
-import me.matsumo.fanbox.feature.post.search.parseQuery
+import me.matsumo.fanbox.feature.post.search.common.PostSearchMode
+import me.matsumo.fanbox.feature.post.search.common.PostSearchQuery
+import me.matsumo.fanbox.feature.post.search.common.parseQuery
 import org.jetbrains.compose.resources.stringResource
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -67,12 +69,20 @@ internal fun PostSearchTopBar(
     onClickTerminate: () -> Unit,
     onClickSearch: (PostSearchQuery) -> Unit,
     modifier: Modifier = Modifier,
+    onQueryChanged: (String) -> Unit = {}
 ) {
     val keyboardController = LocalSoftwareKeyboardController.current
     val focusManager = LocalFocusManager.current
 
-    var queryText by rememberSaveable(query) { mutableStateOf(query) }
     val focusRequester = remember { FocusRequester() }
+    var queryText by remember(query) {
+        mutableStateOf(
+            TextFieldValue(
+                text = query,
+                selection = TextRange(query.length),
+            )
+        )
+    }
 
     val colorTransitionFraction = scrollBehavior?.state?.overlappedFraction ?: 0f
     val fraction = if (colorTransitionFraction > 0.01f) 1f else 0f
@@ -89,6 +99,11 @@ internal fun PostSearchTopBar(
     LaunchedEffect(true) {
         if (initialQuery.isEmpty()) {
             focusRequester.requestFocus()
+        } else {
+            queryText = TextFieldValue(
+                text = initialQuery,
+                selection = TextRange(initialQuery.length),
+            )
         }
     }
 
@@ -108,11 +123,14 @@ internal fun PostSearchTopBar(
                         .focusRequester(focusRequester)
                         .fillMaxWidth(),
                     value = queryText,
-                    onValueChange = { queryText = it },
+                    onValueChange = {
+                        queryText = it
+                        onQueryChanged.invoke(it.text)
+                    },
                     keyboardOptions = KeyboardOptions(imeAction = ImeAction.Search),
                     keyboardActions = KeyboardActions(
                         onSearch = {
-                            parseQuery(queryText).also {
+                            parseQuery(queryText.text).also {
                                 if (it.mode != PostSearchMode.Unknown) {
                                     keyboardController?.hide()
                                     focusManager.clearFocus()
@@ -131,7 +149,7 @@ internal fun PostSearchTopBar(
                             horizontalArrangement = Arrangement.spacedBy(16.dp),
                         ) {
                             Box(Modifier.weight(1f)) {
-                                if (queryText.isEmpty()) {
+                                if (queryText.text.isEmpty()) {
                                     Text(
                                         text = stringResource(Res.string.post_search_placeholder),
                                         style = MaterialTheme.typography.bodyLarge,
@@ -144,9 +162,9 @@ internal fun PostSearchTopBar(
 
                             Icon(
                                 modifier = Modifier
-                                    .alpha(if (queryText.isNotEmpty()) 1f else 0f)
+                                    .alpha(if (queryText.text.isNotEmpty()) 1f else 0f)
                                     .clip(CircleShape)
-                                    .clickable(queryText.isNotEmpty()) { queryText = "" },
+                                    .clickable(queryText.text.isNotEmpty()) { queryText = TextFieldValue("") },
                                 imageVector = Icons.Default.Clear,
                                 contentDescription = null,
                             )

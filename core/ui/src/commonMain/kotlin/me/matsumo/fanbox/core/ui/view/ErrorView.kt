@@ -50,22 +50,22 @@ fun ErrorView(
     val navigatorExtension = koinInject<NavigatorExtension>()
 
     Box(modifier) {
-        TopAppBar(
-            modifier = Modifier
-                .align(Alignment.TopCenter)
-                .fillMaxWidth(),
-            title = { /* nothing */ },
-            navigationIcon = {
-                if (terminate != null) {
+        if (terminate != null) {
+            TopAppBar(
+                modifier = Modifier
+                    .align(Alignment.TopCenter)
+                    .fillMaxWidth(),
+                title = { /* nothing */ },
+                navigationIcon = {
                     IconButton(terminate) {
                         Icon(
                             imageVector = Icons.AutoMirrored.Outlined.ArrowBackIos,
                             contentDescription = null,
                         )
                     }
-                }
-            },
-        )
+                },
+            )
+        }
 
         Column(
             modifier = Modifier.fillMaxSize()

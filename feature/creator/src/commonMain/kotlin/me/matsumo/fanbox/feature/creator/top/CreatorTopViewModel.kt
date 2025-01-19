@@ -45,13 +45,13 @@ class CreatorTopViewModel(
     init {
         viewModelScope.launch {
             userDataRepository.userData.collectLatest { data ->
-                _screenState.value = screenState.updateWhenIdle { it.copy(userData = data) }
+                _screenState.updateWhenIdle { it.copy(userData = data) }
             }
         }
 
         viewModelScope.launch {
             fanboxRepository.bookmarkedPostsIds.collectLatest { data ->
-                _screenState.value = screenState.updateWhenIdle { it.copy(bookmarkedPostsIds = data) }
+                _screenState.updateWhenIdle { it.copy(bookmarkedPostsIds = data) }
             }
         }
 
