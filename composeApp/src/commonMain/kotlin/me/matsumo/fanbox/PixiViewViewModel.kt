@@ -32,6 +32,7 @@ import me.matsumo.fanbox.core.resources.Res
 import me.matsumo.fanbox.core.resources.error_no_data
 import me.matsumo.fanbox.core.resources.home_app_lock_message
 import me.matsumo.fanbox.core.resources.home_app_lock_title
+import me.matsumo.fanbox.core.ui.extensition.getFanboxMetadataDummy
 import me.matsumo.fankt.fanbox.domain.model.FanboxMetaData
 import org.jetbrains.compose.resources.getString
 import kotlin.time.Duration.Companion.minutes
@@ -70,7 +71,7 @@ class PixiViewViewModel(
             MainUiState(
                 userData = userData,
                 sessionId = sessionId,
-                fanboxMetadata = fanboxRepository.getMetadata(),
+                fanboxMetadata = suspendRunCatching { fanboxRepository.getMetadata() }.getOrElse { getFanboxMetadataDummy() },
                 downloadState = downloadState,
                 isLoggedIn = isLoggedIn,
                 isAppLocked = if (userData.isUseAppLock) isAppLocked else false,

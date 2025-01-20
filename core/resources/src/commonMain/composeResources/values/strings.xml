@@ -49,6 +49,7 @@
     <string name="error_no_data_notify">Notification hasn't arrived yet.</string>
     <string name="error_no_data_payments">There is no payment history.</string>
     <string name="error_network">A communication error occurred</string>
+    <string name="error_network_description">Please check your network connection and try again.</string>
     <string name="error_paging">Unable to continue pagination</string>
     <string name="error_developing_feature">Feature under development</string>
     <string name="error_billing">Failed to retrieve purchase information</string>

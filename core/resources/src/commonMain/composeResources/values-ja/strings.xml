@@ -49,6 +49,7 @@
     <string name="error_no_data_payments">決済履歴はありません</string>
     <string name="error_no_data_notify">通知はまだ届いていません</string>
     <string name="error_network">通信エラーが発生しました</string>
+    <string name="error_network_description">通信環境をご確認の上、再度お試しください</string>
     <string name="error_paging">ページネーションを継続できません</string>
     <string name="error_developing_feature">開発中の機能です</string>
     <string name="error_billing">購入情報を取得できませんでした</string>

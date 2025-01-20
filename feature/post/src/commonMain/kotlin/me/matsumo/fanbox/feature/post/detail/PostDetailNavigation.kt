@@ -43,6 +43,7 @@ fun NavGraphBuilder.postDetailScreen(
             },
         ),
         deepLinks = listOf(
+            navDeepLink { uriPattern = "https://www.fanbox.cc/@{creatorId}/posts/{$PostDetailId}" },
             navDeepLink { uriPattern = "https://{creatorId}.fanbox.cc/posts/{$PostDetailId}" },
         ),
     ) {

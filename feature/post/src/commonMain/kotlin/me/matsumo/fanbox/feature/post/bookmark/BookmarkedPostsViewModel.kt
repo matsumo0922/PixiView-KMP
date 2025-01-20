@@ -14,6 +14,8 @@ import me.matsumo.fanbox.core.model.UserData
 import me.matsumo.fanbox.core.model.updateWhenIdle
 import me.matsumo.fanbox.core.repository.FanboxRepository
 import me.matsumo.fanbox.core.repository.UserDataRepository
+import me.matsumo.fanbox.core.resources.Res
+import me.matsumo.fanbox.core.resources.error_no_data
 import me.matsumo.fankt.fanbox.domain.model.FanboxPost
 import me.matsumo.fankt.fanbox.domain.model.id.FanboxPostId
 
@@ -39,12 +41,15 @@ class BookmarkedPostsViewModel(
     fun fetch() {
         viewModelScope.launch {
             _screenState.value = ScreenState.Loading
-            _screenState.value = ScreenState.Idle(
+            _screenState.value = suspendRunCatching {
                 LikedPostsUiState(
                     userData = userDataRepository.userData.first(),
                     posts = fanboxRepository.getBookmarkedPosts(),
                     bookmarkedPostIds = fanboxRepository.bookmarkedPostsIds.first(),
-                ),
+                )
+            }.fold(
+                onSuccess = { ScreenState.Idle(it) },
+                onFailure = { ScreenState.Error(Res.string.error_no_data) },
             )
         }
     }

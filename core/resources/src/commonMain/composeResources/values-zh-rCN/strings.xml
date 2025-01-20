@@ -49,6 +49,7 @@
     <string name="error_no_data_notify">没有新通知</string>
     <string name="error_no_data_payments">没有历史支付记录</string>
     <string name="error_network">发生网络错误</string>
+    <string name="error_network_description">请检查您的网络连接并重试</string>
     <string name="error_paging">无法继续翻页</string>
     <string name="error_developing_feature">功能正在开发中</string>
     <string name="error_billing">无法获取购买信息</string>

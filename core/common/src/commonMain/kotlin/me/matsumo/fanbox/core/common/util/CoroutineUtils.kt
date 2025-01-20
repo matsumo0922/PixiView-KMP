@@ -10,7 +10,7 @@ suspend fun <T> suspendRunCatching(block: suspend () -> T): Result<T> = try {
     Result.success(block())
 } catch (cancellationException: CancellationException) {
     throw cancellationException
-} catch (exception: Exception) {
+} catch (exception: Throwable) {
     Napier.i(exception) { "Failed to evaluate a suspendRunCatchingBlock. Returning failure Result" }
     Result.failure(exception)
 }

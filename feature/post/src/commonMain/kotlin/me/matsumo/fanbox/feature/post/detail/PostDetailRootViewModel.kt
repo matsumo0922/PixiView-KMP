@@ -44,6 +44,12 @@ class PostDetailRootViewModel(
                 _uiState.value = _uiState.value.copy(bookmarkedPostIds = it)
             }
         }
+
+        viewModelScope.launch {
+            userDataRepository.userData.collectLatest {
+                _uiState.value = _uiState.value.copy(userData = it)
+            }
+        }
     }
 
     fun fetch(type: PostDetailPagingType) {

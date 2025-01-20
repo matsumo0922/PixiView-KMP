@@ -122,10 +122,12 @@ class CreatorTopViewModel(
     fun postBookmark(post: FanboxPost, isBookmarked: Boolean) {
         viewModelScope.launch {
             (screenState.value as? ScreenState.Idle)?.also {
-                if (isBookmarked) {
-                    fanboxRepository.bookmarkPost(post)
-                } else {
-                    fanboxRepository.unbookmarkPost(post)
+                suspendRunCatching {
+                    if (isBookmarked) {
+                        fanboxRepository.bookmarkPost(post)
+                    } else {
+                        fanboxRepository.unbookmarkPost(post)
+                    }
                 }
             }
         }

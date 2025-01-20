@@ -6,6 +6,7 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
@@ -35,6 +36,7 @@ import me.matsumo.fanbox.core.resources.welcome_login_ready_message
 import me.matsumo.fanbox.core.resources.welcome_login_ready_title
 import me.matsumo.fanbox.core.resources.welcome_login_title
 import me.matsumo.fanbox.core.resources.welcome_login_toast_failed
+import me.matsumo.fanbox.core.ui.AsyncLoadContents
 import me.matsumo.fanbox.core.ui.extensition.LocalNavigationType
 import me.matsumo.fanbox.core.ui.extensition.LocalSnackbarHostState
 import me.matsumo.fanbox.core.ui.extensition.NavigatorExtension
@@ -59,7 +61,7 @@ internal fun WelcomeLoginScreen(
 ) {
     val snackbarHostState = LocalSnackbarHostState.current
     val navigationType = LocalNavigationType.current.type
-    val isLoggedIn by viewModel.isLoggedInFlow.collectAsStateWithLifecycle(false)
+    val screenState by viewModel.screenState.collectAsStateWithLifecycle()
     val isLoginError by viewModel.triggerLoginError.collectAsStateWithLifecycle(-1)
 
     LaunchedEffect(true) {
@@ -72,53 +74,31 @@ internal fun WelcomeLoginScreen(
         }
     }
 
-    if (isLoggedIn) {
-        LaunchedEffect(isLoggedIn) {
-            WelcomeLog.loggedIn()
-            navigateToHome.invoke()
+    AsyncLoadContents(
+        modifier = modifier,
+        screenState = screenState,
+        retryAction = { viewModel.fetchLoggedIn() },
+    ) {
+        if (it) {
+            LaunchedEffect(it) {
+                WelcomeLog.loggedIn()
+                navigateToHome.invoke()
+            }
         }
-    }
 
-    if (navigationType != PixiViewNavigationType.PermanentNavigationDrawer) {
-        Column(
-            modifier = modifier
-                .background(MaterialTheme.colorScheme.surface)
-                .padding(24.dp),
-            horizontalAlignment = Alignment.CenterHorizontally,
-        ) {
-            FirstSection()
-
-            SecondSection(
-                modifier = Modifier.weight(1f),
-                isLoggedIn = isLoggedIn,
-                navigateToLoginScreen = {
-                    viewModel.logout()
-                    navigateToLoginScreen.invoke()
-                },
-                navigateToHome = navigateToHome,
-                navigateToHelp = { navigatorExtension.navigateToWebPage(it, WelcomeLoginRoute) },
-                onSetSessionId = viewModel::setSessionId,
-            )
-        }
-    } else {
-        Row(
-            modifier = modifier
-                .background(MaterialTheme.colorScheme.surface)
-                .padding(24.dp),
-            verticalAlignment = Alignment.CenterVertically,
-        ) {
-            FirstSection(
-                modifier = Modifier.weight(1f),
-            )
-
-            Spacer(modifier = Modifier.width(24.dp))
-
-            Column(Modifier.weight(1f)) {
-                Box(Modifier.weight(2f))
+        if (navigationType != PixiViewNavigationType.PermanentNavigationDrawer) {
+            Column(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .background(MaterialTheme.colorScheme.surface)
+                    .padding(24.dp),
+                horizontalAlignment = Alignment.CenterHorizontally,
+            ) {
+                FirstSection()
 
                 SecondSection(
-                    modifier = Modifier.weight(3f),
-                    isLoggedIn = isLoggedIn,
+                    modifier = Modifier.weight(1f),
+                    isLoggedIn = it,
                     navigateToLoginScreen = {
                         viewModel.logout()
                         navigateToLoginScreen.invoke()
@@ -127,6 +107,36 @@ internal fun WelcomeLoginScreen(
                     navigateToHelp = { navigatorExtension.navigateToWebPage(it, WelcomeLoginRoute) },
                     onSetSessionId = viewModel::setSessionId,
                 )
+            }
+        } else {
+            Row(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .background(MaterialTheme.colorScheme.surface)
+                    .padding(24.dp),
+                verticalAlignment = Alignment.CenterVertically,
+            ) {
+                FirstSection(
+                    modifier = Modifier.weight(1f),
+                )
+
+                Spacer(modifier = Modifier.width(24.dp))
+
+                Column(Modifier.weight(1f)) {
+                    Box(Modifier.weight(2f))
+
+                    SecondSection(
+                        modifier = Modifier.weight(3f),
+                        isLoggedIn = it,
+                        navigateToLoginScreen = {
+                            viewModel.logout()
+                            navigateToLoginScreen.invoke()
+                        },
+                        navigateToHome = navigateToHome,
+                        navigateToHelp = { navigatorExtension.navigateToWebPage(it, WelcomeLoginRoute) },
+                        onSetSessionId = viewModel::setSessionId,
+                    )
+                }
             }
         }
     }

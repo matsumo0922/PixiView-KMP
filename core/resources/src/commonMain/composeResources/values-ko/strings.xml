@@ -47,6 +47,7 @@
     <string name="error_no_data_notify">알림이 아직 도착하지 않았습니다.</string>
     <string name="error_no_data_payments">결제 기록이 없습니다.</string>
     <string name="error_network">통신 과정에서 문제가 발생했습니다</string>
+    <string name="error_network_description">인터넷 연결을 확인하고 다시 시도해주세요</string>
     <string name="error_paging">페이징을 계속할 수 없습니다</string>
     <string name="error_developing_feature">개발 중인 기능입니다</string>
     <string name="error_billing">결제 정보를 가져오지 못했습니다</string>

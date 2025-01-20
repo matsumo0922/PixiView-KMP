@@ -111,15 +111,17 @@ class PostDetailViewModel(
 
     fun loadMoreComment(postId: FanboxPostId, offset: Int) {
         viewModelScope.launch {
-            val comments = fanboxRepository.getPostComment(postId, offset)
+            suspendRunCatching {
+                val comments = fanboxRepository.getPostComment(postId, offset)
 
-            _screenState.updateWhenIdle {
-                it.copy(
-                    comments = PageOffsetInfo(
-                        contents = it.comments.contents + comments.contents,
-                        offset = comments.offset,
-                    ),
-                )
+                _screenState.updateWhenIdle {
+                    it.copy(
+                        comments = PageOffsetInfo(
+                            contents = it.comments.contents + comments.contents,
+                            offset = comments.offset,
+                        ),
+                    )
+                }
             }
         }
     }

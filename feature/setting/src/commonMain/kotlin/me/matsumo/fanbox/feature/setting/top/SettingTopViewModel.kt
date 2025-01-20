@@ -23,6 +23,7 @@ import me.matsumo.fanbox.core.resources.Res
 import me.matsumo.fanbox.core.resources.error_no_data
 import me.matsumo.fanbox.core.resources.home_app_lock_message
 import me.matsumo.fanbox.core.resources.home_app_lock_title
+import me.matsumo.fanbox.core.ui.extensition.getFanboxMetadataDummy
 import me.matsumo.fankt.fanbox.domain.model.FanboxMetaData
 import org.jetbrains.compose.resources.getString
 
@@ -37,7 +38,7 @@ class SettingTopViewModel(
         ScreenState.Idle(
             SettingTopUiState(
                 userData = userData,
-                metaData = fanboxRepository.getMetadata(),
+                metaData = suspendRunCatching { fanboxRepository.getMetadata() }.getOrElse { getFanboxMetadataDummy() },
                 fanboxSessionId = sessionId ?: "unknown",
                 config = pixiViewConfig,
             ),

@@ -69,33 +69,35 @@ class DownloadPostsRepositoryImpl(
                     continue
                 }
 
-                val items = when (val type = downloadItems.requestType) {
-                    FanboxDownloadItems.RequestType.File -> downloadItems.items
-                    FanboxDownloadItems.RequestType.Image -> downloadItems.items
-                    is FanboxDownloadItems.RequestType.Post -> {
-                        val postDetail = fanboxRepository.getPostDetail(downloadItems.postId)
-                        val images = postDetail.body.imageItems.map { it.toDownloadItem() }
-                        val files = postDetail.body.fileItems.map { it.toDownloadItem() }
+                suspendRunCatching {
+                    val items = when (val type = downloadItems.requestType) {
+                        FanboxDownloadItems.RequestType.File -> downloadItems.items
+                        FanboxDownloadItems.RequestType.Image -> downloadItems.items
+                        is FanboxDownloadItems.RequestType.Post -> {
+                            val postDetail = fanboxRepository.getPostDetail(downloadItems.postId)
+                            val images = postDetail.body.imageItems.map { it.toDownloadItem() }
+                            val files = postDetail.body.fileItems.map { it.toDownloadItem() }
 
-                        images + if (type.isIgnoreFiles) emptyList() else files
-                    }
-                }
-
-                val itemProgresses = MutableList(items.size) { MutableStateFlow(0f) }
-                val data = items.mapIndexed { index, item ->
-                    async {
-                        downloadItem(item) { progress ->
-                            itemProgresses[index].value = progress
-
-                            _downloadState.value = DownloadState.Downloading(
-                                items = downloadItems,
-                                progress = itemProgresses.sumOf { it.value.toDouble() }.toFloat() / items.size,
-                            )
+                            images + if (type.isIgnoreFiles) emptyList() else files
                         }
                     }
-                }
 
-                saveFiles(downloadItems, data.awaitAll().filterNotNull())
+                    val itemProgresses = MutableList(items.size) { MutableStateFlow(0f) }
+                    val data = items.mapIndexed { index, item ->
+                        async {
+                            downloadItem(item) { progress ->
+                                itemProgresses[index].value = progress
+
+                                _downloadState.value = DownloadState.Downloading(
+                                    items = downloadItems,
+                                    progress = itemProgresses.sumOf { it.value.toDouble() }.toFloat() / items.size,
+                                )
+                            }
+                        }
+                    }
+
+                    saveFiles(downloadItems, data.awaitAll().filterNotNull())
+                }
             }
         }
     }
