@@ -4,27 +4,37 @@ FANBOXSESSIDとは、いわゆるpixivFANBOX内で使用されているセッシ
 そのため、セッションIDを手動で取得することはセキュリティリスクが高く、本来推奨されない方法です。可能であれば、アプリ内からのログインをお試しください。
 
 ## 1. 準備
-- PC
-- Chrome（他のブラウザでも可能ですがここでは説明しません）
+- スマートフォン（OS は問いませんが、今回は Android で説明します）
+- Firefox Browser
+  - https://play.google.com/store/apps/details?id=org.mozilla.firefox
 
 ## 2. FANBOXSESSIDを生成する
 先に説明したとおり、FANBOXSESSIDとはユーザーの認証状態を保持するためのIDです。そのため、まずはじめにpixivFANBOXへのログインを行い、FANBOXSESSIDを生成する必要があります。以下のログインでは、アプリではログインできなかったアカウント（アプリで使用したいアカウント）で行ってください。Google,Apple,X もしくは E-mail, Pixiv ID どの認証手段を用いても構いません。
 
-1. 用意したPCのChromeで [pixivFANBOX](https://www.fanbox.cc/)にアクセスする
+1. 用意したスマートフォンの Firefox Browser で [pixivFANBOX](https://www.fanbox.cc/) にアクセスする
 2. 右上に「ログイン」と言うボタンが表示されていたらクリックし、ログインを行う（ログイン済みであれば3へ）
 3. 支援しているクリエイターやフォローしているクリエイターの投稿を何件か見る
 
 ## 3. FANBOXSESSIDを取得する
-生成されたFANBOXSESSIDはCookieとしてPCに保存されています。これを取得する必要があります。以後の操作は先に説明したセキュリティリスクがあるため、細心の注意を払ってください。間違っても、FANBOXSESSIDが漏洩するような行為（ex: SNSに上げる, Yahoo知恵袋で質問する）は行わないでください。
+生成されたFANBOXSESSIDはCookieとしてブラウザに保存されています。これを取得する必要があります。以後の操作は先に説明したセキュリティリスクがあるため、細心の注意を払ってください。間違っても、FANBOXSESSIDが漏洩するような行為（ex: SNSに上げる, Yahoo知恵袋で質問する）は行わないでください。
 
-1. 開発者ツールを起動する（何もないところを右クリック→「検証」をクリック, もしくはF12キーを押す）
-2. 出てきたウィンドウの上部に並んでいるタブの中から「アプリケーション」もしくは「Application」を探してクリックする
-3. 左ペインの中から「Cookie」→「 https://www.fanbox.cc 」を探してクリックする
-4. Cookieが何個か表示されるので、名前の列から「FANBOXSESSID」を探し、「値」にある文字列をコピーする
+| Cookie Editor のインストール |
+| - |
+|![pixiview-sessionid-1](https://github.com/user-attachments/assets/66b6ee14-5d44-4ebb-b845-480b2de1de1e)|
 
-|手順2|手順3|手順4|
-|-|-|-|
-|![スクリーンショット 2024-03-10 015904](https://github.com/matsumo0922/PixiView-KMP/assets/56629437/6c775d2a-bb96-426a-9034-e3baa8841262)|![スクリーンショット 2024-03-10 015944](https://github.com/matsumo0922/PixiView-KMP/assets/56629437/0a9fec6a-2186-4fbc-8176-9bd3d9568c0b)|![スクリーンショット 2024-03-10 020035](https://github.com/matsumo0922/PixiView-KMP/assets/56629437/9567c16b-0fc1-4599-98e9-63fadc2272c6)|
+1. Firefox Browser を起動し、右上のメニューを表示する。
+2. 「拡張機能」をタップし、拡張機能一覧画面に遷移する。（場合によっては追加で「拡張機能マネージャー」をタップする必要があります）
+3. 下にスクロールし、「拡張機能を探す」ボタンをタップする。
+4. Firefox の拡張機能追加サイトに遷移するので、検索バーに「Cookie Editor」と入力し画像と同一の拡張機能をインストールする。
+
+| FANBOXSESSID の取得 |
+| - |
+|![pixiview-sessionid-2](https://github.com/user-attachments/assets/4e29a181-3761-459c-93f0-e5601601816b)|
+
+5. 再度 Firebox Browser で [pixivFANBOX](https://www.fanbox.cc/) にアクセスする。（この際、アプリでログインしたいアカウントでログイン済みであることを確認してください。）
+6. 右上のメニューから「拡張機能」をタップする。
+7. 先ほどインストールした「Cookie Editor」が表示されているはずなので、タップする。
+8. 「Cookie Editor」の拡張機能画面に遷移するので、「FANBOXSESSID」をタップし、「value」に値が表示されていることを確認する。
 
 ## 4. アプリでログインを行う
 コピーした値をメモするなりして記録した後、その文字列をそのままアプリに打ち込みます。このとき、余計な文字列（空白なども含む）は足さないでください。PCに表示されている値とアプリに記入した値が一致していることを確認したら、ログインボタンを押してください。FANBOXSESSIDの認証情報を用いてアプリが自動的にログインを行うはずです。「ログイン済みです」と表示されたら、ログインは正常に完了しています。そのままアプリの操作を続行してください。
