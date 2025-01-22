@@ -62,6 +62,7 @@
     <string name="error_service_status">サービス稼働状況</string>
     <string name="error_ad_load_failed">広告の読み込みに失敗しました</string>
     <string name="error_ad_load_failed_description">サービスの品質維持のために広告を表示しています。</string>
+    <string name="error_no_available_this_device">このデバイスでは利用できない機能です</string>
 
     <!-- Common Unit -->
     <string name="unit_day_before">%1$d日前</string>
@@ -354,8 +355,10 @@
     <string name="welcome_login_dialog_message">GoogleやX(Twitter)のOAuthを利用した認証はセキュリティ上の懸念により対応していません。\n\nメールアドレスとパスワードを直接入力してログインを行ってください。</string>
     <string name="welcome_login_debug_dialog_title">注意</string>
     <string name="welcome_login_debug_dialog_message">デバッグログインを実行しますか？\n\nデバッグアカウントは事前に準備されたアカウントで、通常ユーザーの挙動を模倣します。ステージング環境保全のため、一部操作ができないもしくはエラーになる場合があります。</string>
-    <string name="welcome_login_other_title">ログインできない場合</string>
+    <string name="welcome_login_other_title">FANBOXSESSID 直接入力</string>
     <string name="welcome_login_other_message">このアプリが動作するためには FANBOXSESSID というセッションIDが必要です。以下のリンクの手順に従って FANBOXSESSID を取得し、入力してください。</string>
+    <string name="welcome_login_web_help">ログインできない場合</string>
+    <string name="welcome_login_web_help_description">email と passwordを入力し、画面上ではログインできているにも関わらず、自動的に画面が切り替わらない場合のみ以下をお試しください。\n\nこのダイアログを一旦閉じ、ログインしていないと閲覧することができない情報があるページまで、画面上で遷移してください（ex: 支援しているクリエイターの投稿詳細画面）。\n\nその画面まで遷移したら再度画面下部の「ログインできない場合」のボタンを押し、このダイアログを表示してください。\n\nこの状態でダイアログ下部のログインボタンをタップしてください。WebView からログイン情報を取得し、ログインを試みます。</string>
     <string name="welcome_permission_title">権限</string>
     <string name="welcome_permission_message">アプリの利用には以下の権限が必要です\n下のボタンを押して権限を許可してください</string>
     <string name="welcome_permission_ready_title">準備完了</string>

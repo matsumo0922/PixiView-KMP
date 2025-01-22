@@ -50,6 +50,7 @@ import me.matsumo.fanbox.core.resources.domain_validation_request_button
 import me.matsumo.fanbox.core.resources.domain_validation_request_message
 import me.matsumo.fanbox.core.resources.domain_validation_request_never_ask
 import me.matsumo.fanbox.core.resources.domain_validation_request_title
+import me.matsumo.fanbox.core.resources.error_no_available_this_device
 import me.matsumo.fanbox.core.resources.error_unknown
 import me.matsumo.fanbox.core.ui.extensition.padding
 import me.matsumo.fanbox.core.ui.theme.bold
@@ -85,7 +86,7 @@ private fun RequestDomainVerification(
 ) {
     val scope = rememberCoroutineScope()
     var shouldRequest by remember { mutableStateOf(false) }
-    val errorMessage = stringResource(Res.string.error_unknown)
+    val errorMessage = stringResource(Res.string.error_no_available_this_device)
 
     LaunchedEffect(Unit) {
         val manager = activity.getSystemService(DomainVerificationManager::class.java)
