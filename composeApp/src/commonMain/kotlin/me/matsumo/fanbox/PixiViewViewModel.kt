@@ -62,7 +62,7 @@ class PixiViewViewModel(
         ),
     ) { flows ->
         val userData = flows[0] as UserData
-        val sessionId = flows[1] as String
+        val sessionId = flows[1] as String?
         val downloadState = flows[2] as DownloadState
         val isLoggedIn = flows[3] as Boolean
         val isAppLocked = flows[4] as Boolean
@@ -70,7 +70,7 @@ class PixiViewViewModel(
         ScreenState.Idle(
             MainUiState(
                 userData = userData,
-                sessionId = sessionId,
+                sessionId = sessionId.orEmpty(),
                 fanboxMetadata = suspendRunCatching { fanboxRepository.getMetadata() }.getOrElse { getFanboxMetadataDummy() },
                 downloadState = downloadState,
                 isLoggedIn = isLoggedIn,
@@ -111,6 +111,10 @@ class PixiViewViewModel(
 
     fun billingClientInitialize() {
         billingStatus.init()
+    }
+
+    fun billingClientFinish() {
+        billingStatus.finish()
     }
 
     fun billingClientUpdate() {

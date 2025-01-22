@@ -58,6 +58,7 @@
     <string name="error_service_status">서비스 운영 현황</string>
     <string name="error_ad_load_failed">광고를 로드하지 못했습니다.</string>
     <string name="error_ad_load_failed_description">서비스 품질 유지를 위해 광고를 게재하고 있습니다.</string>
+    <string name="error_no_available_this_device">이 기기에서는 사용할 수 없는 기능입니다</string>
 
     <!-- Common Unit -->
     <string name="unit_day_before">%1$d일 전</string>
@@ -343,8 +344,10 @@
     <string name="welcome_login_dialog_message">구글이나 X의 OAuth를 이용한 인증은 보안상의 문제로 인해 지원하지 않습니다.\n\n 이메일 주소와 비밀번호를 직접 입력하여 로그인하십시오.</string>
     <string name="welcome_login_debug_dialog_title">주의</string>
     <string name="welcome_login_debug_dialog_message">디버그 로그인을 실행하시겠습니까?\n\n디버그 계정은 미리 준비된 계정으로, 일반 사용자의 행동을 모방합니다. 스테이징 환경 보존을 위해 일부 조작이 불가능하거나 오류가 발생할 수 있습니다.</string>
-    <string name="welcome_login_other_title">로그인할 수 없는 경우</string>
-    <string name="welcome_login_other_message">이 앱이 작동하려면 FANBOXSESSID라는 세션 ID가 필요합니다. 아래 링크의 절차에 따라 FANBOXSESSID를 발급받아 입력하세요.</string>
+    <string name="welcome_login_other_title">FANBOXSESSID 직접 입력</string>
+    <string name="welcome_login_other_message">이 앱이 작동하려면 FANBOXSESSID라는 세션 ID가 필요합니다. 아래 링크의 지침에 따라 FANBOXSESSID를 얻은 후 입력해주세요.</string>
+    <string name="welcome_login_web_help">로그인할 수 없는 경우</string>
+    <string name="welcome_login_web_help_description">이메일과 비밀번호를 입력하고 화면에서 로그인된 것처럼 보이지만 화면이 자동으로 전환되지 않을 경우 아래 단계를 시도해보세요:\n\n이 대화 상자를 한 번 닫고 로그인하지 않으면 볼 수 없는 페이지(예: 후원 중인 창작자의 게시물 상세 페이지)로 화면을 이동하세요.\n\n그 화면으로 이동한 후 다시 화면 하단의 '로그인할 수 없는 경우' 버튼을 눌러 이 대화 상자를 표시해주세요.\n\n이 상태에서 대화 상자 하단의 로그인 버튼을 눌러주세요. WebView에서 로그인 정보를 가져와 로그인을 시도합니다."</string>
     <string name="welcome_permission_title">권한 설정</string>
     <string name="welcome_permission_message">이 앱을 이용하려면 다음 권한이 필요합니다.\n아래의 버튼을 눌러 권한을 허용해주세요</string>
     <string name="welcome_permission_ready_title">준비 완료</string>
