@@ -39,7 +39,7 @@ class SettingTopViewModel(
             SettingTopUiState(
                 userData = userData,
                 metaData = suspendRunCatching { fanboxRepository.getMetadata() }.getOrElse { getFanboxMetadataDummy() },
-                fanboxSessionId = sessionId ?: "unknown",
+                fanboxSessionId = sessionId ?: "Unknown",
                 config = pixiViewConfig,
             ),
         )

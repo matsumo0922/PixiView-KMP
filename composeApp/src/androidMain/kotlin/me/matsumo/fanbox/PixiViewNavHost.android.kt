@@ -6,6 +6,7 @@ import android.content.pm.verify.domain.DomainVerificationUserState
 import android.net.Uri
 import android.os.Build
 import android.provider.Settings
+import android.widget.Toast
 import androidx.activity.compose.LocalActivity
 import androidx.annotation.RequiresApi
 import androidx.compose.foundation.background
@@ -49,8 +50,10 @@ import me.matsumo.fanbox.core.resources.domain_validation_request_button
 import me.matsumo.fanbox.core.resources.domain_validation_request_message
 import me.matsumo.fanbox.core.resources.domain_validation_request_never_ask
 import me.matsumo.fanbox.core.resources.domain_validation_request_title
+import me.matsumo.fanbox.core.resources.error_unknown
 import me.matsumo.fanbox.core.ui.extensition.padding
 import me.matsumo.fanbox.core.ui.theme.bold
+import org.jetbrains.compose.resources.getString
 import org.jetbrains.compose.resources.stringResource
 import org.koin.compose.koinInject
 
@@ -82,6 +85,7 @@ private fun RequestDomainVerification(
 ) {
     val scope = rememberCoroutineScope()
     var shouldRequest by remember { mutableStateOf(false) }
+    val errorMessage = stringResource(Res.string.error_unknown)
 
     LaunchedEffect(Unit) {
         val manager = activity.getSystemService(DomainVerificationManager::class.java)
@@ -100,8 +104,13 @@ private fun RequestDomainVerification(
     if (shouldRequest) {
         RequestDomainVerificationDialog(
             onRequestClicked = {
-                activity.startActivity(Intent(Settings.ACTION_APP_OPEN_BY_DEFAULT_SETTINGS, Uri.parse("package:${activity.packageName}")))
-                shouldRequest = false
+                runCatching {
+                    activity.startActivity(Intent(Settings.ACTION_APP_OPEN_BY_DEFAULT_SETTINGS, Uri.parse("package:${activity.packageName}")))
+                }.onFailure {
+                    Toast.makeText(activity, errorMessage, Toast.LENGTH_SHORT).show()
+                }.onSuccess {
+                    shouldRequest = false
+                }
             },
             onCancelClicked = { isChecked ->
                 if (isChecked) {

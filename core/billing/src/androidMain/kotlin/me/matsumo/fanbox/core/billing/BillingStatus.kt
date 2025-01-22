@@ -29,6 +29,6 @@ class BillingStatusImpl(
     }
 
     override fun finish() {
-        // do nothing
+        billingClient.dispose()
     }
 }

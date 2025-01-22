@@ -129,24 +129,25 @@ fun PixiViewApp(
 
                 DisposableEffect(lifecycleOwner) {
                     val observer = object : DefaultLifecycleObserver {
-                        override fun onResume(owner: LifecycleOwner) {
-                            Napier.d { "onResume" }
+                        override fun onCreate(owner: LifecycleOwner) {
+                            viewModel.billingClientInitialize()
+                        }
 
+                        override fun onResume(owner: LifecycleOwner) {
                             viewModel.setAppLock(true)
                             viewModel.billingClientUpdate()
+                        }
+
+                        override fun onDestroy(owner: LifecycleOwner) {
+                            viewModel.billingClientFinish()
                         }
                     }
 
                     lifecycleOwner.lifecycle.addObserver(observer)
-
                     onDispose { lifecycleOwner.lifecycle.removeObserver(observer) }
                 }
             }
         }
-    }
-
-    LaunchedEffect(true) {
-        viewModel.billingClientInitialize()
     }
 }
 
