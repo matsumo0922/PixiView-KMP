@@ -147,12 +147,14 @@ internal fun WelcomeWebScreen(
                 Icon(
                     modifier = Modifier.size(18.dp),
                     imageVector = Icons.AutoMirrored.Outlined.HelpOutline,
+                    tint = MaterialTheme.colorScheme.onPrimary,
                     contentDescription = null,
                 )
 
                 Text(
                     modifier = Modifier.padding(start = 8.dp),
                     text = stringResource(Res.string.welcome_login_web_help),
+                    color = MaterialTheme.colorScheme.onPrimary,
                 )
             }
         },
