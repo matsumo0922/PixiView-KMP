@@ -37,6 +37,7 @@ import com.multiplatform.webview.web.LoadingState
 import com.multiplatform.webview.web.WebView
 import com.multiplatform.webview.web.rememberWebViewState
 import io.github.aakira.napier.Napier
+import kotlinx.collections.immutable.toImmutableList
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
@@ -185,7 +186,7 @@ internal fun WelcomeWebScreen(
     if (isDisplayHelpDialog) {
         WelcomeWebDialog(
             currentUrl = webViewState.lastLoadedUrl.orEmpty(),
-            currentCookies = currentCookies.map { "${it.name}=${it.value}" },
+            currentCookies = currentCookies.map { "${it.name}=${it.value}" }.toImmutableList(),
             onDismissRequest = { isDisplayHelpDialog = false },
             onClickLogin = {
                 scope.launch {

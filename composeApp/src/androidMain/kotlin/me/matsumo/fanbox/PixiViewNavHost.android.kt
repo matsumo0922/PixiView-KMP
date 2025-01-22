@@ -51,10 +51,8 @@ import me.matsumo.fanbox.core.resources.domain_validation_request_message
 import me.matsumo.fanbox.core.resources.domain_validation_request_never_ask
 import me.matsumo.fanbox.core.resources.domain_validation_request_title
 import me.matsumo.fanbox.core.resources.error_no_available_this_device
-import me.matsumo.fanbox.core.resources.error_unknown
 import me.matsumo.fanbox.core.ui.extensition.padding
 import me.matsumo.fanbox.core.ui.theme.bold
-import org.jetbrains.compose.resources.getString
 import org.jetbrains.compose.resources.stringResource
 import org.koin.compose.koinInject
 
