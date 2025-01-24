@@ -143,15 +143,15 @@ fun DrawerContent(
         }
 
         if (userData?.isTestUser == false) {
-        NavigationDrawerItem(
-            state = state,
-            isSelected = currentDestination.isLibraryDestinationInHierarchy(LibraryDestination.Message),
-            label = stringResource(Res.string.library_navigation_message),
-            icon = Icons.Outlined.Mail,
-            selectedIcon = Icons.Default.Mail,
-            onClick = { onClickLibrary.invoke(LibraryDestination.Message) },
-        )
-            }
+            NavigationDrawerItem(
+                state = state,
+                isSelected = currentDestination.isLibraryDestinationInHierarchy(LibraryDestination.Message),
+                label = stringResource(Res.string.library_navigation_message),
+                icon = Icons.Outlined.Mail,
+                selectedIcon = Icons.Default.Mail,
+                onClick = { onClickLibrary.invoke(LibraryDestination.Message) },
+            )
+        }
 
         HorizontalDivider(
             modifier = Modifier
