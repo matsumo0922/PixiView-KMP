@@ -79,6 +79,7 @@ internal fun LibraryExpandedScreen(
                 LibraryNavHost(
                     modifier = Modifier.fillMaxSize(),
                     navController = navController,
+                    userData = uiState.userData,
                     openDrawer = {
                         scope.launch {
                             drawerState.open()

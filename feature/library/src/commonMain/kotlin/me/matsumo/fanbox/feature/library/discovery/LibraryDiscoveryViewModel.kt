@@ -41,11 +41,15 @@ class LibraryDiscoveryViewModel(
         viewModelScope.launch {
             _screenState.value = ScreenState.Loading
             _screenState.value = suspendRunCatching {
+                val followingCreators = suspendRunCatching { fanboxRepository.getFollowingCreators() }.getOrElse { emptyList() }
+                val recommendedCreators = suspendRunCatching { fanboxRepository.getRecommendedCreators() }.getOrElse { emptyList() }
+                val followingPixivCreators = suspendRunCatching { fanboxRepository.getFollowingPixivCreators() }.getOrElse { emptyList() }
+
                 LibraryDiscoveryUiState(
                     userData = userDataRepository.userData.first(),
-                    followingCreators = fanboxRepository.getFollowingCreators().shuffled(),
-                    recommendedCreators = fanboxRepository.getRecommendedCreators(),
-                    followingPixivCreators = fanboxRepository.getFollowingPixivCreators(),
+                    followingCreators = followingCreators.shuffled(),
+                    recommendedCreators = recommendedCreators,
+                    followingPixivCreators = followingPixivCreators,
                 )
             }.fold(
                 onSuccess = { ScreenState.Idle(it) },

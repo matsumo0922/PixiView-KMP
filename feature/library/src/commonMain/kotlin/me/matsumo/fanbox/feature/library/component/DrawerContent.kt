@@ -39,6 +39,7 @@ import androidx.compose.material3.DrawerState
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.NavigationDrawerItem
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.rememberCoroutineScope
@@ -109,15 +110,17 @@ fun DrawerContent(
                 .statusBarsPadding(),
         )
 
-        NavigationDrawerItem(
-            modifier = Modifier.padding(top = 8.dp),
-            state = state,
-            isSelected = currentDestination.isLibraryDestinationInHierarchy(LibraryDestination.Home),
-            label = stringResource(Res.string.library_navigation_home),
-            icon = Icons.Outlined.Home,
-            selectedIcon = Icons.Default.Home,
-            onClick = { onClickLibrary.invoke(LibraryDestination.Home) },
-        )
+        if (userData?.isTestUser == false) {
+            NavigationDrawerItem(
+                modifier = Modifier.padding(top = 8.dp),
+                state = state,
+                isSelected = currentDestination.isLibraryDestinationInHierarchy(LibraryDestination.Home),
+                label = stringResource(Res.string.library_navigation_home),
+                icon = Icons.Outlined.Home,
+                selectedIcon = Icons.Default.Home,
+                onClick = { onClickLibrary.invoke(LibraryDestination.Home) },
+            )
+        }
 
         NavigationDrawerItem(
             state = state,
@@ -128,15 +131,18 @@ fun DrawerContent(
             onClick = { onClickLibrary.invoke(LibraryDestination.Discovery) },
         )
 
-        NavigationDrawerItem(
-            state = state,
-            isSelected = currentDestination.isLibraryDestinationInHierarchy(LibraryDestination.Notify),
-            label = stringResource(Res.string.library_navigation_notify),
-            icon = Icons.Outlined.Notifications,
-            selectedIcon = Icons.Default.Notifications,
-            onClick = { onClickLibrary.invoke(LibraryDestination.Notify) },
-        )
+        if (userData?.isTestUser == false) {
+            NavigationDrawerItem(
+                state = state,
+                isSelected = currentDestination.isLibraryDestinationInHierarchy(LibraryDestination.Notify),
+                label = stringResource(Res.string.library_navigation_notify),
+                icon = Icons.Outlined.Notifications,
+                selectedIcon = Icons.Default.Notifications,
+                onClick = { onClickLibrary.invoke(LibraryDestination.Notify) },
+            )
+        }
 
+        if (userData?.isTestUser == false) {
         NavigationDrawerItem(
             state = state,
             isSelected = currentDestination.isLibraryDestinationInHierarchy(LibraryDestination.Message),
@@ -145,6 +151,7 @@ fun DrawerContent(
             selectedIcon = Icons.Default.Mail,
             onClick = { onClickLibrary.invoke(LibraryDestination.Message) },
         )
+            }
 
         HorizontalDivider(
             modifier = Modifier
@@ -159,26 +166,32 @@ fun DrawerContent(
             onClick = navigateToBookmarkedPosts,
         )
 
-        NavigationDrawerItem(
-            state = state,
-            label = stringResource(Res.string.library_navigation_following),
-            icon = Icons.Outlined.PersonAdd,
-            onClick = navigateToFollowingCreators,
-        )
+        if (userData?.isTestUser == false) {
+            NavigationDrawerItem(
+                state = state,
+                label = stringResource(Res.string.library_navigation_following),
+                icon = Icons.Outlined.PersonAdd,
+                onClick = navigateToFollowingCreators,
+            )
+        }
 
-        NavigationDrawerItem(
-            state = state,
-            label = stringResource(Res.string.library_navigation_supporting),
-            icon = Icons.Outlined.Group,
-            onClick = navigateToSupportingCreators,
-        )
+        if (userData?.isTestUser == false) {
+            NavigationDrawerItem(
+                state = state,
+                label = stringResource(Res.string.library_navigation_supporting),
+                icon = Icons.Outlined.Group,
+                onClick = navigateToSupportingCreators,
+            )
+        }
 
-        NavigationDrawerItem(
-            state = state,
-            label = stringResource(Res.string.library_navigation_payments),
-            icon = Icons.Outlined.Payment,
-            onClick = navigateToPayments,
-        )
+        if (userData?.isTestUser == false) {
+            NavigationDrawerItem(
+                state = state,
+                label = stringResource(Res.string.library_navigation_payments),
+                icon = Icons.Outlined.Payment,
+                onClick = navigateToPayments,
+            )
+        }
 
         NavigationDrawerItem(
             state = state,

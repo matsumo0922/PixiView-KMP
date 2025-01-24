@@ -5,6 +5,7 @@ import androidx.compose.ui.Modifier
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
+import me.matsumo.fanbox.core.model.UserData
 import me.matsumo.fanbox.core.ui.animation.NavigateAnimation
 import me.matsumo.fanbox.core.ui.view.SimpleAlertContents
 import me.matsumo.fanbox.feature.library.discovery.LibraryDiscoveryRoute
@@ -21,6 +22,7 @@ import me.matsumo.fankt.fanbox.domain.model.id.FanboxPostId
 @Composable
 fun LibraryNavHost(
     navController: NavHostController,
+    userData: UserData,
     openDrawer: () -> Unit,
     navigateToPostSearch: () -> Unit,
     navigateToPostByCreatorSearch: (FanboxCreatorId) -> Unit,
@@ -31,9 +33,14 @@ fun LibraryNavHost(
     navigateToSimpleAlert: (SimpleAlertContents) -> Unit,
     navigateToBillingPlus: (String?) -> Unit,
     modifier: Modifier = Modifier,
-    startDestination: String = LibraryHomeRoute,
     applyOtherRoutes: NavGraphBuilder.() -> Unit = {},
 ) {
+    val startDestination = if (userData.isTestUser) {
+        LibraryDiscoveryRoute
+    } else {
+        LibraryHomeRoute
+    }
+
     NavHost(
         modifier = modifier,
         navController = navController,

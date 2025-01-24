@@ -84,6 +84,7 @@ internal fun LibraryCompactScreen(
                     LibraryNavHost(
                         modifier = Modifier.fillMaxSize(),
                         navController = navController,
+                        userData = uiState.userData,
                         openDrawer = {
                             scope.launch {
                                 drawerState.open()
@@ -101,12 +102,14 @@ internal fun LibraryCompactScreen(
                 }
             }
 
-            LibraryBottomBar(
-                modifier = Modifier.fillMaxWidth(),
-                destinations = LibraryDestination.entries.toImmutableList(),
-                currentDestination = navController.currentBackStackEntryAsState().value?.destination,
-                navigateToDestination = navController::navigateToLibraryDestination,
-            )
+            if (!uiState.userData.isTestUser) {
+                LibraryBottomBar(
+                    modifier = Modifier.fillMaxWidth(),
+                    destinations = LibraryDestination.entries.toImmutableList(),
+                    currentDestination = navController.currentBackStackEntryAsState().value?.destination,
+                    navigateToDestination = navController::navigateToLibraryDestination,
+                )
+            }
         }
     }
 }
