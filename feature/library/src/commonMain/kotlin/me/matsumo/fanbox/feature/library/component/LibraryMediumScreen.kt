@@ -71,12 +71,14 @@ internal fun LibraryMediumScreen(
         },
     ) {
         Row(Modifier.fillMaxSize()) {
-            LibraryNavigationRail(
-                modifier = Modifier.fillMaxHeight(),
-                destinations = LibraryDestination.entries.toImmutableList(),
-                currentDestination = navController.currentBackStackEntryAsState().value?.destination,
-                navigateToDestination = navController::navigateToLibraryDestination,
-            )
+            if (!uiState.userData.isTestUser) {
+                LibraryNavigationRail(
+                    modifier = Modifier.fillMaxHeight(),
+                    destinations = LibraryDestination.entries.toImmutableList(),
+                    currentDestination = navController.currentBackStackEntryAsState().value?.destination,
+                    navigateToDestination = navController::navigateToLibraryDestination,
+                )
+            }
 
             Scaffold(
                 modifier = Modifier.weight(1f),
@@ -91,6 +93,7 @@ internal fun LibraryMediumScreen(
                     LibraryNavHost(
                         modifier = Modifier.fillMaxSize(),
                         navController = navController,
+                        userData = uiState.userData,
                         openDrawer = {
                             scope.launch {
                                 drawerState.open()

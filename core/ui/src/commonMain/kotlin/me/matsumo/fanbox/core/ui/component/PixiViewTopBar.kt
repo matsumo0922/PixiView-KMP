@@ -47,6 +47,12 @@ fun PixiViewTopBar(
         TopAppBarDefaults.topAppBarColors()
     }
 
+    val iconColors = if (isTransparent) {
+        IconButtonDefaults.iconButtonColors(highlightColor.copy(alpha = 0.4f))
+    } else {
+        IconButtonDefaults.iconButtonColors()
+    }
+
     TopAppBar(
         modifier = modifier,
         colors = colors,
@@ -70,7 +76,7 @@ fun PixiViewTopBar(
         navigationIcon = {
             if (onClickNavigation != null) {
                 IconButton(
-                    colors = IconButtonDefaults.iconButtonColors(highlightColor.copy(alpha = 0.4f)),
+                    colors = iconColors,
                     onClick = onClickNavigation,
                 ) {
                     navigationIcon?.let {
@@ -86,7 +92,7 @@ fun PixiViewTopBar(
         actions = {
             if (onClickActions != null) {
                 IconButton(
-                    colors = IconButtonDefaults.iconButtonColors(highlightColor.copy(alpha = 0.4f)),
+                    colors = iconColors,
                     onClick = onClickActions,
                 ) {
                     actionsIcon?.let {
