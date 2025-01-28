@@ -30,6 +30,7 @@ kmpPaging = "3.3.0-alpha02-0.5.1"
 mokoPermissions = "0.18.0"
 mokoBiometry = "0.4.0"
 calf = "0.5.5"
+adaptive = "1.0.1"
 
 # AndroidX
 androidxCore = "1.15.0"
@@ -61,7 +62,7 @@ billing = "6.1.0"
 koin = "4.0.0"
 
 # matsumo
-fankt = "0.0.8"
+fankt = "0.0.9"
 
 # Others
 ktor = "3.0.1"
@@ -79,9 +80,9 @@ cupertino = "0.1.0-alpha04"
 twitterComposeRule = "0.0.26"
 
 # Debugs
-firebase = "33.7.0"
+firebase = "33.8.0"
 leakCanary = "2.13"
-flipper = "0.247.0"
+flipper = "0.273.0"
 napier = "2.7.1"
 junit = "4.13.2"
 junitVersion = "1.2.1"
@@ -155,6 +156,10 @@ kmp-lifecycle-viewmodel-compose = { module = "org.jetbrains.androidx.lifecycle:l
 kmp-navigation-compose = { module = "org.jetbrains.androidx.navigation:navigation-compose", version.ref = "kmpNavigation" }
 kmp-paging-common = { module = "app.cash.paging:paging-common", version.ref = "kmpPaging" }
 kmp-paging-compose = { module = "app.cash.paging:paging-compose-common", version.ref = "kmpPaging" }
+
+# Adaptive
+adaptive = { module = "org.jetbrains.compose.material3.adaptive:adaptive", version.ref = "adaptive" }
+adaptive-layout = { module = "org.jetbrains.compose.material3.adaptive:adaptive-layout", version.ref = "adaptive" }
 
 # Billing
 billing = { module = "com.android.billingclient:billing", version.ref = "billing" }

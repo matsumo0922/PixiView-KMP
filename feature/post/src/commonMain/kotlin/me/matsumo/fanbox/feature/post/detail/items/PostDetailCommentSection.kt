@@ -381,7 +381,7 @@ private fun CommentEditor(
                 .size(36.dp),
             model = ImageRequest.Builder(LocalPlatformContext.current)
                 .error(Res.drawable.im_default_user.asCoilImage())
-                .data(metaData.context.user.iconUrl)
+                .data(metaData.context?.user?.iconUrl)
                 .build(),
             contentDescription = null,
         )

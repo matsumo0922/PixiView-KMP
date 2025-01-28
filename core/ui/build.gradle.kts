@@ -38,6 +38,9 @@ kotlin {
                 api(compose.ui)
                 api(compose.materialIconsExtended)
 
+                api(libs.adaptive)
+                api(libs.adaptive.layout)
+
                 api(libs.calf.ui)
                 api(libs.placeholder)
                 api(libs.rich.editor)

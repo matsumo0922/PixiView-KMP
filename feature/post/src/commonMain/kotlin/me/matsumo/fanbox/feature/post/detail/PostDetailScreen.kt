@@ -409,7 +409,7 @@ private fun PostDetailScreen(
     LaunchedEffect(comments) {
         if (isShowCommentEditor) {
             val commentItems = comments.contents.flatMap { comment -> listOf(comment) + comment.replies }
-            isShowCommentEditor = !commentItems.any { comment -> comment.user?.name == metaData.context.user.name && comment.body == latestComment }
+            isShowCommentEditor = !commentItems.any { comment -> comment.user?.name == metaData.context?.user?.name && comment.body == latestComment }
         }
     }
 

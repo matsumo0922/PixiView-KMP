@@ -253,7 +253,7 @@ private fun NavigationDrawerHeader(modifier: Modifier = Modifier) {
                 .clip(CircleShape),
             model = ImageRequest.Builder(LocalPlatformContext.current)
                 .error(Res.drawable.im_default_user.asCoilImage())
-                .data(metadata.context.user.iconUrl)
+                .data(metadata.context?.user?.iconUrl)
                 .build(),
             loading = {
                 FadePlaceHolder()
@@ -267,14 +267,14 @@ private fun NavigationDrawerHeader(modifier: Modifier = Modifier) {
         ) {
             Text(
                 modifier = Modifier.fillMaxWidth(),
-                text = metadata.context.user.name,
+                text = metadata.context?.user?.name.takeIf { !it.isNullOrBlank() } ?: "Unknown User",
                 style = MaterialTheme.typography.titleMedium.bold(),
                 color = MaterialTheme.colorScheme.onSurface,
             )
 
             Text(
                 modifier = Modifier.fillMaxWidth(),
-                text = "@${metadata.context.user.userId}",
+                text = "@${metadata.context?.user?.userId ?: "Unknown"}",
                 style = MaterialTheme.typography.bodySmall,
                 color = MaterialTheme.colorScheme.onSurfaceVariant,
             )

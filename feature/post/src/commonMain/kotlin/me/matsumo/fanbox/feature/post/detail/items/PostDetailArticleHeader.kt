@@ -49,7 +49,7 @@ internal fun LazyListScope.postDetailArticleHeader(
             }
 
             is FanboxPostDetail.Body.Article.Block.Image -> {
-                if (!userData.isAllowedShowAdultContents && !metadata.context.user.showAdultContent && isAdultContents) {
+                if (!userData.isAllowedShowAdultContents && metadata.context?.user?.showAdultContent == false && isAdultContents) {
                     AdultContentThumbnail(
                         modifier = Modifier
                             .fillMaxWidth()
