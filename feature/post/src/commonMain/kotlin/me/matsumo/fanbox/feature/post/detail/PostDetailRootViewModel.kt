@@ -10,13 +10,13 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.first
-import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
 import me.matsumo.fanbox.core.common.util.suspendRunCatching
 import me.matsumo.fanbox.core.model.UserData
 import me.matsumo.fanbox.core.repository.FanboxRepository
 import me.matsumo.fanbox.core.repository.UserDataRepository
+import me.matsumo.fanbox.core.ui.extensition.createStaticPaging
 import me.matsumo.fanbox.core.ui.extensition.emptyPaging
 import me.matsumo.fanbox.feature.post.detail.PostDetailPagingType.Creator
 import me.matsumo.fanbox.feature.post.detail.PostDetailPagingType.Home
@@ -65,14 +65,16 @@ class PostDetailRootViewModel(
             val loadSize = if (userData.isHideRestricted || userData.isUseGridMode) 20 else 10
             val isHideRestricted = userData.isHideRestricted
 
+            val paging = when (type) {
+                Home -> fanboxRepository.getHomePostsPagerCache(loadSize, isHideRestricted).toIdFlow()
+                Supported -> fanboxRepository.getSupportedPostsPagerCache(loadSize, isHideRestricted).toIdFlow()
+                Creator -> fanboxRepository.getCreatorPostsPagerCache()?.toIdFlow()
+                Search -> fanboxRepository.getPostsFromQueryPagerCache()?.toIdFlow()
+                Unknown -> createStaticPaging(listOf(postId))
+            }
+
             _uiState.value = PostDetailRootUiState(
-                paging = when (type) {
-                    Home -> fanboxRepository.getHomePostsPagerCache(loadSize, isHideRestricted).toIdFlow()
-                    Supported -> fanboxRepository.getSupportedPostsPagerCache(loadSize, isHideRestricted).toIdFlow()
-                    Creator -> fanboxRepository.getCreatorPostsPagerCache()?.toIdFlow()
-                    Search -> fanboxRepository.getPostsFromQueryPagerCache()?.toIdFlow()
-                    Unknown -> flowOf(PagingData.from(listOf(postId)))
-                },
+                paging = paging,
                 userData = userData,
                 bookmarkedPostIds = fanboxRepository.bookmarkedPostsIds.first(),
             )

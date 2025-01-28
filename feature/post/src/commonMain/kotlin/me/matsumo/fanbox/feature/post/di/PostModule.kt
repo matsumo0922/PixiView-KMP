@@ -13,7 +13,6 @@ import org.koin.dsl.module
 
 val postModule = module {
     viewModelOf(::BookmarkedPostsViewModel)
-    viewModelOf(::PostDetailViewModel)
     viewModelOf(::PostImageViewModel)
     viewModelOf(::PostSearchViewModel)
     viewModelOf(::DownloadQueueViewModel)
@@ -24,6 +23,15 @@ val postModule = module {
             type = it[1],
             userDataRepository = get(),
             fanboxRepository = get(),
+        )
+    }
+
+    viewModel {
+        PostDetailViewModel(
+            postId = it[0],
+            userDataRepository = get(),
+            fanboxRepository = get(),
+            downloadPostsRepository = get(),
         )
     }
 

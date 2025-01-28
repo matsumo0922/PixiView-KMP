@@ -14,6 +14,8 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.rememberLazyListState
+import androidx.compose.foundation.pager.HorizontalPager
+import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.InsertDriveFile
 import androidx.compose.material3.Icon
@@ -63,8 +65,6 @@ import me.matsumo.fanbox.core.ui.AsyncLoadContents
 import me.matsumo.fanbox.core.ui.LazyPagingItemsLoadContents
 import me.matsumo.fanbox.core.ui.ads.BannerAdView
 import me.matsumo.fanbox.core.ui.ads.NativeAdView
-import me.matsumo.fanbox.core.ui.component.pager.HorizontalPager
-import me.matsumo.fanbox.core.ui.component.pager.rememberPagerState
 import me.matsumo.fanbox.core.ui.extensition.FadePlaceHolder
 import me.matsumo.fanbox.core.ui.extensition.NavigatorExtension
 import me.matsumo.fanbox.core.ui.extensition.Platform
@@ -171,7 +171,7 @@ internal fun PostDetailRoute(
                 isSwipeEnabled = false,
             ) {
                 val initIndex = remember { paging.itemSnapshotList.indexOfFirst { it == postId } }
-                val pagerState = rememberPagerState(if (initIndex != -1) initIndex else 0)
+                val pagerState = rememberPagerState(initialPage = initIndex) { paging.itemCount }
 
                 LaunchedEffect(pagerState) {
                     snapshotFlow { pagerState.currentPage }.collect { index ->
@@ -182,7 +182,6 @@ internal fun PostDetailRoute(
                 HorizontalPager(
                     modifier = Modifier.fillMaxSize(),
                     state = pagerState,
-                    count = paging.itemCount,
                     key = { index -> paging[index]?.uniqueValue ?: Uuid.random().toString() },
                     userScrollEnabled = uiState.userData.isUseInfinityPostDetail,
                 ) { index ->
@@ -231,23 +230,19 @@ private fun PostDetailView(
     onPostDetailFetched: (FanboxPostDetail) -> Unit,
     terminate: () -> Unit,
     modifier: Modifier = Modifier,
-    viewModel: PostDetailViewModel = koinViewModel(key = postId.value),
+    viewModel: PostDetailViewModel = koinViewModel(key = postId.value) {
+        parametersOf(postId)
+    },
     navigatorExtension: NavigatorExtension = koinInject(),
     snackExtension: ToastExtension = koinInject(),
 ) {
     val screenState by viewModel.screenState.collectAsStateWithLifecycle()
     val scope = rememberCoroutineScope()
 
-    LaunchedEffect(postId) {
-        if (screenState !is ScreenState.Idle) {
-            viewModel.fetch(postId)
-        }
-    }
-
     AsyncLoadContents(
         modifier = modifier,
         screenState = screenState,
-        retryAction = { viewModel.fetch(postId) },
+        retryAction = { viewModel.fetch() },
         terminate = { terminate.invoke() },
     ) { uiState ->
         PostDetailScreen(

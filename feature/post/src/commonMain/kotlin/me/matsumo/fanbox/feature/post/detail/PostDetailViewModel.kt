@@ -33,16 +33,18 @@ import me.matsumo.fankt.fanbox.domain.model.id.FanboxUserId
 import org.jetbrains.compose.resources.StringResource
 
 class PostDetailViewModel(
+    private val postId: FanboxPostId,
     private val userDataRepository: UserDataRepository,
     private val fanboxRepository: FanboxRepository,
     private val downloadPostsRepository: DownloadPostsRepository,
 ) : ViewModel() {
 
     private val _screenState = MutableStateFlow<ScreenState<PostDetailUiState>>(ScreenState.Loading)
-
     val screenState = _screenState.asStateFlow()
 
     init {
+        fetch()
+
         viewModelScope.launch {
             userDataRepository.userData.collectLatest { data ->
                 _screenState.updateWhenIdle { it.copy(userData = data) }
@@ -58,7 +60,7 @@ class PostDetailViewModel(
         }
     }
 
-    fun fetch(postId: FanboxPostId) {
+    fun fetch() {
         viewModelScope.launch {
             _screenState.value = ScreenState.Loading
             _screenState.value = suspendRunCatching {

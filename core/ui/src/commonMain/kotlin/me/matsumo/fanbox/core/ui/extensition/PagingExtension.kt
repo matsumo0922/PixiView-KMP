@@ -1,6 +1,7 @@
 package me.matsumo.fanbox.core.ui.extensition
 
 import androidx.paging.LoadState
+import androidx.paging.LoadState.NotLoading
 import androidx.paging.LoadStates
 import androidx.paging.PagingData
 import app.cash.paging.compose.LazyPagingItems
@@ -33,4 +34,14 @@ fun <T : Any> LazyPagingItems<T>?.isNullOrEmpty(): Boolean {
     val isEmptyItems = itemCount == 0
 
     return isNotLoading && isReachedEnd && isEmptyItems
+}
+
+fun <T: Any> createStaticPaging(data: List<T>): Flow<PagingData<T>> {
+    val idleLoadState = LoadStates(
+        refresh = NotLoading(true),
+        prepend = NotLoading(true),
+        append = NotLoading(true),
+    )
+
+    return flowOf(PagingData.from(data, idleLoadState))
 }
