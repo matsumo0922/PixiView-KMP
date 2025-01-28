@@ -14,10 +14,18 @@ import org.koin.dsl.module
 val postModule = module {
     viewModelOf(::BookmarkedPostsViewModel)
     viewModelOf(::PostDetailViewModel)
-    viewModelOf(::PostDetailRootViewModel)
     viewModelOf(::PostImageViewModel)
     viewModelOf(::PostSearchViewModel)
     viewModelOf(::DownloadQueueViewModel)
+
+    viewModel {
+        PostDetailRootViewModel(
+            postId = it[0],
+            type = it[1],
+            userDataRepository = get(),
+            fanboxRepository = get(),
+        )
+    }
 
     viewModel {
         PostByCreatorSearchViewModel(

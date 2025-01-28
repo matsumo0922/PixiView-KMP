@@ -4,11 +4,14 @@ import androidx.compose.runtime.Stable
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.paging.PagingData
+import app.cash.paging.map
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.flow.flowOf
+import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
 import me.matsumo.fanbox.core.common.util.suspendRunCatching
 import me.matsumo.fanbox.core.model.UserData
@@ -24,6 +27,8 @@ import me.matsumo.fankt.fanbox.domain.model.FanboxPost
 import me.matsumo.fankt.fanbox.domain.model.id.FanboxPostId
 
 class PostDetailRootViewModel(
+    private val postId: FanboxPostId,
+    private val type: PostDetailPagingType,
     private val userDataRepository: UserDataRepository,
     private val fanboxRepository: FanboxRepository,
 ) : ViewModel() {
@@ -39,6 +44,8 @@ class PostDetailRootViewModel(
     val uiState = _uiState.asStateFlow()
 
     init {
+        fetch()
+
         viewModelScope.launch {
             fanboxRepository.bookmarkedPostsIds.collectLatest {
                 _uiState.value = _uiState.value.copy(bookmarkedPostIds = it)
@@ -52,7 +59,7 @@ class PostDetailRootViewModel(
         }
     }
 
-    fun fetch(type: PostDetailPagingType) {
+    fun fetch() {
         viewModelScope.launch {
             val userData = userDataRepository.userData.first()
             val loadSize = if (userData.isHideRestricted || userData.isUseGridMode) 20 else 10
@@ -60,11 +67,11 @@ class PostDetailRootViewModel(
 
             _uiState.value = PostDetailRootUiState(
                 paging = when (type) {
-                    Home -> fanboxRepository.getHomePostsPagerCache(loadSize, isHideRestricted)
-                    Supported -> fanboxRepository.getSupportedPostsPagerCache(loadSize, isHideRestricted)
-                    Creator -> fanboxRepository.getCreatorPostsPagerCache()
-                    Search -> fanboxRepository.getPostsFromQueryPagerCache()
-                    Unknown -> emptyPaging()
+                    Home -> fanboxRepository.getHomePostsPagerCache(loadSize, isHideRestricted).toIdFlow()
+                    Supported -> fanboxRepository.getSupportedPostsPagerCache(loadSize, isHideRestricted).toIdFlow()
+                    Creator -> fanboxRepository.getCreatorPostsPagerCache()?.toIdFlow()
+                    Search -> fanboxRepository.getPostsFromQueryPagerCache()?.toIdFlow()
+                    Unknown -> flowOf(PagingData.from(listOf(postId)))
                 },
                 userData = userData,
                 bookmarkedPostIds = fanboxRepository.bookmarkedPostsIds.first(),
@@ -83,11 +90,15 @@ class PostDetailRootViewModel(
             }
         }
     }
+
+    private fun Flow<PagingData<FanboxPost>>.toIdFlow(): Flow<PagingData<FanboxPostId>> {
+        return map { list -> list.map { it.id } }
+    }
 }
 
 @Stable
 data class PostDetailRootUiState(
-    val paging: Flow<PagingData<FanboxPost>>?,
+    val paging: Flow<PagingData<FanboxPostId>>?,
     val userData: UserData,
     val bookmarkedPostIds: List<FanboxPostId>,
 )

@@ -100,6 +100,7 @@ import me.matsumo.fankt.fanbox.domain.model.id.FanboxPostId
 import me.matsumo.fankt.fanbox.domain.model.id.FanboxUserId
 import org.koin.compose.koinInject
 import org.koin.compose.viewmodel.koinViewModel
+import org.koin.core.parameter.parametersOf
 import kotlin.uuid.ExperimentalUuidApi
 import kotlin.uuid.Uuid
 
@@ -117,7 +118,9 @@ internal fun PostDetailRoute(
     navigateToDownloadQueue: () -> Unit,
     terminate: () -> Unit,
     modifier: Modifier = Modifier,
-    viewModel: PostDetailRootViewModel = koinViewModel(),
+    viewModel: PostDetailRootViewModel = koinViewModel {
+        parametersOf(postId, type)
+    },
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
     val paging = uiState.paging?.collectAsLazyPagingItems()
@@ -126,12 +129,6 @@ internal fun PostDetailRoute(
     var currentPostId by remember { mutableStateOf(postId) }
 
     val snackbarHostState = remember { SnackbarHostState() }
-
-    LaunchedEffect(true) {
-        if (paging == null) {
-            viewModel.fetch(type)
-        }
-    }
 
     Scaffold(
         modifier = modifier,
@@ -165,18 +162,20 @@ internal fun PostDetailRoute(
         },
         contentWindowInsets = WindowInsets(0, 0, 0, 0),
     ) { padding ->
-        if (paging != null && !paging.isNullOrEmpty() && uiState.userData.isUseInfinityPostDetail) {
+        if (paging != null && !paging.isNullOrEmpty()) {
             LazyPagingItemsLoadContents(
-                modifier = Modifier.padding(padding),
+                modifier = Modifier
+                    .fillMaxSize()
+                    .padding(padding),
                 lazyPagingItems = paging,
                 isSwipeEnabled = false,
             ) {
-                val initIndex = remember { paging.itemSnapshotList.indexOfFirst { it?.id == postId } }
+                val initIndex = remember { paging.itemSnapshotList.indexOfFirst { it == postId } }
                 val pagerState = rememberPagerState(if (initIndex != -1) initIndex else 0)
 
                 LaunchedEffect(pagerState) {
                     snapshotFlow { pagerState.currentPage }.collect { index ->
-                        paging[index]?.id?.let { currentPostId = it }
+                        paging[index]?.let { currentPostId = it }
                     }
                 }
 
@@ -184,12 +183,13 @@ internal fun PostDetailRoute(
                     modifier = Modifier.fillMaxSize(),
                     state = pagerState,
                     count = paging.itemCount,
-                    key = { index -> paging[index]?.id?.uniqueValue ?: Uuid.random().toString() },
+                    key = { index -> paging[index]?.uniqueValue ?: Uuid.random().toString() },
+                    userScrollEnabled = uiState.userData.isUseInfinityPostDetail,
                 ) { index ->
-                    paging[index]?.let { post ->
+                    paging[index]?.let { id ->
                         PostDetailView(
                             modifier = Modifier.fillMaxSize(),
-                            postId = post.id,
+                            postId = id,
                             snackbarHostState = snackbarHostState,
                             navigateToPostSearch = navigateToPostSearch,
                             navigateToPostDetail = navigateToPostDetail,
@@ -198,29 +198,12 @@ internal fun PostDetailRoute(
                             navigateToCreatorPosts = navigateToCreatorPosts,
                             navigateToCommentDeleteDialog = navigateToCommentDeleteDialog,
                             navigateToDownloadQueue = navigateToDownloadQueue,
-                            onPostDetailFetched = { postDetailMap[post.id] = it },
+                            onPostDetailFetched = { postDetailMap[id] = it },
                             terminate = terminate,
                         )
                     }
                 }
             }
-        } else if (paging != null) {
-            PostDetailView(
-                modifier = Modifier
-                    .padding(padding)
-                    .fillMaxSize(),
-                postId = postId,
-                snackbarHostState = snackbarHostState,
-                navigateToPostSearch = navigateToPostSearch,
-                navigateToPostDetail = navigateToPostDetail,
-                navigateToPostImage = navigateToPostImage,
-                navigateToCreatorPlans = navigateToCreatorPlans,
-                navigateToCreatorPosts = navigateToCreatorPosts,
-                navigateToCommentDeleteDialog = navigateToCommentDeleteDialog,
-                navigateToDownloadQueue = navigateToDownloadQueue,
-                onPostDetailFetched = { postDetailMap[postId] = it },
-                terminate = terminate,
-            )
         } else {
             ErrorView(
                 modifier = Modifier

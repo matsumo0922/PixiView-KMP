@@ -159,7 +159,7 @@ private fun NavGraphBuilder.applyNavGraph(
     )
 
     postByCreatorSearchScreen(
-        navigateToPostDetail = { subNavController.navigateToPostDetail(it, PostDetailPagingType.Creator) },
+        navigateToPostDetail = { subNavController.navigateToPostDetail(it, PostDetailPagingType.Unknown) },
         navigateToCreatorPosts = { mainNavController.navigateToCreatorTop(it, isPosts = true) },
         navigateToCreatorPlans = { mainNavController.navigateToCreatorTop(it) },
         terminate = { mainNavController.popBackStack() },
