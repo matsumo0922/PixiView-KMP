@@ -36,7 +36,7 @@ fun <T : Any> LazyPagingItems<T>?.isNullOrEmpty(): Boolean {
     return isNotLoading && isReachedEnd && isEmptyItems
 }
 
-fun <T: Any> createStaticPaging(data: List<T>): Flow<PagingData<T>> {
+fun <T : Any> createStaticPaging(data: List<T>): Flow<PagingData<T>> {
     val idleLoadState = LoadStates(
         refresh = NotLoading(true),
         prepend = NotLoading(true),
