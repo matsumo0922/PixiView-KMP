@@ -160,6 +160,7 @@ kmp-paging-compose = { module = "app.cash.paging:paging-compose-common", version
 # Adaptive
 adaptive = { module = "org.jetbrains.compose.material3.adaptive:adaptive", version.ref = "adaptive" }
 adaptive-layout = { module = "org.jetbrains.compose.material3.adaptive:adaptive-layout", version.ref = "adaptive" }
+adaptive-navigation = { module = "org.jetbrains.compose.material3.adaptive:adaptive-navigation", version.ref = "adaptive" }
 
 # Billing
 billing = { module = "com.android.billingclient:billing", version.ref = "billing" }

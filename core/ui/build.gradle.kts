@@ -40,6 +40,7 @@ kotlin {
 
                 api(libs.adaptive)
                 api(libs.adaptive.layout)
+                api(libs.adaptive.navigation)
 
                 api(libs.calf.ui)
                 api(libs.placeholder)
