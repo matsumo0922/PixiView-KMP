@@ -5,20 +5,15 @@ import androidx.compose.ui.Modifier
 import androidx.navigation.NavController
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.compose.composable
+import me.matsumo.fanbox.core.model.Destination
 import me.matsumo.fanbox.core.ui.extensition.navigateWithLog
 import me.matsumo.fankt.fanbox.domain.model.id.FanboxPostId
-
-const val DownloadQueueRoute = "downloadQueue"
-
-fun NavController.navigateToDownloadQueue() {
-    this.navigateWithLog(DownloadQueueRoute)
-}
 
 fun NavGraphBuilder.downloadQueueScreen(
     navigateToPostDetail: (FanboxPostId) -> Unit,
     terminate: () -> Unit,
 ) {
-    composable(DownloadQueueRoute) {
+    composable<Destination.DownloadQueue> {
         DownloadQueueScreen(
             modifier = Modifier.fillMaxSize(),
             navigateToPostDetail = navigateToPostDetail,

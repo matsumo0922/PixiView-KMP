@@ -186,6 +186,11 @@ private fun NavGraphBuilder.applyNavGraph(
         terminate = { mainNavController.popBackStack() },
     )
 
+    creatorPostsDownloadDialog(
+        navigateToDownloadQueue = { subNavController.navigateToDownloadQueue() },
+        terminate = { mainNavController.popBackStack() },
+    )
+
     supportingCreatorsScreen(
         navigateToCreatorPosts = { mainNavController.navigateToCreatorTop(it, isPosts = true) },
         navigateToFanCard = { subNavController.navigateToFanCard(it) },
@@ -248,11 +253,6 @@ private fun NavGraphBuilder.applyNavGraph(
 
     simpleAlertDialogDialog(
         onResult = { mainNavController.popBackStackWithResult(it) },
-    )
-
-    creatorPostsDownloadDialog(
-        navigateToDownloadQueue = { subNavController.navigateToDownloadQueue() },
-        terminate = { mainNavController.popBackStack() },
     )
 
     settingDeveloperDialog(

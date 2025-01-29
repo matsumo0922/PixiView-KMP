@@ -5,18 +5,13 @@ import androidx.compose.ui.Modifier
 import androidx.navigation.NavController
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.compose.composable
+import me.matsumo.fanbox.core.model.Destination
 import me.matsumo.fanbox.core.ui.extensition.navigateWithLog
-
-const val SettingLicenseRoute = "SettingLicense"
-
-fun NavController.navigateToSettingLicense() {
-    this.navigateWithLog(SettingLicenseRoute)
-}
 
 fun NavGraphBuilder.settingLicenseScreen(
     terminate: () -> Unit,
 ) {
-    composable(SettingLicenseRoute) {
+    composable<Destination.SettingLicense> {
         SettingLicenseScreen(
             modifier = Modifier.fillMaxSize(),
             terminate = terminate,

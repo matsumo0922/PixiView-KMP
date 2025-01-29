@@ -7,27 +7,17 @@ import androidx.navigation.NavGraphBuilder
 import androidx.navigation.NavType
 import androidx.navigation.compose.composable
 import androidx.navigation.navArgument
+import me.matsumo.fanbox.core.model.Destination
 import me.matsumo.fanbox.core.ui.extensition.navigateWithLog
 import me.matsumo.fankt.fanbox.domain.model.id.FanboxCreatorId
-
-const val CreatorPostsDownloadId = "creatorPostsDownloadId"
-const val CreatorPostsDownloadRoute = "creatorPostsDownload/{$CreatorPostsDownloadId}"
-
-fun NavController.navigateToCreatorPostsDownload(creatorId: FanboxCreatorId) {
-    this.navigateWithLog("creatorPostsDownload/$creatorId")
-}
 
 fun NavGraphBuilder.creatorPostsDownloadDialog(
     navigateToDownloadQueue: () -> Unit,
     terminate: () -> Unit,
 ) {
-    composable(
-        route = CreatorPostsDownloadRoute,
-        arguments = listOf(navArgument(CreatorPostsDownloadId) { type = NavType.StringType }),
-    ) {
+    composable<Destination.CreatorPostsDownload> {
         CreatorPostsDownloadRoute(
             modifier = Modifier.fillMaxSize(),
-            creatorId = FanboxCreatorId(it.arguments?.getString(CreatorPostsDownloadId).orEmpty()),
             navigateToDownloadQueue = navigateToDownloadQueue,
             terminate = terminate,
         )

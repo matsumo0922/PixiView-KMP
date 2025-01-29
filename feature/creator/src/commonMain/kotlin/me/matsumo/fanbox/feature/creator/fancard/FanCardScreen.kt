@@ -33,7 +33,6 @@ import org.koin.compose.viewmodel.koinViewModel
 
 @Composable
 internal fun FanCardRoute(
-    creatorId: FanboxCreatorId,
     terminate: () -> Unit,
     modifier: Modifier = Modifier,
     viewModel: FanCardViewModel = koinViewModel(),
@@ -41,12 +40,6 @@ internal fun FanCardRoute(
 ) {
     val screenState by viewModel.screenState.collectAsStateWithLifecycle()
     val snackHostState = LocalSnackbarHostState.current
-
-    LaunchedEffect(creatorId) {
-        if (screenState !is ScreenState.Idle) {
-            viewModel.fetch(creatorId)
-        }
-    }
 
     LaunchedEffect(true) {
         viewModel.downloadedEvent.collectLatest {
@@ -57,8 +50,8 @@ internal fun FanCardRoute(
     AsyncLoadContents(
         modifier = modifier,
         screenState = screenState,
-        retryAction = { terminate.invoke() },
-        terminate = { terminate.invoke() },
+        retryAction = viewModel::fetch,
+        terminate = terminate,
     ) {
         FanCardScreen(
             modifier = Modifier.fillMaxWidth(),

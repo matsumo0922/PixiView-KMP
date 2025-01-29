@@ -81,7 +81,7 @@ import me.matsumo.fanbox.core.ui.extensition.NavigatorExtension
 import me.matsumo.fanbox.core.ui.extensition.OverlayText
 import me.matsumo.fanbox.core.ui.extensition.ToastExtension
 import me.matsumo.fanbox.core.ui.extensition.revealByStep
-import me.matsumo.fanbox.core.ui.view.SimpleAlertContents
+import me.matsumo.fanbox.core.model.SimpleAlertContents
 import me.matsumo.fanbox.feature.creator.top.items.CreatorTopDescriptionDialog
 import me.matsumo.fanbox.feature.creator.top.items.CreatorTopHeader
 import me.matsumo.fanbox.feature.creator.top.items.CreatorTopMenuDialog
@@ -108,7 +108,6 @@ internal enum class CreatorTopRevealKeys {
 
 @Composable
 internal fun CreatorTopRoute(
-    creatorId: FanboxCreatorId,
     isPosts: Boolean,
     navigateToPostDetail: (FanboxPostId) -> Unit,
     navigateToPostSearch: (String, FanboxCreatorId) -> Unit,
@@ -133,17 +132,11 @@ internal fun CreatorTopRoute(
     val snackbarHostState = LocalSnackbarHostState.current
     val requirePlus = stringResource(Res.string.billing_plus_toast_require_plus, appName)
 
-    LaunchedEffect(creatorId) {
-        if (screenState !is ScreenState.Idle) {
-            viewModel.fetch(creatorId)
-        }
-    }
-
     AsyncLoadContents(
         modifier = modifier,
         screenState = screenState,
-        retryAction = { viewModel.fetch(creatorId) },
-        terminate = { terminate.invoke() },
+        retryAction = viewModel::fetch,
+        terminate = terminate,
     ) { uiState ->
         val creatorPostsPaging = uiState.creatorPostsPaging.collectAsLazyPagingItems()
 
@@ -186,7 +179,7 @@ internal fun CreatorTopRoute(
                         SimpleAlertContents.CreatorBlock,
                         {
                             scope.launch {
-                                viewModel.blockCreator(creatorId)
+                                viewModel.blockCreator()
                                 terminate.invoke()
                             }
                         },
@@ -198,8 +191,8 @@ internal fun CreatorTopRoute(
                         SimpleAlertContents.CreatorUnblock,
                         {
                             scope.launch {
-                                viewModel.unblockCreator(creatorId)
-                                viewModel.fetch(creatorId)
+                                viewModel.unblockCreator()
+                                viewModel.fetch()
                                 creatorPostsPaging.refresh()
                             }
                         },

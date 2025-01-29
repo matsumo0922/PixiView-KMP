@@ -5,26 +5,13 @@ import androidx.navigation.NavGraphBuilder
 import androidx.navigation.NavType
 import androidx.navigation.compose.composable
 import androidx.navigation.navArgument
+import androidx.navigation.toRoute
 import io.ktor.http.decodeURLPart
 import io.ktor.http.encodeURLPathPart
+import me.matsumo.fanbox.core.model.Destination
 import me.matsumo.fanbox.core.ui.extensition.navigateWithLog
 import me.matsumo.fankt.fanbox.domain.model.id.FanboxCreatorId
 import me.matsumo.fankt.fanbox.domain.model.id.FanboxPostId
-
-const val PostSearchQueryStr = "postSearchQuery"
-const val PostSearchRoute = "postSearch/{$PostSearchQueryStr}"
-
-fun NavController.navigateToPostSearch(
-    creatorId: FanboxCreatorId? = null,
-    creatorQuery: String? = null,
-    tag: String? = null,
-) {
-    val query = buildQuery(creatorId, creatorQuery, tag).encodeURLPathPart()
-    val encodedQuery = query.encodeURLPathPart()
-    val route = if (parseQuery(query).mode != PostSearchMode.Unknown) "postSearch/$encodedQuery" else "postSearch/pixiViewUnknown"
-
-    this.navigateWithLog(route)
-}
 
 fun NavGraphBuilder.postSearchScreen(
     navigateToPostSearch: (FanboxCreatorId?, String?, String?) -> Unit,
@@ -33,18 +20,12 @@ fun NavGraphBuilder.postSearchScreen(
     navigateToCreatorPlans: (FanboxCreatorId) -> Unit,
     terminate: () -> Unit,
 ) {
-    composable(
-        route = PostSearchRoute,
-        arguments = listOf(navArgument(PostSearchQueryStr) { type = NavType.StringType }),
-    ) {
-        var query = it.arguments?.getString(PostSearchQueryStr)?.decodeURLPart().orEmpty()
-
-        if (query == "pixiViewUnknown") {
-            query = ""
-        }
+    composable<Destination.PostSearch> { entry ->
+        val args = entry.toRoute<Destination.PostSearch>()
+        val query = buildQuery(args.creatorId, args.creatorQuery, args.tag)
 
         PostSearchRoute(
-            query = query,
+            query = query.takeIf { parseQuery(it).mode != PostSearchMode.Unknown }.orEmpty(),
             navigateToPostSearch = navigateToPostSearch,
             navigateToPostDetail = navigateToPostDetail,
             navigateToCreatorPosts = navigateToCreatorPosts,

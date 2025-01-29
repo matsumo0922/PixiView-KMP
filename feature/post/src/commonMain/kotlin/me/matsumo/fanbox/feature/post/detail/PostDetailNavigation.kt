@@ -10,18 +10,15 @@ import androidx.navigation.NavType
 import androidx.navigation.compose.composable
 import androidx.navigation.navArgument
 import androidx.navigation.navDeepLink
+import androidx.navigation.toRoute
+import me.matsumo.fanbox.core.model.Destination
 import me.matsumo.fanbox.core.ui.extensition.navigateWithLog
-import me.matsumo.fanbox.core.ui.view.SimpleAlertContents
+import me.matsumo.fanbox.core.model.SimpleAlertContents
 import me.matsumo.fankt.fanbox.domain.model.id.FanboxCreatorId
 import me.matsumo.fankt.fanbox.domain.model.id.FanboxPostId
 
 const val PostDetailId = "postDetailId"
-const val PostDetailType = "postDetailPagingType"
-const val PostDetailRoute = "postDetail/{$PostDetailId}/{$PostDetailType}"
 
-fun NavController.navigateToPostDetail(postId: FanboxPostId, pagingType: PostDetailPagingType) {
-    this.navigateWithLog("postDetail/$postId/${pagingType.name}")
-}
 
 fun NavGraphBuilder.postDetailScreen(
     navigateToPostSearch: (String, FanboxCreatorId) -> Unit,
@@ -33,15 +30,7 @@ fun NavGraphBuilder.postDetailScreen(
     navigateToCommentDeleteDialog: (SimpleAlertContents, () -> Unit) -> Unit,
     terminate: () -> Unit,
 ) {
-    composable(
-        route = PostDetailRoute,
-        arguments = listOf(
-            navArgument(PostDetailId) { type = NavType.StringType },
-            navArgument(PostDetailType) {
-                type = NavType.StringType
-                defaultValue = PostDetailPagingType.Unknown.name
-            },
-        ),
+    composable<Destination.PostDetail>(
         deepLinks = listOf(
             navDeepLink { uriPattern = "https://www.fanbox.cc/@{creatorId}/posts/{$PostDetailId}" },
             navDeepLink { uriPattern = "https://{creatorId}.fanbox.cc/posts/{$PostDetailId}" },
@@ -49,8 +38,7 @@ fun NavGraphBuilder.postDetailScreen(
     ) {
         PostDetailRoute(
             modifier = Modifier.fillMaxSize(),
-            postId = FanboxPostId(it.arguments?.getString(PostDetailId).orEmpty()),
-            type = PostDetailPagingType.valueOf(it.arguments?.getString(PostDetailType) ?: PostDetailPagingType.Unknown.name),
+            postId = it.toRoute<Destination.PostDetail>().postId,
             navigateToPostSearch = navigateToPostSearch,
             navigateToPostDetail = navigateToPostDetail,
             navigateToPostImage = navigateToPostImage,
@@ -61,12 +49,4 @@ fun NavGraphBuilder.postDetailScreen(
             terminate = terminate,
         )
     }
-}
-
-enum class PostDetailPagingType {
-    Home,
-    Supported,
-    Creator,
-    Search,
-    Unknown,
 }

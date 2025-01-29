@@ -15,7 +15,7 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.currentBackStackEntryAsState
 import kotlinx.coroutines.launch
 import me.matsumo.fanbox.core.ui.extensition.LocalSnackbarHostState
-import me.matsumo.fanbox.core.ui.view.SimpleAlertContents
+import me.matsumo.fanbox.core.model.SimpleAlertContents
 import me.matsumo.fanbox.feature.library.LibraryNavHost
 import me.matsumo.fanbox.feature.library.LibraryUiState
 import me.matsumo.fanbox.feature.library.navigateToLibraryDestination

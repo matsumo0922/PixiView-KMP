@@ -60,16 +60,13 @@ import org.koin.core.parameter.parametersOf
 
 @Composable
 internal fun PostByCreatorSearchRoute(
-    creatorId: FanboxCreatorId,
     navigateToPostDetail: (FanboxPostId) -> Unit,
     navigateToCreatorPosts: (FanboxCreatorId) -> Unit,
     navigateToCreatorPlans: (FanboxCreatorId) -> Unit,
     terminate: () -> Unit,
     modifier: Modifier = Modifier,
     navigatorExtension: NavigatorExtension = koinInject(),
-    viewModel: PostByCreatorSearchViewModel = koinViewModel {
-        parametersOf(creatorId)
-    },
+    viewModel: PostByCreatorSearchViewModel = koinViewModel(),
 ) {
     val screenState by viewModel.screenState.collectAsStateWithLifecycle()
     val query by viewModel.query.collectAsStateWithLifecycle()

@@ -40,7 +40,7 @@ import me.matsumo.fanbox.core.ui.LazyPagingItemsLoadContents
 import me.matsumo.fanbox.core.ui.appName
 import me.matsumo.fanbox.core.ui.extensition.LocalNavigationType
 import me.matsumo.fanbox.core.ui.extensition.PixiViewNavigationType
-import me.matsumo.fanbox.core.ui.view.SimpleAlertContents
+import me.matsumo.fanbox.core.model.SimpleAlertContents
 import me.matsumo.fanbox.feature.library.home.items.LibraryHomeIdleSection
 import me.matsumo.fanbox.feature.library.home.items.LibrarySupportedIdleSection
 import me.matsumo.fankt.fanbox.domain.model.id.FanboxCreatorId

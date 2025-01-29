@@ -1,12 +1,15 @@
 package me.matsumo.fanbox.feature.creator.download
 
 import androidx.compose.runtime.Stable
+import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import androidx.navigation.toRoute
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 import me.matsumo.fanbox.core.common.util.suspendRunCatching
+import me.matsumo.fanbox.core.model.Destination
 import me.matsumo.fanbox.core.model.ScreenState
 import me.matsumo.fanbox.core.model.updateWhenIdle
 import me.matsumo.fanbox.core.repository.DownloadPostsRepository
@@ -19,15 +22,17 @@ import me.matsumo.fankt.fanbox.domain.model.FanboxPost
 import me.matsumo.fankt.fanbox.domain.model.id.FanboxCreatorId
 
 class CreatorPostsDownloadViewModel(
+    savedStateHandle: SavedStateHandle,
     private val fanboxRepository: FanboxRepository,
     private val downloadPostsRepository: DownloadPostsRepository,
 ) : ViewModel() {
 
-    private val _screenState = MutableStateFlow<ScreenState<CreatorPostsDownloadUiState>>(ScreenState.Loading)
+    private val creatorId = savedStateHandle.toRoute<Destination.CreatorPostsDownload>().creatorId
 
+    private val _screenState = MutableStateFlow<ScreenState<CreatorPostsDownloadUiState>>(ScreenState.Loading)
     val screenState = _screenState.asStateFlow()
 
-    fun fetch(creatorId: FanboxCreatorId) {
+    fun fetch() {
         viewModelScope.launch {
             _screenState.value = ScreenState.Loading
             _screenState.value = suspendRunCatching {
@@ -52,7 +57,6 @@ class CreatorPostsDownloadViewModel(
     }
 
     suspend fun fetchPosts(
-        creatorId: FanboxCreatorId,
         paginate: List<FanboxCursor>,
         updateCallback: (Float) -> Unit,
     ) {

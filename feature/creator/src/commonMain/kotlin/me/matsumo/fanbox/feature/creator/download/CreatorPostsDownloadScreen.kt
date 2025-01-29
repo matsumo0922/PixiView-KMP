@@ -63,7 +63,6 @@ import org.koin.compose.viewmodel.koinViewModel
 
 @Composable
 internal fun CreatorPostsDownloadRoute(
-    creatorId: FanboxCreatorId,
     navigateToDownloadQueue: () -> Unit,
     terminate: () -> Unit,
     modifier: Modifier = Modifier,
@@ -71,18 +70,12 @@ internal fun CreatorPostsDownloadRoute(
 ) {
     val screenState by viewModel.screenState.collectAsStateWithLifecycle()
 
-    LaunchedEffect(true) {
-        if (screenState !is ScreenState.Idle) {
-            viewModel.fetch(creatorId)
-        }
-    }
-
     AsyncLoadContents(
         modifier = modifier,
         otherModifier = Modifier.fillMaxSize(),
         screenState = screenState,
-        retryAction = { viewModel.fetch(creatorId) },
-        terminate = { terminate.invoke() },
+        retryAction = viewModel::fetch,
+        terminate = terminate,
     ) { uiState ->
         CreatorPostsDownloadScreen(
             modifier = Modifier.fillMaxSize(),
@@ -109,7 +102,6 @@ internal fun CreatorPostsDownloadRoute(
 
             LaunchedEffect(true) {
                 viewModel.fetchPosts(
-                    creatorId = creatorId,
                     paginate = uiState.postsPaginate,
                     updateCallback = { progress = it },
                 )

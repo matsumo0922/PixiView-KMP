@@ -1,8 +1,10 @@
 package me.matsumo.fanbox.feature.creator.top
 
 import androidx.compose.runtime.Stable
+import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import androidx.navigation.toRoute
 import androidx.paging.PagingData
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -11,6 +13,7 @@ import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
 import me.matsumo.fanbox.core.common.util.suspendRunCatching
+import me.matsumo.fanbox.core.model.Destination
 import me.matsumo.fanbox.core.model.Flag
 import me.matsumo.fanbox.core.model.ScreenState
 import me.matsumo.fanbox.core.model.UserData
@@ -30,19 +33,22 @@ import me.matsumo.fankt.fanbox.domain.model.id.FanboxPostId
 import me.matsumo.fankt.fanbox.domain.model.id.FanboxUserId
 
 class CreatorTopViewModel(
+    savedStateHandle: SavedStateHandle,
     private val userDataRepository: UserDataRepository,
     private val fanboxRepository: FanboxRepository,
     private val rewardRepository: RewardRepository,
     private val flagRepository: FlagRepository,
 ) : ViewModel() {
 
-    private val _screenState = MutableStateFlow<ScreenState<CreatorTopUiState>>(ScreenState.Loading)
-
-    val screenState = _screenState.asStateFlow()
-
+    private val creatorId = savedStateHandle.toRoute<Destination.CreatorTop>().creatorId
     private var postsPagingCache: Flow<PagingData<FanboxPost>>? = null
 
+    private val _screenState = MutableStateFlow<ScreenState<CreatorTopUiState>>(ScreenState.Loading)
+    val screenState = _screenState.asStateFlow()
+
     init {
+        fetch()
+
         viewModelScope.launch {
             userDataRepository.userData.collectLatest { data ->
                 _screenState.updateWhenIdle { it.copy(userData = data) }
@@ -62,7 +68,7 @@ class CreatorTopViewModel(
         }
     }
 
-    fun fetch(creatorId: FanboxCreatorId) {
+    fun fetch() {
         viewModelScope.launch {
             _screenState.value = ScreenState.Loading
             _screenState.value = suspendRunCatching {
@@ -133,13 +139,13 @@ class CreatorTopViewModel(
         }
     }
 
-    suspend fun blockCreator(creatorId: FanboxCreatorId) {
+    suspend fun blockCreator() {
         suspendRunCatching {
             fanboxRepository.blockCreator(creatorId)
         }
     }
 
-    suspend fun unblockCreator(creatorId: FanboxCreatorId) {
+    suspend fun unblockCreator() {
         suspendRunCatching {
             fanboxRepository.unblockCreator(creatorId)
         }

@@ -6,7 +6,7 @@ import androidx.navigation.NavController
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.compose.composable
 import me.matsumo.fanbox.core.ui.extensition.navigateWithLog
-import me.matsumo.fanbox.core.ui.view.SimpleAlertContents
+import me.matsumo.fanbox.core.model.SimpleAlertContents
 
 const val WelcomeWebRoute = "welcomeWeb"
 

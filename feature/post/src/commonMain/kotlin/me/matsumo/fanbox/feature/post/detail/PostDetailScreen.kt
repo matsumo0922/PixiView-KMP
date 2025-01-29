@@ -77,7 +77,7 @@ import me.matsumo.fanbox.core.ui.extensition.padding
 import me.matsumo.fanbox.core.ui.theme.bold
 import me.matsumo.fanbox.core.ui.theme.center
 import me.matsumo.fanbox.core.ui.view.ErrorView
-import me.matsumo.fanbox.core.ui.view.SimpleAlertContents
+import me.matsumo.fanbox.core.model.SimpleAlertContents
 import me.matsumo.fanbox.feature.post.detail.items.PostDetailBottomBar
 import me.matsumo.fanbox.feature.post.detail.items.PostDetailCommentLikeButton
 import me.matsumo.fanbox.feature.post.detail.items.PostDetailCreatorSection
@@ -108,7 +108,6 @@ import kotlin.uuid.Uuid
 @Composable
 internal fun PostDetailRoute(
     postId: FanboxPostId,
-    type: PostDetailPagingType,
     navigateToPostSearch: (String, FanboxCreatorId) -> Unit,
     navigateToPostDetail: (FanboxPostId) -> Unit,
     navigateToPostImage: (FanboxPostId, Int) -> Unit,
@@ -118,9 +117,7 @@ internal fun PostDetailRoute(
     navigateToDownloadQueue: () -> Unit,
     terminate: () -> Unit,
     modifier: Modifier = Modifier,
-    viewModel: PostDetailRootViewModel = koinViewModel {
-        parametersOf(postId, type)
-    },
+    viewModel: PostDetailRootViewModel = koinViewModel(),
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
     val paging = uiState.paging?.collectAsLazyPagingItems()

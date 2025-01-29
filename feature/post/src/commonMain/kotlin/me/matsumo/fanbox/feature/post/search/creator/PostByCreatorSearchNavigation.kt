@@ -7,6 +7,8 @@ import androidx.navigation.NavGraphBuilder
 import androidx.navigation.NavType
 import androidx.navigation.compose.composable
 import androidx.navigation.navArgument
+import androidx.navigation.toRoute
+import me.matsumo.fanbox.core.model.Destination
 import me.matsumo.fanbox.core.ui.extensition.navigateWithLog
 import me.matsumo.fankt.fanbox.domain.model.id.FanboxCreatorId
 import me.matsumo.fankt.fanbox.domain.model.id.FanboxPostId
@@ -24,15 +26,9 @@ fun NavGraphBuilder.postByCreatorSearchScreen(
     navigateToCreatorPlans: (FanboxCreatorId) -> Unit,
     terminate: () -> Unit,
 ) {
-    composable(
-        route = PostByCreatorRoute,
-        arguments = listOf(
-            navArgument(PostByCreatorCreatorId) { type = NavType.StringType },
-        ),
-    ) {
+    composable<Destination.PostByCreatorSearch> {
         PostByCreatorSearchRoute(
             modifier = Modifier.fillMaxSize(),
-            creatorId = FanboxCreatorId(it.arguments?.getString(PostByCreatorCreatorId).orEmpty()),
             navigateToPostDetail = navigateToPostDetail,
             navigateToCreatorPosts = navigateToCreatorPosts,
             navigateToCreatorPlans = navigateToCreatorPlans,

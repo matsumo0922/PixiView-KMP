@@ -7,7 +7,7 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import me.matsumo.fanbox.core.model.UserData
 import me.matsumo.fanbox.core.ui.animation.NavigateAnimation
-import me.matsumo.fanbox.core.ui.view.SimpleAlertContents
+import me.matsumo.fanbox.core.model.SimpleAlertContents
 import me.matsumo.fanbox.feature.library.discovery.LibraryDiscoveryRoute
 import me.matsumo.fanbox.feature.library.discovery.libraryDiscoveryScreen
 import me.matsumo.fanbox.feature.library.home.LibraryHomeRoute

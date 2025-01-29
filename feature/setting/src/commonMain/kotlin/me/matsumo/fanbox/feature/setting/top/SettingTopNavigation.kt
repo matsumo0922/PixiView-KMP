@@ -5,14 +5,9 @@ import androidx.compose.ui.Modifier
 import androidx.navigation.NavController
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.compose.composable
+import me.matsumo.fanbox.core.model.Destination
 import me.matsumo.fanbox.core.ui.extensition.navigateWithLog
-import me.matsumo.fanbox.core.ui.view.SimpleAlertContents
-
-const val SettingTopRoute = "settingTop"
-
-fun NavController.navigateToSettingTop() {
-    this.navigateWithLog(SettingTopRoute)
-}
+import me.matsumo.fanbox.core.model.SimpleAlertContents
 
 fun NavGraphBuilder.settingTopScreen(
     navigateToThemeSetting: () -> Unit,
@@ -23,7 +18,7 @@ fun NavGraphBuilder.settingTopScreen(
     navigateToSettingDeveloper: () -> Unit,
     terminate: () -> Unit,
 ) {
-    composable(SettingTopRoute) {
+    composable<Destination.SettingTop> {
         SettingTopRoute(
             modifier = Modifier.fillMaxSize(),
             navigateToThemeSetting = navigateToThemeSetting,

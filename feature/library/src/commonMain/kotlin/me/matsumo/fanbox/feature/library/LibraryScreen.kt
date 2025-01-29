@@ -14,7 +14,7 @@ import me.matsumo.fanbox.core.ui.AsyncLoadContents
 import me.matsumo.fanbox.core.ui.extensition.LocalNavigationType
 import me.matsumo.fanbox.core.ui.extensition.LocalSnackbarHostState
 import me.matsumo.fanbox.core.ui.extensition.PixiViewNavigationType
-import me.matsumo.fanbox.core.ui.view.SimpleAlertContents
+import me.matsumo.fanbox.core.model.SimpleAlertContents
 import me.matsumo.fanbox.feature.library.component.LibraryCompactScreen
 import me.matsumo.fanbox.feature.library.component.LibraryDestination
 import me.matsumo.fanbox.feature.library.component.LibraryExpandedScreen
