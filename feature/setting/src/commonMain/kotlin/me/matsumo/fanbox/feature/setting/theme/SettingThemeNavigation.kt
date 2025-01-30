@@ -9,13 +9,13 @@ import me.matsumo.fanbox.core.model.Destination
 import me.matsumo.fanbox.core.ui.extensition.navigateWithLog
 
 fun NavGraphBuilder.settingThemeScreen(
-    navigateToBillingPlus: (String?) -> Unit,
+    navigateTo: (Destination) -> Unit,
     terminate: () -> Unit,
 ) {
     composable<Destination.SettingTheme> {
         SettingThemeRoute(
             modifier = Modifier.fillMaxSize(),
-            navigateToBillingPlus = navigateToBillingPlus,
+            navigateTo = navigateTo,
             terminate = terminate,
         )
     }

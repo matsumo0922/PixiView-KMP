@@ -19,6 +19,7 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import kotlinx.coroutines.launch
 import me.matsumo.fanbox.core.common.PixiViewConfig
+import me.matsumo.fanbox.core.model.Destination
 import me.matsumo.fanbox.core.model.UserData
 import me.matsumo.fanbox.core.resources.Res
 import me.matsumo.fanbox.core.resources.about_title
@@ -39,8 +40,7 @@ import org.koin.compose.viewmodel.koinViewModel
 
 @Composable
 internal fun AboutRoute(
-    navigateToVersionHistory: () -> Unit,
-    navigateToDonate: () -> Unit,
+    navigateTo: (Destination) -> Unit,
     terminate: () -> Unit,
     modifier: Modifier = Modifier,
     viewModel: AboutViewModel = koinViewModel(),
@@ -60,30 +60,38 @@ internal fun AboutRoute(
             modifier = Modifier.background(MaterialTheme.colorScheme.surface),
             userData = uiState.userData,
             config = uiState.config,
-            onClickGithub = { navigatorExtension.navigateToWebPage("https://github.com/matsumo0922/PixiView-KMP", AboutRoute) },
-            onClickGithubProfile = { navigatorExtension.navigateToWebPage("https://github.com/matsumo0922", AboutRoute) },
+            onClickGithub = {
+                navigatorExtension.navigateToWebPage("https://github.com/matsumo0922/PixiView-KMP", "")
+            },
+            onClickGithubProfile = {
+                navigatorExtension.navigateToWebPage("https://github.com/matsumo0922", "")
+            },
             onClickGithubIssue = {
-                navigatorExtension.navigateToWebPage("https://github.com/matsumo0922/PixiView-KMP/issues/new", AboutRoute)
+                navigatorExtension.navigateToWebPage("https://github.com/matsumo0922/PixiView-KMP/issues/new", "")
             },
             onClickGitHubContributor = {
-                navigatorExtension.navigateToWebPage("https://github.com/matsumo0922/PixiView-KMP/graphs/contributors", AboutRoute)
+                navigatorExtension.navigateToWebPage("https://github.com/matsumo0922/PixiView-KMP/graphs/contributors", "")
             },
-            onClickDiscord = { scope.launch { toastExtension.show(snackHostState, Res.string.error_developing_feature) } },
+            onClickDiscord = {
+                scope.launch { toastExtension.show(snackHostState, Res.string.error_developing_feature) }
+            },
             onClickGooglePlay = {
-                navigatorExtension.navigateToWebPage("https://play.google.com/store/apps/details?id=caios.android.fanbox", AboutRoute)
+                navigatorExtension.navigateToWebPage("https://play.google.com/store/apps/details?id=caios.android.fanbox", "")
             },
             onClickGooglePlayDeveloper = {
-                navigatorExtension.navigateToWebPage("https://play.google.com/store/apps/developer?id=CAIOS", AboutRoute)
+                navigatorExtension.navigateToWebPage("https://play.google.com/store/apps/developer?id=CAIOS", "")
             },
             onClickAppStore = {
-                navigatorExtension.navigateToWebPage("https://apps.apple.com/jp/developer/caios/id1563407383", AboutRoute)
+                navigatorExtension.navigateToWebPage("https://apps.apple.com/jp/developer/caios/id1563407383", "")
             },
             onClickAppStoreDeveloper = {
-                navigatorExtension.navigateToWebPage("https://apps.apple.com/jp/developer/caios/id1563407383", AboutRoute)
+                navigatorExtension.navigateToWebPage("https://apps.apple.com/jp/developer/caios/id1563407383", "")
             },
-            onClickTwitter = { navigatorExtension.navigateToWebPage("https://twitter.com/matsumo0922", AboutRoute) },
-            onClickVersionHistory = { navigateToVersionHistory.invoke() },
-            onClickDonate = { navigateToDonate.invoke() },
+            onClickTwitter = {
+                navigatorExtension.navigateToWebPage("https://twitter.com/matsumo0922", "")
+            },
+            onClickVersionHistory = { navigateTo(Destination.VersionHistoryBottomSheet) },
+            onClickDonate = { navigateTo(Destination.BillingPlusBottomSheet("")) },
             onTerminate = terminate,
         )
     }

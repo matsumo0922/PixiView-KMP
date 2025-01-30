@@ -28,6 +28,7 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import io.github.alexzhirkevich.cupertino.adaptive.AdaptiveScaffold
 import io.github.alexzhirkevich.cupertino.adaptive.ExperimentalAdaptiveApi
 import kotlinx.coroutines.launch
+import me.matsumo.fanbox.core.model.Destination
 import me.matsumo.fanbox.core.model.ThemeColorConfig
 import me.matsumo.fanbox.core.model.ThemeConfig
 import me.matsumo.fanbox.core.model.UserData
@@ -52,7 +53,7 @@ import org.koin.compose.viewmodel.koinViewModel
 
 @Composable
 internal fun SettingThemeRoute(
-    navigateToBillingPlus: (String?) -> Unit,
+    navigateTo: (Destination) -> Unit,
     terminate: () -> Unit,
     modifier: Modifier = Modifier,
     viewModel: SettingThemeViewModel = koinViewModel(),
@@ -70,7 +71,7 @@ internal fun SettingThemeRoute(
         SettingThemeDialog(
             modifier = Modifier.background(MaterialTheme.colorScheme.surface),
             userData = it.userData,
-            onClickBillingPlus = { navigateToBillingPlus.invoke("isUseDynamicColor") },
+            onClickBillingPlus = { navigateTo(Destination.BillingPlusBottomSheet("")) },
             onSelectTheme = viewModel::setThemeConfig,
             onSelectThemeColor = viewModel::setThemeColorConfig,
             onClickDynamicColor = viewModel::setUseDynamicColor,

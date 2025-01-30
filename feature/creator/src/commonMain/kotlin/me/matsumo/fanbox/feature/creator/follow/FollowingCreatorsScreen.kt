@@ -30,6 +30,7 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.toImmutableList
 import kotlinx.coroutines.launch
+import me.matsumo.fanbox.core.model.Destination
 import me.matsumo.fanbox.core.resources.Res
 import me.matsumo.fanbox.core.resources.error_no_data
 import me.matsumo.fanbox.core.resources.error_no_data_following
@@ -51,7 +52,7 @@ import org.koin.compose.viewmodel.koinViewModel
 
 @Composable
 internal fun FollowingCreatorsRoute(
-    navigateToCreatorPosts: (FanboxCreatorId) -> Unit,
+    navigateTo: (Destination) -> Unit,
     terminate: () -> Unit,
     modifier: Modifier = Modifier,
     viewModel: FollowingCreatorsViewModel = koinViewModel(),
@@ -68,10 +69,10 @@ internal fun FollowingCreatorsRoute(
         FollowingCreatorsScreen(
             modifier = Modifier.fillMaxSize(),
             followingCreators = uiState.followingCreators.toImmutableList(),
-            onClickCreator = navigateToCreatorPosts,
+            onClickCreator = { navigateTo(Destination.CreatorTop(it, true)) },
             onClickFollow = viewModel::follow,
             onClickUnfollow = viewModel::unfollow,
-            onClickSupporting = { navigatorExtension.navigateToWebPage(it, FollowingCreatorsRoute) },
+            onClickSupporting = { navigatorExtension.navigateToWebPage(it, "") },
             terminate = terminate,
         )
     }

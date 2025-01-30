@@ -41,6 +41,7 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.toImmutableList
 import kotlinx.coroutines.launch
+import me.matsumo.fanbox.core.model.Destination
 import me.matsumo.fanbox.core.model.ScreenState
 import me.matsumo.fanbox.core.resources.Res
 import me.matsumo.fanbox.core.resources.creator_posts_download_button
@@ -63,7 +64,7 @@ import org.koin.compose.viewmodel.koinViewModel
 
 @Composable
 internal fun CreatorPostsDownloadRoute(
-    navigateToDownloadQueue: () -> Unit,
+    navigateTo: (Destination) -> Unit,
     terminate: () -> Unit,
     modifier: Modifier = Modifier,
     viewModel: CreatorPostsDownloadViewModel = koinViewModel(),
@@ -89,7 +90,7 @@ internal fun CreatorPostsDownloadRoute(
             onClickIgnoreFreePosts = viewModel::updateIgnoreFreePosts,
             onClickIgnoreFiles = viewModel::updateIgnoreFiles,
             onClickDownload = viewModel::download,
-            onClickCheckQueue = navigateToDownloadQueue,
+            onClickCheckQueue = { navigateTo(Destination.DownloadQueue) },
             terminate = terminate,
         )
 

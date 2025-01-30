@@ -19,17 +19,14 @@ import kotlinx.datetime.Clock
 import me.matsumo.fanbox.core.common.util.format
 import me.matsumo.fanbox.core.logs.category.WelcomeLog
 import me.matsumo.fanbox.core.logs.logger.send
+import me.matsumo.fanbox.core.model.Destination
 import me.matsumo.fanbox.core.ui.animation.NavigateAnimation
 import me.matsumo.fanbox.core.ui.extensition.LocalSnackbarHostState
 import me.matsumo.fanbox.core.ui.extensition.popBackStackWithResult
 import me.matsumo.fanbox.core.ui.view.navigateToSimpleAlertDialog
 import me.matsumo.fanbox.core.ui.view.simpleAlertDialogDialog
-import me.matsumo.fanbox.feature.welcome.login.WelcomeLoginRoute
-import me.matsumo.fanbox.feature.welcome.login.navigateToWelcomeLogin
 import me.matsumo.fanbox.feature.welcome.login.welcomeLoginScreen
-import me.matsumo.fanbox.feature.welcome.top.WelcomeTopRoute
 import me.matsumo.fanbox.feature.welcome.top.welcomeTopScreen
-import me.matsumo.fanbox.feature.welcome.web.navigateToWelcomeWeb
 import me.matsumo.fanbox.feature.welcome.web.welcomeWebScreen
 
 @Composable
@@ -46,9 +43,9 @@ fun WelcomeNavHost(
     val snackbarHostState = remember { SnackbarHostState() }
 
     val startDestination = when {
-        !isAgreedTeams -> WelcomeTopRoute
-        !isLoggedIn -> WelcomeLoginRoute
-        else -> WelcomeTopRoute
+        !isAgreedTeams -> Destination.WelcomeTop
+        !isLoggedIn -> Destination.WelcomeLogin
+        else -> Destination.WelcomeTop
     }
 
     val onboardingStartTime = Clock.System.now()
@@ -75,12 +72,12 @@ fun WelcomeNavHost(
                 welcomeTopScreen(
                     navigateToWelcomeLogin = {
                         WelcomeLog.firstOpen().send()
-                        navController.navigateToWelcomeLogin()
+                        navController.navigate(Destination.WelcomeLogin)
                     },
                 )
 
                 welcomeLoginScreen(
-                    navigateToLoginScreen = { navController.navigateToWelcomeWeb() },
+                    navigateToLoginScreen = { navController.navigate(Destination.WelcomeWeb) },
                     navigateToHome = {
                         val onboardingEndTime = Clock.System.now()
 

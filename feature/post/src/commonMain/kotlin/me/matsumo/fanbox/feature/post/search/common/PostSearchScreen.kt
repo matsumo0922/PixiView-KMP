@@ -16,6 +16,7 @@ import app.cash.paging.compose.LazyPagingItems
 import app.cash.paging.compose.collectAsLazyPagingItems
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.toImmutableList
+import me.matsumo.fanbox.core.model.Destination
 import me.matsumo.fanbox.core.model.UserData
 import me.matsumo.fanbox.core.ui.extensition.NavigatorExtension
 import me.matsumo.fanbox.feature.post.search.common.items.PostSearchCreatorScreen
@@ -33,10 +34,7 @@ import org.koin.compose.viewmodel.koinViewModel
 @Composable
 internal fun PostSearchRoute(
     query: String,
-    navigateToPostSearch: (FanboxCreatorId?, String?, String?) -> Unit,
-    navigateToPostDetail: (FanboxPostId) -> Unit,
-    navigateToCreatorPosts: (FanboxCreatorId) -> Unit,
-    navigateToCreatorPlans: (FanboxCreatorId) -> Unit,
+    navigateTo: (Destination) -> Unit,
     terminate: () -> Unit,
     modifier: Modifier = Modifier,
     viewModel: PostSearchViewModel = koinViewModel(),
@@ -62,17 +60,17 @@ internal fun PostSearchRoute(
         creatorPaging = creatorPaging,
         tagPaging = tagPaging,
         onTerminate = terminate,
-        onClickPost = navigateToPostDetail,
+        onClickPost = { navigateTo(Destination.PostDetail(it, Destination.PostDetail.PagingType.Search)) },
         onClickPostLike = viewModel::postLike,
         onClickPostBookmark = viewModel::postBookmark,
-        onClickCreatorPosts = navigateToCreatorPosts,
-        onClickCreatorPlans = navigateToCreatorPlans,
+        onClickCreatorPosts = { navigateTo(Destination.CreatorTop(it, true)) },
+        onClickCreatorPlans = { navigateTo(Destination.CreatorTop(it, false)) },
         onClickFollow = viewModel::follow,
         onClickUnfollow = viewModel::unfollow,
-        onClickSupporting = { navigatorExtension.navigateToWebPage(it, PostSearchRoute) },
+        onClickSupporting = { navigatorExtension.navigateToWebPage(it, "") },
         onSearch = {
             if (uiState.query.isNotBlank()) {
-                navigateToPostSearch.invoke(it.creatorId, it.creatorQuery, it.tag)
+                navigateTo(Destination.PostSearch(it.creatorId ?: FanboxCreatorId(""), it.creatorQuery, it.tag))
             } else {
                 viewModel.search(it)
             }
@@ -157,7 +155,7 @@ private fun PostSearchScreen(
 }
 
 internal fun buildQuery(
-    creatorId: FanboxCreatorId?,
+    creatorId: FanboxCreatorId,
     creatorQuery: String?,
     tag: String?,
 ): String {
@@ -171,7 +169,7 @@ internal fun buildQuery(
         queryList += "#$tag"
     }
 
-    if (creatorId != null) {
+    if (creatorId.value.isNotBlank()) {
         queryList += "from:@${creatorId.value}"
     }
 
@@ -180,7 +178,7 @@ internal fun buildQuery(
 
 internal fun buildQuery(query: PostSearchQuery): String {
     return buildQuery(
-        creatorId = query.creatorId,
+        creatorId = query.creatorId ?: FanboxCreatorId(""),
         creatorQuery = query.creatorQuery,
         tag = query.tag,
     )

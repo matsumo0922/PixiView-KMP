@@ -14,37 +14,27 @@ import androidx.navigation.toRoute
 import me.matsumo.fanbox.core.model.Destination
 import me.matsumo.fanbox.core.ui.extensition.navigateWithLog
 import me.matsumo.fanbox.core.model.SimpleAlertContents
+import me.matsumo.fanbox.core.ui.customNavTypes
 import me.matsumo.fankt.fanbox.domain.model.id.FanboxCreatorId
 import me.matsumo.fankt.fanbox.domain.model.id.FanboxPostId
-
-const val PostDetailId = "postDetailId"
-
+import kotlin.reflect.typeOf
 
 fun NavGraphBuilder.postDetailScreen(
-    navigateToPostSearch: (String, FanboxCreatorId) -> Unit,
-    navigateToPostDetail: (FanboxPostId) -> Unit,
-    navigateToPostImage: (FanboxPostId, Int) -> Unit,
-    navigateToCreatorPosts: (FanboxCreatorId) -> Unit,
-    navigateToCreatorPlans: (FanboxCreatorId) -> Unit,
-    navigateToDownloadQueue: () -> Unit,
+    navigateTo: (Destination) -> Unit,
     navigateToCommentDeleteDialog: (SimpleAlertContents, () -> Unit) -> Unit,
     terminate: () -> Unit,
 ) {
     composable<Destination.PostDetail>(
         deepLinks = listOf(
-            navDeepLink { uriPattern = "https://www.fanbox.cc/@{creatorId}/posts/{$PostDetailId}" },
-            navDeepLink { uriPattern = "https://{creatorId}.fanbox.cc/posts/{$PostDetailId}" },
+            navDeepLink { uriPattern = "https://www.fanbox.cc/@{creatorId}/posts/{postId}" },
+            navDeepLink { uriPattern = "https://{creatorId}.fanbox.cc/posts/{postId}" },
         ),
+        typeMap = customNavTypes,
     ) {
         PostDetailRoute(
             modifier = Modifier.fillMaxSize(),
             postId = it.toRoute<Destination.PostDetail>().postId,
-            navigateToPostSearch = navigateToPostSearch,
-            navigateToPostDetail = navigateToPostDetail,
-            navigateToPostImage = navigateToPostImage,
-            navigateToCreatorPosts = navigateToCreatorPosts,
-            navigateToCreatorPlans = navigateToCreatorPlans,
-            navigateToDownloadQueue = navigateToDownloadQueue,
+            navigateTo = navigateTo,
             navigateToCommentDeleteDialog = navigateToCommentDeleteDialog,
             terminate = terminate,
         )

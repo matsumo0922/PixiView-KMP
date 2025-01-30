@@ -24,6 +24,7 @@ import me.matsumo.fanbox.core.repository.FanboxRepository
 import me.matsumo.fanbox.core.repository.UserDataRepository
 import me.matsumo.fanbox.core.resources.Res
 import me.matsumo.fanbox.core.resources.error_network
+import me.matsumo.fanbox.core.ui.customNavTypes
 import me.matsumo.fankt.fanbox.domain.model.FanboxCreatorDetail
 import me.matsumo.fankt.fanbox.domain.model.FanboxPost
 import me.matsumo.fankt.fanbox.domain.model.id.FanboxCreatorId
@@ -37,7 +38,7 @@ class PostByCreatorSearchViewModel(
     private val ioDispatcher: CoroutineDispatcher = Dispatchers.IO,
 ) : ViewModel() {
 
-    private val creatorId = savedStateHandle.toRoute<Destination.PostByCreatorSearch>().creatorId
+    private val creatorId = savedStateHandle.toRoute<Destination.PostByCreatorSearch>(customNavTypes).creatorId
 
     private val _allPosts = MutableSharedFlow<List<FanboxPost>>(replay = 1)
     private val _query = MutableStateFlow("")

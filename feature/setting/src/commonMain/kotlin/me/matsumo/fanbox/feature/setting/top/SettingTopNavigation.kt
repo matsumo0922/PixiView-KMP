@@ -10,23 +10,15 @@ import me.matsumo.fanbox.core.ui.extensition.navigateWithLog
 import me.matsumo.fanbox.core.model.SimpleAlertContents
 
 fun NavGraphBuilder.settingTopScreen(
-    navigateToThemeSetting: () -> Unit,
-    navigateToDirectorySetting: () -> Unit,
-    navigateToBillingPlus: (String?) -> Unit,
+    navigateTo: (Destination) -> Unit,
     navigateToLogoutDialog: (SimpleAlertContents, () -> Unit) -> Unit,
-    navigateToOpenSourceLicense: () -> Unit,
-    navigateToSettingDeveloper: () -> Unit,
     terminate: () -> Unit,
 ) {
     composable<Destination.SettingTop> {
         SettingTopRoute(
             modifier = Modifier.fillMaxSize(),
-            navigateToThemeSetting = navigateToThemeSetting,
-            navigateToDirectorySetting = navigateToDirectorySetting,
-            navigateToBillingPlus = navigateToBillingPlus,
-            navigateToOpenSourceLicense = navigateToOpenSourceLicense,
+            navigateTo = navigateTo,
             navigateToLogoutDialog = navigateToLogoutDialog,
-            navigateToSettingDeveloper = navigateToSettingDeveloper,
             terminate = terminate,
         )
     }

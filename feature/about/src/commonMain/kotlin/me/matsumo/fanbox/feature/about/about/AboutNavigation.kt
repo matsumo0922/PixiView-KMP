@@ -9,15 +9,13 @@ import me.matsumo.fanbox.core.model.Destination
 import me.matsumo.fanbox.core.ui.extensition.navigateWithLog
 
 fun NavGraphBuilder.aboutScreen(
-    navigateToVersionHistory: () -> Unit,
-    navigateToDonate: () -> Unit,
+    navigateTo: (Destination) -> Unit,
     terminate: () -> Unit,
 ) {
     composable<Destination.About> {
         AboutRoute(
             modifier = Modifier.fillMaxSize(),
-            navigateToVersionHistory = navigateToVersionHistory,
-            navigateToDonate = navigateToDonate,
+            navigateTo = navigateTo,
             terminate = terminate,
         )
     }

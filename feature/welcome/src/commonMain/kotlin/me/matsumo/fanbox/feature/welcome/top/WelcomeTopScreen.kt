@@ -81,7 +81,7 @@ internal fun WelcomeTopScreen(
                 navigateToWelcomeLogin = navigateToWelcomeLogin,
                 setAgreedPrivacyPolicy = viewModel::setAgreedPrivacyPolicy,
                 setAgreedTermsOfService = viewModel::setAgreedTermsOfService,
-                navigateToWebPage = { navigatorExtension.navigateToWebPage(it, WelcomeTopRoute) },
+                navigateToWebPage = { navigatorExtension.navigateToWebPage(it, "") },
             )
         }
     } else {
@@ -105,7 +105,7 @@ internal fun WelcomeTopScreen(
                     navigateToWelcomeLogin = navigateToWelcomeLogin,
                     setAgreedPrivacyPolicy = viewModel::setAgreedPrivacyPolicy,
                     setAgreedTermsOfService = viewModel::setAgreedTermsOfService,
-                    navigateToWebPage = { navigatorExtension.navigateToWebPage(it, WelcomeTopRoute) },
+                    navigateToWebPage = { navigatorExtension.navigateToWebPage(it, "") },
                 )
             }
         }

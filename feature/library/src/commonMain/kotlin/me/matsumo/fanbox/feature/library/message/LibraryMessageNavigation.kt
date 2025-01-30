@@ -6,6 +6,7 @@ import androidx.navigation.NavController
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.NavOptions
 import androidx.navigation.compose.composable
+import me.matsumo.fanbox.core.model.Destination
 import me.matsumo.fanbox.core.ui.extensition.navigateWithLog
 import me.matsumo.fankt.fanbox.domain.model.id.FanboxCreatorId
 
@@ -17,7 +18,7 @@ fun NavController.navigateToLibraryMessage(navOptions: NavOptions? = null) {
 
 fun NavGraphBuilder.libraryMessageScreen(
     openDrawer: () -> Unit,
-    navigateToCreatorPosts: (FanboxCreatorId) -> Unit,
+    navigateTo: (Destination) -> Unit,
 ) {
     composable(
         route = LibraryMessageRoute,
@@ -25,7 +26,7 @@ fun NavGraphBuilder.libraryMessageScreen(
         LibraryMessageRoute(
             modifier = Modifier.fillMaxSize(),
             openDrawer = openDrawer,
-            navigateToCreatorPosts = navigateToCreatorPosts,
+            navigateTo = navigateTo,
         )
     }
 }

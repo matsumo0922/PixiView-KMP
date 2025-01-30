@@ -24,6 +24,7 @@ import me.matsumo.fanbox.core.repository.RewardRepository
 import me.matsumo.fanbox.core.repository.UserDataRepository
 import me.matsumo.fanbox.core.resources.Res
 import me.matsumo.fanbox.core.resources.error_network
+import me.matsumo.fanbox.core.ui.customNavTypes
 import me.matsumo.fankt.fanbox.domain.model.FanboxCreatorDetail
 import me.matsumo.fankt.fanbox.domain.model.FanboxCreatorPlan
 import me.matsumo.fankt.fanbox.domain.model.FanboxPost
@@ -40,7 +41,7 @@ class CreatorTopViewModel(
     private val flagRepository: FlagRepository,
 ) : ViewModel() {
 
-    private val creatorId = savedStateHandle.toRoute<Destination.CreatorTop>().creatorId
+    private val creatorId = savedStateHandle.toRoute<Destination.CreatorTop>(customNavTypes).creatorId
     private var postsPagingCache: Flow<PagingData<FanboxPost>>? = null
 
     private val _screenState = MutableStateFlow<ScreenState<CreatorTopUiState>>(ScreenState.Loading)

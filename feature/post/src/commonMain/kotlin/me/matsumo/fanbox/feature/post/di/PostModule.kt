@@ -17,14 +17,8 @@ val postModule = module {
     viewModelOf(::PostSearchViewModel)
     viewModelOf(::DownloadQueueViewModel)
 
-    viewModel {
-        PostDetailRootViewModel(
-            postId = it[0],
-            type = it[1],
-            userDataRepository = get(),
-            fanboxRepository = get(),
-        )
-    }
+    viewModelOf(::PostDetailRootViewModel)
+    viewModelOf(::PostByCreatorSearchViewModel)
 
     viewModel {
         PostDetailViewModel(
@@ -32,14 +26,6 @@ val postModule = module {
             userDataRepository = get(),
             fanboxRepository = get(),
             downloadPostsRepository = get(),
-        )
-    }
-
-    viewModel {
-        PostByCreatorSearchViewModel(
-            creatorId = it.get(),
-            userDataRepository = get(),
-            fanboxRepository = get(),
         )
     }
 }

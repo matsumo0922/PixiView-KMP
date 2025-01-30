@@ -60,6 +60,7 @@ import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.toImmutableList
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
+import me.matsumo.fanbox.core.model.Destination
 import me.matsumo.fanbox.core.model.ScreenState
 import me.matsumo.fanbox.core.model.UserData
 import me.matsumo.fanbox.core.resources.Res
@@ -109,11 +110,7 @@ internal enum class CreatorTopRevealKeys {
 @Composable
 internal fun CreatorTopRoute(
     isPosts: Boolean,
-    navigateToPostDetail: (FanboxPostId) -> Unit,
-    navigateToPostSearch: (String, FanboxCreatorId) -> Unit,
-    navigateToPostByCreatorSearch: (FanboxCreatorId) -> Unit,
-    navigateToDownloadAll: (FanboxCreatorId) -> Unit,
-    navigateToBillingPlus: (String?) -> Unit,
+    navigateTo: (Destination) -> Unit,
     navigateToAlertDialog: (SimpleAlertContents, () -> Unit, () -> Unit) -> Unit,
     terminate: () -> Unit,
     modifier: Modifier = Modifier,
@@ -160,19 +157,19 @@ internal fun CreatorTopRoute(
                 creatorPlans = uiState.creatorPlans.toImmutableList(),
                 creatorTags = uiState.creatorTags.toImmutableList(),
                 creatorPostsPaging = creatorPostsPaging,
-                onClickSearch = navigateToPostByCreatorSearch,
-                onClickAllDownload = navigateToDownloadAll,
-                onClickPost = navigateToPostDetail,
-                onClickPlan = { navigatorExtension.navigateToWebPage(it.planBrowserUrl, CreatorTopRoute) },
-                onClickTag = { navigateToPostSearch.invoke(it.name, uiState.creatorDetail.creatorId) },
+                onClickSearch = { navigateTo(Destination.PostByCreatorSearch(it)) },
+                onClickAllDownload = { navigateTo(Destination.CreatorPostsDownload(it)) },
+                onClickPost = { navigateTo(Destination.PostDetail(it, Destination.PostDetail.PagingType.Creator)) },
+                onClickPlan = { navigatorExtension.navigateToWebPage(it.planBrowserUrl, "") },
+                onClickTag = { navigateTo(Destination.PostSearch(uiState.creatorDetail.creatorId, null, it.name)) },
                 onTerminate = terminate,
-                onClickLink = { navigatorExtension.navigateToWebPage(it, CreatorTopRoute) },
+                onClickLink = { navigatorExtension.navigateToWebPage(it, "") },
                 onClickFollow = viewModel::follow,
                 onClickUnfollow = viewModel::unfollow,
                 onClickPostBookmark = viewModel::postBookmark,
                 onClickBillingPlus = {
                     scope.launch { toastExtension.show(snackbarHostState, requirePlus) }
-                    navigateToBillingPlus.invoke(it)
+                    navigateTo(Destination.BillingPlusBottomSheet(it))
                 },
                 onShowBlockDialog = {
                     navigateToAlertDialog.invoke(

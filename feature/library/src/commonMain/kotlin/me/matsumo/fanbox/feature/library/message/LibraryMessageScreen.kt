@@ -20,6 +20,7 @@ import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.toImmutableList
+import me.matsumo.fanbox.core.model.Destination
 import me.matsumo.fanbox.core.resources.Res
 import me.matsumo.fanbox.core.resources.error_no_data
 import me.matsumo.fanbox.core.resources.error_no_data_message
@@ -39,7 +40,7 @@ import org.koin.compose.viewmodel.koinViewModel
 @Composable
 internal fun LibraryMessageRoute(
     openDrawer: () -> Unit,
-    navigateToCreatorPosts: (FanboxCreatorId) -> Unit,
+    navigateTo: (Destination) -> Unit,
     modifier: Modifier = Modifier,
     viewModel: LibraryMessageViewModel = koinViewModel(),
 ) {
@@ -54,7 +55,7 @@ internal fun LibraryMessageRoute(
             modifier = Modifier.fillMaxSize(),
             messages = uiState.messages.toImmutableList(),
             openDrawer = openDrawer,
-            onClickCreator = navigateToCreatorPosts,
+            onClickCreator = { navigateTo(Destination.CreatorTop(it, true)) },
         )
     }
 }

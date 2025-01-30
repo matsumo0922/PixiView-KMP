@@ -23,6 +23,7 @@ import app.cash.paging.compose.LazyPagingItems
 import app.cash.paging.compose.collectAsLazyPagingItems
 import app.cash.paging.compose.itemContentType
 import app.cash.paging.compose.itemKey
+import me.matsumo.fanbox.core.model.Destination
 import me.matsumo.fanbox.core.resources.Res
 import me.matsumo.fanbox.core.resources.error_no_data_notify
 import me.matsumo.fanbox.core.resources.library_navigation_notify
@@ -42,7 +43,7 @@ import org.koin.compose.viewmodel.koinViewModel
 @Composable
 internal fun LibraryNotifyRoute(
     openDrawer: () -> Unit,
-    navigateToPostDetail: (FanboxPostId) -> Unit,
+    navigateTo: (Destination) -> Unit,
     modifier: Modifier = Modifier,
     viewModel: LibraryNotifyViewModel = koinViewModel(),
 ) {
@@ -51,13 +52,13 @@ internal fun LibraryNotifyRoute(
     AsyncLoadContents(
         modifier = modifier,
         screenState = screenState,
-    ) {
-        val paging = it.paging.collectAsLazyPagingItems()
+    ) { uiState ->
+        val paging = uiState.paging.collectAsLazyPagingItems()
 
         LibraryNotifyScreen(
             modifier = Modifier.fillMaxSize(),
             openDrawer = openDrawer,
-            onClickBell = navigateToPostDetail,
+            onClickBell = { navigateTo(Destination.PostDetail(it, Destination.PostDetail.PagingType.Unknown)) },
             pagingAdapter = paging,
         )
     }

@@ -2,23 +2,21 @@ package me.matsumo.fanbox.feature.creator.download
 
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.ui.Modifier
-import androidx.navigation.NavController
 import androidx.navigation.NavGraphBuilder
-import androidx.navigation.NavType
 import androidx.navigation.compose.composable
-import androidx.navigation.navArgument
 import me.matsumo.fanbox.core.model.Destination
-import me.matsumo.fanbox.core.ui.extensition.navigateWithLog
-import me.matsumo.fankt.fanbox.domain.model.id.FanboxCreatorId
+import me.matsumo.fanbox.core.ui.customNavTypes
 
 fun NavGraphBuilder.creatorPostsDownloadDialog(
-    navigateToDownloadQueue: () -> Unit,
+    navigateTo: (Destination) -> Unit,
     terminate: () -> Unit,
 ) {
-    composable<Destination.CreatorPostsDownload> {
+    composable<Destination.CreatorPostsDownload>(
+        typeMap = customNavTypes,
+    ) {
         CreatorPostsDownloadRoute(
             modifier = Modifier.fillMaxSize(),
-            navigateToDownloadQueue = navigateToDownloadQueue,
+            navigateTo = navigateTo,
             terminate = terminate,
         )
     }

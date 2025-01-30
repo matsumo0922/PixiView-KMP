@@ -78,9 +78,9 @@ internal fun WelcomeLoginScreen(
         modifier = modifier,
         screenState = screenState,
         retryAction = { viewModel.fetchLoggedIn() },
-    ) {
-        if (it) {
-            LaunchedEffect(it) {
+    ) { isLoggedIn ->
+        if (isLoggedIn) {
+            LaunchedEffect(isLoggedIn) {
                 WelcomeLog.loggedIn()
                 navigateToHome.invoke()
             }
@@ -98,13 +98,13 @@ internal fun WelcomeLoginScreen(
 
                 SecondSection(
                     modifier = Modifier.weight(1f),
-                    isLoggedIn = it,
+                    isLoggedIn = isLoggedIn,
                     navigateToLoginScreen = {
                         viewModel.logout()
                         navigateToLoginScreen.invoke()
                     },
                     navigateToHome = navigateToHome,
-                    navigateToHelp = { navigatorExtension.navigateToWebPage(it, WelcomeLoginRoute) },
+                    navigateToHelp = { navigatorExtension.navigateToWebPage(it, "") },
                     onSetSessionId = viewModel::setSessionId,
                 )
             }
@@ -127,13 +127,13 @@ internal fun WelcomeLoginScreen(
 
                     SecondSection(
                         modifier = Modifier.weight(3f),
-                        isLoggedIn = it,
+                        isLoggedIn = isLoggedIn,
                         navigateToLoginScreen = {
                             viewModel.logout()
                             navigateToLoginScreen.invoke()
                         },
                         navigateToHome = navigateToHome,
-                        navigateToHelp = { navigatorExtension.navigateToWebPage(it, WelcomeLoginRoute) },
+                        navigateToHelp = { navigatorExtension.navigateToWebPage(it, "") },
                         onSetSessionId = viewModel::setSessionId,
                     )
                 }

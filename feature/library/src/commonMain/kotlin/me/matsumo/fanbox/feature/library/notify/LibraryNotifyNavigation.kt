@@ -8,6 +8,7 @@ import androidx.navigation.NavController
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.NavOptions
 import androidx.navigation.compose.composable
+import me.matsumo.fanbox.core.model.Destination
 import me.matsumo.fanbox.core.ui.extensition.navigateWithLog
 import me.matsumo.fankt.fanbox.domain.model.id.FanboxPostId
 
@@ -19,7 +20,7 @@ fun NavController.navigateToLibraryNotify(navOptions: NavOptions? = null) {
 
 fun NavGraphBuilder.libraryNotifyScreen(
     openDrawer: () -> Unit,
-    navigateToPostDetail: (FanboxPostId) -> Unit,
+    navigateTo: (Destination) -> Unit,
 ) {
     composable(
         route = LibraryNotifyRoute,
@@ -29,7 +30,7 @@ fun NavGraphBuilder.libraryNotifyScreen(
                 .fillMaxSize()
                 .background(MaterialTheme.colorScheme.background),
             openDrawer = openDrawer,
-            navigateToPostDetail = navigateToPostDetail,
+            navigateTo = navigateTo,
         )
     }
 }

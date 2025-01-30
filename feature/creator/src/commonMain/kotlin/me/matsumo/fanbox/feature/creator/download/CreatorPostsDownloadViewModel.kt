@@ -16,6 +16,7 @@ import me.matsumo.fanbox.core.repository.DownloadPostsRepository
 import me.matsumo.fanbox.core.repository.FanboxRepository
 import me.matsumo.fanbox.core.resources.Res
 import me.matsumo.fanbox.core.resources.error_network
+import me.matsumo.fanbox.core.ui.customNavTypes
 import me.matsumo.fankt.fanbox.domain.FanboxCursor
 import me.matsumo.fankt.fanbox.domain.model.FanboxCreatorDetail
 import me.matsumo.fankt.fanbox.domain.model.FanboxPost
@@ -27,7 +28,7 @@ class CreatorPostsDownloadViewModel(
     private val downloadPostsRepository: DownloadPostsRepository,
 ) : ViewModel() {
 
-    private val creatorId = savedStateHandle.toRoute<Destination.CreatorPostsDownload>().creatorId
+    private val creatorId = savedStateHandle.toRoute<Destination.CreatorPostsDownload>(customNavTypes).creatorId
 
     private val _screenState = MutableStateFlow<ScreenState<CreatorPostsDownloadUiState>>(ScreenState.Loading)
     val screenState = _screenState.asStateFlow()

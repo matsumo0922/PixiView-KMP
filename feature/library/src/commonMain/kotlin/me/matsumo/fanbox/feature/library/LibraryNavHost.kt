@@ -5,6 +5,7 @@ import androidx.compose.ui.Modifier
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
+import me.matsumo.fanbox.core.model.Destination
 import me.matsumo.fanbox.core.model.UserData
 import me.matsumo.fanbox.core.ui.animation.NavigateAnimation
 import me.matsumo.fanbox.core.model.SimpleAlertContents
@@ -24,16 +25,8 @@ fun LibraryNavHost(
     navController: NavHostController,
     userData: UserData,
     openDrawer: () -> Unit,
-    navigateToPostSearch: () -> Unit,
-    navigateToPostByCreatorSearch: (FanboxCreatorId) -> Unit,
-    navigateToPostDetailFromHome: (postId: FanboxPostId) -> Unit,
-    navigateToPostDetailFromSupported: (postId: FanboxPostId) -> Unit,
-    navigateToCreatorPosts: (creatorId: FanboxCreatorId) -> Unit,
-    navigateToCreatorPlans: (creatorId: FanboxCreatorId) -> Unit,
-    navigateToSimpleAlert: (SimpleAlertContents) -> Unit,
-    navigateToBillingPlus: (String?) -> Unit,
+    navigateTo: (Destination) -> Unit,
     modifier: Modifier = Modifier,
-    applyOtherRoutes: NavGraphBuilder.() -> Unit = {},
 ) {
     val startDestination = if (userData.isTestUser) {
         LibraryDiscoveryRoute
@@ -50,32 +43,23 @@ fun LibraryNavHost(
     ) {
         libraryHomeScreen(
             openDrawer = openDrawer,
-            navigateToPostDetailFromHome = navigateToPostDetailFromHome,
-            navigateToPostDetailFromSupported = navigateToPostDetailFromSupported,
-            navigateToCreatorPosts = navigateToCreatorPosts,
-            navigateToCreatorPlans = navigateToCreatorPlans,
-            navigateToSimpleAlert = navigateToSimpleAlert,
+            navigateTo = navigateTo,
         )
 
         libraryDiscoveryScreen(
             openDrawer = openDrawer,
-            navigateToPostSearch = navigateToPostSearch,
-            navigateToPostByCreatorSearch = navigateToPostByCreatorSearch,
-            navigateToCreatorPosts = navigateToCreatorPosts,
-            navigateToBillingPlus = navigateToBillingPlus,
+            navigateTo = navigateTo,
         )
 
         libraryNotifyScreen(
             openDrawer = openDrawer,
-            navigateToPostDetail = navigateToPostDetailFromHome,
+            navigateTo = navigateTo,
         )
 
         libraryMessageScreen(
             openDrawer = openDrawer,
-            navigateToCreatorPosts = navigateToCreatorPosts,
+            navigateTo = navigateTo,
         )
-
-        applyOtherRoutes.invoke(this)
     }
 }
 

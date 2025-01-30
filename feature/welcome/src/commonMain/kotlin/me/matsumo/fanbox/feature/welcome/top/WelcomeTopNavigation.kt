@@ -5,18 +5,13 @@ import androidx.compose.ui.Modifier
 import androidx.navigation.NavController
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.compose.composable
+import me.matsumo.fanbox.core.model.Destination
 import me.matsumo.fanbox.core.ui.extensition.navigateWithLog
-
-const val WelcomeTopRoute = "welcomeTop"
-
-fun NavController.navigateToWelcomeTop() {
-    this.navigateWithLog(WelcomeTopRoute)
-}
 
 fun NavGraphBuilder.welcomeTopScreen(
     navigateToWelcomeLogin: () -> Unit,
 ) {
-    composable(WelcomeTopRoute) {
+    composable<Destination.WelcomeTop> {
         WelcomeTopScreen(
             modifier = Modifier.fillMaxSize(),
             navigateToWelcomeLogin = navigateToWelcomeLogin,

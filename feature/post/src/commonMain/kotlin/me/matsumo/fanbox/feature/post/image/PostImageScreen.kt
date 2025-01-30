@@ -27,6 +27,7 @@ import coil3.compose.LocalPlatformContext
 import coil3.compose.SubcomposeAsyncImage
 import coil3.request.ImageRequest
 import kotlinx.coroutines.launch
+import me.matsumo.fanbox.core.model.Destination
 import me.matsumo.fanbox.core.model.ScreenState
 import me.matsumo.fanbox.core.resources.Res
 import me.matsumo.fanbox.core.resources.error_ios_gif_support
@@ -54,7 +55,7 @@ import org.koin.compose.viewmodel.koinViewModel
 internal fun PostImageRoute(
     postId: FanboxPostId,
     postImageIndex: Int,
-    navigateToDownloadQueue: () -> Unit,
+    navigateTo: (Destination) -> Unit,
     terminate: () -> Unit,
     modifier: Modifier = Modifier,
     viewModel: PostImageViewModel = koinViewModel(),
@@ -89,7 +90,7 @@ internal fun PostImageRoute(
                         label = Res.string.queue_added_action,
                         callback = { result ->
                             if (result == SnackbarResult.ActionPerformed) {
-                                navigateToDownloadQueue.invoke()
+                                navigateTo(Destination.DownloadQueue)
                             }
                         },
                     )

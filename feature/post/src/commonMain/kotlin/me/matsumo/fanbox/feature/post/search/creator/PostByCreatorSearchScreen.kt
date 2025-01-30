@@ -35,6 +35,7 @@ import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.toImmutableList
 import kotlinx.coroutines.launch
 import me.matsumo.fanbox.core.common.util.format
+import me.matsumo.fanbox.core.model.Destination
 import me.matsumo.fanbox.core.model.UserData
 import me.matsumo.fanbox.core.resources.Res
 import me.matsumo.fanbox.core.resources.creator_posts_download_dialog_title
@@ -60,9 +61,7 @@ import org.koin.core.parameter.parametersOf
 
 @Composable
 internal fun PostByCreatorSearchRoute(
-    navigateToPostDetail: (FanboxPostId) -> Unit,
-    navigateToCreatorPosts: (FanboxCreatorId) -> Unit,
-    navigateToCreatorPlans: (FanboxCreatorId) -> Unit,
+    navigateTo: (Destination) -> Unit,
     terminate: () -> Unit,
     modifier: Modifier = Modifier,
     navigatorExtension: NavigatorExtension = koinInject(),
@@ -86,12 +85,12 @@ internal fun PostByCreatorSearchRoute(
             progress = uiState.progress,
             isPrepared = uiState.isPrepared,
             onQueryChanged = viewModel::updateQuery,
-            onPostClicked = navigateToPostDetail,
-            onCreatorPostsClicked = navigateToCreatorPosts,
-            onCreatorPlansClicked = navigateToCreatorPlans,
+            onPostClicked = { navigateTo(Destination.PostDetail(it, Destination.PostDetail.PagingType.Unknown)) },
+            onCreatorPostsClicked = { navigateTo(Destination.CreatorTop(it, true))},
+            onCreatorPlansClicked = { navigateTo(Destination.CreatorTop(it, false))},
             onFollowClicked = viewModel::follow,
             onUnfollowClicked = viewModel::unfollow,
-            onSupportingClicked = { navigatorExtension.navigateToWebPage(it, PostByCreatorRoute) },
+            onSupportingClicked = { navigatorExtension.navigateToWebPage(it, "") },
             onLikeClicked = viewModel::postLike,
             onBookmarkClicked = viewModel::postBookmark,
             onBackClicked = terminate,

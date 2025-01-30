@@ -24,6 +24,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import me.matsumo.fanbox.core.model.Destination
 import me.matsumo.fanbox.core.model.DownloadState
 import me.matsumo.fanbox.core.resources.Res
 import me.matsumo.fanbox.core.resources.library_navigation_queue
@@ -40,7 +41,7 @@ import org.koin.compose.viewmodel.koinViewModel
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 internal fun DownloadQueueScreen(
-    navigateToPostDetail: (FanboxPostId) -> Unit,
+    navigateTo: (Destination) -> Unit,
     terminate: () -> Unit,
     modifier: Modifier = Modifier,
     viewModel: DownloadQueueViewModel = koinViewModel(),
@@ -86,7 +87,7 @@ internal fun DownloadQueueScreen(
                                 modifier = Modifier
                                     .animateItem()
                                     .fillMaxWidth()
-                                    .clickable { navigateToPostDetail.invoke(items.postId) },
+                                    .clickable { navigateTo(Destination.PostDetail(items.postId, Destination.PostDetail.PagingType.Unknown)) },
                                 items = items,
                                 progress = currentState.progress.takeIf { items.key == currentState.items.key } ?: -1f,
                                 onCancelClicked = { viewModel.cancelDownload(it) },

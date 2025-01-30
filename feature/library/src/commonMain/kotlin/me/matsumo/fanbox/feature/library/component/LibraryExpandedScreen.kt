@@ -14,6 +14,7 @@ import androidx.compose.ui.Modifier
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.currentBackStackEntryAsState
 import kotlinx.coroutines.launch
+import me.matsumo.fanbox.core.model.Destination
 import me.matsumo.fanbox.core.ui.extensition.LocalSnackbarHostState
 import me.matsumo.fanbox.core.model.SimpleAlertContents
 import me.matsumo.fanbox.feature.library.LibraryNavHost
@@ -28,21 +29,7 @@ internal fun LibraryExpandedScreen(
     drawerState: DrawerState,
     snackbarHostState: SnackbarHostState,
     navController: NavHostController,
-    navigateToPostSearch: () -> Unit,
-    navigateToPostByCreatorSearch: (FanboxCreatorId) -> Unit,
-    navigateToPostDetailFromHome: (postId: FanboxPostId) -> Unit,
-    navigateToPostDetailFromSupported: (postId: FanboxPostId) -> Unit,
-    navigateToCreatorPosts: (creatorId: FanboxCreatorId) -> Unit,
-    navigateToCreatorPlans: (creatorId: FanboxCreatorId) -> Unit,
-    navigateToBookmarkedPosts: () -> Unit,
-    navigateToFollowerCreators: () -> Unit,
-    navigateToSupportingCreators: () -> Unit,
-    navigateToPayments: () -> Unit,
-    navigateToDownloadQueue: () -> Unit,
-    navigateToSettingTop: () -> Unit,
-    navigateToAbout: () -> Unit,
-    navigateToBillingPlus: (String?) -> Unit,
-    navigateToCancelPlus: (SimpleAlertContents) -> Unit,
+    navigateTo: (Destination) -> Unit,
     modifier: Modifier = Modifier,
 ) {
     val scope = rememberCoroutineScope()
@@ -55,14 +42,7 @@ internal fun LibraryExpandedScreen(
                 userData = uiState.userData,
                 currentDestination = navController.currentBackStackEntryAsState().value?.destination,
                 onClickLibrary = navController::navigateToLibraryDestination,
-                navigateToBookmarkedPosts = navigateToBookmarkedPosts,
-                navigateToFollowingCreators = navigateToFollowerCreators,
-                navigateToSupportingCreators = navigateToSupportingCreators,
-                navigateToPayments = navigateToPayments,
-                navigateToDownloadQueue = navigateToDownloadQueue,
-                navigateToSetting = navigateToSettingTop,
-                navigateToAbout = navigateToAbout,
-                navigateToBillingPlus = navigateToBillingPlus,
+                navigateTo = navigateTo,
             )
         },
     ) {
@@ -85,14 +65,7 @@ internal fun LibraryExpandedScreen(
                             drawerState.open()
                         }
                     },
-                    navigateToPostSearch = navigateToPostSearch,
-                    navigateToPostByCreatorSearch = navigateToPostByCreatorSearch,
-                    navigateToPostDetailFromHome = navigateToPostDetailFromHome,
-                    navigateToPostDetailFromSupported = navigateToPostDetailFromSupported,
-                    navigateToCreatorPosts = navigateToCreatorPosts,
-                    navigateToCreatorPlans = navigateToCreatorPlans,
-                    navigateToSimpleAlert = navigateToCancelPlus,
-                    navigateToBillingPlus = navigateToBillingPlus,
+                    navigateTo = navigateTo,
                 )
             }
         }

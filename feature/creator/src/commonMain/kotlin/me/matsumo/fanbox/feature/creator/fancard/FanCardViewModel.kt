@@ -17,6 +17,7 @@ import me.matsumo.fanbox.core.repository.FanboxRepository
 import me.matsumo.fanbox.core.resources.Res
 import me.matsumo.fanbox.core.resources.common_back
 import me.matsumo.fanbox.core.resources.creator_fan_card_not_supported
+import me.matsumo.fanbox.core.ui.customNavTypes
 import me.matsumo.fankt.fanbox.domain.model.FanboxCreatorPlanDetail
 import me.matsumo.fankt.fanbox.domain.model.id.FanboxCreatorId
 
@@ -25,7 +26,7 @@ class FanCardViewModel(
     private val fanboxRepository: FanboxRepository,
 ) : ViewModel() {
 
-    private val creatorId = savedStateHandle.toRoute<Destination.FanCard>().creatorId
+    private val creatorId = savedStateHandle.toRoute<Destination.FanCard>(customNavTypes).creatorId
 
     private val _screenState = MutableStateFlow<ScreenState<FanCardUiState>>(ScreenState.Loading)
     private val _downloadedEvent = Channel<Boolean>()

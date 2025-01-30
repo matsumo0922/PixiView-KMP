@@ -55,6 +55,7 @@ import kotlinx.coroutines.launch
 import me.matsumo.fanbox.core.common.util.format
 import me.matsumo.fanbox.core.logs.category.PostsLog
 import me.matsumo.fanbox.core.logs.logger.send
+import me.matsumo.fanbox.core.model.Destination
 import me.matsumo.fanbox.core.model.ScreenState
 import me.matsumo.fanbox.core.model.UserData
 import me.matsumo.fanbox.core.resources.Res
@@ -108,13 +109,8 @@ import kotlin.uuid.Uuid
 @Composable
 internal fun PostDetailRoute(
     postId: FanboxPostId,
-    navigateToPostSearch: (String, FanboxCreatorId) -> Unit,
-    navigateToPostDetail: (FanboxPostId) -> Unit,
-    navigateToPostImage: (FanboxPostId, Int) -> Unit,
-    navigateToCreatorPlans: (FanboxCreatorId) -> Unit,
-    navigateToCreatorPosts: (FanboxCreatorId) -> Unit,
+    navigateTo: (Destination) -> Unit,
     navigateToCommentDeleteDialog: (SimpleAlertContents, () -> Unit) -> Unit,
-    navigateToDownloadQueue: () -> Unit,
     terminate: () -> Unit,
     modifier: Modifier = Modifier,
     viewModel: PostDetailRootViewModel = koinViewModel(),
@@ -145,7 +141,7 @@ internal fun PostDetailRoute(
                     modifier = Modifier.fillMaxWidth(),
                     postDetail = postDetailMap[currentPostId],
                     isBookmarked = uiState.bookmarkedPostIds.contains(currentPostId),
-                    onCreatorClicked = navigateToCreatorPosts,
+                    onCreatorClicked = { navigateTo(Destination.CreatorTop(it, true)) },
                     onBookmarkClicked = { isBookmarked ->
                         postDetailMap[currentPostId]?.let { viewModel.postBookmark(it.adPost(), isBookmarked) }
                     },
@@ -187,13 +183,8 @@ internal fun PostDetailRoute(
                             modifier = Modifier.fillMaxSize(),
                             postId = id,
                             snackbarHostState = snackbarHostState,
-                            navigateToPostSearch = navigateToPostSearch,
-                            navigateToPostDetail = navigateToPostDetail,
-                            navigateToPostImage = navigateToPostImage,
-                            navigateToCreatorPlans = navigateToCreatorPlans,
-                            navigateToCreatorPosts = navigateToCreatorPosts,
+                            navigateTo = navigateTo,
                             navigateToCommentDeleteDialog = navigateToCommentDeleteDialog,
-                            navigateToDownloadQueue = navigateToDownloadQueue,
                             onPostDetailFetched = { postDetailMap[id] = it },
                             terminate = terminate,
                         )
@@ -217,13 +208,8 @@ internal fun PostDetailRoute(
 private fun PostDetailView(
     postId: FanboxPostId,
     snackbarHostState: SnackbarHostState,
-    navigateToPostSearch: (String, FanboxCreatorId) -> Unit,
-    navigateToPostDetail: (FanboxPostId) -> Unit,
-    navigateToPostImage: (FanboxPostId, Int) -> Unit,
-    navigateToCreatorPlans: (FanboxCreatorId) -> Unit,
-    navigateToCreatorPosts: (FanboxCreatorId) -> Unit,
+    navigateTo: (Destination) -> Unit,
     navigateToCommentDeleteDialog: (SimpleAlertContents, () -> Unit) -> Unit,
-    navigateToDownloadQueue: () -> Unit,
     onPostDetailFetched: (FanboxPostDetail) -> Unit,
     terminate: () -> Unit,
     modifier: Modifier = Modifier,
@@ -250,7 +236,7 @@ private fun PostDetailView(
             userData = uiState.userData,
             metaData = uiState.metaData,
             bookmarkedPostIds = uiState.bookmarkedPostIds.toImmutableList(),
-            onClickPost = navigateToPostDetail,
+            onClickPost = { navigateTo(Destination.PostDetail(it, Destination.PostDetail.PagingType.Unknown)) },
             onClickPostLike = {
                 PostsLog.like(postId.value).send()
                 viewModel.postLike(it)
@@ -286,13 +272,15 @@ private fun PostDetailView(
                 }
             },
             onClickTag = { tag ->
-                uiState.postDetail.user?.creatorId?.let { navigateToPostSearch.invoke(tag, it) }
+                uiState.postDetail.user?.creatorId?.let { creatorId ->
+                    navigateTo(Destination.PostSearch(creatorId, null, tag))
+                }
             },
-            onClickCreator = navigateToCreatorPlans,
+            onClickCreator = { navigateTo(Destination.CreatorTop(it, false)) },
             onClickImage = { item ->
                 uiState.postDetail
                 uiState.postDetail.body.imageItems.indexOf(item).let { index ->
-                    navigateToPostImage.invoke(postId, index)
+                    navigateTo(Destination.PostImage(postId, index))
                 }
             },
             onClickFile = {
@@ -304,7 +292,7 @@ private fun PostDetailView(
                         label = Res.string.queue_added_action,
                         callback = { result ->
                             if (result == SnackbarResult.ActionPerformed) {
-                                navigateToDownloadQueue.invoke()
+                                navigateTo(Destination.DownloadQueue)
                             }
                         },
                     )
@@ -319,17 +307,17 @@ private fun PostDetailView(
                         label = Res.string.queue_added_action,
                         callback = { result ->
                             if (result == SnackbarResult.ActionPerformed) {
-                                navigateToDownloadQueue.invoke()
+                                navigateTo(Destination.DownloadQueue)
                             }
                         },
                     )
                 }
             },
-            onClickCreatorPosts = navigateToCreatorPosts,
-            onClickCreatorPlans = navigateToCreatorPlans,
+            onClickCreatorPosts = { navigateTo(Destination.CreatorTop(it, true)) },
+            onClickCreatorPlans = { navigateTo(Destination.CreatorTop(it, false)) },
             onClickFollow = viewModel::follow,
             onClickUnfollow = viewModel::unfollow,
-            onClickOpenBrowser = { navigatorExtension.navigateToWebPage(it, PostDetailRoute) },
+            onClickOpenBrowser = { navigatorExtension.navigateToWebPage(it, "") },
             onTerminate = terminate,
         )
 

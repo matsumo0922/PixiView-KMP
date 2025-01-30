@@ -19,6 +19,7 @@ import me.matsumo.fanbox.core.model.Destination
 import me.matsumo.fanbox.core.model.UserData
 import me.matsumo.fanbox.core.repository.FanboxRepository
 import me.matsumo.fanbox.core.repository.UserDataRepository
+import me.matsumo.fanbox.core.ui.customNavTypes
 import me.matsumo.fanbox.core.ui.extensition.createStaticPaging
 import me.matsumo.fanbox.core.ui.extensition.emptyPaging
 import me.matsumo.fankt.fanbox.domain.model.FanboxPost
@@ -30,8 +31,9 @@ class PostDetailRootViewModel(
     private val fanboxRepository: FanboxRepository,
 ) : ViewModel() {
 
-    private val postId = savedStateHandle.toRoute<Destination.PostDetail>().postId
-    private val type = savedStateHandle.toRoute<Destination.PostDetail>().pagingType
+    private val navArgs = savedStateHandle.toRoute<Destination.PostDetail>(customNavTypes)
+    private val postId = navArgs.postId
+    private val type = navArgs.pagingType
 
     private val _uiState = MutableStateFlow(
         PostDetailRootUiState(

@@ -9,17 +9,13 @@ import me.matsumo.fankt.fanbox.domain.model.id.FanboxCreatorId
 import me.matsumo.fankt.fanbox.domain.model.id.FanboxPostId
 
 fun NavGraphBuilder.bookmarkedPostsScreen(
-    navigateToPostDetail: (FanboxPostId) -> Unit,
-    navigateToCreatorPosts: (FanboxCreatorId) -> Unit,
-    navigateToCreatorPlans: (FanboxCreatorId) -> Unit,
+    navigateTo: (Destination) -> Unit,
     terminate: () -> Unit,
 ) {
     composable<Destination.BookmarkedPosts> {
         BookmarkedPostsRoute(
             modifier = Modifier.fillMaxSize(),
-            navigateToPostDetail = navigateToPostDetail,
-            navigateToCreatorPosts = navigateToCreatorPosts,
-            navigateToCreatorPlans = navigateToCreatorPlans,
+            navigateTo = navigateTo,
             terminate = terminate,
         )
     }

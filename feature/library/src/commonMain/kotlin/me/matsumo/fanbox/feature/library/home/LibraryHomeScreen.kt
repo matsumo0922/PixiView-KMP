@@ -31,6 +31,7 @@ import app.cash.paging.compose.collectAsLazyPagingItems
 import kotlinx.collections.immutable.toImmutableList
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
+import me.matsumo.fanbox.core.model.Destination
 import me.matsumo.fanbox.core.resources.Res
 import me.matsumo.fanbox.core.resources.error_no_data_following
 import me.matsumo.fanbox.core.resources.error_no_data_supported
@@ -53,11 +54,7 @@ import org.koin.compose.viewmodel.koinViewModel
 @Composable
 internal fun LibraryHomeScreen(
     openDrawer: () -> Unit,
-    navigateToPostDetailFromHome: (FanboxPostId) -> Unit,
-    navigateToPostDetailFromSupported: (FanboxPostId) -> Unit,
-    navigateToCreatorPlans: (FanboxCreatorId) -> Unit,
-    navigateToCreatorPosts: (FanboxCreatorId) -> Unit,
-    navigateToSimpleAlert: (SimpleAlertContents) -> Unit,
+    navigateTo: (Destination) -> Unit,
     modifier: Modifier = Modifier,
     viewModel: LibraryHomeViewModel = koinViewModel(),
 ) {
@@ -78,7 +75,10 @@ internal fun LibraryHomeScreen(
 
     LaunchedEffect(true) {
         viewModel.updatePlusTrigger.collectLatest {
-            navigateToSimpleAlert.invoke(if (it) SimpleAlertContents.PurchasePlus else SimpleAlertContents.CancelPlus)
+            val content = if (it) SimpleAlertContents.PurchasePlus else SimpleAlertContents.CancelPlus
+            val destination = Destination.SimpleAlertDialog(content)
+
+            navigateTo(destination)
         }
     }
 
@@ -131,8 +131,8 @@ internal fun LibraryHomeScreen(
                 }
             }
 
-            HorizontalPager(pagerState) {
-                when (tabs[it]) {
+            HorizontalPager(pagerState) { index ->
+                when (tabs[index]) {
                     HomeTabs.Home -> {
                         LazyPagingItemsLoadContents(
                             modifier = Modifier.fillMaxSize(),
@@ -144,11 +144,11 @@ internal fun LibraryHomeScreen(
                                 pagingAdapter = homePager,
                                 userData = uiState.userData,
                                 bookmarkedPostsIds = uiState.bookmarkedPostsIds.toImmutableList(),
-                                onClickPost = navigateToPostDetailFromHome,
+                                onClickPost = { navigateTo(Destination.PostDetail(it, Destination.PostDetail.PagingType.Home)) },
                                 onClickPostLike = viewModel::postLike,
                                 onClickPostBookmark = viewModel::postBookmark,
-                                onClickCreator = navigateToCreatorPosts,
-                                onClickPlanList = navigateToCreatorPlans,
+                                onClickCreator = { navigateTo(Destination.CreatorTop(it, true)) },
+                                onClickPlanList = { navigateTo(Destination.CreatorTop(it, false)) },
                             )
                         }
                     }
@@ -163,11 +163,11 @@ internal fun LibraryHomeScreen(
                                 pagingAdapter = supportedPager,
                                 userData = uiState.userData,
                                 bookmarkedPostsIds = uiState.bookmarkedPostsIds.toImmutableList(),
-                                onClickPost = navigateToPostDetailFromSupported,
+                                onClickPost = { navigateTo(Destination.PostDetail(it, Destination.PostDetail.PagingType.Supported)) },
                                 onClickPostLike = viewModel::postLike,
                                 onClickPostBookmark = viewModel::postBookmark,
-                                onClickCreator = navigateToCreatorPosts,
-                                onClickPlanList = navigateToCreatorPlans,
+                                onClickCreator = { navigateTo(Destination.CreatorTop(it, true)) },
+                                onClickPlanList = { navigateTo(Destination.CreatorTop(it, false)) },
                             )
                         }
                     }

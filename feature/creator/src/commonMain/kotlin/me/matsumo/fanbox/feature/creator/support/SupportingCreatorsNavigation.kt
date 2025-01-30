@@ -11,15 +11,13 @@ import me.matsumo.fanbox.core.ui.extensition.navigateWithLog
 import me.matsumo.fankt.fanbox.domain.model.id.FanboxCreatorId
 
 fun NavGraphBuilder.supportingCreatorsScreen(
-    navigateToCreatorPosts: (FanboxCreatorId) -> Unit,
-    navigateToFanCard: (FanboxCreatorId) -> Unit,
+    navigateTo: (Destination) -> Unit,
     terminate: () -> Unit,
 ) {
     composable<Destination.SupportingCreators> {
         SupportingCreatorsRoute(
             modifier = Modifier.fillMaxSize(),
-            navigateToCreatorPosts = navigateToCreatorPosts,
-            navigateToFanCard = navigateToFanCard,
+            navigateTo = navigateTo,
             terminate = terminate,
         )
     }

@@ -37,6 +37,7 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.toImmutableList
 import kotlinx.coroutines.launch
+import me.matsumo.fanbox.core.model.Destination
 import me.matsumo.fanbox.core.model.ScreenState
 import me.matsumo.fanbox.core.model.UserData
 import me.matsumo.fanbox.core.resources.Res
@@ -67,10 +68,7 @@ import org.koin.compose.viewmodel.koinViewModel
 @Composable
 internal fun LibraryDiscoveryRoute(
     openDrawer: () -> Unit,
-    navigateToPostSearch: () -> Unit,
-    navigateToPostByCreatorSearch: (FanboxCreatorId) -> Unit,
-    navigateToCreatorPosts: (FanboxCreatorId) -> Unit,
-    navigateToBillingPlus: (String?) -> Unit,
+    navigateTo: (Destination) -> Unit,
     modifier: Modifier = Modifier,
     viewModel: LibraryDiscoveryViewModel = koinViewModel(),
     navigatorExtension: NavigatorExtension = koinInject(),
@@ -101,15 +99,15 @@ internal fun LibraryDiscoveryRoute(
             followingPixivCreators = uiState.followingPixivCreators.toImmutableList(),
             openDrawer = openDrawer,
             fetch = viewModel::fetch,
-            onClickSearch = navigateToPostSearch,
-            onClickPostByCreatorSearch = navigateToPostByCreatorSearch,
-            onClickCreator = navigateToCreatorPosts,
+            onClickSearch = { navigateTo(Destination.PostSearch(FanboxCreatorId(""), null, null)) },
+            onClickPostByCreatorSearch = { navigateTo(Destination.PostByCreatorSearch(it)) },
+            onClickCreator = { navigateTo(Destination.CreatorTop(it, true)) },
             onClickFollow = viewModel::follow,
             onClickUnfollow = viewModel::unfollow,
             onClickSupporting = { navigatorExtension.navigateToWebPage(it, LibraryDiscoveryRoute) },
             onClickBillingPlus = {
                 scope.launch { toastExtension.show(snackbarHostState, requirePlus) }
-                navigateToBillingPlus.invoke(it)
+                navigateTo(Destination.BillingPlusBottomSheet(it))
             },
         )
     }

@@ -9,27 +9,24 @@ import androidx.navigation.toRoute
 import io.ktor.http.decodeURLPart
 import io.ktor.http.encodeURLPathPart
 import me.matsumo.fanbox.core.model.Destination
+import me.matsumo.fanbox.core.ui.customNavTypes
 import me.matsumo.fanbox.core.ui.extensition.navigateWithLog
 import me.matsumo.fankt.fanbox.domain.model.id.FanboxCreatorId
 import me.matsumo.fankt.fanbox.domain.model.id.FanboxPostId
 
 fun NavGraphBuilder.postSearchScreen(
-    navigateToPostSearch: (FanboxCreatorId?, String?, String?) -> Unit,
-    navigateToPostDetail: (FanboxPostId) -> Unit,
-    navigateToCreatorPosts: (FanboxCreatorId) -> Unit,
-    navigateToCreatorPlans: (FanboxCreatorId) -> Unit,
+    navigateTo: (Destination) -> Unit,
     terminate: () -> Unit,
 ) {
-    composable<Destination.PostSearch> { entry ->
+    composable<Destination.PostSearch>(
+        typeMap = customNavTypes,
+    ) { entry ->
         val args = entry.toRoute<Destination.PostSearch>()
         val query = buildQuery(args.creatorId, args.creatorQuery, args.tag)
 
         PostSearchRoute(
             query = query.takeIf { parseQuery(it).mode != PostSearchMode.Unknown }.orEmpty(),
-            navigateToPostSearch = navigateToPostSearch,
-            navigateToPostDetail = navigateToPostDetail,
-            navigateToCreatorPosts = navigateToCreatorPosts,
-            navigateToCreatorPlans = navigateToCreatorPlans,
+            navigateTo = navigateTo,
             terminate = terminate,
         )
     }

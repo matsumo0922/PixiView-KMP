@@ -28,7 +28,9 @@ import kotlinx.coroutines.launch
 import me.matsumo.fanbox.core.common.PixiViewConfig
 import me.matsumo.fanbox.core.logs.category.WelcomeLog
 import me.matsumo.fanbox.core.logs.logger.send
+import me.matsumo.fanbox.core.model.Destination
 import me.matsumo.fanbox.core.model.DownloadFileType
+import me.matsumo.fanbox.core.model.SimpleAlertContents
 import me.matsumo.fanbox.core.model.UserData
 import me.matsumo.fanbox.core.resources.Res
 import me.matsumo.fanbox.core.resources.billing_plus_toast_require_plus
@@ -40,7 +42,6 @@ import me.matsumo.fanbox.core.ui.appName
 import me.matsumo.fanbox.core.ui.extensition.LocalSnackbarHostState
 import me.matsumo.fanbox.core.ui.extensition.NavigatorExtension
 import me.matsumo.fanbox.core.ui.extensition.ToastExtension
-import me.matsumo.fanbox.core.model.SimpleAlertContents
 import me.matsumo.fanbox.feature.setting.SettingTheme
 import me.matsumo.fanbox.feature.setting.top.items.SettingTopAccountSection
 import me.matsumo.fanbox.feature.setting.top.items.SettingTopFileSection
@@ -55,12 +56,8 @@ import org.koin.compose.viewmodel.koinViewModel
 
 @Composable
 internal fun SettingTopRoute(
-    navigateToThemeSetting: () -> Unit,
-    navigateToDirectorySetting: () -> Unit,
-    navigateToBillingPlus: (String?) -> Unit,
+    navigateTo: (Destination) -> Unit,
     navigateToLogoutDialog: (SimpleAlertContents, () -> Unit) -> Unit,
-    navigateToOpenSourceLicense: () -> Unit,
-    navigateToSettingDeveloper: () -> Unit,
     terminate: () -> Unit,
     modifier: Modifier = Modifier,
     viewModel: SettingTopViewModel = koinViewModel(),
@@ -87,7 +84,7 @@ internal fun SettingTopRoute(
                     settingMethod.invoke(true)
                 } else {
                     scope.launch { toastExtension.show(snackbarHostState, requirePlus) }
-                    navigateToBillingPlus.invoke(referrer)
+                    navigateTo(Destination.BillingPlusBottomSheet(referrer))
                 }
             } else {
                 settingMethod.invoke(false)
@@ -100,22 +97,22 @@ internal fun SettingTopRoute(
             metaData = uiState.metaData,
             fanboxSessionId = uiState.fanboxSessionId,
             config = uiState.config,
-            onClickThemeSetting = navigateToThemeSetting,
-            onClickDirectory = navigateToDirectorySetting,
+            onClickThemeSetting = { navigateTo(Destination.SettingTheme) },
+            onClickDirectory = { navigateTo(Destination.SettingDirectory) },
             onClickAccountSetting = {
-                navigatorExtension.navigateToWebPage("https://www.fanbox.cc/user/settings", SettingTopRoute)
+                navigatorExtension.navigateToWebPage("https://www.fanbox.cc/user/settings", "")
             },
             onClickNotifySetting = {
-                navigatorExtension.navigateToWebPage("https://www.fanbox.cc/notifications/settings", SettingTopRoute)
+                navigatorExtension.navigateToWebPage("https://www.fanbox.cc/notifications/settings", "")
             },
             onClickTeamsOfService = {
-                navigatorExtension.navigateToWebPage("https://www.matsumo.me/application/pixiview/team_of_service", SettingTopRoute)
+                navigatorExtension.navigateToWebPage("https://www.matsumo.me/application/pixiview/team_of_service", "")
             },
             onClickPrivacyPolicy = {
-                navigatorExtension.navigateToWebPage("https://www.matsumo.me/application/pixiview/privacy_policy", SettingTopRoute)
+                navigatorExtension.navigateToWebPage("https://www.matsumo.me/application/pixiview/privacy_policy", "")
             },
             onClickDownloadFileType = viewModel::setDownloadFileType,
-            onClickOpenSourceLicense = navigateToOpenSourceLicense,
+            onClickOpenSourceLicense = { navigateTo(Destination.SettingLicense) },
             onClickFollowTabDefaultHome = viewModel::setFollowTabDefaultHome,
             onClickHideAdultContents = viewModel::setHideAdultContents,
             onClickOverrideAdultContents = viewModel::setOverrideAdultContents,
@@ -143,7 +140,7 @@ internal fun SettingTopRoute(
             },
             onClickDeveloperMode = { isEnable ->
                 if (isEnable) {
-                    navigateToSettingDeveloper.invoke()
+                    navigateTo(Destination.SettingDeveloperDialog)
                 } else {
                     viewModel.setDeveloperMode(false)
                 }

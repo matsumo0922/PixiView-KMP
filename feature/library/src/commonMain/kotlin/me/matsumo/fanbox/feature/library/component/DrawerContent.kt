@@ -26,7 +26,6 @@ import androidx.compose.material.icons.filled.Notifications
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material.icons.outlined.Bookmark
-import androidx.compose.material.icons.outlined.Download
 import androidx.compose.material.icons.outlined.Group
 import androidx.compose.material.icons.outlined.Home
 import androidx.compose.material.icons.outlined.Info
@@ -39,7 +38,6 @@ import androidx.compose.material3.DrawerState
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.NavigationDrawerItem
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.rememberCoroutineScope
@@ -53,11 +51,11 @@ import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavDestination
-import coil3.annotation.ExperimentalCoilApi
 import coil3.compose.LocalPlatformContext
 import coil3.compose.SubcomposeAsyncImage
 import coil3.request.ImageRequest
 import kotlinx.coroutines.launch
+import me.matsumo.fanbox.core.model.Destination
 import me.matsumo.fanbox.core.model.UserData
 import me.matsumo.fanbox.core.resources.Res
 import me.matsumo.fanbox.core.resources.im_default_user
@@ -87,14 +85,7 @@ fun DrawerContent(
     userData: UserData?,
     currentDestination: NavDestination?,
     onClickLibrary: (LibraryDestination) -> Unit,
-    navigateToBookmarkedPosts: () -> Unit,
-    navigateToFollowingCreators: () -> Unit,
-    navigateToSupportingCreators: () -> Unit,
-    navigateToPayments: () -> Unit,
-    navigateToDownloadQueue: () -> Unit,
-    navigateToSetting: () -> Unit,
-    navigateToAbout: () -> Unit,
-    navigateToBillingPlus: (String?) -> Unit,
+    navigateTo: (Destination) -> Unit,
     modifier: Modifier = Modifier,
 ) {
     Column(
@@ -163,7 +154,7 @@ fun DrawerContent(
             state = state,
             label = stringResource(Res.string.library_navigation_bookmark),
             icon = Icons.Outlined.Bookmark,
-            onClick = navigateToBookmarkedPosts,
+            onClick = { navigateTo(Destination.BookmarkedPosts) },
         )
 
         if (userData?.isTestUser == false) {
@@ -171,7 +162,7 @@ fun DrawerContent(
                 state = state,
                 label = stringResource(Res.string.library_navigation_following),
                 icon = Icons.Outlined.PersonAdd,
-                onClick = navigateToFollowingCreators,
+                onClick = { navigateTo(Destination.FollowingCreators) },
             )
         }
 
@@ -180,7 +171,7 @@ fun DrawerContent(
                 state = state,
                 label = stringResource(Res.string.library_navigation_supporting),
                 icon = Icons.Outlined.Group,
-                onClick = navigateToSupportingCreators,
+                onClick = { navigateTo(Destination.SupportingCreators) },
             )
         }
 
@@ -189,7 +180,7 @@ fun DrawerContent(
                 state = state,
                 label = stringResource(Res.string.library_navigation_payments),
                 icon = Icons.Outlined.Payment,
-                onClick = navigateToPayments,
+                onClick = { navigateTo(Destination.Payments) },
             )
         }
 
@@ -197,7 +188,7 @@ fun DrawerContent(
             state = state,
             label = stringResource(Res.string.library_navigation_queue),
             icon = Icons.Filled.Download,
-            onClick = navigateToDownloadQueue,
+            onClick = { navigateTo(Destination.DownloadQueue) },
         )
 
         HorizontalDivider(
@@ -210,14 +201,14 @@ fun DrawerContent(
             state = state,
             label = stringResource(Res.string.library_navigation_setting),
             icon = Icons.Default.Settings,
-            onClick = navigateToSetting,
+            onClick = { navigateTo(Destination.SettingTop) },
         )
 
         NavigationDrawerItem(
             state = state,
             label = stringResource(Res.string.library_navigation_about),
             icon = Icons.Outlined.Info,
-            onClick = navigateToAbout,
+            onClick = { navigateTo(Destination.About) },
         )
 
         Spacer(modifier = Modifier.weight(1f))
@@ -232,12 +223,11 @@ fun DrawerContent(
             state = state,
             isPlusMode = userData?.isPlusMode == true,
             isDeveloperMode = userData?.isDeveloperMode == true,
-            onClick = { navigateToBillingPlus.invoke("drawer") },
+            onClick = { navigateTo(Destination.BillingPlusBottomSheet("drawer")) },
         )
     }
 }
 
-@OptIn(ExperimentalCoilApi::class)
 @Composable
 private fun NavigationDrawerHeader(modifier: Modifier = Modifier) {
     val metadata = LocalFanboxMetadata.current

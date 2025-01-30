@@ -6,6 +6,7 @@ import androidx.navigation.NavController
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.NavOptions
 import androidx.navigation.compose.composable
+import me.matsumo.fanbox.core.model.Destination
 import me.matsumo.fanbox.core.ui.extensition.navigateWithLog
 import me.matsumo.fankt.fanbox.domain.model.id.FanboxCreatorId
 
@@ -17,10 +18,7 @@ fun NavController.navigateToLibraryDiscovery(navOptions: NavOptions? = null) {
 
 fun NavGraphBuilder.libraryDiscoveryScreen(
     openDrawer: () -> Unit,
-    navigateToPostSearch: () -> Unit,
-    navigateToPostByCreatorSearch: (FanboxCreatorId) -> Unit,
-    navigateToCreatorPosts: (FanboxCreatorId) -> Unit,
-    navigateToBillingPlus: (String?) -> Unit,
+    navigateTo: (Destination) -> Unit,
 ) {
     composable(
         route = LibraryDiscoveryRoute,
@@ -28,10 +26,7 @@ fun NavGraphBuilder.libraryDiscoveryScreen(
         LibraryDiscoveryRoute(
             modifier = Modifier.fillMaxSize(),
             openDrawer = openDrawer,
-            navigateToPostSearch = navigateToPostSearch,
-            navigateToPostByCreatorSearch = navigateToPostByCreatorSearch,
-            navigateToCreatorPosts = navigateToCreatorPosts,
-            navigateToBillingPlus = navigateToBillingPlus,
+            navigateTo = navigateTo,
         )
     }
 }

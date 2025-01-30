@@ -12,13 +12,13 @@ import me.matsumo.fankt.fanbox.domain.model.id.FanboxCreatorId
 
 
 fun NavGraphBuilder.followingCreatorsScreen(
-    navigateToCreatorPosts: (FanboxCreatorId) -> Unit,
+    navigateTo: (Destination) -> Unit,
     terminate: () -> Unit,
 ) {
     composable<Destination.SupportingCreators> {
         FollowingCreatorsRoute(
             modifier = Modifier.fillMaxSize(),
-            navigateToCreatorPosts = navigateToCreatorPosts,
+            navigateTo = navigateTo,
             terminate = terminate,
         )
     }

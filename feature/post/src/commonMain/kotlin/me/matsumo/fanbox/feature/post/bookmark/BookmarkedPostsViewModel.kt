@@ -29,6 +29,8 @@ class BookmarkedPostsViewModel(
     val screenState = _screenState.asStateFlow()
 
     init {
+        fetch()
+
         viewModelScope.launch {
             fanboxRepository.bookmarkedPostsIds.collectLatest {
                 _screenState.updateWhenIdle { data ->

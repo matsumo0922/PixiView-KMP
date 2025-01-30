@@ -10,13 +10,13 @@ import me.matsumo.fanbox.core.ui.extensition.navigateWithLog
 import me.matsumo.fankt.fanbox.domain.model.id.FanboxPostId
 
 fun NavGraphBuilder.downloadQueueScreen(
-    navigateToPostDetail: (FanboxPostId) -> Unit,
+    navigateTo: (Destination) -> Unit,
     terminate: () -> Unit,
 ) {
     composable<Destination.DownloadQueue> {
         DownloadQueueScreen(
             modifier = Modifier.fillMaxSize(),
-            navigateToPostDetail = navigateToPostDetail,
+            navigateTo = navigateTo,
             terminate = terminate,
         )
     }

@@ -25,6 +25,7 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.toImmutableList
 import me.matsumo.fanbox.core.common.util.format
+import me.matsumo.fanbox.core.model.Destination
 import me.matsumo.fanbox.core.resources.Res
 import me.matsumo.fanbox.core.resources.error_no_data
 import me.matsumo.fanbox.core.resources.error_no_data_payments
@@ -41,7 +42,7 @@ import org.koin.compose.viewmodel.koinViewModel
 
 @Composable
 internal fun PaymentsRoute(
-    navigateToCreatorPosts: (FanboxCreatorId) -> Unit,
+    navigateTo: (Destination) -> Unit,
     terminate: () -> Unit,
     modifier: Modifier = Modifier,
     viewModel: PaymentsViewModel = koinViewModel(),
@@ -53,11 +54,11 @@ internal fun PaymentsRoute(
         screenState = screenState,
         retryAction = { viewModel.fetch() },
         terminate = { terminate.invoke() },
-    ) {
+    ) { uiState ->
         PaymentsScreen(
             modifier = Modifier.fillMaxSize(),
-            payments = it.payments.toImmutableList(),
-            onClickCreatorPosts = navigateToCreatorPosts,
+            payments = uiState.payments.toImmutableList(),
+            onClickCreatorPosts = { navigateTo(Destination.CreatorTop(it, true)) },
             onTerminate = terminate,
         )
     }

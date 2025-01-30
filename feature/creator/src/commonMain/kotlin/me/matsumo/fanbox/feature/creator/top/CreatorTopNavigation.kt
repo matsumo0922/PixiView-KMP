@@ -12,35 +12,27 @@ import androidx.navigation.toRoute
 import me.matsumo.fanbox.core.model.Destination
 import me.matsumo.fanbox.core.ui.extensition.navigateWithLog
 import me.matsumo.fanbox.core.model.SimpleAlertContents
+import me.matsumo.fanbox.core.ui.customNavTypes
 import me.matsumo.fankt.fanbox.domain.model.id.FanboxCreatorId
 import me.matsumo.fankt.fanbox.domain.model.id.FanboxPostId
 
-const val CreatorTopId = "creatorTopId"
-
 fun NavGraphBuilder.creatorTopScreen(
-    navigateToPostDetail: (FanboxPostId) -> Unit,
-    navigateToPostSearch: (String, FanboxCreatorId) -> Unit,
-    navigateToBillingPlus: (String?) -> Unit,
-    navigateToPostByCreatorSearch: (FanboxCreatorId) -> Unit,
-    navigateToDownloadAll: (FanboxCreatorId) -> Unit,
+    navigateTo: (Destination) -> Unit,
     navigateToAlertDialog: (SimpleAlertContents, () -> Unit, () -> Unit) -> Unit,
     terminate: () -> Unit,
 ) {
     composable<Destination.CreatorTop>(
         deepLinks = listOf(
-            navDeepLink { uriPattern = "https://www.fanbox.cc/@{$CreatorTopId}" },
-            navDeepLink { uriPattern = "https://{$CreatorTopId}.fanbox.cc/" },
-            navDeepLink { uriPattern = "https://{$CreatorTopId}.fanbox.cc" },
+            navDeepLink { uriPattern = "https://www.fanbox.cc/@{creatorId}" },
+            navDeepLink { uriPattern = "https://{creatorId}.fanbox.cc/" },
+            navDeepLink { uriPattern = "https://{creatorId}.fanbox.cc" },
         ),
+        typeMap = customNavTypes,
     ) {
         CreatorTopRoute(
             modifier = Modifier.fillMaxSize(),
             isPosts = it.toRoute<Destination.CreatorTop>().isPosts,
-            navigateToPostDetail = navigateToPostDetail,
-            navigateToPostSearch = navigateToPostSearch,
-            navigateToPostByCreatorSearch = navigateToPostByCreatorSearch,
-            navigateToBillingPlus = navigateToBillingPlus,
-            navigateToDownloadAll = navigateToDownloadAll,
+            navigateTo = navigateTo,
             navigateToAlertDialog = navigateToAlertDialog,
             terminate = terminate,
         )

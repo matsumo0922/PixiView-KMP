@@ -31,6 +31,7 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.toImmutableList
+import me.matsumo.fanbox.core.model.Destination
 import me.matsumo.fanbox.core.model.ScreenState
 import me.matsumo.fanbox.core.model.UserData
 import me.matsumo.fanbox.core.resources.Res
@@ -50,37 +51,29 @@ import org.koin.compose.viewmodel.koinViewModel
 
 @Composable
 internal fun BookmarkedPostsRoute(
-    navigateToPostDetail: (FanboxPostId) -> Unit,
-    navigateToCreatorPosts: (FanboxCreatorId) -> Unit,
-    navigateToCreatorPlans: (FanboxCreatorId) -> Unit,
+    navigateTo: (Destination) -> Unit,
     terminate: () -> Unit,
     modifier: Modifier = Modifier,
     viewModel: BookmarkedPostsViewModel = koinViewModel(),
 ) {
     val screenState by viewModel.screenState.collectAsStateWithLifecycle()
 
-    LaunchedEffect(true) {
-        if (screenState !is ScreenState.Idle) {
-            viewModel.fetch()
-        }
-    }
-
     AsyncLoadContents(
         modifier = modifier,
         screenState = screenState,
         terminate = { terminate.invoke() },
-    ) {
+    ) { uiState ->
         BookmarkedPostsScreen(
             modifier = Modifier.fillMaxSize(),
-            userData = it.userData,
-            posts = it.posts.toImmutableList(),
-            bookmarkedPostIds = it.bookmarkedPostIds.toImmutableList(),
+            userData = uiState.userData,
+            posts = uiState.posts.toImmutableList(),
+            bookmarkedPostIds = uiState.bookmarkedPostIds.toImmutableList(),
             onSearch = viewModel::search,
-            onClickPost = navigateToPostDetail,
+            onClickPost = { navigateTo(Destination.PostDetail(it, Destination.PostDetail.PagingType.Unknown)) },
             onCLickPostLike = viewModel::postLike,
             onClickPostBookmark = viewModel::postBookmark,
-            onClickCreatorPosts = navigateToCreatorPosts,
-            onClickCreatorPlans = navigateToCreatorPlans,
+            onClickCreatorPosts = { navigateTo(Destination.CreatorTop(it, true)) },
+            onClickCreatorPlans = { navigateTo(Destination.CreatorTop(it, false)) },
             onTerminate = terminate,
         )
     }
