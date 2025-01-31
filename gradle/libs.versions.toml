@@ -1,7 +1,7 @@
 [versions]
 # Application
-versionName = "2.2.1"
-versionCode = "55"
+versionName = "2.2.2"
+versionCode = "56"
 
 # SDK
 minSdk = "26"
@@ -17,7 +17,7 @@ kotlin = "2.1.0"
 # KotlinX
 kotlinxCoroutines = "1.7.3"
 kotlinxDatetime = "0.6.1"
-kotlinxSerializationJson = "1.7.3"
+kotlinxSerializationJson = "1.8.0"
 kotlinxImmutable = "0.3.7"
 
 # KMP
@@ -43,7 +43,7 @@ androidxDataStore = "1.1.2"
 androidxPalette = "1.0.0"
 androidxAnnotation = "1.9.1"
 androidxMedia3 = "1.5.1"
-androidxCompose = "2025.01.00"
+androidxCompose = "2025.01.01"
 
 # Google
 playReview = "2.0.2"

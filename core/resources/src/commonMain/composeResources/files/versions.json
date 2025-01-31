@@ -194,5 +194,12 @@
     "date": "2025/01/24",
     "logJp": "・ログインができない場合の救済導線を追加\n・アプリがクラッシュする恐れのある不具合の修正",
     "logEn": "・Added a rescue guide for when you can't log in\n・Fixed a bug that could cause the app to crash"
+  },
+  {
+    "versionName": "2.2.2",
+    "versionCode": 56,
+    "date": "2025/01/31",
+    "logJp": "・特定の画面でスワイプで次の投稿へ移動できない不具合の修正\n・アプリがクラッシュする恐れのある不具合の修正",
+    "logEn": "・Fixed a problem that swipe to the next post on a specific screen\n・Fixed a bug that could cause the app to crash"
   }
 ]
