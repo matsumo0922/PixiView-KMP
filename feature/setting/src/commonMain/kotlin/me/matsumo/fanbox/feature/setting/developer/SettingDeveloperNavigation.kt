@@ -7,11 +7,9 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
-import androidx.navigation.NavController
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.compose.dialog
 import me.matsumo.fanbox.core.model.Destination
-import me.matsumo.fanbox.core.ui.extensition.navigateWithLog
 
 fun NavGraphBuilder.settingDeveloperDialog(
     terminate: () -> Unit,

@@ -1,6 +1,5 @@
 package me.matsumo.fanbox.core.model
 
-import org.jetbrains.compose.resources.StringResource
 import me.matsumo.fanbox.core.resources.Res
 import me.matsumo.fanbox.core.resources.billing_plus_cancel_message
 import me.matsumo.fanbox.core.resources.billing_plus_cancel_title
@@ -26,6 +25,7 @@ import me.matsumo.fanbox.core.resources.welcome_login_debug_dialog_message
 import me.matsumo.fanbox.core.resources.welcome_login_debug_dialog_title
 import me.matsumo.fanbox.core.resources.welcome_login_dialog_message
 import me.matsumo.fanbox.core.resources.welcome_login_dialog_title
+import org.jetbrains.compose.resources.StringResource
 
 enum class SimpleAlertContents(
     val titleRes: StringResource,

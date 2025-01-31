@@ -57,7 +57,6 @@ import me.matsumo.fankt.fanbox.domain.model.id.FanboxUserId
 import org.jetbrains.compose.resources.stringResource
 import org.koin.compose.koinInject
 import org.koin.compose.viewmodel.koinViewModel
-import org.koin.core.parameter.parametersOf
 
 @Composable
 internal fun PostByCreatorSearchRoute(
@@ -86,8 +85,8 @@ internal fun PostByCreatorSearchRoute(
             isPrepared = uiState.isPrepared,
             onQueryChanged = viewModel::updateQuery,
             onPostClicked = { navigateTo(Destination.PostDetail(it, Destination.PostDetail.PagingType.Unknown)) },
-            onCreatorPostsClicked = { navigateTo(Destination.CreatorTop(it, true))},
-            onCreatorPlansClicked = { navigateTo(Destination.CreatorTop(it, false))},
+            onCreatorPostsClicked = { navigateTo(Destination.CreatorTop(it, true)) },
+            onCreatorPlansClicked = { navigateTo(Destination.CreatorTop(it, false)) },
             onFollowClicked = viewModel::follow,
             onUnfollowClicked = viewModel::unfollow,
             onSupportingClicked = { navigatorExtension.navigateToWebPage(it, "") },

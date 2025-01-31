@@ -12,6 +12,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.unit.dp
+import kotlinx.collections.immutable.ImmutableList
 import me.matsumo.fanbox.core.model.UserData
 import me.matsumo.fanbox.core.ui.component.AdultContentThumbnail
 import me.matsumo.fanbox.core.ui.component.PostItem
@@ -26,9 +27,9 @@ import sh.calvin.autolinktext.TextRuleDefaults
 internal fun LazyListScope.postDetailArticleHeader(
     content: FanboxPostDetail.Body.Article,
     userData: UserData,
+    bookmarkedPostIds: ImmutableList<FanboxPostId>,
     isAdultContents: Boolean,
     isAutoImagePreview: Boolean,
-    isBookmarked: Boolean,
     onClickPost: (FanboxPostId) -> Unit,
     onClickPostLike: (FanboxPostId) -> Unit,
     onClickPostBookmark: (FanboxPost, Boolean) -> Unit,
@@ -95,7 +96,7 @@ internal fun LazyListScope.postDetailArticleHeader(
                     isHideAdultContents = userData.isHideAdultContents,
                     isOverrideAdultContents = userData.isAllowedShowAdultContents,
                     isTestUser = userData.isTestUser,
-                    isBookmarked = isBookmarked,
+                    isBookmarked = bookmarkedPostIds.contains(it.post?.id),
                     onClickPost = onClickPost,
                     onClickPostLike = onClickPostLike,
                     onClickPostBookmark = { _, isLiked -> it.post?.let { onClickPostBookmark.invoke(it, isLiked) } },

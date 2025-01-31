@@ -57,6 +57,7 @@ import me.matsumo.fanbox.core.logs.category.PostsLog
 import me.matsumo.fanbox.core.logs.logger.send
 import me.matsumo.fanbox.core.model.Destination
 import me.matsumo.fanbox.core.model.ScreenState
+import me.matsumo.fanbox.core.model.SimpleAlertContents
 import me.matsumo.fanbox.core.model.UserData
 import me.matsumo.fanbox.core.resources.Res
 import me.matsumo.fanbox.core.resources.error_network
@@ -78,7 +79,6 @@ import me.matsumo.fanbox.core.ui.extensition.padding
 import me.matsumo.fanbox.core.ui.theme.bold
 import me.matsumo.fanbox.core.ui.theme.center
 import me.matsumo.fanbox.core.ui.view.ErrorView
-import me.matsumo.fanbox.core.model.SimpleAlertContents
 import me.matsumo.fanbox.feature.post.detail.items.PostDetailBottomBar
 import me.matsumo.fanbox.feature.post.detail.items.PostDetailCommentLikeButton
 import me.matsumo.fanbox.feature.post.detail.items.PostDetailCreatorSection
@@ -404,7 +404,7 @@ private fun PostDetailScreen(
             postDetailItems(
                 post = postDetail,
                 userData = userData,
-                isBookmarked = isBookmarked,
+                bookmarkedPostIds = bookmarkedPostIds,
                 onClickCreator = onClickCreator,
                 onClickPost = onClickPost,
                 onClickPostLike = onClickPostLike,

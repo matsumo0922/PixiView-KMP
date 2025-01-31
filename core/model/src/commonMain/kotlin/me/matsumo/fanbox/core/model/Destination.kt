@@ -43,7 +43,7 @@ sealed interface Destination {
     ) : Destination
 
     @Serializable
-    data object BookmarkedPosts: Destination
+    data object BookmarkedPosts : Destination
 
     @Serializable
     data class CreatorTop(
@@ -57,13 +57,13 @@ sealed interface Destination {
     ) : Destination
 
     @Serializable
-    data object SupportingCreators: Destination
+    data object SupportingCreators : Destination
 
     @Serializable
-    data object FollowingCreators: Destination
+    data object FollowingCreators : Destination
 
     @Serializable
-    data object Payments: Destination
+    data object Payments : Destination
 
     @Serializable
     data class FanCard(
@@ -71,22 +71,22 @@ sealed interface Destination {
     ) : Destination
 
     @Serializable
-    data object DownloadQueue: Destination
+    data object DownloadQueue : Destination
 
     @Serializable
-    data object About: Destination
+    data object About : Destination
 
     @Serializable
-    data object SettingTop: Destination
+    data object SettingTop : Destination
 
     @Serializable
-    data object SettingTheme: Destination
+    data object SettingTheme : Destination
 
     @Serializable
-    data object SettingLicense: Destination
+    data object SettingLicense : Destination
 
     @Serializable
-    data object SettingDirectory: Destination
+    data object SettingDirectory : Destination
 
     @Serializable
     data object WelcomeTop : Destination
@@ -97,7 +97,6 @@ sealed interface Destination {
     @Serializable
     data object WelcomeWeb : Destination
 
-
     // Dialog
 
     @Serializable
@@ -106,22 +105,20 @@ sealed interface Destination {
     ) : Destination
 
     @Serializable
-    data object SettingDeveloperDialog: Destination
-
+    data object SettingDeveloperDialog : Destination
 
     // Bottom Sheet
 
     @Serializable
-    data object VersionHistoryBottomSheet: Destination
+    data object VersionHistoryBottomSheet : Destination
 
     @Serializable
     data class BillingPlusBottomSheet(
         val referrer: String?,
     ) : Destination
 
-
     // Empty
 
     @Serializable
-    data object Empty: Destination
+    data object Empty : Destination
 }

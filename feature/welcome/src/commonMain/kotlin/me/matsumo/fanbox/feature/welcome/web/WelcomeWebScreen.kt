@@ -41,13 +41,13 @@ import kotlinx.collections.immutable.toImmutableList
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
+import me.matsumo.fanbox.core.model.SimpleAlertContents
 import me.matsumo.fanbox.core.resources.Res
 import me.matsumo.fanbox.core.resources.welcome_login_title
 import me.matsumo.fanbox.core.resources.welcome_login_toast_failed
 import me.matsumo.fanbox.core.resources.welcome_login_web_help
 import me.matsumo.fanbox.core.ui.component.PixiViewTopBar
 import me.matsumo.fanbox.core.ui.extensition.ToastExtension
-import me.matsumo.fanbox.core.model.SimpleAlertContents
 import org.jetbrains.compose.resources.getString
 import org.jetbrains.compose.resources.stringResource
 import org.koin.compose.koinInject

@@ -19,7 +19,6 @@ import me.matsumo.fanbox.core.resources.common_back
 import me.matsumo.fanbox.core.resources.creator_fan_card_not_supported
 import me.matsumo.fanbox.core.ui.customNavTypes
 import me.matsumo.fankt.fanbox.domain.model.FanboxCreatorPlanDetail
-import me.matsumo.fankt.fanbox.domain.model.id.FanboxCreatorId
 
 class FanCardViewModel(
     savedStateHandle: SavedStateHandle,

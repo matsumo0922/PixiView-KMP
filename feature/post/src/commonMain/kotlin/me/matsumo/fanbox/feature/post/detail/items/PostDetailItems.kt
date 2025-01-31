@@ -1,6 +1,7 @@
 package me.matsumo.fanbox.feature.post.detail.items
 
 import androidx.compose.foundation.lazy.LazyListScope
+import kotlinx.collections.immutable.ImmutableList
 import me.matsumo.fanbox.core.model.UserData
 import me.matsumo.fankt.fanbox.domain.model.FanboxPost
 import me.matsumo.fankt.fanbox.domain.model.FanboxPostDetail
@@ -10,7 +11,7 @@ import me.matsumo.fankt.fanbox.domain.model.id.FanboxPostId
 internal fun LazyListScope.postDetailItems(
     post: FanboxPostDetail,
     userData: UserData,
-    isBookmarked: Boolean,
+    bookmarkedPostIds: ImmutableList<FanboxPostId>,
     onClickPost: (FanboxPostId) -> Unit,
     onClickPostLike: (FanboxPostId) -> Unit,
     onClickPostBookmark: (FanboxPost, Boolean) -> Unit,
@@ -26,7 +27,7 @@ internal fun LazyListScope.postDetailItems(
                 userData = userData,
                 isAdultContents = post.hasAdultContent,
                 isAutoImagePreview = userData.isAutoImagePreview,
-                isBookmarked = isBookmarked,
+                bookmarkedPostIds = bookmarkedPostIds,
                 onClickPost = onClickPost,
                 onClickPostLike = onClickPostLike,
                 onClickPostBookmark = onClickPostBookmark,

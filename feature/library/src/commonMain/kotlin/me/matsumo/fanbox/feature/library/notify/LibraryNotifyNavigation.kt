@@ -10,7 +10,6 @@ import androidx.navigation.NavOptions
 import androidx.navigation.compose.composable
 import me.matsumo.fanbox.core.model.Destination
 import me.matsumo.fanbox.core.ui.extensition.navigateWithLog
-import me.matsumo.fankt.fanbox.domain.model.id.FanboxPostId
 
 const val LibraryNotifyRoute = "libraryNotify"
 
