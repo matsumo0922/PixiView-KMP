@@ -8,7 +8,7 @@ PixiView is an unofficial Android & iOS client app for pixivFANBOX.
 
 <div align="center">
   <a href="./LICENSE">
-    <img alt="LICENSE" src="https://img.shields.io/badge/license-GPL-blue.svg?maxAge=43200" />
+    <img alt="LICENSE" src="https://img.shields.io/badge/license-CC--BY--NC%204.0-lightgrey" />
   </a>
   <a href="">
     <img src="https://img.shields.io/badge/supports-Android%208+-AD2A5A">
