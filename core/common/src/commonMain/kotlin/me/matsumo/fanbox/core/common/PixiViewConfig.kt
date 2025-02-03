@@ -12,6 +12,7 @@ data class PixiViewConfig(
     val platformVersion: String,
     val device: String,
     val deviceAbis: String,
+    val openaiApiKey: String,
 ) {
     data class AdMob(
         val appId: String,
@@ -45,6 +46,7 @@ data class PixiViewConfig(
                 platformVersion = "12(32)",
                 device = "Pixel 6(Google)",
                 deviceAbis = "arm64-v8a,armeabi-v7a",
+                openaiApiKey = "1919191919",
             )
         }
     }

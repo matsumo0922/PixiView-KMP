@@ -17,11 +17,9 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.text.SpanStyle
-import androidx.compose.ui.text.style.TextDecoration
+import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.unit.dp
-import sh.calvin.autolinktext.AutoLinkText
-import sh.calvin.autolinktext.TextRuleDefaults
+import sh.calvin.autolinktext.rememberAutoLinkText
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -38,21 +36,13 @@ internal fun CreatorTopDescriptionDialog(
                 .padding(16.dp),
             verticalArrangement = Arrangement.spacedBy(16.dp),
         ) {
-            AutoLinkText(
+            Text(
                 modifier = Modifier
                     .padding(top = 8.dp)
                     .weight(1f)
                     .verticalScroll(rememberScrollState()),
-                text = description,
+                text = AnnotatedString.rememberAutoLinkText(description),
                 style = MaterialTheme.typography.bodyMedium.copy(color = MaterialTheme.colorScheme.onSurfaceVariant),
-                textRules = TextRuleDefaults.defaultList().map {
-                    it.copy(
-                        style = SpanStyle(
-                            color = MaterialTheme.colorScheme.primary,
-                            textDecoration = TextDecoration.Underline,
-                        ),
-                    )
-                },
             )
 
             TextButton(

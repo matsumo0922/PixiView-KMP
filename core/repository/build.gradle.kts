@@ -21,6 +21,7 @@ kotlin {
 
             implementation(libs.bundles.ktor)
             implementation(libs.ksoup)
+            implementation(libs.openai.client)
             implementation(libs.webview.compose)
 
             api(libs.kmp.paging.common)

@@ -197,8 +197,8 @@
   },
   {
     "versionName": "2.2.2",
-    "versionCode": 56,
-    "date": "2025/01/31",
+    "versionCode": 57,
+    "date": "2025/02/01",
     "logJp": "・特定の画面でスワイプで次の投稿へ移動できない不具合の修正\n・アプリがクラッシュする恐れのある不具合の修正",
     "logEn": "・Fixed a problem that swipe to the next post on a specific screen\n・Fixed a bug that could cause the app to crash"
   }

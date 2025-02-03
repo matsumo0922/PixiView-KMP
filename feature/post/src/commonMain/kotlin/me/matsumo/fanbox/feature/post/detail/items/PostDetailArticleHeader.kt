@@ -9,8 +9,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.text.SpanStyle
-import androidx.compose.ui.text.style.TextDecoration
+import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.unit.dp
 import kotlinx.collections.immutable.ImmutableList
 import me.matsumo.fanbox.core.model.UserData
@@ -21,8 +20,7 @@ import me.matsumo.fankt.fanbox.domain.model.FanboxPost
 import me.matsumo.fankt.fanbox.domain.model.FanboxPostDetail
 import me.matsumo.fankt.fanbox.domain.model.id.FanboxCreatorId
 import me.matsumo.fankt.fanbox.domain.model.id.FanboxPostId
-import sh.calvin.autolinktext.AutoLinkText
-import sh.calvin.autolinktext.TextRuleDefaults
+import sh.calvin.autolinktext.rememberAutoLinkText
 
 internal fun LazyListScope.postDetailArticleHeader(
     content: FanboxPostDetail.Body.Article,
@@ -112,18 +110,10 @@ private fun ArticleTextItem(
     item: FanboxPostDetail.Body.Article.Block.Text,
     modifier: Modifier = Modifier,
 ) {
-    AutoLinkText(
+    Text(
         modifier = modifier.padding(16.dp),
-        text = item.text,
+        text = AnnotatedString.rememberAutoLinkText(item.text),
         style = MaterialTheme.typography.bodyMedium.copy(color = MaterialTheme.colorScheme.onSurface),
-        textRules = TextRuleDefaults.defaultList().map {
-            it.copy(
-                style = SpanStyle(
-                    color = MaterialTheme.colorScheme.primary,
-                    textDecoration = TextDecoration.Underline,
-                ),
-            )
-        },
     )
 }
 

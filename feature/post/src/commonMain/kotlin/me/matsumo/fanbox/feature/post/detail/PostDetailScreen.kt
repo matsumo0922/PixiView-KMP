@@ -58,6 +58,7 @@ import me.matsumo.fanbox.core.logs.logger.send
 import me.matsumo.fanbox.core.model.Destination
 import me.matsumo.fanbox.core.model.ScreenState
 import me.matsumo.fanbox.core.model.SimpleAlertContents
+import me.matsumo.fanbox.core.model.TranslationState
 import me.matsumo.fanbox.core.model.UserData
 import me.matsumo.fanbox.core.resources.Res
 import me.matsumo.fanbox.core.resources.error_network
@@ -236,6 +237,10 @@ private fun PostDetailView(
             userData = uiState.userData,
             metaData = uiState.metaData,
             bookmarkedPostIds = uiState.bookmarkedPostIds.toImmutableList(),
+            bodyTransState = uiState.bodyTransState,
+            commentsTransState = uiState.commentsTransState,
+            onClickBodyTranslate = viewModel::translate,
+            onClickCommentsTranslate = viewModel::translate,
             onClickPost = { navigateTo(Destination.PostDetail(it, Destination.PostDetail.PagingType.Unknown)) },
             onClickPostLike = {
                 PostsLog.like(postId.value).send()
@@ -340,6 +345,10 @@ private fun PostDetailScreen(
     bookmarkedPostIds: ImmutableList<FanboxPostId>,
     userData: UserData,
     metaData: FanboxMetaData,
+    bodyTransState: TranslationState<FanboxPostDetail>,
+    commentsTransState: TranslationState<PageOffsetInfo<FanboxComment>>,
+    onClickBodyTranslate: (FanboxPostDetail) -> Unit,
+    onClickCommentsTranslate: (PageOffsetInfo<FanboxComment>) -> Unit,
     onClickPost: (FanboxPostId) -> Unit,
     onClickPostLike: (FanboxPostId) -> Unit,
     onClickPostBookmark: (FanboxPost, Boolean) -> Unit,
@@ -474,6 +483,7 @@ private fun PostDetailScreen(
                 postDetail = postDetail,
                 comments = comments,
                 metaData = metaData,
+                commentsTransState = commentsTransState,
                 isShowCommentEditor = isShowCommentEditor,
                 onClickLoadMore = onClickCommentLoadMore,
                 onClickCommentLike = onClickCommentLike,
@@ -483,6 +493,7 @@ private fun PostDetailScreen(
                 },
                 onClickCommentDelete = onClickCommentDelete,
                 onClickShowCommentEditor = { isShowCommentEditor = it },
+                onClickTranslate = onClickCommentsTranslate,
             )
 
             item {
@@ -496,8 +507,10 @@ private fun PostDetailScreen(
                 .fillMaxWidth(),
             state = state,
             postDetail = postDetail,
+            bodyTransState = bodyTransState,
             isShowHeader = isShowHeader,
             onClickNavigateUp = onTerminate,
+            onClickTranslate = onClickBodyTranslate,
             onClickMenu = { isShowMenu = true },
         )
     }

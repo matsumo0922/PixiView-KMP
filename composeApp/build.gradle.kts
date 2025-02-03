@@ -170,6 +170,7 @@ buildkonfig {
         putBuildConfig(localProperties, "ADMOB_IOS_BANNER_AD_UNIT_ID", defaultValue = bannerAdTestId)
         putBuildConfig(localProperties, "ADMOB_IOS_NATIVE_AD_UNIT_ID", defaultValue = nativeAdTestId)
         putBuildConfig(localProperties, "ADMOB_IOS_REWARD_AD_UNIT_ID", defaultValue = rewardAdTestId)
+        putBuildConfig(localProperties, "OPENAI_API_KEY")
     }
 }
 

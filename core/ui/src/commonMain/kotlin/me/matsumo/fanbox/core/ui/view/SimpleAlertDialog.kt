@@ -12,16 +12,13 @@ import me.matsumo.fanbox.core.model.SimpleAlertContents
 import me.matsumo.fanbox.core.ui.extensition.navigateForResult
 import org.jetbrains.compose.resources.stringResource
 
-const val SimpleAlertDialogContent = "simpleAlertDialogSongs"
-const val SimpleAlertDialog = "simpleAlertDialog/{$SimpleAlertDialogContent}"
-
 fun NavController.navigateToSimpleAlertDialog(
     content: SimpleAlertContents,
     onClickPositive: (() -> Unit)? = null,
     onClickNegative: (() -> Unit)? = null,
 ) {
     navigateForResult<Boolean>(
-        route = "simpleAlertDialog/${content.name}",
+        route = Destination.SimpleAlertDialog(content),
         navResultCallback = { result ->
             if (result) {
                 onClickPositive?.invoke()

@@ -30,5 +30,6 @@ actual fun getPixiViewConfig(): PixiViewConfig {
         platformVersion = "$release(${Build.VERSION.SDK_INT})",
         device = "${Build.MODEL}(${Build.MANUFACTURER})",
         deviceAbis = Build.SUPPORTED_ABIS.contentToString(),
+        openaiApiKey = BuildKonfig.OPENAI_API_KEY,
     )
 }

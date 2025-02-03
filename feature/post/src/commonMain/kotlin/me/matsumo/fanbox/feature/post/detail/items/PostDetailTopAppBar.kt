@@ -1,10 +1,14 @@
 package me.matsumo.fanbox.feature.post.detail.items
 
 import androidx.compose.animation.animateColorAsState
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyListState
+import androidx.compose.material.MaterialTheme.colors
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.MoreVert
+import androidx.compose.material.icons.filled.Translate
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -23,6 +27,7 @@ import androidx.compose.runtime.snapshotFlow
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
+import me.matsumo.fanbox.core.model.TranslationState
 import me.matsumo.fankt.fanbox.domain.model.FanboxPostDetail
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -30,8 +35,10 @@ import me.matsumo.fankt.fanbox.domain.model.FanboxPostDetail
 internal fun PostDetailTopAppBar(
     state: LazyListState,
     postDetail: FanboxPostDetail,
+    bodyTransState: TranslationState<FanboxPostDetail>,
     isShowHeader: Boolean,
     onClickNavigateUp: () -> Unit,
+    onClickTranslate: (FanboxPostDetail) -> Unit,
     onClickMenu: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
@@ -85,6 +92,22 @@ internal fun PostDetailTopAppBar(
             }
         },
         actions = {
+            IconButton(
+                onClick = { onClickTranslate.invoke(postDetail) },
+                colors = IconButtonDefaults.iconButtonColors(scrolledContainerColor.copy(alpha = 0.3f)),
+            ) {
+                if (bodyTransState is TranslationState.Loading) {
+                    CircularProgressIndicator(
+                        modifier = Modifier.padding(6.dp)
+                    )
+                } else {
+                    Icon(
+                        imageVector = Icons.Default.Translate,
+                        contentDescription = null,
+                    )
+                }
+            }
+
             IconButton(
                 onClick = onClickMenu,
                 colors = IconButtonDefaults.iconButtonColors(scrolledContainerColor.copy(alpha = 0.3f)),

@@ -19,7 +19,9 @@ import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material.icons.filled.Favorite
 import androidx.compose.material.icons.filled.KeyboardArrowDown
 import androidx.compose.material.icons.filled.Message
+import androidx.compose.material.icons.filled.Translate
 import androidx.compose.material3.Button
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
@@ -43,6 +45,7 @@ import coil3.compose.LocalPlatformContext
 import coil3.request.ImageRequest
 import kotlinx.datetime.Clock
 import kotlinx.datetime.Instant
+import me.matsumo.fanbox.core.model.TranslationState
 import me.matsumo.fanbox.core.resources.Res
 import me.matsumo.fanbox.core.resources.common_delete
 import me.matsumo.fanbox.core.resources.common_see_more
@@ -70,12 +73,14 @@ internal fun LazyListScope.postDetailCommentItems(
     isShowCommentEditor: Boolean,
     postDetail: FanboxPostDetail,
     comments: PageOffsetInfo<FanboxComment>,
+    commentsTransState: TranslationState<PageOffsetInfo<FanboxComment>>,
     metaData: FanboxMetaData,
     onClickLoadMore: (FanboxPostId, Int) -> Unit,
     onClickCommentLike: (FanboxCommentId) -> Unit,
     onClickCommentReply: (String, FanboxCommentId, FanboxCommentId) -> Unit,
     onClickCommentDelete: (FanboxCommentId) -> Unit,
     onClickShowCommentEditor: (Boolean) -> Unit,
+    onClickTranslate: (PageOffsetInfo<FanboxComment>) -> Unit,
 ) {
     item {
         Column(
@@ -86,7 +91,7 @@ internal fun LazyListScope.postDetailCommentItems(
             Row(
                 modifier = Modifier.fillMaxWidth(),
                 verticalAlignment = Alignment.CenterVertically,
-                horizontalArrangement = Arrangement.spacedBy(16.dp),
+                horizontalArrangement = Arrangement.spacedBy(8.dp),
             ) {
                 Text(
                     modifier = Modifier.weight(1f),
@@ -94,6 +99,20 @@ internal fun LazyListScope.postDetailCommentItems(
                     style = MaterialTheme.typography.titleMedium,
                     color = MaterialTheme.colorScheme.onSurface,
                 )
+
+                IconButton(onClick = { onClickTranslate.invoke(comments) }) {
+                    if (commentsTransState is TranslationState.Loading) {
+                        CircularProgressIndicator(
+                            modifier = Modifier.padding(4.dp)
+                        )
+                    } else {
+                        Icon(
+                            imageVector = Icons.Default.Translate,
+                            tint = MaterialTheme.colorScheme.onSurface,
+                            contentDescription = null,
+                        )
+                    }
+                }
 
                 IconButton(onClick = { onClickShowCommentEditor.invoke(!isShowCommentEditor) }) {
                     Icon(

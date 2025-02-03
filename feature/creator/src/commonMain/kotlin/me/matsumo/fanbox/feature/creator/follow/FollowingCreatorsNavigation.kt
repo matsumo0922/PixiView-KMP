@@ -10,7 +10,7 @@ fun NavGraphBuilder.followingCreatorsScreen(
     navigateTo: (Destination) -> Unit,
     terminate: () -> Unit,
 ) {
-    composable<Destination.SupportingCreators> {
+    composable<Destination.FollowingCreators> {
         FollowingCreatorsRoute(
             modifier = Modifier.fillMaxSize(),
             navigateTo = navigateTo,

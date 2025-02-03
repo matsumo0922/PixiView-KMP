@@ -1,8 +1,10 @@
 package me.matsumo.fanbox.feature.post.detail
 
 import androidx.compose.runtime.Stable
+import androidx.compose.ui.text.intl.Locale
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.collectLatest
@@ -10,10 +12,12 @@ import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
 import me.matsumo.fanbox.core.common.util.suspendRunCatching
 import me.matsumo.fanbox.core.model.ScreenState
+import me.matsumo.fanbox.core.model.TranslationState
 import me.matsumo.fanbox.core.model.UserData
 import me.matsumo.fanbox.core.model.updateWhenIdle
 import me.matsumo.fanbox.core.repository.DownloadPostsRepository
 import me.matsumo.fanbox.core.repository.FanboxRepository
+import me.matsumo.fanbox.core.repository.TranslationRepository
 import me.matsumo.fanbox.core.repository.UserDataRepository
 import me.matsumo.fanbox.core.resources.Res
 import me.matsumo.fanbox.core.resources.error_network
@@ -21,6 +25,7 @@ import me.matsumo.fanbox.core.resources.post_detail_comment_comment_failed
 import me.matsumo.fanbox.core.resources.post_detail_comment_commented
 import me.matsumo.fanbox.core.resources.post_detail_comment_delete_failed
 import me.matsumo.fanbox.core.resources.post_detail_comment_delete_success
+import me.matsumo.fankt.fanbox.Fanbox
 import me.matsumo.fankt.fanbox.domain.PageOffsetInfo
 import me.matsumo.fankt.fanbox.domain.model.FanboxComment
 import me.matsumo.fankt.fanbox.domain.model.FanboxCreatorDetail
@@ -36,6 +41,7 @@ class PostDetailViewModel(
     private val postId: FanboxPostId,
     private val userDataRepository: UserDataRepository,
     private val fanboxRepository: FanboxRepository,
+    private val translationRepository: TranslationRepository,
     private val downloadPostsRepository: DownloadPostsRepository,
 ) : ViewModel() {
 
@@ -87,6 +93,58 @@ class PostDetailViewModel(
                 _screenState.updateWhenIdle {
                     it.copy(postDetail = it.postDetail.copy(isBookmarked = it.postDetail.id in bookmarkedPosts))
                 }
+            }
+        }
+    }
+
+    fun translate(postDetail: FanboxPostDetail) {
+        viewModelScope.launch {
+            (screenState.value as? ScreenState.Idle)?.also { data ->
+                if (data.data.bodyTransState is TranslationState.Translated) return@launch
+
+                _screenState.updateWhenIdle { it.copy(bodyTransState = TranslationState.Loading) }
+
+                val bodyTransState = suspendRunCatching {
+                    translationRepository.translate(postDetail, Locale("en"))
+                }.onSuccess {
+                    _screenState.value = ScreenState.Loading
+                    delay(500)
+                }.fold(
+                    onSuccess = { TranslationState.Translated(it) },
+                    onFailure = { TranslationState.None },
+                )
+
+                _screenState.value = ScreenState.Idle(
+                    data.data.copy(
+                        postDetail = (bodyTransState as? TranslationState.Translated)?.data ?: data.data.postDetail,
+                        bodyTransState = bodyTransState,
+                        messageToast = Res.string.error_network.takeIf { bodyTransState is TranslationState.None },
+                    )
+                )
+            }
+        }
+    }
+
+    fun translate(comments: PageOffsetInfo<FanboxComment>) {
+        viewModelScope.launch {
+            (screenState.value as? ScreenState.Idle)?.also { data ->
+                _screenState.updateWhenIdle { it.copy(commentsTransState = TranslationState.Loading) }
+
+                val commentsTransState = suspendRunCatching {
+                    translationRepository.translate(comments, Locale("en"))
+                }.fold(
+                    onSuccess = { TranslationState.Translated(it) },
+                    onFailure = { TranslationState.None },
+                )
+
+                _screenState.value = ScreenState.Loading
+                _screenState.value = ScreenState.Idle(
+                    data.data.copy(
+                        comments = (commentsTransState as? TranslationState.Translated)?.data ?: data.data.comments,
+                        commentsTransState = commentsTransState,
+                        messageToast = Res.string.error_network.takeIf { commentsTransState is TranslationState.None },
+                    )
+                )
             }
         }
     }
@@ -245,5 +303,7 @@ data class PostDetailUiState(
     val creatorDetail: FanboxCreatorDetail,
     val postDetail: FanboxPostDetail,
     val comments: PageOffsetInfo<FanboxComment>,
+    val bodyTransState: TranslationState<FanboxPostDetail> = TranslationState.None,
+    val commentsTransState: TranslationState<PageOffsetInfo<FanboxComment>> = TranslationState.None,
     val messageToast: StringResource? = null,
 )

@@ -69,13 +69,13 @@ fun <T> NavController.popBackStackWithResult(result: T) {
  * @throws IllegalArgumentException if the given route is invalid
  */
 fun <T> NavController.navigateForResult(
-    route: String,
+    route: Any,
     navResultCallback: NavResultCallback<T>,
     navOptions: NavOptions? = null,
     navigatorExtras: Navigator.Extras? = null,
 ) {
     setNavResultCallback(navResultCallback)
-    navigateWithLog(route, navOptions, navigatorExtras)
+    navigate(route, navOptions, navigatorExtras)
 }
 
 /**

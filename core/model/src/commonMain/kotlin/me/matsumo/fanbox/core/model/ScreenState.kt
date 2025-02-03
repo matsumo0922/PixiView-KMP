@@ -19,6 +19,16 @@ sealed class ScreenState<out T> {
     ) : ScreenState<T>()
 }
 
+@Stable
+sealed class TranslationState<out T> {
+    data object Loading : TranslationState<Nothing>()
+    data object None : TranslationState<Nothing>()
+
+    data class Translated<T>(
+        val data: T,
+    ) : TranslationState<T>()
+}
+
 fun <T> ScreenState<T>.updateWhenIdle(action: (T) -> T): ScreenState<T> {
     return if (this is ScreenState.Idle) {
         val newData = action(data)

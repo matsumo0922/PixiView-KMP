@@ -1,7 +1,7 @@
 [versions]
 # Application
 versionName = "2.2.2"
-versionCode = "56"
+versionCode = "57"
 
 # SDK
 minSdk = "26"
@@ -62,7 +62,10 @@ billing = "6.1.0"
 koin = "4.0.0"
 
 # matsumo
-fankt = "0.0.9"
+fankt = "0.0.10"
+
+# OpenAI
+openai = "4.0.1"
 
 # Others
 ktor = "3.0.1"
@@ -70,7 +73,7 @@ coil3 = "3.0.4"
 ksoup = "0.1.2"
 composeWebView = "1.9.40-alpha03"
 composeRichEditor = "1.0.0-rc10"
-autolink = "1.1.1"
+autolink = "2.0.0"
 windowSize = "0.3.2"
 reveal = "3.1.1"
 detekt = "1.23.7"
@@ -225,6 +228,9 @@ reveal-shapes = { module = "com.svenjacobs.reveal:reveal-shapes", version.ref = 
 
 # matsumo
 fankt-fanbox = { module = "me.matsumo.fankt:fanbox", version.ref = "fankt" }
+
+# OpenAI
+openai-client = { module = "com.aallam.openai:openai-client", version.ref = "openai" }
 
 # Others
 coil3-compose = { module = "io.coil-kt.coil3:coil-compose", version.ref = "coil3" }

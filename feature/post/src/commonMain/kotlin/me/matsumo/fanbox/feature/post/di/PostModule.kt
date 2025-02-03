@@ -26,6 +26,7 @@ val postModule = module {
             userDataRepository = get(),
             fanboxRepository = get(),
             downloadPostsRepository = get(),
+            translationRepository = get(),
         )
     }
 }

@@ -7,6 +7,7 @@ import me.matsumo.fanbox.core.repository.FlagRepository
 import me.matsumo.fanbox.core.repository.FlagRepositoryImpl
 import me.matsumo.fanbox.core.repository.RewardRepository
 import me.matsumo.fanbox.core.repository.RewardRepositoryImpl
+import me.matsumo.fanbox.core.repository.TranslationRepository
 import me.matsumo.fanbox.core.repository.UserDataRepository
 import me.matsumo.fanbox.core.repository.UserDataRepositoryImpl
 import org.koin.core.module.Module
@@ -53,6 +54,13 @@ val repositoryModule = module {
     single<FlagRepository> {
         FlagRepositoryImpl(
             flagDataStore = get(),
+        )
+    }
+
+    single {
+        TranslationRepository(
+            formatter = get(),
+            pixiViewConfig = get(),
         )
     }
 }

@@ -20,8 +20,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.text.SpanStyle
-import androidx.compose.ui.text.style.TextDecoration
+import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import coil3.compose.AsyncImage
@@ -34,8 +33,7 @@ import me.matsumo.fanbox.core.ui.extensition.asCoilImage
 import me.matsumo.fanbox.core.ui.theme.bold
 import me.matsumo.fankt.fanbox.domain.model.FanboxNewsLetter
 import me.matsumo.fankt.fanbox.domain.model.id.FanboxCreatorId
-import sh.calvin.autolinktext.AutoLinkText
-import sh.calvin.autolinktext.TextRuleDefaults
+import sh.calvin.autolinktext.rememberAutoLinkText
 
 @Composable
 internal fun LibraryMessageItem(
@@ -93,20 +91,12 @@ internal fun LibraryMessageItem(
         }
 
         if (isShowBigBody) {
-            AutoLinkText(
+            Text(
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(8.dp),
-                text = message.body,
+                text = AnnotatedString.rememberAutoLinkText(message.body),
                 style = MaterialTheme.typography.bodyMedium.copy(color = MaterialTheme.colorScheme.onSurface),
-                textRules = TextRuleDefaults.defaultList().map {
-                    it.copy(
-                        style = SpanStyle(
-                            color = MaterialTheme.colorScheme.primary,
-                            textDecoration = TextDecoration.Underline,
-                        ),
-                    )
-                },
             )
         } else {
             Text(
