@@ -32,6 +32,10 @@ class CreatorPostsDownloadViewModel(
     private val _screenState = MutableStateFlow<ScreenState<CreatorPostsDownloadUiState>>(ScreenState.Loading)
     val screenState = _screenState.asStateFlow()
 
+    init {
+        fetch()
+    }
+
     fun fetch() {
         viewModelScope.launch {
             _screenState.value = ScreenState.Loading

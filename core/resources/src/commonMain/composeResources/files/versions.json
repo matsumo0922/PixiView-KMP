@@ -204,7 +204,7 @@
   },
   {
     "versionName": "2.2.3",
-    "versionCode": 58,
+    "versionCode": 59,
     "date": "2025/02/03",
     "logJp": "・投稿&クリエイター詳細の翻訳機能を追加（翻訳機能は実験的なものです。予告なく提供を終了する場合があります。）\n・支援中のクリエイター画面が開けない問題を修正\n・アプリがクラッシュする恐れのある不具合の修正",
     "logEn": "・Added translation function for posts and creator details. (The translation function is experimental. It may be discontinued without notice.)\n・Fixed issue where the screen for supported creators could not be opened\n・Fixed a bug that could cause the app to crash"
