@@ -62,6 +62,7 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import me.matsumo.fanbox.core.model.Destination
 import me.matsumo.fanbox.core.model.SimpleAlertContents
+import me.matsumo.fanbox.core.model.TranslationState
 import me.matsumo.fanbox.core.model.UserData
 import me.matsumo.fanbox.core.resources.Res
 import me.matsumo.fanbox.core.resources.billing_plus_toast_require_plus
@@ -156,6 +157,7 @@ internal fun CreatorTopRoute(
                 creatorPlans = uiState.creatorPlans.toImmutableList(),
                 creatorTags = uiState.creatorTags.toImmutableList(),
                 creatorPostsPaging = creatorPostsPaging,
+                descriptionTransState = uiState.descriptionTransState,
                 onClickSearch = { navigateTo(Destination.PostByCreatorSearch(it)) },
                 onClickAllDownload = { navigateTo(Destination.CreatorPostsDownload(it)) },
                 onClickPost = { navigateTo(Destination.PostDetail(it, Destination.PostDetail.PagingType.Creator)) },
@@ -195,6 +197,7 @@ internal fun CreatorTopRoute(
                         { terminate.invoke() },
                     )
                 },
+                onClickTranslateDescription = viewModel::translateDescription,
                 onRevealCompleted = viewModel::finishReveal,
                 onRewarded = viewModel::rewarded,
                 onClickPostLike = viewModel::postLike,
@@ -216,6 +219,7 @@ private fun CreatorTopScreen(
     creatorPlans: ImmutableList<FanboxCreatorPlan>,
     creatorTags: ImmutableList<FanboxTag>,
     creatorPostsPaging: LazyPagingItems<FanboxPost>,
+    descriptionTransState: TranslationState<String>,
     onClickSearch: (FanboxCreatorId) -> Unit,
     onClickAllDownload: (FanboxCreatorId) -> Unit,
     onClickBillingPlus: (String?) -> Unit,
@@ -229,6 +233,7 @@ private fun CreatorTopScreen(
     onClickUnfollow: suspend (FanboxUserId) -> Result<Unit>,
     onShowBlockDialog: (SimpleAlertContents) -> Unit,
     onShowUnblockDialog: (SimpleAlertContents) -> Unit,
+    onClickTranslateDescription: (String) -> Unit,
     onRevealCompleted: () -> Unit,
     onRewarded: () -> Unit,
     onTerminate: () -> Unit,
@@ -469,6 +474,15 @@ private fun CreatorTopScreen(
     if (isShowDescriptionDialog) {
         CreatorTopDescriptionDialog(
             description = creatorDetail.description,
+            translationState = descriptionTransState,
+            onTranslateClicked = {
+                if (userData.hasPrivilege) {
+                    onClickTranslateDescription.invoke(it)
+                } else {
+                    onClickBillingPlus.invoke("translate")
+                    isShowDescriptionDialog = false
+                }
+            },
             onDismissRequest = { isShowDescriptionDialog = false },
         )
     }

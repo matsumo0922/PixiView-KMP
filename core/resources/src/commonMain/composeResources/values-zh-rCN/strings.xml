@@ -85,6 +85,7 @@
     <!-- Reveal -->
     <string name="reveal_creator_top_search">按标题、文本等搜索创作者的帖子\n（%1$s+ 独有功能）</string>
     <string name="reveal_creator_top_fab">一次性下载创作者的所有帖子\n%1$s+ 独有功能）</string>
+    <string name="reveal_post_detail_translate">翻译帖子的标题和正文。\n（%1$s+ 独有功能）</string>
 
     <!-- Notify -->
     <string name="notify_download_channel_name">下载</string>

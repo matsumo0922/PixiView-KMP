@@ -49,8 +49,16 @@ import app.cash.paging.compose.collectAsLazyPagingItems
 import coil3.compose.LocalPlatformContext
 import coil3.compose.SubcomposeAsyncImage
 import coil3.request.ImageRequest
+import com.svenjacobs.reveal.Key
+import com.svenjacobs.reveal.Reveal
+import com.svenjacobs.reveal.RevealOverlayArrangement
+import com.svenjacobs.reveal.RevealOverlayScope
+import com.svenjacobs.reveal.RevealState
+import com.svenjacobs.reveal.rememberRevealState
+import com.svenjacobs.reveal.shapes.balloon.Arrow
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.toImmutableList
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import me.matsumo.fanbox.core.common.util.format
 import me.matsumo.fanbox.core.logs.category.PostsLog
@@ -64,12 +72,18 @@ import me.matsumo.fanbox.core.resources.Res
 import me.matsumo.fanbox.core.resources.error_network
 import me.matsumo.fanbox.core.resources.queue_added
 import me.matsumo.fanbox.core.resources.queue_added_action
+import me.matsumo.fanbox.core.resources.reveal_creator_top_fab
+import me.matsumo.fanbox.core.resources.reveal_creator_top_search
+import me.matsumo.fanbox.core.resources.reveal_post_detail_translate
 import me.matsumo.fanbox.core.ui.AsyncLoadContents
 import me.matsumo.fanbox.core.ui.LazyPagingItemsLoadContents
 import me.matsumo.fanbox.core.ui.ads.BannerAdView
 import me.matsumo.fanbox.core.ui.ads.NativeAdView
+import me.matsumo.fanbox.core.ui.appName
 import me.matsumo.fanbox.core.ui.extensition.FadePlaceHolder
+import me.matsumo.fanbox.core.ui.extensition.LocalRevealCanvasState
 import me.matsumo.fanbox.core.ui.extensition.NavigatorExtension
+import me.matsumo.fanbox.core.ui.extensition.OverlayText
 import me.matsumo.fanbox.core.ui.extensition.Platform
 import me.matsumo.fanbox.core.ui.extensition.ToastExtension
 import me.matsumo.fanbox.core.ui.extensition.currentPlatform
@@ -77,6 +91,7 @@ import me.matsumo.fanbox.core.ui.extensition.fanboxHeader
 import me.matsumo.fanbox.core.ui.extensition.isNullOrEmpty
 import me.matsumo.fanbox.core.ui.extensition.marquee
 import me.matsumo.fanbox.core.ui.extensition.padding
+import me.matsumo.fanbox.core.ui.extensition.revealByStep
 import me.matsumo.fanbox.core.ui.theme.bold
 import me.matsumo.fanbox.core.ui.theme.center
 import me.matsumo.fanbox.core.ui.view.ErrorView
@@ -100,11 +115,16 @@ import me.matsumo.fankt.fanbox.domain.model.id.FanboxCommentId
 import me.matsumo.fankt.fanbox.domain.model.id.FanboxCreatorId
 import me.matsumo.fankt.fanbox.domain.model.id.FanboxPostId
 import me.matsumo.fankt.fanbox.domain.model.id.FanboxUserId
+import org.jetbrains.compose.resources.stringResource
 import org.koin.compose.koinInject
 import org.koin.compose.viewmodel.koinViewModel
 import org.koin.core.parameter.parametersOf
 import kotlin.uuid.ExperimentalUuidApi
 import kotlin.uuid.Uuid
+
+internal enum class PostDetailRevealKeys {
+    Translate,
+}
 
 @OptIn(ExperimentalUuidApi::class)
 @Composable
@@ -121,86 +141,102 @@ internal fun PostDetailRoute(
 
     val postDetailMap = remember { mutableStateMapOf<FanboxPostId, FanboxPostDetail>() }
     var currentPostId by remember { mutableStateOf(postId) }
-
     val snackbarHostState = remember { SnackbarHostState() }
+    val scope = rememberCoroutineScope()
 
-    Scaffold(
+    val revealCanvasState = LocalRevealCanvasState.current
+    val revealState = rememberRevealState()
+    val revealOverlayContainerColor = MaterialTheme.colorScheme.tertiaryContainer
+    val revealOverlayContentColor = MaterialTheme.colorScheme.onTertiaryContainer
+
+    Reveal(
         modifier = modifier,
-        bottomBar = {
-            Column(
-                modifier = Modifier
-                    .shadow(8.dp)
-                    .background(MaterialTheme.colorScheme.surfaceColorAtElevation(1.dp)),
-            ) {
-                if (!uiState.userData.hasPrivilege) {
-                    BannerAdView(
-                        modifier = Modifier.fillMaxWidth(),
-                    )
-                }
-
-                PostDetailBottomBar(
-                    modifier = Modifier.fillMaxWidth(),
-                    postDetail = postDetailMap[currentPostId],
-                    isBookmarked = uiState.bookmarkedPostIds.contains(currentPostId),
-                    onCreatorClicked = { navigateTo(Destination.CreatorTop(it, true)) },
-                    onBookmarkClicked = { isBookmarked ->
-                        postDetailMap[currentPostId]?.let { viewModel.postBookmark(it.adPost(), isBookmarked) }
-                    },
-                )
-            }
-        },
-        snackbarHost = {
-            SnackbarHost(
-                hostState = snackbarHostState,
-            )
-        },
-        contentWindowInsets = WindowInsets(0, 0, 0, 0),
-    ) { padding ->
-        if (paging != null && !paging.isNullOrEmpty()) {
-            LazyPagingItemsLoadContents(
-                modifier = Modifier
-                    .fillMaxSize()
-                    .padding(padding),
-                lazyPagingItems = paging,
-                isSwipeEnabled = false,
-            ) {
-                val initIndex = remember { paging.itemSnapshotList.indexOfFirst { it == postId } }
-                val pagerState = rememberPagerState(initialPage = initIndex) { paging.itemCount }
-
-                LaunchedEffect(pagerState) {
-                    snapshotFlow { pagerState.currentPage }.collect { index ->
-                        paging[index]?.let { currentPostId = it }
-                    }
-                }
-
-                HorizontalPager(
-                    modifier = Modifier.fillMaxSize(),
-                    state = pagerState,
-                    key = { index -> paging[index]?.uniqueValue ?: Uuid.random().toString() },
-                    userScrollEnabled = uiState.userData.isUseInfinityPostDetail,
-                ) { index ->
-                    paging[index]?.let { id ->
-                        PostDetailView(
-                            modifier = Modifier.fillMaxSize(),
-                            postId = id,
-                            snackbarHostState = snackbarHostState,
-                            navigateTo = navigateTo,
-                            navigateToCommentDeleteDialog = navigateToCommentDeleteDialog,
-                            onPostDetailFetched = { postDetailMap[id] = it },
-                            terminate = terminate,
+        onOverlayClick = { scope.launch { revealState.hide() } },
+        revealCanvasState = revealCanvasState,
+        revealState = revealState,
+        overlayContent = { key -> RevealOverlayContent(key, revealOverlayContainerColor, revealOverlayContentColor) },
+    ) {
+        Scaffold(
+            modifier = Modifier.fillMaxSize(),
+            bottomBar = {
+                Column(
+                    modifier = Modifier
+                        .shadow(8.dp)
+                        .background(MaterialTheme.colorScheme.surfaceColorAtElevation(1.dp)),
+                ) {
+                    if (!uiState.userData.hasPrivilege) {
+                        BannerAdView(
+                            modifier = Modifier.fillMaxWidth(),
                         )
                     }
+
+                    PostDetailBottomBar(
+                        modifier = Modifier.fillMaxWidth(),
+                        postDetail = postDetailMap[currentPostId],
+                        isBookmarked = uiState.bookmarkedPostIds.contains(currentPostId),
+                        onCreatorClicked = { navigateTo(Destination.CreatorTop(it, true)) },
+                        onBookmarkClicked = { isBookmarked ->
+                            postDetailMap[currentPostId]?.let { viewModel.postBookmark(it.adPost(), isBookmarked) }
+                        },
+                    )
                 }
+            },
+            snackbarHost = {
+                SnackbarHost(
+                    hostState = snackbarHostState,
+                )
+            },
+            contentWindowInsets = WindowInsets(0, 0, 0, 0),
+        ) { padding ->
+            if (paging != null && !paging.isNullOrEmpty()) {
+                LazyPagingItemsLoadContents(
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .padding(padding),
+                    lazyPagingItems = paging,
+                    isSwipeEnabled = false,
+                ) {
+                    val initIndex = remember { paging.itemSnapshotList.indexOfFirst { it == postId } }
+                    val pagerState = rememberPagerState(initialPage = initIndex) { paging.itemCount }
+
+                    LaunchedEffect(pagerState) {
+                        snapshotFlow { pagerState.currentPage }.collect { index ->
+                            paging[index]?.let { currentPostId = it }
+                        }
+                    }
+
+                    HorizontalPager(
+                        modifier = Modifier.fillMaxSize(),
+                        state = pagerState,
+                        key = { index -> paging[index]?.uniqueValue ?: Uuid.random().toString() },
+                        userScrollEnabled = uiState.userData.isUseInfinityPostDetail,
+                    ) { index ->
+                        paging[index]?.let { id ->
+                            PostDetailView(
+                                modifier = Modifier.fillMaxSize(),
+                                postId = id,
+                                shouldShowReveal = uiState.shouldShowReveal,
+                                revealState = revealState,
+                                snackbarHostState = snackbarHostState,
+                                navigateTo = navigateTo,
+                                navigateToCommentDeleteDialog = navigateToCommentDeleteDialog,
+                                onPostDetailFetched = { postDetailMap[id] = it },
+                                onRevealCompleted = viewModel::finishReveal,
+                                terminate = terminate,
+                            )
+                        }
+                    }
+                }
+            } else {
+                ErrorView(
+                    modifier = Modifier
+                        .padding(padding)
+                        .fillMaxSize(),
+                    errorState = ScreenState.Error(Res.string.error_network),
+                    retryAction = { terminate.invoke() },
+                    terminate = { terminate.invoke() },
+                )
             }
-        } else {
-            ErrorView(
-                modifier = Modifier
-                    .padding(padding)
-                    .fillMaxSize(),
-                errorState = ScreenState.Error(Res.string.error_network),
-                retryAction = { terminate.invoke() },
-                terminate = { terminate.invoke() },
-            )
         }
     }
 }
@@ -208,10 +244,13 @@ internal fun PostDetailRoute(
 @Composable
 private fun PostDetailView(
     postId: FanboxPostId,
+    shouldShowReveal: Boolean,
+    revealState: RevealState,
     snackbarHostState: SnackbarHostState,
     navigateTo: (Destination) -> Unit,
     navigateToCommentDeleteDialog: (SimpleAlertContents, () -> Unit) -> Unit,
     onPostDetailFetched: (FanboxPostDetail) -> Unit,
+    onRevealCompleted: () -> Unit,
     terminate: () -> Unit,
     modifier: Modifier = Modifier,
     viewModel: PostDetailViewModel = koinViewModel(key = postId.value) {
@@ -231,6 +270,8 @@ private fun PostDetailView(
     ) { uiState ->
         PostDetailScreen(
             modifier = Modifier.fillMaxSize(),
+            revealState = revealState,
+            shouldShowReveal = shouldShowReveal,
             postDetail = uiState.postDetail,
             comments = uiState.comments,
             creatorDetail = uiState.creatorDetail,
@@ -283,7 +324,6 @@ private fun PostDetailView(
             },
             onClickCreator = { navigateTo(Destination.CreatorTop(it, false)) },
             onClickImage = { item ->
-                uiState.postDetail
                 uiState.postDetail.body.imageItems.indexOf(item).let { index ->
                     navigateTo(Destination.PostImage(postId, index))
                 }
@@ -323,6 +363,8 @@ private fun PostDetailView(
             onClickFollow = viewModel::follow,
             onClickUnfollow = viewModel::unfollow,
             onClickOpenBrowser = { navigatorExtension.navigateToWebPage(it, "") },
+            onClickBillingPlus = { navigateTo(Destination.BillingPlusBottomSheet(it)) },
+            onRevealCompleted = onRevealCompleted,
             onTerminate = terminate,
         )
 
@@ -339,6 +381,7 @@ private fun PostDetailView(
 
 @Composable
 private fun PostDetailScreen(
+    revealState: RevealState,
     postDetail: FanboxPostDetail,
     comments: PageOffsetInfo<FanboxComment>,
     creatorDetail: FanboxCreatorDetail,
@@ -347,6 +390,7 @@ private fun PostDetailScreen(
     metaData: FanboxMetaData,
     bodyTransState: TranslationState<FanboxPostDetail>,
     commentsTransState: TranslationState<PageOffsetInfo<FanboxComment>>,
+    shouldShowReveal: Boolean,
     onClickBodyTranslate: (FanboxPostDetail) -> Unit,
     onClickCommentsTranslate: (PageOffsetInfo<FanboxComment>) -> Unit,
     onClickPost: (FanboxPostId) -> Unit,
@@ -366,6 +410,8 @@ private fun PostDetailScreen(
     onClickFollow: (FanboxUserId) -> Unit,
     onClickUnfollow: (FanboxUserId) -> Unit,
     onClickOpenBrowser: (String) -> Unit,
+    onClickBillingPlus: (String?) -> Unit,
+    onRevealCompleted: () -> Unit,
     onTerminate: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
@@ -382,6 +428,16 @@ private fun PostDetailScreen(
         if (isShowCommentEditor) {
             val commentItems = comments.contents.flatMap { comment -> listOf(comment) + comment.replies }
             isShowCommentEditor = !commentItems.any { comment -> comment.user?.name == metaData.context?.user?.name && comment.body == latestComment }
+        }
+    }
+
+    if (shouldShowReveal) {
+        LaunchedEffect(shouldShowReveal) {
+            delay(500)
+            revealState.revealByStep(
+                keys = listOf(PostDetailRevealKeys.Translate),
+                onCompleted = onRevealCompleted,
+            )
         }
     }
 
@@ -493,7 +549,13 @@ private fun PostDetailScreen(
                 },
                 onClickCommentDelete = onClickCommentDelete,
                 onClickShowCommentEditor = { isShowCommentEditor = it },
-                onClickTranslate = onClickCommentsTranslate,
+                onClickTranslate = {
+                    if (userData.hasPrivilege) {
+                        onClickCommentsTranslate.invoke(it)
+                    } else {
+                        onClickBillingPlus.invoke("translate")
+                    }
+                },
             )
 
             item {
@@ -506,11 +568,18 @@ private fun PostDetailScreen(
                 .align(Alignment.TopCenter)
                 .fillMaxWidth(),
             state = state,
+            revealState = revealState,
             postDetail = postDetail,
             bodyTransState = bodyTransState,
             isShowHeader = isShowHeader,
             onClickNavigateUp = onTerminate,
-            onClickTranslate = onClickBodyTranslate,
+            onClickTranslate = {
+                if (userData.hasPrivilege) {
+                    onClickBodyTranslate.invoke(postDetail)
+                } else {
+                    onClickBillingPlus.invoke("translate")
+                }
+            },
             onClickMenu = { isShowMenu = true },
         )
     }
@@ -611,6 +680,28 @@ private fun FileThumbnail(
             tint = Color.White,
             contentDescription = null,
         )
+    }
+}
+
+@Composable
+private fun RevealOverlayScope.RevealOverlayContent(
+    key: Key,
+    containerColor: Color,
+    contentColor: Color,
+) {
+    when (key) {
+        PostDetailRevealKeys.Translate -> {
+            OverlayText(
+                modifier = Modifier.align(
+                    horizontalAlignment = Alignment.End,
+                    verticalArrangement = RevealOverlayArrangement.Bottom,
+                ),
+                text = stringResource(Res.string.reveal_post_detail_translate, appName),
+                arrow = Arrow.top(horizontalAlignment = Alignment.End),
+                containerColor = containerColor,
+                contentColor = contentColor,
+            )
+        }
     }
 }
 

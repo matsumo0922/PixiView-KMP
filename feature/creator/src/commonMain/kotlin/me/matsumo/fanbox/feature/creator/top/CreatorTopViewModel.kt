@@ -1,6 +1,7 @@
 package me.matsumo.fanbox.feature.creator.top
 
 import androidx.compose.runtime.Stable
+import androidx.compose.ui.text.intl.Locale
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -16,11 +17,13 @@ import me.matsumo.fanbox.core.common.util.suspendRunCatching
 import me.matsumo.fanbox.core.model.Destination
 import me.matsumo.fanbox.core.model.Flag
 import me.matsumo.fanbox.core.model.ScreenState
+import me.matsumo.fanbox.core.model.TranslationState
 import me.matsumo.fanbox.core.model.UserData
 import me.matsumo.fanbox.core.model.updateWhenIdle
 import me.matsumo.fanbox.core.repository.FanboxRepository
 import me.matsumo.fanbox.core.repository.FlagRepository
 import me.matsumo.fanbox.core.repository.RewardRepository
+import me.matsumo.fanbox.core.repository.TranslationRepository
 import me.matsumo.fanbox.core.repository.UserDataRepository
 import me.matsumo.fanbox.core.resources.Res
 import me.matsumo.fanbox.core.resources.error_network
@@ -31,11 +34,13 @@ import me.matsumo.fankt.fanbox.domain.model.FanboxPost
 import me.matsumo.fankt.fanbox.domain.model.FanboxTag
 import me.matsumo.fankt.fanbox.domain.model.id.FanboxPostId
 import me.matsumo.fankt.fanbox.domain.model.id.FanboxUserId
+import org.jetbrains.compose.resources.getString
 
 class CreatorTopViewModel(
     savedStateHandle: SavedStateHandle,
     private val userDataRepository: UserDataRepository,
     private val fanboxRepository: FanboxRepository,
+    private val translationRepository: TranslationRepository,
     private val rewardRepository: RewardRepository,
     private val flagRepository: FlagRepository,
 ) : ViewModel() {
@@ -151,6 +156,32 @@ class CreatorTopViewModel(
         }
     }
 
+    fun translateDescription(description: String) {
+        viewModelScope.launch {
+            (screenState.value as? ScreenState.Idle)?.also { state ->
+                if (state.data.descriptionTransState is TranslationState.Translated) return@launch
+
+                _screenState.updateWhenIdle { it.copy(descriptionTransState = TranslationState.Loading) }
+
+                val translatedDescription = suspendRunCatching {
+                    translationRepository.translate(description, Locale("en"))
+                }.fold(
+                    onSuccess = { it },
+                    onFailure = { getString(Res.string.error_network) }
+                )
+
+                _screenState.updateWhenIdle {
+                    it.copy(
+                        descriptionTransState = TranslationState.Translated(translatedDescription),
+                        creatorDetail = it.creatorDetail.copy(
+                            description = translatedDescription
+                        )
+                    )
+                }
+            }
+        }
+    }
+
     fun rewarded() {
         viewModelScope.launch {
             rewardRepository.rewarded()
@@ -169,4 +200,5 @@ data class CreatorTopUiState(
     val isBlocked: Boolean,
     val isAbleToReward: Boolean,
     val shouldShowReveal: Boolean,
+    val descriptionTransState: TranslationState<String> = TranslationState.None,
 )

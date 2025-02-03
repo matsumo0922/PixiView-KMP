@@ -27,13 +27,18 @@ import androidx.compose.runtime.snapshotFlow
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
+import com.svenjacobs.reveal.RevealShape
+import com.svenjacobs.reveal.RevealState
+import com.svenjacobs.reveal.revealable
 import me.matsumo.fanbox.core.model.TranslationState
+import me.matsumo.fanbox.feature.post.detail.PostDetailRevealKeys
 import me.matsumo.fankt.fanbox.domain.model.FanboxPostDetail
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 internal fun PostDetailTopAppBar(
     state: LazyListState,
+    revealState: RevealState,
     postDetail: FanboxPostDetail,
     bodyTransState: TranslationState<FanboxPostDetail>,
     isShowHeader: Boolean,
@@ -93,6 +98,11 @@ internal fun PostDetailTopAppBar(
         },
         actions = {
             IconButton(
+                modifier = Modifier.revealable(
+                    key = PostDetailRevealKeys.Translate,
+                    state = revealState,
+                    shape = RevealShape.Circle,
+                ),
                 onClick = { onClickTranslate.invoke(postDetail) },
                 colors = IconButtonDefaults.iconButtonColors(scrolledContainerColor.copy(alpha = 0.3f)),
             ) {

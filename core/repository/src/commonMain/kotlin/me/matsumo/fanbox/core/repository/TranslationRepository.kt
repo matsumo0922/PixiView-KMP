@@ -13,6 +13,7 @@ import kotlinx.coroutines.IO
 import kotlinx.coroutines.withContext
 import kotlinx.serialization.json.Json
 import me.matsumo.fanbox.core.common.PixiViewConfig
+import me.matsumo.fanbox.core.model.translation.TransString
 import me.matsumo.fanbox.core.model.translation.toFanboxComments
 import me.matsumo.fanbox.core.model.translation.toFanboxPostDetail
 import me.matsumo.fanbox.core.model.translation.toTrans
@@ -39,6 +40,13 @@ class TranslationRepository(
         val resultJson = completion.choices.first().message.content.orEmpty()
 
         return formatter.decodeFromString(resultJson)
+    }
+
+    suspend fun translate(body: String, locale: Locale): String = withContext(ioDispatcher) {
+        val transString = TransString(body)
+        val result = translate(transString, locale)
+
+        result.body
     }
 
     suspend fun translate(postDetail: FanboxPostDetail, locale: Locale): FanboxPostDetail = withContext(ioDispatcher) {

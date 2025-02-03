@@ -79,6 +79,7 @@
     <!-- Reveal -->
     <string name="reveal_creator_top_search">クリエイターの投稿をタイトル・本文などから検索\n（%1$s+ 専用機能）</string>
     <string name="reveal_creator_top_fab">クリエイターの投稿を一括で全てダウンロード\n（%1$s+ 専用機能）</string>
+    <string name="reveal_post_detail_translate">投稿のタイトル・本文を翻訳\n（%1$s+ 専用機能）</string>
 
     <!-- Domain Validation -->
     <string name="domain_validation_request_title">対応リンクを開く</string>

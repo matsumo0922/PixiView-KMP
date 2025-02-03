@@ -112,6 +112,7 @@ class SettingTopViewModel(
     fun setReshowReveal() {
         viewModelScope.launch {
             flagRepository.setFlag(Flag.REVEAL_CREATOR_TOP, true)
+            flagRepository.setFlag(Flag.REVEAL_POST_DETAIL, true)
             flagRepository.setFlag(Flag.SHOULD_REQUEST_DOMAIN_VERIFICATION, true)
         }
     }

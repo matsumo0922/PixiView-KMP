@@ -79,6 +79,7 @@
     <!-- Reveal -->
     <string name="reveal_creator_top_search">Search for creators' posts by title, text, etc.\n(%1$s+ exclusive feature)</string>
     <string name="reveal_creator_top_fab">Download all of a creator's posts at once.\n(%1$s+ exclusive feature)</string>
+    <string name="reveal_post_detail_translate">Translate the title and text of the post.\n(%1$s+ exclusive feature)</string>
 
     <!-- Domain Validation -->
     <string name="domain_validation_request_title">Open by default</string>

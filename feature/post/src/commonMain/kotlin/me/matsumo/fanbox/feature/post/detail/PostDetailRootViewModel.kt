@@ -16,8 +16,10 @@ import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
 import me.matsumo.fanbox.core.common.util.suspendRunCatching
 import me.matsumo.fanbox.core.model.Destination
+import me.matsumo.fanbox.core.model.Flag
 import me.matsumo.fanbox.core.model.UserData
 import me.matsumo.fanbox.core.repository.FanboxRepository
+import me.matsumo.fanbox.core.repository.FlagRepository
 import me.matsumo.fanbox.core.repository.UserDataRepository
 import me.matsumo.fanbox.core.ui.customNavTypes
 import me.matsumo.fanbox.core.ui.extensition.createStaticPaging
@@ -29,6 +31,7 @@ class PostDetailRootViewModel(
     savedStateHandle: SavedStateHandle,
     private val userDataRepository: UserDataRepository,
     private val fanboxRepository: FanboxRepository,
+    private val flagRepository: FlagRepository,
 ) : ViewModel() {
 
     private val navArgs = savedStateHandle.toRoute<Destination.PostDetail>(customNavTypes)
@@ -40,6 +43,7 @@ class PostDetailRootViewModel(
             paging = emptyPaging(),
             userData = UserData.default(),
             bookmarkedPostIds = emptyList(),
+            shouldShowReveal = false,
         ),
     )
 
@@ -79,6 +83,7 @@ class PostDetailRootViewModel(
                 paging = paging,
                 userData = userData,
                 bookmarkedPostIds = fanboxRepository.bookmarkedPostsIds.first(),
+                shouldShowReveal = flagRepository.getFlag(Flag.REVEAL_POST_DETAIL, true),
             )
         }
     }
@@ -95,6 +100,13 @@ class PostDetailRootViewModel(
         }
     }
 
+    fun finishReveal() {
+        viewModelScope.launch {
+            flagRepository.setFlag(Flag.REVEAL_POST_DETAIL, false)
+            _uiState.value = _uiState.value.copy(shouldShowReveal = false)
+        }
+    }
+
     private fun Flow<PagingData<FanboxPost>>.toIdFlow(): Flow<PagingData<FanboxPostId>> {
         return map { list -> list.map { it.id } }
     }
@@ -105,4 +117,5 @@ data class PostDetailRootUiState(
     val paging: Flow<PagingData<FanboxPostId>>?,
     val userData: UserData,
     val bookmarkedPostIds: List<FanboxPostId>,
+    val shouldShowReveal: Boolean,
 )

@@ -75,6 +75,7 @@
     <!-- Reveal -->
     <string name="reveal_creator_top_search">크리에이터의 투고를 타이틀·본문등에서 검색\n(%1$s+ 전용 기능)</string>
     <string name="reveal_creator_top_fab">크리에이터의 게시물을 일괄로 모두 다운로드\n(%1$s+ 전용 기능)</string>
+    <string name="reveal_post_detail_translate">게시물의 제목과 본문을 번역합니다.\n(%1$s+ 독점 기능)</string>
 
     <!-- Domain Validation -->
     <string name="domain_validation_request_title">기본적으로 열림</string>
