@@ -17,7 +17,7 @@ private fun flatCooments(comments: List<FanboxComment>): List<FanboxComment> {
 
 fun PageOffsetInfo<FanboxComment>.toTrans(): TransComments {
     return TransComments(
-        comments = flatCooments(contents).map { it.body }
+        comments = flatCooments(contents).map { it.body },
     )
 }
 
@@ -29,11 +29,11 @@ fun TransComments.toFanboxComments(original: PageOffsetInfo<FanboxComment>): Pag
 
         return comment.copy(
             body = newBody,
-            replies = comment.replies.map { replaceCommentBody(it) }
+            replies = comment.replies.map { replaceCommentBody(it) },
         )
     }
 
     return original.copy(
-        contents = original.contents.map { replaceCommentBody(it) }
+        contents = original.contents.map { replaceCommentBody(it) },
     )
 }

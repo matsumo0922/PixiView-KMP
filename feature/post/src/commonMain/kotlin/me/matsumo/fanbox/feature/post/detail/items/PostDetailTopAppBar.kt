@@ -108,7 +108,7 @@ internal fun PostDetailTopAppBar(
             ) {
                 if (bodyTransState is TranslationState.Loading) {
                     CircularProgressIndicator(
-                        modifier = Modifier.padding(6.dp)
+                        modifier = Modifier.padding(6.dp),
                     )
                 } else {
                     Icon(

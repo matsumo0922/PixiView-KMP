@@ -37,7 +37,7 @@ fun TransPostDetail.toFanboxPostDetail(original: FanboxPostDetail): FanboxPostDe
                     } else {
                         block
                     }
-                }
+                },
             )
         }
 

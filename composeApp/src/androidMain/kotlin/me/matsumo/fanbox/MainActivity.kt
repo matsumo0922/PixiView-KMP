@@ -19,7 +19,6 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import com.google.android.play.core.review.ReviewManagerFactory
-import io.github.aakira.napier.Napier
 import kotlinx.collections.immutable.persistentMapOf
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.first
@@ -33,7 +32,6 @@ import me.matsumo.fanbox.core.logs.logger.send
 import me.matsumo.fanbox.core.model.ThemeConfig
 import me.matsumo.fanbox.core.repository.DownloadPostsRepository
 import me.matsumo.fanbox.core.repository.UserDataRepository
-import me.matsumo.fanbox.core.ui.extensition.NavigatorExtension
 import me.matsumo.fanbox.core.ui.theme.shouldUseDarkTheme
 import me.matsumo.fanbox.feature.service.DownloadPostService
 import org.koin.compose.KoinContext
@@ -47,8 +45,6 @@ class MainActivity : FragmentActivity(), KoinComponent {
     private val downloadPostsRepository: DownloadPostsRepository by inject()
 
     private val launchLogDataStore: LaunchLogDataStore by inject()
-
-    private val navigatorExtension: NavigatorExtension by inject()
 
     private var stayTime = 0L
 

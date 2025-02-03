@@ -25,7 +25,6 @@ import me.matsumo.fanbox.core.resources.post_detail_comment_comment_failed
 import me.matsumo.fanbox.core.resources.post_detail_comment_commented
 import me.matsumo.fanbox.core.resources.post_detail_comment_delete_failed
 import me.matsumo.fanbox.core.resources.post_detail_comment_delete_success
-import me.matsumo.fankt.fanbox.Fanbox
 import me.matsumo.fankt.fanbox.domain.PageOffsetInfo
 import me.matsumo.fankt.fanbox.domain.model.FanboxComment
 import me.matsumo.fankt.fanbox.domain.model.FanboxCreatorDetail
@@ -119,7 +118,7 @@ class PostDetailViewModel(
                         postDetail = (bodyTransState as? TranslationState.Translated)?.data ?: data.data.postDetail,
                         bodyTransState = bodyTransState,
                         messageToast = Res.string.error_network.takeIf { bodyTransState is TranslationState.None },
-                    )
+                    ),
                 )
             }
         }
@@ -143,7 +142,7 @@ class PostDetailViewModel(
                         comments = (commentsTransState as? TranslationState.Translated)?.data ?: data.data.comments,
                         commentsTransState = commentsTransState,
                         messageToast = Res.string.error_network.takeIf { commentsTransState is TranslationState.None },
-                    )
+                    ),
                 )
             }
         }

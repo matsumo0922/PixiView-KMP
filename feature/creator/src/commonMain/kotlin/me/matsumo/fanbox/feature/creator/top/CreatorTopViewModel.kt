@@ -167,15 +167,15 @@ class CreatorTopViewModel(
                     translationRepository.translate(description, Locale(state.data.userData.translateLanguage))
                 }.fold(
                     onSuccess = { it },
-                    onFailure = { getString(Res.string.error_network) }
+                    onFailure = { getString(Res.string.error_network) },
                 )
 
                 _screenState.updateWhenIdle {
                     it.copy(
                         descriptionTransState = TranslationState.Translated(translatedDescription),
                         creatorDetail = it.creatorDetail.copy(
-                            description = translatedDescription
-                        )
+                            description = translatedDescription,
+                        ),
                     )
                 }
             }

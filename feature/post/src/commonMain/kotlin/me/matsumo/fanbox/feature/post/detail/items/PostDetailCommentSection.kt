@@ -103,7 +103,7 @@ internal fun LazyListScope.postDetailCommentItems(
                 IconButton(onClick = { onClickTranslate.invoke(comments) }) {
                     if (commentsTransState is TranslationState.Loading) {
                         CircularProgressIndicator(
-                            modifier = Modifier.padding(4.dp)
+                            modifier = Modifier.padding(4.dp),
                         )
                     } else {
                         Icon(

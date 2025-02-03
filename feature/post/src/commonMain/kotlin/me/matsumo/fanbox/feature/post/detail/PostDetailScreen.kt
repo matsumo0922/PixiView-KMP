@@ -72,8 +72,6 @@ import me.matsumo.fanbox.core.resources.Res
 import me.matsumo.fanbox.core.resources.error_network
 import me.matsumo.fanbox.core.resources.queue_added
 import me.matsumo.fanbox.core.resources.queue_added_action
-import me.matsumo.fanbox.core.resources.reveal_creator_top_fab
-import me.matsumo.fanbox.core.resources.reveal_creator_top_search
 import me.matsumo.fanbox.core.resources.reveal_post_detail_translate
 import me.matsumo.fanbox.core.ui.AsyncLoadContents
 import me.matsumo.fanbox.core.ui.LazyPagingItemsLoadContents
