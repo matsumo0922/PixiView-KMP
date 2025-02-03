@@ -21,7 +21,7 @@ kotlinxSerializationJson = "1.8.0"
 kotlinxImmutable = "0.3.7"
 
 # KMP
-kmpCompose = "1.7.3"
+kmpCompose = "1.8.0-alpha02"
 kmpComplete = "1.1.0"
 kmpSwiftKlib = "0.6.3"
 kmpLifecycle = "2.8.4"
