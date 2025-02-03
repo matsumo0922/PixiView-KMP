@@ -40,6 +40,7 @@ import me.matsumo.fanbox.feature.setting.directory.settingDirectoryScreen
 import me.matsumo.fanbox.feature.setting.oss.settingLicenseScreen
 import me.matsumo.fanbox.feature.setting.theme.settingThemeScreen
 import me.matsumo.fanbox.feature.setting.top.settingTopScreen
+import me.matsumo.fanbox.feature.setting.translate.settingTranslationDialog
 
 @Composable
 internal fun PixiViewNavHost(
@@ -201,6 +202,10 @@ private fun NavGraphBuilder.applyNavGraph(
     )
 
     settingDeveloperDialog(
+        terminate = { mainNavController.popBackStack() },
+    )
+
+    settingTranslationDialog(
         terminate = { mainNavController.popBackStack() },
     )
 

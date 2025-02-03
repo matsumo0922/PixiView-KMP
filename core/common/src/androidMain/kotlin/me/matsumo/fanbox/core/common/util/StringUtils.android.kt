@@ -7,6 +7,7 @@ import kotlinx.datetime.toJavaLocalDate
 import kotlinx.datetime.toJavaLocalDateTime
 import kotlinx.datetime.toLocalDateTime
 import java.time.format.DateTimeFormatter
+import java.util.Locale
 
 actual fun Instant.format(pattern: String): String {
     return toLocalDateTime(TimeZone.currentSystemDefault()).toJavaLocalDateTime().format(DateTimeFormatter.ofPattern(pattern))
@@ -18,4 +19,8 @@ actual fun LocalDate.format(pattern: String): String {
 
 actual fun String.format(vararg args: Any?): String {
     return java.lang.String.format(this, *args)
+}
+
+actual fun getAvailableLanguageTags(): List<String> {
+    return Locale.getAvailableLocales().map { it.toLanguageTag() }
 }

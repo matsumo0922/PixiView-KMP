@@ -98,6 +98,14 @@ internal fun SettingTopRoute(
             fanboxSessionId = uiState.fanboxSessionId,
             config = uiState.config,
             onClickThemeSetting = { navigateTo(Destination.SettingTheme) },
+            onClickTranslationLanguage = {
+                if (uiState.userData.hasPrivilege) {
+                    navigateTo(Destination.SettingTranslationDialog(it))
+                } else {
+                    scope.launch { toastExtension.show(snackbarHostState, requirePlus) }
+                    navigateTo(Destination.BillingPlusBottomSheet("translate"))
+                }
+            },
             onClickDirectory = { navigateTo(Destination.SettingDirectory) },
             onClickAccountSetting = {
                 navigatorExtension.navigateToWebPage("https://www.fanbox.cc/user/settings", "")
@@ -160,6 +168,7 @@ private fun SettingTopScreen(
     fanboxSessionId: String,
     config: PixiViewConfig,
     onClickThemeSetting: () -> Unit,
+    onClickTranslationLanguage: (String) -> Unit,
     onClickAccountSetting: () -> Unit,
     onClickDirectory: () -> Unit,
     onClickDownloadFileType: (DownloadFileType) -> Unit,
@@ -224,6 +233,8 @@ private fun SettingTopScreen(
                 SettingTopThemeSection(
                     modifier = Modifier.fillMaxWidth(),
                     onClickAppTheme = onClickThemeSetting,
+                    onClickTranslationLanguage = onClickTranslationLanguage,
+                    translationLanguage = userData.translateLanguage,
                 )
             }
 

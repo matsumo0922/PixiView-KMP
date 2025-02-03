@@ -223,6 +223,8 @@
     <string name="setting_top_theme_app_light">浅色主题</string>
     <string name="setting_top_theme_app_dark">深色主题</string>
     <string name="setting_top_theme_app_system">跟随系统</string>
+    <string name="setting_top_theme_translate_language">翻译语言</string>
+    <string name="setting_top_theme_translate_language_description">请输入目标语言的语言代码（BCP47）。</string>
     <string name="setting_top_general">常规</string>
     <string name="setting_top_general_app_lock">应用密码锁</string>
     <string name="setting_top_general_app_lock_description">启动应用时需要输入密码。</string>

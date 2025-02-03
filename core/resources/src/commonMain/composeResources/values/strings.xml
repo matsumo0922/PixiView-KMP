@@ -223,6 +223,8 @@
     <string name="setting_top_theme_app_light">Light theme</string>
     <string name="setting_top_theme_app_dark">Dark theme</string>
     <string name="setting_top_theme_app_system">System theme</string>
+    <string name="setting_top_theme_translate_language">Translation language</string>
+    <string name="setting_top_theme_translate_language_description">Please enter the language tag (BCP47) of the target language.</string>
     <string name="setting_top_general">General</string>
     <string name="setting_top_general_app_lock">Require password to start app</string>
     <string name="setting_top_general_app_lock_description">Require a password when starting the app.</string>

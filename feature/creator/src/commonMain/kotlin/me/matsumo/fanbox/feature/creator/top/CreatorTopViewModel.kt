@@ -164,7 +164,7 @@ class CreatorTopViewModel(
                 _screenState.updateWhenIdle { it.copy(descriptionTransState = TranslationState.Loading) }
 
                 val translatedDescription = suspendRunCatching {
-                    translationRepository.translate(description, Locale("en"))
+                    translationRepository.translate(description, Locale(state.data.userData.translateLanguage))
                 }.fold(
                     onSuccess = { it },
                     onFailure = { getString(Res.string.error_network) }

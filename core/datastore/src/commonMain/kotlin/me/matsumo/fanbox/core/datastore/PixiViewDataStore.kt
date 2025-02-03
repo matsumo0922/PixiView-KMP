@@ -122,6 +122,20 @@ class PixiViewDataStore(
         }
     }
 
+    suspend fun setTranslateLanguage(code: String) = withContext(ioDispatcher) {
+        if (userData.first().translateLanguage == code) return@withContext
+
+        SettingsLog.update(
+            propertyName = "translateLanguage",
+            oldValue = userData.first().translateLanguage,
+            newValue = code,
+        ).send()
+
+        userPreference.edit {
+            it[stringPreferencesKey(UserData::translateLanguage.name)] = code
+        }
+    }
+
     suspend fun setDownloadFileType(downloadFileType: DownloadFileType) = withContext(ioDispatcher) {
         if (userData.first().downloadFileType == downloadFileType) return@withContext
 

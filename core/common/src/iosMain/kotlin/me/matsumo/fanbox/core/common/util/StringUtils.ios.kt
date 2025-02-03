@@ -5,7 +5,9 @@ import kotlinx.datetime.LocalDate
 import kotlinx.datetime.toNSDate
 import kotlinx.datetime.toNSDateComponents
 import platform.Foundation.NSDateFormatter
+import platform.Foundation.NSLocale
 import platform.Foundation.NSString
+import platform.Foundation.availableLocaleIdentifiers
 import platform.Foundation.stringWithFormat
 
 actual fun Instant.format(pattern: String): String {
@@ -46,4 +48,14 @@ actual fun String.format(vararg args: Any?): String {
     }
 
     return returnString
+}
+
+actual fun getAvailableLanguageTags(): List<String> {
+    return NSLocale.availableLocaleIdentifiers().map { localeId ->
+        when (localeId) {
+            is String -> localeId
+            is NSString -> localeId.toString()
+            else -> localeId.toString()
+        }
+    }
 }

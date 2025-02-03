@@ -107,6 +107,11 @@ sealed interface Destination {
     @Serializable
     data object SettingDeveloperDialog : Destination
 
+    @Serializable
+    data class SettingTranslationDialog(
+        val language: String,
+    ) : Destination
+
     // Bottom Sheet
 
     @Serializable

@@ -21,6 +21,7 @@ interface UserDataRepository {
     suspend fun setAgreedTermsOfService(isAgreed: Boolean)
     suspend fun setThemeConfig(themeConfig: ThemeConfig)
     suspend fun setThemeColorConfig(themeColorConfig: ThemeColorConfig)
+    suspend fun setTranslateLanguage(code: String)
     suspend fun setDownloadFileType(downloadFileType: DownloadFileType)
     suspend fun setImageSaveDirectory(directory: String)
     suspend fun setFileSaveDirectory(directory: String)
@@ -71,6 +72,10 @@ class UserDataRepositoryImpl(
 
     override suspend fun setThemeColorConfig(themeColorConfig: ThemeColorConfig) {
         pixiViewDataStore.setThemeColorConfig(themeColorConfig)
+    }
+
+    override suspend fun setTranslateLanguage(code: String) {
+        pixiViewDataStore.setTranslateLanguage(code)
     }
 
     override suspend fun setDownloadFileType(downloadFileType: DownloadFileType) {

@@ -1,5 +1,6 @@
 package me.matsumo.fanbox.core.model
 
+import androidx.compose.ui.text.intl.Locale
 import kotlinx.serialization.Serializable
 
 @Serializable
@@ -7,6 +8,7 @@ data class UserData(
     val pixiViewId: String,
     val themeConfig: ThemeConfig,
     val themeColorConfig: ThemeColorConfig,
+    val translateLanguage: String,
     val downloadFileType: DownloadFileType,
     val imageSaveDirectory: String,
     val fileSaveDirectory: String,
@@ -36,6 +38,7 @@ data class UserData(
                 pixiViewId = "",
                 themeConfig = ThemeConfig.System,
                 themeColorConfig = ThemeColorConfig.Blue,
+                translateLanguage = Locale.current.language,
                 downloadFileType = DownloadFileType.ORIGINAL,
                 imageSaveDirectory = "",
                 fileSaveDirectory = "",

@@ -209,6 +209,8 @@
     <string name="setting_top_theme_app_light">밝은 테마</string>
     <string name="setting_top_theme_app_dark">어두운 테마</string>
     <string name="setting_top_theme_app_system">시스템 설정에 따름</string>
+    <string name="setting_top_theme_translate_language">번역 언어</string>
+    <string name="setting_top_theme_translate_language_description">대상 언어의 언어 코드(BCP47)를 입력하세요.</string>
     <string name="setting_top_general">일반</string>
     <string name="setting_top_general_app_lock">앱 비밀번호 설정</string>
     <string name="setting_top_general_app_lock_description">앱을 실행할 때 비밀번호를 입력하게 합니다.</string>

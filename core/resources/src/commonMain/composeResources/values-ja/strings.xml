@@ -224,6 +224,8 @@
     <string name="setting_top_theme_app_system">システムのテーマ</string>
     <string name="setting_top_theme_language">言語</string>
     <string name="setting_top_theme_language_description">アプリの表示言語を変更します。</string>
+    <string name="setting_top_theme_translate_language">翻訳先の言語</string>
+    <string name="setting_top_theme_translate_language_description">翻訳後の言語タグ（BCP47）を入力してください。</string>
     <string name="setting_top_general">一般</string>
     <string name="setting_top_general_app_lock">アプリ起動にパスワードを要求する</string>
     <string name="setting_top_general_app_lock_description">アプリを起動する際にパスワードを要求します。</string>

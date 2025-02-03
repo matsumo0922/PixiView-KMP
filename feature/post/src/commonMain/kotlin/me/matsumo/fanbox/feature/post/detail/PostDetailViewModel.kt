@@ -105,7 +105,7 @@ class PostDetailViewModel(
                 _screenState.updateWhenIdle { it.copy(bodyTransState = TranslationState.Loading) }
 
                 val bodyTransState = suspendRunCatching {
-                    translationRepository.translate(postDetail, Locale("en"))
+                    translationRepository.translate(postDetail, Locale(data.data.userData.translateLanguage))
                 }.onSuccess {
                     _screenState.value = ScreenState.Loading
                     delay(500)
@@ -131,7 +131,7 @@ class PostDetailViewModel(
                 _screenState.updateWhenIdle { it.copy(commentsTransState = TranslationState.Loading) }
 
                 val commentsTransState = suspendRunCatching {
-                    translationRepository.translate(comments, Locale("en"))
+                    translationRepository.translate(comments, Locale(data.data.userData.translateLanguage))
                 }.fold(
                     onSuccess = { TranslationState.Translated(it) },
                     onFailure = { TranslationState.None },
