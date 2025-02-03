@@ -9,6 +9,7 @@ import me.matsumo.fanbox.core.resources.setting_top_theme
 import me.matsumo.fanbox.core.resources.setting_top_theme_app
 import me.matsumo.fanbox.core.resources.setting_top_theme_app_description
 import me.matsumo.fanbox.core.resources.setting_top_theme_translate_language
+import me.matsumo.fanbox.core.resources.setting_top_theme_translate_language_caution
 import me.matsumo.fanbox.core.ui.component.SettingTextItem
 import org.jetbrains.compose.resources.stringResource
 
@@ -35,7 +36,7 @@ internal fun SettingTopThemeSection(
         SettingTextItem(
             modifier = Modifier.fillMaxWidth(),
             title = stringResource(Res.string.setting_top_theme_translate_language),
-            description = translationLanguage,
+            description = translationLanguage + " " + stringResource(Res.string.setting_top_theme_translate_language_caution),
             onClick = { onClickTranslationLanguage(translationLanguage) },
         )
     }

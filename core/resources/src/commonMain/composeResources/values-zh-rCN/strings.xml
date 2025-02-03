@@ -224,6 +224,7 @@
     <string name="setting_top_theme_app_dark">深色主题</string>
     <string name="setting_top_theme_app_system">跟随系统</string>
     <string name="setting_top_theme_translate_language">翻译语言</string>
+    <string name="setting_top_theme_translate_language_caution">（翻译功能尚处于实验阶段。可能会在不另行通知的情况下停止使用。）</string>
     <string name="setting_top_theme_translate_language_description">请输入目标语言的语言代码（BCP47）。</string>
     <string name="setting_top_general">常规</string>
     <string name="setting_top_general_app_lock">应用密码锁</string>
