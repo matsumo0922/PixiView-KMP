@@ -34,9 +34,10 @@ jobs:
       - name: translate
         run: |
           java -jar ./scripts/kmp-translation.jar \
-            --target-languages=ko,zh-rCN,ru
-            --base-dir=./core/resources/src/commonMain/composeResources
-            --api-key=${{ secrets.OPENAI_API_KEY }}
+            --target-languages="ko,zh-rCN,ru" \
+            --base-dir="./core/resources/src/commonMain/composeResources" \
+            --api-key=${{ secrets.OPENAI_API_KEY }} \
+            --model="o3-mini"
 
       - name: Create Pull Request
         uses: peter-evans/create-pull-request@v7
