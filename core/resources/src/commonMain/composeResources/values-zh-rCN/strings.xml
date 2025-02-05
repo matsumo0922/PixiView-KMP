@@ -1,7 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-
-    <!-- Common -->
     <string name="common_ok">确定</string>
     <string name="common_cancel">取消</string>
     <string name="common_allow">允许</string>
@@ -33,8 +31,6 @@
     <string name="common_creator">投稿</string>
     <string name="common_block">屏蔽</string>
     <string name="common_unblock">取消屏蔽</string>
-
-    <!-- Common Error -->
     <string name="error_executed">发生错误</string>
     <string name="error_unknown">发生未知错误</string>
     <string name="error_download">下载失败</string>
@@ -63,8 +59,6 @@
     <string name="error_ad_load_failed">广告加载失败</string>
     <string name="error_ad_load_failed_description">我们展示广告来维护我们服务的质量。</string>
     <string name="error_no_available_this_device">此设备无法使用该功能</string>
-
-    <!-- Common Unit -->
     <string name="unit_day_before">%1$d天前</string>
     <string name="unit_hour_before">%1$d小时前</string>
     <string name="unit_minute_before">%1$d分钟前</string>
@@ -75,25 +69,22 @@
     <string name="unit_year">年</string>
     <string name="unit_month">月</string>
     <string name="unit_day">日</string>
-
-    <!-- Domain Validation -->
+    <string name="reveal_creator_top_search">按标题、文本等搜索创作者的帖子
+（%1$s+ 独有功能）</string>
+    <string name="reveal_creator_top_fab">一次性下载创作者的所有帖子
+（%1$s+ 独有功能）</string>
+    <string name="reveal_post_detail_translate">翻译帖子的标题和正文。
+（%1$s+ 独有功能）</string>
     <string name="domain_validation_request_title">默认打开</string>
-    <string name="domain_validation_request_message">要使用此应用打开 FANBOX 的链接，需要进行其他设置。\n\n在设置中开启“默认打开”并添加“*.fanbox.cc”链接。</string>
+    <string name="domain_validation_request_message">要使用此应用打开 FANBOX 的链接，需要进行其他设置。
+
+在设置中开启“默认打开”并添加“*.fanbox.cc”链接。</string>
     <string name="domain_validation_request_button">打开设置</string>
     <string name="domain_validation_request_never_ask">不再询问</string>
-
-    <!-- Reveal -->
-    <string name="reveal_creator_top_search">按标题、文本等搜索创作者的帖子\n（%1$s+ 独有功能）</string>
-    <string name="reveal_creator_top_fab">一次性下载创作者的所有帖子\n%1$s+ 独有功能）</string>
-    <string name="reveal_post_detail_translate">翻译帖子的标题和正文。\n（%1$s+ 独有功能）</string>
-
-    <!-- Notify -->
     <string name="notify_download_channel_name">下载</string>
     <string name="notify_download_channel_description">通知下载进度</string>
     <string name="notify_download_title">下载中…</string>
     <string name="notify_download_message">插画下载正在进行中（还剩 %1$d）</string>
-
-    <!-- Library -->
     <string name="library_navigation_home">主页</string>
     <string name="library_navigation_discovery">搜索</string>
     <string name="library_navigation_notify">通知</string>
@@ -107,29 +98,19 @@
     <string name="library_navigation_about">关于此应用</string>
     <string name="library_navigation_plus_description">以一杯咖啡的价格获得所有功能！</string>
     <string name="library_navigation_plus_purchased_description">您是 %1$s+ 用户，尽情享受更顺畅的投稿浏览！</string>
-
-    <!-- Fanbox -->
     <string name="fanbox_free_fee">所有用户</string>
     <string name="fanbox_plan_List">计划列表</string>
-
-    <!-- Home -->
     <string name="home_tab_home">正在关注</string>
     <string name="home_tab_supported">正在赞助</string>
     <string name="home_app_lock_title">需要授权</string>
     <string name="home_app_lock_message">需要解锁才能使用该应用</string>
     <string name="home_review_success">感谢您的评论</string>
-
-    <!-- Empty -->
     <string name="empty_detail_title">查看投稿详细信息</string>
     <string name="empty_detail_description">选择一个投稿，在此处查看详细信息</string>
-
-    <!-- Notify -->
     <string name="notify_load_more">更多</string>
     <string name="notify_title_post_published">“%1$s” 已发布！</string>
     <string name="notify_title_comment">%1$s回复了您的评论！</string>
     <string name="notify_title_like">%1$d人点赞了您的评论！</string>
-
-    <!-- Creator -->
     <string name="creator_tab_posts">投稿</string>
     <string name="creator_tab_plans">计划</string>
     <string name="creator_supporting_payment_method_card">信用卡</string>
@@ -148,14 +129,18 @@
     <string name="creator_download_all">批量下载投稿</string>
     <string name="creator_download_all_error">批量下载是 %1$s+ 的独家功能</string>
     <string name="creator_block_dialog_title">屏蔽</string>
-    <string name="creator_block_dialog_message">是否要屏蔽该创作者？\n\n您可能需要重新启动应用以停止看到被屏蔽的创作者。</string>
+    <string name="creator_block_dialog_message">是否要屏蔽该创作者？
+
+您可能需要重新启动应用以停止看到被屏蔽的创作者。</string>
     <string name="creator_unblock_dialog_title">已屏蔽</string>
     <string name="creator_unblock_dialog_message">您要取消屏蔽该创作者吗？</string>
     <string name="creator_plans_for_ios_error">需要前往FANBOX</string>
     <string name="creator_plans_for_ios_error_description">无法在iOS上的应用程序中查看该创作者的计划。请前往pixivFANBOX网站确认。</string>
     <string name="creator_plans_for_ios_error_button">前往FANBOX</string>
     <string name="creator_posts_download_title">批量下载</string>
-    <string name="creator_posts_download_message">批量下载该创作者的投稿。\n\n*为防止集中访问FANBOX，我们特意降低了下载速度，还请注意。</string>
+    <string name="creator_posts_download_message">批量下载该创作者的投稿。
+
+*为防止集中访问FANBOX，我们特意降低了下载速度，还请注意。</string>
     <string name="creator_posts_download_prepare">正在收集创作者信息，请稍等片刻。</string>
     <string name="creator_posts_download_ignore_free">忽略免费内容</string>
     <string name="creator_posts_download_ignore_free_description">忽略您不在计划中也可以查看的投稿</string>
@@ -171,25 +156,21 @@
     <string name="creator_recommended">推荐的创作者</string>
     <string name="creator_following_pixiv">在pixiv上正在关注的作者</string>
     <string name="creator_download_require_plus_title">批量下载投稿</string>
-    <string name="creator_download_require_plus_message">批量下载是 %1$s+ 的独家功能。\n\n您可以通过购买 %1$s+ 或每天观看1次广告来暂时使用该功能。</string>
+    <string name="creator_download_require_plus_message">批量下载是 %1$s+ 的独家功能。
+
+您可以通过购买 %1$s+ 或每天观看1次广告来暂时使用该功能。</string>
     <string name="creator_download_require_plus_button">购买 %1$s+</string>
     <string name="creator_download_require_plus_button_ad">观看广告</string>
     <string name="creator_download_require_plus_button_ad_over">已观看广告</string>
-
-    <!-- Bookmark -->
     <string name="bookmark_search_placeholder">搜索收藏</string>
     <string name="bookmark_empty_title">无收藏</string>
     <string name="bookmark_empty_description">查找并收藏您喜欢的投稿！</string>
-
-    <!-- Queue -->
     <string name="queue_empty_title">您的下载队列是空的</string>
     <string name="queue_empty_description">当您选择下载时，它将排队并按顺序下载。</string>
     <string name="queue_added">已添加到下载队列</string>
     <string name="queue_added_action">确认</string>
     <string name="queue_saving">保存…</string>
     <string name="queue_item_post">整篇文章</string>
-
-    <!-- PostDetail -->
     <string name="post_detail_title">投稿详细信息</string>
     <string name="post_detail_download_images">下载所有图片（%1$d）</string>
     <string name="post_detail_creator">创作者</string>
@@ -211,11 +192,7 @@
     <string name="post_image_download">下载该图片</string>
     <string name="post_image_all_download">下载所有图片</string>
     <string name="post_search_placeholder">搜索创作者标签</string>
-
-    <!-- Search -->
     <string name="search_post_by_creator">搜索创作者帖子</string>
-
-    <!-- Settings -->
     <string name="setting_title">设置</string>
     <string name="setting_top_theme">主题</string>
     <string name="setting_top_theme_app">应用主题</string>
@@ -283,9 +260,9 @@
     <string name="setting_theme_color">主题颜色</string>
     <string name="setting_theme_color_description">设置应用的主题颜色。不能与动态颜色同时使用。</string>
     <string name="setting_developer_title">开发模式</string>
-    <string name="setting_developer_warning">您正在尝试打开此模式，请输入开发者的PIN码。\n\n[警告] 开启此模式后，您将无法获得任何支持。</string>
+    <string name="setting_developer_warning">您正在尝试打开此模式，请输入开发者的PIN码。
 
-    <!-- About -->
+[警告] 开启此模式后，您将无法获得任何支持。</string>
     <string name="about_title">关于此应用</string>
     <string name="about_name">%1$s</string>
     <string name="about_developer_name">CAIOS</string>
@@ -301,8 +278,6 @@
     <string name="about_support_rate_app">评价应用</string>
     <string name="about_support_opinion">意见与请求</string>
     <string name="about_support_donate">捐赠</string>
-
-    <!-- Billing -->
     <string name="billing_plus_title">%1$s+</string>
     <string name="billing_plus_description">%1$s+ 是一项支持开发者的订阅计划，可使您以每月一杯咖啡的费用访问所有功能。</string>
     <string name="billing_plus_purchase_button">以 %1$s 的价格购买</string>
@@ -338,11 +313,12 @@
     <string name="billing_plus_item_support">优先支持</string>
     <string name="billing_plus_item_support_description">始终给予最优先的支持！</string>
     <string name="billing_plus_cancel_title">计划已取消</string>
-    <string name="billing_plus_cancel_message">您的 %1$s+ 计划已取消，因此恢复为普通用户。\n\n如果这不是您的意图，可能是支付失败。请从Play商店检查计划状态。</string>
-    <string name="billing_plus_purchase_title">已支持！！</string>
-    <string name="billing_plus_purchase_message">您的购买已完成。\n感谢您的支持！</string>
+    <string name="billing_plus_cancel_message">您的 %1$s+ 计划已取消，因此恢复为普通用户。
 
-    <!-- Welcome -->
+如果这不是您的意图，可能是支付失败。请从Play商店检查计划状态。</string>
+    <string name="billing_plus_purchase_title">已支持！！</string>
+    <string name="billing_plus_purchase_message">您的购买已完成。
+感谢您的支持！</string>
     <string name="welcome_description">非官方的pixivFANBOX客户端应用</string>
     <string name="welcome_privacy_policy">隐私政策</string>
     <string name="welcome_team_of_service">服务条款</string>
@@ -357,15 +333,26 @@
     <string name="welcome_login_button_login">登录</string>
     <string name="welcome_login_button_next">下一步</string>
     <string name="welcome_login_dialog_title">登录注意事项</string>
-    <string name="welcome_login_dialog_message">由于安全问题，不支持使用Google或X（Twitter）的OAuth进行身份验证。\n\n请直接输入您的电子邮件地址和密码登录。</string>
+    <string name="welcome_login_dialog_message">由于安全问题，不支持使用Google或X（Twitter）的OAuth进行身份验证。
+
+请直接输入您的电子邮件地址和密码登录。</string>
     <string name="welcome_login_debug_dialog_title">注意</string>
-    <string name="welcome_login_debug_dialog_message">是否要执行调试登录？\n\n调试帐户是模拟常规用户行为的预先设置的帐户。为了保留暂存环境，某些操作可能无法执行或可能会发生错误。</string>
+    <string name="welcome_login_debug_dialog_message">是否要执行调试登录？
+
+调试帐户是模拟常规用户行为的预先设置的帐户。为了保留暂存环境，某些操作可能无法执行或可能会发生错误。</string>
     <string name="welcome_login_other_title">直接输入 FANBOXSESSID</string>
     <string name="welcome_login_other_message">此应用需要一个名为 FANBOXSESSID 的会话 ID 才能运行。请按照以下链接中的步骤获取 FANBOXSESSID 并输入。</string>
     <string name="welcome_login_web_help">无法登录时</string>
-    <string name="welcome_login_web_help_description">如果输入邮箱和密码后，虽然屏幕显示已登录，但界面没有自动切换，请尝试以下步骤：\n\n先关闭此对话框，并在屏幕上导航到需要登录才能查看的页面（例如：支持的创作者的帖子详细页面）。\n\n导航到该页面后，再次点击屏幕底部的“无法登录时”按钮，显示此对话框。\n\n在此状态下，点击对话框底部的登录按钮。应用将尝试从 WebView 获取登录信息并进行登录。”</string>
+    <string name="welcome_login_web_help_description">如果输入邮箱和密码后，虽然屏幕显示已登录，但界面没有自动切换，请尝试以下步骤：
+
+先关闭此对话框，并在屏幕上导航到需要登录才能查看的页面（例如：支持的创作者的帖子详细页面）。
+
+导航到该页面后，再次点击屏幕底部的“无法登录时”按钮，显示此对话框。
+
+在此状态下，点击对话框底部的登录按钮。应用将尝试从 WebView 获取登录信息并进行登录。</string>
     <string name="welcome_permission_title">权限</string>
-    <string name="welcome_permission_message">使用应用程序需要以下权限。\n单击下面的按钮以授予权限。</string>
+    <string name="welcome_permission_message">使用应用程序需要以下权限。
+单击下面的按钮以授予权限。</string>
     <string name="welcome_permission_ready_title">准备就绪</string>
     <string name="welcome_permission_ready_message">已授予使用该应用所需的所有权限</string>
     <string name="welcome_permission_storage">存储权限</string>
