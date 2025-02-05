@@ -36,7 +36,6 @@ import com.multiplatform.webview.cookie.WebViewCookieManager
 import com.multiplatform.webview.web.LoadingState
 import com.multiplatform.webview.web.WebView
 import com.multiplatform.webview.web.rememberWebViewState
-import io.github.aakira.napier.Napier
 import kotlinx.collections.immutable.toImmutableList
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -74,10 +73,8 @@ internal fun WelcomeWebScreen(
     var isDisplayHelpDialog by remember { mutableStateOf(false) }
 
     suspend fun tryLogin() {
-        val sessionId = currentCookies.find { it.name == "FANBOXSESSID" }
-
-        if (sessionId != null && viewModel.checkSessionId(sessionId.value)) {
-            viewModel.saveSessionId(sessionId.value)
+        if (viewModel.checkSessionId(currentCookies)) {
+            viewModel.saveCookies(currentCookies)
             terminate.invoke()
         } else {
             snackExtension.show(
@@ -109,8 +106,6 @@ internal fun WelcomeWebScreen(
 
         currentCookies.clear()
         currentCookies.addAll(fanboxCookies + oauthCookies)
-
-        Napier.d { "WebView current url: ${webViewState.lastLoadedUrl} == $fanboxRedirectUrl" }
 
         if (webViewState.lastLoadedUrl == fanboxRedirectUrl) {
             tryLogin()

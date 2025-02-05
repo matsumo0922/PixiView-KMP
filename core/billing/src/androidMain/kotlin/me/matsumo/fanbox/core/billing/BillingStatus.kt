@@ -2,6 +2,7 @@ package me.matsumo.fanbox.core.billing
 
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import me.matsumo.fanbox.core.billing.usecase.VerifyPlusUseCase
 import me.matsumo.fanbox.core.common.util.suspendRunCatching
@@ -22,8 +23,11 @@ class BillingStatusImpl(
 
     override fun update() {
         scope.launch {
-            suspendRunCatching { verifyPlusUseCase.invoke()!! }.isSuccess.also {
-                userDataRepository.setPlusMode(it)
+            // Wait for billing client to initialize
+            delay(2000)
+
+            suspendRunCatching { verifyPlusUseCase.invoke() }.onSuccess {
+                userDataRepository.setPlusMode(it != null)
             }
         }
     }

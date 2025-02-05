@@ -137,7 +137,7 @@ fun PixiViewApp(
                         }
 
                         override fun onDestroy(owner: LifecycleOwner) {
-                            viewModel.billingClientFinish()
+                            // viewModel.billingClientFinish()
                         }
                     }
 

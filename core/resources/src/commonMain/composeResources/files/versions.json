@@ -208,5 +208,12 @@
     "date": "2025/02/03",
     "logJp": "・投稿&クリエイター詳細の翻訳機能を追加（翻訳機能は実験的なものです。予告なく提供を終了する場合があります。）\n・支援中のクリエイター画面が開けない問題を修正\n・アプリがクラッシュする恐れのある不具合の修正",
     "logEn": "・Added translation function for posts and creator details. (The translation function is experimental. It may be discontinued without notice.)\n・Fixed issue where the screen for supported creators could not be opened\n・Fixed a bug that could cause the app to crash"
+  },
+  {
+    "versionName": "2.2.4",
+    "versionCode": 60,
+    "date": "2025/02/05",
+    "logJp": "・サブスクリプションに継続加入しているにも関わらず、アプリ起動直後に解約された旨のダイアログが出る不具合を修正\n・軽微なUIの修正",
+    "logEn": "・Fixed an issue where a dialogue box would appear stating that a subscription had been cancelled immediately after launching the app, even if the subscription was still active.\n・Minor UI fixes"
   }
 ]

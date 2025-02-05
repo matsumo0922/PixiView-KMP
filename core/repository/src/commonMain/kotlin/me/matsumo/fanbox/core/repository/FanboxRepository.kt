@@ -10,6 +10,7 @@ import io.ktor.client.plugins.onDownload
 import io.ktor.client.request.prepareGet
 import io.ktor.client.request.url
 import io.ktor.client.statement.HttpStatement
+import io.ktor.http.Cookie
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -61,6 +62,7 @@ interface FanboxRepository {
 
     suspend fun logout()
     suspend fun setSessionId(sessionId: String)
+    suspend fun setCookies(cookies: List<Cookie>)
     suspend fun updateCsrfToken()
     suspend fun getMetadata(): FanboxMetaData
 
@@ -229,6 +231,10 @@ class FanboxRepositoryImpl(
 
     override suspend fun setSessionId(sessionId: String) {
         fanbox.setFanboxSessionId(sessionId)
+    }
+
+    override suspend fun setCookies(cookies: List<Cookie>) {
+        fanbox.setCookies(cookies, reset = true)
     }
 
     override suspend fun updateCsrfToken() {

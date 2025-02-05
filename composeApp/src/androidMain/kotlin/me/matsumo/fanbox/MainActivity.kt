@@ -26,7 +26,6 @@ import kotlinx.coroutines.launch
 import me.matsumo.fanbox.core.datastore.LaunchLogDataStore
 import me.matsumo.fanbox.core.logs.category.ApplicationLog
 import me.matsumo.fanbox.core.logs.category.ReviewsLog
-import me.matsumo.fanbox.core.logs.category.ReviewsLog.Companion.requestReview
 import me.matsumo.fanbox.core.logs.logger.LogConfigurator
 import me.matsumo.fanbox.core.logs.logger.send
 import me.matsumo.fanbox.core.model.ThemeConfig
