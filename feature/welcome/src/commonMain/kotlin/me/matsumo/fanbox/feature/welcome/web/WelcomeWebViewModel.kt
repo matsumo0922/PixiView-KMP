@@ -3,12 +3,12 @@ package me.matsumo.fanbox.feature.welcome.web
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import io.ktor.util.date.GMTDate
-import io.ktor.http.Cookie as KtorCookie
-import com.multiplatform.webview.cookie.Cookie as WebViewCookie
 import kotlinx.coroutines.launch
 import me.matsumo.fanbox.core.common.util.suspendRunCatching
 import me.matsumo.fanbox.core.repository.FanboxRepository
 import me.matsumo.fanbox.core.repository.UserDataRepository
+import com.multiplatform.webview.cookie.Cookie as WebViewCookie
+import io.ktor.http.Cookie as KtorCookie
 
 class WelcomeWebViewModel(
     private val fanboxRepository: FanboxRepository,
