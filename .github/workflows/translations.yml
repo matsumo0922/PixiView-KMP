@@ -36,6 +36,7 @@ jobs:
           java -jar ./scripts/kmp-translation.jar \
             --target-languages="ko,zh-rCN,ru" \
             --base-dir="./core/resources/src/commonMain/composeResources" \
+            --timeout=5 \
             --api-key=${{ secrets.OPENAI_API_KEY }} \
             --model="o3-mini"
 
