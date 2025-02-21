@@ -21,6 +21,7 @@ import me.matsumo.fanbox.core.logs.category.WelcomeLog
 import me.matsumo.fanbox.core.logs.logger.send
 import me.matsumo.fanbox.core.model.Destination
 import me.matsumo.fanbox.core.ui.animation.NavigateAnimation
+import me.matsumo.fanbox.core.ui.customNavTypes
 import me.matsumo.fanbox.core.ui.extensition.LocalSnackbarHostState
 import me.matsumo.fanbox.core.ui.extensition.popBackStackWithResult
 import me.matsumo.fanbox.core.ui.view.navigateToSimpleAlertDialog
@@ -68,6 +69,7 @@ fun WelcomeNavHost(
                 exitTransition = { NavigateAnimation.Horizontal.exit },
                 popEnterTransition = { NavigateAnimation.Horizontal.popEnter },
                 popExitTransition = { NavigateAnimation.Horizontal.popExit },
+                typeMap = customNavTypes,
             ) {
                 welcomeTopScreen(
                     navigateToWelcomeLogin = {

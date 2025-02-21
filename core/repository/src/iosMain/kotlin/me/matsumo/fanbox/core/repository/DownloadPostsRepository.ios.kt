@@ -1,5 +1,6 @@
 package me.matsumo.fanbox.core.repository
 
+import kotlinx.cinterop.BetaInteropApi
 import kotlinx.cinterop.ExperimentalForeignApi
 import kotlinx.cinterop.allocArrayOf
 import kotlinx.cinterop.memScoped
@@ -196,6 +197,7 @@ class DownloadPostsRepositoryImpl(
         }.getOrNull()
     }
 
+    @OptIn(BetaInteropApi::class)
     private fun saveItem(item: FanboxDownloadItems.Item, requestType: FanboxDownloadItems.RequestType, bytes: ByteArray) {
         runCatching {
             when (item.type) {
@@ -227,7 +229,7 @@ class DownloadPostsRepositoryImpl(
     private fun getParentDirName(requestType: FanboxDownloadItems.RequestType?): String = when (requestType) {
         is FanboxDownloadItems.RequestType.Image -> "images"
         is FanboxDownloadItems.RequestType.File -> "files"
-        is FanboxDownloadItems.RequestType.Post -> requestType.post.user?.name ?: "UnknownUser"
+        is FanboxDownloadItems.RequestType.Post -> requestType.post?.user?.name ?: "UnknownUser"
         else -> "FANBOX"
     }
 }

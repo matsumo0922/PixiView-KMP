@@ -9,23 +9,23 @@ targetSdk = "35"
 compileSdk = "35"
 
 # Gradle
-gradle = "8.8.0"
+gradle = "8.8.1"
 
 # Kotlin
-kotlin = "2.1.0"
+kotlin = "2.1.10"
 
 # KotlinX
 kotlinxCoroutines = "1.7.3"
 kotlinxDatetime = "0.6.1"
 kotlinxSerializationJson = "1.8.0"
-kotlinxImmutable = "0.3.7"
+kotlinxImmutable = "0.3.8"
 
 # KMP
-kmpCompose = "1.8.0-alpha02"
+kmpCompose = "1.7.3"
 kmpComplete = "1.1.0"
 kmpSwiftKlib = "0.6.3"
 kmpLifecycle = "2.8.4"
-kmpNavigation = "2.8.0-alpha11"
+kmpNavigation = "2.8.0-alpha12"
 kmpPaging = "3.3.0-alpha02-0.5.1"
 mokoPermissions = "0.18.0"
 mokoBiometry = "0.4.0"
@@ -37,13 +37,13 @@ androidxCore = "1.15.0"
 androidxCoreSplash = "1.0.1"
 androidxAppCompat = "1.7.0"
 androidxActivity = "1.10.0"
-androidxFragment = "1.8.5"
+androidxFragment = "1.8.6"
 androidxPreference = "1.2.1"
 androidxDataStore = "1.1.2"
 androidxPalette = "1.0.0"
 androidxAnnotation = "1.9.1"
 androidxMedia3 = "1.5.1"
-androidxCompose = "2025.01.01"
+androidxCompose = "2025.02.00"
 
 # Google
 playReview = "2.0.2"
@@ -51,8 +51,7 @@ playUpdate = "2.1.0"
 playServiceAds = "23.6.0"
 playServiceOss = "17.1.0"
 material = "1.12.0"
-accompanist = "0.33.2-alpha"
-ksp = "2.1.0-1.0.29"
+ksp = "2.1.10-1.0.29"
 gms = "4.4.2"
 
 # Billing
@@ -68,23 +67,23 @@ fankt = "0.0.11"
 openai = "4.0.1"
 
 # Others
-ktor = "3.0.1"
-coil3 = "3.0.4"
+ktor = "3.0.3"
+coil3 = "3.1.0"
 ksoup = "0.1.2"
-composeWebView = "1.9.40-alpha03"
+composeWebView = "1.9.40"
 composeRichEditor = "1.0.0-rc10"
 autolink = "2.0.0"
 windowSize = "0.3.2"
 reveal = "3.1.1"
 detekt = "1.23.7"
-libraries = "11.2.3"
-buildKonfig = "0.15.1"
+libraries = "11.4.0"
+buildKonfig = "0.16.0"
 cupertino = "0.1.0-alpha04"
 twitterComposeRule = "0.0.26"
 
 # Debugs
-firebase = "33.8.0"
-leakCanary = "2.13"
+firebase = "33.9.0"
+leakCanary = "2.14"
 flipper = "0.273.0"
 napier = "2.7.1"
 junit = "4.13.2"
@@ -99,7 +98,7 @@ kotlin-serialization = { id = "org.jetbrains.kotlin.plugin.serialization", versi
 ksp = { id = "com.google.devtools.ksp", version.ref = "ksp" }
 gms = { id = "com.google.gms.google-services", version.ref = "gms" }
 detekt = { id = "io.gitlab.arturbosch.detekt", version.ref = "detekt" }
-firebase-crashlytics = { id = "com.google.firebase.crashlytics", version = "3.0.2" }
+firebase-crashlytics = { id = "com.google.firebase.crashlytics", version = "3.0.3" }
 libraries = { id = "com.mikepenz.aboutlibraries.plugin", version.ref = "libraries" }
 kmp = { id = "org.jetbrains.kotlin.multiplatform", version.ref = "kotlin" }
 kmpCompose = { id = "org.jetbrains.compose", version.ref = "kmpCompose" }
@@ -188,13 +187,6 @@ play-update = { module = "com.google.android.play:app-update-ktx", version.ref =
 play-service-oss = { module = "com.google.android.gms:play-services-oss-licenses", version.ref = "playServiceOss" }
 play-service-ads = { module = "com.google.android.gms:play-services-ads", version.ref = "playServiceAds" }
 google-material = { module = "com.google.android.material:material", version.ref = "material" }
-accompanist-systemuicontroller = { module = "com.google.accompanist:accompanist-systemuicontroller", version.ref = "accompanist" }
-accompanist-compose-theme-adapter = { module = "com.google.accompanist:accompanist-themeadapter-material", version.ref = "accompanist" }
-accompanist-compose-theme-adapter3 = { module = "com.google.accompanist:accompanist-themeadapter-material3", version.ref = "accompanist" }
-accompanist-navigation = { module = "com.google.accompanist:accompanist-navigation-material", version.ref = "accompanist" }
-accompanist-permissions = { module = "com.google.accompanist:accompanist-permissions", version.ref = "accompanist" }
-accompanist-webview = { module = "com.google.accompanist:accompanist-webview", version.ref = "accompanist" }
-accompanist-placeholder-material = { module = "com.google.accompanist:accompanist-placeholder-material", version.ref = "accompanist" }
 
 # Firebase
 firebase-bom = { module = "com.google.firebase:firebase-bom", version.ref = "firebase" }
@@ -280,11 +272,6 @@ ui-android-api = [
     "androidx-compose-runtime",
     "androidx-compose-ui",
     "androidx-compose-ui-binding",
-    "accompanist-systemuicontroller",
-    "accompanist-compose-theme-adapter",
-    "accompanist-compose-theme-adapter3",
-    "accompanist-permissions",
-    "accompanist-placeholder-material",
     "google-material",
 ]
 

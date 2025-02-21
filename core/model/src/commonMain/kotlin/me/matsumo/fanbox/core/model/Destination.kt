@@ -15,6 +15,7 @@ sealed interface Destination {
         val postId: FanboxPostId,
         val pagingType: PagingType = PagingType.Unknown,
     ) : Destination {
+        @Serializable
         enum class PagingType {
             Home,
             Supported,

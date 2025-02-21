@@ -9,6 +9,7 @@ import androidx.navigation.compose.dialog
 import androidx.navigation.toRoute
 import me.matsumo.fanbox.core.model.Destination
 import me.matsumo.fanbox.core.model.SimpleAlertContents
+import me.matsumo.fanbox.core.ui.customNavTypes
 import me.matsumo.fanbox.core.ui.extensition.navigateForResult
 import org.jetbrains.compose.resources.stringResource
 
@@ -32,7 +33,9 @@ fun NavController.navigateToSimpleAlertDialog(
 fun NavGraphBuilder.simpleAlertDialogDialog(
     onResult: (Boolean) -> Unit,
 ) {
-    dialog<Destination.SimpleAlertDialog> { entry ->
+    dialog<Destination.SimpleAlertDialog>(
+        typeMap = customNavTypes,
+    ) { entry ->
         val content = entry.toRoute<Destination.SimpleAlertDialog>().content
 
         SimpleAlertDialog(
