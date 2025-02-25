@@ -248,7 +248,7 @@
     <string name="setting_top_information_version">App version</string>
     <string name="setting_top_information_csrf_token">CSRF token</string>
     <string name="setting_top_information_fanbox_session_id">FANBOXSESSID</string>
-    <string name="setting_top_information_team_of_service">Teams of Service</string>
+    <string name="setting_top_information_team_of_service">Terms of Service</string>
     <string name="setting_top_information_privacy_policy">Privacy Policy</string>
     <string name="setting_top_others">Others</string>
     <string name="setting_top_others_logout">Logout</string>
