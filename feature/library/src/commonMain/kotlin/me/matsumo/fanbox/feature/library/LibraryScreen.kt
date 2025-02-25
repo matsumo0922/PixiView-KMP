@@ -5,13 +5,16 @@ import androidx.compose.material3.DrawerValue
 import androidx.compose.material3.rememberDrawerState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavGraph.Companion.findStartDestination
 import androidx.navigation.NavHostController
 import androidx.navigation.navOptions
+import kotlinx.coroutines.launch
 import me.matsumo.fanbox.core.model.Destination
 import me.matsumo.fanbox.core.ui.AsyncLoadContents
+import me.matsumo.fanbox.core.ui.extensition.BackHandler
 import me.matsumo.fanbox.core.ui.extensition.LocalNavigationType
 import me.matsumo.fanbox.core.ui.extensition.LocalSnackbarHostState
 import me.matsumo.fanbox.core.ui.extensition.PixiViewNavigationType
@@ -33,6 +36,7 @@ fun LibraryScreen(
     viewModel: LibraryViewModel = koinViewModel(),
 ) {
     val drawerState = rememberDrawerState(DrawerValue.Closed)
+    val scope = rememberCoroutineScope()
 
     val snackbarHostState = LocalSnackbarHostState.current
     val navigationType = LocalNavigationType.current.type
@@ -76,6 +80,10 @@ fun LibraryScreen(
                 )
             }
         }
+    }
+
+    BackHandler(drawerState.isOpen || drawerState.targetValue == DrawerValue.Open) {
+        scope.launch { drawerState.close() }
     }
 }
 
