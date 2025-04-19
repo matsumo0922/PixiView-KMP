@@ -215,5 +215,12 @@
     "date": "2025/02/05",
     "logJp": "・サブスクリプションに継続加入しているにも関わらず、アプリ起動直後に解約された旨のダイアログが出る不具合を修正\n・軽微なUIの修正",
     "logEn": "・Fixed an issue where a dialogue box would appear stating that a subscription had been cancelled immediately after launching the app, even if the subscription was still active.\n・Minor UI fixes"
+  },
+  {
+    "versionName": "2.2.5",
+    "versionCode": 61,
+    "date": "2025/04/17",
+    "logJp": "・一部投稿画面が表示できない問題の修正\n・軽微なUIの修正",
+    "logEn": "・Fixed an issue where some posting screens could not be displayed.\n・Minor UI fixes"
   }
 ]

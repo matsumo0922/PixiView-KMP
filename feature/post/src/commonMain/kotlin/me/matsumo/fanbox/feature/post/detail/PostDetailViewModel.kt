@@ -10,6 +10,7 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
+import me.matsumo.fanbox.core.common.util.recordException
 import me.matsumo.fanbox.core.common.util.suspendRunCatching
 import me.matsumo.fanbox.core.model.ScreenState
 import me.matsumo.fanbox.core.model.TranslationState
@@ -71,7 +72,9 @@ class PostDetailViewModel(
             _screenState.value = suspendRunCatching {
                 val postDetail = fanboxRepository.getPostDetail(postId)
                 val creatorDetail = fanboxRepository.getCreatorDetailCached(postDetail.user!!.creatorId!!)
-                val comments = fanboxRepository.getPostComment(postId)
+                val comments = runCatching { fanboxRepository.getPostComment(postId) }
+                    .onFailure { recordException(it) }
+                    .getOrElse { PageOffsetInfo(emptyList(), null) }
 
                 PostDetailUiState(
                     userData = userDataRepository.userData.first(),

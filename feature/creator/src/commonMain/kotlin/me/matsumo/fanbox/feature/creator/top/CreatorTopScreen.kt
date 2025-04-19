@@ -9,11 +9,13 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.WindowInsets
+import androidx.compose.foundation.layout.asPaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.statusBars
 import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.lazy.grid.rememberLazyGridState
 import androidx.compose.foundation.lazy.rememberLazyListState
@@ -56,6 +58,7 @@ import com.svenjacobs.reveal.RevealState
 import com.svenjacobs.reveal.rememberRevealState
 import com.svenjacobs.reveal.revealable
 import com.svenjacobs.reveal.shapes.balloon.Arrow
+import io.github.aakira.napier.Napier
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.toImmutableList
 import kotlinx.coroutines.delay
@@ -245,6 +248,9 @@ private fun CreatorTopScreen(
     val pagerState = rememberPagerState(initialPage = if (isPosts) 0 else 1) { 2 }
     val scope = rememberCoroutineScope()
 
+    val insets = WindowInsets.statusBars.asPaddingValues()
+    val topInset = insets.calculateTopPadding()
+
     val postsGridState = rememberLazyGridState()
     val plansListState = rememberLazyListState()
 
@@ -292,7 +298,7 @@ private fun CreatorTopScreen(
             modifier = Modifier.fillMaxSize(),
             state = state,
             toolbarModifier = Modifier
-                .heightIn(min = topAppBarHeight + 4.dp)
+                .heightIn(min = topInset + topAppBarHeight)
                 .verticalScroll(rememberScrollState()),
             toolbar = {
                 Spacer(
@@ -399,6 +405,7 @@ private fun CreatorTopScreen(
                 .statusBarsPadding()
                 .onGloballyPositioned {
                     topAppBarHeight = with(density) { it.size.height.toDp() }
+                    Napier.d { "topAppBarHeight: $topAppBarHeight" }
                 },
             title = creatorDetail.user?.name.orEmpty(),
             isShowTitle = state.toolbarState.progress == 0f,
