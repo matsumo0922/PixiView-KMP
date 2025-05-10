@@ -12,7 +12,9 @@ import androidx.compose.material3.SnackbarHostState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.backhandler.BackHandler
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.currentBackStackEntryAsState
 import kotlinx.collections.immutable.toImmutableList
@@ -23,6 +25,7 @@ import me.matsumo.fanbox.feature.library.LibraryNavHost
 import me.matsumo.fanbox.feature.library.LibraryUiState
 import me.matsumo.fanbox.feature.library.navigateToLibraryDestination
 
+@OptIn(ExperimentalComposeUiApi::class)
 @Composable
 internal fun LibraryCompactScreen(
     uiState: LibraryUiState,
@@ -69,6 +72,7 @@ internal fun LibraryCompactScreen(
                         },
                         navigateTo = navigateTo,
                     )
+                    BackHandler(drawerState.isOpen) { scope.launch { drawerState.close() } }
                 }
             }
 

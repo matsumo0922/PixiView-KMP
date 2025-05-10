@@ -1,6 +1,5 @@
 package me.matsumo.fanbox.core.ui.extensition
 
-import androidx.compose.runtime.Composable
 import androidx.navigation.NavController
 import androidx.navigation.NavOptions
 import androidx.navigation.NavOptionsBuilder
@@ -13,12 +12,6 @@ interface NavigatorExtension {
     fun navigateToWebPage(url: String, referrer: String)
     fun killApp()
 }
-
-@Composable
-expect fun BackHandler(
-    isEnable: Boolean = true,
-    onBack: () -> Unit,
-)
 
 /**
  * The navigation result callback between two call screens.
