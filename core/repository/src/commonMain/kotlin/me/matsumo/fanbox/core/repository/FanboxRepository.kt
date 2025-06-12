@@ -194,7 +194,7 @@ class FanboxRepositoryImpl(
     private val scope = CoroutineScope(SupervisorJob() + ioDispatcher)
 
     private val fanbox = Fanbox(
-        logLevel = LogLevel.NONE,
+        logLevel = LogLevel.INFO,
         ioDispatcher = ioDispatcher,
     )
 

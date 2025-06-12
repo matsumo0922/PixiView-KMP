@@ -13,6 +13,7 @@ import kotlinx.coroutines.launch
 import me.matsumo.fanbox.core.model.Destination
 import me.matsumo.fanbox.core.ui.animation.NavigateAnimation
 import me.matsumo.fanbox.core.ui.component.emptyDetailScreen
+import me.matsumo.fanbox.core.ui.component.sheet.BottomSheetNavigator
 import me.matsumo.fanbox.core.ui.component.sheet.ModalBottomSheetLayout
 import me.matsumo.fanbox.core.ui.component.sheet.rememberBottomSheetNavigator
 import me.matsumo.fanbox.core.ui.customNavTypes
@@ -45,10 +46,10 @@ import me.matsumo.fanbox.feature.setting.translate.settingTranslationDialog
 @Composable
 internal fun PixiViewNavHost(
     modifier: Modifier = Modifier,
+    bottomSheetNavigator: BottomSheetNavigator = rememberBottomSheetNavigator(),
+    navController: NavHostController = rememberNavController(bottomSheetNavigator),
     startDestination: Destination = Destination.Library,
 ) {
-    val bottomSheetNavigator = rememberBottomSheetNavigator()
-    val navController = rememberNavController(bottomSheetNavigator)
     val bottomNavigationNavController = rememberNavController()
     val scope = rememberCoroutineScope()
 

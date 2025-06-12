@@ -51,12 +51,14 @@ class PixiViewViewModel(
 
     private val _isLoggedInFlow: MutableSharedFlow<Boolean> = MutableSharedFlow(replay = 1)
     private val _isAppLockedFlow: MutableStateFlow<Boolean> = MutableStateFlow(true)
+    private val _metadataFlow: MutableStateFlow<FanboxMetaData> = MutableStateFlow(getFanboxMetadataDummy())
 
     val screenState = combine(
         listOf(
             userDataRepository.userData,
             fanboxRepository.sessionId,
             downloadPostsRepository.downloadState,
+            _metadataFlow,
             _isLoggedInFlow,
             _isAppLockedFlow,
         ),
@@ -64,14 +66,15 @@ class PixiViewViewModel(
         val userData = flows[0] as UserData
         val sessionId = flows[1] as String?
         val downloadState = flows[2] as DownloadState
-        val isLoggedIn = flows[3] as Boolean
-        val isAppLocked = flows[4] as Boolean
+        val fanboxMetadata = flows[3] as FanboxMetaData
+        val isLoggedIn = flows[4] as Boolean
+        val isAppLocked = flows[5] as Boolean
 
         ScreenState.Idle(
             MainUiState(
                 userData = userData,
                 sessionId = sessionId.orEmpty(),
-                fanboxMetadata = suspendRunCatching { fanboxRepository.getMetadata() }.getOrElse { getFanboxMetadataDummy() },
+                fanboxMetadata = fanboxMetadata,
                 downloadState = downloadState,
                 isLoggedIn = isLoggedIn,
                 isAppLocked = if (userData.isUseAppLock) isAppLocked else false,
@@ -139,6 +142,8 @@ class PixiViewViewModel(
                         fanboxRepository.setSessionId(sessionId)
                         oldCookieDataStore.save("")
                     }
+
+                    _metadataFlow.value = suspendRunCatching { fanboxRepository.getMetadata() }.getOrElse { getFanboxMetadataDummy() }
 
                     fanboxRepository.updateCsrfToken()
                     fanboxRepository.getNewsLetters()

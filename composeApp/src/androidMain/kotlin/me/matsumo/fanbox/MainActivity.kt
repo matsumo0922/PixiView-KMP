@@ -122,15 +122,11 @@ class MainActivity : FragmentActivity(), KoinComponent {
         lifecycleScope.launch {
             if (launchLogDataStore.getLaunchCount() < 3) return@launch
 
-            ReviewsLog.tryRequestReview().send()
-
             val manager = ReviewManagerFactory.create(this@MainActivity)
             val request = manager.requestReviewFlow()
 
             request.addOnCompleteListener {
                 if (it.isSuccessful) {
-                    ReviewsLog.requestReview().send()
-
                     val reviewInfo = it.result
                     val flow = manager.launchReviewFlow(this@MainActivity, reviewInfo)
 

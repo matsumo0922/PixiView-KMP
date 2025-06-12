@@ -269,7 +269,7 @@ class DownloadPostsRepositoryImpl(
             runCatching {
                 val mimeType = MimeTypeMap.getSingleton().getMimeTypeFromExtension(item.extension)
                 val selectedLocation = getParentFile(downloadItems.requestType) ?: getOldParentFile(downloadItems.requestType)
-                val name = "${item.name}.${item.extension}"
+                val name = "${item.name}.${item.extension.ifBlank { "jpeg" }}"
 
                 when {
                     selectedLocation != null -> {
@@ -282,7 +282,7 @@ class DownloadPostsRepositoryImpl(
                 }
 
                 tmpFile.delete()
-                delay(1000)
+                delay(500)
             }.onFailure {
                 Napier.e(it) { "Failed to download item: ${item.name}" }
             }

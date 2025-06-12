@@ -1,7 +1,7 @@
 [versions]
 # Application
 versionName = "2.2.7"
-versionCode = "64"
+versionCode = "65"
 
 # SDK
 minSdk = "26"
@@ -21,11 +21,11 @@ kotlinxSerializationJson = "1.8.1"
 kotlinxImmutable = "0.3.8"
 
 # KMP
-kmpCompose = "1.7.3"
+kmpCompose = "1.8.1"
 kmpComplete = "1.1.0"
 kmpSwiftKlib = "0.6.3"
-kmpLifecycle = "2.8.4"
-kmpNavigation = "2.8.0-alpha12"
+kmpLifecycle = "2.9.0"
+kmpNavigation = "2.9.0-beta02"
 kmpPaging = "3.3.0-alpha02-0.5.1"
 mokoPermissions = "0.18.0"
 mokoBiometry = "0.4.0"
