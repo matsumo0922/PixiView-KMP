@@ -55,7 +55,6 @@ import me.matsumo.fankt.fanbox.domain.model.FanboxPost
 import me.matsumo.fankt.fanbox.domain.model.id.FanboxCreatorId
 import me.matsumo.fankt.fanbox.domain.model.id.FanboxPostId
 import org.jetbrains.compose.resources.stringResource
-import kotlin.time.ExperimentalTime
 
 @Composable
 fun PostItem(
@@ -208,7 +207,6 @@ fun PostItem(
     }
 }
 
-@OptIn(ExperimentalTime::class)
 @Composable
 private fun UserSection(
     post: FanboxPost,

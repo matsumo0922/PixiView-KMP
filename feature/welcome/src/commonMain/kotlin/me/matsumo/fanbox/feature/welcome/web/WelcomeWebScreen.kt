@@ -36,6 +36,7 @@ import com.multiplatform.webview.cookie.WebViewCookieManager
 import com.multiplatform.webview.web.LoadingState
 import com.multiplatform.webview.web.WebView
 import com.multiplatform.webview.web.rememberWebViewState
+import io.github.aakira.napier.Napier
 import kotlinx.collections.immutable.toImmutableList
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -108,6 +109,7 @@ internal fun WelcomeWebScreen(
         currentCookies.addAll(fanboxCookies + oauthCookies)
 
         if (webViewState.lastLoadedUrl == fanboxRedirectUrl) {
+            Napier.d { "try login. current url: ${webViewState.lastLoadedUrl}, cookies: $currentCookies" }
             tryLogin()
         }
     }

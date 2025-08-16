@@ -6,6 +6,7 @@ import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
+import kotlinx.datetime.toStdlibInstant
 import me.matsumo.fanbox.core.common.util.format
 import me.matsumo.fanbox.core.common.util.suspendRunCatching
 import me.matsumo.fanbox.core.model.ScreenState
@@ -44,7 +45,7 @@ class PaymentsViewModel(
 
     @OptIn(ExperimentalTime::class)
     private fun List<FanboxPaidRecord>.translate(): List<Payment> {
-        val paymentDates = map { it.paymentDateTime }.distinctBy { it.format("yyyy-MM-dd") }
+        val paymentDates = map { it.paymentDateTime.toStdlibInstant() }.distinctBy { it.format("yyyy-MM-dd") }
 
         return paymentDates.map { paymentDate ->
             Payment(

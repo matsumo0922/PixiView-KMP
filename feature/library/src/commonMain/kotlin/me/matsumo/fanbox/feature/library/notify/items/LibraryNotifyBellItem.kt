@@ -29,6 +29,7 @@ import coil3.compose.AsyncImage
 import coil3.compose.LocalPlatformContext
 import coil3.compose.SubcomposeAsyncImage
 import coil3.request.ImageRequest
+import kotlinx.datetime.toStdlibInstant
 import me.matsumo.fanbox.core.resources.Res
 import me.matsumo.fanbox.core.resources.im_default_user
 import me.matsumo.fanbox.core.resources.notify_title_comment
@@ -46,7 +47,6 @@ import me.matsumo.fankt.fanbox.domain.model.id.FanboxPostId
 import org.jetbrains.compose.resources.stringResource
 import kotlin.time.Clock
 import kotlin.time.ExperimentalTime
-import kotlin.time.Instant
 
 @Composable
 internal fun LibraryNotifyBellItem(
@@ -282,9 +282,9 @@ private fun LikeItem(
 
 @OptIn(ExperimentalTime::class)
 @Composable
-private fun Instant.toRelativeTimeString(): String {
+private fun kotlinx.datetime.Instant.toRelativeTimeString(): String {
     val now = Clock.System.now()
-    val duration = now - this
+    val duration = now - this.toStdlibInstant()
 
     return when {
         duration.inWholeDays > 0 -> stringResource(Res.string.unit_day_before, duration.inWholeDays)
