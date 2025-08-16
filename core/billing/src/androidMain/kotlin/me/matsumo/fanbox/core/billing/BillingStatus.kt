@@ -6,10 +6,10 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import me.matsumo.fanbox.core.billing.usecase.VerifyPlusUseCase
 import me.matsumo.fanbox.core.common.util.suspendRunCatching
-import me.matsumo.fanbox.core.repository.UserDataRepository
+import me.matsumo.fanbox.core.repository.SettingRepository
 
 class BillingStatusImpl(
-    private val userDataRepository: UserDataRepository,
+    private val settingRepository: SettingRepository,
     private val billingClient: BillingClient,
     private val verifyPlusUseCase: VerifyPlusUseCase,
     private val ioDispatcher: CoroutineDispatcher,
@@ -27,7 +27,7 @@ class BillingStatusImpl(
             delay(2000)
 
             suspendRunCatching { verifyPlusUseCase.invoke() }.onSuccess {
-                userDataRepository.setPlusMode(it != null)
+                settingRepository.setPlusMode(it != null)
             }
         }
     }

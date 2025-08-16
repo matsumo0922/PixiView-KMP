@@ -42,7 +42,7 @@ import coil3.compose.LocalPlatformContext
 import coil3.compose.SubcomposeAsyncImage
 import coil3.request.ImageRequest
 import kotlinx.collections.immutable.ImmutableList
-import me.matsumo.fanbox.core.model.UserData
+import me.matsumo.fanbox.core.model.Setting
 import me.matsumo.fanbox.core.ui.ads.NativeAdView
 import me.matsumo.fanbox.core.ui.component.PostGridItem
 import me.matsumo.fanbox.core.ui.component.PostItem
@@ -63,7 +63,7 @@ import me.matsumo.fankt.fanbox.domain.model.id.FanboxPostId
 @Composable
 internal fun CreatorTopPostsScreen(
     state: LazyGridState,
-    userData: UserData,
+    setting: Setting,
     bookmarkedPostsIds: ImmutableList<FanboxPostId>,
     pagingAdapter: LazyPagingItems<FanboxPost>,
     creatorTags: ImmutableList<FanboxTag>,
@@ -78,7 +78,7 @@ internal fun CreatorTopPostsScreen(
     val adOffset: Int
     val adInterval: Int
 
-    val columns = if (userData.isUseGridMode) {
+    val columns = if (setting.isUseGridMode) {
         when (LocalNavigationType.current.type) {
             PixiViewNavigationType.BottomNavigation -> 2
             PixiViewNavigationType.NavigationRail -> 3
@@ -109,10 +109,10 @@ internal fun CreatorTopPostsScreen(
         adOffset = adOffset,
         adInterval = adInterval,
         pagingAdapter = pagingAdapter,
-        userData = userData,
+        setting = setting,
         creatorTags = creatorTags,
         bookmarkedPostIds = bookmarkedPostsIds,
-        isGridMode = userData.isUseGridMode,
+        isGridMode = setting.isUseGridMode,
         onClickPost = onClickPost,
         onClickPostLike = onClickPostLike,
         onClickPostBookmark = onClickPostBookmark,
@@ -128,7 +128,7 @@ private fun PagingItems(
     columns: Int,
     adOffset: Int,
     adInterval: Int,
-    userData: UserData,
+    setting: Setting,
     bookmarkedPostIds: ImmutableList<FanboxPostId>,
     pagingAdapter: LazyPagingItems<FanboxPost>,
     creatorTags: ImmutableList<FanboxTag>,
@@ -169,28 +169,28 @@ private fun PagingItems(
         }
 
         items(
-            count = pagingAdapter.itemCount + if (userData.hasPrivilege) 0 else (pagingAdapter.itemCount / adInterval),
+            count = pagingAdapter.itemCount + if (setting.hasPrivilege) 0 else (pagingAdapter.itemCount / adInterval),
             key = { index ->
                 when {
-                    userData.hasPrivilege -> pagingAdapter.itemKey { it.id.uniqueValue }(index)
+                    setting.hasPrivilege -> pagingAdapter.itemKey { it.id.uniqueValue }(index)
                     (index + adOffset) % adInterval == 0 -> "ad-$index"
                     else -> pagingAdapter.itemKey { it.id.uniqueValue }(index - ((index + adOffset) / adInterval))
                 }
             },
         ) { index ->
-            if ((index + adOffset) % adInterval == 0 && !userData.hasPrivilege) {
+            if ((index + adOffset) % adInterval == 0 && !setting.hasPrivilege) {
                 NativeAdView(
                     modifier = Modifier.fillMaxSize(),
                     key = "$index",
                 )
             } else {
-                pagingAdapter[if (userData.hasPrivilege) index else index - ((index + adOffset) / adInterval)]?.let { post ->
+                pagingAdapter[if (setting.hasPrivilege) index else index - ((index + adOffset) / adInterval)]?.let { post ->
                     if (isGridMode) {
                         PostGridItem(
                             modifier = Modifier.fillMaxWidth(),
                             post = post,
-                            isHideAdultContents = userData.isHideAdultContents,
-                            isOverrideAdultContents = userData.isAllowedShowAdultContents,
+                            isHideAdultContents = setting.isHideAdultContents,
+                            isOverrideAdultContents = setting.isAllowedShowAdultContents,
                             onClickPost = onClickPost,
                         )
                     } else {
@@ -198,9 +198,9 @@ private fun PagingItems(
                             modifier = Modifier.fillMaxSize(),
                             post = post,
                             isBookmarked = bookmarkedPostIds.contains(post.id),
-                            isHideAdultContents = userData.isHideAdultContents,
-                            isOverrideAdultContents = userData.isAllowedShowAdultContents,
-                            isTestUser = userData.isTestUser,
+                            isHideAdultContents = setting.isHideAdultContents,
+                            isOverrideAdultContents = setting.isAllowedShowAdultContents,
+                            isTestUser = setting.isTestUser,
                             onClickPost = onClickPost,
                             onClickCreator = onClickCreator,
                             onClickPlanList = onClickPlanList,

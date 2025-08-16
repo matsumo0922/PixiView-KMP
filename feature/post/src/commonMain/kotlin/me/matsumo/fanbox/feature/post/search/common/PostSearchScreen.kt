@@ -17,7 +17,7 @@ import app.cash.paging.compose.collectAsLazyPagingItems
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.toImmutableList
 import me.matsumo.fanbox.core.model.Destination
-import me.matsumo.fanbox.core.model.UserData
+import me.matsumo.fanbox.core.model.Setting
 import me.matsumo.fanbox.core.ui.extensition.NavigatorExtension
 import me.matsumo.fanbox.feature.post.search.common.items.PostSearchCreatorScreen
 import me.matsumo.fanbox.feature.post.search.common.items.PostSearchTagScreen
@@ -54,7 +54,7 @@ internal fun PostSearchRoute(
         modifier = modifier,
         query = uiState.query,
         initialQuery = query,
-        userData = uiState.userData,
+        setting = uiState.setting,
         bookmarkedPosts = uiState.bookmarkedPosts.toImmutableList(),
         suggestTags = uiState.suggestTags.toImmutableList(),
         creatorPaging = creatorPaging,
@@ -83,7 +83,7 @@ internal fun PostSearchRoute(
 private fun PostSearchScreen(
     query: String,
     initialQuery: String,
-    userData: UserData,
+    setting: Setting,
     bookmarkedPosts: ImmutableList<FanboxPostId>,
     suggestTags: ImmutableList<FanboxTag>,
     creatorPaging: LazyPagingItems<FanboxCreatorDetail>,
@@ -137,7 +137,7 @@ private fun PostSearchScreen(
                         .padding(padding)
                         .fillMaxSize(),
                     pagingAdapter = tagPaging,
-                    userData = userData,
+                    setting = setting,
                     bookmarkedPosts = bookmarkedPosts,
                     onClickPost = onClickPost,
                     onClickPostLike = onClickPostLike,

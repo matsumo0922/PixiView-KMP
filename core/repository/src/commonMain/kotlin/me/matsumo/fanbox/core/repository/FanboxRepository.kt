@@ -24,7 +24,7 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import me.matsumo.fanbox.core.datastore.BlockDataStore
 import me.matsumo.fanbox.core.datastore.BookmarkDataStore
-import me.matsumo.fanbox.core.datastore.PixiViewDataStore
+import me.matsumo.fanbox.core.datastore.SettingDataStore
 import me.matsumo.fanbox.core.repository.paging.CreatorPostsPagingSource
 import me.matsumo.fanbox.core.repository.paging.HomePostsPagingSource
 import me.matsumo.fanbox.core.repository.paging.SearchCreatorsPagingSource
@@ -187,7 +187,7 @@ interface FanboxRepository {
 class FanboxRepositoryImpl(
     private val bookmarkDataStore: BookmarkDataStore,
     private val blockDataStore: BlockDataStore,
-    private val userDataStore: PixiViewDataStore,
+    private val userDataStore: SettingDataStore,
     private val ioDispatcher: CoroutineDispatcher,
 ) : FanboxRepository, KoinComponent {
 

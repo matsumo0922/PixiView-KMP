@@ -19,7 +19,7 @@ actual val billingModule: Module = module {
 
     single<BillingStatus> {
         BillingStatusImpl(
-            userDataRepository = get(),
+            settingRepository = get(),
             billingClient = get(),
             verifyPlusUseCase = get(),
             ioDispatcher = get(),

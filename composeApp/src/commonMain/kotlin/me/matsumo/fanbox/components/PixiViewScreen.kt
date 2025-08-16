@@ -33,12 +33,12 @@ internal fun PixiViewScreen(
 
     var showPaywallFlag by remember { mutableStateOf(false) }
     var isAgreedTeams by remember {
-        mutableStateOf(uiState.userData.isAgreedPrivacyPolicy && uiState.userData.isAgreedTermsOfService)
+        mutableStateOf(uiState.setting.isAgreedPrivacyPolicy && uiState.setting.isAgreedTermsOfService)
     }
-    var isAllowedPermission by remember(uiState.userData, uiState.isLoggedIn) { mutableStateOf(true) }
+    var isAllowedPermission by remember(uiState.setting, uiState.isLoggedIn) { mutableStateOf(true) }
 
     LaunchedEffect(true) {
-        if (uiState.userData.pixiViewId.isBlank()) {
+        if (uiState.setting.pixiViewId.isBlank()) {
             onRequestInitPixiViewId.invoke()
         }
     }

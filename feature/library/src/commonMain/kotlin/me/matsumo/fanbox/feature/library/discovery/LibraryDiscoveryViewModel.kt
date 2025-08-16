@@ -10,17 +10,17 @@ import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
 import me.matsumo.fanbox.core.common.util.suspendRunCatching
 import me.matsumo.fanbox.core.model.ScreenState
-import me.matsumo.fanbox.core.model.UserData
+import me.matsumo.fanbox.core.model.Setting
 import me.matsumo.fanbox.core.model.updateWhenIdle
 import me.matsumo.fanbox.core.repository.FanboxRepository
-import me.matsumo.fanbox.core.repository.UserDataRepository
+import me.matsumo.fanbox.core.repository.SettingRepository
 import me.matsumo.fanbox.core.resources.Res
 import me.matsumo.fanbox.core.resources.error_no_data_discovery
 import me.matsumo.fankt.fanbox.domain.model.FanboxCreatorDetail
 import me.matsumo.fankt.fanbox.domain.model.id.FanboxUserId
 
 class LibraryDiscoveryViewModel(
-    private val userDataRepository: UserDataRepository,
+    private val settingRepository: SettingRepository,
     private val fanboxRepository: FanboxRepository,
 ) : ViewModel() {
 
@@ -29,9 +29,9 @@ class LibraryDiscoveryViewModel(
 
     init {
         viewModelScope.launch {
-            userDataRepository.userData.collectLatest { userData ->
+            settingRepository.setting.collectLatest { userData ->
                 _screenState.updateWhenIdle {
-                    it.copy(userData = userData)
+                    it.copy(setting = userData)
                 }
             }
         }
@@ -48,7 +48,7 @@ class LibraryDiscoveryViewModel(
                 }.getOrElse { emptyList() }
 
                 LibraryDiscoveryUiState(
-                    userData = userDataRepository.userData.first(),
+                    setting = settingRepository.setting.first(),
                     followingCreators = followingCreators.shuffled(),
                     recommendedCreators = recommendedCreators,
                     followingPixivCreators = followingPixivCreators,
@@ -75,7 +75,7 @@ class LibraryDiscoveryViewModel(
 
 @Stable
 data class LibraryDiscoveryUiState(
-    val userData: UserData,
+    val setting: Setting,
     val followingCreators: List<FanboxCreatorDetail>,
     val recommendedCreators: List<FanboxCreatorDetail>,
     val followingPixivCreators: List<FanboxCreatorDetail>,

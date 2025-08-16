@@ -9,7 +9,7 @@ actual val aboutSubModule: Module = module {
 
     factory<BillingPlusViewModel> {
         BillingPlusViewModelImpl(
-            userDataRepository = get(),
+            settingRepository = get(),
         )
     }
 }

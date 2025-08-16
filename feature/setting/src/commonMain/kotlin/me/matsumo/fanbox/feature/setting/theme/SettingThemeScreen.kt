@@ -29,9 +29,9 @@ import io.github.alexzhirkevich.cupertino.adaptive.AdaptiveScaffold
 import io.github.alexzhirkevich.cupertino.adaptive.ExperimentalAdaptiveApi
 import kotlinx.coroutines.launch
 import me.matsumo.fanbox.core.model.Destination
+import me.matsumo.fanbox.core.model.Setting
 import me.matsumo.fanbox.core.model.ThemeColorConfig
 import me.matsumo.fanbox.core.model.ThemeConfig
-import me.matsumo.fanbox.core.model.UserData
 import me.matsumo.fanbox.core.resources.Res
 import me.matsumo.fanbox.core.resources.billing_plus_toast_require_plus
 import me.matsumo.fanbox.core.resources.setting_theme_theme_dynamic_color
@@ -70,7 +70,7 @@ internal fun SettingThemeRoute(
     ) {
         SettingThemeDialog(
             modifier = Modifier.background(MaterialTheme.colorScheme.surface),
-            userData = it.userData,
+            setting = it.setting,
             onClickBillingPlus = { navigateTo(Destination.BillingPlusBottomSheet("")) },
             onSelectTheme = viewModel::setThemeConfig,
             onSelectThemeColor = viewModel::setThemeColorConfig,
@@ -84,7 +84,7 @@ internal fun SettingThemeRoute(
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalAdaptiveApi::class)
 @Composable
 private fun SettingThemeDialog(
-    userData: UserData,
+    setting: Setting,
     onClickBillingPlus: () -> Unit,
     onSelectTheme: (ThemeConfig) -> Unit,
     onSelectThemeColor: (ThemeColorConfig) -> Unit,
@@ -131,7 +131,7 @@ private fun SettingThemeDialog(
             item {
                 SettingThemeTabsSection(
                     modifier = Modifier.fillMaxWidth(),
-                    themeConfig = userData.themeConfig,
+                    themeConfig = setting.themeConfig,
                     onSelectTheme = onSelectTheme,
                 )
             }
@@ -144,9 +144,9 @@ private fun SettingThemeDialog(
                     title = Res.string.setting_theme_theme_dynamic_color,
                     description = Res.string.setting_theme_theme_dynamic_color_description,
                     isEnabled = currentPlatform == Platform.Android,
-                    value = if (currentPlatform == Platform.Android) userData.isUseDynamicColor else false,
+                    value = if (currentPlatform == Platform.Android) setting.isUseDynamicColor else false,
                     onValueChanged = {
-                        if (userData.hasPrivilege) {
+                        if (setting.hasPrivilege) {
                             onClickDynamicColor.invoke(it)
                         } else {
                             onShowSnackbar.invoke(Res.string.billing_plus_toast_require_plus)
@@ -159,9 +159,9 @@ private fun SettingThemeDialog(
             item {
                 SettingThemeColorSection(
                     modifier = Modifier.fillMaxWidth(),
-                    isUseDynamicColor = userData.isUseDynamicColor,
-                    themeConfig = userData.themeConfig,
-                    themeColorConfig = userData.themeColorConfig,
+                    isUseDynamicColor = setting.isUseDynamicColor,
+                    themeConfig = setting.themeConfig,
+                    themeColorConfig = setting.themeColorConfig,
                     onSelectThemeColor = onSelectThemeColor,
                 )
             }

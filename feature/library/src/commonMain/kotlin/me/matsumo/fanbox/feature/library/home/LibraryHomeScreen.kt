@@ -63,7 +63,7 @@ internal fun LibraryHomeScreen(
     val supportedPager = uiState.supportedPaging.collectAsLazyPagingItems()
     val scrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior(snapAnimationSpec = null, flingAnimationSpec = null)
 
-    val pagerState = rememberPagerState(initialPage = if (uiState.userData.isDefaultFollowTabInHome) 1 else 0) { 2 }
+    val pagerState = rememberPagerState(initialPage = if (uiState.setting.isDefaultFollowTabInHome) 1 else 0) { 2 }
     val scope = rememberCoroutineScope()
 
     val tabs = listOf(
@@ -80,8 +80,8 @@ internal fun LibraryHomeScreen(
         }
     }
 
-    LaunchedEffect(uiState.userData.isDefaultFollowTabInHome) {
-        pagerState.scrollToPage(if (uiState.userData.isDefaultFollowTabInHome) 1 else 0)
+    LaunchedEffect(uiState.setting.isDefaultFollowTabInHome) {
+        pagerState.scrollToPage(if (uiState.setting.isDefaultFollowTabInHome) 1 else 0)
     }
 
     Scaffold(
@@ -140,7 +140,7 @@ internal fun LibraryHomeScreen(
                             LibraryHomeIdleSection(
                                 modifier = Modifier.fillMaxSize(),
                                 pagingAdapter = homePager,
-                                userData = uiState.userData,
+                                setting = uiState.setting,
                                 bookmarkedPostsIds = uiState.bookmarkedPostsIds.toImmutableList(),
                                 onClickPost = { navigateTo(Destination.PostDetail(it, Destination.PostDetail.PagingType.Home)) },
                                 onClickPostLike = viewModel::postLike,
@@ -159,7 +159,7 @@ internal fun LibraryHomeScreen(
                             LibrarySupportedIdleSection(
                                 modifier = Modifier.fillMaxSize(),
                                 pagingAdapter = supportedPager,
-                                userData = uiState.userData,
+                                setting = uiState.setting,
                                 bookmarkedPostsIds = uiState.bookmarkedPostsIds.toImmutableList(),
                                 onClickPost = { navigateTo(Destination.PostDetail(it, Destination.PostDetail.PagingType.Supported)) },
                                 onClickPostLike = viewModel::postLike,

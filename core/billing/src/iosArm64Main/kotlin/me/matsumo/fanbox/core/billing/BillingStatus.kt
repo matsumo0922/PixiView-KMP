@@ -7,11 +7,11 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.cancel
 import kotlinx.coroutines.launch
 import me.matsumo.fanbox.core.billing.swift.BillingController
-import me.matsumo.fanbox.core.repository.UserDataRepository
+import me.matsumo.fanbox.core.repository.SettingRepository
 
 @OptIn(ExperimentalForeignApi::class)
 class BillingStatusImpl(
-    private val userDataRepository: UserDataRepository,
+    private val settingRepository: SettingRepository,
     private val ioDispatcher: CoroutineDispatcher,
 ) : BillingStatus {
 
@@ -20,7 +20,7 @@ class BillingStatusImpl(
     override fun init() {
         BillingController.observeTransactionStatusOnResult {
             scope.launch {
-                userDataRepository.setPlusMode(it)
+                settingRepository.setPlusMode(it)
             }
         }
     }
@@ -31,7 +31,7 @@ class BillingStatusImpl(
                 onResult = {
                     scope.launch {
                         Napier.d { "refresh billing status: $it" }
-                        userDataRepository.setPlusMode(it)
+                        settingRepository.setPlusMode(it)
                     }
                 },
                 completionHandler = {

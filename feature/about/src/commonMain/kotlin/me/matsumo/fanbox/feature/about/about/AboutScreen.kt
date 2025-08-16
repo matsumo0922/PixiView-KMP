@@ -20,7 +20,7 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import kotlinx.coroutines.launch
 import me.matsumo.fanbox.core.common.PixiViewConfig
 import me.matsumo.fanbox.core.model.Destination
-import me.matsumo.fanbox.core.model.UserData
+import me.matsumo.fanbox.core.model.Setting
 import me.matsumo.fanbox.core.resources.Res
 import me.matsumo.fanbox.core.resources.about_title
 import me.matsumo.fanbox.core.resources.error_developing_feature
@@ -58,7 +58,7 @@ internal fun AboutRoute(
     ) { uiState ->
         AboutScreen(
             modifier = Modifier.background(MaterialTheme.colorScheme.surface),
-            userData = uiState.userData,
+            setting = uiState.setting,
             config = uiState.config,
             onClickGithub = {
                 navigatorExtension.navigateToWebPage("https://github.com/matsumo0922/PixiView-KMP", "")
@@ -100,7 +100,7 @@ internal fun AboutRoute(
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 private fun AboutScreen(
-    userData: UserData,
+    setting: Setting,
     config: PixiViewConfig,
     onClickGithub: () -> Unit,
     onClickGithubProfile: () -> Unit,
@@ -144,7 +144,7 @@ private fun AboutScreen(
             item {
                 AboutAppSection(
                     modifier = Modifier.fillMaxWidth(),
-                    userData = userData,
+                    setting = setting,
                     config = config,
                     onClickGithub = onClickGithub,
                     onClickDiscord = onClickDiscord,

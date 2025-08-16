@@ -64,9 +64,9 @@ import kotlinx.collections.immutable.toImmutableList
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import me.matsumo.fanbox.core.model.Destination
+import me.matsumo.fanbox.core.model.Setting
 import me.matsumo.fanbox.core.model.SimpleAlertContents
 import me.matsumo.fanbox.core.model.TranslationState
-import me.matsumo.fanbox.core.model.UserData
 import me.matsumo.fanbox.core.resources.Res
 import me.matsumo.fanbox.core.resources.billing_plus_toast_require_plus
 import me.matsumo.fanbox.core.resources.creator_tab_plans
@@ -154,7 +154,7 @@ internal fun CreatorTopRoute(
                 isPosts = isPosts,
                 isBlocked = uiState.isBlocked,
                 isAbleToReward = uiState.isAbleToReward,
-                userData = uiState.userData,
+                setting = uiState.setting,
                 bookmarkedPostsIds = uiState.bookmarkedPostsIds.toImmutableList(),
                 creatorDetail = uiState.creatorDetail,
                 creatorPlans = uiState.creatorPlans.toImmutableList(),
@@ -217,7 +217,7 @@ private fun CreatorTopScreen(
     isAbleToReward: Boolean,
     shouldShowReveal: Boolean,
     creatorDetail: FanboxCreatorDetail,
-    userData: UserData,
+    setting: Setting,
     bookmarkedPostsIds: ImmutableList<FanboxPostId>,
     creatorPlans: ImmutableList<FanboxCreatorPlan>,
     creatorTags: ImmutableList<FanboxTag>,
@@ -363,7 +363,7 @@ private fun CreatorTopScreen(
                                 CreatorTopPostsScreen(
                                     modifier = Modifier.fillMaxSize(),
                                     state = postsGridState,
-                                    userData = userData,
+                                    setting = setting,
                                     bookmarkedPostsIds = bookmarkedPostsIds.toImmutableList(),
                                     pagingAdapter = creatorPostsPaging,
                                     creatorTags = creatorTags,
@@ -414,7 +414,7 @@ private fun CreatorTopScreen(
             onClickNavigation = onTerminate,
             onClickActions = { isShowMenuDialog = true },
             onClickSearch = {
-                if (userData.hasPrivilege) {
+                if (setting.hasPrivilege) {
                     onClickSearch.invoke(creatorDetail.creatorId)
                 } else {
                     onClickBillingPlus.invoke("search_post_by_creator")
@@ -439,7 +439,7 @@ private fun CreatorTopScreen(
                 ),
                 containerColor = MaterialTheme.colorScheme.primaryContainer,
                 onClick = {
-                    if (userData.hasPrivilege) {
+                    if (setting.hasPrivilege) {
                         onClickAllDownload.invoke(creatorDetail.creatorId)
                     } else {
                         isShowRewardAdDialog = true
@@ -483,7 +483,7 @@ private fun CreatorTopScreen(
             description = creatorDetail.description,
             translationState = descriptionTransState,
             onTranslateClicked = {
-                if (userData.hasPrivilege) {
+                if (setting.hasPrivilege) {
                     onClickTranslateDescription.invoke(it)
                 } else {
                     onClickBillingPlus.invoke("translate")

@@ -2,7 +2,7 @@ package me.matsumo.fanbox.feature.post.detail.items
 
 import androidx.compose.foundation.lazy.LazyListScope
 import kotlinx.collections.immutable.ImmutableList
-import me.matsumo.fanbox.core.model.UserData
+import me.matsumo.fanbox.core.model.Setting
 import me.matsumo.fankt.fanbox.domain.model.FanboxPost
 import me.matsumo.fankt.fanbox.domain.model.FanboxPostDetail
 import me.matsumo.fankt.fanbox.domain.model.id.FanboxCreatorId
@@ -10,7 +10,7 @@ import me.matsumo.fankt.fanbox.domain.model.id.FanboxPostId
 
 internal fun LazyListScope.postDetailItems(
     post: FanboxPostDetail,
-    userData: UserData,
+    setting: Setting,
     bookmarkedPostIds: ImmutableList<FanboxPostId>,
     onClickPost: (FanboxPostId) -> Unit,
     onClickPostLike: (FanboxPostId) -> Unit,
@@ -24,9 +24,9 @@ internal fun LazyListScope.postDetailItems(
         is FanboxPostDetail.Body.Article -> {
             postDetailArticleHeader(
                 content = content,
-                userData = userData,
+                setting = setting,
                 isAdultContents = post.hasAdultContent,
-                isAutoImagePreview = userData.isAutoImagePreview,
+                isAutoImagePreview = setting.isAutoImagePreview,
                 bookmarkedPostIds = bookmarkedPostIds,
                 onClickPost = onClickPost,
                 onClickPostLike = onClickPostLike,
@@ -42,8 +42,8 @@ internal fun LazyListScope.postDetailItems(
             postDetailImageHeader(
                 content = content,
                 isAdultContents = post.hasAdultContent,
-                isOverrideAdultContents = userData.isAllowedShowAdultContents,
-                isTestUser = userData.isTestUser,
+                isOverrideAdultContents = setting.isAllowedShowAdultContents,
+                isTestUser = setting.isTestUser,
                 onClickImage = onClickImage,
                 onClickDownload = onClickDownload,
             )
@@ -52,7 +52,7 @@ internal fun LazyListScope.postDetailItems(
         is FanboxPostDetail.Body.File -> {
             postDetailFileHeader(
                 content = content,
-                isAutoImagePreview = userData.isAutoImagePreview,
+                isAutoImagePreview = setting.isAutoImagePreview,
                 onClickFile = onClickFile,
                 onClickImage = onClickImage,
                 onClickDownload = onClickDownload,

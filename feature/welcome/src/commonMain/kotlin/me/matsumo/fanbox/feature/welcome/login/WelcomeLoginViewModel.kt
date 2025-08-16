@@ -11,10 +11,10 @@ import kotlinx.coroutines.launch
 import me.matsumo.fanbox.core.common.util.suspendRunCatching
 import me.matsumo.fanbox.core.model.ScreenState
 import me.matsumo.fanbox.core.repository.FanboxRepository
-import me.matsumo.fanbox.core.repository.UserDataRepository
+import me.matsumo.fanbox.core.repository.SettingRepository
 
 class WelcomeLoginViewModel(
-    private val userDataRepository: UserDataRepository,
+    private val settingRepository: SettingRepository,
     private val fanboxRepository: FanboxRepository,
 ) : ViewModel() {
 
@@ -28,7 +28,7 @@ class WelcomeLoginViewModel(
         viewModelScope.launch {
             _screenState.value = ScreenState.Loading
             _screenState.value = suspendRunCatching {
-                if (!userDataRepository.userData.first().isTestUser) {
+                if (!settingRepository.setting.first().isTestUser) {
                     fanboxRepository.getNewsLetters()
                     setDefaultHomeTab()
                 }
@@ -61,7 +61,7 @@ class WelcomeLoginViewModel(
             onSuccess = { it.contents.isEmpty() },
             onFailure = { true },
         ).also {
-            userDataRepository.setFollowTabDefaultHome(it)
+            settingRepository.setFollowTabDefaultHome(it)
         }
     }
 }

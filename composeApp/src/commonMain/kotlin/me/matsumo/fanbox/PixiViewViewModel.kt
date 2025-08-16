@@ -24,10 +24,10 @@ import me.matsumo.fanbox.core.datastore.OldCookieDataStore
 import me.matsumo.fanbox.core.logs.logger.LogConfigurator
 import me.matsumo.fanbox.core.model.DownloadState
 import me.matsumo.fanbox.core.model.ScreenState
-import me.matsumo.fanbox.core.model.UserData
+import me.matsumo.fanbox.core.model.Setting
 import me.matsumo.fanbox.core.repository.DownloadPostsRepository
 import me.matsumo.fanbox.core.repository.FanboxRepository
-import me.matsumo.fanbox.core.repository.UserDataRepository
+import me.matsumo.fanbox.core.repository.SettingRepository
 import me.matsumo.fanbox.core.resources.Res
 import me.matsumo.fanbox.core.resources.error_no_data
 import me.matsumo.fanbox.core.resources.home_app_lock_message
@@ -40,7 +40,7 @@ import kotlin.uuid.ExperimentalUuidApi
 import kotlin.uuid.Uuid
 
 class PixiViewViewModel(
-    private val userDataRepository: UserDataRepository,
+    private val settingRepository: SettingRepository,
     private val fanboxRepository: FanboxRepository,
     private val downloadPostsRepository: DownloadPostsRepository,
     private val launchLogDataStore: LaunchLogDataStore,
@@ -55,7 +55,7 @@ class PixiViewViewModel(
 
     val screenState = combine(
         listOf(
-            userDataRepository.userData,
+            settingRepository.setting,
             fanboxRepository.sessionId,
             downloadPostsRepository.downloadState,
             _metadataFlow,
@@ -63,7 +63,7 @@ class PixiViewViewModel(
             _isAppLockedFlow,
         ),
     ) { flows ->
-        val userData = flows[0] as UserData
+        val setting = flows[0] as Setting
         val sessionId = flows[1] as String?
         val downloadState = flows[2] as DownloadState
         val fanboxMetadata = flows[3] as FanboxMetaData
@@ -72,12 +72,12 @@ class PixiViewViewModel(
 
         ScreenState.Idle(
             MainUiState(
-                userData = userData,
+                setting = setting,
                 sessionId = sessionId.orEmpty(),
                 fanboxMetadata = fanboxMetadata,
                 downloadState = downloadState,
                 isLoggedIn = isLoggedIn,
-                isAppLocked = if (userData.isUseAppLock) isAppLocked else false,
+                isAppLocked = if (setting.isUseAppLock) isAppLocked else false,
             ),
         )
     }.stateIn(
@@ -96,10 +96,10 @@ class PixiViewViewModel(
         }
 
         viewModelScope.launch {
-            userDataRepository.userData.collectLatest {
+            settingRepository.setting.collectLatest {
                 LogConfigurator.configure(
                     pixiViewConfig = pixiViewConfig,
-                    userData = it,
+                    setting = it,
                 )
             }
         }
@@ -127,14 +127,14 @@ class PixiViewViewModel(
     @OptIn(ExperimentalUuidApi::class)
     fun initPixiViewId() {
         viewModelScope.launch {
-            userDataRepository.setPixiViewId(Uuid.random().toString())
+            settingRepository.setPixiViewId(Uuid.random().toString())
         }
     }
 
     fun updateState() {
         viewModelScope.launch {
             suspendRunCatching {
-                if (!userDataRepository.userData.first().isTestUser) {
+                if (!settingRepository.setting.first().isTestUser) {
                     val oldCookies = oldCookieDataStore.getCookies()
                     val sessionId = oldCookies.map { it.split("=") }.firstOrNull { it.first() == "FANBOXSESSID" }?.get(1)
 
@@ -157,7 +157,7 @@ class PixiViewViewModel(
 
     fun setAppLock(isAppLock: Boolean) {
         viewModelScope.launch {
-            _isAppLockedFlow.emit(if (userDataRepository.userData.first().isUseAppLock) isAppLock else false)
+            _isAppLockedFlow.emit(if (settingRepository.setting.first().isUseAppLock) isAppLock else false)
         }
     }
 
@@ -176,7 +176,7 @@ class PixiViewViewModel(
 
 @Stable
 data class MainUiState(
-    val userData: UserData,
+    val setting: Setting,
     val sessionId: String,
     val fanboxMetadata: FanboxMetaData,
     val downloadState: DownloadState,

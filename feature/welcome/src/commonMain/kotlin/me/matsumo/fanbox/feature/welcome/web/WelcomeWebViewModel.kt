@@ -6,13 +6,13 @@ import io.ktor.util.date.GMTDate
 import kotlinx.coroutines.launch
 import me.matsumo.fanbox.core.common.util.suspendRunCatching
 import me.matsumo.fanbox.core.repository.FanboxRepository
-import me.matsumo.fanbox.core.repository.UserDataRepository
+import me.matsumo.fanbox.core.repository.SettingRepository
 import com.multiplatform.webview.cookie.Cookie as WebViewCookie
 import io.ktor.http.Cookie as KtorCookie
 
 class WelcomeWebViewModel(
     private val fanboxRepository: FanboxRepository,
-    private val userDataRepository: UserDataRepository,
+    private val settingRepository: SettingRepository,
 ) : ViewModel() {
 
     suspend fun saveCookies(cookies: List<WebViewCookie>) {
@@ -32,8 +32,8 @@ class WelcomeWebViewModel(
 
     fun debugLogin() {
         viewModelScope.launch {
-            userDataRepository.setTestUser(true)
-            userDataRepository.setFollowTabDefaultHome(true)
+            settingRepository.setTestUser(true)
+            settingRepository.setFollowTabDefaultHome(true)
         }
     }
 

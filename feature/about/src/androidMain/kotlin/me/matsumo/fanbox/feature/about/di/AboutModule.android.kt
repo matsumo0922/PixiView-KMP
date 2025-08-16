@@ -13,7 +13,7 @@ actual val aboutSubModule: Module = module {
             purchasePlusSubscriptionUseCase = get(),
             consumePlusUseCase = get(),
             verifyPlusUseCase = get(),
-            userDataRepository = get(),
+            settingRepository = get(),
             ioDispatcher = get(),
         )
     }

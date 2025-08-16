@@ -7,9 +7,9 @@ import me.matsumo.fanbox.core.repository.FlagRepository
 import me.matsumo.fanbox.core.repository.FlagRepositoryImpl
 import me.matsumo.fanbox.core.repository.RewardRepository
 import me.matsumo.fanbox.core.repository.RewardRepositoryImpl
+import me.matsumo.fanbox.core.repository.SettingRepository
+import me.matsumo.fanbox.core.repository.SettingRepositoryImpl
 import me.matsumo.fanbox.core.repository.TranslationRepository
-import me.matsumo.fanbox.core.repository.UserDataRepository
-import me.matsumo.fanbox.core.repository.UserDataRepositoryImpl
 import org.koin.core.module.Module
 import org.koin.dsl.module
 
@@ -29,9 +29,9 @@ val repositoryModule = module {
         json
     }
 
-    single<UserDataRepository> {
-        UserDataRepositoryImpl(
-            pixiViewDataStore = get(),
+    single<SettingRepository> {
+        SettingRepositoryImpl(
+            settingDataStore = get(),
         )
     }
 

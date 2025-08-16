@@ -8,18 +8,18 @@ import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
 import me.matsumo.fanbox.core.common.PixiViewConfig
 import me.matsumo.fanbox.core.model.ScreenState
-import me.matsumo.fanbox.core.model.UserData
-import me.matsumo.fanbox.core.repository.UserDataRepository
+import me.matsumo.fanbox.core.model.Setting
+import me.matsumo.fanbox.core.repository.SettingRepository
 
 class AboutViewModel(
     pixiViewConfig: PixiViewConfig,
-    userDataRepository: UserDataRepository,
+    settingRepository: SettingRepository,
 ) : ViewModel() {
 
-    val screenState = userDataRepository.userData.map {
+    val screenState = settingRepository.setting.map {
         ScreenState.Idle(
             AboutUiState(
-                userData = it,
+                setting = it,
                 config = pixiViewConfig,
             ),
         )
@@ -32,6 +32,6 @@ class AboutViewModel(
 
 @Stable
 data class AboutUiState(
-    val userData: UserData,
+    val setting: Setting,
     val config: PixiViewConfig,
 )

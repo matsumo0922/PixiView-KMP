@@ -17,14 +17,14 @@ import me.matsumo.fanbox.core.common.util.suspendRunCatching
 import me.matsumo.fanbox.core.model.Destination
 import me.matsumo.fanbox.core.model.Flag
 import me.matsumo.fanbox.core.model.ScreenState
+import me.matsumo.fanbox.core.model.Setting
 import me.matsumo.fanbox.core.model.TranslationState
-import me.matsumo.fanbox.core.model.UserData
 import me.matsumo.fanbox.core.model.updateWhenIdle
 import me.matsumo.fanbox.core.repository.FanboxRepository
 import me.matsumo.fanbox.core.repository.FlagRepository
 import me.matsumo.fanbox.core.repository.RewardRepository
+import me.matsumo.fanbox.core.repository.SettingRepository
 import me.matsumo.fanbox.core.repository.TranslationRepository
-import me.matsumo.fanbox.core.repository.UserDataRepository
 import me.matsumo.fanbox.core.resources.Res
 import me.matsumo.fanbox.core.resources.error_network
 import me.matsumo.fanbox.core.ui.customNavTypes
@@ -38,7 +38,7 @@ import org.jetbrains.compose.resources.getString
 
 class CreatorTopViewModel(
     savedStateHandle: SavedStateHandle,
-    private val userDataRepository: UserDataRepository,
+    private val settingRepository: SettingRepository,
     private val fanboxRepository: FanboxRepository,
     private val translationRepository: TranslationRepository,
     private val rewardRepository: RewardRepository,
@@ -55,8 +55,8 @@ class CreatorTopViewModel(
         fetch()
 
         viewModelScope.launch {
-            userDataRepository.userData.collectLatest { data ->
-                _screenState.updateWhenIdle { it.copy(userData = data) }
+            settingRepository.setting.collectLatest { data ->
+                _screenState.updateWhenIdle { it.copy(setting = data) }
             }
         }
 
@@ -77,11 +77,11 @@ class CreatorTopViewModel(
         viewModelScope.launch {
             _screenState.value = ScreenState.Loading
             _screenState.value = suspendRunCatching {
-                val userData = userDataRepository.userData.first()
+                val userData = settingRepository.setting.first()
                 val loadSize = if (userData.isHideRestricted || userData.isUseGridMode) 20 else 10
 
                 CreatorTopUiState(
-                    userData = userData,
+                    setting = userData,
                     bookmarkedPostsIds = fanboxRepository.bookmarkedPostsIds.first(),
                     isBlocked = fanboxRepository.blockedCreators.first().contains(creatorId),
                     isAbleToReward = rewardRepository.isAbleToReward(),
@@ -164,7 +164,7 @@ class CreatorTopViewModel(
                 _screenState.updateWhenIdle { it.copy(descriptionTransState = TranslationState.Loading) }
 
                 val translatedDescription = suspendRunCatching {
-                    translationRepository.translate(description, Locale(state.data.userData.translateLanguage))
+                    translationRepository.translate(description, Locale(state.data.setting.translateLanguage))
                 }.fold(
                     onSuccess = { it },
                     onFailure = { getString(Res.string.error_network) },
@@ -191,7 +191,7 @@ class CreatorTopViewModel(
 
 @Stable
 data class CreatorTopUiState(
-    val userData: UserData,
+    val setting: Setting,
     val bookmarkedPostsIds: List<FanboxPostId>,
     val creatorDetail: FanboxCreatorDetail,
     val creatorPlans: List<FanboxCreatorPlan>,

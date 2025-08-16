@@ -23,7 +23,7 @@ val postModule = module {
     viewModel {
         PostDetailViewModel(
             postId = it[0],
-            userDataRepository = get(),
+            settingRepository = get(),
             fanboxRepository = get(),
             downloadPostsRepository = get(),
             translationRepository = get(),

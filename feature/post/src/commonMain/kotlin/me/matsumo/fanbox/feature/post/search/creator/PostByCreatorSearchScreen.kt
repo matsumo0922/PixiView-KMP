@@ -36,7 +36,7 @@ import kotlinx.collections.immutable.toImmutableList
 import kotlinx.coroutines.launch
 import me.matsumo.fanbox.core.common.util.format
 import me.matsumo.fanbox.core.model.Destination
-import me.matsumo.fanbox.core.model.UserData
+import me.matsumo.fanbox.core.model.Setting
 import me.matsumo.fanbox.core.resources.Res
 import me.matsumo.fanbox.core.resources.creator_posts_download_dialog_title
 import me.matsumo.fanbox.core.resources.error_no_data
@@ -77,7 +77,7 @@ internal fun PostByCreatorSearchRoute(
         PostByCreatorSearchScreen(
             modifier = Modifier.fillMaxSize(),
             query = query,
-            userData = uiState.userData,
+            setting = uiState.setting,
             creatorDetail = uiState.creatorDetail,
             searchedPosts = uiState.searchedPosts.toImmutableList(),
             bookmarkedPostIds = uiState.bookmarkedPostsIds.toImmutableList(),
@@ -101,7 +101,7 @@ internal fun PostByCreatorSearchRoute(
 @Composable
 private fun PostByCreatorSearchScreen(
     query: String,
-    userData: UserData,
+    setting: Setting,
     creatorDetail: FanboxCreatorDetail,
     searchedPosts: ImmutableList<FanboxPost>,
     bookmarkedPostIds: ImmutableList<FanboxPostId>,
@@ -190,9 +190,9 @@ private fun PostByCreatorSearchScreen(
                     onClickPlanList = onCreatorPlansClicked,
                     onClickLike = onLikeClicked,
                     onClickBookmark = { _, isBookmarked -> onBookmarkClicked.invoke(it, isBookmarked) },
-                    isHideAdultContents = userData.isHideAdultContents,
-                    isOverrideAdultContents = userData.isOverrideAdultContents,
-                    isTestUser = userData.isTestUser,
+                    isHideAdultContents = setting.isHideAdultContents,
+                    isOverrideAdultContents = setting.isOverrideAdultContents,
+                    isTestUser = setting.isTestUser,
                     isBookmarked = bookmarkedPostIds.contains(it.id),
                 )
             }

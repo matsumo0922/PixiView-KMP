@@ -18,10 +18,10 @@ import kotlinx.coroutines.withContext
 import me.matsumo.fanbox.core.common.util.suspendRunCatching
 import me.matsumo.fanbox.core.model.Destination
 import me.matsumo.fanbox.core.model.ScreenState
-import me.matsumo.fanbox.core.model.UserData
+import me.matsumo.fanbox.core.model.Setting
 import me.matsumo.fanbox.core.model.updateWhenIdle
 import me.matsumo.fanbox.core.repository.FanboxRepository
-import me.matsumo.fanbox.core.repository.UserDataRepository
+import me.matsumo.fanbox.core.repository.SettingRepository
 import me.matsumo.fanbox.core.resources.Res
 import me.matsumo.fanbox.core.resources.error_network
 import me.matsumo.fanbox.core.ui.customNavTypes
@@ -33,7 +33,7 @@ import me.matsumo.fankt.fanbox.domain.model.id.FanboxUserId
 
 class PostByCreatorSearchViewModel(
     savedStateHandle: SavedStateHandle,
-    private val userDataRepository: UserDataRepository,
+    private val settingRepository: SettingRepository,
     private val fanboxRepository: FanboxRepository,
     private val ioDispatcher: CoroutineDispatcher = Dispatchers.IO,
 ) : ViewModel() {
@@ -65,7 +65,7 @@ class PostByCreatorSearchViewModel(
                 PostByCreatorSearchUiState(
                     creatorId = creatorId,
                     creatorDetail = fanboxRepository.getCreatorDetail(creatorId),
-                    userData = userDataRepository.userData.first(),
+                    setting = settingRepository.setting.first(),
                     bookmarkedPostsIds = fanboxRepository.bookmarkedPostsIds.first(),
                     searchedPosts = emptyList(),
                     progress = 0f,
@@ -165,7 +165,7 @@ class PostByCreatorSearchViewModel(
 data class PostByCreatorSearchUiState(
     val creatorId: FanboxCreatorId,
     val creatorDetail: FanboxCreatorDetail,
-    val userData: UserData,
+    val setting: Setting,
     val bookmarkedPostsIds: List<FanboxPostId>,
     val searchedPosts: List<FanboxPost>,
     val progress: Float,

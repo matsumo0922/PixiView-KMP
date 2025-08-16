@@ -30,7 +30,7 @@ import me.matsumo.fanbox.core.logs.logger.LogConfigurator
 import me.matsumo.fanbox.core.logs.logger.send
 import me.matsumo.fanbox.core.model.ThemeConfig
 import me.matsumo.fanbox.core.repository.DownloadPostsRepository
-import me.matsumo.fanbox.core.repository.UserDataRepository
+import me.matsumo.fanbox.core.repository.SettingRepository
 import me.matsumo.fanbox.core.ui.theme.shouldUseDarkTheme
 import me.matsumo.fanbox.feature.service.DownloadPostService
 import org.koin.compose.KoinContext
@@ -39,7 +39,7 @@ import org.koin.core.component.inject
 
 class MainActivity : FragmentActivity(), KoinComponent {
 
-    private val userDataRepository: UserDataRepository by inject()
+    private val settingRepository: SettingRepository by inject()
 
     private val downloadPostsRepository: DownloadPostsRepository by inject()
 
@@ -57,7 +57,7 @@ class MainActivity : FragmentActivity(), KoinComponent {
 
         setContent {
             KoinContext {
-                val userData by userDataRepository.userData.collectAsStateWithLifecycle(null)
+                val userData by settingRepository.setting.collectAsStateWithLifecycle(null)
                 val isSystemInDarkTheme = shouldUseDarkTheme(userData?.themeConfig ?: ThemeConfig.System)
                 val windowSize = calculateWindowSizeClass()
 

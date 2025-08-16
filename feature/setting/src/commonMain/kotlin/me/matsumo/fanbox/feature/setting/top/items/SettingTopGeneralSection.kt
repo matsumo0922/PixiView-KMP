@@ -4,7 +4,7 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import me.matsumo.fanbox.core.model.UserData
+import me.matsumo.fanbox.core.model.Setting
 import me.matsumo.fanbox.core.resources.Res
 import me.matsumo.fanbox.core.resources.setting_top_general
 import me.matsumo.fanbox.core.resources.setting_top_general_app_lock
@@ -27,7 +27,7 @@ import me.matsumo.fanbox.core.ui.component.SettingSwitchItem
 
 @Composable
 internal fun SettingTopGeneralSection(
-    userData: UserData,
+    setting: Setting,
     onClickAppLock: (Boolean) -> Unit,
     onClickFollowTabDefaultHome: (Boolean) -> Unit,
     onClickHideAdultContents: (Boolean) -> Unit,
@@ -48,7 +48,7 @@ internal fun SettingTopGeneralSection(
             modifier = Modifier.fillMaxWidth(),
             title = Res.string.setting_top_general_app_lock,
             description = Res.string.setting_top_general_app_lock_description,
-            value = userData.isUseAppLock,
+            value = setting.isUseAppLock,
             onValueChanged = onClickAppLock,
         )
 
@@ -56,7 +56,7 @@ internal fun SettingTopGeneralSection(
             modifier = Modifier.fillMaxWidth(),
             title = Res.string.setting_top_general_default_follow_tab,
             description = Res.string.setting_top_general_default_follow_tab_description,
-            value = userData.isDefaultFollowTabInHome,
+            value = setting.isDefaultFollowTabInHome,
             onValueChanged = onClickFollowTabDefaultHome,
         )
 
@@ -64,7 +64,7 @@ internal fun SettingTopGeneralSection(
             modifier = Modifier.fillMaxWidth(),
             title = Res.string.setting_top_general_hide_adult_contents,
             description = Res.string.setting_top_general_hide_adult_contents_description,
-            value = userData.isHideAdultContents,
+            value = setting.isHideAdultContents,
             onValueChanged = onClickHideAdultContents,
         )
 
@@ -72,7 +72,7 @@ internal fun SettingTopGeneralSection(
             modifier = Modifier.fillMaxWidth(),
             title = Res.string.setting_top_general_override_adult_contents_setting,
             description = Res.string.setting_top_general_override_adult_contents_setting_description,
-            value = userData.isOverrideAdultContents,
+            value = setting.isOverrideAdultContents,
             onValueChanged = onClickOverrideAdultContents,
         )
 
@@ -80,7 +80,7 @@ internal fun SettingTopGeneralSection(
             modifier = Modifier.fillMaxWidth(),
             title = Res.string.setting_top_general_hide_restricted_contents,
             description = Res.string.setting_top_general_hide_restricted_contents_description,
-            value = userData.isHideRestricted,
+            value = setting.isHideRestricted,
             onValueChanged = onClickHideRestricted,
         )
 
@@ -88,7 +88,7 @@ internal fun SettingTopGeneralSection(
             modifier = Modifier.fillMaxWidth(),
             title = Res.string.setting_top_general_grid_mode,
             description = Res.string.setting_top_general_grid_mode_description,
-            value = userData.isUseGridMode,
+            value = setting.isUseGridMode,
             onValueChanged = onClickGridMode,
         )
 
@@ -96,7 +96,7 @@ internal fun SettingTopGeneralSection(
             modifier = Modifier.fillMaxWidth(),
             title = Res.string.setting_top_general_infinity_post_detail,
             description = Res.string.setting_top_general_infinity_post_detail_description,
-            value = userData.isUseInfinityPostDetail,
+            value = setting.isUseInfinityPostDetail,
             onValueChanged = onClickInfinityPostDetail,
         )
 
@@ -104,7 +104,7 @@ internal fun SettingTopGeneralSection(
             modifier = Modifier.fillMaxWidth(),
             title = Res.string.setting_top_general_auto_image_preview,
             description = Res.string.setting_top_general_auto_image_preview_description,
-            value = userData.isAutoImagePreview,
+            value = setting.isAutoImagePreview,
             onValueChanged = onClickAutoImagePreview,
         )
     }

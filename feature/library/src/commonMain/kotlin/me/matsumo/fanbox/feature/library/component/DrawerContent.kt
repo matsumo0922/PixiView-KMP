@@ -56,7 +56,7 @@ import coil3.compose.SubcomposeAsyncImage
 import coil3.request.ImageRequest
 import kotlinx.coroutines.launch
 import me.matsumo.fanbox.core.model.Destination
-import me.matsumo.fanbox.core.model.UserData
+import me.matsumo.fanbox.core.model.Setting
 import me.matsumo.fanbox.core.resources.Res
 import me.matsumo.fanbox.core.resources.im_default_user
 import me.matsumo.fanbox.core.resources.library_navigation_about
@@ -82,7 +82,7 @@ import org.jetbrains.compose.resources.stringResource
 @Composable
 fun DrawerContent(
     state: DrawerState?,
-    userData: UserData?,
+    setting: Setting?,
     currentDestination: NavDestination?,
     onClickLibrary: (LibraryDestination) -> Unit,
     navigateTo: (Destination) -> Unit,
@@ -101,7 +101,7 @@ fun DrawerContent(
                 .statusBarsPadding(),
         )
 
-        if (userData?.isTestUser == false) {
+        if (setting?.isTestUser == false) {
             NavigationDrawerItem(
                 modifier = Modifier.padding(top = 8.dp),
                 state = state,
@@ -122,7 +122,7 @@ fun DrawerContent(
             onClick = { onClickLibrary.invoke(LibraryDestination.Discovery) },
         )
 
-        if (userData?.isTestUser == false) {
+        if (setting?.isTestUser == false) {
             NavigationDrawerItem(
                 state = state,
                 isSelected = currentDestination.isLibraryDestinationInHierarchy(LibraryDestination.Notify),
@@ -133,7 +133,7 @@ fun DrawerContent(
             )
         }
 
-        if (userData?.isTestUser == false) {
+        if (setting?.isTestUser == false) {
             NavigationDrawerItem(
                 state = state,
                 isSelected = currentDestination.isLibraryDestinationInHierarchy(LibraryDestination.Message),
@@ -157,7 +157,7 @@ fun DrawerContent(
             onClick = { navigateTo(Destination.BookmarkedPosts) },
         )
 
-        if (userData?.isTestUser == false) {
+        if (setting?.isTestUser == false) {
             NavigationDrawerItem(
                 state = state,
                 label = stringResource(Res.string.library_navigation_following),
@@ -166,7 +166,7 @@ fun DrawerContent(
             )
         }
 
-        if (userData?.isTestUser == false) {
+        if (setting?.isTestUser == false) {
             NavigationDrawerItem(
                 state = state,
                 label = stringResource(Res.string.library_navigation_supporting),
@@ -175,7 +175,7 @@ fun DrawerContent(
             )
         }
 
-        if (userData?.isTestUser == false) {
+        if (setting?.isTestUser == false) {
             NavigationDrawerItem(
                 state = state,
                 label = stringResource(Res.string.library_navigation_payments),
@@ -221,8 +221,8 @@ fun DrawerContent(
 
         NavigationDrawerPlusItem(
             state = state,
-            isPlusMode = userData?.isPlusMode == true,
-            isDeveloperMode = userData?.isDeveloperMode == true,
+            isPlusMode = setting?.isPlusMode == true,
+            isDeveloperMode = setting?.isDeveloperMode == true,
             onClick = { navigateTo(Destination.BillingPlusBottomSheet("drawer")) },
         )
     }

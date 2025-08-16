@@ -36,7 +36,7 @@ internal fun LibraryExpandedScreen(
         drawerContent = {
             LibraryPermanentDrawer(
                 state = drawerState,
-                userData = uiState.userData,
+                setting = uiState.setting,
                 currentDestination = navController.currentBackStackEntryAsState().value?.destination,
                 onClickLibrary = navController::navigateToLibraryDestination,
                 navigateTo = navigateTo,
@@ -56,7 +56,7 @@ internal fun LibraryExpandedScreen(
                 LibraryNavHost(
                     modifier = Modifier.fillMaxSize(),
                     navController = navController,
-                    userData = uiState.userData,
+                    setting = uiState.setting,
                     openDrawer = {
                         scope.launch {
                             drawerState.open()

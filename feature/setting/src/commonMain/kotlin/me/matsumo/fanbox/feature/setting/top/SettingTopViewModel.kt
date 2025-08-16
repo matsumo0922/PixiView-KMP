@@ -15,10 +15,10 @@ import me.matsumo.fanbox.core.common.util.suspendRunCatching
 import me.matsumo.fanbox.core.model.DownloadFileType
 import me.matsumo.fanbox.core.model.Flag
 import me.matsumo.fanbox.core.model.ScreenState
-import me.matsumo.fanbox.core.model.UserData
+import me.matsumo.fanbox.core.model.Setting
 import me.matsumo.fanbox.core.repository.FanboxRepository
 import me.matsumo.fanbox.core.repository.FlagRepository
-import me.matsumo.fanbox.core.repository.UserDataRepository
+import me.matsumo.fanbox.core.repository.SettingRepository
 import me.matsumo.fanbox.core.resources.Res
 import me.matsumo.fanbox.core.resources.error_no_data
 import me.matsumo.fanbox.core.resources.home_app_lock_message
@@ -28,16 +28,16 @@ import me.matsumo.fankt.fanbox.domain.model.FanboxMetaData
 import org.jetbrains.compose.resources.getString
 
 class SettingTopViewModel(
-    private val userDataRepository: UserDataRepository,
+    private val settingRepository: SettingRepository,
     private val fanboxRepository: FanboxRepository,
     private val flagRepository: FlagRepository,
     private val pixiViewConfig: PixiViewConfig,
 ) : ViewModel() {
 
-    val screenState = combine(userDataRepository.userData, fanboxRepository.sessionId, ::Pair).map { (userData, sessionId) ->
+    val screenState = combine(settingRepository.setting, fanboxRepository.sessionId, ::Pair).map { (userData, sessionId) ->
         ScreenState.Idle(
             SettingTopUiState(
-                userData = userData,
+                setting = userData,
                 metaData = suspendRunCatching { fanboxRepository.getMetadata() }.getOrElse { getFanboxMetadataDummy() },
                 fanboxSessionId = sessionId ?: "Unknown",
                 config = pixiViewConfig,
@@ -57,55 +57,55 @@ class SettingTopViewModel(
 
     fun setAppLock(isAppLock: Boolean) {
         viewModelScope.launch {
-            userDataRepository.setUseAppLock(isAppLock)
+            settingRepository.setUseAppLock(isAppLock)
         }
     }
 
     fun setDownloadFileType(downloadFileType: DownloadFileType) {
         viewModelScope.launch {
-            userDataRepository.setDownloadFileType(downloadFileType)
+            settingRepository.setDownloadFileType(downloadFileType)
         }
     }
 
     fun setFollowTabDefaultHome(isFollowTabDefaultHome: Boolean) {
         viewModelScope.launch {
-            userDataRepository.setFollowTabDefaultHome(isFollowTabDefaultHome)
+            settingRepository.setFollowTabDefaultHome(isFollowTabDefaultHome)
         }
     }
 
     fun setHideAdultContents(isHideAdultContents: Boolean) {
         viewModelScope.launch {
-            userDataRepository.setHideAdultContents(isHideAdultContents)
+            settingRepository.setHideAdultContents(isHideAdultContents)
         }
     }
 
     fun setOverrideAdultContents(isOverrideAdultContents: Boolean) {
         viewModelScope.launch {
-            userDataRepository.setOverrideAdultContents(isOverrideAdultContents)
+            settingRepository.setOverrideAdultContents(isOverrideAdultContents)
         }
     }
 
     fun setUseInfinityPostDetail(isInfinityPostDetail: Boolean) {
         viewModelScope.launch {
-            userDataRepository.setUseInfinityPostDetail(isInfinityPostDetail)
+            settingRepository.setUseInfinityPostDetail(isInfinityPostDetail)
         }
     }
 
     fun setHideRestricted(isHideRestricted: Boolean) {
         viewModelScope.launch {
-            userDataRepository.setHideRestricted(isHideRestricted)
+            settingRepository.setHideRestricted(isHideRestricted)
         }
     }
 
     fun setGridMode(isGridMode: Boolean) {
         viewModelScope.launch {
-            userDataRepository.setUseGridMode(isGridMode)
+            settingRepository.setUseGridMode(isGridMode)
         }
     }
 
     fun setAutoImagePreview(isAutoImagePreview: Boolean) {
         viewModelScope.launch {
-            userDataRepository.setAutoImagePreview(isAutoImagePreview)
+            settingRepository.setAutoImagePreview(isAutoImagePreview)
         }
     }
 
@@ -119,7 +119,7 @@ class SettingTopViewModel(
 
     fun setDeveloperMode(isDeveloperMode: Boolean) {
         viewModelScope.launch {
-            userDataRepository.setDeveloperMode(isDeveloperMode)
+            settingRepository.setDeveloperMode(isDeveloperMode)
         }
     }
 
@@ -138,7 +138,7 @@ class SettingTopViewModel(
 
 @Stable
 data class SettingTopUiState(
-    val userData: UserData,
+    val setting: Setting,
     val metaData: FanboxMetaData,
     val fanboxSessionId: String,
     val config: PixiViewConfig,

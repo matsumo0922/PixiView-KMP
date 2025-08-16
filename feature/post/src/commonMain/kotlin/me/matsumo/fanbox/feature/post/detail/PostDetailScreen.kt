@@ -65,9 +65,9 @@ import me.matsumo.fanbox.core.logs.category.PostsLog
 import me.matsumo.fanbox.core.logs.logger.send
 import me.matsumo.fanbox.core.model.Destination
 import me.matsumo.fanbox.core.model.ScreenState
+import me.matsumo.fanbox.core.model.Setting
 import me.matsumo.fanbox.core.model.SimpleAlertContents
 import me.matsumo.fanbox.core.model.TranslationState
-import me.matsumo.fanbox.core.model.UserData
 import me.matsumo.fanbox.core.resources.Res
 import me.matsumo.fanbox.core.resources.error_network
 import me.matsumo.fanbox.core.resources.queue_added
@@ -162,7 +162,7 @@ internal fun PostDetailRoute(
                         .shadow(8.dp)
                         .background(MaterialTheme.colorScheme.surfaceColorAtElevation(1.dp)),
                 ) {
-                    if (!uiState.userData.hasPrivilege) {
+                    if (!uiState.setting.hasPrivilege) {
                         BannerAdView(
                             modifier = Modifier.fillMaxWidth(),
                         )
@@ -207,7 +207,7 @@ internal fun PostDetailRoute(
                         modifier = Modifier.fillMaxSize(),
                         state = pagerState,
                         key = { index -> paging[index]?.uniqueValue ?: Uuid.random().toString() },
-                        userScrollEnabled = uiState.userData.isUseInfinityPostDetail,
+                        userScrollEnabled = uiState.setting.isUseInfinityPostDetail,
                     ) { index ->
                         paging[index]?.let { id ->
                             PostDetailView(
@@ -273,7 +273,7 @@ private fun PostDetailView(
             postDetail = uiState.postDetail,
             comments = uiState.comments,
             creatorDetail = uiState.creatorDetail,
-            userData = uiState.userData,
+            setting = uiState.setting,
             metaData = uiState.metaData,
             bookmarkedPostIds = uiState.bookmarkedPostIds.toImmutableList(),
             bodyTransState = uiState.bodyTransState,
@@ -384,7 +384,7 @@ private fun PostDetailScreen(
     comments: PageOffsetInfo<FanboxComment>,
     creatorDetail: FanboxCreatorDetail,
     bookmarkedPostIds: ImmutableList<FanboxPostId>,
-    userData: UserData,
+    setting: Setting,
     metaData: FanboxMetaData,
     bodyTransState: TranslationState<FanboxPostDetail>,
     commentsTransState: TranslationState<PageOffsetInfo<FanboxComment>>,
@@ -466,7 +466,7 @@ private fun PostDetailScreen(
 
             postDetailItems(
                 post = postDetail,
-                userData = userData,
+                setting = setting,
                 bookmarkedPostIds = bookmarkedPostIds,
                 onClickCreator = onClickCreator,
                 onClickPost = onClickPost,
@@ -508,7 +508,7 @@ private fun PostDetailScreen(
             )
 
             // Android は NativeAds なので下部に置く
-            if (!userData.hasPrivilege && currentPlatform == Platform.Android) {
+            if (!setting.hasPrivilege && currentPlatform == Platform.Android) {
                 item {
                     NativeAdView(
                         modifier = Modifier
@@ -548,7 +548,7 @@ private fun PostDetailScreen(
                 onClickCommentDelete = onClickCommentDelete,
                 onClickShowCommentEditor = { isShowCommentEditor = it },
                 onClickTranslate = {
-                    if (userData.hasPrivilege) {
+                    if (setting.hasPrivilege) {
                         onClickCommentsTranslate.invoke(it)
                     } else {
                         onClickBillingPlus.invoke("translate")
@@ -572,7 +572,7 @@ private fun PostDetailScreen(
             isShowHeader = isShowHeader,
             onClickNavigateUp = onTerminate,
             onClickTranslate = {
-                if (userData.hasPrivilege) {
+                if (setting.hasPrivilege) {
                     onClickBodyTranslate.invoke(postDetail)
                 } else {
                     onClickBillingPlus.invoke("translate")

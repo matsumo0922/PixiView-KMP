@@ -17,7 +17,7 @@ import me.matsumo.fanbox.core.billing.swift.PlusProduct
 import me.matsumo.fanbox.core.common.util.format
 import me.matsumo.fanbox.core.common.util.suspendRunCatching
 import me.matsumo.fanbox.core.model.ScreenState
-import me.matsumo.fanbox.core.repository.UserDataRepository
+import me.matsumo.fanbox.core.repository.SettingRepository
 import me.matsumo.fanbox.core.resources.Res
 import me.matsumo.fanbox.core.resources.common_close
 import me.matsumo.fanbox.core.resources.error_billing
@@ -28,10 +28,10 @@ import kotlin.coroutines.resume
 
 @OptIn(ExperimentalForeignApi::class)
 class BillingPlusViewModelImpl(
-    private val userDataRepository: UserDataRepository,
+    private val settingRepository: SettingRepository,
 ) : BillingPlusViewModel() {
 
-    override val screenState = userDataRepository.userData.map { userData ->
+    override val screenState = settingRepository.setting.map { userData ->
         suspendRunCatching {
             callbackFlow {
                 BillingController.queryProductsWithCompletionHandler { products ->
@@ -90,7 +90,7 @@ class BillingPlusViewModelImpl(
 
                     Napier.d { "isPurchased: $isPurchased" }
 
-                    userDataRepository.setPlusMode(isPurchased)
+                    settingRepository.setPlusMode(isPurchased)
                     continuation.resume(isPurchased)
                 }
             },
@@ -110,7 +110,7 @@ class BillingPlusViewModelImpl(
                 viewModelScope.launch {
                     Napier.d { "isPurchased: $it" }
 
-                    userDataRepository.setPlusMode(it)
+                    settingRepository.setPlusMode(it)
                     continuation.resume(it)
                 }
             },

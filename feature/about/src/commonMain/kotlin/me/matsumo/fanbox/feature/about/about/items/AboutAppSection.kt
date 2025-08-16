@@ -21,7 +21,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.unit.dp
 import me.matsumo.fanbox.core.common.PixiViewConfig
-import me.matsumo.fanbox.core.model.UserData
+import me.matsumo.fanbox.core.model.Setting
 import me.matsumo.fanbox.core.resources.Res
 import me.matsumo.fanbox.core.resources.ic_app_icon
 import me.matsumo.fanbox.core.ui.appName
@@ -35,7 +35,7 @@ import org.jetbrains.compose.resources.painterResource
 
 @Composable
 internal fun AboutAppSection(
-    userData: UserData,
+    setting: Setting,
     config: PixiViewConfig,
     onClickGithub: () -> Unit,
     onClickDiscord: () -> Unit,
@@ -77,11 +77,11 @@ internal fun AboutAppSection(
                     Text(
                         modifier = Modifier.fillMaxWidth(),
                         text = "${config.versionName}:${config.versionCode}" + when {
-                            userData.isPlusMode && userData.isDeveloperMode -> " [P+D]"
-                            userData.isPlusMode -> " [Premium]"
-                            userData.isDeveloperMode -> " [Developer]"
+                            setting.isPlusMode && setting.isDeveloperMode -> " [P+D]"
+                            setting.isPlusMode -> " [Premium]"
+                            setting.isDeveloperMode -> " [Developer]"
                             else -> ""
-                        } + if (userData.isTestUser) " [Test]" else "",
+                        } + if (setting.isTestUser) " [Test]" else "",
                         style = MaterialTheme.typography.bodySmall,
                         color = MaterialTheme.colorScheme.onSurfaceVariant,
                     )

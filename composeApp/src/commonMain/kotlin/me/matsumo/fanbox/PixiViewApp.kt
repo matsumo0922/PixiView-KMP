@@ -40,7 +40,6 @@ import me.matsumo.fanbox.core.ui.extensition.currentPlatform
 import me.matsumo.fanbox.core.ui.theme.DarkDefaultColorScheme
 import me.matsumo.fanbox.core.ui.theme.LightDefaultColorScheme
 import me.matsumo.fanbox.core.ui.theme.PixiViewTheme
-import me.matsumo.fanbox.core.ui.theme.shouldUseDarkTheme
 import me.matsumo.fanbox.core.ui.view.LoadingView
 import me.matsumo.fanbox.core.ui.view.NativeView
 import org.koin.compose.koinInject
@@ -82,8 +81,8 @@ fun PixiViewApp(
                 PixiViewTheme(
                     sessionId = it.sessionId,
                     fanboxMetadata = it.fanboxMetadata,
-                    themeConfig = it.userData.themeConfig,
-                    themeColorConfig = it.userData.themeColorConfig,
+                    themeConfig = it.setting.themeConfig,
+                    themeColorConfig = it.setting.themeColorConfig,
                     pixiViewConfig = pixiViewConfig,
                     nativeViews = nativeViews,
                     revealCanvasState = revealCanvasState,
@@ -154,7 +153,7 @@ private fun shouldUseDarkTheme(screenState: ScreenState<MainUiState>): Boolean {
     val default = isSystemInDarkTheme()
     val data = (screenState as? ScreenState.Idle)?.data ?: return default
 
-    return when (data.userData.themeConfig) {
+    return when (data.setting.themeConfig) {
         ThemeConfig.Light -> false
         ThemeConfig.Dark -> true
         ThemeConfig.System -> default

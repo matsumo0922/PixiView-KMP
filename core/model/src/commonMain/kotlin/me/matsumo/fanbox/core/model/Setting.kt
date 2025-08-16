@@ -4,7 +4,7 @@ import androidx.compose.ui.text.intl.Locale
 import kotlinx.serialization.Serializable
 
 @Serializable
-data class UserData(
+data class Setting(
     val pixiViewId: String,
     val themeConfig: ThemeConfig,
     val themeColorConfig: ThemeColorConfig,
@@ -32,9 +32,9 @@ data class UserData(
 
     val isAllowedShowAdultContents get() = !isTestUser && isOverrideAdultContents
 
-    companion object {
-        fun default(): UserData {
-            return UserData(
+    companion object Companion {
+        fun default(): Setting {
+            return Setting(
                 pixiViewId = "",
                 themeConfig = ThemeConfig.System,
                 themeColorConfig = ThemeColorConfig.Blue,

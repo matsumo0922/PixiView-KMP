@@ -30,7 +30,7 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.suspendCancellableCoroutine
 import kotlinx.io.readByteArray
 import me.matsumo.fanbox.core.common.util.suspendRunCatching
-import me.matsumo.fanbox.core.datastore.PixiViewDataStore
+import me.matsumo.fanbox.core.datastore.SettingDataStore
 import me.matsumo.fanbox.core.logs.category.PostsLog
 import me.matsumo.fanbox.core.logs.logger.send
 import me.matsumo.fanbox.core.model.DownloadFileType
@@ -47,7 +47,7 @@ import kotlin.uuid.Uuid
 @OptIn(ExperimentalUuidApi::class)
 class DownloadPostsRepositoryImpl(
     private val context: Context,
-    private val userDataStore: PixiViewDataStore,
+    private val userDataStore: SettingDataStore,
     private val fanboxRepository: FanboxRepository,
     private val scope: CoroutineScope,
 ) : DownloadPostsRepository {
@@ -176,7 +176,7 @@ class DownloadPostsRepositoryImpl(
 
     private suspend fun downloadItem(item: FanboxDownloadItems.Item, onDownload: (Float) -> Unit): Pair<FanboxDownloadItems.Item, File>? {
         return suspendRunCatching {
-            val fileType = userDataStore.userData.first().downloadFileType
+            val fileType = userDataStore.setting.first().downloadFileType
             val url = if (item.extension.lowercase() != "gif" || fileType == DownloadFileType.ORIGINAL) item.originalUrl else item.thumbnailUrl
 
             val tmpFile = File(context.cacheDir, "tmp-${item.name}.${item.extension}")
@@ -243,7 +243,7 @@ class DownloadPostsRepositoryImpl(
     }
 
     private suspend fun getParentFile(requestType: FanboxDownloadItems.RequestType): UniFile? {
-        val userData = userDataStore.userData.first()
+        val userData = userDataStore.setting.first()
 
         return when (requestType) {
             is FanboxDownloadItems.RequestType.Image -> {

@@ -40,7 +40,7 @@ internal fun LibraryMediumScreen(
         drawerContent = {
             LibraryDrawer(
                 state = drawerState,
-                userData = uiState.userData,
+                setting = uiState.setting,
                 currentDestination = navController.currentBackStackEntryAsState().value?.destination,
                 onClickLibrary = navController::navigateToLibraryDestination,
                 navigateTo = navigateTo,
@@ -48,7 +48,7 @@ internal fun LibraryMediumScreen(
         },
     ) {
         Row(Modifier.fillMaxSize()) {
-            if (!uiState.userData.isTestUser) {
+            if (!uiState.setting.isTestUser) {
                 LibraryNavigationRail(
                     modifier = Modifier.fillMaxHeight(),
                     destinations = LibraryDestination.entries.toImmutableList(),
@@ -70,7 +70,7 @@ internal fun LibraryMediumScreen(
                     LibraryNavHost(
                         modifier = Modifier.fillMaxSize(),
                         navController = navController,
-                        userData = uiState.userData,
+                        setting = uiState.setting,
                         openDrawer = {
                             scope.launch {
                                 drawerState.open()

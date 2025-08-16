@@ -12,7 +12,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.unit.dp
 import kotlinx.collections.immutable.ImmutableList
-import me.matsumo.fanbox.core.model.UserData
+import me.matsumo.fanbox.core.model.Setting
 import me.matsumo.fanbox.core.ui.component.AdultContentThumbnail
 import me.matsumo.fanbox.core.ui.component.PostItem
 import me.matsumo.fanbox.core.ui.extensition.LocalFanboxMetadata
@@ -24,7 +24,7 @@ import sh.calvin.autolinktext.rememberAutoLinkText
 
 internal fun LazyListScope.postDetailArticleHeader(
     content: FanboxPostDetail.Body.Article,
-    userData: UserData,
+    setting: Setting,
     bookmarkedPostIds: ImmutableList<FanboxPostId>,
     isAdultContents: Boolean,
     isAutoImagePreview: Boolean,
@@ -48,13 +48,13 @@ internal fun LazyListScope.postDetailArticleHeader(
             }
 
             is FanboxPostDetail.Body.Article.Block.Image -> {
-                if (!userData.isAllowedShowAdultContents && metadata.context?.user?.showAdultContent == false && isAdultContents) {
+                if (!setting.isAllowedShowAdultContents && metadata.context?.user?.showAdultContent == false && isAdultContents) {
                     AdultContentThumbnail(
                         modifier = Modifier
                             .fillMaxWidth()
                             .aspectRatio(it.item.aspectRatio),
                         coverImageUrl = it.item.thumbnailUrl,
-                        isTestUser = userData.isTestUser,
+                        isTestUser = setting.isTestUser,
                     )
                 } else {
                     PostDetailImageItem(
@@ -91,9 +91,9 @@ internal fun LazyListScope.postDetailArticleHeader(
                 ArticleLinkItem(
                     modifier = Modifier.fillMaxWidth(),
                     item = it,
-                    isHideAdultContents = userData.isHideAdultContents,
-                    isOverrideAdultContents = userData.isAllowedShowAdultContents,
-                    isTestUser = userData.isTestUser,
+                    isHideAdultContents = setting.isHideAdultContents,
+                    isOverrideAdultContents = setting.isAllowedShowAdultContents,
+                    isTestUser = setting.isTestUser,
                     isBookmarked = bookmarkedPostIds.contains(it.post?.id),
                     onClickPost = onClickPost,
                     onClickPostLike = onClickPostLike,

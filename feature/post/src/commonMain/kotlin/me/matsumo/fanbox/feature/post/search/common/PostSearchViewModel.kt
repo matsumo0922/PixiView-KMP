@@ -12,9 +12,9 @@ import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
 import kotlinx.serialization.Serializable
 import me.matsumo.fanbox.core.common.util.suspendRunCatching
-import me.matsumo.fanbox.core.model.UserData
+import me.matsumo.fanbox.core.model.Setting
 import me.matsumo.fanbox.core.repository.FanboxRepository
-import me.matsumo.fanbox.core.repository.UserDataRepository
+import me.matsumo.fanbox.core.repository.SettingRepository
 import me.matsumo.fanbox.core.ui.extensition.emptyPaging
 import me.matsumo.fankt.fanbox.domain.model.FanboxCreatorDetail
 import me.matsumo.fankt.fanbox.domain.model.FanboxPost
@@ -24,14 +24,14 @@ import me.matsumo.fankt.fanbox.domain.model.id.FanboxPostId
 import me.matsumo.fankt.fanbox.domain.model.id.FanboxUserId
 
 class PostSearchViewModel(
-    private val userDataRepository: UserDataRepository,
+    private val settingRepository: SettingRepository,
     private val fanboxRepository: FanboxRepository,
 ) : ViewModel() {
 
     private val _uiState = MutableStateFlow(
         PostSearchUiState(
             query = "",
-            userData = UserData.default(),
+            setting = Setting.default(),
             bookmarkedPosts = emptyList(),
             suggestTags = emptyList(),
             creatorPaging = emptyPaging(),
@@ -44,8 +44,8 @@ class PostSearchViewModel(
 
     init {
         viewModelScope.launch {
-            userDataRepository.userData.collectLatest { data ->
-                _uiState.value = uiState.value.copy(userData = data)
+            settingRepository.setting.collectLatest { data ->
+                _uiState.value = uiState.value.copy(setting = data)
             }
         }
 
@@ -61,7 +61,7 @@ class PostSearchViewModel(
             suspendRunCatching {
                 _uiState.value = uiState.value.copy(
                     query = buildQuery(query),
-                    userData = userDataRepository.userData.first(),
+                    setting = settingRepository.setting.first(),
                 )
 
                 when (query.mode) {
@@ -130,7 +130,7 @@ class PostSearchViewModel(
 @Stable
 data class PostSearchUiState(
     val query: String,
-    val userData: UserData,
+    val setting: Setting,
     val bookmarkedPosts: List<FanboxPostId>,
     val suggestTags: List<FanboxTag>,
     val creatorPaging: Flow<PagingData<FanboxCreatorDetail>>,

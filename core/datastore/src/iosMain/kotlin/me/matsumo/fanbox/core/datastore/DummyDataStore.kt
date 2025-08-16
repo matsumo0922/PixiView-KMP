@@ -6,10 +6,10 @@ import me.matsumo.fanbox.core.resources.Res
 import org.jetbrains.compose.resources.ExperimentalResourceApi
 
 class DummyDataStoreImpl(
-    private val userDataStore: PixiViewDataStore,
+    private val userDataStore: SettingDataStore,
 ) : DummyDataStore {
 
-    private val userData = userDataStore.userData
+    private val userData = userDataStore.setting
 
     override suspend fun setDummyData(key: String, value: String) {
         // Dummy implementation

@@ -19,7 +19,7 @@ import me.matsumo.fanbox.core.billing.usecase.ConsumePlusUseCase
 import me.matsumo.fanbox.core.billing.usecase.PurchasePlusSubscriptionUseCase
 import me.matsumo.fanbox.core.billing.usecase.VerifyPlusUseCase
 import me.matsumo.fanbox.core.model.ScreenState
-import me.matsumo.fanbox.core.repository.UserDataRepository
+import me.matsumo.fanbox.core.repository.SettingRepository
 import me.matsumo.fanbox.core.resources.Res
 import me.matsumo.fanbox.core.resources.common_close
 import me.matsumo.fanbox.core.resources.error_billing
@@ -31,7 +31,7 @@ class BillingPlusViewModelImpl(
     private val purchasePlusSubscriptionUseCase: PurchasePlusSubscriptionUseCase,
     private val consumePlusUseCase: ConsumePlusUseCase,
     private val verifyPlusUseCase: VerifyPlusUseCase,
-    private val userDataRepository: UserDataRepository,
+    private val settingRepository: SettingRepository,
     private val ioDispatcher: CoroutineDispatcher,
 ) : BillingPlusViewModel() {
 
@@ -46,7 +46,7 @@ class BillingPlusViewModelImpl(
     init {
         viewModelScope.launch {
             _screenState.value = runCatching {
-                val userData = userDataRepository.userData.firstOrNull()
+                val userData = settingRepository.setting.firstOrNull()
                 val productDetail = billingClient.queryProductDetails(ProductItem.plusSubscription, ProductType.SUBS)
 
                 val plans = productDetail.rawProductDetails.subscriptionOfferDetails?.map {
@@ -102,7 +102,7 @@ class BillingPlusViewModelImpl(
                 )
             }
         }.onSuccess {
-            userDataRepository.setPlusMode(true)
+            settingRepository.setPlusMode(true)
         }.isSuccess
     }
 
@@ -112,7 +112,7 @@ class BillingPlusViewModelImpl(
                 verifyPlusUseCase.invoke()!!
             }
         }.onSuccess {
-            userDataRepository.setPlusMode(true)
+            settingRepository.setPlusMode(true)
         }.isSuccess
     }
 
@@ -122,7 +122,7 @@ class BillingPlusViewModelImpl(
                 consumePlusUseCase.invoke(lastPurchase!!)
             }
         }.onSuccess {
-            userDataRepository.setPlusMode(false)
+            settingRepository.setPlusMode(false)
         }.isSuccess
     }
 }

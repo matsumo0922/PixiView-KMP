@@ -8,7 +8,7 @@ import org.koin.dsl.module
 actual val billingModule: Module = module {
     single<BillingStatus> {
         BillingStatusImpl(
-            userDataRepository = get(),
+            settingRepository = get(),
             ioDispatcher = get(),
         )
     }
