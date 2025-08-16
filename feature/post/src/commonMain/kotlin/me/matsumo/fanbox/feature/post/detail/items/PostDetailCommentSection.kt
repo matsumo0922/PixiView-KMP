@@ -43,8 +43,6 @@ import coil3.annotation.ExperimentalCoilApi
 import coil3.compose.AsyncImage
 import coil3.compose.LocalPlatformContext
 import coil3.request.ImageRequest
-import kotlinx.datetime.Clock
-import kotlinx.datetime.Instant
 import me.matsumo.fanbox.core.model.TranslationState
 import me.matsumo.fanbox.core.resources.Res
 import me.matsumo.fanbox.core.resources.common_delete
@@ -68,6 +66,9 @@ import me.matsumo.fankt.fanbox.domain.model.FanboxPostDetail
 import me.matsumo.fankt.fanbox.domain.model.id.FanboxCommentId
 import me.matsumo.fankt.fanbox.domain.model.id.FanboxPostId
 import org.jetbrains.compose.resources.stringResource
+import kotlin.time.Clock
+import kotlin.time.ExperimentalTime
+import kotlin.time.Instant
 
 internal fun LazyListScope.postDetailCommentItems(
     isShowCommentEditor: Boolean,
@@ -212,6 +213,7 @@ internal fun LazyListScope.postDetailCommentItems(
     }
 }
 
+@OptIn(ExperimentalTime::class)
 @Composable
 private fun CommentItem(
     comment: FanboxComment,
@@ -432,6 +434,7 @@ private fun CommentEditor(
     }
 }
 
+@OptIn(ExperimentalTime::class)
 @Composable
 private fun Instant.toRelativeTimeString(): String {
     val now = Clock.System.now()

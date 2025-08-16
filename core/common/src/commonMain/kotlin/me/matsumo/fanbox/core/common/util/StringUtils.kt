@@ -1,8 +1,10 @@
 package me.matsumo.fanbox.core.common.util
 
-import kotlinx.datetime.Instant
 import kotlinx.datetime.LocalDate
+import kotlin.time.ExperimentalTime
+import kotlin.time.Instant
 
+@OptIn(ExperimentalTime::class)
 expect fun Instant.format(pattern: String): String
 
 expect fun LocalDate.format(pattern: String): String

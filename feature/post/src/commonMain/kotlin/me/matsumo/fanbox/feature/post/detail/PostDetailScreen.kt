@@ -117,6 +117,7 @@ import org.jetbrains.compose.resources.stringResource
 import org.koin.compose.koinInject
 import org.koin.compose.viewmodel.koinViewModel
 import org.koin.core.parameter.parametersOf
+import kotlin.time.ExperimentalTime
 import kotlin.uuid.ExperimentalUuidApi
 import kotlin.uuid.Uuid
 
@@ -590,6 +591,7 @@ private fun PostDetailScreen(
     )
 }
 
+@OptIn(ExperimentalTime::class)
 @Composable
 private fun PostDetailHeader(
     post: FanboxPostDetail,

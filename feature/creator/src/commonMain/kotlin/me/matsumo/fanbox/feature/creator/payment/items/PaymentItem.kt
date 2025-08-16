@@ -24,7 +24,6 @@ import androidx.compose.ui.unit.dp
 import coil3.compose.AsyncImage
 import coil3.compose.LocalPlatformContext
 import coil3.request.ImageRequest
-import kotlinx.datetime.Instant
 import me.matsumo.fanbox.core.common.util.format
 import me.matsumo.fanbox.core.resources.Res
 import me.matsumo.fanbox.core.resources.creator_supporting_payment_method_card
@@ -40,7 +39,10 @@ import me.matsumo.fankt.fanbox.domain.model.FanboxPaidRecord
 import me.matsumo.fankt.fanbox.domain.model.FanboxPaymentMethod
 import me.matsumo.fankt.fanbox.domain.model.id.FanboxCreatorId
 import org.jetbrains.compose.resources.stringResource
+import kotlin.time.ExperimentalTime
+import kotlin.time.Instant
 
+@OptIn(ExperimentalTime::class)
 @Composable
 internal fun PaymentItem(
     payment: Payment,
@@ -84,6 +86,7 @@ internal fun PaymentItem(
     }
 }
 
+@OptIn(ExperimentalTime::class)
 @Composable
 private fun TitleItem(
     dateTime: Instant,

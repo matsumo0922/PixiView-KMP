@@ -16,7 +16,7 @@ kotlin = "2.2.10"
 
 # KotlinX
 kotlinxCoroutines = "1.7.3"
-kotlinxDatetime = "0.6.1"
+kotlinxDatetime = "0.7.1"
 kotlinxSerializationJson = "1.9.0"
 kotlinxImmutable = "0.4.0"
 

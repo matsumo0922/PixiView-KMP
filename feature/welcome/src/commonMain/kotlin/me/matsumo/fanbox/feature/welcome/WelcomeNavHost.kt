@@ -15,7 +15,6 @@ import dev.icerock.moko.permissions.PermissionsController
 import dev.icerock.moko.permissions.compose.BindEffect
 import dev.icerock.moko.permissions.compose.PermissionsControllerFactory
 import dev.icerock.moko.permissions.compose.rememberPermissionsControllerFactory
-import kotlinx.datetime.Clock
 import me.matsumo.fanbox.core.common.util.format
 import me.matsumo.fanbox.core.logs.category.WelcomeLog
 import me.matsumo.fanbox.core.logs.logger.send
@@ -29,7 +28,10 @@ import me.matsumo.fanbox.core.ui.view.simpleAlertDialogDialog
 import me.matsumo.fanbox.feature.welcome.login.welcomeLoginScreen
 import me.matsumo.fanbox.feature.welcome.top.welcomeTopScreen
 import me.matsumo.fanbox.feature.welcome.web.welcomeWebScreen
+import kotlin.time.Clock
+import kotlin.time.ExperimentalTime
 
+@OptIn(ExperimentalTime::class)
 @Composable
 fun WelcomeNavHost(
     onComplete: () -> Unit,
