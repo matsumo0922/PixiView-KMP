@@ -18,18 +18,12 @@ import me.matsumo.fanbox.di.applyModules
 import okio.Path.Companion.toOkioPath
 import org.koin.android.ext.koin.androidContext
 import org.koin.android.ext.koin.androidLogger
-import org.koin.androix.startup.KoinStartup.onKoinStartup
+import org.koin.androix.startup.KoinStartup
+import org.koin.core.annotation.KoinExperimentalAPI
+import org.koin.dsl.koinConfiguration
 
-class PixiViewApplication : Application() {
-
-    init {
-        @Suppress("OPT_IN_USAGE")
-        onKoinStartup {
-            androidContext(applicationContext)
-            androidLogger()
-            applyModules()
-        }
-    }
+@OptIn(KoinExperimentalAPI::class)
+class PixiViewApplication : Application(), KoinStartup {
 
     override fun onCreate() {
         super.onCreate()
@@ -42,6 +36,12 @@ class PixiViewApplication : Application() {
         setupFirebase()
         setupAdMob()
         setupCoil()
+    }
+
+    override fun onKoinStartup() = koinConfiguration {
+        androidContext(this@PixiViewApplication)
+        androidLogger()
+        applyModules()
     }
 
     private fun setupAdMob() {

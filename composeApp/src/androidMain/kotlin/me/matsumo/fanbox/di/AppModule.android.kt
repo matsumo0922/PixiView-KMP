@@ -1,7 +1,6 @@
 package me.matsumo.fanbox.di
 
 import android.os.Build
-import me.matsumo.fanbox.BuildConfig
 import me.matsumo.fanbox.BuildKonfig
 import me.matsumo.fanbox.core.common.PixiViewConfig
 
@@ -16,9 +15,9 @@ actual fun getPixiViewConfig(): PixiViewConfig {
         pixivClientSecret = BuildKonfig.PIXIV_CLIENT_SECRET,
         adMobAndroid = PixiViewConfig.AdMob(
             appId = BuildKonfig.ADMOB_ANDROID_APP_ID,
-            bannerAdUnitId = BuildConfig.ADMOB_ANDROID_BANNER_AD_UNIT_ID,
-            nativeAdUnitId = BuildConfig.ADMOB_ANDROID_NATIVE_AD_UNIT_ID,
-            rewardAdUnitId = BuildConfig.ADMOB_ANDROID_REWARD_AD_UNIT_ID,
+            bannerAdUnitId = BuildKonfig.ADMOB_ANDROID_BANNER_AD_UNIT_ID,
+            nativeAdUnitId = BuildKonfig.ADMOB_ANDROID_NATIVE_AD_UNIT_ID,
+            rewardAdUnitId = BuildKonfig.ADMOB_ANDROID_REWARD_AD_UNIT_ID,
         ),
         adMobIos = PixiViewConfig.AdMob(
             appId = BuildKonfig.ADMOB_IOS_APP_ID,

@@ -1,11 +1,8 @@
 @file:Suppress("UnusedPrivateProperty")
 
-import com.android.build.api.variant.BuildConfigField
 import com.android.build.api.variant.ResValue
 import com.codingfeline.buildkonfig.compiler.FieldSpec
-import com.codingfeline.buildkonfig.gradle.TargetConfigDsl
 import org.jetbrains.kotlin.konan.properties.Properties
-import java.io.Serializable
 
 plugins {
     id("pixiview.primitive.kmp.common")
@@ -76,15 +73,8 @@ android {
             }
 
             it.manifestPlaceholders.apply {
-                putManifestPlaceholder(localProperties, "ADMOB_ANDROID_APP_ID", defaultValue = admobTestAppId)
-                putManifestPlaceholder(localProperties, "ADMOB_IOS_APP_ID", defaultValue = admobTestAppId)
-            }
-
-            it.buildConfigFields.apply {
-                putBuildConfig(localProperties, "ADMOB_ANDROID_APP_ID", defaultValue = admobTestAppId)
-                putBuildConfig(localProperties, "ADMOB_ANDROID_BANNER_AD_UNIT_ID", if (it.buildType != "release") bannerAdTestId else null)
-                putBuildConfig(localProperties, "ADMOB_ANDROID_NATIVE_AD_UNIT_ID", if (it.buildType != "release") nativeAdTestId else null)
-                putBuildConfig(localProperties, "ADMOB_ANDROID_REWARD_AD_UNIT_ID", if (it.buildType != "release") rewardAdTestId else null)
+                put("ADMOB_ANDROID_APP_ID", localProperties.getProperty("ADMOB_ANDROID_APP_ID") ?: admobTestAppId)
+                put("ADMOB_IOS_APP_ID", localProperties.getProperty("ADMOB_IOS_APP_ID") ?: admobTestAppId)
             }
 
             it.resValues.apply {
@@ -96,55 +86,40 @@ android {
             }
         }
     }
-
-    // https://youtrack.jetbrains.com/issue/CMP-6707/Compose-Multiplatform-Resources-and-Kotlin-2.1.0-Beta1-SyncComposeResourcesForIosTask-configuration-failure
-    tasks.findByName("checkSandboxAndWriteProtection")?.dependsOn("syncComposeResourcesForIos")
-
-    dependencies {
-        debugImplementation(libs.facebook.flipper)
-        debugImplementation(libs.facebook.flipper.network)
-        debugImplementation(libs.facebook.flipper.leakcanary)
-        debugImplementation(libs.facebook.soloader)
-        // debugImplementation(libs.leakcanary)
-    }
 }
 
 kotlin {
     sourceSets {
-        val commonMain by getting {
-            dependencies {
-                implementation(project(":core:common"))
-                implementation(project(":core:model"))
-                implementation(project(":core:datastore"))
-                implementation(project(":core:repository"))
-                implementation(project(":core:billing"))
-                implementation(project(":core:ui"))
-                implementation(project(":core:logs"))
-                implementation(project(":core:resources"))
+        commonMain.dependencies {
+            implementation(project(":core:common"))
+            implementation(project(":core:model"))
+            implementation(project(":core:datastore"))
+            implementation(project(":core:repository"))
+            implementation(project(":core:billing"))
+            implementation(project(":core:ui"))
+            implementation(project(":core:logs"))
+            implementation(project(":core:resources"))
 
-                implementation(project(":feature:welcome"))
-                implementation(project(":feature:library"))
-                implementation(project(":feature:setting"))
-                implementation(project(":feature:about"))
-                implementation(project(":feature:post"))
-                implementation(project(":feature:creator"))
-                implementation(project(":feature:service"))
+            implementation(project(":feature:welcome"))
+            implementation(project(":feature:library"))
+            implementation(project(":feature:setting"))
+            implementation(project(":feature:about"))
+            implementation(project(":feature:post"))
+            implementation(project(":feature:creator"))
+            implementation(project(":feature:service"))
 
-                implementation(libs.moko.permissions)
-                implementation(libs.moko.permissions.compose)
-                implementation(libs.moko.biometry)
-                implementation(libs.moko.biometry.compose)
-            }
+            implementation(libs.moko.permissions)
+            implementation(libs.moko.permissions.compose)
+            implementation(libs.moko.biometry)
+            implementation(libs.moko.biometry.compose)
         }
 
-        val androidMain by getting {
-            dependencies {
-                implementation(libs.androidx.core.splashscreen)
-                implementation(libs.play.review)
-                implementation(libs.play.update)
-                implementation(libs.google.material)
-                implementation(libs.koin.androidx.startup)
-            }
+        androidMain.dependencies {
+            implementation(libs.androidx.core.splashscreen)
+            implementation(libs.play.review)
+            implementation(libs.play.update)
+            implementation(libs.google.material)
+            implementation(libs.koin.androidx.startup)
         }
     }
 }
@@ -157,67 +132,33 @@ buildkonfig {
     packageName = "me.matsumo.fanbox"
 
     defaultConfigs {
-        putBuildConfig(localProperties, "VERSION_NAME", libs.versions.versionName.get())
-        putBuildConfig(localProperties, "VERSION_CODE", libs.versions.versionCode.get())
-        putBuildConfig(localProperties, "DEVELOPER_PASSWORD")
-        putBuildConfig(localProperties, "PIXIV_CLIENT_ID")
-        putBuildConfig(localProperties, "PIXIV_CLIENT_SECRET")
-        putBuildConfig(localProperties, "ADMOB_ANDROID_APP_ID", defaultValue = admobTestAppId)
-        putBuildConfig(localProperties, "ADMOB_ANDROID_BANNER_AD_UNIT_ID", defaultValue = bannerAdTestId)
-        putBuildConfig(localProperties, "ADMOB_ANDROID_NATIVE_AD_UNIT_ID", defaultValue = nativeAdTestId)
-        putBuildConfig(localProperties, "ADMOB_ANDROID_REWARD_AD_UNIT_ID", defaultValue = rewardAdTestId)
-        putBuildConfig(localProperties, "ADMOB_IOS_APP_ID", defaultValue = admobTestAppId)
-        putBuildConfig(localProperties, "ADMOB_IOS_BANNER_AD_UNIT_ID", defaultValue = bannerAdTestId)
-        putBuildConfig(localProperties, "ADMOB_IOS_NATIVE_AD_UNIT_ID", defaultValue = nativeAdTestId)
-        putBuildConfig(localProperties, "ADMOB_IOS_REWARD_AD_UNIT_ID", defaultValue = rewardAdTestId)
-        putBuildConfig(localProperties, "OPENAI_API_KEY")
+        fun putBuildConfig(
+            key: String,
+            value: String? = null,
+            defaultValue: String = "",
+        ) {
+            val property = localProperties.getProperty(key)
+            val env = System.getenv(key)
+
+            buildConfigField(FieldSpec.Type.STRING, key, (value ?: property ?: env ?: defaultValue).replace("\"", ""))
+        }
+
+        putBuildConfig("VERSION_NAME", libs.versions.versionName.get())
+        putBuildConfig("VERSION_CODE", libs.versions.versionCode.get())
+        putBuildConfig("DEVELOPER_PASSWORD")
+        putBuildConfig("PIXIV_CLIENT_ID")
+        putBuildConfig("PIXIV_CLIENT_SECRET")
+
+        putBuildConfig("ADMOB_ANDROID_APP_ID", defaultValue = admobTestAppId)
+        putBuildConfig("ADMOB_ANDROID_BANNER_AD_UNIT_ID", defaultValue = bannerAdTestId)
+        putBuildConfig("ADMOB_ANDROID_NATIVE_AD_UNIT_ID", defaultValue = nativeAdTestId)
+        putBuildConfig("ADMOB_ANDROID_REWARD_AD_UNIT_ID", defaultValue = rewardAdTestId)
+
+        putBuildConfig("ADMOB_IOS_APP_ID", defaultValue = admobTestAppId)
+        putBuildConfig("ADMOB_IOS_BANNER_AD_UNIT_ID", defaultValue = bannerAdTestId)
+        putBuildConfig("ADMOB_IOS_NATIVE_AD_UNIT_ID", defaultValue = nativeAdTestId)
+        putBuildConfig("ADMOB_IOS_REWARD_AD_UNIT_ID", defaultValue = rewardAdTestId)
+
+        putBuildConfig("OPENAI_API_KEY")
     }
-}
-
-fun TargetConfigDsl.putBuildConfig(
-    localProperties: Properties,
-    key: String,
-    value: String? = null,
-    defaultValue: String = "",
-) {
-    val property = localProperties.getProperty(key)
-    val env = System.getenv(key)
-
-    buildConfigField(FieldSpec.Type.STRING, key, (value ?: property ?: env ?: defaultValue).replace("\"", ""))
-}
-
-fun MapProperty<String, BuildConfigField<out Serializable>>.putBuildConfig(
-    localProperties: Properties,
-    key: String,
-    value: String? = null,
-    type: String = "String",
-    defaultValue: String = "",
-    comment: String? = null,
-) {
-    val property = localProperties.getProperty(key)
-    val env = System.getenv(key)
-
-    put(key, BuildConfigField(type, (value ?: property ?: env ?: defaultValue).toStringLiteral(), comment))
-}
-
-fun MapProperty<String, String>.putManifestPlaceholder(
-    localProperties: Properties,
-    key: String,
-    value: String? = null,
-    defaultValue: String = "",
-) {
-    val property = localProperties.getProperty(key)
-    val env = System.getenv(key)
-
-    put(key, (value ?: property ?: env ?: defaultValue).replace("\"", ""))
-}
-
-fun Any.toStringLiteral(): String {
-    val value = toString()
-
-    if (value.firstOrNull() == '\"' && value.lastOrNull() == '\"') {
-        return value
-    }
-
-    return "\"$value\""
 }
