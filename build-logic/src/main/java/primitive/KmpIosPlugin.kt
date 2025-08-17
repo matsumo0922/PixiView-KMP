@@ -22,6 +22,12 @@ class KmpIosPlugin : Plugin<Project> {
                         isStatic = true
                     }
                 }
+
+                sourceSets.named { it.lowercase().startsWith("ios") }.configureEach {
+                    languageSettings {
+                        optIn("kotlinx.cinterop.ExperimentalForeignApi")
+                    }
+                }
             }
         }
     }
