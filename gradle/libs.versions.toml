@@ -61,7 +61,7 @@ billing = "6.1.0"
 koin = "4.1.0"
 
 # matsumo
-fankt = "0.0.14"
+fankt = "0.0.15"
 
 # OpenAI
 openai = "4.0.1"

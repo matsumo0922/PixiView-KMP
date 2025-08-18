@@ -88,7 +88,6 @@ data class UpdateSubscriptionCommand(
     fun toSubscriptionUpdateParams(): BillingFlowParams.SubscriptionUpdateParams {
         return BillingFlowParams.SubscriptionUpdateParams.newBuilder()
             .setOldPurchaseToken(oldPurchaseToken)
-            .setReplaceProrationMode(prorationMode)
             .build()
     }
 }

@@ -54,7 +54,6 @@ class BillingClientProviderImpl(context: Context) : BillingClientProvider {
     private val billingClient = BillingClient
         .newBuilder(context)
         .setListener(compositeListener)
-        .enablePendingPurchases()
         .build()
 
     private var state = BillingClientProvider.State.DISCONNECTED
@@ -213,21 +212,21 @@ class BillingClientProviderImpl(context: Context) : BillingClientProvider {
     ) {
         require(state == BillingClientProvider.State.CONNECTED) { "BillingClient is not connected" }
 
-        billingClient.queryProductDetailsAsync(productDetailsCommand.toQueryProductDetailsParams(productType)) { result, products ->
-            when (val response = result.toResponse()) {
-                is BillingResponse.OK -> {
-                    listener.invoke(Result.success(products.translate()))
-                }
-                is BillingResponse.ServiceDisconnected, is BillingResponse.ServiceError -> {
-                    Napier.d("queryProductDetails: service error. CODE=${response.code}")
-                    state = BillingClientProvider.State.DISPOSED
-                    listener.invoke(Result.failure(QueryProductDetailsListFailedException(response, productDetailsCommand)))
-                }
-                else -> {
-                    listener.invoke(Result.failure(QueryProductDetailsListFailedException(response, productDetailsCommand)))
-                }
-            }
-        }
+        /*        billingClient.queryProductDetailsAsync(productDetailsCommand.toQueryProductDetailsParams(productType)) { result, products ->
+                    when (val response = result.toResponse()) {
+                        is BillingResponse.OK -> {
+                            listener.invoke(Result.success(products.translate()))
+                        }
+                        is BillingResponse.ServiceDisconnected, is BillingResponse.ServiceError -> {
+                            Napier.d("queryProductDetails: service error. CODE=${response.code}")
+                            state = BillingClientProvider.State.DISPOSED
+                            listener.invoke(Result.failure(QueryProductDetailsListFailedException(response, productDetailsCommand)))
+                        }
+                        else -> {
+                            listener.invoke(Result.failure(QueryProductDetailsListFailedException(response, productDetailsCommand)))
+                        }
+                    }
+                }*/
     }
 
     override fun queryPurchases(
@@ -267,21 +266,21 @@ class BillingClientProviderImpl(context: Context) : BillingClientProvider {
             .setProductType(productType.rawValue)
             .build()
 
-        billingClient.queryPurchaseHistoryAsync(params) { result, purchases ->
-            when (val response = result.toResponse()) {
-                is BillingResponse.OK -> {
-                    listener.invoke(Result.success(purchases.orEmpty()))
-                }
-                is BillingResponse.ServiceDisconnected, is BillingResponse.ServiceError -> {
-                    Napier.d("queryPurchaseHistory: service error. CODE=${response.code}")
-                    state = BillingClientProvider.State.DISPOSED
-                    listener.invoke(Result.failure(QueryPurchasesFailedException(response)))
-                }
-                else -> {
-                    listener.invoke(Result.failure(QueryPurchasesFailedException(response)))
-                }
-            }
-        }
+        /*        billingClient.queryPurchaseHistoryAsync(params) { result, purchases ->
+                    when (val response = result.toResponse()) {
+                        is BillingResponse.OK -> {
+                            listener.invoke(Result.success(purchases.orEmpty()))
+                        }
+                        is BillingResponse.ServiceDisconnected, is BillingResponse.ServiceError -> {
+                            Napier.d("queryPurchaseHistory: service error. CODE=${response.code}")
+                            state = BillingClientProvider.State.DISPOSED
+                            listener.invoke(Result.failure(QueryPurchasesFailedException(response)))
+                        }
+                        else -> {
+                            listener.invoke(Result.failure(QueryPurchasesFailedException(response)))
+                        }
+                    }
+                }*/
     }
 
     override fun consumePurchase(
