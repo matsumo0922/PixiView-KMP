@@ -1,7 +1,6 @@
 package me.matsumo.fanbox.core.ui.theme
 
 import androidx.compose.foundation.isSystemInDarkTheme
-import androidx.compose.material3.ColorScheme
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.darkColorScheme
 import androidx.compose.material3.lightColorScheme
@@ -12,10 +11,6 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import com.svenjacobs.reveal.RevealCanvasState
 import com.svenjacobs.reveal.rememberRevealCanvasState
-import io.github.alexzhirkevich.cupertino.adaptive.AdaptiveTheme
-import io.github.alexzhirkevich.cupertino.adaptive.ExperimentalAdaptiveApi
-import io.github.alexzhirkevich.cupertino.adaptive.Theme
-import io.github.alexzhirkevich.cupertino.theme.CupertinoTheme
 import kotlinx.collections.immutable.ImmutableMap
 import kotlinx.collections.immutable.persistentMapOf
 import me.matsumo.fanbox.core.common.PixiViewConfig
@@ -40,10 +35,6 @@ import me.matsumo.fanbox.core.ui.view.LocalNativeViewsProvider
 import me.matsumo.fanbox.core.ui.view.NativeView
 import me.matsumo.fanbox.core.ui.view.NativeViews
 import me.matsumo.fankt.fanbox.domain.model.FanboxMetaData
-
-typealias ColorSchemeIOS = io.github.alexzhirkevich.cupertino.theme.ColorScheme
-
-expect fun determineTheme(): Theme
 
 val LightDefaultColorScheme = lightColorScheme(
     primary = Purple40,
@@ -103,7 +94,6 @@ val DarkDefaultColorScheme = darkColorScheme(
 
 val LocalColorScheme = staticCompositionLocalOf { LightDefaultColorScheme }
 
-@OptIn(ExperimentalAdaptiveApi::class)
 @Composable
 fun PixiViewTheme(
     sessionId: String = "",
@@ -135,71 +125,10 @@ fun PixiViewTheme(
         LocalNativeViewsProvider provides NativeViews(nativeViews),
         LocalRevealCanvasState provides revealCanvasState,
     ) {
-        AdaptiveTheme(
-            material = {
-                MaterialTheme(
-                    colorScheme = colorScheme,
-                    typography = PixiViewTypography,
-                    content = it,
-                )
-            },
-            cupertino = {
-                CupertinoTheme(
-                    colorScheme = convertMaterialToIOSColorScheme(colorScheme, shouldUseDarkTheme),
-                    content = it,
-                )
-            },
-            target = determineTheme(),
-        ) {
-            content.invoke()
-        }
-    }
-}
-
-fun convertMaterialToIOSColorScheme(materialScheme: ColorScheme, isDark: Boolean): ColorSchemeIOS {
-    return if (isDark) {
-        io.github.alexzhirkevich.cupertino.theme.darkColorScheme(
-            accent = materialScheme.secondary,
-            label = materialScheme.onSurface,
-            secondaryLabel = materialScheme.onSurfaceVariant,
-            tertiaryLabel = materialScheme.onBackground,
-            quaternaryLabel = materialScheme.onPrimaryContainer,
-            systemFill = materialScheme.primary,
-            secondarySystemFill = materialScheme.primaryContainer,
-            tertiarySystemFill = materialScheme.tertiary,
-            quaternarySystemFill = materialScheme.tertiaryContainer,
-            placeholderText = materialScheme.onBackground,
-            separator = materialScheme.outline,
-            opaqueSeparator = materialScheme.outlineVariant,
-            link = materialScheme.secondary,
-            systemGroupedBackground = materialScheme.surface,
-            secondarySystemGroupedBackground = materialScheme.surfaceVariant,
-            tertiarySystemGroupedBackground = materialScheme.background,
-            systemBackground = materialScheme.surface,
-            secondarySystemBackground = materialScheme.surfaceVariant,
-            tertiarySystemBackground = materialScheme.background,
-        )
-    } else {
-        io.github.alexzhirkevich.cupertino.theme.lightColorScheme(
-            accent = materialScheme.secondary,
-            label = materialScheme.onSurface,
-            secondaryLabel = materialScheme.onSurfaceVariant,
-            tertiaryLabel = materialScheme.onBackground,
-            quaternaryLabel = materialScheme.onPrimaryContainer,
-            systemFill = materialScheme.primary,
-            secondarySystemFill = materialScheme.primaryContainer,
-            tertiarySystemFill = materialScheme.tertiary,
-            quaternarySystemFill = materialScheme.tertiaryContainer,
-            placeholderText = materialScheme.onBackground,
-            separator = materialScheme.outline,
-            opaqueSeparator = materialScheme.outlineVariant,
-            link = materialScheme.secondary,
-            systemGroupedBackground = materialScheme.surface,
-            secondarySystemGroupedBackground = materialScheme.surfaceVariant,
-            tertiarySystemGroupedBackground = materialScheme.background,
-            systemBackground = materialScheme.surface,
-            secondarySystemBackground = materialScheme.surfaceVariant,
-            tertiarySystemBackground = materialScheme.background,
+        MaterialTheme(
+            colorScheme = colorScheme,
+            typography = PixiViewTypography,
+            content = content,
         )
     }
 }

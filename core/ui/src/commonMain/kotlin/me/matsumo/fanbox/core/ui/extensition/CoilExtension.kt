@@ -4,6 +4,7 @@ package me.matsumo.fanbox.core.ui.extensition
 
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.Immutable
@@ -20,8 +21,6 @@ import com.eygraber.compose.placeholder.material3.fade
 import com.eygraber.compose.placeholder.material3.shimmer
 import com.eygraber.compose.placeholder.placeholder
 import io.github.aakira.napier.Napier
-import io.github.alexzhirkevich.cupertino.adaptive.AdaptiveCircularProgressIndicator
-import io.github.alexzhirkevich.cupertino.adaptive.ExperimentalAdaptiveApi
 import me.matsumo.fankt.fanbox.domain.model.FanboxMetaData
 import org.jetbrains.compose.resources.DrawableResource
 
@@ -46,7 +45,10 @@ fun ImageRequest.Builder.fanboxHeader(): ImageRequest.Builder {
             .apply {
                 set("origin", "https://www.fanbox.cc")
                 set("referer", "https://www.fanbox.cc")
-                set("user-agent", "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/98.0.4758.102 Safari/537.36")
+                set(
+                    "user-agent",
+                    "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/98.0.4758.102 Safari/537.36"
+                )
 
                 if (sessionId.isNotBlank()) {
                     set("Cookie", "FANBOXSESSID=$sessionId")
@@ -94,13 +96,12 @@ fun FadePlaceHolder(
     )
 }
 
-@OptIn(ExperimentalAdaptiveApi::class)
 @Composable
 fun IndicatorPlaceHolder(
     modifier: Modifier = Modifier,
 ) {
     Box(modifier.fillMaxSize()) {
-        AdaptiveCircularProgressIndicator(
+        CircularProgressIndicator(
             modifier = Modifier.align(Alignment.Center),
         )
     }

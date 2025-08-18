@@ -14,69 +14,38 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
-import io.github.alexzhirkevich.cupertino.CupertinoActionSheet
-import io.github.alexzhirkevich.cupertino.ExperimentalCupertinoApi
-import io.github.alexzhirkevich.cupertino.cancel
-import io.github.alexzhirkevich.cupertino.default
-import me.matsumo.fanbox.core.resources.Res
-import me.matsumo.fanbox.core.resources.common_cancel
-import me.matsumo.fanbox.core.ui.extensition.Platform
-import me.matsumo.fanbox.core.ui.extensition.currentPlatform
 import org.jetbrains.compose.resources.StringResource
 import org.jetbrains.compose.resources.stringResource
 
 @Suppress("UnstableCollections", "ModifierMissing")
-@OptIn(ExperimentalCupertinoApi::class)
 @Composable
 fun ActionSheet(
     isVisible: Boolean,
     actions: List<Action>,
     onDismissRequest: () -> Unit,
 ) {
-    if (currentPlatform == Platform.Android) {
-        if (!isVisible) return
+    if (!isVisible) return
 
-        Dialog(onDismissRequest = onDismissRequest) {
-            Column(
-                modifier = Modifier
-                    .clip(RoundedCornerShape(8.dp))
-                    .background(MaterialTheme.colorScheme.surface)
-                    .padding(vertical = 8.dp),
-            ) {
-                for (action in actions) {
-                    Text(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .clickable {
-                                action.onClick.invoke()
-                                onDismissRequest.invoke()
-                            }
-                            .padding(20.dp, 16.dp),
-                        text = stringResource(action.text),
-                        style = MaterialTheme.typography.bodyLarge,
-                        color = MaterialTheme.colorScheme.onSurface,
-                    )
-                }
-            }
-        }
-    } else {
-        CupertinoActionSheet(
-            visible = isVisible,
-            onDismissRequest = onDismissRequest,
+    Dialog(onDismissRequest = onDismissRequest) {
+        Column(
+            modifier = Modifier
+                .clip(RoundedCornerShape(8.dp))
+                .background(MaterialTheme.colorScheme.surface)
+                .padding(vertical = 8.dp),
         ) {
             for (action in actions) {
-                default(
-                    onClick = {
-                        action.onClick.invoke()
-                        onDismissRequest.invoke()
-                    },
-                ) {
-                    Text(stringResource(action.text))
-                }
-            }
-
-            cancel(onDismissRequest) {
-                Text(stringResource(Res.string.common_cancel))
+                Text(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .clickable {
+                            action.onClick.invoke()
+                            onDismissRequest.invoke()
+                        }
+                        .padding(20.dp, 16.dp),
+                    text = stringResource(action.text),
+                    style = MaterialTheme.typography.bodyLarge,
+                    color = MaterialTheme.colorScheme.onSurface,
+                )
             }
         }
     }

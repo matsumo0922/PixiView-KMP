@@ -34,6 +34,7 @@ import platform.UIKit.UISheetPresentationControllerDetentIdentifierMedium
 import platform.UIKit.presentationController
 import platform.UIKit.sheetPresentationController
 import kotlin.concurrent.Volatile
+import kotlin.native.concurrent.isFrozen
 
 @Suppress("UnstableCollections", "ModifierMissing")
 @OptIn(ExperimentalMaterial3Api::class)
@@ -116,11 +117,15 @@ private class BottomSheetManager(
         content.invoke()
     }
 
+    @OptIn(ExperimentalMaterial3Api::class)
     private val presentationControllerDelegate = BottomSheetControllerDelegate(
         onDismiss = {
             isPresented = false
             onDismiss.invoke()
         },
+        confirmValueChange = {
+            true // Always allow value changes
+        }
     )
 
     fun show() {

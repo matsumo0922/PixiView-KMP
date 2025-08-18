@@ -25,7 +25,6 @@ kotlin {
                 implementation(project(":core:resources"))
 
                 api(libs.bundles.ui.common.api)
-                api(libs.bundles.cupertino)
 
                 // Compose
                 api(compose.runtime)

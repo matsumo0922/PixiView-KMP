@@ -30,7 +30,7 @@ kmpPaging = "3.3.0-alpha02-0.5.1"
 kmpPurchase = "2.1.0+16.2.0"
 mokoPermissions = "0.18.0"
 mokoBiometry = "0.4.0"
-calf = "0.5.5"
+calf = "0.8.0"
 adaptive = "1.1.2"
 
 # AndroidX
@@ -78,17 +78,11 @@ reveal = "3.3.0"
 detekt = "1.23.8"
 libraries = "11.4.0"
 buildKonfig = "0.17.1"
-cupertino = "0.1.0-alpha04"
 twitterComposeRule = "0.0.26"
 
 # Debugs
 firebase = "33.9.0"
-leakCanary = "2.14"
-flipper = "0.273.0"
 napier = "2.7.1"
-junit = "4.13.2"
-junitVersion = "1.3.0"
-espressoCore = "3.7.0"
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "gradle" }
@@ -177,12 +171,6 @@ moko-permissions-compose = { module = "dev.icerock.moko:permissions-compose", ve
 moko-biometry = { module = "dev.icerock.moko:biometry", version.ref = "mokoBiometry" }
 moko-biometry-compose = { module = "dev.icerock.moko:biometry-compose", version.ref = "mokoBiometry" }
 calf-ui = { module = "com.mohamedrejeb.calf:calf-ui", version.ref = "calf" }
-
-# Cupertino
-cupertino = { module = "io.github.alexzhirkevich:cupertino", version.ref = "cupertino" }
-cupertino-native = { module = "io.github.alexzhirkevich:cupertino-native", version.ref = "cupertino" }
-cupertino-adaptive = { module = "io.github.alexzhirkevich:cupertino-adaptive", version.ref = "cupertino" }
-cupertino-icons = { module = "io.github.alexzhirkevich:cupertino-icons-extended", version.ref = "cupertino" }
 
 # Google
 play-review = { module = "com.google.android.play:review-ktx", version.ref = "playReview" }
@@ -311,13 +299,6 @@ media3 = [
     "androidx-media3-exoplayer-dashboard",
     "androidx-media3-ui",
     "androidx-media3-session",
-]
-
-cupertino = [
-    "cupertino",
-    "cupertino-native",
-    "cupertino-adaptive",
-    "cupertino-icons",
 ]
 
 ktor = [

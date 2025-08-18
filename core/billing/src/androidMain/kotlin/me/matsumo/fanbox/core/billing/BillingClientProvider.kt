@@ -8,6 +8,7 @@ import com.android.billingclient.api.BillingClient.BillingResponseCode
 import com.android.billingclient.api.BillingClientStateListener
 import com.android.billingclient.api.BillingResult
 import com.android.billingclient.api.ConsumeParams
+import com.android.billingclient.api.PendingPurchasesParams
 import com.android.billingclient.api.Purchase
 import com.android.billingclient.api.PurchaseHistoryRecord
 import com.android.billingclient.api.PurchasesUpdatedListener
@@ -54,6 +55,12 @@ class BillingClientProviderImpl(context: Context) : BillingClientProvider {
     private val billingClient = BillingClient
         .newBuilder(context)
         .setListener(compositeListener)
+        .enablePendingPurchases(
+            PendingPurchasesParams.newBuilder()
+                .enableOneTimeProducts()  // 一回限りのアイテムをサポート
+                .enablePrepaidPlans()     // 任意: 定期購入の保留をサポートする場合
+                .build()
+        )
         .build()
 
     private var state = BillingClientProvider.State.DISCONNECTED
