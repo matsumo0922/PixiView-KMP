@@ -1,6 +1,7 @@
 package me.matsumo.fanbox
 
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
 import androidx.navigation.NavController
@@ -18,6 +19,7 @@ import me.matsumo.fanbox.core.ui.component.sheet.ModalBottomSheetLayout
 import me.matsumo.fanbox.core.ui.component.sheet.rememberBottomSheetNavigator
 import me.matsumo.fanbox.core.ui.customNavTypes
 import me.matsumo.fanbox.core.ui.extensition.popBackStackWithResult
+import me.matsumo.fanbox.core.ui.theme.LocalNavController
 import me.matsumo.fanbox.core.ui.view.navigateToSimpleAlertDialog
 import me.matsumo.fanbox.core.ui.view.simpleAlertDialogDialog
 import me.matsumo.fanbox.feature.about.about.aboutScreen
@@ -55,22 +57,24 @@ internal fun PixiViewNavHost(
 
     HandleDeepLink(navController)
 
-    ModalBottomSheetLayout(bottomSheetNavigator) {
-        NavHost(
-            modifier = modifier,
-            navController = navController,
-            startDestination = startDestination,
-            enterTransition = { NavigateAnimation.Horizontal.enter },
-            exitTransition = { NavigateAnimation.Horizontal.exit },
-            popEnterTransition = { NavigateAnimation.Horizontal.popEnter },
-            popExitTransition = { NavigateAnimation.Horizontal.popExit },
-            typeMap = customNavTypes,
-        ) {
-            applyNavGraph(
-                scope = scope,
-                mainNavController = navController,
-                bottomNavigationNavController = bottomNavigationNavController,
-            )
+    CompositionLocalProvider(LocalNavController provides navController) {
+        ModalBottomSheetLayout(bottomSheetNavigator) {
+            NavHost(
+                modifier = modifier,
+                navController = navController,
+                startDestination = startDestination,
+                enterTransition = { NavigateAnimation.Horizontal.enter },
+                exitTransition = { NavigateAnimation.Horizontal.exit },
+                popEnterTransition = { NavigateAnimation.Horizontal.popEnter },
+                popExitTransition = { NavigateAnimation.Horizontal.popExit },
+                typeMap = customNavTypes,
+            ) {
+                applyNavGraph(
+                    scope = scope,
+                    mainNavController = navController,
+                    bottomNavigationNavController = bottomNavigationNavController,
+                )
+            }
         }
     }
 }

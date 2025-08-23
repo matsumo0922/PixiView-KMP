@@ -46,7 +46,7 @@ import me.matsumo.fanbox.core.resources.billing_plus_item_widget_description
 import org.jetbrains.compose.resources.StringResource
 import org.jetbrains.compose.resources.stringResource
 
-internal fun LazyListScope.billingPlusDescriptionSection() {
+internal fun LazyListScope.billingDescriptionSection() {
     item {
         PlusItem(
             modifier = Modifier.fillMaxWidth(),
@@ -137,7 +137,7 @@ private fun PlusItem(
     modifier: Modifier = Modifier,
 ) {
     Row(
-        modifier = modifier.padding(vertical = 16.dp),
+        modifier = modifier.padding(16.dp),
         horizontalArrangement = Arrangement.spacedBy(16.dp),
     ) {
         Icon(
