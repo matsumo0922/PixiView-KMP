@@ -22,9 +22,5 @@ kotlin {
 
             implementation(libs.bundles.purchase)
         }
-
-        androidMain.dependencies {
-            api(libs.bundles.billing)
-        }
     }
 }

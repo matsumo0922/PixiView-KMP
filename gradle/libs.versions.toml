@@ -1,7 +1,7 @@
 [versions]
 # Application
-versionName = "2.2.7"
-versionCode = "65"
+versionName = "2.2.8"
+versionCode = "66"
 
 # SDK
 minSdk = "26"
@@ -52,9 +52,6 @@ playServiceOss = "17.2.2"
 material = "1.12.0"
 ksp = "2.2.10-2.0.2"
 gms = "4.4.3"
-
-# Billing
-billing = "6.1.0"
 
 # koin
 koin = "4.1.0"
@@ -159,10 +156,6 @@ purchases-result = { module = "com.revenuecat.purchases:purchases-kmp-result", v
 adaptive = { module = "org.jetbrains.compose.material3.adaptive:adaptive", version.ref = "adaptive" }
 adaptive-layout = { module = "org.jetbrains.compose.material3.adaptive:adaptive-layout", version.ref = "adaptive" }
 adaptive-navigation = { module = "org.jetbrains.compose.material3.adaptive:adaptive-navigation", version.ref = "adaptive" }
-
-# Billing
-billing = { module = "com.android.billingclient:billing", version.ref = "billing" }
-billing-ktx = { module = "com.android.billingclient:billing-ktx", version.ref = "billing" }
 
 # MOKO
 moko-permissions = { module = "dev.icerock.moko:permissions", version.ref = "mokoPermissions" }
@@ -274,11 +267,6 @@ ui-common-api = [
     "window-size",
     "reveal-core",
     "reveal-shapes",
-]
-
-billing = [
-    "billing",
-    "billing-ktx",
 ]
 
 purchase = [

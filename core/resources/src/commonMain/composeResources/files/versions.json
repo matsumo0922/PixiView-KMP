@@ -222,5 +222,12 @@
     "date": "2025/04/17",
     "logJp": "・一部投稿画面が表示できない問題の修正\n・軽微なUIの修正",
     "logEn": "・Fixed an issue where some posting screens could not be displayed.\n・Minor UI fixes"
+  },
+  {
+    "versionName": "2.2.8",
+    "versionCode": 66,
+    "date": "2025/08/23",
+    "logJp": "・API36に対応\n・Billing Library の更新\n・軽微なUIの修正",
+    "logEn": "・Compatible with API36\n・Billing Library updated\n・Minor UI fixes"
   }
 ]

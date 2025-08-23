@@ -30,7 +30,7 @@ internal fun BillingTopSection(
             append("Buy ")
 
             withStyle(titleStyle.copy(color = MaterialTheme.colorScheme.primary).toSpanStyle()) {
-                append("ID Photo+")
+                append("$appName+")
             }
         }
 
