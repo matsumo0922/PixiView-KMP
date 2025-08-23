@@ -26,22 +26,16 @@ actual fun getPixiViewConfig(): PixiViewConfig {
         developerPassword = BuildKonfig.DEVELOPER_PASSWORD,
         pixivClientId = BuildKonfig.PIXIV_CLIENT_ID,
         pixivClientSecret = BuildKonfig.PIXIV_CLIENT_SECRET,
-        adMobAndroid = PixiViewConfig.AdMob(
-            appId = BuildKonfig.ADMOB_ANDROID_APP_ID,
-            bannerAdUnitId = BuildKonfig.ADMOB_ANDROID_BANNER_AD_UNIT_ID,
-            nativeAdUnitId = BuildKonfig.ADMOB_ANDROID_NATIVE_AD_UNIT_ID,
-            rewardAdUnitId = BuildKonfig.ADMOB_ANDROID_REWARD_AD_UNIT_ID,
-        ),
-        adMobIos = PixiViewConfig.AdMob(
-            appId = BuildKonfig.ADMOB_IOS_APP_ID,
-            bannerAdUnitId = BuildKonfig.ADMOB_IOS_BANNER_AD_UNIT_ID,
-            nativeAdUnitId = BuildKonfig.ADMOB_IOS_NATIVE_AD_UNIT_ID,
-            rewardAdUnitId = BuildKonfig.ADMOB_IOS_REWARD_AD_UNIT_ID,
-        ),
+        bannerAdUnitId = BuildKonfig.ADMOB_IOS_BANNER_AD_UNIT_ID,
+        nativeAdUnitId = BuildKonfig.ADMOB_IOS_NATIVE_AD_UNIT_ID,
+        rewardAdUnitId = BuildKonfig.ADMOB_IOS_REWARD_AD_UNIT_ID,
+        interstitialAdUnitId = BuildKonfig.ADMOB_IOS_INTERSTITIAL_AD_UNIT_ID,
+        appOpenAdUnitId = BuildKonfig.ADMOB_IOS_APP_OPEN_AD_UNIT_ID,
         platform = "iOS",
         platformVersion = "${device.systemVersion}(${device.systemName})",
         device = "${device.model}(${device.name})",
         deviceAbis = architectureName,
         openaiApiKey = BuildKonfig.OPENAI_API_KEY,
+        purchaseApiKey = BuildKonfig.PURCHASE_IOS_API_KEY,
     )
 }

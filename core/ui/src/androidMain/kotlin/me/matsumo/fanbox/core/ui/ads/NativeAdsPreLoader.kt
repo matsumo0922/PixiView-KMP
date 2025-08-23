@@ -45,7 +45,7 @@ class NativeAdsPreLoader(
             }
         }
 
-        adLoader = AdLoader.Builder(context, pixiViewConfig.adMobAndroid.nativeAdUnitId)
+        adLoader = AdLoader.Builder(context, pixiViewConfig.nativeAdUnitId)
             .withNativeAdOptions(nativeAdOptions)
             .withAdListener(adListener)
             .forNativeAd { nativeAd ->

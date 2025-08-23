@@ -19,6 +19,8 @@ val admobTestAppId = "ca-app-pub-0000000000000000~0000000000"
 val bannerAdTestId = "ca-app-pub-3940256099942544/6300978111"
 val nativeAdTestId = "ca-app-pub-3940256099942544/2247696110"
 val rewardAdTestId = "ca-app-pub-3940256099942544/5224354917"
+val interstitialAdTestId = "ca-app-pub-3940256099942544/1033173712"
+val appOpenAdTestId = "ca-app-pub-3940256099942544/9257395921"
 
 android {
     namespace = "me.matsumo.fanbox"
@@ -155,12 +157,19 @@ buildkonfig {
         putBuildConfig("ADMOB_ANDROID_BANNER_AD_UNIT_ID", defaultValue = bannerAdTestId)
         putBuildConfig("ADMOB_ANDROID_NATIVE_AD_UNIT_ID", defaultValue = nativeAdTestId)
         putBuildConfig("ADMOB_ANDROID_REWARD_AD_UNIT_ID", defaultValue = rewardAdTestId)
+        putBuildConfig("ADMOB_ANDROID_INTERSTITIAL_AD_UNIT_ID", defaultValue = interstitialAdTestId)
+        putBuildConfig("ADMOB_ANDROID_APP_OPEN_AD_UNIT_ID", defaultValue = appOpenAdTestId)
 
         putBuildConfig("ADMOB_IOS_APP_ID", defaultValue = admobTestAppId)
         putBuildConfig("ADMOB_IOS_BANNER_AD_UNIT_ID", defaultValue = bannerAdTestId)
         putBuildConfig("ADMOB_IOS_NATIVE_AD_UNIT_ID", defaultValue = nativeAdTestId)
         putBuildConfig("ADMOB_IOS_REWARD_AD_UNIT_ID", defaultValue = rewardAdTestId)
+        putBuildConfig("ADMOB_IOS_INTERSTITIAL_AD_UNIT_ID", defaultValue = interstitialAdTestId)
+        putBuildConfig("ADMOB_IOS_APP_OPEN_AD_UNIT_ID", defaultValue = appOpenAdTestId)
 
         putBuildConfig("OPENAI_API_KEY")
+
+        putBuildConfig("PURCHASE_ANDROID_API_KEY")
+        putBuildConfig("PURCHASE_IOS_API_KEY")
     }
 }

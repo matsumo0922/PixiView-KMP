@@ -16,7 +16,6 @@ import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.isActive
 import kotlinx.coroutines.launch
-import me.matsumo.fanbox.core.billing.BillingStatus
 import me.matsumo.fanbox.core.common.PixiViewConfig
 import me.matsumo.fanbox.core.common.util.suspendRunCatching
 import me.matsumo.fanbox.core.datastore.LaunchLogDataStore
@@ -46,7 +45,6 @@ class PixiViewViewModel(
     private val launchLogDataStore: LaunchLogDataStore,
     private val oldCookieDataStore: OldCookieDataStore,
     private val pixiViewConfig: PixiViewConfig,
-    private val billingStatus: BillingStatus,
 ) : ViewModel() {
 
     private val _isLoggedInFlow: MutableSharedFlow<Boolean> = MutableSharedFlow(replay = 1)
@@ -113,15 +111,15 @@ class PixiViewViewModel(
     }
 
     fun billingClientInitialize() {
-        billingStatus.init()
+        // billingStatus.init()
     }
 
     fun billingClientFinish() {
-        billingStatus.finish()
+        // billingStatus.finish()
     }
 
     fun billingClientUpdate() {
-        billingStatus.update()
+        // billingStatus.update()
     }
 
     @OptIn(ExperimentalUuidApi::class)

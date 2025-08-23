@@ -57,7 +57,7 @@ actual fun BannerAdView(modifier: Modifier) {
     }
 
     val adManagerAdView = rememberAdViewWithLifecycle(
-        adUnitId = pixiViewConfig.adMobAndroid.bannerAdUnitId,
+        adUnitId = pixiViewConfig.bannerAdUnitId,
         adRequest = AdRequest.Builder().build(),
         adListener = object : AdListener() {
             override fun onAdFailedToLoad(error: LoadAdError) {

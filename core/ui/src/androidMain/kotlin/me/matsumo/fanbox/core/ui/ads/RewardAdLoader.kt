@@ -54,6 +54,6 @@ class RewardAdLoader(
             }
         }
 
-        RewardedAd.load(context, pixiViewConfig.adMobAndroid.rewardAdUnitId, adRequest, adLoadCallback)
+        RewardedAd.load(context, pixiViewConfig.rewardAdUnitId, adRequest, adLoadCallback)
     }
 }
