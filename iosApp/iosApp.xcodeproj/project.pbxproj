@@ -665,8 +665,8 @@
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/RevenueCat/purchases-hybrid-common";
 			requirement = {
-				kind = upToNextMajorVersion;
-				minimumVersion = 16.2.2;
+				kind = exactVersion;
+				version = 16.2.0;
 			};
 		};
 /* End XCRemoteSwiftPackageReference section */

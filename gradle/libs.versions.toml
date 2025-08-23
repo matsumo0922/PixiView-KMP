@@ -23,7 +23,6 @@ kotlinxImmutable = "0.4.0"
 # KMP
 kmpCompose = "1.9.0-beta03"
 kmpComplete = "1.1.0"
-kmpSwiftKlib = "0.6.4"
 kmpLifecycle = "2.9.2"
 kmpNavigation = "2.9.0-beta05"
 kmpPaging = "3.3.0-alpha02-0.5.1"
@@ -97,7 +96,6 @@ libraries = { id = "com.mikepenz.aboutlibraries.plugin", version.ref = "librarie
 kmp = { id = "org.jetbrains.kotlin.multiplatform", version.ref = "kotlin" }
 kmpCompose = { id = "org.jetbrains.compose", version.ref = "kmpCompose" }
 kmpComplete = { id = "com.louiscad.complete-kotlin", version.ref = "kmpComplete" }
-kmpSwiftKlib = { id = "io.github.ttypic.swiftklib", version.ref = "kmpSwiftKlib" }
 kotlin-android = { id = "org.jetbrains.kotlin.android", version.ref = "kotlin" }
 
 [libraries]

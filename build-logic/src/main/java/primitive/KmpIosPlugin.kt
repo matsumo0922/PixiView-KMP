@@ -5,10 +5,6 @@ import org.gradle.api.Project
 class KmpIosPlugin : Plugin<Project> {
     override fun apply(target: Project) {
         with(target) {
-            with(pluginManager) {
-                apply("io.github.ttypic.swiftklib")
-            }
-
             kotlin {
                 applyDefaultHierarchyTemplate()
 

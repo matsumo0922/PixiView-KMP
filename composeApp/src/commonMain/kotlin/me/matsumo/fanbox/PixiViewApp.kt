@@ -127,7 +127,7 @@ fun PixiViewApp(
                 DisposableEffect(lifecycleOwner) {
                     val observer = object : DefaultLifecycleObserver {
                         override fun onCreate(owner: LifecycleOwner) {
-                            viewModel.billingClientInitialize()
+                            // viewModel.billingClientInitialize()
                         }
 
                         override fun onResume(owner: LifecycleOwner) {

@@ -8,10 +8,13 @@ import com.revenuecat.purchases.kmp.ktx.awaitOfferings
 import com.revenuecat.purchases.kmp.ktx.awaitPurchase
 import com.revenuecat.purchases.kmp.models.PackageType
 import com.revenuecat.purchases.kmp.models.StoreProduct
+import io.github.aakira.napier.Napier
 import kotlinx.coroutines.CoroutineDispatcher
+import kotlinx.coroutines.suspendCancellableCoroutine
 import kotlinx.coroutines.withContext
 import me.matsumo.fanbox.core.common.PixiViewConfig
 import me.matsumo.fanbox.core.model.BillingPlan
+import kotlin.coroutines.resume
 
 class BillingClient(
     val pixiViewConfig: PixiViewConfig,
@@ -28,6 +31,8 @@ class BillingClient(
         val customerInfo = Purchases.sharedInstance.awaitCustomerInfo()
         val entitlement = customerInfo.entitlements[PLUS_ENTITLEMENT_ID]
 
+        Napier.d { "entitlement: $entitlement" }
+
         return@withContext entitlement?.isActive == true
     }
 
@@ -37,6 +42,20 @@ class BillingClient(
         val entitlement = result.customerInfo.entitlements[PLUS_ENTITLEMENT_ID]
 
         return@withContext entitlement?.isActive == true
+    }
+
+    suspend fun restore() = suspendCancellableCoroutine { continuation ->
+        Purchases.sharedInstance.restorePurchases(
+            onSuccess = {
+                Napier.d { "restore success: $it" }
+                val entitlement = it.entitlements[PLUS_ENTITLEMENT_ID]
+                continuation.resume(entitlement?.isActive == true)
+            },
+            onError = {
+                Napier.d { "restore error: $it" }
+                continuation.resume(false)
+            },
+        )
     }
 
     suspend fun getPlans() = withContext(ioDispatcher) {

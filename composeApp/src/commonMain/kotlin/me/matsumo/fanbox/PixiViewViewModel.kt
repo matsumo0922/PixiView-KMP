@@ -16,6 +16,7 @@ import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.isActive
 import kotlinx.coroutines.launch
+import me.matsumo.fanbox.core.billing.BillingClient
 import me.matsumo.fanbox.core.common.PixiViewConfig
 import me.matsumo.fanbox.core.common.util.suspendRunCatching
 import me.matsumo.fanbox.core.datastore.LaunchLogDataStore
@@ -44,6 +45,7 @@ class PixiViewViewModel(
     private val downloadPostsRepository: DownloadPostsRepository,
     private val launchLogDataStore: LaunchLogDataStore,
     private val oldCookieDataStore: OldCookieDataStore,
+    private val billingClient: BillingClient,
     private val pixiViewConfig: PixiViewConfig,
 ) : ViewModel() {
 
@@ -110,16 +112,14 @@ class PixiViewViewModel(
         }
     }
 
-    fun billingClientInitialize() {
-        // billingStatus.init()
-    }
-
-    fun billingClientFinish() {
-        // billingStatus.finish()
-    }
-
     fun billingClientUpdate() {
-        // billingStatus.update()
+        viewModelScope.launch {
+            delay(3000)
+
+            suspendRunCatching { billingClient.hasPlus() }.onSuccess {
+                settingRepository.setPlusMode(it)
+            }
+        }
     }
 
     @OptIn(ExperimentalUuidApi::class)

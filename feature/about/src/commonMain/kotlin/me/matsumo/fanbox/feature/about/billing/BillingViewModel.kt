@@ -89,7 +89,7 @@ class BillingViewModel(
 
     private fun handleRestore() {
         viewModelScope.launch {
-            val result = suspendRunCatching { billingClient.hasPlus() }.getOrElse { false }
+            val result = suspendRunCatching { billingClient.restore() }.getOrElse { false }
 
             if (result) {
                 settingRepository.setPlusMode(true)
