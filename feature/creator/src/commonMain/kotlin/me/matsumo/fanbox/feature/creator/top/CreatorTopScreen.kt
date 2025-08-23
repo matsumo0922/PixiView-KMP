@@ -39,7 +39,9 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
+import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.backhandler.BackHandler
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.layout.onGloballyPositioned
@@ -79,7 +81,6 @@ import me.matsumo.fanbox.core.ui.appName
 import me.matsumo.fanbox.core.ui.component.CollapsingToolbarScaffold
 import me.matsumo.fanbox.core.ui.component.ScrollStrategy
 import me.matsumo.fanbox.core.ui.component.rememberCollapsingToolbarScaffoldState
-import me.matsumo.fanbox.core.ui.extensition.BackHandler
 import me.matsumo.fanbox.core.ui.extensition.LocalRevealCanvasState
 import me.matsumo.fanbox.core.ui.extensition.LocalSnackbarHostState
 import me.matsumo.fanbox.core.ui.extensition.NavigatorExtension
@@ -209,6 +210,7 @@ internal fun CreatorTopRoute(
     }
 }
 
+@OptIn(ExperimentalComposeUiApi::class)
 @Composable
 private fun CreatorTopScreen(
     revealState: RevealState,

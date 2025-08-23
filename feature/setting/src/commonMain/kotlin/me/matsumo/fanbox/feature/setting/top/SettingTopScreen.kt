@@ -123,7 +123,7 @@ internal fun SettingTopRoute(
             onClickFollowTabDefaultHome = viewModel::setFollowTabDefaultHome,
             onClickHideAdultContents = viewModel::setHideAdultContents,
             onClickOverrideAdultContents = viewModel::setOverrideAdultContents,
-            onClickInfinityPostDetail = viewModel::setUseInfinityPostDetail,
+            onClickInfinityPostDetail = { requirePlus(it, viewModel::setUseInfinityPostDetail, "isUseInfinityPostDetail") },
             onClickGridMode = { requirePlus(it, viewModel::setGridMode, "isUseGridMode") },
             onClickHideRestricted = { requirePlus(it, viewModel::setHideRestricted, "isHideRestricted") },
             onClickAppLock = { requirePlus(it, viewModel::setAppLock, "isUseAppLock") },

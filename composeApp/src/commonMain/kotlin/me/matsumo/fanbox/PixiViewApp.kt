@@ -92,6 +92,7 @@ fun PixiViewApp(
                             modifier = Modifier.fillMaxSize(),
                             uiState = it,
                             onRequestInitPixiViewId = viewModel::initPixiViewId,
+                            onRequestFirstLaunchFlag = viewModel::initFirstLaunchTime,
                             onRequestUpdateState = viewModel::updateState,
                         )
 

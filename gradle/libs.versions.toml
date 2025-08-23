@@ -25,6 +25,7 @@ kmpCompose = "1.9.0-beta03"
 kmpComplete = "1.1.0"
 kmpLifecycle = "2.9.2"
 kmpNavigation = "2.9.0-beta05"
+kmpBackHandler = "1.9.0-beta03"
 kmpPaging = "3.3.0-alpha02-0.5.1"
 kmpPurchase = "2.1.0+16.2.0"
 mokoPermissions = "0.18.0"
@@ -38,7 +39,6 @@ androidxCoreSplash = "1.0.1"
 androidxAppCompat = "1.7.1"
 androidxActivity = "1.10.1"
 androidxFragment = "1.8.9"
-androidxPreference = "1.2.1"
 androidxDataStore = "1.1.7"
 androidxAnnotation = "1.9.1"
 androidxMedia3 = "1.8.0"
@@ -147,6 +147,7 @@ androidx-compose-ui-tooling-preview = { module = "androidx.compose.ui:ui-tooling
 kmp-lifecycle-runtime-compose = { module = "org.jetbrains.androidx.lifecycle:lifecycle-runtime-compose", version.ref = "kmpLifecycle" }
 kmp-lifecycle-viewmodel-compose = { module = "org.jetbrains.androidx.lifecycle:lifecycle-viewmodel-compose", version.ref = "kmpLifecycle" }
 kmp-navigation-compose = { module = "org.jetbrains.androidx.navigation:navigation-compose", version.ref = "kmpNavigation" }
+kmp-backandler = { module = "org.jetbrains.compose.ui:ui-backhandler", version.ref = "kmpBackHandler" }
 kmp-paging-common = { module = "app.cash.paging:paging-common", version.ref = "kmpPaging" }
 kmp-paging-compose = { module = "app.cash.paging:paging-compose-common", version.ref = "kmpPaging" }
 
@@ -264,6 +265,7 @@ ui-common-api = [
     "kmp-lifecycle-runtime-compose",
     "kmp-lifecycle-viewmodel-compose",
     "kmp-navigation-compose",
+    "kmp-backandler",
     "kmp-paging-common",
     "kmp-paging-compose",
     "coil3-compose",

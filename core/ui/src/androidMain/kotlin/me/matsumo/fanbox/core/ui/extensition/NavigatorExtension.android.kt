@@ -7,7 +7,6 @@ import android.net.Uri
 import android.os.Process
 import android.widget.Toast
 import androidx.browser.customtabs.CustomTabsIntent
-import androidx.compose.runtime.Composable
 import androidx.core.net.toUri
 import io.github.aakira.napier.Napier
 import me.matsumo.fanbox.core.logs.category.NavigationLog
@@ -58,9 +57,4 @@ class NavigatorExtensionImpl(
 
         return resolveInfo?.activityInfo?.packageName
     }
-}
-
-@Composable
-actual fun BackHandler(isEnable: Boolean, onBack: () -> Unit) {
-    androidx.activity.compose.BackHandler(isEnable, onBack)
 }

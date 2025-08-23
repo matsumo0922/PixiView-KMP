@@ -10,7 +10,6 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.navigation.compose.rememberNavController
@@ -23,11 +22,10 @@ import me.matsumo.fanbox.feature.welcome.WelcomeNavHost
 internal fun PixiViewScreen(
     uiState: MainUiState,
     onRequestInitPixiViewId: () -> Unit,
+    onRequestFirstLaunchFlag: () -> Unit,
     onRequestUpdateState: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
-    val scope = rememberCoroutineScope()
-
     val bottomSheetNavigator = rememberBottomSheetNavigator()
     val navController = rememberNavController(bottomSheetNavigator)
 
@@ -40,6 +38,10 @@ internal fun PixiViewScreen(
     LaunchedEffect(true) {
         if (uiState.setting.pixiViewId.isBlank()) {
             onRequestInitPixiViewId.invoke()
+        }
+
+        if (uiState.setting.firstLaunchTime == -1L) {
+            onRequestFirstLaunchFlag.invoke()
         }
     }
 

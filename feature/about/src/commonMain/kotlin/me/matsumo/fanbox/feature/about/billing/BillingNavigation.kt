@@ -1,17 +1,19 @@
 package me.matsumo.fanbox.feature.about.billing
 
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.backhandler.PredictiveBackHandler
 import androidx.navigation.NavGraphBuilder
 import me.matsumo.fanbox.core.model.Destination
 import me.matsumo.fanbox.core.ui.component.sheet.bottomSheet
-import me.matsumo.fanbox.core.ui.extensition.BackHandler
 
+@OptIn(ExperimentalComposeUiApi::class)
 fun NavGraphBuilder.billingPlusBottomSheet(
     terminate: () -> Unit,
 ) {
     bottomSheet<Destination.BillingPlusBottomSheet> {
-        BackHandler {
+        PredictiveBackHandler {
             terminate()
         }
 

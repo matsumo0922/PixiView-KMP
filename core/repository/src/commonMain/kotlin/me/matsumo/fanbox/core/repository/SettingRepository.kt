@@ -26,6 +26,7 @@ interface SettingRepository {
     suspend fun setImageSaveDirectory(directory: String)
     suspend fun setFileSaveDirectory(directory: String)
     suspend fun setPostSaveDirectory(directory: String)
+    suspend fun setFirstLaunchTime(time: Long)
     suspend fun setUseDynamicColor(useDynamicColor: Boolean)
     suspend fun setUseAppLock(isAppLock: Boolean)
     suspend fun setUseGridMode(isGridMode: Boolean)
@@ -94,6 +95,10 @@ class SettingRepositoryImpl(
         settingDataStore.setPostSaveDirectory(directory)
     }
 
+    override suspend fun setFirstLaunchTime(time: Long) {
+        settingDataStore.setFirstLaunchTime(time)
+    }
+
     override suspend fun setUseAppLock(isAppLock: Boolean) {
         settingDataStore.setUseAppLock(isAppLock)
     }
@@ -148,6 +153,7 @@ class SettingRepositoryImpl(
                 setUseAppLock(false)
                 setHideRestricted(false)
                 setUseGridMode(false)
+                setUseInfinityPostDetail(false)
                 setAutoImagePreview(false)
             }
         }

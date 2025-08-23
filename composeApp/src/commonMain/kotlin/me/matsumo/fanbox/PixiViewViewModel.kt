@@ -35,7 +35,9 @@ import me.matsumo.fanbox.core.resources.home_app_lock_title
 import me.matsumo.fanbox.core.ui.extensition.getFanboxMetadataDummy
 import me.matsumo.fankt.fanbox.domain.model.FanboxMetaData
 import org.jetbrains.compose.resources.getString
+import kotlin.time.Clock
 import kotlin.time.Duration.Companion.minutes
+import kotlin.time.ExperimentalTime
 import kotlin.uuid.ExperimentalUuidApi
 import kotlin.uuid.Uuid
 
@@ -122,10 +124,17 @@ class PixiViewViewModel(
         }
     }
 
-    @OptIn(ExperimentalUuidApi::class)
+    @OptIn(ExperimentalUuidApi::class, ExperimentalTime::class)
     fun initPixiViewId() {
         viewModelScope.launch {
             settingRepository.setPixiViewId(Uuid.random().toString())
+        }
+    }
+
+    @OptIn(ExperimentalTime::class)
+    fun initFirstLaunchTime() {
+        viewModelScope.launch {
+            settingRepository.setFirstLaunchTime(Clock.System.now().epochSeconds)
         }
     }
 

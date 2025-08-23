@@ -2,6 +2,8 @@ package me.matsumo.fanbox.core.model
 
 import androidx.compose.ui.text.intl.Locale
 import kotlinx.serialization.Serializable
+import kotlin.time.Clock
+import kotlin.time.ExperimentalTime
 
 @Serializable
 data class Setting(
@@ -13,6 +15,7 @@ data class Setting(
     val imageSaveDirectory: String,
     val fileSaveDirectory: String,
     val postSaveDirectory: String,
+    val firstLaunchTime: Long,
     val isAgreedPrivacyPolicy: Boolean,
     val isAgreedTermsOfService: Boolean,
     val isUseAppLock: Boolean,
@@ -32,7 +35,11 @@ data class Setting(
 
     val isAllowedShowAdultContents get() = !isTestUser && isOverrideAdultContents
 
+    @OptIn(ExperimentalTime::class)
+    val shouldShowInterstitialAd get() = (Clock.System.now().epochSeconds - firstLaunchTime) > 300L // 1日(=24*60*60秒)
+
     companion object Companion {
+        @OptIn(ExperimentalTime::class)
         fun default(): Setting {
             return Setting(
                 pixiViewId = "",
@@ -43,6 +50,7 @@ data class Setting(
                 imageSaveDirectory = "",
                 fileSaveDirectory = "",
                 postSaveDirectory = "",
+                firstLaunchTime = -1L,
                 isAgreedPrivacyPolicy = false,
                 isAgreedTermsOfService = false,
                 isUseAppLock = false,

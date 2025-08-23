@@ -1,6 +1,5 @@
 package me.matsumo.fanbox.core.ui.extensition
 
-import androidx.compose.runtime.Composable
 import io.github.aakira.napier.Napier
 import kotlinx.cinterop.ExperimentalForeignApi
 import me.matsumo.fanbox.core.logs.category.NavigationLog
@@ -30,9 +29,4 @@ class NavigatorExtensionImpl : NavigatorExtension {
             withObject = null,
         )
     }
-}
-
-@Composable
-actual fun BackHandler(isEnable: Boolean, onBack: () -> Unit) {
-    // Not supported on iOS
 }

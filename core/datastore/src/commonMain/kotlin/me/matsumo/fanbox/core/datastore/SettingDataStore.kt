@@ -2,6 +2,7 @@ package me.matsumo.fanbox.core.datastore
 
 import androidx.datastore.preferences.core.booleanPreferencesKey
 import androidx.datastore.preferences.core.edit
+import androidx.datastore.preferences.core.longPreferencesKey
 import androidx.datastore.preferences.core.stringPreferencesKey
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.flow.first
@@ -37,6 +38,7 @@ class SettingDataStore(
             setImageSaveDirectory(data.imageSaveDirectory)
             setFileSaveDirectory(data.fileSaveDirectory)
             setPostSaveDirectory(data.postSaveDirectory)
+            setFirstLaunchTime(data.firstLaunchTime)
             setUseDynamicColor(data.isUseDynamicColor)
             setUseAppLock(data.isUseAppLock)
             setUseGridMode(data.isUseGridMode)
@@ -189,6 +191,20 @@ class SettingDataStore(
 
         settingPreference.edit {
             it[stringPreferencesKey(Setting::postSaveDirectory.name)] = directory
+        }
+    }
+
+    suspend fun setFirstLaunchTime(time: Long) = withContext(ioDispatcher) {
+        if (setting.first().firstLaunchTime == time) return@withContext
+
+        SettingsLog.update(
+            propertyName = "firstLaunchTime",
+            oldValue = setting.first().firstLaunchTime.toString(),
+            newValue = time.toString(),
+        ).send()
+
+        settingPreference.edit {
+            it[longPreferencesKey(Setting::firstLaunchTime.name)] = time
         }
     }
 
