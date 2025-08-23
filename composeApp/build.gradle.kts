@@ -171,5 +171,7 @@ buildkonfig {
 
         putBuildConfig("PURCHASE_ANDROID_API_KEY")
         putBuildConfig("PURCHASE_IOS_API_KEY")
+
+        putBuildConfig("APPLOVIN_SDK_KEY")
     }
 }

@@ -58,6 +58,7 @@ import com.svenjacobs.reveal.RevealOverlayScope
 import com.svenjacobs.reveal.RevealState
 import com.svenjacobs.reveal.rememberRevealState
 import com.svenjacobs.reveal.shapes.balloon.Arrow
+import io.github.aakira.napier.Napier
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.toImmutableList
 import kotlinx.coroutines.delay
@@ -153,7 +154,7 @@ internal fun PostDetailRoute(
     val revealOverlayContainerColor = MaterialTheme.colorScheme.tertiaryContainer
     val revealOverlayContentColor = MaterialTheme.colorScheme.onTertiaryContainer
 
-    val shouldShowInterstitialAdRandom by remember(postId) { mutableStateOf(Random.nextInt(5) == 1) }
+    val shouldShowInterstitialAdRandom by remember(postId) { mutableStateOf(Random.nextInt(3) == 1) }
     val interstitialAdState = rememberInterstitialAdState(
         adUnitId = LocalPixiViewConfig.current.interstitialAdUnitId,
         enable = !uiState.setting.hasPrivilege && uiState.setting.shouldShowInterstitialAd && shouldShowInterstitialAdRandom,
@@ -164,6 +165,10 @@ internal fun PostDetailRoute(
             interstitialAdState.show()
             terminate.invoke()
         }
+    }
+
+    LaunchedEffect(shouldShowInterstitialAdRandom) {
+        Napier.d("shouldShowInterstitialAdRandom: $shouldShowInterstitialAdRandom, ${!uiState.setting.hasPrivilege && uiState.setting.shouldShowInterstitialAd}")
     }
 
     LaunchedEffect(true) {
