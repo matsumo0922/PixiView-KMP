@@ -154,7 +154,7 @@ internal fun PostDetailRoute(
     val revealOverlayContainerColor = MaterialTheme.colorScheme.tertiaryContainer
     val revealOverlayContentColor = MaterialTheme.colorScheme.onTertiaryContainer
 
-    val shouldShowInterstitialAdRandom by remember(postId) { mutableStateOf(Random.nextInt(3) == 1) }
+    val shouldShowInterstitialAdRandom by remember(postId) { mutableStateOf(Random.nextInt(5) == 1) }
     val interstitialAdState = rememberInterstitialAdState(
         adUnitId = LocalPixiViewConfig.current.interstitialAdUnitId,
         enable = !uiState.setting.hasPrivilege && uiState.setting.shouldShowInterstitialAd && shouldShowInterstitialAdRandom,
