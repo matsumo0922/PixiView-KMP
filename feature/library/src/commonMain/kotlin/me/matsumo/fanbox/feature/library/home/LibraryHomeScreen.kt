@@ -73,10 +73,12 @@ internal fun LibraryHomeScreen(
 
     LaunchedEffect(true) {
         viewModel.updatePlusTrigger.collectLatest {
-            val content = if (it) SimpleAlertContents.PurchasePlus else SimpleAlertContents.CancelPlus
-            val destination = Destination.SimpleAlertDialog(content)
+            if (!it) {
+                val content = SimpleAlertContents.CancelPlus
+                val destination = Destination.SimpleAlertDialog(content)
 
-            navigateTo(destination)
+                navigateTo(destination)
+            }
         }
     }
 

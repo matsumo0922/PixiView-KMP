@@ -12,7 +12,9 @@ import androidx.compose.material3.SnackbarHostState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
@@ -20,6 +22,7 @@ import kotlinx.coroutines.flow.Flow
 import me.matsumo.fanbox.core.ui.AsyncLoadContents
 import me.matsumo.fanbox.core.ui.theme.LocalNavController
 import me.matsumo.fanbox.feature.about.billing.items.BillingBottomBar
+import me.matsumo.fanbox.feature.about.billing.items.BillingPurchaseSuccessDialog
 import me.matsumo.fanbox.feature.about.billing.items.BillingTopSection
 import me.matsumo.fanbox.feature.about.billing.items.billingDescriptionSection
 import org.jetbrains.compose.resources.getString
@@ -53,7 +56,9 @@ private fun BillingScreen(
     modifier: Modifier = Modifier,
 ) {
     val navController = LocalNavController.current
+
     val snackbarHostState = remember { SnackbarHostState() }
+    var showPurchaseSuccessDialog by remember { mutableStateOf(false) }
 
     Scaffold(
         modifier = modifier,
@@ -88,11 +93,20 @@ private fun BillingScreen(
         }
     }
 
+    if (showPurchaseSuccessDialog) {
+        BillingPurchaseSuccessDialog(
+            onDismissRequest = {
+                showPurchaseSuccessDialog = false
+                navController.popBackStack()
+            },
+        )
+    }
+
     LaunchedEffect(true) {
         messageEventFlow.collect {
             when (it) {
                 is BillingMessageEvent.Purchased -> {
-                    navController.popBackStack()
+                    showPurchaseSuccessDialog = true
                 }
 
                 is BillingMessageEvent.SnackBar -> {
