@@ -6,8 +6,9 @@ import io.github.aakira.napier.Napier
 import kotlinx.serialization.ExperimentalSerializationApi
 import kotlinx.serialization.KSerializer
 import kotlinx.serialization.json.Json
+import kotlinx.serialization.json.JsonElement
 import kotlinx.serialization.json.JsonObject
-import kotlinx.serialization.json.JsonUnquotedLiteral
+import kotlinx.serialization.json.JsonPrimitive
 import kotlinx.serialization.json.buildJsonObject
 import kotlinx.serialization.json.jsonObject
 
@@ -23,18 +24,37 @@ fun <T> Preferences.deserialize(
     defaultValue: T,
 ): T {
     return try {
-        val map = this.asMap().map { it.key.name to JsonUnquotedLiteral(it.value.toString()) }.toMap()
-        val defaultData = formatter.encodeToJsonElement(serializer, defaultValue)
-        val preferenceData = JsonObject(map)
+        val parsedPrefMap: Map<String, JsonElement> = buildMap {
+            for ((k, vAny) in this@deserialize.asMap()) {
+                val key = k.name
+                val elem: JsonElement = when (val v = vAny) {
+                    is String -> {
+                        // JSON 文字列（{...} or [...]）は parse、通常文字列は Primitive
+                        if (v.startsWith("{") && v.endsWith("}") || v.startsWith("[") && v.endsWith("]")) {
+                            formatter.parseToJsonElement(v)
+                        } else {
+                            JsonPrimitive(v)
+                        }
+                    }
+
+                    is Int -> JsonPrimitive(v)
+                    is Long -> JsonPrimitive(v)
+                    is Float -> JsonPrimitive(v)
+                    is Double -> JsonPrimitive(v)
+                    is Boolean -> JsonPrimitive(v)
+                    else -> JsonPrimitive(v.toString())
+                }
+                put(key, elem)
+            }
+        }
+
+        val defaultData = formatter.encodeToJsonElement(serializer, defaultValue).jsonObject
+        val preferenceData = JsonObject(parsedPrefMap)
 
         val data = buildJsonObject {
-            for (value in defaultData.jsonObject) {
-                put(value.key, value.value)
-            }
-
-            for (value in preferenceData.jsonObject) {
-                put(value.key, value.value)
-            }
+            // デフォルトをベースにしつつ、Prefs を上書き
+            for ((k, v) in defaultData) put(k, v)
+            for ((k, v) in preferenceData) put(k, v)
         }
 
         formatter.decodeFromJsonElement(serializer, data)

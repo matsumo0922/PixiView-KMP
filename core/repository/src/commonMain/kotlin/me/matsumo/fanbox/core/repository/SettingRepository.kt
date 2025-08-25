@@ -2,6 +2,7 @@ package me.matsumo.fanbox.core.repository
 
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.receiveAsFlow
 import me.matsumo.fanbox.core.datastore.SettingDataStore
@@ -12,10 +13,9 @@ import me.matsumo.fanbox.core.model.ThemeConfig
 
 interface SettingRepository {
 
-    val setting: Flow<Setting>
+    val setting: StateFlow<Setting>
     val updatePlusMode: Flow<Boolean>
 
-    suspend fun setDefault()
     suspend fun setPixiViewId(id: String)
     suspend fun setAgreedPrivacyPolicy(isAgreed: Boolean)
     suspend fun setAgreedTermsOfService(isAgreed: Boolean)
@@ -49,11 +49,7 @@ class SettingRepositoryImpl(
 
     override val updatePlusMode: Flow<Boolean> = _updatePlusMode.receiveAsFlow()
 
-    override val setting: Flow<Setting> = settingDataStore.setting
-
-    override suspend fun setDefault() {
-        settingDataStore.setDefault()
-    }
+    override val setting: StateFlow<Setting> = settingDataStore.setting
 
     override suspend fun setPixiViewId(id: String) {
         settingDataStore.setPixiViewId(id)

@@ -175,6 +175,8 @@ google-material = { module = "com.google.android.material:material", version.ref
 ads-unity-core = { module = "com.unity3d.ads:unity-ads", version = "4.16.0" }
 ads-unity = { module = "com.google.ads.mediation:unity", version = "4.16.0.0" }
 ads-applovin = { module = "com.google.ads.mediation:applovin", version = "13.3.1.1" }
+ads-inmobi = { module = "com.google.ads.mediation:inmobi", version = "10.8.7.0" }
+ads-liftoff = { module = "com.google.ads.mediation:vungle", version = "7.5.1.0" }
 
 # Firebase
 firebase-bom = { module = "com.google.firebase:firebase-bom", version.ref = "firebase" }
@@ -307,4 +309,6 @@ mediation = [
     "ads-unity-core",
     "ads-unity",
     "ads-applovin",
+    "ads-inmobi",
+    "ads-liftoff",
 ]

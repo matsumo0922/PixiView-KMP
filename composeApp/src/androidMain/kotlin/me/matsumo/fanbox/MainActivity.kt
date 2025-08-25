@@ -14,84 +14,68 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import androidx.fragment.app.FragmentActivity
-import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.lifecycleScope
-import androidx.lifecycle.repeatOnLifecycle
-import com.google.android.play.core.review.ReviewManagerFactory
+import com.applovin.sdk.AppLovinMediationProvider
+import com.applovin.sdk.AppLovinPrivacySettings
+import com.applovin.sdk.AppLovinSdk
+import com.applovin.sdk.AppLovinSdkInitializationConfiguration
+import com.google.ads.mediation.inmobi.InMobiConsent
+import com.google.android.gms.ads.MobileAds
+import com.inmobi.sdk.InMobiSdk
+import com.unity3d.ads.metadata.MetaData
+import com.vungle.ads.VunglePrivacySettings
 import kotlinx.collections.immutable.persistentMapOf
-import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
-import me.matsumo.fanbox.core.datastore.LaunchLogDataStore
+import kotlinx.serialization.json.buildJsonObject
+import kotlinx.serialization.json.put
 import me.matsumo.fanbox.core.logs.category.ApplicationLog
-import me.matsumo.fanbox.core.logs.category.ReviewsLog
 import me.matsumo.fanbox.core.logs.logger.LogConfigurator
 import me.matsumo.fanbox.core.logs.logger.send
 import me.matsumo.fanbox.core.model.ThemeConfig
-import me.matsumo.fanbox.core.repository.DownloadPostsRepository
-import me.matsumo.fanbox.core.repository.SettingRepository
 import me.matsumo.fanbox.core.ui.theme.shouldUseDarkTheme
 import me.matsumo.fanbox.feature.service.DownloadPostService
-import org.koin.compose.KoinContext
+import org.json.JSONObject
+import org.koin.androidx.viewmodel.ext.android.viewModel
 import org.koin.core.component.KoinComponent
-import org.koin.core.component.inject
 
 class MainActivity : FragmentActivity(), KoinComponent {
 
-    private val settingRepository: SettingRepository by inject()
-
-    private val downloadPostsRepository: DownloadPostsRepository by inject()
-
-    private val launchLogDataStore: LaunchLogDataStore by inject()
-
+    private val viewModel by viewModel<MainViewModel>()
     private var stayTime = 0L
 
     @OptIn(ExperimentalMaterial3WindowSizeClassApi::class)
     override fun onCreate(savedInstanceState: Bundle?) {
         val splashScreen = installSplashScreen()
-
         super.onCreate(savedInstanceState)
-
         enableEdgeToEdge()
-
         setContent {
-            KoinContext {
-                val userData by settingRepository.setting.collectAsStateWithLifecycle(null)
-                val isSystemInDarkTheme = shouldUseDarkTheme(userData?.themeConfig ?: ThemeConfig.System)
-                val windowSize = calculateWindowSizeClass()
+            val settings by viewModel.setting.collectAsStateWithLifecycle(null)
+            val isSystemInDarkTheme = shouldUseDarkTheme(settings?.themeConfig ?: ThemeConfig.System)
+            val windowSize = calculateWindowSizeClass()
 
-                val lightScrim = Color.argb(0xe6, 0xFF, 0xFF, 0xFF)
-                val darkScrim = Color.argb(0x80, 0x1b, 0x1b, 0x1b)
+            val lightScrim = Color.argb(0xe6, 0xFF, 0xFF, 0xFF)
+            val darkScrim = Color.argb(0x80, 0x1b, 0x1b, 0x1b)
 
-                DisposableEffect(isSystemInDarkTheme) {
-                    enableEdgeToEdge(
-                        statusBarStyle = SystemBarStyle.auto(Color.TRANSPARENT, Color.TRANSPARENT) { isSystemInDarkTheme },
-                        navigationBarStyle = SystemBarStyle.auto(lightScrim, darkScrim) { isSystemInDarkTheme },
-                    )
-                    onDispose {}
-                }
-
-                PixiViewApp(
-                    modifier = Modifier.fillMaxSize(),
-                    windowSize = windowSize.widthSizeClass,
-                    nativeViews = persistentMapOf(),
+            DisposableEffect(isSystemInDarkTheme) {
+                enableEdgeToEdge(
+                    statusBarStyle = SystemBarStyle.auto(Color.TRANSPARENT, Color.TRANSPARENT) { isSystemInDarkTheme },
+                    navigationBarStyle = SystemBarStyle.auto(lightScrim, darkScrim) { isSystemInDarkTheme },
                 )
-
-                splashScreen.setKeepOnScreenCondition { userData == null }
+                onDispose {}
             }
+
+            PixiViewApp(
+                modifier = Modifier.fillMaxSize(),
+                windowSize = windowSize.widthSizeClass,
+                nativeViews = persistentMapOf(),
+            )
+
+            splashScreen.setKeepOnScreenCondition { settings == null }
         }
 
-        lifecycleScope.launch {
-            lifecycle.repeatOnLifecycle(Lifecycle.State.STARTED) {
-                downloadPostsRepository.reservingPosts.collectLatest {
-                    if (it.isNotEmpty()) {
-                        requestReview()
-                    }
-                }
-            }
-        }
-
+        initAdsSdk()
         startService(Intent(this, DownloadPostService::class.java))
     }
 
@@ -118,23 +102,44 @@ class MainActivity : FragmentActivity(), KoinComponent {
         }
     }
 
-    private fun requestReview() {
-        lifecycleScope.launch {
-            if (launchLogDataStore.getLaunchCount() < 3) return@launch
-
-            val manager = ReviewManagerFactory.create(this@MainActivity)
-            val request = manager.requestReviewFlow()
-
-            request.addOnCompleteListener {
-                if (it.isSuccessful) {
-                    val reviewInfo = it.result
-                    val flow = manager.launchReviewFlow(this@MainActivity, reviewInfo)
-
-                    flow.addOnCompleteListener {
-                        ReviewsLog.reviewed().send()
-                    }
-                }
-            }
+    private fun initAdsSdk() {
+        if (viewModel.isAdsSdkInitialized.value) {
+            return
         }
+
+        // AppLovin
+        AppLovinSdk.getInstance(this).initialize(
+            AppLovinSdkInitializationConfiguration.builder(BuildKonfig.APPLOVIN_SDK_KEY)
+                .setMediationProvider(AppLovinMediationProvider.ADMOB)
+                .build(),
+            null,
+        )
+        AppLovinPrivacySettings.setHasUserConsent(true)
+
+        // InMobi
+        InMobiConsent.updateGDPRConsent(
+            buildJsonObject {
+                put(InMobiSdk.IM_GDPR_CONSENT_AVAILABLE, true)
+                put("gdpr", "1")
+            }.let {
+                JSONObject(it)
+            },
+        )
+
+        // Liftoff
+        VunglePrivacySettings.setGDPRStatus(true, "v1.0.0")
+        VunglePrivacySettings.setCCPAStatus(true)
+
+        // Unity Ads
+        val gdprMetaData = MetaData(this)
+        gdprMetaData["gdpr.consent"] = true
+        gdprMetaData.commit()
+
+        val ccpaMetaData = MetaData(this)
+        ccpaMetaData["privacy.consent"] = true
+        ccpaMetaData.commit()
+
+        MobileAds.initialize(this)
+        viewModel.setAdsSdkInitialized()
     }
 }

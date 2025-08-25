@@ -7,19 +7,12 @@ import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.IO
 import kotlinx.coroutines.SupervisorJob
 import me.matsumo.fanbox.PixiViewViewModel
-import me.matsumo.fanbox.core.common.PixiViewConfig
+import org.koin.core.module.Module
 import org.koin.core.module.dsl.viewModelOf
 import org.koin.dsl.module
 
-expect fun getPixiViewConfig(): PixiViewConfig
-
 @OptIn(ExperimentalCoroutinesApi::class)
 val appModule = module {
-
-    single {
-        getPixiViewConfig()
-    }
-
     single<CoroutineDispatcher> {
         Dispatchers.IO.limitedParallelism(24)
     }
@@ -29,4 +22,8 @@ val appModule = module {
     }
 
     viewModelOf(::PixiViewViewModel)
+
+    includes(appPlatformModule)
 }
+
+expect val appPlatformModule: Module

@@ -9,14 +9,8 @@ import coil3.gif.AnimatedImageDecoder
 import coil3.gif.GifDecoder
 import coil3.memory.MemoryCache
 import coil3.request.crossfade
-import com.applovin.sdk.AppLovinMediationProvider
-import com.applovin.sdk.AppLovinPrivacySettings
-import com.applovin.sdk.AppLovinSdk
-import com.applovin.sdk.AppLovinSdkInitializationConfiguration
-import com.google.android.gms.ads.MobileAds
 import com.google.firebase.FirebaseApp
 import com.google.firebase.FirebaseOptions
-import com.unity3d.ads.metadata.MetaData
 import io.github.aakira.napier.DebugAntilog
 import io.github.aakira.napier.Napier
 import me.matsumo.fanbox.di.applyModules
@@ -39,7 +33,6 @@ class PixiViewApplication : Application(), KoinStartup {
         }
 
         setupFirebase()
-        setupAdMob()
         setupCoil()
     }
 
@@ -47,28 +40,6 @@ class PixiViewApplication : Application(), KoinStartup {
         androidContext(this@PixiViewApplication)
         androidLogger()
         applyModules()
-    }
-
-    private fun setupAdMob() {
-        // AppLovin
-        AppLovinSdk.getInstance(this).initialize(
-            AppLovinSdkInitializationConfiguration.builder(BuildKonfig.APPLOVIN_SDK_KEY)
-                .setMediationProvider(AppLovinMediationProvider.ADMOB)
-                .build(),
-            null,
-        )
-        AppLovinPrivacySettings.setHasUserConsent(true)
-
-        // Unity Ads
-        val gdprMetaData = MetaData(this)
-        gdprMetaData["gdpr.consent"] = true
-        gdprMetaData.commit()
-
-        val ccpaMetaData = MetaData(this)
-        ccpaMetaData["privacy.consent"] = true
-        ccpaMetaData.commit()
-
-        MobileAds.initialize(this)
     }
 
     private fun setupCoil() {

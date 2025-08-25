@@ -5,8 +5,11 @@ import androidx.datastore.preferences.core.edit
 import androidx.datastore.preferences.core.longPreferencesKey
 import androidx.datastore.preferences.core.stringPreferencesKey
 import kotlinx.coroutines.CoroutineDispatcher
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.withContext
 import kotlinx.serialization.json.Json
 import me.matsumo.fanbox.core.logs.category.SettingsLog
@@ -25,34 +28,11 @@ class SettingDataStore(
 
     val setting = settingPreference.data.map {
         it.deserialize(formatter, Setting.serializer(), Setting.default())
-    }
-
-    suspend fun setDefault() = withContext(ioDispatcher) {
-        Setting.default().also { data ->
-            setPixiViewId(data.pixiViewId)
-            setAgreedPrivacyPolicy(data.isAgreedPrivacyPolicy)
-            setAgreedTermsOfService(data.isAgreedTermsOfService)
-            setThemeConfig(data.themeConfig)
-            setThemeColorConfig(data.themeColorConfig)
-            setDownloadFileType(data.downloadFileType)
-            setImageSaveDirectory(data.imageSaveDirectory)
-            setFileSaveDirectory(data.fileSaveDirectory)
-            setPostSaveDirectory(data.postSaveDirectory)
-            setFirstLaunchTime(data.firstLaunchTime)
-            setUseDynamicColor(data.isUseDynamicColor)
-            setUseAppLock(data.isUseAppLock)
-            setUseGridMode(data.isUseGridMode)
-            setUseInfinityPostDetail(data.isUseInfinityPostDetail)
-            setFollowTabDefaultHome(data.isDefaultFollowTabInHome)
-            setHideAdultContents(data.isHideAdultContents)
-            setOverrideAdultContents(data.isOverrideAdultContents)
-            setAutoImagePreview(data.isAutoImagePreview)
-            setTestUser(data.isTestUser)
-            setHideRestricted(data.isHideRestricted)
-            setDeveloperMode(data.isDeveloperMode)
-            setPlusMode(data.isPlusMode)
-        }
-    }
+    }.stateIn(
+        scope = CoroutineScope(ioDispatcher),
+        started = SharingStarted.WhileSubscribed(1000),
+        initialValue = Setting.default(),
+    )
 
     suspend fun setPixiViewId(id: String) = withContext(ioDispatcher) {
         if (setting.first().pixiViewId == id) return@withContext

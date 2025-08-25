@@ -5,12 +5,14 @@ import me.matsumo.fanbox.core.repository.FanboxRepository
 import me.matsumo.fanbox.core.repository.FanboxRepositoryImpl
 import me.matsumo.fanbox.core.repository.FlagRepository
 import me.matsumo.fanbox.core.repository.FlagRepositoryImpl
+import me.matsumo.fanbox.core.repository.LaunchLogRepository
 import me.matsumo.fanbox.core.repository.RewardRepository
 import me.matsumo.fanbox.core.repository.RewardRepositoryImpl
 import me.matsumo.fanbox.core.repository.SettingRepository
 import me.matsumo.fanbox.core.repository.SettingRepositoryImpl
 import me.matsumo.fanbox.core.repository.TranslationRepository
 import org.koin.core.module.Module
+import org.koin.core.module.dsl.singleOf
 import org.koin.dsl.module
 
 val json = Json {
@@ -63,4 +65,6 @@ val repositoryModule = module {
             pixiViewConfig = get(),
         )
     }
+
+    singleOf(::LaunchLogRepository)
 }
