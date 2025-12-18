@@ -39,7 +39,6 @@ import androidx.compose.runtime.snapshotFlow
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.backhandler.BackHandler
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
@@ -58,7 +57,6 @@ import com.svenjacobs.reveal.RevealOverlayScope
 import com.svenjacobs.reveal.RevealState
 import com.svenjacobs.reveal.rememberRevealState
 import com.svenjacobs.reveal.shapes.balloon.Arrow
-import io.github.aakira.napier.Napier
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.toImmutableList
 import kotlinx.coroutines.delay
@@ -80,7 +78,6 @@ import me.matsumo.fanbox.core.ui.AsyncLoadContents
 import me.matsumo.fanbox.core.ui.LazyPagingItemsLoadContents
 import me.matsumo.fanbox.core.ui.ads.BannerAdView
 import me.matsumo.fanbox.core.ui.ads.NativeAdView
-import me.matsumo.fanbox.core.ui.ads.rememberInterstitialAdState
 import me.matsumo.fanbox.core.ui.appName
 import me.matsumo.fanbox.core.ui.extensition.FadePlaceHolder
 import me.matsumo.fanbox.core.ui.extensition.LocalRevealCanvasState
@@ -94,7 +91,6 @@ import me.matsumo.fanbox.core.ui.extensition.isNullOrEmpty
 import me.matsumo.fanbox.core.ui.extensition.marquee
 import me.matsumo.fanbox.core.ui.extensition.padding
 import me.matsumo.fanbox.core.ui.extensition.revealByStep
-import me.matsumo.fanbox.core.ui.theme.LocalPixiViewConfig
 import me.matsumo.fanbox.core.ui.theme.bold
 import me.matsumo.fanbox.core.ui.theme.center
 import me.matsumo.fanbox.core.ui.view.ErrorView
@@ -122,7 +118,6 @@ import org.jetbrains.compose.resources.stringResource
 import org.koin.compose.koinInject
 import org.koin.compose.viewmodel.koinViewModel
 import org.koin.core.parameter.parametersOf
-import kotlin.random.Random
 import kotlin.time.ExperimentalTime
 import kotlin.uuid.ExperimentalUuidApi
 import kotlin.uuid.Uuid
@@ -154,32 +149,6 @@ internal fun PostDetailRoute(
     val revealOverlayContainerColor = MaterialTheme.colorScheme.tertiaryContainer
     val revealOverlayContentColor = MaterialTheme.colorScheme.onTertiaryContainer
 
-    val shouldShowInterstitialAdRandom by remember(postId) { mutableStateOf(Random.nextInt(5) == 1) }
-    val interstitialAdState = rememberInterstitialAdState(
-        adUnitId = LocalPixiViewConfig.current.interstitialAdUnitId,
-        enable = !uiState.setting.hasPrivilege && uiState.setting.shouldShowInterstitialAd && shouldShowInterstitialAdRandom,
-    )
-
-    fun terminateWithInterstitial() {
-        scope.launch {
-            interstitialAdState.show()
-            terminate.invoke()
-        }
-    }
-
-    LaunchedEffect(shouldShowInterstitialAdRandom) {
-        Napier.d("shouldShowInterstitialAdRandom: $shouldShowInterstitialAdRandom, ${!uiState.setting.hasPrivilege && uiState.setting.shouldShowInterstitialAd}")
-    }
-
-    LaunchedEffect(true) {
-        interstitialAdState.load()
-    }
-
-    if (!uiState.setting.hasPrivilege && uiState.setting.shouldShowInterstitialAd && shouldShowInterstitialAdRandom) {
-        BackHandler {
-            terminateWithInterstitial()
-        }
-    }
 
     Reveal(
         modifier = modifier,
@@ -254,7 +223,7 @@ internal fun PostDetailRoute(
                                 navigateToCommentDeleteDialog = navigateToCommentDeleteDialog,
                                 onPostDetailFetched = { postDetailMap[id] = it },
                                 onRevealCompleted = viewModel::finishReveal,
-                                terminate = ::terminateWithInterstitial,
+                                terminate = terminate,
                             )
                         }
                     }
@@ -265,8 +234,8 @@ internal fun PostDetailRoute(
                         .padding(padding)
                         .fillMaxSize(),
                     errorState = ScreenState.Error(Res.string.error_network),
-                    retryAction = { terminateWithInterstitial() },
-                    terminate = { terminateWithInterstitial() },
+                    retryAction = terminate,
+                    terminate = terminate,
                 )
             }
         }
