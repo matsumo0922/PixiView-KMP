@@ -75,7 +75,7 @@ class DownloadPostsRepositoryImpl(
                         FanboxDownloadItems.RequestType.Image -> downloadItems.items
                         is FanboxDownloadItems.RequestType.Post -> {
                             val postDetail = fanboxRepository.getPostDetail(downloadItems.postId)
-                            val images = postDetail.body.imageItems.map { it.toDownloadItem() }
+                            val images = postDetail.body.imageItems.mapIndexed { index, image -> image.toDownloadItem(index) }
                             val files = postDetail.body.fileItems.map { it.toDownloadItem() }
 
                             images + if (type.isIgnoreFiles) emptyList() else files
@@ -126,7 +126,7 @@ class DownloadPostsRepositoryImpl(
         val items = FanboxDownloadItems(
             postId = postId,
             title = title,
-            items = images.map { it.toDownloadItem() },
+            items = images.mapIndexed { index, image -> image.toDownloadItem(index) },
             requestType = FanboxDownloadItems.RequestType.Image,
             key = Uuid.random().toHexString(),
         )
@@ -150,11 +150,12 @@ class DownloadPostsRepositoryImpl(
         return (getParentFile(requestType) ?: getOldParentFile(requestType, true))?.filePath ?: "Unknown"
     }
 
-    private fun FanboxPostDetail.ImageItem.toDownloadItem(): FanboxDownloadItems.Item {
+    private fun FanboxPostDetail.ImageItem.toDownloadItem(index: Int = -1): FanboxDownloadItems.Item {
+        val namePrefix = if (index >= 0) "image-%03d".format(index) else "image"
         return FanboxDownloadItems.Item(
             postId = postId,
             itemId = id,
-            name = "image-$postId-$id",
+            name = "$namePrefix-$postId-$id",
             extension = extension,
             originalUrl = originalUrl,
             thumbnailUrl = thumbnailUrl,
