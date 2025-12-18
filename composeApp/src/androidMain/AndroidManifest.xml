@@ -93,6 +93,7 @@
         <service
             android:name=".feature.service.DownloadPostService"
             android:exported="false"
+            android:stopWithTask="false"
             android:foregroundServiceType="dataSync" />
 
         <provider
