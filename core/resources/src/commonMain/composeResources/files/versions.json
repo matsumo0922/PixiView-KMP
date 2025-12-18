@@ -229,5 +229,12 @@
     "date": "2025/08/23",
     "logJp": "・API36に対応\n・Billing Library の更新\n・軽微なUIの修正",
     "logEn": "・Compatible with API36\n・Billing Library updated\n・Minor UI fixes"
+  },
+  {
+    "versionName": "2.3.0",
+    "versionCode": 67,
+    "date": "2025/12/19",
+    "logJp": "・画像ダウンロード時のファイル名を連番方式に変更\n・ダウンロードサービスの信頼性を向上\n・インタースティシャル広告の実装\n・課金システムの改善と購入成功ダイアログの追加",
+    "logEn": "・Changed image download file naming to index-based system\n・Improved download service reliability\n・Implemented interstitial ads\n・Enhanced billing system and added purchase success dialog"
   }
 ]
