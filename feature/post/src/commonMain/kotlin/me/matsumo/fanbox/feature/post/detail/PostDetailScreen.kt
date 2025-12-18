@@ -151,7 +151,7 @@ internal fun PostDetailRoute(
     val revealOverlayContainerColor = MaterialTheme.colorScheme.tertiaryContainer
     val revealOverlayContentColor = MaterialTheme.colorScheme.onTertiaryContainer
 
-    var downloadCount by rememberSaveable { mutableStateOf(0) }
+    var downloadCount by remember(uiState.setting.downloadCountForAd) { mutableStateOf(uiState.setting.downloadCountForAd) }
     val interstitialAdState = rememberInterstitialAdState(
         adUnitId = LocalPixiViewConfig.current.interstitialAdUnitId,
         enable = !uiState.setting.hasPrivilege && uiState.setting.shouldShowInterstitialAd,
@@ -165,9 +165,12 @@ internal fun PostDetailRoute(
 
     suspend fun showInterstitialAdIfNeeded(imageCount: Int) {
         downloadCount += imageCount
+        viewModel.updateDownloadCountForAd(downloadCount)
+
         if (downloadCount >= 10) {
             interstitialAdState.show()
             downloadCount = 0
+            viewModel.updateDownloadCountForAd(0)
             delay(500)
             interstitialAdState.load()
         }

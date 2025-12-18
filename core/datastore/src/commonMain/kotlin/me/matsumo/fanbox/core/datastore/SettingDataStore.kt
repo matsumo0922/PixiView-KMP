@@ -2,6 +2,7 @@ package me.matsumo.fanbox.core.datastore
 
 import androidx.datastore.preferences.core.booleanPreferencesKey
 import androidx.datastore.preferences.core.edit
+import androidx.datastore.preferences.core.intPreferencesKey
 import androidx.datastore.preferences.core.longPreferencesKey
 import androidx.datastore.preferences.core.stringPreferencesKey
 import kotlinx.coroutines.CoroutineDispatcher
@@ -353,6 +354,14 @@ class SettingDataStore(
 
         settingPreference.edit {
             it[booleanPreferencesKey(Setting::isPlusMode.name)] = isPlusMode
+        }
+    }
+
+    suspend fun setDownloadCountForAd(count: Int) = withContext(ioDispatcher) {
+        if (setting.first().downloadCountForAd == count) return@withContext
+
+        settingPreference.edit {
+            it[intPreferencesKey(Setting::downloadCountForAd.name)] = count
         }
     }
 }
