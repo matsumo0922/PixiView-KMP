@@ -167,7 +167,7 @@ internal fun PostDetailRoute(
         downloadCount += imageCount
         viewModel.updateDownloadCountForAd(downloadCount)
 
-        if (downloadCount >= 10) {
+        if (downloadCount >= 20) {
             interstitialAdState.show()
             downloadCount = 0
             viewModel.updateDownloadCountForAd(0)

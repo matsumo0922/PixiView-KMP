@@ -2,6 +2,8 @@ package me.matsumo.fanbox.core.model
 
 import androidx.compose.ui.text.intl.Locale
 import kotlinx.serialization.Serializable
+import kotlin.time.Clock
+import kotlin.time.Duration.Companion.days
 import kotlin.time.ExperimentalTime
 
 @Serializable
@@ -36,7 +38,7 @@ data class Setting(
     val isAllowedShowAdultContents get() = !isTestUser && isOverrideAdultContents
 
     @OptIn(ExperimentalTime::class)
-    val shouldShowInterstitialAd get() = true
+    val shouldShowInterstitialAd get() = (Clock.System.now().epochSeconds - firstLaunchTime) > 7.days.inWholeSeconds
 
     companion object Companion {
         @OptIn(ExperimentalTime::class)

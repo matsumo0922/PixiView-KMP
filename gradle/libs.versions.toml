@@ -1,7 +1,7 @@
 [versions]
 # Application
-versionName = "2.3.0"
-versionCode = "69"
+versionName = "2.3.1"
+versionCode = "70"
 
 # SDK
 minSdk = "26"
@@ -57,7 +57,7 @@ gms = "4.4.3"
 koin = "4.1.0"
 
 # matsumo
-fankt = "0.0.15"
+fankt = "0.0.16"
 
 # OpenAI
 openai = "4.0.1"
