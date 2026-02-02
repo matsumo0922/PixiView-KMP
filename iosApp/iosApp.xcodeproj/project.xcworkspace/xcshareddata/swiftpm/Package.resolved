@@ -1,5 +1,5 @@
 {
-  "originHash" : "a75301de83794297b4d7ba79abde3356745f04acdf5601efff86c146b81b905f",
+  "originHash" : "f5f2c8c353e54164f675c4c9c8aa57e3d0f91c03722bdc3a42d7798db43ff13e",
   "pins" : [
     {
       "identity" : "abseil-cpp-binary",
@@ -98,15 +98,6 @@
       "state" : {
         "revision" : "b7e1104502eca3a213b46303391ca4d3bc8ddec1",
         "version" : "2.30910.0"
-      }
-    },
-    {
-      "identity" : "ncmb_swift",
-      "kind" : "remoteSourceControl",
-      "location" : "https://github.com/NIFCLOUD-mbaas/ncmb_swift.git",
-      "state" : {
-        "revision" : "a2e05e0defecadf753f8921fa548e09a492b7fb2",
-        "version" : "1.4.2"
       }
     },
     {

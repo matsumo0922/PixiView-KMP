@@ -19,7 +19,6 @@
 		AD6E4F682B8508E70000CD56 /* NativeAdView.swift in Sources */ = {isa = PBXBuildFile; fileRef = AD6E4F672B8508E70000CD56 /* NativeAdView.swift */; };
 		AD6E4F732B865E6F0000CD56 /* NativeAdView.xib in Resources */ = {isa = PBXBuildFile; fileRef = AD6E4F722B865E6F0000CD56 /* NativeAdView.xib */; };
 		AD6E4F772B86663F0000CD56 /* UIProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = AD6E4F762B86663F0000CD56 /* UIProvider.swift */; };
-		AD6E4F7B2B885A1D0000CD56 /* NCMB in Frameworks */ = {isa = PBXBuildFile; productRef = AD6E4F7A2B885A1D0000CD56 /* NCMB */; };
 		AD6E4F7D2B885A5F0000CD56 /* secret.plist in Resources */ = {isa = PBXBuildFile; fileRef = AD6E4F7C2B885A5F0000CD56 /* secret.plist */; };
 		AD6E4F7F2B885B9B0000CD56 /* KeyManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = AD6E4F7E2B885B9B0000CD56 /* KeyManager.swift */; };
 		AD6E4F812B88A1060000CD56 /* BannerAdView.swift in Sources */ = {isa = PBXBuildFile; fileRef = AD6E4F802B88A1060000CD56 /* BannerAdView.swift */; };
@@ -104,7 +103,6 @@
 				AD6E4F9E2B8A47C40000CD56 /* FirebaseFirestore in Frameworks */,
 				AD6E4F652B84F33D0000CD56 /* GoogleMobileAds in Frameworks */,
 				AD6E4FA82B8A47C40000CD56 /* FirebaseInAppMessaging-Beta in Frameworks */,
-				AD6E4F7B2B885A1D0000CD56 /* NCMB in Frameworks */,
 				AD6E4F882B8A47C40000CD56 /* FirebaseAnalyticsOnDeviceConversion in Frameworks */,
 				AD6E4FB62B8A47C40000CD56 /* FirebaseRemoteConfigSwift in Frameworks */,
 				AD6E4F942B8A47C40000CD56 /* FirebaseAuthCombine-Community in Frameworks */,
@@ -225,7 +223,6 @@
 			name = iosApp;
 			packageProductDependencies = (
 				AD6E4F642B84F33D0000CD56 /* GoogleMobileAds */,
-				AD6E4F7A2B885A1D0000CD56 /* NCMB */,
 				AD6E4F852B8A47C40000CD56 /* FirebaseAnalytics */,
 				AD6E4F872B8A47C40000CD56 /* FirebaseAnalyticsOnDeviceConversion */,
 				AD6E4F892B8A47C40000CD56 /* FirebaseAnalyticsSwift */,
@@ -288,7 +285,6 @@
 			mainGroup = 7555FF72242A565900829871;
 			packageReferences = (
 				AD6E4F632B84F33D0000CD56 /* XCRemoteSwiftPackageReference "swift-package-manager-google-mobile-ads" */,
-				AD6E4F792B885A1D0000CD56 /* XCRemoteSwiftPackageReference "ncmb_swift" */,
 				AD6E4F842B8A47C40000CD56 /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */,
 				ADD02C642E51B38400676644 /* XCRemoteSwiftPackageReference "purchases-hybrid-common" */,
 			);
@@ -508,7 +504,7 @@
 				CODE_SIGN_ENTITLEMENTS = iosApp/iosApp.entitlements;
 				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 66;
+				CURRENT_PROJECT_VERSION = 70;
 				DEVELOPMENT_ASSET_PATHS = "\"iosApp/Preview Content\"";
 				DEVELOPMENT_TEAM = P2KMSDQ33M;
 				ENABLE_PREVIEWS = YES;
@@ -535,7 +531,7 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = 2.2.8;
+				MARKETING_VERSION = 2.3.1;
 				OTHER_LDFLAGS = (
 					"$(inherited)",
 					"-framework",
@@ -566,7 +562,7 @@
 				CODE_SIGN_ENTITLEMENTS = iosApp/iosApp.entitlements;
 				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 66;
+				CURRENT_PROJECT_VERSION = 70;
 				DEVELOPMENT_ASSET_PATHS = "\"iosApp/Preview Content\"";
 				DEVELOPMENT_TEAM = P2KMSDQ33M;
 				ENABLE_PREVIEWS = YES;
@@ -593,7 +589,7 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = 2.2.8;
+				MARKETING_VERSION = 2.3.1;
 				OTHER_LDFLAGS = (
 					"$(inherited)",
 					"-framework",
@@ -645,14 +641,6 @@
 				minimumVersion = 11.0.1;
 			};
 		};
-		AD6E4F792B885A1D0000CD56 /* XCRemoteSwiftPackageReference "ncmb_swift" */ = {
-			isa = XCRemoteSwiftPackageReference;
-			repositoryURL = "https://github.com/NIFCLOUD-mbaas/ncmb_swift.git";
-			requirement = {
-				kind = upToNextMajorVersion;
-				minimumVersion = 1.3.0;
-			};
-		};
 		AD6E4F842B8A47C40000CD56 /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */ = {
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/firebase/firebase-ios-sdk";
@@ -676,11 +664,6 @@
 			isa = XCSwiftPackageProductDependency;
 			package = AD6E4F632B84F33D0000CD56 /* XCRemoteSwiftPackageReference "swift-package-manager-google-mobile-ads" */;
 			productName = GoogleMobileAds;
-		};
-		AD6E4F7A2B885A1D0000CD56 /* NCMB */ = {
-			isa = XCSwiftPackageProductDependency;
-			package = AD6E4F792B885A1D0000CD56 /* XCRemoteSwiftPackageReference "ncmb_swift" */;
-			productName = NCMB;
 		};
 		AD6E4F852B8A47C40000CD56 /* FirebaseAnalytics */ = {
 			isa = XCSwiftPackageProductDependency;
