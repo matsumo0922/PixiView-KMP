@@ -42,7 +42,7 @@ class FollowingCreatorsViewModel(
 
     suspend fun follow(creatorUserId: FanboxUserId): Result<Unit> {
         return suspendRunCatching {
-            fanboxRepository.unfollowCreator(creatorUserId)
+            fanboxRepository.followCreator(creatorUserId)
         }
     }
 
