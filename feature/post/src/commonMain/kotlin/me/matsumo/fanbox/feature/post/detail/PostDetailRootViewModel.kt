@@ -107,9 +107,9 @@ class PostDetailRootViewModel(
         }
     }
 
-    fun updateDownloadCountForAd(count: Int) {
+    fun updateInterstitialPostCloseCount(count: Int) {
         viewModelScope.launch {
-            settingRepository.setDownloadCountForAd(count)
+            settingRepository.setInterstitialPostCloseCount(count)
         }
     }
 

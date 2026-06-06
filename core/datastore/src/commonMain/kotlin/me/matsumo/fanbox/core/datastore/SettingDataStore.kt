@@ -357,11 +357,19 @@ class SettingDataStore(
         }
     }
 
-    suspend fun setDownloadCountForAd(count: Int) = withContext(ioDispatcher) {
-        if (setting.first().downloadCountForAd == count) return@withContext
+    suspend fun setInterstitialPostCloseCount(count: Int) = withContext(ioDispatcher) {
+        if (setting.first().interstitialPostCloseCount == count) return@withContext
 
         settingPreference.edit {
-            it[intPreferencesKey(Setting::downloadCountForAd.name)] = count
+            it[intPreferencesKey(Setting::interstitialPostCloseCount.name)] = count
+        }
+    }
+
+    suspend fun setLastInterstitialShownEpochSeconds(epochSeconds: Long) = withContext(ioDispatcher) {
+        if (setting.first().lastInterstitialShownEpochSeconds == epochSeconds) return@withContext
+
+        settingPreference.edit {
+            it[longPreferencesKey(Setting::lastInterstitialShownEpochSeconds.name)] = epochSeconds
         }
     }
 }
