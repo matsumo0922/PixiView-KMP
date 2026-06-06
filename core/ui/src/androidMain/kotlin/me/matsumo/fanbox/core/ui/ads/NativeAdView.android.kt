@@ -33,6 +33,7 @@ import com.google.android.gms.ads.nativead.NativeAd
 import io.github.aakira.napier.Napier
 import me.matsumo.fanbox.core.ui.R
 import me.matsumo.fanbox.core.ui.databinding.LayoutNativeAdsMediumBinding
+import me.matsumo.fanbox.core.ui.theme.LocalAdsSdkInitialized
 import org.koin.compose.koinInject
 
 @SuppressLint("MissingPermission")
@@ -41,6 +42,12 @@ actual fun NativeAdView(
     key: String,
     modifier: Modifier,
 ) {
+    val isAdsSdkInitialized = LocalAdsSdkInitialized.current
+
+    if (!isAdsSdkInitialized) {
+        return
+    }
+
     val nativeAdsPreLoader = koinInject<NativeAdsPreLoader>()
     val nativeAdInventoryVersion by nativeAdsPreLoader.nativeAdInventoryVersion.collectAsState()
     var nativeAd by remember(key) { mutableStateOf<NativeAd?>(null) }
@@ -49,9 +56,7 @@ actual fun NativeAdView(
         key1 = key,
         key2 = nativeAdInventoryVersion,
     ) {
-        if (nativeAd == null) {
-            nativeAd = nativeAdsPreLoader.getNativeAd(key)
-        }
+        nativeAd = nativeAd ?: nativeAdsPreLoader.getNativeAd(key)
     }
 
     DisposableEffect(

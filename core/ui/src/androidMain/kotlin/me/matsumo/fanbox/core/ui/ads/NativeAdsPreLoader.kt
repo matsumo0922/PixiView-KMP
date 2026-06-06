@@ -57,39 +57,47 @@ class NativeAdsPreLoader(
             .withAdListener(adListener)
             .forNativeAd(::onNativeAdLoaded)
             .build()
-
-        preloadAd()
     }
 
     @SuppressLint("MissingPermission")
-    fun preloadAd() {
+    private fun preloadAd() {
         if (adLoader.isLoading) return
 
         scope.launch {
-            val numberOfAds = NUMBER_OF_PRELOAD_ADS - preloadedNativeAds.count()
-            if (numberOfAds > 0) {
-                adLoader.loadAds(AdRequest.Builder().build(), numberOfAds)
-            }
+            loadMissingNativeAds()
         }
     }
 
     fun getNativeAd(key: String): NativeAd? {
         Napier.d("getNativeAd: $key, ${keyMap.containsKey(key)}, ${keyMap.size}, ${preloadedNativeAds.size}")
 
-        keyMap[key]?.let { return it }
-        preloadedNativeAds.removeFirstOrNull()?.also {
-            preloadAd()
-
-            keyMap[key] = it
-            return it
+        val mappedNativeAd = keyMap[key]
+        if (mappedNativeAd != null) {
+            return mappedNativeAd
         }
 
-        return null
+        val preloadedNativeAd = preloadedNativeAds.removeFirstOrNull()
+        if (preloadedNativeAd == null) {
+            preloadAd()
+            return null
+        }
+
+        preloadAd()
+        keyMap[key] = preloadedNativeAd
+
+        return preloadedNativeAd
     }
 
     fun popAd(key: String) {
         Napier.d("popAd: $key")
         keyMap.remove(key)?.destroy()
+    }
+
+    private fun loadMissingNativeAds() {
+        val numberOfAds = NUMBER_OF_PRELOAD_ADS - preloadedNativeAds.count()
+        if (numberOfAds > 0) {
+            adLoader.loadAds(AdRequest.Builder().build(), numberOfAds)
+        }
     }
 
     private fun onNativeAdLoaded(nativeAd: NativeAd) {
