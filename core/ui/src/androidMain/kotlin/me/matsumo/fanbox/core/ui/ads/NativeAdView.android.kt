@@ -13,6 +13,12 @@ import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.surfaceColorAtElevation
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.toArgb
@@ -32,7 +38,8 @@ actual fun NativeAdView(
     modifier: Modifier,
 ) {
     val nativeAdsPreLoader = koinInject<NativeAdsPreLoader>()
-    var nativeAd: NativeAd? = null
+    val nativeAdInventoryVersion by nativeAdsPreLoader.nativeAdInventoryVersion.collectAsState()
+    var nativeAd by remember(key) { mutableStateOf<NativeAd?>(null) }
 
     fun setupNativeAd(binding: LayoutNativeAdsMediumBinding, nativeAd: NativeAd) {
         if (binding.tvPrice.text.isNotBlank()) return
@@ -78,6 +85,12 @@ actual fun NativeAdView(
         Napier.d("NativeAdView: setupNativeAd, ${binding.tvPrice.text}, $key")
     }
 
+    LaunchedEffect(key, nativeAdInventoryVersion) {
+        if (nativeAd == null) {
+            nativeAd = nativeAdsPreLoader.getNativeAd(key)
+        }
+    }
+
     val titleTextColor = MaterialTheme.colorScheme.onSurface.toArgb()
     val bodyTextColor = MaterialTheme.colorScheme.onSurfaceVariant.toArgb()
     val buttonColor = MaterialTheme.colorScheme.primary.toArgb()
@@ -105,7 +118,6 @@ actual fun NativeAdView(
                 binding
             },
             update = {
-                nativeAd = nativeAdsPreLoader.getNativeAd(key)
                 nativeAd?.let { nativeAd -> setupNativeAd(this, nativeAd) }
             },
         )
