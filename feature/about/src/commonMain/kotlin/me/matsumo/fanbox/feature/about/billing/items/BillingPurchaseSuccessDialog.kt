@@ -29,6 +29,6 @@ internal fun BillingPurchaseSuccessDialog(
             TextButton(onDismissRequest) {
                 Text(stringResource(Res.string.common_ok))
             }
-        }
+        },
     )
 }

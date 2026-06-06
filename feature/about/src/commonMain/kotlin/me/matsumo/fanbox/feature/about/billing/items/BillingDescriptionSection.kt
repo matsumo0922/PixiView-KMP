@@ -16,7 +16,6 @@ import androidx.compose.ui.unit.dp
 import org.jetbrains.compose.resources.StringResource
 import org.jetbrains.compose.resources.stringResource
 
-
 @Composable
 internal fun BillingDescriptionSection(
     title: StringResource,

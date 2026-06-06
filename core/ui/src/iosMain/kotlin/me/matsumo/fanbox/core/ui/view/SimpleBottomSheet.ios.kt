@@ -27,6 +27,7 @@ import com.mohamedrejeb.calf.ui.sheet.BottomSheetControllerDelegate
 import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.CompletableDeferred
 import me.matsumo.fanbox.core.ui.extensition.LocalSnackbarHostState
+import me.matsumo.fanbox.core.ui.view.AdaptiveSheetState.Companion.saver
 import platform.UIKit.UIApplication
 import platform.UIKit.UIModalPresentationPopover
 import platform.UIKit.UISheetPresentationControllerDetentIdentifierLarge
@@ -34,7 +35,6 @@ import platform.UIKit.UISheetPresentationControllerDetentIdentifierMedium
 import platform.UIKit.presentationController
 import platform.UIKit.sheetPresentationController
 import kotlin.concurrent.Volatile
-import kotlin.native.concurrent.isFrozen
 
 @Suppress("UnstableCollections", "ModifierMissing")
 @OptIn(ExperimentalMaterial3Api::class)
@@ -125,7 +125,7 @@ private class BottomSheetManager(
         },
         confirmValueChange = {
             true // Always allow value changes
-        }
+        },
     )
 
     fun show() {

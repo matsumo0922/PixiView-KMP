@@ -5,7 +5,7 @@ import androidx.compose.runtime.remember
 
 class InterstitialAdStateImpl : InterstitialAdState {
     override fun load() {
-
+        // Implement iOS-specific ad loading logic
     }
 
     override suspend fun show(): Boolean {
