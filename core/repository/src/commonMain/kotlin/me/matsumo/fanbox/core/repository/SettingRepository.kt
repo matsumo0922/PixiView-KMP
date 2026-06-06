@@ -38,7 +38,7 @@ interface SettingRepository {
     suspend fun setTestUser(isTestUser: Boolean)
     suspend fun setHideRestricted(isHideRestricted: Boolean)
     suspend fun setDeveloperMode(isDeveloperMode: Boolean)
-    suspend fun setPlusMode(isPlusMode: Boolean)
+    suspend fun setPlusStatus(isPlusMode: Boolean, isPlusTrial: Boolean)
 }
 
 class SettingRepositoryImpl(
@@ -139,9 +139,21 @@ class SettingRepositoryImpl(
         settingDataStore.setUseDynamicColor(useDynamicColor)
     }
 
-    override suspend fun setPlusMode(isPlusMode: Boolean) {
-        if (setting.first().isPlusMode != isPlusMode) {
-            settingDataStore.setPlusMode(isPlusMode)
+    override suspend fun setPlusStatus(isPlusMode: Boolean, isPlusTrial: Boolean) {
+        val currentSetting = setting.first()
+        val normalizedIsPlusTrial = isPlusMode && isPlusTrial
+        val isPlusModeChanged = currentSetting.isPlusMode != isPlusMode
+        val isPlusTrialChanged = currentSetting.isPlusTrial != normalizedIsPlusTrial
+        val hasPlusStatusChanged = isPlusModeChanged || isPlusTrialChanged
+
+        if (hasPlusStatusChanged) {
+            settingDataStore.setPlusStatus(
+                isPlusMode = isPlusMode,
+                isPlusTrial = normalizedIsPlusTrial,
+            )
+        }
+
+        if (isPlusModeChanged) {
             _updatePlusMode.send(isPlusMode)
 
             if (!isPlusMode) {

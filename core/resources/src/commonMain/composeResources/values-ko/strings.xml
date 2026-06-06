@@ -283,6 +283,12 @@
     <string name="billing_plus_title">%1$s+</string>
     <string name="billing_plus_description">%1$s+는 한 달에 커피 한 잔의 가격으로 개발자를 지원해 모든 기능의 접근 권한을 얻는 플랜입니다.</string>
     <string name="billing_plus_purchase_button">월 %1$s에 구매</string>
+    <string name="billing_plus_purchase_trial_button">%1$s 무료 체험 시작</string>
+    <string name="billing_plus_trial_label">무료 체험: %1$s</string>
+    <string name="billing_plus_trial_period_day">%1$d일</string>
+    <string name="billing_plus_trial_period_week">%1$d주</string>
+    <string name="billing_plus_trial_period_month">%1$d개월</string>
+    <string name="billing_plus_trial_period_year">%1$d년</string>
     <string name="billing_plus_verify_button">구매 복구</string>
     <string name="billing_plus_consume_button">활성화</string>
     <string name="billing_plus_caution1">※ %1$s+는 전용 기능을 추가하는 구독 서비스입니다. 결제는 즉시 실행되며, 기능을 계속 이용하시려면 월별 정기 결제가 필요합니다. 언제든지 취소할 수 있습니다.</string>

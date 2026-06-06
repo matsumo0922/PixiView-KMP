@@ -1,5 +1,6 @@
 package me.matsumo.fanbox.core.model
 
+import androidx.compose.runtime.Immutable
 import androidx.compose.ui.text.intl.Locale
 import kotlinx.serialization.Serializable
 import kotlin.time.Clock
@@ -7,6 +8,7 @@ import kotlin.time.Duration.Companion.days
 import kotlin.time.ExperimentalTime
 
 /** アプリ全体のユーザー設定を表すモデル。 */
+@Immutable
 @Serializable
 data class Setting(
     val pixiViewId: String,
@@ -32,11 +34,18 @@ data class Setting(
     val isTestUser: Boolean,
     val isDeveloperMode: Boolean,
     val isPlusMode: Boolean,
+    val isPlusTrial: Boolean,
 ) {
+    /** Plus として扱う機能を利用できるかどうか。 */
     val hasPrivilege get() = isPlusMode || isDeveloperMode
 
+    /** クリエイター全投稿の一括ダウンロードを利用できるかどうか。 */
+    val canBulkDownload get() = isDeveloperMode || (isPlusMode && !isPlusTrial)
+
+    /** 成人向けコンテンツを表示できるかどうか。 */
     val isAllowedShowAdultContents get() = !isTestUser && isOverrideAdultContents
 
+    /** インタースティシャル広告を表示する期間に入っているかどうか。 */
     @OptIn(ExperimentalTime::class)
     val shouldShowInterstitialAd get() = (Clock.System.now().epochSeconds - firstLaunchTime) > 2.days.inWholeSeconds
 
@@ -68,6 +77,7 @@ data class Setting(
                 isTestUser = false,
                 isDeveloperMode = false,
                 isPlusMode = false,
+                isPlusTrial = false,
             )
         }
     }

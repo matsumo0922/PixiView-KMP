@@ -342,17 +342,37 @@ class SettingDataStore(
         }
     }
 
-    suspend fun setPlusMode(isPlusMode: Boolean) = withContext(ioDispatcher) {
-        if (setting.first().isPlusMode == isPlusMode) return@withContext
+    suspend fun setPlusStatus(
+        isPlusMode: Boolean,
+        isPlusTrial: Boolean,
+    ) = withContext(ioDispatcher) {
+        val currentSetting = setting.first()
+        val normalizedIsPlusTrial = isPlusMode && isPlusTrial
+        val isPlusModeChanged = currentSetting.isPlusMode != isPlusMode
+        val isPlusTrialChanged = currentSetting.isPlusTrial != normalizedIsPlusTrial
+        val hasPlusStatusChanged = isPlusModeChanged || isPlusTrialChanged
 
-        SettingsLog.update(
-            propertyName = "isPlusMode",
-            oldValue = setting.first().isPlusMode.toString(),
-            newValue = isPlusMode.toString(),
-        ).send()
+        if (!hasPlusStatusChanged) return@withContext
+
+        if (isPlusModeChanged) {
+            SettingsLog.update(
+                propertyName = "isPlusMode",
+                oldValue = currentSetting.isPlusMode.toString(),
+                newValue = isPlusMode.toString(),
+            ).send()
+        }
+
+        if (isPlusTrialChanged) {
+            SettingsLog.update(
+                propertyName = "isPlusTrial",
+                oldValue = currentSetting.isPlusTrial.toString(),
+                newValue = normalizedIsPlusTrial.toString(),
+            ).send()
+        }
 
         settingPreference.edit {
             it[booleanPreferencesKey(Setting::isPlusMode.name)] = isPlusMode
+            it[booleanPreferencesKey(Setting::isPlusTrial.name)] = normalizedIsPlusTrial
         }
     }
 }

@@ -305,6 +305,12 @@
     <!-- Billing -->
     <string name="billing_plus_description">%1$s+ は、月々コーヒー1杯の金額で全ての機能にアクセスできるようになる開発者への支援プランです。</string>
     <string name="billing_plus_purchase_button">%1$sで支援</string>
+    <string name="billing_plus_purchase_trial_button">%1$s無料で試す</string>
+    <string name="billing_plus_trial_label">無料トライアル: %1$s</string>
+    <string name="billing_plus_trial_period_day">%1$d日間</string>
+    <string name="billing_plus_trial_period_week">%1$d週間</string>
+    <string name="billing_plus_trial_period_month">%1$dか月間</string>
+    <string name="billing_plus_trial_period_year">%1$d年間</string>
     <string name="billing_plus_verify_button">購入を復元</string>
     <string name="billing_plus_consume_button">購入を消費</string>
     <string name="billing_plus_caution1">※ %1$s+ は上記の限定機能を追加する定期購入契約です。支払いは直ちに行われ、機能を利用し続けるには指定された期間ごとの更新が必要となります。解約はいつでも可能です。</string>

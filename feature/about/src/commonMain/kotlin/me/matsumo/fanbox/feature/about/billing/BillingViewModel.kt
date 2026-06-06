@@ -15,6 +15,7 @@ import kotlinx.coroutines.launch
 import me.matsumo.fanbox.core.billing.BillingClient
 import me.matsumo.fanbox.core.common.util.suspendRunCatching
 import me.matsumo.fanbox.core.model.BillingPlan
+import me.matsumo.fanbox.core.model.BillingPlusStatus
 import me.matsumo.fanbox.core.model.ScreenState
 import me.matsumo.fanbox.core.model.Setting
 import me.matsumo.fanbox.core.repository.SettingRepository
@@ -76,10 +77,13 @@ class BillingViewModel(
 
     private fun handleOnPurchase() {
         viewModelScope.launch {
-            val result = suspendRunCatching { billingClient.purchase(selectedPlanType.value) }.getOrElse { false }
+            val result = suspendRunCatching { billingClient.purchase(selectedPlanType.value) }.getOrElse { inactivePlusStatus() }
 
-            if (result) {
-                settingRepository.setPlusMode(true)
+            if (result.isActive) {
+                settingRepository.setPlusStatus(
+                    isPlusMode = result.isActive,
+                    isPlusTrial = result.isTrial,
+                )
                 _messageEvent.trySend(BillingMessageEvent.Purchased)
             } else {
                 _messageEvent.trySend(BillingMessageEvent.SnackBar(Res.string.billing_plus_toast_purchased_error))
@@ -89,10 +93,13 @@ class BillingViewModel(
 
     private fun handleRestore() {
         viewModelScope.launch {
-            val result = suspendRunCatching { billingClient.restore() }.getOrElse { false }
+            val result = suspendRunCatching { billingClient.restore() }.getOrElse { inactivePlusStatus() }
 
-            if (result) {
-                settingRepository.setPlusMode(true)
+            if (result.isActive) {
+                settingRepository.setPlusStatus(
+                    isPlusMode = result.isActive,
+                    isPlusTrial = result.isTrial,
+                )
                 _messageEvent.trySend(BillingMessageEvent.Purchased)
             } else {
                 _messageEvent.trySend(BillingMessageEvent.SnackBar(Res.string.billing_plus_toast_verify_error))
@@ -101,6 +108,14 @@ class BillingViewModel(
     }
 }
 
+private fun inactivePlusStatus(): BillingPlusStatus {
+    return BillingPlusStatus(
+        isActive = false,
+        isTrial = false,
+    )
+}
+
+/** Plus 課金画面の UI 状態を表すモデル。 */
 @Stable
 data class BillingUiState(
     val setting: Setting,
