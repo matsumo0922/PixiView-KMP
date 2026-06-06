@@ -12,6 +12,7 @@ import me.matsumo.fanbox.core.ui.component.sheet.BottomSheetNavigator
 internal fun PixiViewContent(
     bottomSheetNavigator: BottomSheetNavigator,
     navController: NavHostController,
+    onPostDetailClosed: suspend () -> Unit,
     modifier: Modifier = Modifier,
 ) {
     Box(modifier) {
@@ -19,6 +20,7 @@ internal fun PixiViewContent(
             modifier = Modifier.fillMaxSize(),
             bottomSheetNavigator = bottomSheetNavigator,
             navController = navController,
+            onPostDetailClosed = onPostDetailClosed,
         )
     }
 }

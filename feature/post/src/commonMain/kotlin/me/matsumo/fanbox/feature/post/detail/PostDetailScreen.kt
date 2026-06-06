@@ -78,7 +78,6 @@ import me.matsumo.fanbox.core.ui.AsyncLoadContents
 import me.matsumo.fanbox.core.ui.LazyPagingItemsLoadContents
 import me.matsumo.fanbox.core.ui.ads.BannerAdView
 import me.matsumo.fanbox.core.ui.ads.NativeAdView
-import me.matsumo.fanbox.core.ui.ads.rememberInterstitialAdState
 import me.matsumo.fanbox.core.ui.appName
 import me.matsumo.fanbox.core.ui.extensition.FadePlaceHolder
 import me.matsumo.fanbox.core.ui.extensition.LocalRevealCanvasState
@@ -92,7 +91,6 @@ import me.matsumo.fanbox.core.ui.extensition.isNullOrEmpty
 import me.matsumo.fanbox.core.ui.extensition.marquee
 import me.matsumo.fanbox.core.ui.extensition.padding
 import me.matsumo.fanbox.core.ui.extensition.revealByStep
-import me.matsumo.fanbox.core.ui.theme.LocalPixiViewConfig
 import me.matsumo.fanbox.core.ui.theme.bold
 import me.matsumo.fanbox.core.ui.theme.center
 import me.matsumo.fanbox.core.ui.view.ErrorView
@@ -150,31 +148,6 @@ internal fun PostDetailRoute(
     val revealState = rememberRevealState()
     val revealOverlayContainerColor = MaterialTheme.colorScheme.tertiaryContainer
     val revealOverlayContentColor = MaterialTheme.colorScheme.onTertiaryContainer
-
-    var downloadCount by remember(uiState.setting.downloadCountForAd) { mutableStateOf(uiState.setting.downloadCountForAd) }
-    val interstitialAdState = rememberInterstitialAdState(
-        adUnitId = LocalPixiViewConfig.current.interstitialAdUnitId,
-        enable = !uiState.setting.hasPrivilege && uiState.setting.shouldShowInterstitialAd,
-    )
-
-    LaunchedEffect(true) {
-        if (!uiState.setting.hasPrivilege && uiState.setting.shouldShowInterstitialAd) {
-            interstitialAdState.load()
-        }
-    }
-
-    suspend fun showInterstitialAdIfNeeded(imageCount: Int) {
-        downloadCount += imageCount
-        viewModel.updateDownloadCountForAd(downloadCount)
-
-        if (downloadCount >= 20) {
-            interstitialAdState.show()
-            downloadCount = 0
-            viewModel.updateDownloadCountForAd(0)
-            delay(500)
-            interstitialAdState.load()
-        }
-    }
 
     Reveal(
         modifier = modifier,
@@ -249,7 +222,6 @@ internal fun PostDetailRoute(
                                 navigateToCommentDeleteDialog = navigateToCommentDeleteDialog,
                                 onPostDetailFetched = { postDetailMap[id] = it },
                                 onRevealCompleted = viewModel::finishReveal,
-                                onShowInterstitialAd = ::showInterstitialAdIfNeeded,
                                 terminate = terminate,
                             )
                         }
@@ -279,7 +251,6 @@ private fun PostDetailView(
     navigateToCommentDeleteDialog: (SimpleAlertContents, () -> Unit) -> Unit,
     onPostDetailFetched: (FanboxPostDetail) -> Unit,
     onRevealCompleted: () -> Unit,
-    onShowInterstitialAd: suspend (Int) -> Unit,
     terminate: () -> Unit,
     modifier: Modifier = Modifier,
     viewModel: PostDetailViewModel = koinViewModel(key = postId.value) {
@@ -360,7 +331,6 @@ private fun PostDetailView(
             onClickFile = {
                 scope.launch {
                     viewModel.downloadFiles(uiState.postDetail.id, uiState.postDetail.title, listOf(it))
-                    onShowInterstitialAd(1)
                     snackExtension.show(
                         snackbarHostState = snackbarHostState,
                         message = Res.string.queue_added,
@@ -376,7 +346,6 @@ private fun PostDetailView(
             onClickDownloadImages = {
                 scope.launch {
                     viewModel.downloadImages(uiState.postDetail.id, uiState.postDetail.title, it)
-                    onShowInterstitialAd(it.size)
                     snackExtension.show(
                         snackbarHostState = snackbarHostState,
                         message = Res.string.queue_added,

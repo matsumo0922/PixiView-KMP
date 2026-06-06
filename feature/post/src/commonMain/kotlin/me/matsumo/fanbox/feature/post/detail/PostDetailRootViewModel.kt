@@ -107,12 +107,6 @@ class PostDetailRootViewModel(
         }
     }
 
-    fun updateDownloadCountForAd(count: Int) {
-        viewModelScope.launch {
-            settingRepository.setDownloadCountForAd(count)
-        }
-    }
-
     private fun Flow<PagingData<FanboxPost>>.toIdFlow(): Flow<PagingData<FanboxPostId>> {
         return map { list -> list.map { it.id } }
     }

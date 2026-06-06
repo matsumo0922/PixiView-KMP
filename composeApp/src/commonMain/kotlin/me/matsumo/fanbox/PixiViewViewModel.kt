@@ -55,6 +55,10 @@ class PixiViewViewModel(
     private val _isAppLockedFlow: MutableStateFlow<Boolean> = MutableStateFlow(true)
     private val _metadataFlow: MutableStateFlow<FanboxMetaData> = MutableStateFlow(getFanboxMetadataDummy())
 
+    // インタースティシャル広告の頻度判定用。永続化せずプロセス内のみ保持する
+    private var interstitialPostCloseCount = 0
+    private var lastInterstitialShownEpochSeconds = 0L
+
     val screenState = combine(
         listOf(
             settingRepository.setting,
@@ -168,6 +172,29 @@ class PixiViewViewModel(
         }
     }
 
+    @OptIn(ExperimentalTime::class)
+    suspend fun onPostDetailClosedForInterstitialAd(
+        showInterstitialAd: suspend () -> Boolean,
+    ) {
+        val setting = settingRepository.setting.first()
+        if (!setting.canHandlePostDetailInterstitialAd()) return
+
+        val currentEpochSeconds = Clock.System.now().epochSeconds
+        interstitialPostCloseCount += 1
+
+        val canShowInterstitialAd = shouldShowPostDetailInterstitialAd(
+            postCloseCount = interstitialPostCloseCount,
+            currentEpochSeconds = currentEpochSeconds,
+            lastShownEpochSeconds = lastInterstitialShownEpochSeconds,
+        )
+        if (!canShowInterstitialAd) return
+
+        if (showInterstitialAd()) {
+            interstitialPostCloseCount = 0
+            lastInterstitialShownEpochSeconds = currentEpochSeconds
+        }
+    }
+
     suspend fun tryToAuthenticate(biometryAuthenticator: BiometryAuthenticator): Boolean = suspendRunCatching {
         biometryAuthenticator.checkBiometryAuthentication(
             requestTitle = getString(Res.string.home_app_lock_title).desc(),
@@ -181,6 +208,30 @@ class PixiViewViewModel(
     )
 }
 
+private fun Setting.canHandlePostDetailInterstitialAd(): Boolean {
+    return !hasPrivilege && shouldShowInterstitialAd
+}
+
+private fun shouldShowPostDetailInterstitialAd(
+    postCloseCount: Int,
+    currentEpochSeconds: Long,
+    lastShownEpochSeconds: Long,
+): Boolean {
+    val reachesTriggerCount = postCloseCount >= INTERSTITIAL_POST_CLOSE_TRIGGER_COUNT
+    val matchesTriggerInterval = postCloseCount % INTERSTITIAL_POST_CLOSE_TRIGGER_COUNT == 0
+    val elapsedSeconds = currentEpochSeconds - lastShownEpochSeconds
+    val satisfiesCooldown = elapsedSeconds >= INTERSTITIAL_AD_COOLDOWN_SECONDS
+
+    return reachesTriggerCount && matchesTriggerInterval && satisfiesCooldown
+}
+
+/** インタースティシャル広告を表示する投稿詳細クローズ回数。 */
+private const val INTERSTITIAL_POST_CLOSE_TRIGGER_COUNT = 3
+
+/** インタースティシャル広告表示後に再表示を抑制する秒数。 */
+private const val INTERSTITIAL_AD_COOLDOWN_SECONDS = 180L
+
+/** アプリ全体の表示状態をまとめた UI モデル。 */
 @Stable
 data class MainUiState(
     val setting: Setting,

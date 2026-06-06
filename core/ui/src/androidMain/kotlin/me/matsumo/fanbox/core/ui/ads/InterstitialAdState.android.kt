@@ -17,6 +17,7 @@ import kotlin.concurrent.atomics.AtomicBoolean
 import kotlin.concurrent.atomics.ExperimentalAtomicApi
 import kotlin.coroutines.resume
 
+/** Android のインタースティシャル広告ロードと表示状態を管理するクラス。 */
 @Stable
 class InterstitialAdStateImpl internal constructor(
     private val activity: Activity,
@@ -25,11 +26,13 @@ class InterstitialAdStateImpl internal constructor(
 ) : InterstitialAdState {
     private var interstitialAd: InterstitialAd? = null
     private var loaded = false
+    private var loading = false
     private var loadRequestId = 0
 
     override fun load() {
-        if (!enable || loaded) return
+        if (!enable || loaded || loading) return
 
+        loading = true
         val requestId = ++loadRequestId
         val adRequest = AdRequest.Builder().build()
 
@@ -39,6 +42,7 @@ class InterstitialAdStateImpl internal constructor(
 
                 interstitialAd = ad
                 loaded = true
+                loading = false
 
                 Napier.d("InterstitialAd: loaded")
             }
@@ -48,6 +52,7 @@ class InterstitialAdStateImpl internal constructor(
 
                 interstitialAd = null
                 loaded = false
+                loading = false
 
                 Napier.w("InterstitialAd: failed to load, $loadAdError")
             }

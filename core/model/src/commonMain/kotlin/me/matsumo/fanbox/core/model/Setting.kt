@@ -6,6 +6,7 @@ import kotlin.time.Clock
 import kotlin.time.Duration.Companion.days
 import kotlin.time.ExperimentalTime
 
+/** アプリ全体のユーザー設定を表すモデル。 */
 @Serializable
 data class Setting(
     val pixiViewId: String,
@@ -17,7 +18,6 @@ data class Setting(
     val fileSaveDirectory: String,
     val postSaveDirectory: String,
     val firstLaunchTime: Long,
-    val downloadCountForAd: Int,
     val isAgreedPrivacyPolicy: Boolean,
     val isAgreedTermsOfService: Boolean,
     val isUseAppLock: Boolean,
@@ -38,8 +38,9 @@ data class Setting(
     val isAllowedShowAdultContents get() = !isTestUser && isOverrideAdultContents
 
     @OptIn(ExperimentalTime::class)
-    val shouldShowInterstitialAd get() = (Clock.System.now().epochSeconds - firstLaunchTime) > 7.days.inWholeSeconds
+    val shouldShowInterstitialAd get() = (Clock.System.now().epochSeconds - firstLaunchTime) > 2.days.inWholeSeconds
 
+    /** アプリ設定の初期値を生成するオブジェクト。 */
     companion object Companion {
         @OptIn(ExperimentalTime::class)
         fun default(): Setting {
@@ -53,7 +54,6 @@ data class Setting(
                 fileSaveDirectory = "",
                 postSaveDirectory = "",
                 firstLaunchTime = -1L,
-                downloadCountForAd = 0,
                 isAgreedPrivacyPolicy = false,
                 isAgreedTermsOfService = false,
                 isUseAppLock = false,

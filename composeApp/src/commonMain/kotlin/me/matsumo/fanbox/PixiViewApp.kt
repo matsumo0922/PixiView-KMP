@@ -11,6 +11,7 @@ import androidx.compose.material3.windowsizeclass.WindowWidthSizeClass
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.DisposableEffect
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
@@ -28,8 +29,11 @@ import kotlinx.coroutines.launch
 import me.matsumo.fanbox.components.PixiViewScreen
 import me.matsumo.fanbox.core.common.PixiViewConfig
 import me.matsumo.fanbox.core.model.ScreenState
+import me.matsumo.fanbox.core.model.Setting
 import me.matsumo.fanbox.core.model.ThemeConfig
 import me.matsumo.fanbox.core.ui.AsyncLoadContents
+import me.matsumo.fanbox.core.ui.ads.InterstitialAdState
+import me.matsumo.fanbox.core.ui.ads.rememberInterstitialAdState
 import me.matsumo.fanbox.core.ui.component.PixiViewBackground
 import me.matsumo.fanbox.core.ui.extensition.LocalNavigationType
 import me.matsumo.fanbox.core.ui.extensition.NavigationType
@@ -78,12 +82,24 @@ fun PixiViewApp(
                 modifier = Modifier.fillMaxSize(),
                 screenState = screenState,
                 containerColor = if (shouldUseDarkTheme) DarkDefaultColorScheme.surface else LightDefaultColorScheme.surface,
-            ) {
+            ) { uiState ->
+                val shouldLoadInterstitialAd = uiState.setting.shouldLoadInterstitialAd()
+                val interstitialAdState = rememberInterstitialAdState(
+                    adUnitId = pixiViewConfig.interstitialAdUnitId,
+                    enable = shouldLoadInterstitialAd,
+                )
+
+                LaunchedEffect(shouldLoadInterstitialAd, interstitialAdState) {
+                    if (shouldLoadInterstitialAd) {
+                        interstitialAdState.load()
+                    }
+                }
+
                 PixiViewTheme(
-                    sessionId = it.sessionId,
-                    fanboxMetadata = it.fanboxMetadata,
-                    themeConfig = it.setting.themeConfig,
-                    themeColorConfig = it.setting.themeColorConfig,
+                    sessionId = uiState.sessionId,
+                    fanboxMetadata = uiState.fanboxMetadata,
+                    themeConfig = uiState.setting.themeConfig,
+                    themeColorConfig = uiState.setting.themeColorConfig,
                     pixiViewConfig = pixiViewConfig,
                     isAdsSdkInitialized = isAdsSdkInitialized,
                     nativeViews = nativeViews,
@@ -92,14 +108,20 @@ fun PixiViewApp(
                     PixiViewBackground(modifier) {
                         PixiViewScreen(
                             modifier = Modifier.fillMaxSize(),
-                            uiState = it,
+                            uiState = uiState,
                             onRequestInitPixiViewId = viewModel::initPixiViewId,
                             onRequestFirstLaunchFlag = viewModel::initFirstLaunchTime,
                             onRequestUpdateState = viewModel::updateState,
+                            onPostDetailClosed = {
+                                handlePostDetailClosedForInterstitialAd(
+                                    viewModel = viewModel,
+                                    interstitialAdState = interstitialAdState,
+                                )
+                            },
                         )
 
                         AnimatedVisibility(
-                            visible = it.isAppLocked,
+                            visible = uiState.isAppLocked,
                             enter = fadeIn(),
                             exit = fadeOut(),
                         ) {
@@ -110,7 +132,7 @@ fun PixiViewApp(
                             )
                         }
 
-                        if (it.isAppLocked) {
+                        if (uiState.isAppLocked) {
                             scope.launch {
                                 if (currentPlatform == Platform.Android) {
                                     // Wait for the bind fragment manager.
@@ -149,6 +171,30 @@ fun PixiViewApp(
             }
         }
     }
+}
+
+private fun Setting.shouldLoadInterstitialAd(): Boolean {
+    return !hasPrivilege && shouldShowInterstitialAd
+}
+
+private suspend fun handlePostDetailClosedForInterstitialAd(
+    viewModel: PixiViewViewModel,
+    interstitialAdState: InterstitialAdState,
+) {
+    viewModel.onPostDetailClosedForInterstitialAd {
+        showInterstitialAdAndReload(interstitialAdState)
+    }
+}
+
+private suspend fun showInterstitialAdAndReload(
+    interstitialAdState: InterstitialAdState,
+): Boolean {
+    val wasShown = interstitialAdState.show()
+    if (wasShown) {
+        interstitialAdState.load()
+    }
+
+    return wasShown
 }
 
 @Composable

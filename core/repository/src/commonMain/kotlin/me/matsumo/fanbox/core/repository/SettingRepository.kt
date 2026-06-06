@@ -39,7 +39,6 @@ interface SettingRepository {
     suspend fun setHideRestricted(isHideRestricted: Boolean)
     suspend fun setDeveloperMode(isDeveloperMode: Boolean)
     suspend fun setPlusMode(isPlusMode: Boolean)
-    suspend fun setDownloadCountForAd(count: Int)
 }
 
 class SettingRepositoryImpl(
@@ -154,9 +153,5 @@ class SettingRepositoryImpl(
                 setAutoImagePreview(false)
             }
         }
-    }
-
-    override suspend fun setDownloadCountForAd(count: Int) {
-        settingDataStore.setDownloadCountForAd(count)
     }
 }
