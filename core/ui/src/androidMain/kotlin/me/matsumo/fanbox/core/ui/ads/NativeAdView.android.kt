@@ -14,6 +14,7 @@ import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.surfaceColorAtElevation
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.Immutable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
@@ -44,9 +45,21 @@ actual fun NativeAdView(
     val nativeAdInventoryVersion by nativeAdsPreLoader.nativeAdInventoryVersion.collectAsState()
     var nativeAd by remember(key) { mutableStateOf<NativeAd?>(null) }
 
-    LaunchedEffect(key, nativeAdInventoryVersion) {
+    LaunchedEffect(
+        key1 = key,
+        key2 = nativeAdInventoryVersion,
+    ) {
         if (nativeAd == null) {
             nativeAd = nativeAdsPreLoader.getNativeAd(key)
+        }
+    }
+
+    DisposableEffect(
+        key1 = key,
+        key2 = nativeAdsPreLoader,
+    ) {
+        onDispose {
+            nativeAdsPreLoader.popAd(key = key)
         }
     }
 
