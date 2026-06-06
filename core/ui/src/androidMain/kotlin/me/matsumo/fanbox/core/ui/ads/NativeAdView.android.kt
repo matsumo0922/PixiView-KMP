@@ -7,7 +7,9 @@ import android.view.View
 import android.view.ViewGroup
 import android.view.ViewParent
 import android.widget.ImageView
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
@@ -44,10 +46,24 @@ actual fun NativeAdView(
 ) {
     val isAdsSdkInitialized = LocalAdsSdkInitialized.current
 
-    if (!isAdsSdkInitialized) {
-        return
+    Card(
+        modifier = modifier.clip(RoundedCornerShape(8.dp)),
+        shape = RoundedCornerShape(8.dp),
+        colors = CardDefaults.cardColors(MaterialTheme.colorScheme.surfaceColorAtElevation(2.dp)),
+    ) {
+        if (isAdsSdkInitialized) {
+            NativeAdViewContent(key = key)
+        } else {
+            NativeAdViewPlaceholder()
+        }
     }
+}
 
+@Composable
+private fun NativeAdViewContent(
+    key: String,
+    modifier: Modifier = Modifier,
+) {
     val nativeAdsPreLoader = koinInject<NativeAdsPreLoader>()
     val nativeAdInventoryVersion by nativeAdsPreLoader.nativeAdInventoryVersion.collectAsState()
     var nativeAd by remember(key) { mutableStateOf<NativeAd?>(null) }
@@ -79,31 +95,36 @@ actual fun NativeAdView(
         buttonTextColor = buttonTextColor,
     )
 
-    Card(
-        modifier = modifier.clip(RoundedCornerShape(8.dp)),
-        shape = RoundedCornerShape(8.dp),
-        colors = CardDefaults.cardColors(MaterialTheme.colorScheme.surfaceColorAtElevation(2.dp)),
-    ) {
-        AndroidViewBinding(
-            modifier = Modifier.fillMaxWidth(),
-            factory = { inflater, parent, attachToParent ->
-                createNativeAdBinding(
-                    inflater = inflater,
-                    parent = parent,
-                    attachToParent = attachToParent,
-                    colorPalette = colorPalette,
+    AndroidViewBinding(
+        modifier = modifier.fillMaxWidth(),
+        factory = { inflater, parent, attachToParent ->
+            createNativeAdBinding(
+                inflater = inflater,
+                parent = parent,
+                attachToParent = attachToParent,
+                colorPalette = colorPalette,
+            )
+        },
+        update = {
+            nativeAd?.let { loadedNativeAd ->
+                setupNativeAd(
+                    nativeAd = loadedNativeAd,
+                    key = key,
                 )
-            },
-            update = {
-                nativeAd?.let { loadedNativeAd ->
-                    setupNativeAd(
-                        nativeAd = loadedNativeAd,
-                        key = key,
-                    )
-                }
-            },
-        )
-    }
+            }
+        },
+    )
+}
+
+@Composable
+private fun NativeAdViewPlaceholder(
+    modifier: Modifier = Modifier,
+) {
+    Box(
+        modifier = modifier
+            .fillMaxWidth()
+            .height(NativeAdPlaceholderHeight),
+    )
 }
 
 private fun createNativeAdBinding(
@@ -220,3 +241,6 @@ private fun ViewParent?.findAndroidComposeViewParent(): ViewParent? = when {
     this != null -> this.parent.findAndroidComposeViewParent()
     else -> null
 }
+
+/** SDK 初期化前にネイティブ広告枠として確保する高さ。 */
+private val NativeAdPlaceholderHeight = 60.dp

@@ -11,22 +11,17 @@ import com.google.android.gms.ads.VideoOptions
 import com.google.android.gms.ads.nativead.NativeAd
 import com.google.android.gms.ads.nativead.NativeAdOptions
 import io.github.aakira.napier.Napier
-import kotlinx.coroutines.CoroutineDispatcher
-import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
-import kotlinx.coroutines.launch
 import me.matsumo.fanbox.core.common.PixiViewConfig
 
 /** Android ネイティブ広告のプリロード在庫と表示キーへの割り当てを管理するクラス。 */
 class NativeAdsPreLoader(
     context: Context,
     pixiViewConfig: PixiViewConfig,
-    ioDispatcher: CoroutineDispatcher,
 ) {
-    private val scope = CoroutineScope(ioDispatcher)
     private val preloadedNativeAds: MutableList<NativeAd> = mutableListOf()
     private val keyMap: MutableMap<String, NativeAd> = mutableMapOf()
     private val _nativeAdInventoryVersion = MutableStateFlow(0)
@@ -63,9 +58,7 @@ class NativeAdsPreLoader(
     private fun preloadAd() {
         if (adLoader.isLoading) return
 
-        scope.launch {
-            loadMissingNativeAds()
-        }
+        loadMissingNativeAds()
     }
 
     fun getNativeAd(key: String): NativeAd? {
