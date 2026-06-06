@@ -2,6 +2,7 @@ package me.matsumo.fanbox.core.ui.ads
 
 import android.annotation.SuppressLint
 import android.content.res.ColorStateList
+import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.view.ViewParent
@@ -13,6 +14,7 @@ import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.surfaceColorAtElevation
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.Immutable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
@@ -28,6 +30,7 @@ import androidx.core.view.isVisible
 import androidx.core.view.postDelayed
 import com.google.android.gms.ads.nativead.NativeAd
 import io.github.aakira.napier.Napier
+import me.matsumo.fanbox.core.ui.R
 import me.matsumo.fanbox.core.ui.databinding.LayoutNativeAdsMediumBinding
 import org.koin.compose.koinInject
 
@@ -41,50 +44,6 @@ actual fun NativeAdView(
     val nativeAdInventoryVersion by nativeAdsPreLoader.nativeAdInventoryVersion.collectAsState()
     var nativeAd by remember(key) { mutableStateOf<NativeAd?>(null) }
 
-    fun setupNativeAd(binding: LayoutNativeAdsMediumBinding, nativeAd: NativeAd) {
-        if (binding.tvPrice.text.isNotBlank()) return
-
-        val adView = binding.root.also { adView ->
-            adView.advertiserView = binding.tvAdvertiser
-            adView.bodyView = binding.tvBody
-            adView.callToActionView = binding.btnCta
-            adView.headlineView = binding.tvHeadline
-            adView.iconView = binding.ivAppIcon
-            adView.priceView = binding.tvPrice
-            adView.starRatingView = binding.rtbStars
-            adView.storeView = binding.tvStore
-            adView.mediaView = binding.mvContent
-        }
-
-        nativeAd.advertiser?.let { binding.tvAdvertiser.text = it }
-        nativeAd.body?.let { binding.tvBody.text = it }
-        nativeAd.callToAction?.let { binding.btnCta.text = it }
-        nativeAd.headline?.let { binding.tvHeadline.text = it }
-        nativeAd.icon?.let { binding.ivAppIcon.setImageDrawable(it.drawable) }
-        nativeAd.price?.let { binding.tvPrice.text = it }
-        nativeAd.starRating?.let { binding.rtbStars.rating = it.toFloat() }
-        nativeAd.store?.let { binding.tvStore.text = it }
-        nativeAd.mediaContent?.let { binding.mvContent.mediaContent = it }
-
-        binding.tvAdvertiser.visibility = if (nativeAd.advertiser.isNullOrBlank()) View.GONE else View.VISIBLE
-
-        binding.mvContent.isVisible = nativeAd.mediaContent != null
-        binding.mvContent.setOnHierarchyChangeListener(object : ViewGroup.OnHierarchyChangeListener {
-            override fun onChildViewAdded(parent: View, child: View) {
-                if (child is ImageView) {
-                    child.adjustViewBounds = true
-                }
-            }
-
-            override fun onChildViewRemoved(parent: View, child: View) = Unit
-        })
-
-        adView.setNativeAd(nativeAd)
-        adView.requestLayoutWithDelay(500L)
-
-        Napier.d("NativeAdView: setupNativeAd, ${binding.tvPrice.text}, $key")
-    }
-
     LaunchedEffect(key, nativeAdInventoryVersion) {
         if (nativeAd == null) {
             nativeAd = nativeAdsPreLoader.getNativeAd(key)
@@ -95,6 +54,12 @@ actual fun NativeAdView(
     val bodyTextColor = MaterialTheme.colorScheme.onSurfaceVariant.toArgb()
     val buttonColor = MaterialTheme.colorScheme.primary.toArgb()
     val buttonTextColor = MaterialTheme.colorScheme.onPrimary.toArgb()
+    val colorPalette = NativeAdViewColorPalette(
+        titleTextColor = titleTextColor,
+        bodyTextColor = bodyTextColor,
+        buttonColor = buttonColor,
+        buttonTextColor = buttonTextColor,
+    )
 
     Card(
         modifier = modifier.clip(RoundedCornerShape(8.dp)),
@@ -104,24 +69,119 @@ actual fun NativeAdView(
         AndroidViewBinding(
             modifier = Modifier.fillMaxWidth(),
             factory = { inflater, parent, attachToParent ->
-                val binding = LayoutNativeAdsMediumBinding.inflate(inflater, parent, attachToParent)
-
-                binding.tvAdvertiser.setTextColor(bodyTextColor)
-                binding.tvBody.setTextColor(bodyTextColor)
-                binding.btnCta.setTextColor(buttonTextColor)
-                binding.btnCta.backgroundTintList = ColorStateList.valueOf(buttonColor)
-                binding.tvHeadline.setTextColor(titleTextColor)
-                binding.tvPrice.setTextColor(bodyTextColor)
-                binding.tvStore.setTextColor(bodyTextColor)
-                binding.tvAd.setTextColor(bodyTextColor)
-
-                binding
+                createNativeAdBinding(
+                    inflater = inflater,
+                    parent = parent,
+                    attachToParent = attachToParent,
+                    colorPalette = colorPalette,
+                )
             },
             update = {
-                nativeAd?.let { nativeAd -> setupNativeAd(this, nativeAd) }
+                nativeAd?.let { loadedNativeAd ->
+                    setupNativeAd(
+                        nativeAd = loadedNativeAd,
+                        key = key,
+                    )
+                }
             },
         )
     }
+}
+
+private fun createNativeAdBinding(
+    inflater: LayoutInflater,
+    parent: ViewGroup,
+    attachToParent: Boolean,
+    colorPalette: NativeAdViewColorPalette,
+): LayoutNativeAdsMediumBinding {
+    val binding = LayoutNativeAdsMediumBinding.inflate(inflater, parent, attachToParent)
+
+    binding.applyColors(colorPalette = colorPalette)
+
+    return binding
+}
+
+/** ネイティブ広告ビューへ適用する色設定。 */
+@Immutable
+private data class NativeAdViewColorPalette(
+    val titleTextColor: Int,
+    val bodyTextColor: Int,
+    val buttonColor: Int,
+    val buttonTextColor: Int,
+)
+
+private fun LayoutNativeAdsMediumBinding.applyColors(
+    colorPalette: NativeAdViewColorPalette,
+) {
+    tvAdvertiser.setTextColor(colorPalette.bodyTextColor)
+    tvBody.setTextColor(colorPalette.bodyTextColor)
+    btnCta.setTextColor(colorPalette.buttonTextColor)
+    btnCta.backgroundTintList = ColorStateList.valueOf(colorPalette.buttonColor)
+    tvHeadline.setTextColor(colorPalette.titleTextColor)
+    tvPrice.setTextColor(colorPalette.bodyTextColor)
+    tvStore.setTextColor(colorPalette.bodyTextColor)
+    tvAd.setTextColor(colorPalette.bodyTextColor)
+}
+
+private fun LayoutNativeAdsMediumBinding.setupNativeAd(
+    nativeAd: NativeAd,
+    key: String,
+) {
+    if (isSameNativeAdBound(nativeAd = nativeAd)) return
+
+    registerNativeAdAssetViews()
+    bindNativeAdAssets(nativeAd = nativeAd)
+    adjustMediaImageBounds()
+
+    root.setNativeAd(nativeAd)
+    root.setTag(R.id.tag_native_ad_view_bound_ad, nativeAd)
+    root.requestLayoutWithDelay(500L)
+
+    Napier.d("NativeAdView: setupNativeAd, ${tvPrice.text}, $key")
+}
+
+private fun LayoutNativeAdsMediumBinding.isSameNativeAdBound(nativeAd: NativeAd): Boolean {
+    val boundNativeAd = root.getTag(R.id.tag_native_ad_view_bound_ad) as? NativeAd
+    return boundNativeAd === nativeAd
+}
+
+private fun LayoutNativeAdsMediumBinding.registerNativeAdAssetViews() {
+    root.advertiserView = tvAdvertiser
+    root.bodyView = tvBody
+    root.callToActionView = btnCta
+    root.headlineView = tvHeadline
+    root.iconView = ivAppIcon
+    root.priceView = tvPrice
+    root.starRatingView = rtbStars
+    root.storeView = tvStore
+    root.mediaView = mvContent
+}
+
+private fun LayoutNativeAdsMediumBinding.bindNativeAdAssets(nativeAd: NativeAd) {
+    tvAdvertiser.text = nativeAd.advertiser.orEmpty()
+    tvBody.text = nativeAd.body.orEmpty()
+    btnCta.text = nativeAd.callToAction.orEmpty()
+    tvHeadline.text = nativeAd.headline.orEmpty()
+    ivAppIcon.setImageDrawable(nativeAd.icon?.drawable)
+    tvPrice.text = nativeAd.price.orEmpty()
+    rtbStars.rating = nativeAd.starRating?.toFloat() ?: 0f
+    tvStore.text = nativeAd.store.orEmpty()
+    mvContent.mediaContent = nativeAd.mediaContent
+
+    tvAdvertiser.visibility = if (nativeAd.advertiser.isNullOrBlank()) View.GONE else View.VISIBLE
+    mvContent.isVisible = nativeAd.mediaContent != null
+}
+
+private fun LayoutNativeAdsMediumBinding.adjustMediaImageBounds() {
+    mvContent.setOnHierarchyChangeListener(object : ViewGroup.OnHierarchyChangeListener {
+        override fun onChildViewAdded(parent: View, child: View) {
+            if (child is ImageView) {
+                child.adjustViewBounds = true
+            }
+        }
+
+        override fun onChildViewRemoved(parent: View, child: View) = Unit
+    })
 }
 
 private fun View.requestLayoutWithDelay(delayMillis: Long) {
