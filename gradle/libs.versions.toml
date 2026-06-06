@@ -144,7 +144,7 @@ androidx-compose-ui-tooling-preview = { module = "androidx.compose.ui:ui-tooling
 kmp-lifecycle-runtime-compose = { module = "org.jetbrains.androidx.lifecycle:lifecycle-runtime-compose", version.ref = "kmpLifecycle" }
 kmp-lifecycle-viewmodel-compose = { module = "org.jetbrains.androidx.lifecycle:lifecycle-viewmodel-compose", version.ref = "kmpLifecycle" }
 kmp-navigation-compose = { module = "org.jetbrains.androidx.navigation:navigation-compose", version.ref = "kmpNavigation" }
-kmp-backandler = { module = "org.jetbrains.compose.ui:ui-backhandler", version.ref = "kmpBackHandler" }
+kmp-backhandler = { module = "org.jetbrains.compose.ui:ui-backhandler", version.ref = "kmpBackHandler" }
 kmp-paging-common = { module = "app.cash.paging:paging-common", version.ref = "kmpPaging" }
 kmp-paging-compose = { module = "app.cash.paging:paging-compose-common", version.ref = "kmpPaging" }
 
@@ -260,7 +260,7 @@ ui-common-api = [
     "kmp-lifecycle-runtime-compose",
     "kmp-lifecycle-viewmodel-compose",
     "kmp-navigation-compose",
-    "kmp-backandler",
+    "kmp-backhandler",
     "kmp-paging-common",
     "kmp-paging-compose",
     "coil3-compose",
