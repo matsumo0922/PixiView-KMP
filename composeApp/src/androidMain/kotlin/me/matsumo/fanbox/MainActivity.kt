@@ -30,6 +30,7 @@ import com.unity3d.ads.metadata.MetaData
 import com.vungle.ads.VunglePrivacySettings
 import io.github.aakira.napier.Napier
 import kotlinx.collections.immutable.persistentMapOf
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
 import kotlinx.serialization.json.buildJsonObject
@@ -43,10 +44,12 @@ import me.matsumo.fanbox.feature.service.DownloadPostService
 import org.json.JSONObject
 import org.koin.androidx.viewmodel.ext.android.viewModel
 import org.koin.core.component.KoinComponent
+import java.util.concurrent.atomic.AtomicBoolean
 
 class MainActivity : FragmentActivity(), KoinComponent {
 
     private val viewModel by viewModel<MainViewModel>()
+    private val isMobileAdsSdkInitializationStarted = AtomicBoolean(false)
     private var stayTime = 0L
 
     @OptIn(ExperimentalMaterial3WindowSizeClassApi::class)
@@ -150,7 +153,7 @@ class MainActivity : FragmentActivity(), KoinComponent {
 
         if (appLovinSdkKey.isBlank()) {
             Napier.w { "AppLovin SDK key is blank. Skip AppLovin SDK initialization." }
-            initializeMobileAdsSdk()
+            tryInitializeMobileAdsSdk()
             return
         }
 
@@ -162,18 +165,39 @@ class MainActivity : FragmentActivity(), KoinComponent {
             initializationConfiguration,
             ::onAppLovinSdkInitialized,
         )
+        startAppLovinInitializationTimeout()
     }
 
     private fun onAppLovinSdkInitialized(sdkConfiguration: AppLovinSdkConfiguration) {
         Napier.d { "AppLovin SDK initialized: $sdkConfiguration" }
-        initializeMobileAdsSdk()
+        tryInitializeMobileAdsSdk()
     }
 
-    private fun initializeMobileAdsSdk() {
+    private fun startAppLovinInitializationTimeout() {
+        lifecycleScope.launch {
+            waitForAppLovinInitializationTimeout()
+        }
+    }
+
+    private suspend fun waitForAppLovinInitializationTimeout() {
+        delay(APPLOVIN_INITIALIZATION_TIMEOUT_MILLIS)
+
+        val isFallbackInitializationStarted = tryInitializeMobileAdsSdk()
+        if (isFallbackInitializationStarted) {
+            Napier.w { "AppLovin SDK initialization timed out. Start MobileAds initialization." }
+        }
+    }
+
+    private fun tryInitializeMobileAdsSdk(): Boolean {
+        if (!isMobileAdsSdkInitializationStarted.compareAndSet(false, true)) {
+            return false
+        }
+
         MobileAds.initialize(
             this,
             ::onMobileAdsInitialized,
         )
+        return true
     }
 
     private fun onMobileAdsInitialized(initializationStatus: InitializationStatus) {
@@ -207,3 +231,6 @@ class MainActivity : FragmentActivity(), KoinComponent {
         }
     }
 }
+
+/** AppLovin SDK 初期化 callback を待つ最大時間。 */
+private const val APPLOVIN_INITIALIZATION_TIMEOUT_MILLIS = 5_000L
