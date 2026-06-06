@@ -63,8 +63,9 @@ class SupportedPostsPagingSource(
                 nextKey = null,
                 prevKey = null,
             )
+        } catch (exception: CancellationException) {
+            throw exception
         } catch (exception: Throwable) {
-            if (exception is CancellationException) throw exception
             LoadResult.Error(exception)
         }
     }

@@ -62,7 +62,9 @@ data class PaymentsUiState(
 )
 
 @Stable
-data class Payment @OptIn(ExperimentalTime::class) constructor(
+data class Payment
+@OptIn(ExperimentalTime::class)
+constructor(
     val paymentDateTime: Instant,
     val paidRecords: List<FanboxPaidRecord>,
 )

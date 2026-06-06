@@ -45,7 +45,7 @@ class BillingViewModel(
                     setting = setting,
                     plans = plans.toImmutableList(),
                     selectedPlanType = selectedPlanType,
-                )
+                ),
             )
         } else {
             ScreenState.Error(Res.string.error_billing)

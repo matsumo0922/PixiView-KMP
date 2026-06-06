@@ -9,6 +9,6 @@ data class BillingPlan(
     enum class Type {
         MONTHLY,
         ANNUAL,
-        UNKNOWN
+        UNKNOWN,
     }
 }

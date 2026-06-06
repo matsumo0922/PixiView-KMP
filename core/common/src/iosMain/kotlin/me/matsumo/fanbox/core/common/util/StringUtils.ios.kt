@@ -19,7 +19,6 @@ actual fun Instant.format(pattern: String): String {
     return dateFormatter.stringFromDate(toNSDate())
 }
 
-
 actual fun LocalDate.format(pattern: String): String {
     val dateFormatter = NSDateFormatter()
     dateFormatter.dateFormat = pattern

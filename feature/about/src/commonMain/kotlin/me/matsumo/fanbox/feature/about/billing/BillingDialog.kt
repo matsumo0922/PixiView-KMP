@@ -77,7 +77,7 @@ private fun BillingScreen(
         },
     ) { padding ->
         LazyColumn(
-            modifier = modifier,
+            modifier = Modifier.fillMaxSize(),
             contentPadding = padding,
             verticalArrangement = Arrangement.spacedBy(8.dp),
         ) {

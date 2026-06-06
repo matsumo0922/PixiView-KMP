@@ -85,7 +85,7 @@ private fun PlanSelectSection(
 ) {
     Column(
         modifier = modifier,
-        verticalArrangement = Arrangement.spacedBy(8.dp)
+        verticalArrangement = Arrangement.spacedBy(8.dp),
     ) {
         plans.forEach {
             Row(
@@ -142,7 +142,7 @@ private fun ButtonSection(
 ) {
     Column(
         modifier = modifier,
-        verticalArrangement = Arrangement.spacedBy(8.dp)
+        verticalArrangement = Arrangement.spacedBy(8.dp),
     ) {
         Button(
             modifier = Modifier.fillMaxWidth(),
