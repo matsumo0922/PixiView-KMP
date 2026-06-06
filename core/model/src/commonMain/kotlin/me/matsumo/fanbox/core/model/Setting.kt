@@ -18,8 +18,6 @@ data class Setting(
     val fileSaveDirectory: String,
     val postSaveDirectory: String,
     val firstLaunchTime: Long,
-    val interstitialPostCloseCount: Int,
-    val lastInterstitialShownEpochSeconds: Long,
     val isAgreedPrivacyPolicy: Boolean,
     val isAgreedTermsOfService: Boolean,
     val isUseAppLock: Boolean,
@@ -40,7 +38,7 @@ data class Setting(
     val isAllowedShowAdultContents get() = !isTestUser && isOverrideAdultContents
 
     @OptIn(ExperimentalTime::class)
-    val shouldShowInterstitialAd get() = (Clock.System.now().epochSeconds - firstLaunchTime) > 7.days.inWholeSeconds
+    val shouldShowInterstitialAd get() = (Clock.System.now().epochSeconds - firstLaunchTime) > 2.days.inWholeSeconds
 
     /** アプリ設定の初期値を生成するオブジェクト。 */
     companion object Companion {
@@ -56,8 +54,6 @@ data class Setting(
                 fileSaveDirectory = "",
                 postSaveDirectory = "",
                 firstLaunchTime = -1L,
-                interstitialPostCloseCount = 0,
-                lastInterstitialShownEpochSeconds = 0L,
                 isAgreedPrivacyPolicy = false,
                 isAgreedTermsOfService = false,
                 isUseAppLock = false,

@@ -2,7 +2,6 @@ package me.matsumo.fanbox.core.datastore
 
 import androidx.datastore.preferences.core.booleanPreferencesKey
 import androidx.datastore.preferences.core.edit
-import androidx.datastore.preferences.core.intPreferencesKey
 import androidx.datastore.preferences.core.longPreferencesKey
 import androidx.datastore.preferences.core.stringPreferencesKey
 import kotlinx.coroutines.CoroutineDispatcher
@@ -354,22 +353,6 @@ class SettingDataStore(
 
         settingPreference.edit {
             it[booleanPreferencesKey(Setting::isPlusMode.name)] = isPlusMode
-        }
-    }
-
-    suspend fun setInterstitialPostCloseCount(count: Int) = withContext(ioDispatcher) {
-        if (setting.first().interstitialPostCloseCount == count) return@withContext
-
-        settingPreference.edit {
-            it[intPreferencesKey(Setting::interstitialPostCloseCount.name)] = count
-        }
-    }
-
-    suspend fun setLastInterstitialShownEpochSeconds(epochSeconds: Long) = withContext(ioDispatcher) {
-        if (setting.first().lastInterstitialShownEpochSeconds == epochSeconds) return@withContext
-
-        settingPreference.edit {
-            it[longPreferencesKey(Setting::lastInterstitialShownEpochSeconds.name)] = epochSeconds
         }
     }
 }

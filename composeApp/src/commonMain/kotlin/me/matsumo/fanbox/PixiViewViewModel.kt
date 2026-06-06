@@ -55,6 +55,10 @@ class PixiViewViewModel(
     private val _isAppLockedFlow: MutableStateFlow<Boolean> = MutableStateFlow(true)
     private val _metadataFlow: MutableStateFlow<FanboxMetaData> = MutableStateFlow(getFanboxMetadataDummy())
 
+    // インタースティシャル広告の頻度判定用。永続化せずプロセス内のみ保持する
+    private var interstitialPostCloseCount = 0
+    private var lastInterstitialShownEpochSeconds = 0L
+
     val screenState = combine(
         listOf(
             settingRepository.setting,
@@ -176,15 +180,18 @@ class PixiViewViewModel(
         if (!setting.canHandlePostDetailInterstitialAd()) return
 
         val currentEpochSeconds = Clock.System.now().epochSeconds
-        val postCloseCount = setting.interstitialPostCloseCount + 1
+        interstitialPostCloseCount += 1
 
-        settingRepository.setInterstitialPostCloseCount(postCloseCount)
-
-        if (!setting.shouldShowPostDetailInterstitialAd(postCloseCount, currentEpochSeconds)) return
+        val canShowInterstitialAd = shouldShowPostDetailInterstitialAd(
+            postCloseCount = interstitialPostCloseCount,
+            currentEpochSeconds = currentEpochSeconds,
+            lastShownEpochSeconds = lastInterstitialShownEpochSeconds,
+        )
+        if (!canShowInterstitialAd) return
 
         if (showInterstitialAd()) {
-            settingRepository.setInterstitialPostCloseCount(0)
-            settingRepository.setLastInterstitialShownEpochSeconds(currentEpochSeconds)
+            interstitialPostCloseCount = 0
+            lastInterstitialShownEpochSeconds = currentEpochSeconds
         }
     }
 
@@ -205,13 +212,14 @@ private fun Setting.canHandlePostDetailInterstitialAd(): Boolean {
     return !hasPrivilege && shouldShowInterstitialAd
 }
 
-private fun Setting.shouldShowPostDetailInterstitialAd(
+private fun shouldShowPostDetailInterstitialAd(
     postCloseCount: Int,
     currentEpochSeconds: Long,
+    lastShownEpochSeconds: Long,
 ): Boolean {
     val reachesTriggerCount = postCloseCount >= INTERSTITIAL_POST_CLOSE_TRIGGER_COUNT
     val matchesTriggerInterval = postCloseCount % INTERSTITIAL_POST_CLOSE_TRIGGER_COUNT == 0
-    val elapsedSeconds = currentEpochSeconds - lastInterstitialShownEpochSeconds
+    val elapsedSeconds = currentEpochSeconds - lastShownEpochSeconds
     val satisfiesCooldown = elapsedSeconds >= INTERSTITIAL_AD_COOLDOWN_SECONDS
 
     return reachesTriggerCount && matchesTriggerInterval && satisfiesCooldown
