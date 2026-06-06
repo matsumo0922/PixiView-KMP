@@ -52,6 +52,7 @@ class MainActivity : FragmentActivity(), KoinComponent {
         enableEdgeToEdge()
         setContent {
             val settings by viewModel.setting.collectAsStateWithLifecycle(null)
+            val isAdsSdkInitialized by viewModel.isAdsSdkInitialized.collectAsStateWithLifecycle()
             val isSystemInDarkTheme = shouldUseDarkTheme(settings?.themeConfig ?: ThemeConfig.System)
             val windowSize = calculateWindowSizeClass()
 
@@ -70,6 +71,7 @@ class MainActivity : FragmentActivity(), KoinComponent {
                 modifier = Modifier.fillMaxSize(),
                 windowSize = windowSize.widthSizeClass,
                 nativeViews = persistentMapOf(),
+                isAdsSdkInitialized = isAdsSdkInitialized,
             )
 
             splashScreen.setKeepOnScreenCondition { settings == null }
@@ -139,7 +141,8 @@ class MainActivity : FragmentActivity(), KoinComponent {
         ccpaMetaData["privacy.consent"] = true
         ccpaMetaData.commit()
 
-        MobileAds.initialize(this)
-        viewModel.setAdsSdkInitialized()
+        MobileAds.initialize(this) {
+            viewModel.setAdsSdkInitialized()
+        }
     }
 }
