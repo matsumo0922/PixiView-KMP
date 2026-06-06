@@ -11,22 +11,17 @@ import com.google.android.gms.ads.VideoOptions
 import com.google.android.gms.ads.nativead.NativeAd
 import com.google.android.gms.ads.nativead.NativeAdOptions
 import io.github.aakira.napier.Napier
-import kotlinx.coroutines.CoroutineDispatcher
-import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
-import kotlinx.coroutines.launch
 import me.matsumo.fanbox.core.common.PixiViewConfig
 
 /** Android ネイティブ広告のプリロード在庫と表示キーへの割り当てを管理するクラス。 */
 class NativeAdsPreLoader(
     context: Context,
     pixiViewConfig: PixiViewConfig,
-    ioDispatcher: CoroutineDispatcher,
 ) {
-    private val scope = CoroutineScope(ioDispatcher)
     private val preloadedNativeAds: MutableList<NativeAd> = mutableListOf()
     private val keyMap: MutableMap<String, NativeAd> = mutableMapOf()
     private val _nativeAdInventoryVersion = MutableStateFlow(0)
@@ -57,39 +52,45 @@ class NativeAdsPreLoader(
             .withAdListener(adListener)
             .forNativeAd(::onNativeAdLoaded)
             .build()
-
-        preloadAd()
     }
 
     @SuppressLint("MissingPermission")
-    fun preloadAd() {
+    private fun preloadAd() {
         if (adLoader.isLoading) return
 
-        scope.launch {
-            val numberOfAds = NUMBER_OF_PRELOAD_ADS - preloadedNativeAds.count()
-            if (numberOfAds > 0) {
-                adLoader.loadAds(AdRequest.Builder().build(), numberOfAds)
-            }
-        }
+        loadMissingNativeAds()
     }
 
     fun getNativeAd(key: String): NativeAd? {
         Napier.d("getNativeAd: $key, ${keyMap.containsKey(key)}, ${keyMap.size}, ${preloadedNativeAds.size}")
 
-        keyMap[key]?.let { return it }
-        preloadedNativeAds.removeFirstOrNull()?.also {
-            preloadAd()
-
-            keyMap[key] = it
-            return it
+        val mappedNativeAd = keyMap[key]
+        if (mappedNativeAd != null) {
+            return mappedNativeAd
         }
 
-        return null
+        val preloadedNativeAd = preloadedNativeAds.removeFirstOrNull()
+        if (preloadedNativeAd == null) {
+            preloadAd()
+            return null
+        }
+
+        preloadAd()
+        keyMap[key] = preloadedNativeAd
+
+        return preloadedNativeAd
     }
 
     fun popAd(key: String) {
         Napier.d("popAd: $key")
         keyMap.remove(key)?.destroy()
+    }
+
+    private fun loadMissingNativeAds() {
+        val numberOfAds = NUMBER_OF_PRELOAD_ADS - preloadedNativeAds.count()
+        if (numberOfAds > 0) {
+            adLoader.loadAds(AdRequest.Builder().build(), numberOfAds)
+        }
     }
 
     private fun onNativeAdLoaded(nativeAd: NativeAd) {
