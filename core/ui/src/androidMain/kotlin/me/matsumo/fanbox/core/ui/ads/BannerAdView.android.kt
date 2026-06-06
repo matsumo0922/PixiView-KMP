@@ -169,7 +169,10 @@ fun rememberAdViewWithLifecycle(
 
         lifecycleOwner.lifecycle.addObserver(observer)
 
-        onDispose { lifecycleOwner.lifecycle.removeObserver(observer) }
+        onDispose {
+            lifecycleOwner.lifecycle.removeObserver(observer)
+            adView.destroy()
+        }
     }
 
     return adView
