@@ -1,12 +1,13 @@
 package me.matsumo.fanbox.core.ui.ads
 
 import android.annotation.SuppressLint
-import android.content.res.Resources
+import android.content.res.Configuration
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -22,7 +23,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.platform.LocalDensity
+import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.viewinterop.AndroidView
 import androidx.lifecycle.DefaultLifecycleObserver
@@ -33,9 +34,11 @@ import com.google.android.gms.ads.AdRequest
 import com.google.android.gms.ads.AdSize
 import com.google.android.gms.ads.LoadAdError
 import com.google.android.gms.ads.admanager.AdManagerAdView
+import io.github.aakira.napier.Napier
 import me.matsumo.fanbox.core.resources.Res
 import me.matsumo.fanbox.core.resources.error_ad_load_failed
 import me.matsumo.fanbox.core.resources.error_ad_load_failed_description
+import me.matsumo.fanbox.core.ui.extensition.LocalNavigationType
 import me.matsumo.fanbox.core.ui.theme.LocalPixiViewConfig
 import me.matsumo.fanbox.core.ui.theme.bold
 import org.jetbrains.compose.resources.stringResource
@@ -44,60 +47,83 @@ import org.jetbrains.compose.resources.stringResource
 @Composable
 actual fun BannerAdView(modifier: Modifier) {
     val context = LocalContext.current
-    val density = LocalDensity.current
+    val configuration = LocalConfiguration.current
+    val navigationType = LocalNavigationType.current.type
     val pixiViewConfig = LocalPixiViewConfig.current
 
     var isAdLoadFailed by remember { mutableStateOf(false) }
 
-    val adSizeHeight = remember {
-        val displayMetrics = Resources.getSystem().displayMetrics
-        val width = (displayMetrics.widthPixels / displayMetrics.density).toInt()
-        val adSize = AdSize.getCurrentOrientationAnchoredAdaptiveBannerAdSize(context, width)
-        (adSize.height * displayMetrics.density)
-    }
-
-    val adManagerAdView = rememberAdViewWithLifecycle(
-        adUnitId = pixiViewConfig.bannerAdUnitId,
-        adRequest = AdRequest.Builder().build(),
-        adListener = object : AdListener() {
-            override fun onAdFailedToLoad(error: LoadAdError) {
-                isAdLoadFailed = true
-            }
-        },
-    )
-
-    Box(
+    BoxWithConstraints(
         modifier = modifier
-            .fillMaxWidth()
-            .height(with(density) { adSizeHeight.toDp() }),
+            .fillMaxWidth(),
     ) {
-        AndroidView(
-            modifier = Modifier.fillMaxSize(),
-            factory = { adManagerAdView },
-        )
+        val containerWidthDp = maxWidth.value.toInt()
+        val adSize = remember(context, containerWidthDp, configuration.orientation) {
+            if (containerWidthDp > 0) {
+                AdSize.getCurrentOrientationAnchoredAdaptiveBannerAdSize(context, containerWidthDp)
+            } else {
+                null
+            }
+        }
 
-        AnimatedVisibility(
-            modifier = Modifier.align(Alignment.Center),
-            visible = isAdLoadFailed,
-            enter = fadeIn(),
-            exit = fadeOut(),
+        Box(
+            modifier = Modifier
+                .fillMaxWidth()
+                .height(adSize?.height?.dp ?: 0.dp),
         ) {
-            Column(
-                modifier = Modifier.fillMaxWidth(),
-                horizontalAlignment = Alignment.CenterHorizontally,
-                verticalArrangement = Arrangement.spacedBy(8.dp),
-            ) {
-                Text(
-                    text = stringResource(Res.string.error_ad_load_failed),
-                    style = MaterialTheme.typography.bodyMedium.bold(),
-                    color = MaterialTheme.colorScheme.onSurface,
+            if (adSize != null) {
+                val adManagerAdView = rememberAdViewWithLifecycle(
+                    adUnitId = pixiViewConfig.bannerAdUnitId,
+                    adSize = adSize,
+                    adRequest = AdRequest.Builder().build(),
+                    adListener = object : AdListener() {
+                        override fun onAdLoaded() {
+                            isAdLoadFailed = false
+                        }
+
+                        override fun onAdFailedToLoad(error: LoadAdError) {
+                            Napier.w(
+                                error.toBannerAdLoadFailedLog(
+                                    requestedWidthDp = adSize.width,
+                                    containerWidthDp = containerWidthDp,
+                                    orientation = configuration.orientation,
+                                    navigationType = navigationType.name,
+                                ),
+                            )
+                            isAdLoadFailed = true
+                        }
+                    },
                 )
 
-                Text(
-                    text = stringResource(Res.string.error_ad_load_failed_description),
-                    style = MaterialTheme.typography.bodySmall,
-                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                AndroidView(
+                    modifier = Modifier.fillMaxSize(),
+                    factory = { adManagerAdView },
                 )
+            }
+
+            AnimatedVisibility(
+                modifier = Modifier.align(Alignment.Center),
+                visible = isAdLoadFailed,
+                enter = fadeIn(),
+                exit = fadeOut(),
+            ) {
+                Column(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalAlignment = Alignment.CenterHorizontally,
+                    verticalArrangement = Arrangement.spacedBy(8.dp),
+                ) {
+                    Text(
+                        text = stringResource(Res.string.error_ad_load_failed),
+                        style = MaterialTheme.typography.bodyMedium.bold(),
+                        color = MaterialTheme.colorScheme.onSurface,
+                    )
+
+                    Text(
+                        text = stringResource(Res.string.error_ad_load_failed_description),
+                        style = MaterialTheme.typography.bodySmall,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant,
+                    )
+                }
             }
         }
     }
@@ -107,17 +133,14 @@ actual fun BannerAdView(modifier: Modifier) {
 @Composable
 fun rememberAdViewWithLifecycle(
     adUnitId: String,
+    adSize: AdSize,
     adRequest: AdRequest = AdRequest.Builder().build(),
     adListener: AdListener = object : AdListener() {},
 ): AdManagerAdView {
     val context = LocalContext.current
-    val adView = remember {
+    val adView = remember(context, adUnitId, adSize) {
         AdManagerAdView(context).apply {
-            val displayMetrics = Resources.getSystem().displayMetrics
-            val width = (displayMetrics.widthPixels / displayMetrics.density).toInt()
-
-            setAdSize(AdSize.getCurrentOrientationAnchoredAdaptiveBannerAdSize(context, width))
-
+            setAdSize(adSize)
             this.adListener = adListener
             this.adUnitId = adUnitId
 
@@ -127,7 +150,7 @@ fun rememberAdViewWithLifecycle(
 
     val lifecycleOwner = LocalLifecycleOwner.current
 
-    DisposableEffect(lifecycleOwner) {
+    DisposableEffect(lifecycleOwner, adView) {
         val observer = object : DefaultLifecycleObserver {
             override fun onResume(owner: LifecycleOwner) {
                 adView.resume()
@@ -148,4 +171,27 @@ fun rememberAdViewWithLifecycle(
     }
 
     return adView
+}
+
+private fun LoadAdError.toBannerAdLoadFailedLog(
+    requestedWidthDp: Int,
+    containerWidthDp: Int,
+    orientation: Int,
+    navigationType: String,
+): String {
+    val orientationName = when (orientation) {
+        Configuration.ORIENTATION_LANDSCAPE -> "landscape"
+        Configuration.ORIENTATION_PORTRAIT -> "portrait"
+        else -> "undefined"
+    }
+
+    return "BannerAdView: onAdFailedToLoad, " +
+        "code=$code, " +
+        "domain=$domain, " +
+        "message=$message, " +
+        "responseInfo=$responseInfo, " +
+        "requestedWidthDp=$requestedWidthDp, " +
+        "containerWidthDp=$containerWidthDp, " +
+        "orientation=$orientationName, " +
+        "navigationType=$navigationType"
 }
