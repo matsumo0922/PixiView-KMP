@@ -1,8 +1,9 @@
 package me.matsumo.fanbox.core.ui
 
-import androidx.core.bundle.Bundle
 import androidx.navigation.NavType
-import kotlinx.serialization.encodeToString
+import androidx.savedstate.SavedState
+import androidx.savedstate.read
+import androidx.savedstate.write
 import kotlinx.serialization.json.Json
 import me.matsumo.fanbox.core.model.Destination
 import me.matsumo.fanbox.core.model.SimpleAlertContents
@@ -43,16 +44,16 @@ private inline fun <reified T> provideNavType(
     isNullableAllowed: Boolean = false,
 ) = object : NavType<T>(isNullableAllowed) {
 
-    override fun get(bundle: Bundle, key: String): T? {
-        return decode(bundle.getString(key) ?: return null)
+    override fun get(bundle: SavedState, key: String): T? {
+        return decode(bundle.read { getStringOrNull(key) } ?: return null)
     }
 
     override fun parseValue(value: String): T {
         return decode(value)
     }
 
-    override fun put(bundle: Bundle, key: String, value: T) {
-        bundle.putString(key, encode(value))
+    override fun put(bundle: SavedState, key: String, value: T) {
+        bundle.write { putString(key, encode(value)) }
     }
 
     override fun serializeAsValue(value: T): String {

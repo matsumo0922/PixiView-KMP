@@ -5,7 +5,7 @@ import androidx.compose.ui.Modifier
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import me.matsumo.fanbox.core.model.Destination
-import me.matsumo.fanbox.core.model.UserData
+import me.matsumo.fanbox.core.model.Setting
 import me.matsumo.fanbox.core.ui.animation.NavigateAnimation
 import me.matsumo.fanbox.feature.library.discovery.LibraryDiscoveryRoute
 import me.matsumo.fanbox.feature.library.discovery.libraryDiscoveryScreen
@@ -19,12 +19,12 @@ import me.matsumo.fanbox.feature.library.notify.libraryNotifyScreen
 @Composable
 fun LibraryNavHost(
     navController: NavHostController,
-    userData: UserData,
+    setting: Setting,
     openDrawer: () -> Unit,
     navigateTo: (Destination) -> Unit,
     modifier: Modifier = Modifier,
 ) {
-    val startDestination = if (userData.isTestUser) {
+    val startDestination = if (setting.isTestUser) {
         LibraryDiscoveryRoute
     } else {
         LibraryHomeRoute

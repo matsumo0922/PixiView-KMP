@@ -8,8 +8,9 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
-import kotlinx.datetime.Clock
 import me.matsumo.fanbox.core.common.util.format
+import kotlin.time.Clock
+import kotlin.time.ExperimentalTime
 
 class RewardLogDataStore(
     private val preferenceHelper: PreferenceHelper,
@@ -18,6 +19,7 @@ class RewardLogDataStore(
     private val preference = preferenceHelper.create(PreferencesName.REWARD_LOG)
     private val scope = CoroutineScope(ioDispatcher)
 
+    @OptIn(ExperimentalTime::class)
     fun rewarded() {
         scope.launch {
             preference.edit {

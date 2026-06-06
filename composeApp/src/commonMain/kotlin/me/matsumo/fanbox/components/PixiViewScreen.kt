@@ -12,24 +12,37 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.navigation.compose.rememberNavController
 import me.matsumo.fanbox.MainUiState
+import me.matsumo.fanbox.core.model.Destination
+import me.matsumo.fanbox.core.ui.component.sheet.rememberBottomSheetNavigator
 import me.matsumo.fanbox.feature.welcome.WelcomeNavHost
 
 @Composable
 internal fun PixiViewScreen(
     uiState: MainUiState,
     onRequestInitPixiViewId: () -> Unit,
+    onRequestFirstLaunchFlag: () -> Unit,
     onRequestUpdateState: () -> Unit,
+    onPostDetailClosed: suspend () -> Unit,
     modifier: Modifier = Modifier,
 ) {
+    val bottomSheetNavigator = rememberBottomSheetNavigator()
+    val navController = rememberNavController(bottomSheetNavigator)
+
+    var showPaywallFlag by remember { mutableStateOf(false) }
     var isAgreedTeams by remember {
-        mutableStateOf(uiState.userData.isAgreedPrivacyPolicy && uiState.userData.isAgreedTermsOfService)
+        mutableStateOf(uiState.setting.isAgreedPrivacyPolicy && uiState.setting.isAgreedTermsOfService)
     }
-    var isAllowedPermission by remember(uiState.userData, uiState.isLoggedIn) { mutableStateOf(true) }
+    var isAllowedPermission by remember(uiState.setting, uiState.isLoggedIn) { mutableStateOf(true) }
 
     LaunchedEffect(true) {
-        if (uiState.userData.pixiViewId.isBlank()) {
+        if (uiState.setting.pixiViewId.isBlank()) {
             onRequestInitPixiViewId.invoke()
+        }
+
+        if (uiState.setting.firstLaunchTime == -1L) {
+            onRequestFirstLaunchFlag.invoke()
         }
     }
 
@@ -46,6 +59,7 @@ internal fun PixiViewScreen(
                 onComplete = {
                     isAgreedTeams = true
                     isAllowedPermission = true
+                    showPaywallFlag = true
 
                     onRequestUpdateState.invoke()
                 },
@@ -53,7 +67,17 @@ internal fun PixiViewScreen(
         } else {
             PixiViewContent(
                 modifier = Modifier.fillMaxSize(),
+                bottomSheetNavigator = bottomSheetNavigator,
+                navController = navController,
+                onPostDetailClosed = onPostDetailClosed,
             )
+
+            if (showPaywallFlag) {
+                LaunchedEffect(true) {
+                    navController.navigate(Destination.BillingPlusBottomSheet(null))
+                    showPaywallFlag = false
+                }
+            }
         }
     }
 }

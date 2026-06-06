@@ -10,14 +10,14 @@ import kotlinx.coroutines.launch
 import me.matsumo.fanbox.core.model.FanboxDownloadItems
 import me.matsumo.fanbox.core.model.ScreenState
 import me.matsumo.fanbox.core.repository.DownloadPostsRepository
-import me.matsumo.fanbox.core.repository.UserDataRepository
+import me.matsumo.fanbox.core.repository.SettingRepository
 
 class SettingDirectoryViewModel(
-    private val userDataRepository: UserDataRepository,
+    private val settingRepository: SettingRepository,
     private val downloadPostsRepository: DownloadPostsRepository,
 ) : ViewModel() {
 
-    val screenState = userDataRepository.userData.map {
+    val screenState = settingRepository.setting.map {
         ScreenState.Idle(
             SettingDirectoryUiState(
                 imageDirectory = downloadPostsRepository.getSaveDirectory(FanboxDownloadItems.RequestType.Image),
@@ -33,19 +33,19 @@ class SettingDirectoryViewModel(
 
     fun setImageSaveDirectory(directory: String) {
         viewModelScope.launch {
-            userDataRepository.setImageSaveDirectory(directory)
+            settingRepository.setImageSaveDirectory(directory)
         }
     }
 
     fun setFileSaveDirectory(directory: String) {
         viewModelScope.launch {
-            userDataRepository.setFileSaveDirectory(directory)
+            settingRepository.setFileSaveDirectory(directory)
         }
     }
 
     fun setPostSaveDirectory(directory: String) {
         viewModelScope.launch {
-            userDataRepository.setPostSaveDirectory(directory)
+            settingRepository.setPostSaveDirectory(directory)
         }
     }
 }

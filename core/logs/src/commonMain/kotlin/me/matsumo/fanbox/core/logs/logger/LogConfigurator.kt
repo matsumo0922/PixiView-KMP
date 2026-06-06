@@ -8,7 +8,7 @@ import kotlinx.serialization.json.JsonObject
 import kotlinx.serialization.json.buildJsonObject
 import me.matsumo.fanbox.core.common.PixiViewConfig
 import me.matsumo.fanbox.core.logs.category.LogCategory
-import me.matsumo.fanbox.core.model.UserData
+import me.matsumo.fanbox.core.model.Setting
 import org.koin.core.component.KoinComponent
 import org.koin.core.component.inject
 
@@ -43,10 +43,10 @@ object LogConfigurator : KoinComponent {
 
     fun configure(
         pixiViewConfig: PixiViewConfig,
-        userData: UserData,
+        setting: Setting,
     ) {
-        filter = LogFilter(pixiViewConfig, userData, "PixiView")
-        sender.init(userData)
+        filter = LogFilter(pixiViewConfig, setting, "PixiView")
+        sender.init(setting)
 
         _isConfigured.value = true
     }

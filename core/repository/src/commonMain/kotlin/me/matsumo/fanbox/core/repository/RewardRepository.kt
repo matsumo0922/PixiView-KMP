@@ -4,9 +4,10 @@ import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.launch
-import kotlinx.datetime.Clock
 import me.matsumo.fanbox.core.common.util.format
 import me.matsumo.fanbox.core.datastore.RewardLogDataStore
+import kotlin.time.Clock
+import kotlin.time.ExperimentalTime
 
 interface RewardRepository {
     fun rewarded()
@@ -37,6 +38,7 @@ class RewardRepositoryImpl(
         return rewardLogDataStore.getRewardedCount() < MAX_REWARD_COUNT
     }
 
+    @OptIn(ExperimentalTime::class)
     private suspend fun resetIfNeeded() {
         val date = Clock.System.now().format("yyyy-MM-dd")
         val lastRewardDate = rewardLogDataStore.getRewardDate()

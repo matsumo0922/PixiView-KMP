@@ -30,7 +30,7 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.suspendCancellableCoroutine
 import kotlinx.io.readByteArray
 import me.matsumo.fanbox.core.common.util.suspendRunCatching
-import me.matsumo.fanbox.core.datastore.PixiViewDataStore
+import me.matsumo.fanbox.core.datastore.SettingDataStore
 import me.matsumo.fanbox.core.logs.category.PostsLog
 import me.matsumo.fanbox.core.logs.logger.send
 import me.matsumo.fanbox.core.model.DownloadFileType
@@ -47,7 +47,7 @@ import kotlin.uuid.Uuid
 @OptIn(ExperimentalUuidApi::class)
 class DownloadPostsRepositoryImpl(
     private val context: Context,
-    private val userDataStore: PixiViewDataStore,
+    private val userDataStore: SettingDataStore,
     private val fanboxRepository: FanboxRepository,
     private val scope: CoroutineScope,
 ) : DownloadPostsRepository {
@@ -75,7 +75,7 @@ class DownloadPostsRepositoryImpl(
                         FanboxDownloadItems.RequestType.Image -> downloadItems.items
                         is FanboxDownloadItems.RequestType.Post -> {
                             val postDetail = fanboxRepository.getPostDetail(downloadItems.postId)
-                            val images = postDetail.body.imageItems.map { it.toDownloadItem() }
+                            val images = postDetail.body.imageItems.mapIndexed { index, image -> image.toDownloadItem(index) }
                             val files = postDetail.body.fileItems.map { it.toDownloadItem() }
 
                             images + if (type.isIgnoreFiles) emptyList() else files
@@ -126,7 +126,7 @@ class DownloadPostsRepositoryImpl(
         val items = FanboxDownloadItems(
             postId = postId,
             title = title,
-            items = images.map { it.toDownloadItem() },
+            items = images.mapIndexed { index, image -> image.toDownloadItem(index) },
             requestType = FanboxDownloadItems.RequestType.Image,
             key = Uuid.random().toHexString(),
         )
@@ -150,11 +150,12 @@ class DownloadPostsRepositoryImpl(
         return (getParentFile(requestType) ?: getOldParentFile(requestType, true))?.filePath ?: "Unknown"
     }
 
-    private fun FanboxPostDetail.ImageItem.toDownloadItem(): FanboxDownloadItems.Item {
+    private fun FanboxPostDetail.ImageItem.toDownloadItem(index: Int = -1): FanboxDownloadItems.Item {
+        val namePrefix = if (index >= 0) "image-%03d".format(index) else "image"
         return FanboxDownloadItems.Item(
             postId = postId,
             itemId = id,
-            name = "image-$postId-$id",
+            name = "$namePrefix-$postId-$id",
             extension = extension,
             originalUrl = originalUrl,
             thumbnailUrl = thumbnailUrl,
@@ -176,7 +177,7 @@ class DownloadPostsRepositoryImpl(
 
     private suspend fun downloadItem(item: FanboxDownloadItems.Item, onDownload: (Float) -> Unit): Pair<FanboxDownloadItems.Item, File>? {
         return suspendRunCatching {
-            val fileType = userDataStore.userData.first().downloadFileType
+            val fileType = userDataStore.setting.first().downloadFileType
             val url = if (item.extension.lowercase() != "gif" || fileType == DownloadFileType.ORIGINAL) item.originalUrl else item.thumbnailUrl
 
             val tmpFile = File(context.cacheDir, "tmp-${item.name}.${item.extension}")
@@ -243,7 +244,7 @@ class DownloadPostsRepositoryImpl(
     }
 
     private suspend fun getParentFile(requestType: FanboxDownloadItems.RequestType): UniFile? {
-        val userData = userDataStore.userData.first()
+        val userData = userDataStore.setting.first()
 
         return when (requestType) {
             is FanboxDownloadItems.RequestType.Image -> {
@@ -269,7 +270,7 @@ class DownloadPostsRepositoryImpl(
             runCatching {
                 val mimeType = MimeTypeMap.getSingleton().getMimeTypeFromExtension(item.extension)
                 val selectedLocation = getParentFile(downloadItems.requestType) ?: getOldParentFile(downloadItems.requestType)
-                val name = "${item.name}.${item.extension}"
+                val name = "${item.name}.${item.extension.ifBlank { "jpeg" }}"
 
                 when {
                     selectedLocation != null -> {
@@ -282,7 +283,7 @@ class DownloadPostsRepositoryImpl(
                 }
 
                 tmpFile.delete()
-                delay(1000)
+                delay(500)
             }.onFailure {
                 Napier.e(it) { "Failed to download item: ${item.name}" }
             }

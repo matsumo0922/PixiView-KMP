@@ -10,21 +10,21 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 import me.matsumo.fanbox.core.common.util.suspendRunCatching
-import me.matsumo.fanbox.core.model.UserData
+import me.matsumo.fanbox.core.model.Setting
 import me.matsumo.fanbox.core.repository.FanboxRepository
-import me.matsumo.fanbox.core.repository.UserDataRepository
+import me.matsumo.fanbox.core.repository.SettingRepository
 import me.matsumo.fanbox.core.ui.extensition.emptyPaging
 import me.matsumo.fankt.fanbox.domain.model.FanboxPost
 import me.matsumo.fankt.fanbox.domain.model.id.FanboxPostId
 
 class LibraryHomeViewModel(
-    private val userDataRepository: UserDataRepository,
+    private val settingRepository: SettingRepository,
     private val fanboxRepository: FanboxRepository,
 ) : ViewModel() {
 
     private val _uiState = MutableStateFlow(
         LibraryUiState(
-            userData = UserData.default(),
+            setting = Setting.default(),
             bookmarkedPostsIds = emptyList(),
             homePaging = emptyPaging(),
             supportedPaging = emptyPaging(),
@@ -32,16 +32,16 @@ class LibraryHomeViewModel(
     )
 
     val uiState = _uiState.asStateFlow()
-    val updatePlusTrigger = userDataRepository.updatePlusMode
+    val updatePlusTrigger = settingRepository.updatePlusMode
 
     init {
         viewModelScope.launch {
-            userDataRepository.userData.collectLatest { userData ->
+            settingRepository.setting.collectLatest { userData ->
                 val loadSize = if (userData.isHideRestricted || userData.isUseGridMode) 20 else 10
                 val isHideRestricted = userData.isHideRestricted
 
                 _uiState.value = uiState.value.copy(
-                    userData = userData,
+                    setting = userData,
                     homePaging = fanboxRepository.getHomePostsPager(loadSize, isHideRestricted),
                     supportedPaging = fanboxRepository.getSupportedPostsPager(loadSize, isHideRestricted),
                 )
@@ -78,7 +78,7 @@ class LibraryHomeViewModel(
 
 @Stable
 data class LibraryUiState(
-    val userData: UserData,
+    val setting: Setting,
     val bookmarkedPostsIds: List<FanboxPostId>,
     val homePaging: Flow<PagingData<FanboxPost>>,
     val supportedPaging: Flow<PagingData<FanboxPost>>,

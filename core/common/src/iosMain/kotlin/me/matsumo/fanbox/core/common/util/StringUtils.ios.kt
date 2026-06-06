@@ -1,6 +1,5 @@
 package me.matsumo.fanbox.core.common.util
 
-import kotlinx.datetime.Instant
 import kotlinx.datetime.LocalDate
 import kotlinx.datetime.toNSDate
 import kotlinx.datetime.toNSDateComponents
@@ -9,7 +8,10 @@ import platform.Foundation.NSLocale
 import platform.Foundation.NSString
 import platform.Foundation.availableLocaleIdentifiers
 import platform.Foundation.stringWithFormat
+import kotlin.time.ExperimentalTime
+import kotlin.time.Instant
 
+@OptIn(ExperimentalTime::class)
 actual fun Instant.format(pattern: String): String {
     val dateFormatter = NSDateFormatter()
     dateFormatter.dateFormat = pattern

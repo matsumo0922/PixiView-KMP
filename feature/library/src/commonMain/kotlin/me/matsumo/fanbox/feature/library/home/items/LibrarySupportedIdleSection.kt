@@ -5,7 +5,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import app.cash.paging.compose.LazyPagingItems
 import kotlinx.collections.immutable.ImmutableList
-import me.matsumo.fanbox.core.model.UserData
+import me.matsumo.fanbox.core.model.Setting
 import me.matsumo.fanbox.core.ui.extensition.LocalNavigationType
 import me.matsumo.fanbox.core.ui.extensition.PixiViewNavigationType
 import me.matsumo.fanbox.core.ui.extensition.Platform
@@ -17,7 +17,7 @@ import me.matsumo.fankt.fanbox.domain.model.id.FanboxPostId
 @Composable
 internal fun LibrarySupportedIdleSection(
     pagingAdapter: LazyPagingItems<FanboxPost>,
-    userData: UserData,
+    setting: Setting,
     bookmarkedPostsIds: ImmutableList<FanboxPostId>,
     onClickPost: (FanboxPostId) -> Unit,
     onClickPostLike: (FanboxPostId) -> Unit,
@@ -31,7 +31,7 @@ internal fun LibrarySupportedIdleSection(
     val adOffset: Int
     val adInterval: Int
 
-    val columns = if (userData.isUseGridMode) {
+    val columns = if (setting.isUseGridMode) {
         when (LocalNavigationType.current.type) {
             PixiViewNavigationType.BottomNavigation -> 2
             PixiViewNavigationType.NavigationRail -> 3
@@ -62,9 +62,9 @@ internal fun LibrarySupportedIdleSection(
         adOffset = adOffset,
         adInterval = adInterval,
         pagingAdapter = pagingAdapter,
-        userData = userData,
+        setting = setting,
         bookmarkedPostsIds = bookmarkedPostsIds,
-        isGridMode = userData.isUseGridMode,
+        isGridMode = setting.isUseGridMode,
         onClickPost = onClickPost,
         onClickPostLike = onClickPostLike,
         onClickPostBookmark = onClickPostBookmark,

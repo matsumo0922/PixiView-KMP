@@ -35,6 +35,7 @@ import me.matsumo.fanbox.core.ui.extensition.FadePlaceHolder
 import me.matsumo.fanbox.core.ui.extensition.fanboxHeader
 import me.matsumo.fankt.fanbox.domain.model.FanboxCreatorPlanDetail
 import org.jetbrains.compose.resources.painterResource
+import kotlin.time.ExperimentalTime
 
 @Composable
 internal fun FanCardItem(
@@ -87,6 +88,7 @@ internal fun FanCardItem(
     }
 }
 
+@OptIn(ExperimentalTime::class)
 @Composable
 private fun NameItem(
     planDetail: FanboxCreatorPlanDetail,

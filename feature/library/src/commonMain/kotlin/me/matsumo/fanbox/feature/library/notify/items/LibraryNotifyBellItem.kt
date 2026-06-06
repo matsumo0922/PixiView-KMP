@@ -29,8 +29,7 @@ import coil3.compose.AsyncImage
 import coil3.compose.LocalPlatformContext
 import coil3.compose.SubcomposeAsyncImage
 import coil3.request.ImageRequest
-import kotlinx.datetime.Clock
-import kotlinx.datetime.Instant
+import kotlinx.datetime.toStdlibInstant
 import me.matsumo.fanbox.core.resources.Res
 import me.matsumo.fanbox.core.resources.im_default_user
 import me.matsumo.fanbox.core.resources.notify_title_comment
@@ -46,6 +45,8 @@ import me.matsumo.fanbox.core.ui.extensition.fanboxHeader
 import me.matsumo.fankt.fanbox.domain.model.FanboxBell
 import me.matsumo.fankt.fanbox.domain.model.id.FanboxPostId
 import org.jetbrains.compose.resources.stringResource
+import kotlin.time.Clock
+import kotlin.time.ExperimentalTime
 
 @Composable
 internal fun LibraryNotifyBellItem(
@@ -78,6 +79,7 @@ internal fun LibraryNotifyBellItem(
     }
 }
 
+@OptIn(ExperimentalTime::class)
 @Composable
 private fun PostPublishedItem(
     bell: FanboxBell.PostPublished,
@@ -168,7 +170,7 @@ private fun PostPublishedItem(
     }
 }
 
-@OptIn(ExperimentalCoilApi::class)
+@OptIn(ExperimentalCoilApi::class, ExperimentalTime::class)
 @Composable
 private fun CommentItem(
     bell: FanboxBell.Comment,
@@ -224,6 +226,7 @@ private fun CommentItem(
     }
 }
 
+@OptIn(ExperimentalTime::class)
 @Composable
 private fun LikeItem(
     bell: FanboxBell.Like,
@@ -277,10 +280,11 @@ private fun LikeItem(
     }
 }
 
+@OptIn(ExperimentalTime::class)
 @Composable
-private fun Instant.toRelativeTimeString(): String {
+private fun kotlinx.datetime.Instant.toRelativeTimeString(): String {
     val now = Clock.System.now()
-    val duration = now - this
+    val duration = now - this.toStdlibInstant()
 
     return when {
         duration.inWholeDays > 0 -> stringResource(Res.string.unit_day_before, duration.inWholeDays)

@@ -19,7 +19,7 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.sync.Semaphore
 import kotlinx.coroutines.sync.withPermit
 import me.matsumo.fanbox.core.common.util.suspendRunCatching
-import me.matsumo.fanbox.core.datastore.PixiViewDataStore
+import me.matsumo.fanbox.core.datastore.SettingDataStore
 import me.matsumo.fanbox.core.logs.category.PostsLog
 import me.matsumo.fanbox.core.logs.logger.send
 import me.matsumo.fanbox.core.model.DownloadFileType
@@ -44,7 +44,7 @@ import kotlin.uuid.Uuid
 @OptIn(ExperimentalForeignApi::class, ExperimentalUuidApi::class)
 class DownloadPostsRepositoryImpl(
     private val fanboxRepository: FanboxRepository,
-    private val userDataStore: PixiViewDataStore,
+    private val userDataStore: SettingDataStore,
     private val scope: CoroutineScope,
 ) : DownloadPostsRepository {
 
@@ -179,7 +179,7 @@ class DownloadPostsRepositoryImpl(
 
     private suspend fun downloadItem(item: FanboxDownloadItems.Item, onDownload: (Float) -> Unit): Pair<FanboxDownloadItems.Item, ByteArray>? {
         return suspendRunCatching {
-            val fileType = userDataStore.userData.first().downloadFileType
+            val fileType = userDataStore.setting.first().downloadFileType
             val url = if (item.extension.lowercase() != "gif" || fileType == DownloadFileType.ORIGINAL) item.originalUrl else item.thumbnailUrl
             val channel = fanboxRepository.download(url, onDownload).body<ByteArray>()
 

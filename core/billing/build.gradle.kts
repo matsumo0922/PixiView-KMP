@@ -19,37 +19,8 @@ kotlin {
             implementation(project(":core:datastore"))
             implementation(project(":core:logs"))
             implementation(project(":core:resources"))
+
+            implementation(libs.bundles.purchase)
         }
-
-        androidMain.dependencies {
-            api(libs.bundles.billing)
-        }
-
-        iosArm64()
-    }
-
-    if (System.getProperty("os.name").lowercase().contains("mac")) {
-        listOf(
-            iosX64(),
-            iosArm64(),
-            iosSimulatorArm64(),
-        ).forEach { iosTarget ->
-            iosTarget.compilations {
-                getByName("main") {
-                    cinterops {
-                        create("BillingSwift")
-                    }
-                }
-            }
-        }
-    }
-}
-
-swiftklib {
-    create("BillingSwift") {
-        minIos = 15
-
-        path = file("../../iosApp/iosApp/Billing")
-        packageName("me.matsumo.fanbox.core.billing.swift")
     }
 }

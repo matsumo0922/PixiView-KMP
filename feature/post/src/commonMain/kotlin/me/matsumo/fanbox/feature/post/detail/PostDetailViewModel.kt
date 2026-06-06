@@ -13,13 +13,13 @@ import kotlinx.coroutines.launch
 import me.matsumo.fanbox.core.common.util.recordException
 import me.matsumo.fanbox.core.common.util.suspendRunCatching
 import me.matsumo.fanbox.core.model.ScreenState
+import me.matsumo.fanbox.core.model.Setting
 import me.matsumo.fanbox.core.model.TranslationState
-import me.matsumo.fanbox.core.model.UserData
 import me.matsumo.fanbox.core.model.updateWhenIdle
 import me.matsumo.fanbox.core.repository.DownloadPostsRepository
 import me.matsumo.fanbox.core.repository.FanboxRepository
+import me.matsumo.fanbox.core.repository.SettingRepository
 import me.matsumo.fanbox.core.repository.TranslationRepository
-import me.matsumo.fanbox.core.repository.UserDataRepository
 import me.matsumo.fanbox.core.resources.Res
 import me.matsumo.fanbox.core.resources.error_network
 import me.matsumo.fanbox.core.resources.post_detail_comment_comment_failed
@@ -39,7 +39,7 @@ import org.jetbrains.compose.resources.StringResource
 
 class PostDetailViewModel(
     private val postId: FanboxPostId,
-    private val userDataRepository: UserDataRepository,
+    private val settingRepository: SettingRepository,
     private val fanboxRepository: FanboxRepository,
     private val translationRepository: TranslationRepository,
     private val downloadPostsRepository: DownloadPostsRepository,
@@ -52,8 +52,8 @@ class PostDetailViewModel(
         fetch()
 
         viewModelScope.launch {
-            userDataRepository.userData.collectLatest { data ->
-                _screenState.updateWhenIdle { it.copy(userData = data) }
+            settingRepository.setting.collectLatest { data ->
+                _screenState.updateWhenIdle { it.copy(setting = data) }
             }
         }
 
@@ -77,7 +77,7 @@ class PostDetailViewModel(
                     .getOrElse { PageOffsetInfo(emptyList(), null) }
 
                 PostDetailUiState(
-                    userData = userDataRepository.userData.first(),
+                    setting = settingRepository.setting.first(),
                     metaData = fanboxRepository.getMetadata(),
                     bookmarkedPostIds = fanboxRepository.bookmarkedPostsIds.first(),
                     postDetail = postDetail,
@@ -107,7 +107,7 @@ class PostDetailViewModel(
                 _screenState.updateWhenIdle { it.copy(bodyTransState = TranslationState.Loading) }
 
                 val bodyTransState = suspendRunCatching {
-                    translationRepository.translate(postDetail, Locale(data.data.userData.translateLanguage))
+                    translationRepository.translate(postDetail, Locale(data.data.setting.translateLanguage))
                 }.onSuccess {
                     _screenState.value = ScreenState.Loading
                     delay(500)
@@ -133,7 +133,7 @@ class PostDetailViewModel(
                 _screenState.updateWhenIdle { it.copy(commentsTransState = TranslationState.Loading) }
 
                 val commentsTransState = suspendRunCatching {
-                    translationRepository.translate(comments, Locale(data.data.userData.translateLanguage))
+                    translationRepository.translate(comments, Locale(data.data.setting.translateLanguage))
                 }.fold(
                     onSuccess = { TranslationState.Translated(it) },
                     onFailure = { TranslationState.None },
@@ -299,7 +299,7 @@ class PostDetailViewModel(
 
 @Stable
 data class PostDetailUiState(
-    val userData: UserData,
+    val setting: Setting,
     val metaData: FanboxMetaData,
     val bookmarkedPostIds: List<FanboxPostId>,
     val creatorDetail: FanboxCreatorDetail,

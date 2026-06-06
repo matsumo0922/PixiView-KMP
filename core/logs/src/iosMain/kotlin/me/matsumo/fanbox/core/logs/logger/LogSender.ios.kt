@@ -1,11 +1,11 @@
 package me.matsumo.fanbox.core.logs.logger
 
 import kotlinx.serialization.json.JsonObject
-import me.matsumo.fanbox.core.model.UserData
+import me.matsumo.fanbox.core.model.Setting
 
 class LogSenderImpl : LogSender {
 
-    override fun init(userData: UserData) {
+    override fun init(setting: Setting) {
         // not implemented
     }
 

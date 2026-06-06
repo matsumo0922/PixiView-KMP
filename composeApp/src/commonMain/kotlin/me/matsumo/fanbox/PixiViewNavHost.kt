@@ -1,22 +1,33 @@
 package me.matsumo.fanbox
 
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.CompositionLocalProvider
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.ui.Modifier
+import androidx.navigation.NavBackStackEntry
 import androidx.navigation.NavController
+import androidx.navigation.NavDestination.Companion.hasRoute
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.NavHostController
+import androidx.navigation.compose.ComposeNavigator
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.rememberNavController
 import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.launch
 import me.matsumo.fanbox.core.model.Destination
 import me.matsumo.fanbox.core.ui.animation.NavigateAnimation
 import me.matsumo.fanbox.core.ui.component.emptyDetailScreen
+import me.matsumo.fanbox.core.ui.component.sheet.BottomSheetNavigator
 import me.matsumo.fanbox.core.ui.component.sheet.ModalBottomSheetLayout
 import me.matsumo.fanbox.core.ui.component.sheet.rememberBottomSheetNavigator
 import me.matsumo.fanbox.core.ui.customNavTypes
 import me.matsumo.fanbox.core.ui.extensition.popBackStackWithResult
+import me.matsumo.fanbox.core.ui.theme.LocalNavController
 import me.matsumo.fanbox.core.ui.view.navigateToSimpleAlertDialog
 import me.matsumo.fanbox.core.ui.view.simpleAlertDialogDialog
 import me.matsumo.fanbox.feature.about.about.aboutScreen
@@ -45,34 +56,112 @@ import me.matsumo.fanbox.feature.setting.translate.settingTranslationDialog
 @Composable
 internal fun PixiViewNavHost(
     modifier: Modifier = Modifier,
+    bottomSheetNavigator: BottomSheetNavigator = rememberBottomSheetNavigator(),
+    navController: NavHostController = rememberNavController(bottomSheetNavigator),
     startDestination: Destination = Destination.Library,
+    onPostDetailClosed: suspend () -> Unit = {},
 ) {
-    val bottomSheetNavigator = rememberBottomSheetNavigator()
-    val navController = rememberNavController(bottomSheetNavigator)
     val bottomNavigationNavController = rememberNavController()
     val scope = rememberCoroutineScope()
+    val composeNavigator: ComposeNavigator = remember(navController) {
+        navController.navigatorProvider.getNavigator(COMPOSE_NAVIGATOR_NAME)
+    }
+    val currentOnPostDetailClosed by rememberUpdatedState(onPostDetailClosed)
 
     HandleDeepLink(navController)
 
-    ModalBottomSheetLayout(bottomSheetNavigator) {
-        NavHost(
-            modifier = modifier,
+    LaunchedEffect(navController, composeNavigator) {
+        observePostDetailClosedEntries(
             navController = navController,
-            startDestination = startDestination,
-            enterTransition = { NavigateAnimation.Horizontal.enter },
-            exitTransition = { NavigateAnimation.Horizontal.exit },
-            popEnterTransition = { NavigateAnimation.Horizontal.popEnter },
-            popExitTransition = { NavigateAnimation.Horizontal.popExit },
-            typeMap = customNavTypes,
-        ) {
-            applyNavGraph(
-                scope = scope,
-                mainNavController = navController,
-                bottomNavigationNavController = bottomNavigationNavController,
+            composeNavigator = composeNavigator,
+            onPostDetailClosed = { currentOnPostDetailClosed() },
+        )
+    }
+
+    CompositionLocalProvider(LocalNavController provides navController) {
+        ModalBottomSheetLayout(bottomSheetNavigator) {
+            NavHost(
+                modifier = modifier,
+                navController = navController,
+                startDestination = startDestination,
+                enterTransition = { NavigateAnimation.Horizontal.enter },
+                exitTransition = { NavigateAnimation.Horizontal.exit },
+                popEnterTransition = { NavigateAnimation.Horizontal.popEnter },
+                popExitTransition = { NavigateAnimation.Horizontal.popExit },
+                typeMap = customNavTypes,
+            ) {
+                applyNavGraph(
+                    scope = scope,
+                    mainNavController = navController,
+                    bottomNavigationNavController = bottomNavigationNavController,
+                )
+            }
+        }
+    }
+}
+
+private suspend fun observePostDetailClosedEntries(
+    navController: NavHostController,
+    composeNavigator: ComposeNavigator,
+    onPostDetailClosed: suspend () -> Unit,
+) = coroutineScope {
+    val pendingClosedEntryIds = mutableSetOf<String>()
+    var previousBackStack = composeNavigator.backStack.value
+
+    launch {
+        composeNavigator.backStack.collect { currentBackStack ->
+            pendingClosedEntryIds.addAll(previousBackStack.findClosedPostDetailEntryIds(currentBackStack))
+            previousBackStack = currentBackStack
+            dispatchCompletedPostDetailClosedEntries(
+                pendingClosedEntryIds = pendingClosedEntryIds,
+                visibleEntries = navController.visibleEntries.value,
+                onPostDetailClosed = onPostDetailClosed,
+            )
+        }
+    }
+
+    launch {
+        navController.visibleEntries.collect { visibleEntries ->
+            dispatchCompletedPostDetailClosedEntries(
+                pendingClosedEntryIds = pendingClosedEntryIds,
+                visibleEntries = visibleEntries,
+                onPostDetailClosed = onPostDetailClosed,
             )
         }
     }
 }
+
+private suspend fun dispatchCompletedPostDetailClosedEntries(
+    pendingClosedEntryIds: MutableSet<String>,
+    visibleEntries: List<NavBackStackEntry>,
+    onPostDetailClosed: suspend () -> Unit,
+) {
+    val visibleEntryIds = visibleEntries.map { visibleEntry -> visibleEntry.id }.toSet()
+    val completedEntryIds = pendingClosedEntryIds.filter { pendingEntryId ->
+        !visibleEntryIds.contains(pendingEntryId)
+    }
+
+    for (completedEntryId in completedEntryIds) {
+        pendingClosedEntryIds.remove(completedEntryId)
+        onPostDetailClosed()
+    }
+}
+
+private fun List<NavBackStackEntry>.findClosedPostDetailEntryIds(
+    currentBackStack: List<NavBackStackEntry>,
+): List<String> {
+    val currentEntryIds = currentBackStack.map { currentEntry -> currentEntry.id }.toSet()
+
+    return mapNotNull { previousEntry ->
+        val wasRemoved = !currentEntryIds.contains(previousEntry.id)
+        val isPostDetail = previousEntry.destination.hasRoute<Destination.PostDetail>()
+
+        if (wasRemoved && isPostDetail) previousEntry.id else null
+    }
+}
+
+/** Compose の画面遷移を管理する Navigator の登録名。 */
+private const val COMPOSE_NAVIGATOR_NAME = "composable"
 
 /**
  * mainNavController

@@ -11,6 +11,7 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.LargeTopAppBar
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.material3.rememberTopAppBarState
@@ -22,16 +23,14 @@ import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import dev.icerock.moko.biometry.compose.BindBiometryAuthenticatorEffect
 import dev.icerock.moko.biometry.compose.rememberBiometryAuthenticatorFactory
-import io.github.alexzhirkevich.cupertino.adaptive.AdaptiveScaffold
-import io.github.alexzhirkevich.cupertino.adaptive.ExperimentalAdaptiveApi
 import kotlinx.coroutines.launch
 import me.matsumo.fanbox.core.common.PixiViewConfig
 import me.matsumo.fanbox.core.logs.category.WelcomeLog
 import me.matsumo.fanbox.core.logs.logger.send
 import me.matsumo.fanbox.core.model.Destination
 import me.matsumo.fanbox.core.model.DownloadFileType
+import me.matsumo.fanbox.core.model.Setting
 import me.matsumo.fanbox.core.model.SimpleAlertContents
-import me.matsumo.fanbox.core.model.UserData
 import me.matsumo.fanbox.core.resources.Res
 import me.matsumo.fanbox.core.resources.billing_plus_toast_require_plus
 import me.matsumo.fanbox.core.resources.setting_title
@@ -80,7 +79,7 @@ internal fun SettingTopRoute(
     ) { uiState ->
         fun requirePlus(setting: Boolean, settingMethod: (Boolean) -> Unit, referrer: String) {
             if (setting) {
-                if (uiState.userData.hasPrivilege) {
+                if (uiState.setting.hasPrivilege) {
                     settingMethod.invoke(true)
                 } else {
                     scope.launch { toastExtension.show(snackbarHostState, requirePlus) }
@@ -93,13 +92,13 @@ internal fun SettingTopRoute(
 
         SettingTopScreen(
             modifier = Modifier.background(MaterialTheme.colorScheme.surface),
-            userData = uiState.userData,
+            setting = uiState.setting,
             metaData = uiState.metaData,
             fanboxSessionId = uiState.fanboxSessionId,
             config = uiState.config,
             onClickThemeSetting = { navigateTo(Destination.SettingTheme) },
             onClickTranslationLanguage = {
-                if (uiState.userData.hasPrivilege) {
+                if (uiState.setting.hasPrivilege) {
                     navigateTo(Destination.SettingTranslationDialog(it))
                 } else {
                     scope.launch { toastExtension.show(snackbarHostState, requirePlus) }
@@ -124,7 +123,7 @@ internal fun SettingTopRoute(
             onClickFollowTabDefaultHome = viewModel::setFollowTabDefaultHome,
             onClickHideAdultContents = viewModel::setHideAdultContents,
             onClickOverrideAdultContents = viewModel::setOverrideAdultContents,
-            onClickInfinityPostDetail = viewModel::setUseInfinityPostDetail,
+            onClickInfinityPostDetail = { requirePlus(it, viewModel::setUseInfinityPostDetail, "isUseInfinityPostDetail") },
             onClickGridMode = { requirePlus(it, viewModel::setGridMode, "isUseGridMode") },
             onClickHideRestricted = { requirePlus(it, viewModel::setHideRestricted, "isHideRestricted") },
             onClickAppLock = { requirePlus(it, viewModel::setAppLock, "isUseAppLock") },
@@ -160,10 +159,10 @@ internal fun SettingTopRoute(
     BindBiometryAuthenticatorEffect(biometryAuthenticator)
 }
 
-@OptIn(ExperimentalMaterial3Api::class, ExperimentalAdaptiveApi::class)
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 private fun SettingTopScreen(
-    userData: UserData,
+    setting: Setting,
     metaData: FanboxMetaData,
     fanboxSessionId: String,
     config: PixiViewConfig,
@@ -193,7 +192,7 @@ private fun SettingTopScreen(
     val state = rememberTopAppBarState()
     val behavior = TopAppBarDefaults.exitUntilCollapsedScrollBehavior(state)
 
-    AdaptiveScaffold(
+    Scaffold(
         modifier = modifier.nestedScroll(behavior.nestedScrollConnection),
         topBar = {
             SettingTheme {
@@ -234,14 +233,14 @@ private fun SettingTopScreen(
                     modifier = Modifier.fillMaxWidth(),
                     onClickAppTheme = onClickThemeSetting,
                     onClickTranslationLanguage = onClickTranslationLanguage,
-                    translationLanguage = userData.translateLanguage,
+                    translationLanguage = setting.translateLanguage,
                 )
             }
 
             item {
                 SettingTopFileSection(
                     modifier = Modifier.fillMaxWidth(),
-                    userData = userData,
+                    setting = setting,
                     onClickDirectory = onClickDirectory,
                     onClickDownloadFileType = onClickDownloadFileType,
                 )
@@ -250,7 +249,7 @@ private fun SettingTopScreen(
             item {
                 SettingTopGeneralSection(
                     modifier = Modifier.fillMaxWidth(),
-                    userData = userData,
+                    setting = setting,
                     onClickAppLock = onClickAppLock,
                     onClickFollowTabDefaultHome = onClickFollowTabDefaultHome,
                     onClickHideAdultContents = onClickHideAdultContents,
@@ -266,7 +265,7 @@ private fun SettingTopScreen(
                 SettingTopInformationSection(
                     modifier = Modifier.fillMaxWidth(),
                     config = config,
-                    userData = userData,
+                    setting = setting,
                     fanboxMetaData = metaData,
                     fanboxSessionId = fanboxSessionId,
                 )
@@ -275,7 +274,7 @@ private fun SettingTopScreen(
             item {
                 SettingTopOthersSection(
                     modifier = Modifier.fillMaxWidth(),
-                    userData = userData,
+                    setting = setting,
                     onClickTeamsOfService = onClickTeamsOfService,
                     onClickPrivacyPolicy = onClickPrivacyPolicy,
                     onClickReshowReveal = onClickReshowReveal,

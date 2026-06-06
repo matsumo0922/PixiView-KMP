@@ -5,7 +5,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import me.matsumo.fanbox.core.model.DownloadFileType
-import me.matsumo.fanbox.core.model.UserData
+import me.matsumo.fanbox.core.model.Setting
 import me.matsumo.fanbox.core.resources.Res
 import me.matsumo.fanbox.core.resources.setting_top_file
 import me.matsumo.fanbox.core.resources.setting_top_file_directory
@@ -17,7 +17,7 @@ import me.matsumo.fanbox.core.ui.component.SettingTextItem
 
 @Composable
 internal fun SettingTopFileSection(
-    userData: UserData,
+    setting: Setting,
     onClickDirectory: () -> Unit,
     onClickDownloadFileType: (DownloadFileType) -> Unit,
     modifier: Modifier = Modifier,
@@ -39,7 +39,7 @@ internal fun SettingTopFileSection(
             modifier = Modifier.fillMaxWidth(),
             title = Res.string.setting_top_file_type,
             description = Res.string.setting_top_file_type_description,
-            value = userData.downloadFileType == DownloadFileType.ORIGINAL,
+            value = setting.downloadFileType == DownloadFileType.ORIGINAL,
             onValueChanged = {
                 onClickDownloadFileType.invoke(if (it) DownloadFileType.ORIGINAL else DownloadFileType.THUMBNAIL)
             },

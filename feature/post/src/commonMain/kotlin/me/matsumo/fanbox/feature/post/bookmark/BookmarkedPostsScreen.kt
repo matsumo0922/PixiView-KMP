@@ -31,7 +31,7 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.toImmutableList
 import me.matsumo.fanbox.core.model.Destination
-import me.matsumo.fanbox.core.model.UserData
+import me.matsumo.fanbox.core.model.Setting
 import me.matsumo.fanbox.core.resources.Res
 import me.matsumo.fanbox.core.resources.bookmark_empty_description
 import me.matsumo.fanbox.core.resources.bookmark_empty_title
@@ -63,7 +63,7 @@ internal fun BookmarkedPostsRoute(
     ) { uiState ->
         BookmarkedPostsScreen(
             modifier = Modifier.fillMaxSize(),
-            userData = uiState.userData,
+            setting = uiState.setting,
             posts = uiState.posts.toImmutableList(),
             bookmarkedPostIds = uiState.bookmarkedPostIds.toImmutableList(),
             onSearch = viewModel::search,
@@ -80,7 +80,7 @@ internal fun BookmarkedPostsRoute(
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 private fun BookmarkedPostsScreen(
-    userData: UserData,
+    setting: Setting,
     posts: ImmutableList<FanboxPost>,
     bookmarkedPostIds: ImmutableList<FanboxPostId>,
     onSearch: (String) -> Unit,
@@ -145,9 +145,9 @@ private fun BookmarkedPostsScreen(
                                     .animateItem()
                                     .fillMaxWidth(),
                                 post = likedPost,
-                                isHideAdultContents = userData.isHideAdultContents,
-                                isOverrideAdultContents = userData.isAllowedShowAdultContents,
-                                isTestUser = userData.isTestUser,
+                                isHideAdultContents = setting.isHideAdultContents,
+                                isOverrideAdultContents = setting.isAllowedShowAdultContents,
+                                isTestUser = setting.isTestUser,
                                 isBookmarked = bookmarkedPostIds.contains(likedPost.id),
                                 onClickPost = onClickPost,
                                 onClickBookmark = { _, isBookmarked -> onClickPostBookmark.invoke(likedPost, isBookmarked) },

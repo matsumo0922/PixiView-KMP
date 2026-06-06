@@ -10,17 +10,17 @@ import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
 import me.matsumo.fanbox.core.common.util.suspendRunCatching
 import me.matsumo.fanbox.core.model.ScreenState
-import me.matsumo.fanbox.core.model.UserData
+import me.matsumo.fanbox.core.model.Setting
 import me.matsumo.fanbox.core.model.updateWhenIdle
 import me.matsumo.fanbox.core.repository.FanboxRepository
-import me.matsumo.fanbox.core.repository.UserDataRepository
+import me.matsumo.fanbox.core.repository.SettingRepository
 import me.matsumo.fanbox.core.resources.Res
 import me.matsumo.fanbox.core.resources.error_no_data
 import me.matsumo.fankt.fanbox.domain.model.FanboxPost
 import me.matsumo.fankt.fanbox.domain.model.id.FanboxPostId
 
 class BookmarkedPostsViewModel(
-    private val userDataRepository: UserDataRepository,
+    private val settingRepository: SettingRepository,
     private val fanboxRepository: FanboxRepository,
 ) : ViewModel() {
 
@@ -45,7 +45,7 @@ class BookmarkedPostsViewModel(
             _screenState.value = ScreenState.Loading
             _screenState.value = suspendRunCatching {
                 LikedPostsUiState(
-                    userData = userDataRepository.userData.first(),
+                    setting = settingRepository.setting.first(),
                     posts = fanboxRepository.getBookmarkedPosts(),
                     bookmarkedPostIds = fanboxRepository.bookmarkedPostsIds.first(),
                 )
@@ -100,7 +100,7 @@ class BookmarkedPostsViewModel(
 
 @Stable
 data class LikedPostsUiState(
-    val userData: UserData,
+    val setting: Setting,
     val posts: List<FanboxPost>,
     val bookmarkedPostIds: List<FanboxPostId>,
 )

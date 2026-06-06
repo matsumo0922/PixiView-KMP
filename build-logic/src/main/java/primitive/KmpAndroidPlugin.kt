@@ -1,8 +1,8 @@
 package primitive
 import me.matsumo.fanbox.android
-import org.gradle.api.JavaVersion
 import org.gradle.api.Plugin
 import org.gradle.api.Project
+import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 
 @Suppress("unused")
 class KmpAndroidPlugin : Plugin<Project> {
@@ -10,10 +10,8 @@ class KmpAndroidPlugin : Plugin<Project> {
         with(target) {
             kotlin {
                 androidTarget {
-                    compilations.all {
-                        kotlinOptions {
-                            jvmTarget = JavaVersion.VERSION_17.toString()
-                        }
+                    compilerOptions {
+                        jvmTarget.set(JvmTarget.JVM_21)
                     }
                 }
             }

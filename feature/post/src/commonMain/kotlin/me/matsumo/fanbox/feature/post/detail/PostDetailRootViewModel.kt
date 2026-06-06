@@ -17,10 +17,10 @@ import kotlinx.coroutines.launch
 import me.matsumo.fanbox.core.common.util.suspendRunCatching
 import me.matsumo.fanbox.core.model.Destination
 import me.matsumo.fanbox.core.model.Flag
-import me.matsumo.fanbox.core.model.UserData
+import me.matsumo.fanbox.core.model.Setting
 import me.matsumo.fanbox.core.repository.FanboxRepository
 import me.matsumo.fanbox.core.repository.FlagRepository
-import me.matsumo.fanbox.core.repository.UserDataRepository
+import me.matsumo.fanbox.core.repository.SettingRepository
 import me.matsumo.fanbox.core.ui.customNavTypes
 import me.matsumo.fanbox.core.ui.extensition.createStaticPaging
 import me.matsumo.fanbox.core.ui.extensition.emptyPaging
@@ -29,7 +29,7 @@ import me.matsumo.fankt.fanbox.domain.model.id.FanboxPostId
 
 class PostDetailRootViewModel(
     savedStateHandle: SavedStateHandle,
-    private val userDataRepository: UserDataRepository,
+    private val settingRepository: SettingRepository,
     private val fanboxRepository: FanboxRepository,
     private val flagRepository: FlagRepository,
 ) : ViewModel() {
@@ -41,7 +41,7 @@ class PostDetailRootViewModel(
     private val _uiState = MutableStateFlow(
         PostDetailRootUiState(
             paging = emptyPaging(),
-            userData = UserData.default(),
+            setting = Setting.default(),
             bookmarkedPostIds = emptyList(),
             shouldShowReveal = false,
         ),
@@ -59,15 +59,15 @@ class PostDetailRootViewModel(
         }
 
         viewModelScope.launch {
-            userDataRepository.userData.collectLatest {
-                _uiState.value = _uiState.value.copy(userData = it)
+            settingRepository.setting.collectLatest {
+                _uiState.value = _uiState.value.copy(setting = it)
             }
         }
     }
 
     fun fetch() {
         viewModelScope.launch {
-            val userData = userDataRepository.userData.first()
+            val userData = settingRepository.setting.first()
             val loadSize = if (userData.isHideRestricted || userData.isUseGridMode) 20 else 10
             val isHideRestricted = userData.isHideRestricted
 
@@ -81,7 +81,7 @@ class PostDetailRootViewModel(
 
             _uiState.value = PostDetailRootUiState(
                 paging = paging,
-                userData = userData,
+                setting = userData,
                 bookmarkedPostIds = fanboxRepository.bookmarkedPostsIds.first(),
                 shouldShowReveal = flagRepository.getFlag(Flag.REVEAL_POST_DETAIL, true),
             )
@@ -115,7 +115,7 @@ class PostDetailRootViewModel(
 @Stable
 data class PostDetailRootUiState(
     val paging: Flow<PagingData<FanboxPostId>>?,
-    val userData: UserData,
+    val setting: Setting,
     val bookmarkedPostIds: List<FanboxPostId>,
     val shouldShowReveal: Boolean,
 )

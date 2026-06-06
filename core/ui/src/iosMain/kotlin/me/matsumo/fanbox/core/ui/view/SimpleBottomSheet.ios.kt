@@ -27,6 +27,7 @@ import com.mohamedrejeb.calf.ui.sheet.BottomSheetControllerDelegate
 import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.CompletableDeferred
 import me.matsumo.fanbox.core.ui.extensition.LocalSnackbarHostState
+import me.matsumo.fanbox.core.ui.view.AdaptiveSheetState.Companion.saver
 import platform.UIKit.UIApplication
 import platform.UIKit.UIModalPresentationPopover
 import platform.UIKit.UISheetPresentationControllerDetentIdentifierLarge
@@ -116,10 +117,14 @@ private class BottomSheetManager(
         content.invoke()
     }
 
+    @OptIn(ExperimentalMaterial3Api::class)
     private val presentationControllerDelegate = BottomSheetControllerDelegate(
         onDismiss = {
             isPresented = false
             onDismiss.invoke()
+        },
+        confirmValueChange = {
+            true // Always allow value changes
         },
     )
 

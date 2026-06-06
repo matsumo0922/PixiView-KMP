@@ -8,19 +8,19 @@ import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 import me.matsumo.fanbox.core.model.ScreenState
+import me.matsumo.fanbox.core.model.Setting
 import me.matsumo.fanbox.core.model.ThemeColorConfig
 import me.matsumo.fanbox.core.model.ThemeConfig
-import me.matsumo.fanbox.core.model.UserData
-import me.matsumo.fanbox.core.repository.UserDataRepository
+import me.matsumo.fanbox.core.repository.SettingRepository
 
 class SettingThemeViewModel(
-    private val userDataRepository: UserDataRepository,
+    private val settingRepository: SettingRepository,
 ) : ViewModel() {
 
-    val screenState = userDataRepository.userData.map {
+    val screenState = settingRepository.setting.map {
         ScreenState.Idle(
             SettingThemeState(
-                userData = it,
+                setting = it,
             ),
         )
     }.stateIn(
@@ -31,24 +31,24 @@ class SettingThemeViewModel(
 
     fun setThemeConfig(themeConfig: ThemeConfig) {
         viewModelScope.launch {
-            userDataRepository.setThemeConfig(themeConfig)
+            settingRepository.setThemeConfig(themeConfig)
         }
     }
 
     fun setThemeColorConfig(themeColorConfig: ThemeColorConfig) {
         viewModelScope.launch {
-            userDataRepository.setThemeColorConfig(themeColorConfig)
+            settingRepository.setThemeColorConfig(themeColorConfig)
         }
     }
 
     fun setUseDynamicColor(useDynamicColor: Boolean) {
         viewModelScope.launch {
-            userDataRepository.setUseDynamicColor(useDynamicColor)
+            settingRepository.setUseDynamicColor(useDynamicColor)
         }
     }
 }
 
 @Stable
 data class SettingThemeState(
-    val userData: UserData,
+    val setting: Setting,
 )

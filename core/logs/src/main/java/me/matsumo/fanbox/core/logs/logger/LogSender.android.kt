@@ -13,27 +13,27 @@ import kotlinx.serialization.json.JsonObject
 import kotlinx.serialization.json.doubleOrNull
 import kotlinx.serialization.json.jsonPrimitive
 import kotlinx.serialization.json.longOrNull
-import me.matsumo.fanbox.core.model.UserData
+import me.matsumo.fanbox.core.model.Setting
 
 @SuppressLint("MissingPermission")
 class LogSenderImpl(context: Context) : LogSender {
 
     private val analytics = FirebaseAnalytics.getInstance(context)
 
-    override fun init(userData: UserData) {
+    override fun init(setting: Setting) {
         Firebase.crashlytics.setCustomKeys {
-            key("pixiViewId", userData.pixiViewId)
-            key("isUseAppLock", userData.isUseAppLock)
-            key("isUseDynamicColor", userData.isUseDynamicColor)
-            key("isUseGridMode", userData.isUseGridMode)
-            key("isUseInfinityPostDetail", userData.isUseInfinityPostDetail)
-            key("isDefaultFollowTabInHome", userData.isDefaultFollowTabInHome)
-            key("isHideAdultContents", userData.isHideAdultContents)
-            key("isOverrideAdultContents", userData.isOverrideAdultContents)
-            key("isHideRestricted", userData.isHideRestricted)
-            key("isTestUser", userData.isTestUser)
-            key("isPlusMode", userData.isPlusMode)
-            key("isDeveloperMode", userData.isDeveloperMode)
+            key("pixiViewId", setting.pixiViewId)
+            key("isUseAppLock", setting.isUseAppLock)
+            key("isUseDynamicColor", setting.isUseDynamicColor)
+            key("isUseGridMode", setting.isUseGridMode)
+            key("isUseInfinityPostDetail", setting.isUseInfinityPostDetail)
+            key("isDefaultFollowTabInHome", setting.isDefaultFollowTabInHome)
+            key("isHideAdultContents", setting.isHideAdultContents)
+            key("isOverrideAdultContents", setting.isOverrideAdultContents)
+            key("isHideRestricted", setting.isHideRestricted)
+            key("isTestUser", setting.isTestUser)
+            key("isPlusMode", setting.isPlusMode)
+            key("isDeveloperMode", setting.isDeveloperMode)
         }
     }
 

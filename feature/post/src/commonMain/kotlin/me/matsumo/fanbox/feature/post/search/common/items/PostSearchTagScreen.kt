@@ -20,7 +20,7 @@ import app.cash.paging.compose.LazyPagingItems
 import app.cash.paging.compose.itemContentType
 import app.cash.paging.compose.itemKey
 import kotlinx.collections.immutable.ImmutableList
-import me.matsumo.fanbox.core.model.UserData
+import me.matsumo.fanbox.core.model.Setting
 import me.matsumo.fanbox.core.resources.Res
 import me.matsumo.fanbox.core.resources.error_no_data_search
 import me.matsumo.fanbox.core.ui.LazyPagingItemsLoadContents
@@ -36,7 +36,7 @@ import me.matsumo.fankt.fanbox.domain.model.id.FanboxPostId
 @Composable
 internal fun PostSearchTagScreen(
     pagingAdapter: LazyPagingItems<FanboxPost>,
-    userData: UserData,
+    setting: Setting,
     bookmarkedPosts: ImmutableList<FanboxPostId>,
     onClickPost: (FanboxPostId) -> Unit,
     onClickPostLike: (FanboxPostId) -> Unit,
@@ -84,9 +84,9 @@ internal fun PostSearchTagScreen(
                         modifier = Modifier.fillMaxWidth(),
                         post = post,
                         isBookmarked = bookmarkedPosts.contains(post.id),
-                        isHideAdultContents = userData.isHideAdultContents,
-                        isOverrideAdultContents = userData.isAllowedShowAdultContents,
-                        isTestUser = userData.isTestUser,
+                        isHideAdultContents = setting.isHideAdultContents,
+                        isOverrideAdultContents = setting.isAllowedShowAdultContents,
+                        isTestUser = setting.isTestUser,
                         onClickPost = onClickPost,
                         onClickLike = onClickPostLike,
                         onClickBookmark = { _, isLiked -> onClickPostBookmark.invoke(post, isLiked) },

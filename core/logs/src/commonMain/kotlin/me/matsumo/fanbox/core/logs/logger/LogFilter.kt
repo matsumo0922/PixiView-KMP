@@ -4,20 +4,20 @@ import kotlinx.datetime.TimeZone
 import kotlinx.serialization.json.JsonObjectBuilder
 import me.matsumo.fanbox.core.common.PixiViewConfig
 import me.matsumo.fanbox.core.logs.CommonPayload
-import me.matsumo.fanbox.core.model.UserData
+import me.matsumo.fanbox.core.model.Setting
 
 class LogFilter(
     private val pixiViewConfig: PixiViewConfig,
-    private val userData: UserData,
+    private val setting: Setting,
     private val userAgent: String,
 ) {
     fun applyFilter(builder: JsonObjectBuilder): JsonObjectBuilder {
         val commonPayload = CommonPayload(
-            pixiviewId = userData.pixiViewId,
+            pixiviewId = setting.pixiViewId,
             userAgent = userAgent,
-            isPlus = userData.isPlusMode,
-            isDeveloper = userData.isDeveloperMode,
-            isTester = userData.isTestUser,
+            isPlus = setting.isPlusMode,
+            isDeveloper = setting.isDeveloperMode,
+            isTester = setting.isTestUser,
             applicationVersionCode = pixiViewConfig.versionCode.toLong(),
             applicationVersionName = pixiViewConfig.versionName,
             platform = pixiViewConfig.platform,

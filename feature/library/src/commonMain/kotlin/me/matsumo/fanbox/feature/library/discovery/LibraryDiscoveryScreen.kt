@@ -39,7 +39,7 @@ import kotlinx.collections.immutable.toImmutableList
 import kotlinx.coroutines.launch
 import me.matsumo.fanbox.core.model.Destination
 import me.matsumo.fanbox.core.model.ScreenState
-import me.matsumo.fanbox.core.model.UserData
+import me.matsumo.fanbox.core.model.Setting
 import me.matsumo.fanbox.core.resources.Res
 import me.matsumo.fanbox.core.resources.billing_plus_toast_require_plus
 import me.matsumo.fanbox.core.resources.creator_following_pixiv
@@ -93,7 +93,7 @@ internal fun LibraryDiscoveryRoute(
     ) { uiState ->
         LibraryDiscoveryScreen(
             modifier = Modifier.fillMaxSize(),
-            userData = uiState.userData,
+            setting = uiState.setting,
             followingCreators = uiState.followingCreators.toImmutableList(),
             recommendedCreators = uiState.recommendedCreators.toImmutableList(),
             followingPixivCreators = uiState.followingPixivCreators.toImmutableList(),
@@ -116,7 +116,7 @@ internal fun LibraryDiscoveryRoute(
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 private fun LibraryDiscoveryScreen(
-    userData: UserData,
+    setting: Setting,
     followingCreators: ImmutableList<FanboxCreatorDetail>,
     recommendedCreators: ImmutableList<FanboxCreatorDetail>,
     followingPixivCreators: ImmutableList<FanboxCreatorDetail>,
@@ -190,7 +190,7 @@ private fun LibraryDiscoveryScreen(
                             modifier = Modifier.fillMaxWidth(),
                             creatorDetail = creatorDetail,
                             onSearchPostClicked = {
-                                if (userData.hasPrivilege) {
+                                if (setting.hasPrivilege) {
                                     onClickPostByCreatorSearch.invoke(it)
                                 } else {
                                     onClickBillingPlus.invoke("search_post_by_creator")

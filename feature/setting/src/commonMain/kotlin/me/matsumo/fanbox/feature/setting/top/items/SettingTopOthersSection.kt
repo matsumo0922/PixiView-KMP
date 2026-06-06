@@ -4,7 +4,7 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import me.matsumo.fanbox.core.model.UserData
+import me.matsumo.fanbox.core.model.Setting
 import me.matsumo.fanbox.core.resources.Res
 import me.matsumo.fanbox.core.resources.setting_top_information_privacy_policy
 import me.matsumo.fanbox.core.resources.setting_top_information_team_of_service
@@ -23,7 +23,7 @@ import org.jetbrains.compose.resources.stringResource
 
 @Composable
 internal fun SettingTopOthersSection(
-    userData: UserData,
+    setting: Setting,
     onClickTeamsOfService: () -> Unit,
     onClickPrivacyPolicy: () -> Unit,
     onClickReshowReveal: () -> Unit,
@@ -75,7 +75,7 @@ internal fun SettingTopOthersSection(
             modifier = Modifier.fillMaxWidth(),
             title = Res.string.setting_top_others_developer_mode,
             description = Res.string.setting_top_others_developer_mode_description,
-            value = userData.isDeveloperMode,
+            value = setting.isDeveloperMode,
             onValueChanged = onClickDeveloperMode,
         )
     }

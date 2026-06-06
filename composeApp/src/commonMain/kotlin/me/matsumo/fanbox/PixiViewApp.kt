@@ -11,6 +11,7 @@ import androidx.compose.material3.windowsizeclass.WindowWidthSizeClass
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.DisposableEffect
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
@@ -28,8 +29,11 @@ import kotlinx.coroutines.launch
 import me.matsumo.fanbox.components.PixiViewScreen
 import me.matsumo.fanbox.core.common.PixiViewConfig
 import me.matsumo.fanbox.core.model.ScreenState
+import me.matsumo.fanbox.core.model.Setting
 import me.matsumo.fanbox.core.model.ThemeConfig
 import me.matsumo.fanbox.core.ui.AsyncLoadContents
+import me.matsumo.fanbox.core.ui.ads.InterstitialAdState
+import me.matsumo.fanbox.core.ui.ads.rememberInterstitialAdState
 import me.matsumo.fanbox.core.ui.component.PixiViewBackground
 import me.matsumo.fanbox.core.ui.extensition.LocalNavigationType
 import me.matsumo.fanbox.core.ui.extensition.NavigationType
@@ -40,7 +44,6 @@ import me.matsumo.fanbox.core.ui.extensition.currentPlatform
 import me.matsumo.fanbox.core.ui.theme.DarkDefaultColorScheme
 import me.matsumo.fanbox.core.ui.theme.LightDefaultColorScheme
 import me.matsumo.fanbox.core.ui.theme.PixiViewTheme
-import me.matsumo.fanbox.core.ui.theme.shouldUseDarkTheme
 import me.matsumo.fanbox.core.ui.view.LoadingView
 import me.matsumo.fanbox.core.ui.view.NativeView
 import org.koin.compose.koinInject
@@ -51,6 +54,7 @@ fun PixiViewApp(
     windowSize: WindowWidthSizeClass,
     nativeViews: ImmutableMap<String, () -> NativeView?>,
     modifier: Modifier = Modifier,
+    isAdsSdkInitialized: Boolean = true,
     viewModel: PixiViewViewModel = koinViewModel(),
     navigatorExtension: NavigatorExtension = koinInject(),
     pixiViewConfig: PixiViewConfig = koinInject(),
@@ -78,26 +82,46 @@ fun PixiViewApp(
                 modifier = Modifier.fillMaxSize(),
                 screenState = screenState,
                 containerColor = if (shouldUseDarkTheme) DarkDefaultColorScheme.surface else LightDefaultColorScheme.surface,
-            ) {
+            ) { uiState ->
+                val shouldLoadInterstitialAd = uiState.setting.shouldLoadInterstitialAd()
+                val interstitialAdState = rememberInterstitialAdState(
+                    adUnitId = pixiViewConfig.interstitialAdUnitId,
+                    enable = shouldLoadInterstitialAd,
+                )
+
+                LaunchedEffect(shouldLoadInterstitialAd, interstitialAdState) {
+                    if (shouldLoadInterstitialAd) {
+                        interstitialAdState.load()
+                    }
+                }
+
                 PixiViewTheme(
-                    sessionId = it.sessionId,
-                    fanboxMetadata = it.fanboxMetadata,
-                    themeConfig = it.userData.themeConfig,
-                    themeColorConfig = it.userData.themeColorConfig,
+                    sessionId = uiState.sessionId,
+                    fanboxMetadata = uiState.fanboxMetadata,
+                    themeConfig = uiState.setting.themeConfig,
+                    themeColorConfig = uiState.setting.themeColorConfig,
                     pixiViewConfig = pixiViewConfig,
+                    isAdsSdkInitialized = isAdsSdkInitialized,
                     nativeViews = nativeViews,
                     revealCanvasState = revealCanvasState,
                 ) {
                     PixiViewBackground(modifier) {
                         PixiViewScreen(
                             modifier = Modifier.fillMaxSize(),
-                            uiState = it,
+                            uiState = uiState,
                             onRequestInitPixiViewId = viewModel::initPixiViewId,
+                            onRequestFirstLaunchFlag = viewModel::initFirstLaunchTime,
                             onRequestUpdateState = viewModel::updateState,
+                            onPostDetailClosed = {
+                                handlePostDetailClosedForInterstitialAd(
+                                    viewModel = viewModel,
+                                    interstitialAdState = interstitialAdState,
+                                )
+                            },
                         )
 
                         AnimatedVisibility(
-                            visible = it.isAppLocked,
+                            visible = uiState.isAppLocked,
                             enter = fadeIn(),
                             exit = fadeOut(),
                         ) {
@@ -108,7 +132,7 @@ fun PixiViewApp(
                             )
                         }
 
-                        if (it.isAppLocked) {
+                        if (uiState.isAppLocked) {
                             scope.launch {
                                 if (currentPlatform == Platform.Android) {
                                     // Wait for the bind fragment manager.
@@ -128,7 +152,7 @@ fun PixiViewApp(
                 DisposableEffect(lifecycleOwner) {
                     val observer = object : DefaultLifecycleObserver {
                         override fun onCreate(owner: LifecycleOwner) {
-                            viewModel.billingClientInitialize()
+                            // viewModel.billingClientInitialize()
                         }
 
                         override fun onResume(owner: LifecycleOwner) {
@@ -149,12 +173,36 @@ fun PixiViewApp(
     }
 }
 
+private fun Setting.shouldLoadInterstitialAd(): Boolean {
+    return !hasPrivilege && shouldShowInterstitialAd
+}
+
+private suspend fun handlePostDetailClosedForInterstitialAd(
+    viewModel: PixiViewViewModel,
+    interstitialAdState: InterstitialAdState,
+) {
+    viewModel.onPostDetailClosedForInterstitialAd {
+        showInterstitialAdAndReload(interstitialAdState)
+    }
+}
+
+private suspend fun showInterstitialAdAndReload(
+    interstitialAdState: InterstitialAdState,
+): Boolean {
+    val wasShown = interstitialAdState.show()
+    if (wasShown) {
+        interstitialAdState.load()
+    }
+
+    return wasShown
+}
+
 @Composable
 private fun shouldUseDarkTheme(screenState: ScreenState<MainUiState>): Boolean {
     val default = isSystemInDarkTheme()
     val data = (screenState as? ScreenState.Idle)?.data ?: return default
 
-    return when (data.userData.themeConfig) {
+    return when (data.setting.themeConfig) {
         ThemeConfig.Light -> false
         ThemeConfig.Dark -> true
         ThemeConfig.System -> default

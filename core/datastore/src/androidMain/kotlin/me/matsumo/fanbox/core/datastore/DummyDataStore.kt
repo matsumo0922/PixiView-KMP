@@ -8,10 +8,10 @@ import org.jetbrains.compose.resources.ExperimentalResourceApi
 
 class DummyDataStoreImpl(
     private val context: Context,
-    private val userDataStore: PixiViewDataStore,
+    private val userDataStore: SettingDataStore,
 ) : DummyDataStore {
 
-    private val userData = userDataStore.userData
+    private val userData = userDataStore.setting
 
     override suspend fun setDummyData(key: String, value: String) {
         if (userData.first().isTestUser) {

@@ -9,12 +9,12 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.navigation.NavDestination
 import me.matsumo.fanbox.core.model.Destination
-import me.matsumo.fanbox.core.model.UserData
+import me.matsumo.fanbox.core.model.Setting
 
 @Composable
 fun LibraryDrawer(
     state: DrawerState,
-    userData: UserData?,
+    setting: Setting?,
     currentDestination: NavDestination?,
     onClickLibrary: (LibraryDestination) -> Unit,
     navigateTo: (Destination) -> Unit,
@@ -27,7 +27,7 @@ fun LibraryDrawer(
         DrawerContent(
             modifier = modifier,
             state = state,
-            userData = userData,
+            setting = setting,
             currentDestination = currentDestination,
             onClickLibrary = onClickLibrary,
             navigateTo = navigateTo,
@@ -38,7 +38,7 @@ fun LibraryDrawer(
 @Composable
 fun LibraryPermanentDrawer(
     state: DrawerState,
-    userData: UserData?,
+    setting: Setting?,
     currentDestination: NavDestination?,
     onClickLibrary: (LibraryDestination) -> Unit,
     navigateTo: (Destination) -> Unit,
@@ -51,7 +51,7 @@ fun LibraryPermanentDrawer(
         DrawerContent(
             modifier = modifier,
             state = state,
-            userData = userData,
+            setting = setting,
             currentDestination = currentDestination,
             onClickLibrary = onClickLibrary,
             navigateTo = navigateTo,

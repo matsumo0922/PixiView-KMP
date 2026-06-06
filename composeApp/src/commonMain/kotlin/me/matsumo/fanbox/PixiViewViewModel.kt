@@ -16,7 +16,7 @@ import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.isActive
 import kotlinx.coroutines.launch
-import me.matsumo.fanbox.core.billing.BillingStatus
+import me.matsumo.fanbox.core.billing.BillingClient
 import me.matsumo.fanbox.core.common.PixiViewConfig
 import me.matsumo.fanbox.core.common.util.suspendRunCatching
 import me.matsumo.fanbox.core.datastore.LaunchLogDataStore
@@ -24,10 +24,10 @@ import me.matsumo.fanbox.core.datastore.OldCookieDataStore
 import me.matsumo.fanbox.core.logs.logger.LogConfigurator
 import me.matsumo.fanbox.core.model.DownloadState
 import me.matsumo.fanbox.core.model.ScreenState
-import me.matsumo.fanbox.core.model.UserData
+import me.matsumo.fanbox.core.model.Setting
 import me.matsumo.fanbox.core.repository.DownloadPostsRepository
 import me.matsumo.fanbox.core.repository.FanboxRepository
-import me.matsumo.fanbox.core.repository.UserDataRepository
+import me.matsumo.fanbox.core.repository.SettingRepository
 import me.matsumo.fanbox.core.resources.Res
 import me.matsumo.fanbox.core.resources.error_no_data
 import me.matsumo.fanbox.core.resources.home_app_lock_message
@@ -35,46 +35,55 @@ import me.matsumo.fanbox.core.resources.home_app_lock_title
 import me.matsumo.fanbox.core.ui.extensition.getFanboxMetadataDummy
 import me.matsumo.fankt.fanbox.domain.model.FanboxMetaData
 import org.jetbrains.compose.resources.getString
+import kotlin.time.Clock
 import kotlin.time.Duration.Companion.minutes
+import kotlin.time.ExperimentalTime
 import kotlin.uuid.ExperimentalUuidApi
 import kotlin.uuid.Uuid
 
 class PixiViewViewModel(
-    private val userDataRepository: UserDataRepository,
+    private val settingRepository: SettingRepository,
     private val fanboxRepository: FanboxRepository,
     private val downloadPostsRepository: DownloadPostsRepository,
     private val launchLogDataStore: LaunchLogDataStore,
     private val oldCookieDataStore: OldCookieDataStore,
+    private val billingClient: BillingClient,
     private val pixiViewConfig: PixiViewConfig,
-    private val billingStatus: BillingStatus,
 ) : ViewModel() {
 
     private val _isLoggedInFlow: MutableSharedFlow<Boolean> = MutableSharedFlow(replay = 1)
     private val _isAppLockedFlow: MutableStateFlow<Boolean> = MutableStateFlow(true)
+    private val _metadataFlow: MutableStateFlow<FanboxMetaData> = MutableStateFlow(getFanboxMetadataDummy())
+
+    // インタースティシャル広告の頻度判定用。永続化せずプロセス内のみ保持する
+    private var interstitialPostCloseCount = 0
+    private var lastInterstitialShownEpochSeconds = 0L
 
     val screenState = combine(
         listOf(
-            userDataRepository.userData,
+            settingRepository.setting,
             fanboxRepository.sessionId,
             downloadPostsRepository.downloadState,
+            _metadataFlow,
             _isLoggedInFlow,
             _isAppLockedFlow,
         ),
     ) { flows ->
-        val userData = flows[0] as UserData
+        val setting = flows[0] as Setting
         val sessionId = flows[1] as String?
         val downloadState = flows[2] as DownloadState
-        val isLoggedIn = flows[3] as Boolean
-        val isAppLocked = flows[4] as Boolean
+        val fanboxMetadata = flows[3] as FanboxMetaData
+        val isLoggedIn = flows[4] as Boolean
+        val isAppLocked = flows[5] as Boolean
 
         ScreenState.Idle(
             MainUiState(
-                userData = userData,
+                setting = setting,
                 sessionId = sessionId.orEmpty(),
-                fanboxMetadata = suspendRunCatching { fanboxRepository.getMetadata() }.getOrElse { getFanboxMetadataDummy() },
+                fanboxMetadata = fanboxMetadata,
                 downloadState = downloadState,
                 isLoggedIn = isLoggedIn,
-                isAppLocked = if (userData.isUseAppLock) isAppLocked else false,
+                isAppLocked = if (setting.isUseAppLock) isAppLocked else false,
             ),
         )
     }.stateIn(
@@ -93,10 +102,10 @@ class PixiViewViewModel(
         }
 
         viewModelScope.launch {
-            userDataRepository.userData.collectLatest {
+            settingRepository.setting.collectLatest {
                 LogConfigurator.configure(
                     pixiViewConfig = pixiViewConfig,
-                    userData = it,
+                    setting = it,
                 )
             }
         }
@@ -109,29 +118,34 @@ class PixiViewViewModel(
         }
     }
 
-    fun billingClientInitialize() {
-        billingStatus.init()
-    }
-
-    fun billingClientFinish() {
-        billingStatus.finish()
-    }
-
     fun billingClientUpdate() {
-        billingStatus.update()
+        viewModelScope.launch {
+            delay(3000)
+
+            suspendRunCatching { billingClient.hasPlus() }.onSuccess {
+                settingRepository.setPlusMode(it)
+            }
+        }
     }
 
-    @OptIn(ExperimentalUuidApi::class)
+    @OptIn(ExperimentalUuidApi::class, ExperimentalTime::class)
     fun initPixiViewId() {
         viewModelScope.launch {
-            userDataRepository.setPixiViewId(Uuid.random().toString())
+            settingRepository.setPixiViewId(Uuid.random().toString())
+        }
+    }
+
+    @OptIn(ExperimentalTime::class)
+    fun initFirstLaunchTime() {
+        viewModelScope.launch {
+            settingRepository.setFirstLaunchTime(Clock.System.now().epochSeconds)
         }
     }
 
     fun updateState() {
         viewModelScope.launch {
             suspendRunCatching {
-                if (!userDataRepository.userData.first().isTestUser) {
+                if (!settingRepository.setting.first().isTestUser) {
                     val oldCookies = oldCookieDataStore.getCookies()
                     val sessionId = oldCookies.map { it.split("=") }.firstOrNull { it.first() == "FANBOXSESSID" }?.get(1)
 
@@ -139,6 +153,8 @@ class PixiViewViewModel(
                         fanboxRepository.setSessionId(sessionId)
                         oldCookieDataStore.save("")
                     }
+
+                    _metadataFlow.value = suspendRunCatching { fanboxRepository.getMetadata() }.getOrElse { getFanboxMetadataDummy() }
 
                     fanboxRepository.updateCsrfToken()
                     fanboxRepository.getNewsLetters()
@@ -152,7 +168,30 @@ class PixiViewViewModel(
 
     fun setAppLock(isAppLock: Boolean) {
         viewModelScope.launch {
-            _isAppLockedFlow.emit(if (userDataRepository.userData.first().isUseAppLock) isAppLock else false)
+            _isAppLockedFlow.emit(if (settingRepository.setting.first().isUseAppLock) isAppLock else false)
+        }
+    }
+
+    @OptIn(ExperimentalTime::class)
+    suspend fun onPostDetailClosedForInterstitialAd(
+        showInterstitialAd: suspend () -> Boolean,
+    ) {
+        val setting = settingRepository.setting.first()
+        if (!setting.canHandlePostDetailInterstitialAd()) return
+
+        val currentEpochSeconds = Clock.System.now().epochSeconds
+        interstitialPostCloseCount += 1
+
+        val canShowInterstitialAd = shouldShowPostDetailInterstitialAd(
+            postCloseCount = interstitialPostCloseCount,
+            currentEpochSeconds = currentEpochSeconds,
+            lastShownEpochSeconds = lastInterstitialShownEpochSeconds,
+        )
+        if (!canShowInterstitialAd) return
+
+        if (showInterstitialAd()) {
+            interstitialPostCloseCount = 0
+            lastInterstitialShownEpochSeconds = currentEpochSeconds
         }
     }
 
@@ -169,9 +208,33 @@ class PixiViewViewModel(
     )
 }
 
+private fun Setting.canHandlePostDetailInterstitialAd(): Boolean {
+    return !hasPrivilege && shouldShowInterstitialAd
+}
+
+private fun shouldShowPostDetailInterstitialAd(
+    postCloseCount: Int,
+    currentEpochSeconds: Long,
+    lastShownEpochSeconds: Long,
+): Boolean {
+    val reachesTriggerCount = postCloseCount >= INTERSTITIAL_POST_CLOSE_TRIGGER_COUNT
+    val matchesTriggerInterval = postCloseCount % INTERSTITIAL_POST_CLOSE_TRIGGER_COUNT == 0
+    val elapsedSeconds = currentEpochSeconds - lastShownEpochSeconds
+    val satisfiesCooldown = elapsedSeconds >= INTERSTITIAL_AD_COOLDOWN_SECONDS
+
+    return reachesTriggerCount && matchesTriggerInterval && satisfiesCooldown
+}
+
+/** インタースティシャル広告を表示する投稿詳細クローズ回数。 */
+private const val INTERSTITIAL_POST_CLOSE_TRIGGER_COUNT = 3
+
+/** インタースティシャル広告表示後に再表示を抑制する秒数。 */
+private const val INTERSTITIAL_AD_COOLDOWN_SECONDS = 180L
+
+/** アプリ全体の表示状態をまとめた UI モデル。 */
 @Stable
 data class MainUiState(
-    val userData: UserData,
+    val setting: Setting,
     val sessionId: String,
     val fanboxMetadata: FanboxMetaData,
     val downloadState: DownloadState,

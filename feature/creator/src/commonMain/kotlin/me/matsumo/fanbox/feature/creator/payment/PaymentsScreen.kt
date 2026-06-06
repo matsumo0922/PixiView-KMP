@@ -39,6 +39,7 @@ import me.matsumo.fanbox.feature.creator.payment.items.PaymentItem
 import me.matsumo.fankt.fanbox.domain.model.id.FanboxCreatorId
 import org.jetbrains.compose.resources.stringResource
 import org.koin.compose.viewmodel.koinViewModel
+import kotlin.time.ExperimentalTime
 
 @Composable
 internal fun PaymentsRoute(
@@ -136,10 +137,12 @@ private fun PaymentsScreen(
     }
 }
 
+@OptIn(ExperimentalTime::class)
 private fun isMonthDifferent(prev: Payment?, current: Payment): Boolean {
     return prev?.paymentDateTime?.format("MM") != current.paymentDateTime.format("MM")
 }
 
+@OptIn(ExperimentalTime::class)
 private fun List<Payment>.getFromYearMonth(current: Payment): ImmutableList<Payment> {
     return filter { it.paymentDateTime.format("yyyy-MM") == current.paymentDateTime.format("yyyy-MM") }.toImmutableList()
 }

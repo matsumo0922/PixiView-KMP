@@ -1,5 +1,8 @@
 package me.matsumo.fanbox.feature.post.image
 
+import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
@@ -26,6 +29,7 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import coil3.compose.LocalPlatformContext
 import coil3.compose.SubcomposeAsyncImage
 import coil3.request.ImageRequest
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import me.matsumo.fanbox.core.model.Destination
 import me.matsumo.fanbox.core.model.ScreenState
@@ -50,6 +54,11 @@ import me.matsumo.fankt.fanbox.domain.model.id.FanboxPostId
 import org.jetbrains.compose.resources.stringResource
 import org.koin.compose.koinInject
 import org.koin.compose.viewmodel.koinViewModel
+
+/**
+ * 操作が無い状態が続いた場合に PixiViewTopBar を自動で非表示にするまでの時間（ミリ秒）
+ */
+private const val TOP_BAR_AUTO_HIDE_DELAY_MILLIS = 3000L
 
 @Composable
 internal fun PostImageRoute(
@@ -112,6 +121,14 @@ private fun PostImageScreen(
 ) {
     val pagerState = rememberPagerState(initialPage = imageIndex) { postDetail.body.imageItems.size }
     var isShowMenu by remember { mutableStateOf(false) }
+    var isTopBarVisible by remember { mutableStateOf(true) }
+
+    LaunchedEffect(isTopBarVisible) {
+        if (isTopBarVisible) {
+            delay(TOP_BAR_AUTO_HIDE_DELAY_MILLIS)
+            isTopBarVisible = false
+        }
+    }
 
     Box(modifier) {
         HorizontalPager(
@@ -125,6 +142,7 @@ private fun PostImageScreen(
                 Zoomable(
                     modifier = Modifier.fillMaxSize(),
                     state = zoomState,
+                    onTap = { isTopBarVisible = !isTopBarVisible },
                     onLongPress = { isShowMenu = true },
                 ) {
                     SubcomposeAsyncImage(
@@ -162,14 +180,21 @@ private fun PostImageScreen(
             }
         }
 
-        PixiViewTopBar(
+        AnimatedVisibility(
             modifier = Modifier
                 .align(Alignment.TopCenter)
                 .fillMaxWidth(),
-            onClickActions = { isShowMenu = true },
-            onClickNavigation = onTerminate,
-            isTransparent = true,
-        )
+            visible = isTopBarVisible,
+            enter = fadeIn(),
+            exit = fadeOut(),
+        ) {
+            PixiViewTopBar(
+                modifier = Modifier.fillMaxWidth(),
+                onClickActions = { isShowMenu = true },
+                onClickNavigation = onTerminate,
+                isTransparent = true,
+            )
+        }
 
         PostImageMenuDialog(
             isVisible = isShowMenu,

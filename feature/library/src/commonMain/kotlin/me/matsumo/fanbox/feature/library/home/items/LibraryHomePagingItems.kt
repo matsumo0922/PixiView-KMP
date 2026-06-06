@@ -17,7 +17,7 @@ import androidx.paging.LoadState
 import app.cash.paging.compose.LazyPagingItems
 import app.cash.paging.compose.itemKey
 import kotlinx.collections.immutable.ImmutableList
-import me.matsumo.fanbox.core.model.UserData
+import me.matsumo.fanbox.core.model.Setting
 import me.matsumo.fanbox.core.ui.ads.NativeAdView
 import me.matsumo.fanbox.core.ui.component.PostGridItem
 import me.matsumo.fanbox.core.ui.component.PostItem
@@ -34,7 +34,7 @@ internal fun LibraryHomePagingItems(
     adOffset: Int,
     adInterval: Int,
     pagingAdapter: LazyPagingItems<FanboxPost>,
-    userData: UserData,
+    setting: Setting,
     bookmarkedPostsIds: ImmutableList<FanboxPostId>,
     isGridMode: Boolean,
     onClickPost: (FanboxPostId) -> Unit,
@@ -53,28 +53,28 @@ internal fun LibraryHomePagingItems(
         verticalArrangement = Arrangement.spacedBy(if (isGridMode) 4.dp else 16.dp),
     ) {
         items(
-            count = pagingAdapter.itemCount + if (userData.hasPrivilege) 0 else (pagingAdapter.itemCount / adInterval),
+            count = pagingAdapter.itemCount + if (setting.hasPrivilege) 0 else (pagingAdapter.itemCount / adInterval),
             key = { index ->
                 when {
-                    userData.hasPrivilege -> pagingAdapter.itemKey { it.id.uniqueValue }(index)
+                    setting.hasPrivilege -> pagingAdapter.itemKey { it.id.uniqueValue }(index)
                     (index + adOffset) % adInterval == 0 -> "ad-$index"
                     else -> pagingAdapter.itemKey { it.id.uniqueValue }(index - ((index + adOffset) / adInterval))
                 }
             },
         ) { index ->
-            if ((index + adOffset) % adInterval == 0 && !userData.hasPrivilege) {
+            if ((index + adOffset) % adInterval == 0 && !setting.hasPrivilege) {
                 NativeAdView(
                     modifier = Modifier.fillMaxSize(),
                     key = "$index",
                 )
             } else {
-                pagingAdapter[if (userData.hasPrivilege) index else index - ((index + adOffset) / adInterval)]?.let { post ->
+                pagingAdapter[if (setting.hasPrivilege) index else index - ((index + adOffset) / adInterval)]?.let { post ->
                     if (isGridMode) {
                         PostGridItem(
                             modifier = Modifier.fillMaxWidth(),
                             post = post,
-                            isHideAdultContents = userData.isHideAdultContents,
-                            isOverrideAdultContents = userData.isAllowedShowAdultContents,
+                            isHideAdultContents = setting.isHideAdultContents,
+                            isOverrideAdultContents = setting.isAllowedShowAdultContents,
                             onClickPost = onClickPost,
                         )
                     } else {
@@ -82,9 +82,9 @@ internal fun LibraryHomePagingItems(
                             modifier = Modifier.fillMaxSize(),
                             post = post,
                             isBookmarked = bookmarkedPostsIds.contains(post.id),
-                            isHideAdultContents = userData.isHideAdultContents,
-                            isOverrideAdultContents = userData.isAllowedShowAdultContents,
-                            isTestUser = userData.isTestUser,
+                            isHideAdultContents = setting.isHideAdultContents,
+                            isOverrideAdultContents = setting.isAllowedShowAdultContents,
+                            isTestUser = setting.isTestUser,
                             onClickPost = onClickPost,
                             onClickCreator = onClickCreator,
                             onClickPlanList = onClickPlanList,

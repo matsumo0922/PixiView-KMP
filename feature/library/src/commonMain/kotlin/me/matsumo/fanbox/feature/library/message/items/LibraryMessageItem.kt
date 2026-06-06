@@ -34,7 +34,9 @@ import me.matsumo.fanbox.core.ui.theme.bold
 import me.matsumo.fankt.fanbox.domain.model.FanboxNewsLetter
 import me.matsumo.fankt.fanbox.domain.model.id.FanboxCreatorId
 import sh.calvin.autolinktext.rememberAutoLinkText
+import kotlin.time.ExperimentalTime
 
+@OptIn(ExperimentalTime::class)
 @Composable
 internal fun LibraryMessageItem(
     message: FanboxNewsLetter,
