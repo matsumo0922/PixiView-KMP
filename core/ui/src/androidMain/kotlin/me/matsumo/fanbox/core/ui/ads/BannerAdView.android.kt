@@ -39,6 +39,7 @@ import me.matsumo.fanbox.core.resources.Res
 import me.matsumo.fanbox.core.resources.error_ad_load_failed
 import me.matsumo.fanbox.core.resources.error_ad_load_failed_description
 import me.matsumo.fanbox.core.ui.extensition.LocalNavigationType
+import me.matsumo.fanbox.core.ui.theme.LocalAdsSdkInitialized
 import me.matsumo.fanbox.core.ui.theme.LocalPixiViewConfig
 import me.matsumo.fanbox.core.ui.theme.bold
 import org.jetbrains.compose.resources.stringResource
@@ -49,6 +50,7 @@ actual fun BannerAdView(modifier: Modifier) {
     val context = LocalContext.current
     val configuration = LocalConfiguration.current
     val navigationType = LocalNavigationType.current.type
+    val isAdsSdkInitialized = LocalAdsSdkInitialized.current
     val pixiViewConfig = LocalPixiViewConfig.current
 
     var isAdLoadFailed by remember { mutableStateOf(false) }
@@ -71,7 +73,7 @@ actual fun BannerAdView(modifier: Modifier) {
                 .fillMaxWidth()
                 .height(adSize?.height?.dp ?: 0.dp),
         ) {
-            if (adSize != null) {
+            if (adSize != null && isAdsSdkInitialized) {
                 val adManagerAdView = rememberAdViewWithLifecycle(
                     adUnitId = pixiViewConfig.bannerAdUnitId,
                     adSize = adSize,

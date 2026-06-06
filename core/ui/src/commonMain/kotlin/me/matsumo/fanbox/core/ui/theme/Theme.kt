@@ -99,6 +99,7 @@ fun PixiViewTheme(
     sessionId: String = "",
     fanboxMetadata: FanboxMetaData = getFanboxMetadataDummy(),
     pixiViewConfig: PixiViewConfig = PixiViewConfig.dummy(),
+    isAdsSdkInitialized: Boolean = true,
     themeConfig: ThemeConfig = ThemeConfig.System,
     themeColorConfig: ThemeColorConfig = ThemeColorConfig.Blue,
     nativeViews: ImmutableMap<String, () -> NativeView?> = persistentMapOf(),
@@ -117,6 +118,7 @@ fun PixiViewTheme(
 
     CompositionLocalProvider(
         LocalPixiViewConfig provides pixiViewConfig,
+        LocalAdsSdkInitialized provides isAdsSdkInitialized,
         LocalColorScheme provides colorScheme,
         LocalFanboxSessionId provides FanboxSessionId(sessionId),
         LocalFanboxMetadata provides fanboxMetadata,

@@ -50,6 +50,7 @@ fun PixiViewApp(
     windowSize: WindowWidthSizeClass,
     nativeViews: ImmutableMap<String, () -> NativeView?>,
     modifier: Modifier = Modifier,
+    isAdsSdkInitialized: Boolean = true,
     viewModel: PixiViewViewModel = koinViewModel(),
     navigatorExtension: NavigatorExtension = koinInject(),
     pixiViewConfig: PixiViewConfig = koinInject(),
@@ -84,6 +85,7 @@ fun PixiViewApp(
                     themeConfig = it.setting.themeConfig,
                     themeColorConfig = it.setting.themeColorConfig,
                     pixiViewConfig = pixiViewConfig,
+                    isAdsSdkInitialized = isAdsSdkInitialized,
                     nativeViews = nativeViews,
                     revealCanvasState = revealCanvasState,
                 ) {
