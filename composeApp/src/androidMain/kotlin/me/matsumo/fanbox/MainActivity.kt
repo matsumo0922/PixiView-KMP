@@ -19,12 +19,16 @@ import androidx.lifecycle.lifecycleScope
 import com.applovin.sdk.AppLovinMediationProvider
 import com.applovin.sdk.AppLovinPrivacySettings
 import com.applovin.sdk.AppLovinSdk
+import com.applovin.sdk.AppLovinSdkConfiguration
 import com.applovin.sdk.AppLovinSdkInitializationConfiguration
 import com.google.ads.mediation.inmobi.InMobiConsent
 import com.google.android.gms.ads.MobileAds
+import com.google.android.gms.ads.initialization.AdapterStatus
+import com.google.android.gms.ads.initialization.InitializationStatus
 import com.inmobi.sdk.InMobiSdk
 import com.unity3d.ads.metadata.MetaData
 import com.vungle.ads.VunglePrivacySettings
+import io.github.aakira.napier.Napier
 import kotlinx.collections.immutable.persistentMapOf
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
@@ -109,13 +113,12 @@ class MainActivity : FragmentActivity(), KoinComponent {
             return
         }
 
+        configureMediationPrivacySettings()
+        initializeAppLovinSdk()
+    }
+
+    private fun configureMediationPrivacySettings() {
         // AppLovin
-        AppLovinSdk.getInstance(this).initialize(
-            AppLovinSdkInitializationConfiguration.builder(BuildKonfig.APPLOVIN_SDK_KEY)
-                .setMediationProvider(AppLovinMediationProvider.ADMOB)
-                .build(),
-            null,
-        )
         AppLovinPrivacySettings.setHasUserConsent(true)
 
         // InMobi
@@ -140,9 +143,67 @@ class MainActivity : FragmentActivity(), KoinComponent {
         val ccpaMetaData = MetaData(this)
         ccpaMetaData["privacy.consent"] = true
         ccpaMetaData.commit()
+    }
 
-        MobileAds.initialize(this) {
-            viewModel.setAdsSdkInitialized()
+    private fun initializeAppLovinSdk() {
+        val appLovinSdkKey = BuildKonfig.APPLOVIN_SDK_KEY
+
+        if (appLovinSdkKey.isBlank()) {
+            Napier.w { "AppLovin SDK key is blank. Skip AppLovin SDK initialization." }
+            initializeMobileAdsSdk()
+            return
+        }
+
+        val initializationConfiguration = AppLovinSdkInitializationConfiguration.builder(appLovinSdkKey)
+            .setMediationProvider(AppLovinMediationProvider.ADMOB)
+            .build()
+
+        AppLovinSdk.getInstance(this).initialize(
+            initializationConfiguration,
+            ::onAppLovinSdkInitialized,
+        )
+    }
+
+    private fun onAppLovinSdkInitialized(sdkConfiguration: AppLovinSdkConfiguration) {
+        Napier.d { "AppLovin SDK initialized: $sdkConfiguration" }
+        initializeMobileAdsSdk()
+    }
+
+    private fun initializeMobileAdsSdk() {
+        MobileAds.initialize(
+            this,
+            ::onMobileAdsInitialized,
+        )
+    }
+
+    private fun onMobileAdsInitialized(initializationStatus: InitializationStatus) {
+        logAdapterInitializationStatus(initializationStatus = initializationStatus)
+        viewModel.setAdsSdkInitialized()
+    }
+
+    private fun logAdapterInitializationStatus(initializationStatus: InitializationStatus) {
+        for ((adapterClassName, adapterStatus) in initializationStatus.adapterStatusMap) {
+            logAdapterInitializationStatus(
+                adapterClassName = adapterClassName,
+                adapterStatus = adapterStatus,
+            )
+        }
+    }
+
+    private fun logAdapterInitializationStatus(
+        adapterClassName: String,
+        adapterStatus: AdapterStatus,
+    ) {
+        val initializationState = adapterStatus.initializationState
+        val logMessage = "MobileAds adapter initialized: $adapterClassName, " +
+            "state=$initializationState, " +
+            "latency=${adapterStatus.latency}, " +
+            "description=${adapterStatus.description}"
+
+        if (initializationState == AdapterStatus.State.READY) {
+            Napier.d { logMessage }
+        } else {
+            Napier.w { logMessage }
         }
     }
 }
