@@ -107,12 +107,6 @@ class PostDetailRootViewModel(
         }
     }
 
-    fun updateInterstitialPostCloseCount(count: Int) {
-        viewModelScope.launch {
-            settingRepository.setInterstitialPostCloseCount(count)
-        }
-    }
-
     private fun Flow<PagingData<FanboxPost>>.toIdFlow(): Flow<PagingData<FanboxPostId>> {
         return map { list -> list.map { it.id } }
     }

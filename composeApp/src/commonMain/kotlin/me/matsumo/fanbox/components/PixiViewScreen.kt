@@ -24,6 +24,7 @@ internal fun PixiViewScreen(
     onRequestInitPixiViewId: () -> Unit,
     onRequestFirstLaunchFlag: () -> Unit,
     onRequestUpdateState: () -> Unit,
+    onPostDetailClosed: suspend () -> Unit,
     modifier: Modifier = Modifier,
 ) {
     val bottomSheetNavigator = rememberBottomSheetNavigator()
@@ -68,6 +69,7 @@ internal fun PixiViewScreen(
                 modifier = Modifier.fillMaxSize(),
                 bottomSheetNavigator = bottomSheetNavigator,
                 navController = navController,
+                onPostDetailClosed = onPostDetailClosed,
             )
 
             if (showPaywallFlag) {

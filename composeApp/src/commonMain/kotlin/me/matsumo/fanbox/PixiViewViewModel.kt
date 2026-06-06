@@ -168,6 +168,26 @@ class PixiViewViewModel(
         }
     }
 
+    @OptIn(ExperimentalTime::class)
+    suspend fun onPostDetailClosedForInterstitialAd(
+        showInterstitialAd: suspend () -> Boolean,
+    ) {
+        val setting = settingRepository.setting.first()
+        if (!setting.canHandlePostDetailInterstitialAd()) return
+
+        val currentEpochSeconds = Clock.System.now().epochSeconds
+        val postCloseCount = setting.interstitialPostCloseCount + 1
+
+        settingRepository.setInterstitialPostCloseCount(postCloseCount)
+
+        if (!setting.shouldShowPostDetailInterstitialAd(postCloseCount, currentEpochSeconds)) return
+
+        if (showInterstitialAd()) {
+            settingRepository.setInterstitialPostCloseCount(0)
+            settingRepository.setLastInterstitialShownEpochSeconds(currentEpochSeconds)
+        }
+    }
+
     suspend fun tryToAuthenticate(biometryAuthenticator: BiometryAuthenticator): Boolean = suspendRunCatching {
         biometryAuthenticator.checkBiometryAuthentication(
             requestTitle = getString(Res.string.home_app_lock_title).desc(),
@@ -181,6 +201,29 @@ class PixiViewViewModel(
     )
 }
 
+private fun Setting.canHandlePostDetailInterstitialAd(): Boolean {
+    return !hasPrivilege && shouldShowInterstitialAd
+}
+
+private fun Setting.shouldShowPostDetailInterstitialAd(
+    postCloseCount: Int,
+    currentEpochSeconds: Long,
+): Boolean {
+    val reachesTriggerCount = postCloseCount >= INTERSTITIAL_POST_CLOSE_TRIGGER_COUNT
+    val matchesTriggerInterval = postCloseCount % INTERSTITIAL_POST_CLOSE_TRIGGER_COUNT == 0
+    val elapsedSeconds = currentEpochSeconds - lastInterstitialShownEpochSeconds
+    val satisfiesCooldown = elapsedSeconds >= INTERSTITIAL_AD_COOLDOWN_SECONDS
+
+    return reachesTriggerCount && matchesTriggerInterval && satisfiesCooldown
+}
+
+/** インタースティシャル広告を表示する投稿詳細クローズ回数。 */
+private const val INTERSTITIAL_POST_CLOSE_TRIGGER_COUNT = 3
+
+/** インタースティシャル広告表示後に再表示を抑制する秒数。 */
+private const val INTERSTITIAL_AD_COOLDOWN_SECONDS = 180L
+
+/** アプリ全体の表示状態をまとめた UI モデル。 */
 @Stable
 data class MainUiState(
     val setting: Setting,
