@@ -104,6 +104,7 @@ class BillingClient(
 
         val isActive = entitlement?.isActive == true
         val isTrialPeriod = entitlement?.periodType == PeriodType.TRIAL
+        // iOS でトライアル対応する場合は、この Android 限定ガードを見直す。
         val isTrial = isActive && isAndroidPlatform() && isTrialPeriod
 
         return BillingPlusStatus(

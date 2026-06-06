@@ -16,6 +16,7 @@ import me.matsumo.fanbox.core.logs.category.SettingsLog
 import me.matsumo.fanbox.core.logs.logger.send
 import me.matsumo.fanbox.core.model.DownloadFileType
 import me.matsumo.fanbox.core.model.Setting
+import me.matsumo.fanbox.core.model.SettingPlusStatusUpdate
 import me.matsumo.fanbox.core.model.ThemeColorConfig
 import me.matsumo.fanbox.core.model.ThemeConfig
 
@@ -342,37 +343,30 @@ class SettingDataStore(
         }
     }
 
-    suspend fun setPlusStatus(
-        isPlusMode: Boolean,
-        isPlusTrial: Boolean,
-    ) = withContext(ioDispatcher) {
+    suspend fun setPlusStatus(plusStatusUpdate: SettingPlusStatusUpdate) = withContext(ioDispatcher) {
         val currentSetting = setting.first()
-        val normalizedIsPlusTrial = isPlusMode && isPlusTrial
-        val isPlusModeChanged = currentSetting.isPlusMode != isPlusMode
-        val isPlusTrialChanged = currentSetting.isPlusTrial != normalizedIsPlusTrial
-        val hasPlusStatusChanged = isPlusModeChanged || isPlusTrialChanged
 
-        if (!hasPlusStatusChanged) return@withContext
+        if (!plusStatusUpdate.hasChanged) return@withContext
 
-        if (isPlusModeChanged) {
+        if (plusStatusUpdate.isPlusModeChanged) {
             SettingsLog.update(
                 propertyName = "isPlusMode",
                 oldValue = currentSetting.isPlusMode.toString(),
-                newValue = isPlusMode.toString(),
+                newValue = plusStatusUpdate.isPlusMode.toString(),
             ).send()
         }
 
-        if (isPlusTrialChanged) {
+        if (plusStatusUpdate.isPlusTrialChanged) {
             SettingsLog.update(
                 propertyName = "isPlusTrial",
                 oldValue = currentSetting.isPlusTrial.toString(),
-                newValue = normalizedIsPlusTrial.toString(),
+                newValue = plusStatusUpdate.isPlusTrial.toString(),
             ).send()
         }
 
         settingPreference.edit {
-            it[booleanPreferencesKey(Setting::isPlusMode.name)] = isPlusMode
-            it[booleanPreferencesKey(Setting::isPlusTrial.name)] = normalizedIsPlusTrial
+            it[booleanPreferencesKey(Setting::isPlusMode.name)] = plusStatusUpdate.isPlusMode
+            it[booleanPreferencesKey(Setting::isPlusTrial.name)] = plusStatusUpdate.isPlusTrial
         }
     }
 }

@@ -8,6 +8,7 @@ import kotlinx.coroutines.flow.receiveAsFlow
 import me.matsumo.fanbox.core.datastore.SettingDataStore
 import me.matsumo.fanbox.core.model.DownloadFileType
 import me.matsumo.fanbox.core.model.Setting
+import me.matsumo.fanbox.core.model.SettingPlusStatusUpdate
 import me.matsumo.fanbox.core.model.ThemeColorConfig
 import me.matsumo.fanbox.core.model.ThemeConfig
 
@@ -141,22 +142,20 @@ class SettingRepositoryImpl(
 
     override suspend fun setPlusStatus(isPlusMode: Boolean, isPlusTrial: Boolean) {
         val currentSetting = setting.first()
-        val normalizedIsPlusTrial = isPlusMode && isPlusTrial
-        val isPlusModeChanged = currentSetting.isPlusMode != isPlusMode
-        val isPlusTrialChanged = currentSetting.isPlusTrial != normalizedIsPlusTrial
-        val hasPlusStatusChanged = isPlusModeChanged || isPlusTrialChanged
+        val plusStatusUpdate = SettingPlusStatusUpdate.from(
+            currentSetting = currentSetting,
+            isPlusMode = isPlusMode,
+            isPlusTrial = isPlusTrial,
+        )
 
-        if (hasPlusStatusChanged) {
-            settingDataStore.setPlusStatus(
-                isPlusMode = isPlusMode,
-                isPlusTrial = normalizedIsPlusTrial,
-            )
+        if (plusStatusUpdate.hasChanged) {
+            settingDataStore.setPlusStatus(plusStatusUpdate)
         }
 
-        if (isPlusModeChanged) {
-            _updatePlusMode.send(isPlusMode)
+        if (plusStatusUpdate.isPlusModeChanged) {
+            _updatePlusMode.send(plusStatusUpdate.isPlusMode)
 
-            if (!isPlusMode) {
+            if (!plusStatusUpdate.isPlusMode) {
                 setUseDynamicColor(false)
                 setUseAppLock(false)
                 setHideRestricted(false)
