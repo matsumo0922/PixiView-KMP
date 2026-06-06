@@ -22,8 +22,8 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalConfiguration
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.viewinterop.AndroidView
 import androidx.lifecycle.DefaultLifecycleObserver
@@ -32,8 +32,8 @@ import androidx.lifecycle.compose.LocalLifecycleOwner
 import com.google.android.gms.ads.AdListener
 import com.google.android.gms.ads.AdRequest
 import com.google.android.gms.ads.AdSize
+import com.google.android.gms.ads.AdView
 import com.google.android.gms.ads.LoadAdError
-import com.google.android.gms.ads.admanager.AdManagerAdView
 import io.github.aakira.napier.Napier
 import me.matsumo.fanbox.core.resources.Res
 import me.matsumo.fanbox.core.resources.error_ad_load_failed
@@ -74,7 +74,7 @@ actual fun BannerAdView(modifier: Modifier) {
                 .height(adSize?.height?.dp ?: 0.dp),
         ) {
             if (adSize != null && isAdsSdkInitialized) {
-                val adManagerAdView = rememberAdViewWithLifecycle(
+                val adView = rememberAdViewWithLifecycle(
                     adUnitId = pixiViewConfig.bannerAdUnitId,
                     adSize = adSize,
                     adRequest = AdRequest.Builder().build(),
@@ -99,7 +99,7 @@ actual fun BannerAdView(modifier: Modifier) {
 
                 AndroidView(
                     modifier = Modifier.fillMaxSize(),
-                    factory = { adManagerAdView },
+                    factory = { adView },
                 )
             }
 
@@ -138,10 +138,10 @@ fun rememberAdViewWithLifecycle(
     adSize: AdSize,
     adRequest: AdRequest = AdRequest.Builder().build(),
     adListener: AdListener = object : AdListener() {},
-): AdManagerAdView {
+): AdView {
     val context = LocalContext.current
     val adView = remember(context, adUnitId, adSize) {
-        AdManagerAdView(context).apply {
+        AdView(context).apply {
             setAdSize(adSize)
             this.adListener = adListener
             this.adUnitId = adUnitId
