@@ -39,16 +39,19 @@ import me.matsumo.fanbox.core.logs.category.ApplicationLog
 import me.matsumo.fanbox.core.logs.logger.LogConfigurator
 import me.matsumo.fanbox.core.logs.logger.send
 import me.matsumo.fanbox.core.model.ThemeConfig
+import me.matsumo.fanbox.core.ui.ads.NativeAdsPreLoader
 import me.matsumo.fanbox.core.ui.theme.shouldUseDarkTheme
 import me.matsumo.fanbox.feature.service.DownloadPostService
 import org.json.JSONObject
 import org.koin.androidx.viewmodel.ext.android.viewModel
 import org.koin.core.component.KoinComponent
+import org.koin.core.component.inject
 import java.util.concurrent.atomic.AtomicBoolean
 
 class MainActivity : FragmentActivity(), KoinComponent {
 
     private val viewModel by viewModel<MainViewModel>()
+    private val nativeAdsPreLoader by inject<NativeAdsPreLoader>()
     private val isMobileAdsSdkInitializationStarted = AtomicBoolean(false)
     private var stayTime = 0L
 
@@ -91,6 +94,8 @@ class MainActivity : FragmentActivity(), KoinComponent {
     override fun onResume() {
         super.onResume()
 
+        refreshNativeAdInventory()
+
         if (stayTime == 0L) {
             lifecycleScope.launch {
                 // LogConfigurator が初期化されるまで待つ
@@ -109,6 +114,14 @@ class MainActivity : FragmentActivity(), KoinComponent {
             ApplicationLog.close((System.currentTimeMillis() - stayTime) / 1000).send()
             stayTime = 0L
         }
+    }
+
+    private fun refreshNativeAdInventory() {
+        if (!viewModel.isAdsSdkInitialized.value) {
+            return
+        }
+
+        nativeAdsPreLoader.refreshInventory()
     }
 
     private fun initAdsSdk() {
