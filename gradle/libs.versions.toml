@@ -30,7 +30,7 @@ kmpPaging = "3.3.0-alpha02-0.5.1"
 kmpPurchase = "2.1.0+16.2.0"
 mokoPermissions = "0.18.0"
 mokoBiometry = "0.4.0"
-calf = "0.8.0"
+calf = "0.12.0"
 adaptive = "1.1.2"
 
 # AndroidX
