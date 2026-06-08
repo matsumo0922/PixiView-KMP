@@ -31,7 +31,7 @@ kmpPurchase = "2.1.0+16.2.0"
 mokoPermissions = "0.20.1"
 mokoBiometry = "0.4.0"
 calf = "0.12.0"
-adaptive = "1.1.2"
+adaptive = "1.2.0"
 
 # AndroidX
 androidxCore = "1.18.0"
