@@ -35,7 +35,7 @@ adaptive = "1.1.2"
 
 # AndroidX
 androidxCore = "1.17.0"
-androidxCoreSplash = "1.0.1"
+androidxCoreSplash = "1.2.0"
 androidxAppCompat = "1.7.1"
 androidxActivity = "1.10.1"
 androidxFragment = "1.8.9"
