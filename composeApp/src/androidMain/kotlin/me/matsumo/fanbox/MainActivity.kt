@@ -216,6 +216,7 @@ class MainActivity : FragmentActivity(), KoinComponent {
     private fun onMobileAdsInitialized(initializationStatus: InitializationStatus) {
         logAdapterInitializationStatus(initializationStatus = initializationStatus)
         viewModel.setAdsSdkInitialized()
+        nativeAdsPreLoader.warmUp()
     }
 
     private fun logAdapterInitializationStatus(initializationStatus: InitializationStatus) {

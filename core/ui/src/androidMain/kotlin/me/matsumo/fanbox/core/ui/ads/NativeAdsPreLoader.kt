@@ -29,6 +29,7 @@ class NativeAdsPreLoader(
     private val retryController = AdLoadRetryController(adFormatName = "NativeAds")
     private val _nativeAdInventoryVersion = MutableStateFlow(0)
     private val adLoader: AdLoader
+    private var isWarmedUp = false
     val nativeAdInventoryVersion: StateFlow<Int> = _nativeAdInventoryVersion.asStateFlow()
 
     init {
@@ -58,6 +59,15 @@ class NativeAdsPreLoader(
             .withAdListener(adListener)
             .forNativeAd(::onNativeAdLoaded)
             .build()
+    }
+
+    /** SDK 初期化完了後に在庫を事前読み込みし、初回表示の待ちを減らす。多重実行はガードする。 */
+    fun warmUp() {
+        if (isWarmedUp) return
+        isWarmedUp = true
+
+        Napier.d("warmUp")
+        preloadAd()
     }
 
     private fun preloadAd() {
