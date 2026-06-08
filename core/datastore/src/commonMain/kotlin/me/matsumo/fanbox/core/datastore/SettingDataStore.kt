@@ -16,6 +16,7 @@ import me.matsumo.fanbox.core.logs.category.SettingsLog
 import me.matsumo.fanbox.core.logs.logger.send
 import me.matsumo.fanbox.core.model.DownloadFileType
 import me.matsumo.fanbox.core.model.Setting
+import me.matsumo.fanbox.core.model.SettingPlusStatusUpdate
 import me.matsumo.fanbox.core.model.ThemeColorConfig
 import me.matsumo.fanbox.core.model.ThemeConfig
 
@@ -342,17 +343,30 @@ class SettingDataStore(
         }
     }
 
-    suspend fun setPlusMode(isPlusMode: Boolean) = withContext(ioDispatcher) {
-        if (setting.first().isPlusMode == isPlusMode) return@withContext
+    suspend fun setPlusStatus(plusStatusUpdate: SettingPlusStatusUpdate) = withContext(ioDispatcher) {
+        val currentSetting = setting.first()
 
-        SettingsLog.update(
-            propertyName = "isPlusMode",
-            oldValue = setting.first().isPlusMode.toString(),
-            newValue = isPlusMode.toString(),
-        ).send()
+        if (!plusStatusUpdate.hasChanged) return@withContext
+
+        if (plusStatusUpdate.isPlusModeChanged) {
+            SettingsLog.update(
+                propertyName = "isPlusMode",
+                oldValue = currentSetting.isPlusMode.toString(),
+                newValue = plusStatusUpdate.isPlusMode.toString(),
+            ).send()
+        }
+
+        if (plusStatusUpdate.isPlusTrialChanged) {
+            SettingsLog.update(
+                propertyName = "isPlusTrial",
+                oldValue = currentSetting.isPlusTrial.toString(),
+                newValue = plusStatusUpdate.isPlusTrial.toString(),
+            ).send()
+        }
 
         settingPreference.edit {
-            it[booleanPreferencesKey(Setting::isPlusMode.name)] = isPlusMode
+            it[booleanPreferencesKey(Setting::isPlusMode.name)] = plusStatusUpdate.isPlusMode
+            it[booleanPreferencesKey(Setting::isPlusTrial.name)] = plusStatusUpdate.isPlusTrial
         }
     }
 }

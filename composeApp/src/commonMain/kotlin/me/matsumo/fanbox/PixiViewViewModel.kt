@@ -122,8 +122,11 @@ class PixiViewViewModel(
         viewModelScope.launch {
             delay(3000)
 
-            suspendRunCatching { billingClient.hasPlus() }.onSuccess {
-                settingRepository.setPlusMode(it)
+            suspendRunCatching { billingClient.getPlusStatus() }.onSuccess { plusStatus ->
+                settingRepository.setPlusStatus(
+                    isPlusMode = plusStatus.isActive,
+                    isPlusTrial = plusStatus.isTrial,
+                )
             }
         }
     }

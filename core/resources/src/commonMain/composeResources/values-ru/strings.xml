@@ -284,6 +284,12 @@
     <string name="billing_plus_title">%1$s+</string>
     <string name="billing_plus_description">%1$s+ является планом поддержки для разработчиков, который предоставляет доступ ко всем функциям за стоимость одной чашки кофе в месяц.</string>
     <string name="billing_plus_purchase_button">Купить за %1$s</string>
+    <string name="billing_plus_purchase_trial_button">Начать бесплатный период: %1$s</string>
+    <string name="billing_plus_trial_label">Бесплатный период: %1$s</string>
+    <string name="billing_plus_trial_period_day">%1$d д.</string>
+    <string name="billing_plus_trial_period_week">%1$d нед.</string>
+    <string name="billing_plus_trial_period_month">%1$d мес.</string>
+    <string name="billing_plus_trial_period_year">%1$d г.</string>
     <string name="billing_plus_verify_button">Восстановить покупку</string>
     <string name="billing_plus_consume_button">Активировать покупку</string>
     <string name="billing_plus_caution1">※ %1$s+ является подпиской, добавляющей эксклюзивные функции. Платёж производится сразу, и для продолжения использования функций требуется ежемесячное или ежегодное продление. Подписку можно отменить в любое время.</string>

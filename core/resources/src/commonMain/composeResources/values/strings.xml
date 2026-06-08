@@ -306,6 +306,12 @@
     <string name="billing_plus_title">%1$s+</string>
     <string name="billing_plus_description">%1$s+ is a support plan for developers that allows access to all features for the cost of one coffee per month.</string>
     <string name="billing_plus_purchase_button">Buy for %1$s</string>
+    <string name="billing_plus_purchase_trial_button">Start %1$s free trial</string>
+    <string name="billing_plus_trial_label">Free trial: %1$s</string>
+    <string name="billing_plus_trial_period_day">%1$d days</string>
+    <string name="billing_plus_trial_period_week">%1$d weeks</string>
+    <string name="billing_plus_trial_period_month">%1$d months</string>
+    <string name="billing_plus_trial_period_year">%1$d years</string>
     <string name="billing_plus_verify_button">Restore purchase</string>
     <string name="billing_plus_consume_button">Consume Purchase</string>
     <string name="billing_plus_caution1">※ %1$s+ is a subscription service that adds exclusive features. the payment is made immediately, and to continue using the features, monthly or yearly renewal is necessary. you can cancel the subscription at any time.</string>

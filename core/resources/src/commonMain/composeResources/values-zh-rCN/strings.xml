@@ -281,6 +281,12 @@
     <string name="billing_plus_title">%1$s+</string>
     <string name="billing_plus_description">%1$s+ 是一项支持开发者的订阅计划，可使您以每月一杯咖啡的费用访问所有功能。</string>
     <string name="billing_plus_purchase_button">以 %1$s 的价格购买</string>
+    <string name="billing_plus_purchase_trial_button">开始 %1$s 免费试用</string>
+    <string name="billing_plus_trial_label">免费试用：%1$s</string>
+    <string name="billing_plus_trial_period_day">%1$d天</string>
+    <string name="billing_plus_trial_period_week">%1$d周</string>
+    <string name="billing_plus_trial_period_month">%1$d个月</string>
+    <string name="billing_plus_trial_period_year">%1$d年</string>
     <string name="billing_plus_verify_button">恢复购买</string>
     <string name="billing_plus_consume_button">消费购买</string>
     <string name="billing_plus_caution1">※ %1$s+ 是一个提供独家功能的订阅计划。付款后立即生效，继续使用这些功能需要每月或每年续订。您可以随时取消订阅。</string>

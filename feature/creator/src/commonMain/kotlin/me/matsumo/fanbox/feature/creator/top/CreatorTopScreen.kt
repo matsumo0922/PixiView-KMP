@@ -441,7 +441,7 @@ private fun CreatorTopScreen(
                 ),
                 containerColor = MaterialTheme.colorScheme.primaryContainer,
                 onClick = {
-                    if (setting.hasPrivilege) {
+                    if (setting.canBulkDownload) {
                         onClickAllDownload.invoke(creatorDetail.creatorId)
                     } else {
                         isShowRewardAdDialog = true
