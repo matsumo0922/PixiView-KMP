@@ -64,7 +64,7 @@ fankt = "0.0.18"
 openai = "4.0.1"
 
 # Others
-ktor = "3.2.3"
+ktor = "3.5.0"
 coil3 = "3.3.0"
 ksoup = "0.2.5"
 composeWebView = "2.0.2"
