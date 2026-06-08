@@ -174,7 +174,7 @@ play-service-ads = { module = "com.google.android.gms:play-services-ads", versio
 google-material = { module = "com.google.android.material:material", version.ref = "material" }
 
 # Ads
-ads-unity-core = { module = "com.unity3d.ads:unity-ads", version = "4.18.0" }
+ads-unity-core = { module = "com.unity3d.ads:unity-ads", version = "4.18.1" }
 ads-unity = { module = "com.google.ads.mediation:unity", version = "4.18.0.0" }
 ads-applovin = { module = "com.google.ads.mediation:applovin", version = "13.6.2.0" }
 ads-inmobi = { module = "com.google.ads.mediation:inmobi", version = "11.3.0.0" }
