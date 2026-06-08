@@ -45,13 +45,13 @@ kotlin {
                 api(libs.placeholder)
                 api(libs.rich.editor)
                 api(libs.autolink)
-                api(libs.play.service.ads)
             }
         }
 
         val androidMain by getting {
             dependencies {
                 implementation(libs.bundles.media3)
+                api(libs.play.service.ads)
                 api(libs.bundles.ui.android.api)
             }
         }
