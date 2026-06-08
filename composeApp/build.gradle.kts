@@ -13,14 +13,6 @@ plugins {
     id("pixiview.primitive.detekt")
 }
 
-// fankt <= 0.0.18 pulls ktor-client-cio transitively. On iOS (Kotlin/Native) Ktor's
-// engine auto-discovery picks CIO over Darwin and HTTPS fails with
-// "TLS sessions are not supported on Native platform.". Exclude CIO so Darwin stays
-// the only iOS engine. Can be dropped once fankt >= 0.0.19 (CIO removed) is adopted.
-configurations.configureEach {
-    exclude(group = "io.ktor", module = "ktor-client-cio")
-}
-
 // This ID must be valid or the app will crash.
 // When building from GitHub, either exclude AdMob code or register with AdMob for an ID.
 val admobTestAppId = "ca-app-pub-0000000000000000~0000000000"
