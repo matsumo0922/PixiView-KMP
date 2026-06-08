@@ -226,7 +226,7 @@ rich-editor = { module = "com.mohamedrejeb.richeditor:richeditor-compose", versi
 autolink = { module = "sh.calvin.autolinktext:autolinktext", version.ref = "autolink" }
 window-size = { module = "dev.chrisbanes.material3:material3-window-size-class-multiplatform", version.ref = "windowSize" }
 desugar = { module = "com.android.tools:desugar_jdk_libs", version = "2.1.5" }
-placeholder = { module = "com.eygraber:compose-placeholder-material3", version = "1.0.7" }
+placeholder = { module = "com.eygraber:compose-placeholder-material3", version = "1.0.12" }
 libraries-core = { module = "com.mikepenz:aboutlibraries-core", version.ref = "libraries" }
 libraries-ui = { module = "com.mikepenz:aboutlibraries-compose", version.ref = "libraries" }
 
