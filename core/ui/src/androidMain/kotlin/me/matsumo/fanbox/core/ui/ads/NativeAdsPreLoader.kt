@@ -24,7 +24,7 @@ class NativeAdsPreLoader(
     pixiViewConfig: PixiViewConfig,
 ) {
     private val preloadedNativeAds: MutableList<PreloadedNativeAd> = mutableListOf()
-    private val keyMap: MutableMap<String, NativeAd> = mutableMapOf()
+    private val keyMap: MutableMap<String, PreloadedNativeAd> = mutableMapOf()
     private val inactiveKeys: MutableSet<String> = LinkedHashSet()
     private val retryController = AdLoadRetryController(adFormatName = "NativeAds")
     private val _nativeAdInventoryVersion = MutableStateFlow(0)
@@ -80,6 +80,11 @@ class NativeAdsPreLoader(
             retryController.reset()
         }
 
+        loadMissingNativeAdsIfIdle()
+    }
+
+    @SuppressLint("MissingPermission")
+    private fun loadMissingNativeAdsIfIdle() {
         if (adLoader.isLoading) return
 
         loadMissingNativeAds()
@@ -97,7 +102,12 @@ class NativeAdsPreLoader(
 
         val mappedNativeAd = keyMap[key]
         if (mappedNativeAd != null) {
-            return mappedNativeAd
+            if (!isExpired(mappedNativeAd)) {
+                return mappedNativeAd.nativeAd
+            }
+
+            // 割り当て済みでも失効した広告は表示しても impression が計上されないため、破棄して割り当て直す
+            keyMap.remove(key)?.nativeAd?.destroy()
         }
 
         val preloadedNativeAd = takeValidPreloadedNativeAd()
@@ -109,21 +119,43 @@ class NativeAdsPreLoader(
         preloadAd()
         keyMap[key] = preloadedNativeAd
 
-        return preloadedNativeAd
+        return preloadedNativeAd.nativeAd
     }
 
     /** 失効済みのプリロード在庫を取り除き、有効な広告を1件取り出す。 */
-    private fun takeValidPreloadedNativeAd(): NativeAd? {
+    private fun takeValidPreloadedNativeAd(): PreloadedNativeAd? {
         discardExpiredPreloadedAds()
-        return preloadedNativeAds.removeFirstOrNull()?.nativeAd
+        return preloadedNativeAds.removeFirstOrNull()
     }
 
     /** バックグラウンド復帰時などに、失効した在庫を破棄して不足分を再プリロードする。 */
     fun refreshInventory() {
-        Napier.d("refreshInventory: ${preloadedNativeAds.size}")
-
         discardExpiredPreloadedAds()
-        preloadAd()
+        discardExpiredInactiveAds()
+
+        // 復帰のたびにリトライ backoff をリセットしないよう、reset を伴わない経路で補充する
+        loadMissingNativeAdsIfIdle()
+
+        Napier.d("refreshInventory: ${preloadedNativeAds.size}")
+    }
+
+    private fun discardExpiredInactiveAds() {
+        val expiredKeys = inactiveKeys.filter(::isRetainedAdExpired)
+        if (expiredKeys.isEmpty()) return
+
+        expiredKeys.forEach(::discardRetainedAd)
+
+        Napier.d("discardExpiredInactiveAds: ${expiredKeys.size}")
+    }
+
+    private fun isRetainedAdExpired(key: String): Boolean {
+        val retainedNativeAd = keyMap[key] ?: return false
+        return isExpired(retainedNativeAd)
+    }
+
+    private fun discardRetainedAd(key: String) {
+        inactiveKeys.remove(key)
+        keyMap.remove(key)?.nativeAd?.destroy()
     }
 
     private fun discardExpiredPreloadedAds() {
@@ -156,7 +188,7 @@ class NativeAdsPreLoader(
         while (inactiveKeys.size > MAX_RETAINED_INACTIVE_ADS) {
             val oldestKey = inactiveKeys.firstOrNull() ?: break
             inactiveKeys.remove(oldestKey)
-            keyMap.remove(oldestKey)?.destroy()
+            keyMap.remove(oldestKey)?.nativeAd?.destroy()
         }
     }
 
