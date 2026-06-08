@@ -17,7 +17,7 @@ kotlin = "2.2.10"
 # KotlinX
 kotlinxCoroutines = "1.10.2"
 kotlinxDatetime = "0.7.1-0.6.x-compat"
-kotlinxSerializationJson = "1.9.0"
+kotlinxSerializationJson = "1.11.0"
 kotlinxImmutable = "0.4.0"
 
 # KMP
