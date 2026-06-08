@@ -158,6 +158,7 @@ fun rememberAdViewWithLifecycle(
     val lifecycleOwner = LocalLifecycleOwner.current
 
     DisposableEffect(lifecycleOwner, adView) {
+        // 破棄は onDispose に一本化し、resume/pause のみ lifecycle へ追従させる
         val observer = object : DefaultLifecycleObserver {
             override fun onResume(owner: LifecycleOwner) {
                 adView.resume()
@@ -165,10 +166,6 @@ fun rememberAdViewWithLifecycle(
 
             override fun onPause(owner: LifecycleOwner) {
                 adView.pause()
-            }
-
-            override fun onDestroy(owner: LifecycleOwner) {
-                adView.destroy()
             }
         }
 
