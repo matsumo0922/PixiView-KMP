@@ -294,7 +294,6 @@ media3 = [
 
 ktor = [
     "ktor-core",
-    "ktor-cio",
     "ktor-content-negotiation",
     "ktor-serialization-json",
     "ktot-logging",
