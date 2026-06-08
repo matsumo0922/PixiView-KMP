@@ -1,6 +1,7 @@
 package me.matsumo.fanbox.core.ui.ads
 
 import android.annotation.SuppressLint
+import android.content.Context
 import android.content.res.Configuration
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.fadeIn
@@ -140,14 +141,18 @@ fun rememberAdViewWithLifecycle(
     adListener: AdListener = object : AdListener() {},
 ): AdView {
     val context = LocalContext.current
+    val retryController = remember(context, adUnitId, adSize) {
+        AdLoadRetryController(adFormatName = "BannerAds")
+    }
     val adView = remember(context, adUnitId, adSize) {
-        AdView(context).apply {
-            setAdSize(adSize)
-            this.adListener = adListener
-            this.adUnitId = adUnitId
-
-            loadAd(adRequest)
-        }
+        createBannerAdView(
+            context = context,
+            adUnitId = adUnitId,
+            adSize = adSize,
+            adRequest = adRequest,
+            retryController = retryController,
+            adListener = adListener,
+        )
     }
 
     val lifecycleOwner = LocalLifecycleOwner.current
@@ -171,11 +176,68 @@ fun rememberAdViewWithLifecycle(
 
         onDispose {
             lifecycleOwner.lifecycle.removeObserver(observer)
+            retryController.reset()
             adView.destroy()
         }
     }
 
     return adView
+}
+
+@SuppressLint("MissingPermission")
+private fun createBannerAdView(
+    context: Context,
+    adUnitId: String,
+    adSize: AdSize,
+    adRequest: AdRequest,
+    retryController: AdLoadRetryController,
+    adListener: AdListener,
+): AdView {
+    val adView = AdView(context)
+    adView.setAdSize(adSize)
+    adView.adUnitId = adUnitId
+    adView.adListener = BannerAdRetryListener(
+        adView = adView,
+        adRequest = adRequest,
+        retryController = retryController,
+        delegate = adListener,
+    )
+    adView.loadAd(adRequest)
+    return adView
+}
+
+/** バナー広告のロード失敗時に指数バックオフで再試行し、その他の通知は delegate へ委譲する AdListener。 */
+private class BannerAdRetryListener(
+    private val adView: AdView,
+    private val adRequest: AdRequest,
+    private val retryController: AdLoadRetryController,
+    private val delegate: AdListener,
+) : AdListener() {
+    override fun onAdLoaded() {
+        retryController.reset()
+        delegate.onAdLoaded()
+    }
+
+    override fun onAdFailedToLoad(error: LoadAdError) {
+        delegate.onAdFailedToLoad(error)
+        retryController.scheduleRetry(
+            failureMessage = error.toString(),
+            retryAction = ::reloadAd,
+        )
+    }
+
+    override fun onAdClicked() = delegate.onAdClicked()
+
+    override fun onAdClosed() = delegate.onAdClosed()
+
+    override fun onAdImpression() = delegate.onAdImpression()
+
+    override fun onAdOpened() = delegate.onAdOpened()
+
+    @SuppressLint("MissingPermission")
+    private fun reloadAd() {
+        adView.loadAd(adRequest)
+    }
 }
 
 private fun LoadAdError.toBannerAdLoadFailedLog(
