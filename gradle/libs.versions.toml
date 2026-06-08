@@ -61,7 +61,7 @@ koin = "4.2.1"
 fankt = "0.0.18"
 
 # OpenAI
-openai = "4.0.1"
+openai = "4.1.0"
 
 # Others
 ktor = "3.5.0"
