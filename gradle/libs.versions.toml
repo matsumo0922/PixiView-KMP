@@ -55,7 +55,7 @@ ksp = "2.2.10-2.0.2"
 gms = "4.4.3"
 
 # koin
-koin = "4.1.0"
+koin = "4.2.1"
 
 # matsumo
 fankt = "0.0.18"
