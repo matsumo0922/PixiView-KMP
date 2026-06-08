@@ -78,7 +78,7 @@ buildKonfig = "0.17.1"
 twitterComposeRule = "0.0.26"
 
 # Debugs
-firebase = "33.9.0"
+firebase = "34.14.0"
 napier = "2.7.1"
 
 [plugins]
@@ -182,12 +182,11 @@ ads-liftoff = { module = "com.google.ads.mediation:vungle", version = "7.7.4.0" 
 
 # Firebase
 firebase-bom = { module = "com.google.firebase:firebase-bom", version.ref = "firebase" }
-firebase-analytics = { module = "com.google.firebase:firebase-analytics-ktx" }
-firebase-crushlytics = { module = "com.google.firebase:firebase-crashlytics-ktx" }
-firebase-messaging = { module = "com.google.firebase:firebase-messaging-ktx" }
+firebase-analytics = { module = "com.google.firebase:firebase-analytics" }
+firebase-crushlytics = { module = "com.google.firebase:firebase-crashlytics" }
+firebase-messaging = { module = "com.google.firebase:firebase-messaging" }
 firebase-appindexing = { module = "com.google.firebase:firebase-appindexing" }
-firebase-config = { module = "com.google.firebase:firebase-config-ktx" }
-firebase-dynamiclinks = { module = "com.google.firebase:firebase-dynamic-links-ktx" }
+firebase-config = { module = "com.google.firebase:firebase-config" }
 
 # Koin
 koin-bom = { module = "io.insert-koin:koin-bom", version.ref = "koin" }
@@ -284,7 +283,6 @@ firebase = [
     "firebase-crushlytics",
     "firebase-messaging",
     "firebase-config",
-    "firebase-dynamiclinks",
 ]
 
 media3 = [
