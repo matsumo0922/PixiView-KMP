@@ -37,13 +37,14 @@
             android:layout_height="wrap_content"
             android:layout_marginStart="8dp"
             android:gravity="end"
+            android:text="Ad"
             android:textSize="10sp"
             android:textStyle="bold"
             app:layout_constraintBottom_toBottomOf="@+id/rtb_stars"
             app:layout_constraintEnd_toEndOf="@+id/tv_headline"
             app:layout_constraintStart_toEndOf="@+id/tv_price"
             app:layout_constraintTop_toTopOf="@+id/rtb_stars"
-            tools:ignore="SmallSp" />
+            tools:ignore="HardcodedText,SmallSp"/>
 
         <ImageView
             android:id="@+id/iv_app_icon"
