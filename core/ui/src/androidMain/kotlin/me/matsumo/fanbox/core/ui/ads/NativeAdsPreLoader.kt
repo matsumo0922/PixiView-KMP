@@ -24,6 +24,7 @@ class NativeAdsPreLoader(
 ) {
     private val preloadedNativeAds: MutableList<NativeAd> = mutableListOf()
     private val keyMap: MutableMap<String, NativeAd> = mutableMapOf()
+    private val inactiveKeys: MutableSet<String> = LinkedHashSet()
     private val retryController = AdLoadRetryController(adFormatName = "NativeAds")
     private val _nativeAdInventoryVersion = MutableStateFlow(0)
     private val adLoader: AdLoader
@@ -80,6 +81,9 @@ class NativeAdsPreLoader(
     fun getNativeAd(key: String): NativeAd? {
         Napier.d("getNativeAd: $key, ${keyMap.containsKey(key)}, ${keyMap.size}, ${preloadedNativeAds.size}")
 
+        // 再表示されたので破棄候補から除外し、割り当て済みの広告を維持する
+        inactiveKeys.remove(key)
+
         val mappedNativeAd = keyMap[key]
         if (mappedNativeAd != null) {
             return mappedNativeAd
@@ -97,9 +101,23 @@ class NativeAdsPreLoader(
         return preloadedNativeAd
     }
 
-    fun popAd(key: String) {
-        Napier.d("popAd: $key")
-        keyMap.remove(key)?.destroy()
+    fun releaseAd(key: String) {
+        Napier.d("releaseAd: $key")
+
+        if (!keyMap.containsKey(key)) return
+
+        // すぐには破棄せず破棄候補に積み、再表示時に同じ広告を返せるようにする
+        inactiveKeys.remove(key)
+        inactiveKeys.add(key)
+        trimInactiveAds()
+    }
+
+    private fun trimInactiveAds() {
+        while (inactiveKeys.size > MAX_RETAINED_INACTIVE_ADS) {
+            val oldestKey = inactiveKeys.firstOrNull() ?: break
+            inactiveKeys.remove(oldestKey)
+            keyMap.remove(oldestKey)?.destroy()
+        }
     }
 
     private fun loadMissingNativeAds() {
@@ -118,3 +136,6 @@ class NativeAdsPreLoader(
 
 /** プリロードして保持するネイティブ広告の最大数。 */
 private const val NUMBER_OF_PRELOAD_ADS = 4
+
+/** 画面から外れた後も再表示に備えて破棄せず保持するネイティブ広告の最大数。 */
+private const val MAX_RETAINED_INACTIVE_ADS = 4

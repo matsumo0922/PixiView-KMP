@@ -181,7 +181,7 @@ private fun PagingItems(
             if ((index + adOffset) % adInterval == 0 && !setting.hasPrivilege) {
                 NativeAdView(
                     modifier = Modifier.fillMaxSize(),
-                    key = "$index",
+                    key = "creator-$index",
                 )
             } else {
                 pagingAdapter[if (setting.hasPrivilege) index else index - ((index + adOffset) / adInterval)]?.let { post ->

@@ -1,7 +1,7 @@
 [versions]
 # Application
-versionName = "2.3.1"
-versionCode = "70"
+versionName = "2.3.2"
+versionCode = "71"
 
 # SDK
 minSdk = "26"
@@ -41,6 +41,7 @@ androidxActivity = "1.10.1"
 androidxFragment = "1.8.9"
 androidxDataStore = "1.1.7"
 androidxAnnotation = "1.9.1"
+androidxConstraintLayout = "2.2.1"
 androidxMedia3 = "1.8.0"
 androidxCompose = "2025.08.00"
 
@@ -120,6 +121,7 @@ kotlinx-collections-immutable = { group = "org.jetbrains.kotlinx", name = "kotli
 androidx-core = { module = "androidx.core:core-ktx", version.ref = "androidxCore" }
 androidx-core-splashscreen = { module = "androidx.core:core-splashscreen", version.ref = "androidxCoreSplash" }
 androidx-annotation = { module = "androidx.annotation:annotation", version.ref = "androidxAnnotation" }
+androidx-constraintlayout = { module = "androidx.constraintlayout:constraintlayout", version.ref = "androidxConstraintLayout" }
 androidx-appcompat = { module = "androidx.appcompat:appcompat", version.ref = "androidxAppCompat" }
 androidx-activity = { module = "androidx.activity:activity-ktx", version.ref = "androidxActivity" }
 androidx-activity-compose = { module = "androidx.activity:activity-compose", version.ref = "androidxActivity" }
@@ -247,6 +249,7 @@ ui-android-api = [
     "androidx-core",
     "androidx-annotation",
     "androidx-appcompat",
+    "androidx-constraintlayout",
     "androidx-activity",
     "androidx-activity-compose",
     "androidx-fragment",

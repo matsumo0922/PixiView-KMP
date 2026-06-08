@@ -5,8 +5,6 @@ import android.content.res.ColorStateList
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.view.ViewParent
-import android.widget.ImageView
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -29,8 +27,8 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.viewinterop.AndroidViewBinding
+import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.view.isVisible
-import androidx.core.view.postDelayed
 import com.google.android.gms.ads.nativead.NativeAd
 import io.github.aakira.napier.Napier
 import me.matsumo.fanbox.core.ui.R
@@ -80,7 +78,7 @@ private fun NativeAdViewContent(
         key2 = nativeAdsPreLoader,
     ) {
         onDispose {
-            nativeAdsPreLoader.popAd(key = key)
+            nativeAdsPreLoader.releaseAd(key = key)
         }
     }
 
@@ -170,11 +168,10 @@ private fun LayoutNativeAdsMediumBinding.setupNativeAd(
 
     registerNativeAdAssetViews()
     bindNativeAdAssets(nativeAd = nativeAd)
-    adjustMediaImageBounds()
+    adjustMediaViewAspectRatio(nativeAd = nativeAd)
 
     root.setNativeAd(nativeAd)
     root.setTag(R.id.tag_native_ad_view_bound_ad, nativeAd)
-    root.requestLayoutWithDelay(500L)
 
     Napier.d("NativeAdView: setupNativeAd, ${tvPrice.text}, $key")
 }
@@ -211,36 +208,17 @@ private fun LayoutNativeAdsMediumBinding.bindNativeAdAssets(nativeAd: NativeAd) 
     mvContent.isVisible = nativeAd.mediaContent != null
 }
 
-private fun LayoutNativeAdsMediumBinding.adjustMediaImageBounds() {
-    mvContent.setOnHierarchyChangeListener(object : ViewGroup.OnHierarchyChangeListener {
-        override fun onChildViewAdded(parent: View, child: View) {
-            if (child is ImageView) {
-                child.adjustViewBounds = true
-            }
-        }
+private fun LayoutNativeAdsMediumBinding.adjustMediaViewAspectRatio(nativeAd: NativeAd) {
+    val layoutParams = mvContent.layoutParams as? ConstraintLayout.LayoutParams ?: return
+    val mediaAspectRatio = nativeAd.mediaContent?.aspectRatio ?: 0f
+    val hasValidAspectRatio = mediaAspectRatio > 0f
 
-        override fun onChildViewRemoved(parent: View, child: View) = Unit
-    })
-}
-
-private fun View.requestLayoutWithDelay(delayMillis: Long) {
-    post {
-        val composeView = parent.findAndroidComposeViewParent()
-        if (composeView == null) {
-            postDelayed(delayMillis) {
-                parent.findAndroidComposeViewParent()?.requestLayout()
-            }
-        } else {
-            composeView.requestLayout()
-        }
-    }
-}
-
-private fun ViewParent?.findAndroidComposeViewParent(): ViewParent? = when {
-    this != null && this::class.java.simpleName == "AndroidComposeView" -> this
-    this != null -> this.parent.findAndroidComposeViewParent()
-    else -> null
+    layoutParams.dimensionRatio = if (hasValidAspectRatio) "H,$mediaAspectRatio:1" else DefaultMediaAspectRatio
+    mvContent.layoutParams = layoutParams
 }
 
 /** SDK 初期化前にネイティブ広告枠として確保する高さ。 */
 private val NativeAdPlaceholderHeight = 60.dp
+
+/** メディアアスペクト比を取得できない場合に使用する既定比率（横:縦）。 */
+private const val DefaultMediaAspectRatio = "H,16:9"

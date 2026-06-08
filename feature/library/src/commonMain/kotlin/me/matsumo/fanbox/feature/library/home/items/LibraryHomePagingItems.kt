@@ -65,7 +65,7 @@ internal fun LibraryHomePagingItems(
             if ((index + adOffset) % adInterval == 0 && !setting.hasPrivilege) {
                 NativeAdView(
                     modifier = Modifier.fillMaxSize(),
-                    key = "$index",
+                    key = "library-$index",
                 )
             } else {
                 pagingAdapter[if (setting.hasPrivilege) index else index - ((index + adOffset) / adInterval)]?.let { post ->
