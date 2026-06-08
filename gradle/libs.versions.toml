@@ -65,7 +65,7 @@ openai = "4.0.1"
 
 # Others
 ktor = "3.5.0"
-coil3 = "3.3.0"
+coil3 = "3.4.0"
 ksoup = "0.2.5"
 composeWebView = "2.0.2"
 composeRichEditor = "1.0.0-rc13"
