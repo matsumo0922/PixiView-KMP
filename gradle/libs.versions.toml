@@ -73,7 +73,7 @@ autolink = "2.0.2"
 windowSize = "0.5.0"
 reveal = "4.2.0"
 detekt = "1.23.8"
-libraries = "11.4.0"
+libraries = "14.2.1"
 buildKonfig = "0.17.1"
 twitterComposeRule = "0.0.26"
 
