@@ -24,6 +24,7 @@ class NativeAdsPreLoader(
 ) {
     private val preloadedNativeAds: MutableList<NativeAd> = mutableListOf()
     private val keyMap: MutableMap<String, NativeAd> = mutableMapOf()
+    private val retryController = AdLoadRetryController(adFormatName = "NativeAds")
     private val _nativeAdInventoryVersion = MutableStateFlow(0)
     private val adLoader: AdLoader
     val nativeAdInventoryVersion: StateFlow<Int> = _nativeAdInventoryVersion.asStateFlow()
@@ -43,7 +44,10 @@ class NativeAdsPreLoader(
 
         val adListener = object : AdListener() {
             override fun onAdFailedToLoad(cause: LoadAdError) {
-                Napier.e("onAdFailedToLoad: ${cause.message}")
+                retryController.scheduleRetry(
+                    failureMessage = cause.toString(),
+                    retryAction = ::retryPreloadAd,
+                )
             }
         }
 
@@ -54,11 +58,23 @@ class NativeAdsPreLoader(
             .build()
     }
 
-    @SuppressLint("MissingPermission")
     private fun preloadAd() {
+        preloadAd(isRetry = false)
+    }
+
+    @SuppressLint("MissingPermission")
+    private fun preloadAd(isRetry: Boolean) {
+        if (!isRetry) {
+            retryController.reset()
+        }
+
         if (adLoader.isLoading) return
 
         loadMissingNativeAds()
+    }
+
+    private fun retryPreloadAd() {
+        preloadAd(isRetry = true)
     }
 
     fun getNativeAd(key: String): NativeAd? {
@@ -94,6 +110,7 @@ class NativeAdsPreLoader(
     }
 
     private fun onNativeAdLoaded(nativeAd: NativeAd) {
+        retryController.reset()
         preloadedNativeAds.add(nativeAd)
         _nativeAdInventoryVersion.update { currentVersion -> currentVersion + 1 }
     }

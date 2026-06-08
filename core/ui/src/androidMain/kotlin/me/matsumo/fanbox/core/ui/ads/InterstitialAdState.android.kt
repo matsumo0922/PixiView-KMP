@@ -3,6 +3,7 @@ package me.matsumo.fanbox.core.ui.ads
 import android.app.Activity
 import androidx.activity.compose.LocalActivity
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.Stable
 import androidx.compose.runtime.remember
 import com.google.android.gms.ads.AdError
@@ -25,12 +26,21 @@ class InterstitialAdStateImpl internal constructor(
     private val enable: Boolean,
 ) : InterstitialAdState {
     private var interstitialAd: InterstitialAd? = null
+    private val retryController = AdLoadRetryController(adFormatName = "InterstitialAd")
     private var loaded = false
     private var loading = false
     private var loadRequestId = 0
 
     override fun load() {
+        load(isRetry = false)
+    }
+
+    private fun load(isRetry: Boolean) {
         if (!enable || loaded || loading) return
+
+        if (!isRetry) {
+            retryController.reset()
+        }
 
         loading = true
         val requestId = ++loadRequestId
@@ -43,6 +53,7 @@ class InterstitialAdStateImpl internal constructor(
                 interstitialAd = ad
                 loaded = true
                 loading = false
+                retryController.reset()
 
                 Napier.d("InterstitialAd: loaded")
             }
@@ -54,17 +65,25 @@ class InterstitialAdStateImpl internal constructor(
                 loaded = false
                 loading = false
 
-                Napier.w("InterstitialAd: failed to load, $loadAdError")
+                retryController.scheduleRetry(
+                    failureMessage = loadAdError.toString(),
+                    retryAction = ::retryLoad,
+                )
             }
         }
 
         InterstitialAd.load(activity, adUnitId, adRequest, callback)
     }
 
+    private fun retryLoad() {
+        load(isRetry = true)
+    }
+
     @OptIn(ExperimentalAtomicApi::class)
     override suspend fun show(): Boolean {
         if (!enable || !loaded || interstitialAd == null) {
             Napier.w("InterstitialAd: not loaded, $enable, $loaded, $interstitialAd")
+            load()
             return false
         }
 
@@ -104,6 +123,15 @@ class InterstitialAdStateImpl internal constructor(
 
         load()
     }
+
+    internal fun dispose() {
+        retryController.reset()
+        interstitialAd?.fullScreenContentCallback = null
+        interstitialAd = null
+        loaded = false
+        loading = false
+        loadRequestId += 1
+    }
 }
 
 @Composable
@@ -112,8 +140,15 @@ actual fun rememberInterstitialAdState(
     enable: Boolean,
 ): InterstitialAdState {
     val context = LocalActivity.current!!
-
-    return remember(adUnitId, enable) {
+    val interstitialAdState = remember(adUnitId, enable) {
         InterstitialAdStateImpl(context, adUnitId, enable)
     }
+
+    DisposableEffect(interstitialAdState) {
+        onDispose {
+            interstitialAdState.dispose()
+        }
+    }
+
+    return interstitialAdState
 }
