@@ -1,7 +1,9 @@
 package me.matsumo.fanbox.core.model
 
 import kotlin.test.Test
+import kotlin.test.assertEquals
 import kotlin.test.assertFalse
+import kotlin.test.assertNotEquals
 import kotlin.test.assertTrue
 
 /** 解約予約ユーザー向けリテンション UI の表示判定を検証するテスト。 */
@@ -73,6 +75,22 @@ class SettingBillingRetentionPromptTest {
         assertFalse(annualSetting.shouldShowBillingRetentionAnnualOffer)
         assertTrue(monthlySetting.shouldShowBillingRetentionAnnualOffer)
         assertTrue(unknownSetting.shouldShowBillingRetentionAnnualOffer)
+    }
+
+    @Test
+    fun billingRetentionPromptDedupeKeyChangesWhenLastShownAtMillisChanges() {
+        val beforeShownSetting = setToCancelSetting().copy(
+            plusRetentionPromptLastShownAtMillis = CURRENT_TIME_MILLIS,
+        )
+        val afterShownSetting = beforeShownSetting.copy(
+            plusRetentionPromptLastShownAtMillis = CURRENT_TIME_MILLIS + ONE_DAY_MILLIS,
+        )
+
+        assertEquals("1000:10000", beforeShownSetting.billingRetentionPromptDedupeKey)
+        assertNotEquals(
+            beforeShownSetting.billingRetentionPromptDedupeKey,
+            afterShownSetting.billingRetentionPromptDedupeKey,
+        )
     }
 
     private fun setToCancelSetting(): Setting {

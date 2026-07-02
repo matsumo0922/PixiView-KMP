@@ -17,7 +17,6 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
 import me.matsumo.fanbox.MainUiState
 import me.matsumo.fanbox.core.model.Destination
-import me.matsumo.fanbox.core.model.Setting
 import me.matsumo.fanbox.core.ui.component.sheet.rememberBottomSheetNavigator
 import me.matsumo.fanbox.feature.welcome.WelcomeNavHost
 import kotlin.time.Clock
@@ -102,17 +101,17 @@ private fun HandleBillingRetentionPrompt(
     onBillingRetentionPromptShown: () -> Unit,
 ) {
     val currentOnBillingRetentionPromptShown by rememberUpdatedState(onBillingRetentionPromptShown)
-    var shownPromptEpisodeKey by remember { mutableStateOf<String?>(null) }
+    var shownPromptDedupeKey by remember { mutableStateOf<String?>(null) }
 
     LaunchedEffect(uiState.setting, uiState.isBillingSyncSucceeded, uiState.isAppLocked) {
         val currentTimeMillis = Clock.System.now().toEpochMilliseconds()
         val canShowPrompt = uiState.canShowBillingRetentionPrompt(currentTimeMillis)
         if (!canShowPrompt) return@LaunchedEffect
 
-        val promptEpisodeKey = uiState.setting.billingRetentionPromptEpisodeKey()
-        if (shownPromptEpisodeKey == promptEpisodeKey) return@LaunchedEffect
+        val promptDedupeKey = uiState.setting.billingRetentionPromptDedupeKey
+        if (shownPromptDedupeKey == promptDedupeKey) return@LaunchedEffect
 
-        shownPromptEpisodeKey = promptEpisodeKey
+        shownPromptDedupeKey = promptDedupeKey
         currentOnBillingRetentionPromptShown()
         navController.navigate(
             Destination.BillingRetentionBottomSheet(
@@ -128,10 +127,3 @@ private fun MainUiState.canShowBillingRetentionPrompt(currentTimeMillis: Long): 
 
     return setting.canShowBillingRetentionPrompt(currentTimeMillis)
 }
-
-private fun Setting.billingRetentionPromptEpisodeKey(): String {
-    return plusUnsubscribeDetectedAtMillis?.toString() ?: BILLING_RETENTION_PROMPT_UNKNOWN_EPISODE_KEY
-}
-
-/** 解約検知時刻がないリテンション表示履歴のエピソードキー。 */
-private const val BILLING_RETENTION_PROMPT_UNKNOWN_EPISODE_KEY = "unknown"

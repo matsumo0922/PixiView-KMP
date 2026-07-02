@@ -60,6 +60,10 @@ data class Setting(
     /** リテンション UI で年額プランへの訴求を表示するかどうか。 */
     val shouldShowBillingRetentionAnnualOffer get() = plusPlanType != BillingPlan.Type.ANNUAL
 
+    /** プロセス内のリテンション UI 二重表示を防ぐための表示履歴キー。 */
+    val billingRetentionPromptDedupeKey
+        get() = "${plusUnsubscribeDetectedAtMillis ?: BILLING_RETENTION_PROMPT_UNKNOWN_EPISODE_KEY}:$plusRetentionPromptLastShownAtMillis"
+
     /** 指定時刻でリテンション UI を表示できるかどうか。 */
     fun canShowBillingRetentionPrompt(currentTimeMillis: Long): Boolean {
         if (!isSubscriptionSetToCancel) return false
@@ -116,3 +120,6 @@ data class Setting(
 
 /** リテンション UI の再表示を抑制するミリ秒数。 */
 private const val BILLING_RETENTION_PROMPT_INTERVAL_MILLIS = 86_400_000L
+
+/** 解約検知時刻がないリテンション表示履歴のエピソードキー。 */
+private const val BILLING_RETENTION_PROMPT_UNKNOWN_EPISODE_KEY = "unknown"
