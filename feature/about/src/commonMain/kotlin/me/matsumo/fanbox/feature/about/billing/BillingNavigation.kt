@@ -6,8 +6,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.backhandler.BackHandler
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.toRoute
-import me.matsumo.fanbox.core.logs.category.BillingLog
-import me.matsumo.fanbox.core.logs.logger.send
 import me.matsumo.fanbox.core.model.BillingPlan
 import me.matsumo.fanbox.core.model.Destination
 import me.matsumo.fanbox.core.ui.component.sheet.bottomSheet
@@ -36,11 +34,6 @@ fun NavGraphBuilder.billingRetentionBottomSheet(
 ) {
     bottomSheet<Destination.BillingRetentionBottomSheet> { entry ->
         val args = entry.toRoute<Destination.BillingRetentionBottomSheet>()
-
-        BackHandler {
-            BillingLog.retentionPromptDismissed("back").send()
-            terminate()
-        }
 
         BillingRetentionRoute(
             modifier = Modifier.fillMaxSize(),

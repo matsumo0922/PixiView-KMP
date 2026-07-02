@@ -73,7 +73,7 @@ sealed class BillingLog : LogCategory {
         }
     }
 
-    /** 解約予約ユーザー向けリテンション UI の明示的な閉じる操作ログ。 */
+    /** 解約予約ユーザー向けリテンション UI の dismiss 操作ログ。 */
     class RetentionPromptDismissed internal constructor(
         private val reason: String,
     ) : BillingLog() {
@@ -116,7 +116,7 @@ sealed class BillingLog : LogCategory {
             platform: String,
         ) = RetentionPromptManageClicked(platform)
 
-        // リテンション UI 明示 dismiss
+        // リテンション UI dismiss
         fun retentionPromptDismissed(
             reason: String,
         ) = RetentionPromptDismissed(reason)
