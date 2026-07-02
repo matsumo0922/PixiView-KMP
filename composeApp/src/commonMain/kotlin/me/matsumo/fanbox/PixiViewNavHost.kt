@@ -32,6 +32,7 @@ import me.matsumo.fanbox.core.ui.view.navigateToSimpleAlertDialog
 import me.matsumo.fanbox.core.ui.view.simpleAlertDialogDialog
 import me.matsumo.fanbox.feature.about.about.aboutScreen
 import me.matsumo.fanbox.feature.about.billing.billingPlusBottomSheet
+import me.matsumo.fanbox.feature.about.billing.billingRetentionBottomSheet
 import me.matsumo.fanbox.feature.about.versions.versionHistoryBottomSheet
 import me.matsumo.fanbox.feature.creator.download.creatorPostsDownloadDialog
 import me.matsumo.fanbox.feature.creator.fancard.fanCardScreen
@@ -305,6 +306,10 @@ private fun NavGraphBuilder.applyNavGraph(
     )
 
     billingPlusBottomSheet(
+        terminate = { mainNavController.popBackStack() },
+    )
+
+    billingRetentionBottomSheet(
         terminate = { mainNavController.popBackStack() },
     )
 

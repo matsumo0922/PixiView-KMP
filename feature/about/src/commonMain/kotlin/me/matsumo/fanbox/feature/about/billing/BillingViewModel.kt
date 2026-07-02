@@ -80,10 +80,7 @@ class BillingViewModel(
             val result = suspendRunCatching { billingClient.purchase(selectedPlanType.value) }.getOrElse { inactivePlusStatus() }
 
             if (result.isActive) {
-                settingRepository.setPlusStatus(
-                    isPlusMode = result.isActive,
-                    isPlusTrial = result.isTrial,
-                )
+                settingRepository.setPlusStatus(result)
                 _messageEvent.trySend(BillingMessageEvent.Purchased)
             } else {
                 _messageEvent.trySend(BillingMessageEvent.SnackBar(Res.string.billing_plus_toast_purchased_error))
@@ -96,10 +93,7 @@ class BillingViewModel(
             val result = suspendRunCatching { billingClient.restore() }.getOrElse { inactivePlusStatus() }
 
             if (result.isActive) {
-                settingRepository.setPlusStatus(
-                    isPlusMode = result.isActive,
-                    isPlusTrial = result.isTrial,
-                )
+                settingRepository.setPlusStatus(result)
                 _messageEvent.trySend(BillingMessageEvent.Purchased)
             } else {
                 _messageEvent.trySend(BillingMessageEvent.SnackBar(Res.string.billing_plus_toast_verify_error))
@@ -112,6 +106,9 @@ private fun inactivePlusStatus(): BillingPlusStatus {
     return BillingPlusStatus(
         isActive = false,
         isTrial = false,
+        willRenew = false,
+        unsubscribeDetectedAtMillis = null,
+        planType = BillingPlan.Type.UNKNOWN,
     )
 }
 

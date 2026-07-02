@@ -6,6 +6,7 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.receiveAsFlow
 import me.matsumo.fanbox.core.datastore.SettingDataStore
+import me.matsumo.fanbox.core.model.BillingPlusStatus
 import me.matsumo.fanbox.core.model.DownloadFileType
 import me.matsumo.fanbox.core.model.Setting
 import me.matsumo.fanbox.core.model.SettingPlusStatusUpdate
@@ -39,7 +40,8 @@ interface SettingRepository {
     suspend fun setTestUser(isTestUser: Boolean)
     suspend fun setHideRestricted(isHideRestricted: Boolean)
     suspend fun setDeveloperMode(isDeveloperMode: Boolean)
-    suspend fun setPlusStatus(isPlusMode: Boolean, isPlusTrial: Boolean)
+    suspend fun setPlusStatus(plusStatus: BillingPlusStatus)
+    suspend fun recordBillingRetentionPromptShown(shownAtMillis: Long, unsubscribeDetectedAtMillis: Long?)
 }
 
 class SettingRepositoryImpl(
@@ -140,12 +142,11 @@ class SettingRepositoryImpl(
         settingDataStore.setUseDynamicColor(useDynamicColor)
     }
 
-    override suspend fun setPlusStatus(isPlusMode: Boolean, isPlusTrial: Boolean) {
+    override suspend fun setPlusStatus(plusStatus: BillingPlusStatus) {
         val currentSetting = setting.first()
         val plusStatusUpdate = SettingPlusStatusUpdate.from(
             currentSetting = currentSetting,
-            isPlusMode = isPlusMode,
-            isPlusTrial = isPlusTrial,
+            plusStatus = plusStatus,
         )
 
         if (plusStatusUpdate.hasChanged) {
@@ -164,5 +165,12 @@ class SettingRepositoryImpl(
                 setAutoImagePreview(false)
             }
         }
+    }
+
+    override suspend fun recordBillingRetentionPromptShown(shownAtMillis: Long, unsubscribeDetectedAtMillis: Long?) {
+        settingDataStore.recordBillingRetentionPromptShown(
+            shownAtMillis = shownAtMillis,
+            unsubscribeDetectedAtMillis = unsubscribeDetectedAtMillis,
+        )
     }
 }

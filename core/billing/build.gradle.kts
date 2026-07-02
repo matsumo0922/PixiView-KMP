@@ -22,5 +22,9 @@ kotlin {
 
             implementation(libs.bundles.purchase)
         }
+
+        commonTest.dependencies {
+            implementation(kotlin("test"))
+        }
     }
 }

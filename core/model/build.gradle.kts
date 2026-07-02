@@ -22,5 +22,9 @@ kotlin {
 
             api(libs.fankt.fanbox)
         }
+
+        commonTest.dependencies {
+            implementation(kotlin("test"))
+        }
     }
 }

@@ -364,9 +364,55 @@ class SettingDataStore(
             ).send()
         }
 
+        if (plusStatusUpdate.isPlusSubscriptionSetToCancelChanged) {
+            SettingsLog.update(
+                propertyName = "isPlusSubscriptionSetToCancel",
+                oldValue = currentSetting.isPlusSubscriptionSetToCancel.toString(),
+                newValue = plusStatusUpdate.isPlusSubscriptionSetToCancel.toString(),
+            ).send()
+        }
+
+        if (plusStatusUpdate.plusUnsubscribeDetectedAtMillisChanged) {
+            SettingsLog.update(
+                propertyName = "plusUnsubscribeDetectedAtMillis",
+                oldValue = currentSetting.plusUnsubscribeDetectedAtMillis.toString(),
+                newValue = plusStatusUpdate.plusUnsubscribeDetectedAtMillis.toString(),
+            ).send()
+        }
+
+        if (plusStatusUpdate.plusPlanTypeChanged) {
+            SettingsLog.update(
+                propertyName = "plusPlanType",
+                oldValue = currentSetting.plusPlanType.name,
+                newValue = plusStatusUpdate.plusPlanType.name,
+            ).send()
+        }
+
+        val unsubscribeDetectedAtMillis = plusStatusUpdate.plusUnsubscribeDetectedAtMillis
+
         settingPreference.edit {
             it[booleanPreferencesKey(Setting::isPlusMode.name)] = plusStatusUpdate.isPlusMode
             it[booleanPreferencesKey(Setting::isPlusTrial.name)] = plusStatusUpdate.isPlusTrial
+            it[booleanPreferencesKey(Setting::isPlusSubscriptionSetToCancel.name)] = plusStatusUpdate.isPlusSubscriptionSetToCancel
+            it[stringPreferencesKey(Setting::plusPlanType.name)] = plusStatusUpdate.plusPlanType.name
+
+            if (unsubscribeDetectedAtMillis != null) {
+                it[longPreferencesKey(Setting::plusUnsubscribeDetectedAtMillis.name)] = unsubscribeDetectedAtMillis
+            } else {
+                it.remove(longPreferencesKey(Setting::plusUnsubscribeDetectedAtMillis.name))
+            }
+        }
+    }
+
+    suspend fun recordBillingRetentionPromptShown(shownAtMillis: Long, unsubscribeDetectedAtMillis: Long?) = withContext(ioDispatcher) {
+        settingPreference.edit {
+            it[longPreferencesKey(Setting::plusRetentionPromptLastShownAtMillis.name)] = shownAtMillis
+
+            if (unsubscribeDetectedAtMillis != null) {
+                it[longPreferencesKey(Setting::plusRetentionPromptLastShownUnsubscribeDetectedAtMillis.name)] = unsubscribeDetectedAtMillis
+            } else {
+                it.remove(longPreferencesKey(Setting::plusRetentionPromptLastShownUnsubscribeDetectedAtMillis.name))
+            }
         }
     }
 }

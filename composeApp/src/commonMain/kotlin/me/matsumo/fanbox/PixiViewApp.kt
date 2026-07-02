@@ -112,6 +112,7 @@ fun PixiViewApp(
                             onRequestInitPixiViewId = viewModel::initPixiViewId,
                             onRequestFirstLaunchFlag = viewModel::initFirstLaunchTime,
                             onRequestUpdateState = viewModel::updateState,
+                            onBillingRetentionPromptShown = viewModel::recordBillingRetentionPromptShown,
                             onPostDetailClosed = {
                                 handlePostDetailClosedForInterstitialAd(
                                     viewModel = viewModel,

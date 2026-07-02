@@ -19,6 +19,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import kotlinx.coroutines.flow.Flow
+import me.matsumo.fanbox.core.model.BillingPlan
 import me.matsumo.fanbox.core.ui.AsyncLoadContents
 import me.matsumo.fanbox.core.ui.theme.LocalNavController
 import me.matsumo.fanbox.feature.about.billing.items.BillingBottomBar
@@ -31,9 +32,14 @@ import org.koin.compose.viewmodel.koinViewModel
 @Composable
 internal fun BillingPlusRoute(
     modifier: Modifier = Modifier,
+    initialPlanType: BillingPlan.Type = BillingPlan.Type.MONTHLY,
     viewModel: BillingViewModel = koinViewModel(),
 ) {
     val screenState by viewModel.screenState.collectAsStateWithLifecycle()
+
+    LaunchedEffect(initialPlanType) {
+        viewModel.onViewEvent(BillingViewEvent.OnPlanSelected(initialPlanType))
+    }
 
     AsyncLoadContents(
         modifier = modifier,
