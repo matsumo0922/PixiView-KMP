@@ -2,18 +2,18 @@
 
 plugins {
     id("pixiview.primitive.kmp.common")
-    id("pixiview.primitive.kmp.android.library")
-    id("pixiview.primitive.kmp.android.compose")
+    id("pixiview.primitive.android.library")
+    id("pixiview.primitive.kmp.compose")
     id("pixiview.primitive.kmp.android")
     id("pixiview.primitive.kmp.ios")
     id("pixiview.primitive.detekt")
 }
 
-android {
-    namespace = "me.matsumo.fanbox.core.ui"
-}
-
 kotlin {
+    android {
+        namespace = "me.matsumo.fanbox.core.ui"
+    }
+
     sourceSets {
         val commonMain by getting {
             dependencies {

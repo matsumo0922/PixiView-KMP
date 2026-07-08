@@ -6,10 +6,10 @@ versionCode = "72"
 # SDK
 minSdk = "26"
 targetSdk = "36"
-compileSdk = "36"
+compileSdk = "37"
 
 # Gradle
-gradle = "8.12.0"
+gradle = "9.2.1"
 
 # Kotlin
 kotlin = "2.4.0"
@@ -21,9 +21,9 @@ kotlinxSerializationJson = "1.11.0"
 kotlinxImmutable = "0.4.0"
 
 # KMP
-kmpCompose = "1.11.1"
+kmpCompose = "1.12.0-alpha01"
 kmpComplete = "1.1.0"
-kmpLifecycle = "2.10.0"
+kmpLifecycle = "2.11.0-beta01"
 kmpNavigation = "2.9.2"
 kmpBackHandler = "1.11.1"
 kmpPaging = "3.3.0-alpha02-0.5.1"
@@ -31,7 +31,7 @@ kmpPurchase = "2.1.0+16.2.0"
 mokoPermissions = "0.20.1"
 mokoBiometry = "0.4.0"
 calf = "0.12.0"
-adaptive = "1.2.0"
+adaptive = "1.3.0-beta01"
 
 # AndroidX
 androidxCore = "1.18.0"
@@ -74,16 +74,17 @@ windowSize = "0.5.0"
 reveal = "4.2.0"
 detekt = "1.23.8"
 libraries = "14.2.1"
-buildKonfig = "0.17.1"
+buildKonfig = "0.21.2"
 twitterComposeRule = "0.0.26"
 
 # Debugs
-firebase = "34.14.0"
+firebase = "34.14.1"
 napier = "2.7.1"
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "gradle" }
 android-library = { id = "com.android.library", version.ref = "gradle" }
+android-kmp-library = { id = "com.android.kotlin.multiplatform.library", version.ref = "gradle" }
 kotlin-compose-compiler = { id = "org.jetbrains.kotlin.plugin.compose", version.ref = "kotlin" }
 kotlin-serialization = { id = "org.jetbrains.kotlin.plugin.serialization", version.ref = "kotlin" }
 ksp = { id = "com.google.devtools.ksp", version.ref = "ksp" }
@@ -91,10 +92,10 @@ gms = { id = "com.google.gms.google-services", version.ref = "gms" }
 detekt = { id = "io.gitlab.arturbosch.detekt", version.ref = "detekt" }
 firebase-crashlytics = { id = "com.google.firebase.crashlytics", version = "3.0.7" }
 libraries = { id = "com.mikepenz.aboutlibraries.plugin", version.ref = "libraries" }
+build-konfig = { id = "com.codingfeline.buildkonfig", version.ref = "buildKonfig" }
 kmp = { id = "org.jetbrains.kotlin.multiplatform", version.ref = "kotlin" }
 kmpCompose = { id = "org.jetbrains.compose", version.ref = "kmpCompose" }
 kmpComplete = { id = "com.louiscad.complete-kotlin", version.ref = "kmpComplete" }
-kotlin-android = { id = "org.jetbrains.kotlin.android", version.ref = "kotlin" }
 
 [libraries]
 ## Dependency of the include build-logic

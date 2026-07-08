@@ -88,12 +88,13 @@ init: {
 }%%
 
 graph LR
-  subgraph gradle 
-    build-logic  
-  end  
+  subgraph gradle
+    build-logic
+  end
   subgraph application
-    app  
-  end  
+    androidApp
+    shared
+  end
   subgraph core
     common
     datastore
@@ -106,9 +107,10 @@ graph LR
     creator
     post
   end
-  app --> library
-  app --> creator
-  app --> post
+  androidApp --> shared
+  shared --> library
+  shared --> creator
+  shared --> post
   library --> ui
   library --> repository
   post --> ui
@@ -127,7 +129,7 @@ graph LR
 
 何か不具合を発見したり機能を改善したい場合、機能を新たに開発したい場合は、まず issue を書いてください。その上であなた自身を assign し、開発に取り組んでください。pull request はいつでも歓迎です :smile:
 
-このアプリは AdMob を用いて収益化しています。GitHub から手動でビルドする際は AdMob App ID を `local.properties` に記述する必要があります。デフォルトではダミーの ID が入っているため、起動時にクラッシュします。もしくは AdMob の当該コードを削除してからアプリをビルドしてください。その他、 `local.properties` には様々な ID が記述されています。詳細は `app/build.gradle.kts` または `PixiViewConfig` をご覧ください。
+このアプリは AdMob を用いて収益化しています。GitHub から手動でビルドする際は AdMob App ID を `local.properties` に記述する必要があります。デフォルトではダミーの ID が入っているため、起動時にクラッシュします。もしくは AdMob の当該コードを削除してからアプリをビルドしてください。その他、 `local.properties` には様々な ID が記述されています。詳細は `androidApp/build.gradle.kts`、`shared/build.gradle.kts`、`core/common/src/commonMain/kotlin/me/matsumo/fanbox/core/common/PixiViewConfig.kt` をご覧ください。
 
 ## License
 

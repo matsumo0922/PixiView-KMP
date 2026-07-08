@@ -1,7 +1,7 @@
 import UIKit
 import SwiftUI
 import GoogleMobileAds
-import ComposeApp
+import shared
 
 struct ComposeViewController: UIViewControllerRepresentable {
     private let topSafeArea: Float
