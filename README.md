@@ -95,6 +95,7 @@ graph LR
   end
   subgraph application
     androidApp
+    iosApp
     shared
   end
   subgraph core
@@ -110,6 +111,7 @@ graph LR
     post
   end
   androidApp --> shared
+  iosApp --> shared
   shared --> library
   shared --> creator
   shared --> post
