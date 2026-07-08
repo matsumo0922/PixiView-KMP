@@ -8,7 +8,7 @@
 
 import SwiftUI
 import GoogleMobileAds
-import ComposeApp
+import shared
 
 struct NativeAdView: View {
     

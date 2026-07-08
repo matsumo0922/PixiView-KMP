@@ -1,5 +1,7 @@
 package primitive
-import me.matsumo.fanbox.android
+import com.android.build.api.dsl.KotlinMultiplatformAndroidLibraryTarget
+import me.matsumo.fanbox.libs
+import me.matsumo.fanbox.version
 import org.gradle.api.Plugin
 import org.gradle.api.Project
 import org.jetbrains.kotlin.gradle.dsl.JvmTarget
@@ -8,19 +10,19 @@ import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 class KmpAndroidPlugin : Plugin<Project> {
     override fun apply(target: Project) {
         with(target) {
-            kotlin {
-                androidTarget {
-                    compilerOptions {
-                        jvmTarget.set(JvmTarget.JVM_21)
-                    }
-                }
-            }
+            pluginManager.withPlugin("com.android.kotlin.multiplatform.library") {
+                kotlin {
+                    targets.withType(KotlinMultiplatformAndroidLibraryTarget::class.java).configureEach {
+                        compileSdk = libs.version("compileSdk").toInt()
+                        minSdk = libs.version("minSdk").toInt()
 
-            android {
-                sourceSets {
-                    getByName("main") {
-                        manifest.srcFile("src/androidMain/AndroidManifest.xml")
-                        res.srcDirs("src/androidMain/res")
+                        androidResources {
+                            enable = true
+                        }
+
+                        compilerOptions {
+                            jvmTarget.set(JvmTarget.JVM_17)
+                        }
                     }
                 }
             }

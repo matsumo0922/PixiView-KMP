@@ -3,30 +3,32 @@ plugins {
 }
 
 java {
-    sourceCompatibility = JavaVersion.VERSION_21
-    targetCompatibility = JavaVersion.VERSION_21
-}
+    sourceCompatibility = JavaVersion.VERSION_17
+    targetCompatibility = JavaVersion.VERSION_17
 
-kotlin {
-    sourceSets.all {
-        languageSettings {
-            languageVersion = "2.0"
-        }
-    }
+    toolchain.languageVersion.set(JavaLanguageVersion.of(17))
 }
 
 dependencies {
+    compileOnly(gradleKotlinDsl())
     implementation(libs.android.gradlePlugin)
     implementation(libs.kotlin.gradlePlugin)
     implementation(libs.secret.gradlePlugin)
     implementation(libs.detekt.gradlePlugin)
     implementation(libs.build.konfig.gradlePlugin)
     implementation(libs.gms.services)
-    implementation(libs.gms.oss)
 }
 
 gradlePlugin {
     plugins {
+        register("AndroidApplicationPlugin") {
+            id = "pixiview.primitive.android.application"
+            implementationClass = "primitive.AndroidApplicationPlugin"
+        }
+        register("AndroidLibraryPlugin") {
+            id = "pixiview.primitive.android.library"
+            implementationClass = "primitive.AndroidLibraryPlugin"
+        }
         register("KmpPlugin") {
             id = "pixiview.primitive.kmp.common"
             implementationClass = "primitive.KmpCommonPlugin"
@@ -35,17 +37,9 @@ gradlePlugin {
             id = "pixiview.primitive.kmp.android"
             implementationClass = "primitive.KmpAndroidPlugin"
         }
-        register("KmpAndroidApplication") {
-            id = "pixiview.primitive.kmp.android.application"
-            implementationClass = "primitive.KmpAndroidApplication"
-        }
-        register("KmpAndroidLibrary") {
-            id = "pixiview.primitive.kmp.android.library"
-            implementationClass = "primitive.KmpAndroidLibrary"
-        }
         register("KmpAndroidCompose") {
-            id = "pixiview.primitive.kmp.android.compose"
-            implementationClass = "primitive.KmpAndroidCompose"
+            id = "pixiview.primitive.kmp.compose"
+            implementationClass = "primitive.KmpComposePlugin"
         }
         register("KmpIosPlugin") {
             id = "pixiview.primitive.kmp.ios"

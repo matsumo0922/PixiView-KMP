@@ -6,14 +6,12 @@ class KmpIosPlugin : Plugin<Project> {
     override fun apply(target: Project) {
         with(target) {
             kotlin {
-                applyDefaultHierarchyTemplate()
-
                 listOf(
                     iosArm64(),
                     iosSimulatorArm64(),
                 ).forEach { iosTarget ->
                     iosTarget.binaries.framework {
-                        baseName = "ComposeApp"
+                        baseName = "shared"
                         isStatic = true
                     }
                 }
