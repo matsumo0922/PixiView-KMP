@@ -74,8 +74,11 @@ import me.matsumo.fanbox.core.model.TranslationState
 import me.matsumo.fanbox.core.resources.Res
 import me.matsumo.fanbox.core.resources.billing_plus_toast_require_plus
 import me.matsumo.fanbox.core.resources.creator_download_require_plus_title
+import me.matsumo.fanbox.core.resources.creator_reward_unlock_bulk_download_feature
+import me.matsumo.fanbox.core.resources.creator_reward_unlock_creator_search_feature
 import me.matsumo.fanbox.core.resources.creator_reward_unlock_require_plus_message
 import me.matsumo.fanbox.core.resources.creator_reward_unlock_search_title
+import me.matsumo.fanbox.core.resources.creator_reward_unlock_translation_feature
 import me.matsumo.fanbox.core.resources.creator_reward_unlock_translation_title
 import me.matsumo.fanbox.core.resources.creator_tab_plans
 import me.matsumo.fanbox.core.resources.creator_tab_posts
@@ -247,7 +250,7 @@ private fun CreatorTopScreen(
     onShowUnblockDialog: (SimpleAlertContents) -> Unit,
     onClickTranslateDescription: (String) -> Unit,
     onRevealCompleted: () -> Unit,
-    onRewarded: suspend (RewardUsage) -> Unit,
+    onRewarded: (RewardUsage) -> Unit,
     onTerminate: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
@@ -269,12 +272,10 @@ private fun CreatorTopScreen(
     var isShowMenuDialog by remember { mutableStateOf(false) }
     var isVisibleFAB by remember { mutableStateOf(false) }
 
-    val rewardPreloadCandidates = listOf(
-        !setting.canBulkDownload && rewardAvailability.bulkDownload,
-        !setting.hasPrivilege && rewardAvailability.creatorSearch,
-        !setting.hasPrivilege && rewardAvailability.creatorTranslation,
-    )
-    val shouldPreloadRewardAd = rewardPreloadCandidates.any { it }
+    val canRewardBulkDownload = !setting.canBulkDownload && rewardAvailability.bulkDownload
+    val canRewardCreatorSearch = !setting.hasPrivilege && rewardAvailability.creatorSearch
+    val canRewardCreatorTranslation = !setting.hasPrivilege && rewardAvailability.creatorTranslation
+    val shouldPreloadRewardAd = canRewardBulkDownload || canRewardCreatorSearch || canRewardCreatorTranslation
 
     val tabs = listOf(
         CreatorTab.POSTS,
@@ -480,16 +481,13 @@ private fun CreatorTopScreen(
             message = activeRewardUsage.rewardUnlockMessage(),
             isAbleToReward = rewardAvailability.isAbleToReward(activeRewardUsage),
             onRewarded = {
-                scope.launch {
-                    onRewarded.invoke(activeRewardUsage)
+                onRewarded.invoke(activeRewardUsage)
+                rewardUsage = null
 
-                    when (activeRewardUsage) {
-                        RewardUsage.BulkDownload -> onClickAllDownload.invoke(creatorDetail.creatorId)
-                        RewardUsage.CreatorSearch -> onClickSearch.invoke(creatorDetail.creatorId)
-                        RewardUsage.CreatorTranslation -> onClickTranslateDescription.invoke(creatorDetail.description)
-                    }
-
-                    rewardUsage = null
+                when (activeRewardUsage) {
+                    RewardUsage.BulkDownload -> onClickAllDownload.invoke(creatorDetail.creatorId)
+                    RewardUsage.CreatorSearch -> onClickSearch.invoke(creatorDetail.creatorId)
+                    RewardUsage.CreatorTranslation -> onClickTranslateDescription.invoke(creatorDetail.description)
                 }
             },
             onClickShowPlus = {
@@ -603,8 +601,19 @@ private fun RewardUsage.rewardUnlockTitle(): String {
 private fun RewardUsage.rewardUnlockMessage(): String {
     return stringResource(
         Res.string.creator_reward_unlock_require_plus_message,
-        rewardUnlockTitle(),
+        rewardUnlockFeatureName(),
         appName,
+    )
+}
+
+@Composable
+private fun RewardUsage.rewardUnlockFeatureName(): String {
+    return stringResource(
+        when (this) {
+            RewardUsage.BulkDownload -> Res.string.creator_reward_unlock_bulk_download_feature
+            RewardUsage.CreatorSearch -> Res.string.creator_reward_unlock_creator_search_feature
+            RewardUsage.CreatorTranslation -> Res.string.creator_reward_unlock_translation_feature
+        },
     )
 }
 

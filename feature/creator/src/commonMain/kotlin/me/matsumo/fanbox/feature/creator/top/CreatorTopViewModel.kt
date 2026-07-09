@@ -1,5 +1,6 @@
 package me.matsumo.fanbox.feature.creator.top
 
+import androidx.compose.runtime.Immutable
 import androidx.compose.runtime.Stable
 import androidx.compose.ui.text.intl.Locale
 import androidx.lifecycle.SavedStateHandle
@@ -183,12 +184,16 @@ class CreatorTopViewModel(
         }
     }
 
-    suspend fun rewarded(usage: RewardUsage) {
-        rewardRepository.rewarded(usage)
-        val rewardAvailability = getRewardAvailability()
+    fun rewarded(usage: RewardUsage) {
+        viewModelScope.launch {
+            val rewardAvailability = suspendRunCatching {
+                rewardRepository.rewarded(usage)
+                getRewardAvailability()
+            }.getOrNull() ?: return@launch
 
-        _screenState.updateWhenIdle {
-            it.copy(rewardAvailability = rewardAvailability)
+            _screenState.updateWhenIdle {
+                it.copy(rewardAvailability = rewardAvailability)
+            }
         }
     }
 
@@ -202,7 +207,7 @@ class CreatorTopViewModel(
 }
 
 /** Creator Top の用途別リワード広告利用可否。 */
-@Stable
+@Immutable
 data class CreatorTopRewardAvailability(
     val bulkDownload: Boolean,
     val creatorSearch: Boolean,

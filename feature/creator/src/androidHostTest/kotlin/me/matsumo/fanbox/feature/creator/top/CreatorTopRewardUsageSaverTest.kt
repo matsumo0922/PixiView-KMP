@@ -13,7 +13,7 @@ class CreatorTopRewardUsageSaverTest {
         RewardUsage.entries.forEach { usage ->
             val savedKey = saveCreatorTopRewardUsage(usage)
 
-            assertEquals(usage.storageKey, savedKey)
+            assertEquals(usage.name, savedKey)
             assertEquals(usage, restoreCreatorTopRewardUsage(savedKey.orEmpty()))
         }
     }

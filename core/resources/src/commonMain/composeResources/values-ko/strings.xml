@@ -158,12 +158,12 @@
     <string name="creator_recommended">추천 크리에이터</string>
     <string name="creator_following_pixiv">pixiv에서 팔로우 중</string>
     <string name="creator_download_require_plus_title">게시물 일괄 다운로드</string>
-    <string name="creator_download_require_plus_message">일괄 다운로드는 %1$s+ 전용 기능입니다. 
-
-%1$s+를 구매하거나 이 기능용 광고를 하루 1회 시청하면 일시적으로 사용할 수 있습니다.</string>
     <string name="creator_download_require_plus_button">%1$s+ 구매</string>
     <string name="creator_download_require_plus_button_ad">광고 보기</string>
     <string name="creator_download_require_plus_button_ad_over">광고 시청 완료</string>
+    <string name="creator_reward_unlock_bulk_download_feature">일괄 다운로드</string>
+    <string name="creator_reward_unlock_creator_search_feature">게시물 검색</string>
+    <string name="creator_reward_unlock_translation_feature">설명 번역</string>
     <string name="creator_reward_unlock_search_title">크리에이터 게시물 검색</string>
     <string name="creator_reward_unlock_translation_title">크리에이터 설명 번역</string>
     <string name="creator_reward_unlock_require_plus_message">%1$s은(는) %2$s+ 전용 기능입니다.\n\n%2$s+를 구매하거나 이 기능용 광고를 하루 1회 시청하면 일시적으로 사용할 수 있습니다.</string>

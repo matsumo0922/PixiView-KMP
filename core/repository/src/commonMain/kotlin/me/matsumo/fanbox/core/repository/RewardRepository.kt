@@ -14,9 +14,11 @@ interface RewardRepository {
     suspend fun isAbleToReward(usage: RewardUsage): Boolean
 }
 
+@OptIn(ExperimentalTime::class)
 class RewardRepositoryImpl(
     private val rewardLogDataStore: RewardLogDataStore,
     private val ioDispatcher: CoroutineDispatcher,
+    private val clock: Clock = Clock.System,
 ) : RewardRepository {
 
     override suspend fun rewarded(usage: RewardUsage) {
@@ -33,9 +35,8 @@ class RewardRepositoryImpl(
         }
     }
 
-    @OptIn(ExperimentalTime::class)
     private suspend fun resetIfNeeded() {
-        val date = Clock.System.now().format("yyyy-MM-dd")
+        val date = clock.now().format("yyyy-MM-dd")
         val lastRewardDate = rewardLogDataStore.getRewardDate()
 
         if (lastRewardDate != date) {

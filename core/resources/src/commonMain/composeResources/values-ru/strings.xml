@@ -159,12 +159,12 @@
     <string name="creator_recommended">Рекомендуемые авторы</string>
     <string name="creator_following_pixiv">Подписки на pixiv</string>
     <string name="creator_download_require_plus_title">Скачивание множества публикации</string>
-    <string name="creator_download_require_plus_message">Пакетное скачивание – доступно только в %1$s+. 
-
-Функцию можно временно использовать, купив %1$s+ или посмотрев рекламу для этой функции один раз в день.</string>
     <string name="creator_download_require_plus_button">Купить %1$s+</string>
     <string name="creator_download_require_plus_button_ad">Посмотреть рекламу</string>
     <string name="creator_download_require_plus_button_ad_over">Реклама просмотрена</string>
+    <string name="creator_reward_unlock_bulk_download_feature">Пакетное скачивание</string>
+    <string name="creator_reward_unlock_creator_search_feature">Поиск публикаций</string>
+    <string name="creator_reward_unlock_translation_feature">Перевод описания</string>
     <string name="creator_reward_unlock_search_title">Поиск публикаций автора</string>
     <string name="creator_reward_unlock_translation_title">Перевод описания автора</string>
     <string name="creator_reward_unlock_require_plus_message">%1$s доступно только в %2$s+.\n\nФункцию можно временно использовать, купив %2$s+ или посмотрев рекламу для этой функции один раз в день.</string>

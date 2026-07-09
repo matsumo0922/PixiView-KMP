@@ -170,10 +170,12 @@
     <string name="creator_recommended">おすすめのクリエイター</string>
     <string name="creator_following_pixiv">Pixivでフォロー中のクリエイター</string>
     <string name="creator_download_require_plus_title">投稿を一括ダウンロード</string>
-    <string name="creator_download_require_plus_message">一括ダウンロードは%1$s+専用機能です。\n\n%1$s+を購入するか、この機能用の広告を1日1回見ることで一時的に使用できます。</string>
     <string name="creator_download_require_plus_button">%1$s+を購入</string>
     <string name="creator_download_require_plus_button_ad">広告を見る</string>
     <string name="creator_download_require_plus_button_ad_over">広告視聴済み</string>
+    <string name="creator_reward_unlock_bulk_download_feature">一括ダウンロード</string>
+    <string name="creator_reward_unlock_creator_search_feature">投稿検索</string>
+    <string name="creator_reward_unlock_translation_feature">概要翻訳</string>
     <string name="creator_reward_unlock_search_title">クリエイターの投稿を検索</string>
     <string name="creator_reward_unlock_translation_title">クリエイター概要を翻訳</string>
     <string name="creator_reward_unlock_require_plus_message">%1$sは%2$s+専用機能です。\n\n%2$s+を購入するか、この機能用の広告を1日1回見ることで一時的に使用できます。</string>
