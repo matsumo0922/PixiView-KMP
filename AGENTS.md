@@ -1,3 +1,20 @@
+# PixiView Agent Notes
+
+共通ルール（口調、Git/PR、RTK）は `~/.codex/AGENTS.md` と `~/.codex/RTK.md` に従うこと。このファイルには `pixiview` 固有の補足だけを書く。
+
+## Worktree 運用
+
+実装を行う場合は、必ず worktree を作成し、デフォルトディレクトリを汚さない。
+特別に指示がある場合や、read-only の調査やビルド・テストの実行はこの限りでない。
+
+```bash
+git worktree add ../pixiview-<task-slug> -b <branch-name>
+cp -p local.properties ../pixiview-<task-slug>/local.properties
+cd ../pixiview-<task-slug>
+```
+
+- `local.properties` は git 管理外なので、`git worktree add` ではコピーされない。ビルドに必要な情報が記載されているため、worktree 作成直後に必ず元 checkout からコピーする。
+
 <!-- agents-rules:kotlin:begin -->
 <!-- この区間は Agents リポジトリが管理する。編集は Agents の rules/kotlin.md で行い、make link-project で更新する -->
 # Kotlin / Jetpack Compose 規約
