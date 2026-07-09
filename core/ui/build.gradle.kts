@@ -56,6 +56,12 @@ kotlin {
             }
         }
 
+        val androidHostTest by getting {
+            dependencies {
+                implementation(kotlin("test-junit"))
+            }
+        }
+
         val androidMain by getting {
             dependencies {
                 implementation(libs.bundles.media3)

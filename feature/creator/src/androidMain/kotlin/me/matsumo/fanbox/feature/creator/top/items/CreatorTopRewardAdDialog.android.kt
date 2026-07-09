@@ -21,7 +21,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
@@ -60,36 +59,26 @@ actual fun CreatorTopRewardAdDialog(
     val isRewardAdShowing by rewardAdLoader.isShowing.collectAsStateWithLifecycle()
     val rewardAdShowResult by rewardAdLoader.showResult.collectAsStateWithLifecycle()
     var activeRewardAdRequestId by rememberSaveable { mutableStateOf<Long?>(null) }
-    var startedRewardAdRequestId by remember { mutableStateOf<Long?>(null) }
 
     val isRewardAdReady = activity != null && rewardAd != null
     val canStartRewardAd = isAbleToReward && isRewardAdReady
     val hasActiveRewardAdRequest = activeRewardAdRequestId != null
-    val isStartedRewardAdRequestActive =
-        startedRewardAdRequestId != null && startedRewardAdRequestId == activeRewardAdRequestId
-    val isRewardAdShowActive = isRewardAdShowing || isStartedRewardAdRequestActive
-    val hasRewardAdShowResult = rewardAdShowResult != null
-    val isRewardAdRequestWithoutResult = hasActiveRewardAdRequest && !hasRewardAdShowResult
-    val shouldClearOrphanedRewardAdRequest = isRewardAdRequestWithoutResult && !isRewardAdShowActive
-    val canRequestRewardAd = canStartRewardAd && !isRewardAdShowActive
+    val canRequestRewardAd = canStartRewardAd && !isRewardAdShowing
     val isRewardAdButtonEnabled = canRequestRewardAd && !hasActiveRewardAdRequest
-    val shouldShowRewardAdProgress = rewardAd == null || isRewardAdShowActive
+    val shouldShowRewardAdProgress = rewardAd == null || isRewardAdShowing
     val isRewardAdProgressVisible = shouldShowRewardAdProgress || hasActiveRewardAdRequest
 
     LaunchedEffect(isAdsSdkInitialized) {
         rewardAdLoader.loadRewardAdIfNeeded(isAdsSdkInitialized)
     }
 
-    LaunchedEffect(shouldClearOrphanedRewardAdRequest) {
-        if (shouldClearOrphanedRewardAdRequest) {
-            activeRewardAdRequestId = null
-            startedRewardAdRequestId = null
-        }
-    }
+    LaunchedEffect(Unit) {
+        val restoredRequestId = activeRewardAdRequestId ?: return@LaunchedEffect
+        val isRestoredAdShowing = rewardAdLoader.isShowing.value
+        val hasRestoredResult = rewardAdLoader.showResult.value?.requestId == restoredRequestId
 
-    LaunchedEffect(isRewardAdShowing) {
-        if (isRewardAdShowing) {
-            startedRewardAdRequestId = null
+        if (!isRestoredAdShowing && !hasRestoredResult) {
+            activeRewardAdRequestId = null
         }
     }
 
@@ -103,7 +92,6 @@ actual fun CreatorTopRewardAdDialog(
             consumeShowResult = rewardAdLoader::consumeShowResult,
             onActiveResultConsumed = { isRewardEarned ->
                 activeRewardAdRequestId = null
-                startedRewardAdRequestId = null
 
                 if (isRewardEarned) {
                     onRewarded.invoke()
@@ -165,7 +153,6 @@ actual fun CreatorTopRewardAdDialog(
 
                             if (requestId != null) {
                                 activeRewardAdRequestId = requestId
-                                startedRewardAdRequestId = requestId
                             }
                         },
                         enabled = isRewardAdButtonEnabled,
