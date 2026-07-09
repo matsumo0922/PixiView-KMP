@@ -12,6 +12,8 @@ plugins {
 kotlin {
     android {
         namespace = "me.matsumo.fanbox.core.ui"
+
+        withHostTest {}
     }
 
     sourceSets {
@@ -45,6 +47,12 @@ kotlin {
                 api(libs.placeholder)
                 api(libs.rich.editor)
                 api(libs.autolink)
+            }
+        }
+
+        val commonTest by getting {
+            dependencies {
+                implementation(kotlin("test"))
             }
         }
 
