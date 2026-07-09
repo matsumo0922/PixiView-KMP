@@ -9,42 +9,36 @@ import com.google.android.gms.ads.LoadAdError
 import com.google.android.gms.ads.rewarded.RewardedAd
 import com.google.android.gms.ads.rewarded.RewardedAdLoadCallback
 import io.github.aakira.napier.Napier
-import kotlinx.coroutines.CancellableContinuation
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
-import kotlinx.coroutines.suspendCancellableCoroutine
 import me.matsumo.fanbox.core.common.PixiViewConfig
-import kotlin.concurrent.atomics.AtomicBoolean
-import kotlin.concurrent.atomics.ExperimentalAtomicApi
-import kotlin.coroutines.resume
 
 /** Android のリワード広告ロード状態を管理するクラス。 */
-@OptIn(ExperimentalAtomicApi::class)
 class RewardAdLoader(
     private val context: Context,
     private val pixiViewConfig: PixiViewConfig,
 ) {
     private val _rewardAd = MutableStateFlow<RewardedAd?>(null)
     private val _isShowing = MutableStateFlow(false)
-    private val isShowingAd = AtomicBoolean(false)
+    private val _showResult = MutableStateFlow<RewardAdShowResult?>(null)
     private val retryController = AdLoadRetryController(adFormatName = "RewardAd")
     val rewardAd = _rewardAd.asStateFlow()
     val isShowing = _isShowing.asStateFlow()
+    val showResult = _showResult.asStateFlow()
 
     private var isLoading = false
-    private var isAdsSdkInitialized = false
-    private var loadRequestId = 0
+    private var showRequestId = 0L
 
     fun loadRewardAdIfNeeded(isAdsSdkInitialized: Boolean) {
-        this.isAdsSdkInitialized = isAdsSdkInitialized
+        if (!isAdsSdkInitialized) return
+
         loadRewardAdInternal(isRetry = false)
     }
 
     private fun loadRewardAdInternal(isRetry: Boolean) {
         val hasLoadedAd = _rewardAd.value != null
-        val canLoadAds = isAdsSdkInitialized && !hasLoadedAd
-        val canStartLoading = canLoadAds && !isLoading
-        val shouldSkipLoading = !canStartLoading || isShowingAd.load()
+        val canStartLoading = !hasLoadedAd && !isLoading
+        val shouldSkipLoading = !canStartLoading || _isShowing.value
 
         if (shouldSkipLoading) return
 
@@ -53,13 +47,10 @@ class RewardAdLoader(
         }
 
         isLoading = true
-        val requestId = ++loadRequestId
 
         val adRequest = AdRequest.Builder().build()
         val adLoadCallback = object : RewardedAdLoadCallback() {
             override fun onAdLoaded(rewardedAd: RewardedAd) {
-                if (requestId != loadRequestId) return
-
                 Napier.d { "onAdLoaded" }
                 _rewardAd.value = rewardedAd
                 isLoading = false
@@ -67,8 +58,6 @@ class RewardAdLoader(
             }
 
             override fun onAdFailedToLoad(error: LoadAdError) {
-                if (requestId != loadRequestId) return
-
                 isLoading = false
                 retryController.scheduleRetry(
                     failureMessage = error.toString(),
@@ -84,38 +73,35 @@ class RewardAdLoader(
         loadRewardAdInternal(isRetry = true)
     }
 
-    suspend fun showRewardAd(activity: Activity): Boolean {
+    fun showRewardAd(activity: Activity): Long? {
         val rewardedAd = _rewardAd.value
 
-        if (rewardedAd == null) {
-            loadRewardAdInternal(isRetry = false)
-            return false
-        }
+        if (rewardedAd == null) return null
 
-        if (!isShowingAd.compareAndSet(false, true)) return false
+        if (!_isShowing.compareAndSet(false, true)) return null
 
-        _isShowing.value = true
+        val requestId = ++showRequestId
 
-        return suspendCancellableCoroutine { continuation ->
-            showLoadedRewardAd(
-                activity = activity,
-                rewardedAd = rewardedAd,
-                continuation = continuation,
-            )
-        }
+        showLoadedRewardAd(
+            activity = activity,
+            rewardedAd = rewardedAd,
+            requestId = requestId,
+        )
+
+        return requestId
     }
 
     private fun showLoadedRewardAd(
         activity: Activity,
         rewardedAd: RewardedAd,
-        continuation: CancellableContinuation<Boolean>,
+        requestId: Long,
     ) {
         val showState = RewardAdShowState()
 
         rewardedAd.fullScreenContentCallback = createFullScreenContentCallback(
             rewardedAd = rewardedAd,
             showState = showState,
-            continuation = continuation,
+            requestId = requestId,
         )
 
         runCatching {
@@ -127,15 +113,7 @@ class RewardAdLoader(
             completeRewardAdShow(
                 rewardedAd = rewardedAd,
                 rewardResult = showState.completeWithoutReward(),
-                continuation = continuation,
-            )
-        }
-
-        continuation.invokeOnCancellation {
-            completeRewardAdShow(
-                rewardedAd = rewardedAd,
-                rewardResult = showState.completeWithoutReward(),
-                continuation = continuation,
+                requestId = requestId,
             )
         }
     }
@@ -143,7 +121,7 @@ class RewardAdLoader(
     private fun createFullScreenContentCallback(
         rewardedAd: RewardedAd,
         showState: RewardAdShowState,
-        continuation: CancellableContinuation<Boolean>,
+        requestId: Long,
     ): FullScreenContentCallback {
         return object : FullScreenContentCallback() {
             override fun onAdFailedToShowFullScreenContent(error: AdError) {
@@ -151,7 +129,7 @@ class RewardAdLoader(
                 completeRewardAdShow(
                     rewardedAd = rewardedAd,
                     rewardResult = showState.completeWithoutReward(),
-                    continuation = continuation,
+                    requestId = requestId,
                 )
             }
 
@@ -164,7 +142,7 @@ class RewardAdLoader(
                 completeRewardAdShow(
                     rewardedAd = rewardedAd,
                     rewardResult = showState.completeByDismissal(),
-                    continuation = continuation,
+                    requestId = requestId,
                 )
             }
         }
@@ -173,21 +151,26 @@ class RewardAdLoader(
     private fun completeRewardAdShow(
         rewardedAd: RewardedAd,
         rewardResult: Boolean?,
-        continuation: CancellableContinuation<Boolean>,
+        requestId: Long,
     ) {
         if (rewardResult == null) return
 
         cleanupRewardAd(rewardedAd)
-
-        if (continuation.isActive) continuation.resume(rewardResult)
+        _showResult.value = RewardAdShowResult(
+            requestId = requestId,
+            isRewardEarned = rewardResult,
+        )
     }
 
     private fun cleanupRewardAd(rewardedAd: RewardedAd) {
         rewardedAd.fullScreenContentCallback = null
         _rewardAd.value = null
-        isShowingAd.store(false)
         _isShowing.value = false
 
         loadRewardAdInternal(isRetry = false)
+    }
+
+    fun consumeShowResult(showResult: RewardAdShowResult) {
+        _showResult.compareAndSet(showResult, null)
     }
 }

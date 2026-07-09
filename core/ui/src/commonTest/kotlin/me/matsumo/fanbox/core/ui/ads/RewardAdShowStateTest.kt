@@ -46,7 +46,7 @@ class RewardAdShowStateTest {
     }
 
     @Test
-    fun rewardAfterCancellationIsIgnored() {
+    fun rewardAfterCompletionIsIgnored() {
         val showState = RewardAdShowState()
 
         assertEquals(false, showState.completeWithoutReward())

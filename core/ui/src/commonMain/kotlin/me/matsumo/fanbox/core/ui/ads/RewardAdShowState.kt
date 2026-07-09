@@ -3,6 +3,12 @@ package me.matsumo.fanbox.core.ui.ads
 import kotlin.concurrent.atomics.AtomicBoolean
 import kotlin.concurrent.atomics.ExperimentalAtomicApi
 
+/** リワード広告の表示完了結果。 */
+data class RewardAdShowResult(
+    val requestId: Long,
+    val isRewardEarned: Boolean,
+)
+
 /** リワード広告の表示完了結果を一度だけ確定する状態管理クラス。 */
 @OptIn(ExperimentalAtomicApi::class)
 internal class RewardAdShowState {
