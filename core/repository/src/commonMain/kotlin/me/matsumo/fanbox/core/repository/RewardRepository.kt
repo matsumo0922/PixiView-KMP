@@ -23,9 +23,7 @@ class RewardRepositoryImpl(
 
     override suspend fun rewarded(usage: RewardUsage) {
         withContext(ioDispatcher) {
-            val date = currentDate()
-
-            resetIfNeeded(date)
+            resetIfNeeded(currentDate())
             rewardLogDataStore.rewarded(usage)
         }
     }
