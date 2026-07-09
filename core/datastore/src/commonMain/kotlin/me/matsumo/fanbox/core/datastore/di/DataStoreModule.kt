@@ -46,7 +46,6 @@ val dataStoreModule = module {
     single {
         RewardLogDataStore(
             preferenceHelper = get(),
-            ioDispatcher = get(),
         )
     }
 

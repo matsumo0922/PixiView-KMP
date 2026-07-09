@@ -37,7 +37,6 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
-import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.ExperimentalComposeUiApi
@@ -67,11 +66,16 @@ import kotlinx.collections.immutable.toImmutableList
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import me.matsumo.fanbox.core.model.Destination
+import me.matsumo.fanbox.core.model.RewardUsage
 import me.matsumo.fanbox.core.model.Setting
 import me.matsumo.fanbox.core.model.SimpleAlertContents
 import me.matsumo.fanbox.core.model.TranslationState
 import me.matsumo.fanbox.core.resources.Res
 import me.matsumo.fanbox.core.resources.billing_plus_toast_require_plus
+import me.matsumo.fanbox.core.resources.creator_download_require_plus_title
+import me.matsumo.fanbox.core.resources.creator_reward_unlock_require_plus_message
+import me.matsumo.fanbox.core.resources.creator_reward_unlock_search_title
+import me.matsumo.fanbox.core.resources.creator_reward_unlock_translation_title
 import me.matsumo.fanbox.core.resources.creator_tab_plans
 import me.matsumo.fanbox.core.resources.creator_tab_posts
 import me.matsumo.fanbox.core.resources.reveal_creator_top_fab
@@ -94,6 +98,7 @@ import me.matsumo.fanbox.feature.creator.top.items.CreatorTopMenuDialog
 import me.matsumo.fanbox.feature.creator.top.items.CreatorTopPlansScreen
 import me.matsumo.fanbox.feature.creator.top.items.CreatorTopPostsScreen
 import me.matsumo.fanbox.feature.creator.top.items.CreatorTopRewardAdDialog
+import me.matsumo.fanbox.feature.creator.top.items.CreatorTopRewardAdPreloader
 import me.matsumo.fanbox.feature.creator.top.items.CreatorTopTopAppBar
 import me.matsumo.fankt.fanbox.domain.model.FanboxCreatorDetail
 import me.matsumo.fankt.fanbox.domain.model.FanboxCreatorPlan
@@ -155,7 +160,7 @@ internal fun CreatorTopRoute(
                 shouldShowReveal = uiState.shouldShowReveal,
                 isPosts = isPosts,
                 isBlocked = uiState.isBlocked,
-                isAbleToReward = uiState.isAbleToReward,
+                rewardAvailability = uiState.rewardAvailability,
                 setting = uiState.setting,
                 bookmarkedPostsIds = uiState.bookmarkedPostsIds.toImmutableList(),
                 creatorDetail = uiState.creatorDetail,
@@ -217,7 +222,7 @@ private fun CreatorTopScreen(
     revealState: RevealState,
     isPosts: Boolean,
     isBlocked: Boolean,
-    isAbleToReward: Boolean,
+    rewardAvailability: CreatorTopRewardAvailability,
     shouldShowReveal: Boolean,
     creatorDetail: FanboxCreatorDetail,
     setting: Setting,
@@ -241,7 +246,7 @@ private fun CreatorTopScreen(
     onShowUnblockDialog: (SimpleAlertContents) -> Unit,
     onClickTranslateDescription: (String) -> Unit,
     onRevealCompleted: () -> Unit,
-    onRewarded: () -> Unit,
+    onRewarded: suspend (RewardUsage) -> Unit,
     onTerminate: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
@@ -258,10 +263,17 @@ private fun CreatorTopScreen(
     val plansListState = rememberLazyListState()
 
     var topAppBarHeight by remember { mutableStateOf(0.dp) }
-    var isShowRewardAdDialog by rememberSaveable { mutableStateOf(false) }
+    var rewardUsage by remember { mutableStateOf<RewardUsage?>(null) }
     var isShowDescriptionDialog by remember { mutableStateOf(false) }
     var isShowMenuDialog by remember { mutableStateOf(false) }
     var isVisibleFAB by remember { mutableStateOf(false) }
+
+    val rewardPreloadCandidates = listOf(
+        !setting.canBulkDownload && rewardAvailability.bulkDownload,
+        !setting.hasPrivilege && rewardAvailability.creatorSearch,
+        !setting.hasPrivilege && rewardAvailability.creatorTranslation,
+    )
+    val shouldPreloadRewardAd = rewardPreloadCandidates.any { it }
 
     val tabs = listOf(
         CreatorTab.POSTS,
@@ -275,6 +287,8 @@ private fun CreatorTopScreen(
     LaunchedEffect(true) {
         isVisibleFAB = true
     }
+
+    CreatorTopRewardAdPreloader(shouldPreload = shouldPreloadRewardAd)
 
     LaunchedEffect(isBlocked) {
         if (isBlocked) {
@@ -420,7 +434,7 @@ private fun CreatorTopScreen(
                 if (setting.hasPrivilege) {
                     onClickSearch.invoke(creatorDetail.creatorId)
                 } else {
-                    onClickBillingPlus.invoke("search_post_by_creator")
+                    rewardUsage = RewardUsage.CreatorSearch
                 }
             },
         )
@@ -445,7 +459,7 @@ private fun CreatorTopScreen(
                     if (setting.canBulkDownload) {
                         onClickAllDownload.invoke(creatorDetail.creatorId)
                     } else {
-                        isShowRewardAdDialog = true
+                        rewardUsage = RewardUsage.BulkDownload
                     }
                 },
             ) {
@@ -457,19 +471,35 @@ private fun CreatorTopScreen(
         }
     }
 
-    if (isShowRewardAdDialog) {
+    val activeRewardUsage = rewardUsage
+
+    if (activeRewardUsage != null) {
         CreatorTopRewardAdDialog(
-            isAbleToReward = isAbleToReward,
+            title = activeRewardUsage.rewardUnlockTitle(),
+            message = activeRewardUsage.rewardUnlockMessage(),
+            isAbleToReward = rewardAvailability.isAbleToReward(activeRewardUsage),
             onRewarded = {
-                onRewarded.invoke()
-                onClickAllDownload.invoke(creatorDetail.creatorId)
-                isShowRewardAdDialog = false
+                scope.launch {
+                    onRewarded.invoke(activeRewardUsage)
+
+                    when (activeRewardUsage) {
+                        RewardUsage.BulkDownload -> onClickAllDownload.invoke(creatorDetail.creatorId)
+                        RewardUsage.CreatorSearch -> onClickSearch.invoke(creatorDetail.creatorId)
+                        RewardUsage.CreatorTranslation -> onClickTranslateDescription.invoke(creatorDetail.description)
+                    }
+
+                    rewardUsage = null
+                }
             },
             onClickShowPlus = {
-                onClickBillingPlus.invoke("all_download")
-                isShowRewardAdDialog = false
+                onClickBillingPlus.invoke(activeRewardUsage.billingPlusKey())
+                rewardUsage = null
+
+                if (activeRewardUsage == RewardUsage.CreatorTranslation) {
+                    isShowDescriptionDialog = false
+                }
             },
-            onDismissRequest = { isShowRewardAdDialog = false },
+            onDismissRequest = { rewardUsage = null },
         )
     }
 
@@ -489,8 +519,7 @@ private fun CreatorTopScreen(
                 if (setting.hasPrivilege) {
                     onClickTranslateDescription.invoke(it)
                 } else {
-                    onClickBillingPlus.invoke("translate")
-                    isShowDescriptionDialog = false
+                    rewardUsage = RewardUsage.CreatorTranslation
                 }
             },
             onDismissRequest = { isShowDescriptionDialog = false },
@@ -556,4 +585,32 @@ private fun RevealOverlayScope.RevealOverlayContent(
 private enum class CreatorTab(val titleRes: StringResource) {
     POSTS(Res.string.creator_tab_posts),
     PLANS(Res.string.creator_tab_plans),
+}
+
+@Composable
+private fun RewardUsage.rewardUnlockTitle(): String {
+    return stringResource(
+        when (this) {
+            RewardUsage.BulkDownload -> Res.string.creator_download_require_plus_title
+            RewardUsage.CreatorSearch -> Res.string.creator_reward_unlock_search_title
+            RewardUsage.CreatorTranslation -> Res.string.creator_reward_unlock_translation_title
+        },
+    )
+}
+
+@Composable
+private fun RewardUsage.rewardUnlockMessage(): String {
+    return stringResource(
+        Res.string.creator_reward_unlock_require_plus_message,
+        rewardUnlockTitle(),
+        appName,
+    )
+}
+
+private fun RewardUsage.billingPlusKey(): String {
+    return when (this) {
+        RewardUsage.BulkDownload -> "all_download"
+        RewardUsage.CreatorSearch -> "search_post_by_creator"
+        RewardUsage.CreatorTranslation -> "translate"
+    }
 }

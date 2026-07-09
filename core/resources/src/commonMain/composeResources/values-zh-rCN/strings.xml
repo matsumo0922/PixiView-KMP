@@ -158,10 +158,13 @@
     <string name="creator_download_require_plus_title">批量下载投稿</string>
     <string name="creator_download_require_plus_message">批量下载是 %1$s+ 的独家功能。
 
-您可以通过购买 %1$s+ 或每天观看1次广告来暂时使用该功能。</string>
+您可以购买 %1$s+，或每天为此功能观看 1 次广告来临时使用。</string>
     <string name="creator_download_require_plus_button">购买 %1$s+</string>
     <string name="creator_download_require_plus_button_ad">观看广告</string>
     <string name="creator_download_require_plus_button_ad_over">已观看广告</string>
+    <string name="creator_reward_unlock_search_title">搜索创作者投稿</string>
+    <string name="creator_reward_unlock_translation_title">翻译创作者简介</string>
+    <string name="creator_reward_unlock_require_plus_message">%1$s 是 %2$s+ 的专属功能。\n\n您可以购买 %2$s+，或每天为此功能观看 1 次广告来临时使用。</string>
     <string name="bookmark_search_placeholder">搜索收藏</string>
     <string name="bookmark_empty_title">无收藏</string>
     <string name="bookmark_empty_description">查找并收藏您喜欢的投稿</string>

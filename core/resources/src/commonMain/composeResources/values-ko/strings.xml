@@ -160,10 +160,13 @@
     <string name="creator_download_require_plus_title">게시물 일괄 다운로드</string>
     <string name="creator_download_require_plus_message">일괄 다운로드는 %1$s+ 전용 기능입니다. 
 
-%1$s+를 구매하거나 하루 1회만 광고를 시청하여 일시적으로 기능을 사용할 수 있습니다.</string>
+%1$s+를 구매하거나 이 기능용 광고를 하루 1회 시청하면 일시적으로 사용할 수 있습니다.</string>
     <string name="creator_download_require_plus_button">%1$s+ 구매</string>
     <string name="creator_download_require_plus_button_ad">광고 보기</string>
     <string name="creator_download_require_plus_button_ad_over">광고 시청 완료</string>
+    <string name="creator_reward_unlock_search_title">크리에이터 게시물 검색</string>
+    <string name="creator_reward_unlock_translation_title">크리에이터 설명 번역</string>
+    <string name="creator_reward_unlock_require_plus_message">%1$s은(는) %2$s+ 전용 기능입니다.\n\n%2$s+를 구매하거나 이 기능용 광고를 하루 1회 시청하면 일시적으로 사용할 수 있습니다.</string>
     <string name="bookmark_search_placeholder">북마크 검색</string>
     <string name="bookmark_empty_title">북마크가 없습니다</string>
     <string name="bookmark_empty_description">좋아하는 포스트를 찾아 북마크해보세요!</string>

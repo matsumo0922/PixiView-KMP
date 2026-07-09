@@ -16,6 +16,7 @@ import kotlinx.coroutines.launch
 import me.matsumo.fanbox.core.common.util.suspendRunCatching
 import me.matsumo.fanbox.core.model.Destination
 import me.matsumo.fanbox.core.model.Flag
+import me.matsumo.fanbox.core.model.RewardUsage
 import me.matsumo.fanbox.core.model.ScreenState
 import me.matsumo.fanbox.core.model.Setting
 import me.matsumo.fanbox.core.model.TranslationState
@@ -84,7 +85,7 @@ class CreatorTopViewModel(
                     setting = userData,
                     bookmarkedPostsIds = fanboxRepository.bookmarkedPostsIds.first(),
                     isBlocked = fanboxRepository.blockedCreators.first().contains(creatorId),
-                    isAbleToReward = rewardRepository.isAbleToReward(),
+                    rewardAvailability = getRewardAvailability(),
                     shouldShowReveal = flagRepository.getFlag(Flag.REVEAL_CREATOR_TOP, true),
                     creatorDetail = fanboxRepository.getCreatorDetail(creatorId),
                     creatorPlans = fanboxRepository.getCreatorPlans(creatorId),
@@ -182,9 +183,36 @@ class CreatorTopViewModel(
         }
     }
 
-    fun rewarded() {
-        viewModelScope.launch {
-            rewardRepository.rewarded()
+    suspend fun rewarded(usage: RewardUsage) {
+        rewardRepository.rewarded(usage)
+        val rewardAvailability = getRewardAvailability()
+
+        _screenState.updateWhenIdle {
+            it.copy(rewardAvailability = rewardAvailability)
+        }
+    }
+
+    private suspend fun getRewardAvailability(): CreatorTopRewardAvailability {
+        return CreatorTopRewardAvailability(
+            bulkDownload = rewardRepository.isAbleToReward(RewardUsage.BulkDownload),
+            creatorSearch = rewardRepository.isAbleToReward(RewardUsage.CreatorSearch),
+            creatorTranslation = rewardRepository.isAbleToReward(RewardUsage.CreatorTranslation),
+        )
+    }
+}
+
+/** Creator Top の用途別リワード広告利用可否。 */
+@Stable
+data class CreatorTopRewardAvailability(
+    val bulkDownload: Boolean,
+    val creatorSearch: Boolean,
+    val creatorTranslation: Boolean,
+) {
+    fun isAbleToReward(usage: RewardUsage): Boolean {
+        return when (usage) {
+            RewardUsage.BulkDownload -> bulkDownload
+            RewardUsage.CreatorSearch -> creatorSearch
+            RewardUsage.CreatorTranslation -> creatorTranslation
         }
     }
 }
@@ -198,7 +226,7 @@ data class CreatorTopUiState(
     val creatorTags: List<FanboxTag>,
     val creatorPostsPaging: Flow<PagingData<FanboxPost>>,
     val isBlocked: Boolean,
-    val isAbleToReward: Boolean,
+    val rewardAvailability: CreatorTopRewardAvailability,
     val shouldShowReveal: Boolean,
     val descriptionTransState: TranslationState<String> = TranslationState.None,
 )
