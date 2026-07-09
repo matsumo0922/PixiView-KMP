@@ -37,6 +37,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.ExperimentalComposeUiApi
@@ -263,7 +264,7 @@ private fun CreatorTopScreen(
     val plansListState = rememberLazyListState()
 
     var topAppBarHeight by remember { mutableStateOf(0.dp) }
-    var rewardUsage by remember { mutableStateOf<RewardUsage?>(null) }
+    var rewardUsage by rememberSaveable(stateSaver = CreatorTopRewardUsageSaver) { mutableStateOf<RewardUsage?>(null) }
     var isShowDescriptionDialog by remember { mutableStateOf(false) }
     var isShowMenuDialog by remember { mutableStateOf(false) }
     var isVisibleFAB by remember { mutableStateOf(false) }
