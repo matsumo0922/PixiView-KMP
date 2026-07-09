@@ -33,8 +33,6 @@ import me.matsumo.fanbox.core.resources.Res
 import me.matsumo.fanbox.core.resources.creator_download_require_plus_button
 import me.matsumo.fanbox.core.resources.creator_download_require_plus_button_ad
 import me.matsumo.fanbox.core.resources.creator_download_require_plus_button_ad_over
-import me.matsumo.fanbox.core.resources.creator_download_require_plus_message
-import me.matsumo.fanbox.core.resources.creator_download_require_plus_title
 import me.matsumo.fanbox.core.ui.ads.RewardAdLoader
 import me.matsumo.fanbox.core.ui.ads.handleRewardAdShowResult
 import me.matsumo.fanbox.core.ui.appName
@@ -46,6 +44,8 @@ import org.koin.compose.koinInject
 @Suppress("UnstableCollections", "ModifierMissing")
 @Composable
 actual fun CreatorTopRewardAdDialog(
+    title: String,
+    message: String,
     isAbleToReward: Boolean,
     onRewarded: () -> Unit,
     onClickShowPlus: () -> Unit,
@@ -119,14 +119,14 @@ actual fun CreatorTopRewardAdDialog(
             ) {
                 Text(
                     modifier = Modifier.fillMaxWidth(),
-                    text = stringResource(Res.string.creator_download_require_plus_title),
+                    text = title,
                     style = MaterialTheme.typography.titleMedium.bold(),
                     color = MaterialTheme.colorScheme.onSurface,
                 )
 
                 Text(
                     modifier = Modifier.fillMaxWidth(),
-                    text = stringResource(Res.string.creator_download_require_plus_message, appName),
+                    text = message,
                     style = MaterialTheme.typography.bodyMedium,
                     color = MaterialTheme.colorScheme.onSurfaceVariant,
                 )

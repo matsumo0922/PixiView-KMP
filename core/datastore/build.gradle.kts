@@ -1,3 +1,5 @@
+@file:Suppress("UnusedPrivateProperty")
+
 plugins {
     id("pixiview.primitive.kmp.common")
     id("pixiview.primitive.android.library")
@@ -9,6 +11,8 @@ plugins {
 kotlin {
     android {
         namespace = "me.matsumo.fanbox.core.datastore"
+
+        withHostTest {}
     }
 
     sourceSets {
@@ -21,6 +25,12 @@ kotlin {
             implementation(libs.androidx.datastore)
             implementation(libs.androidx.datastore.proto)
             api(libs.androidx.datastore.preferences)
+        }
+
+        val androidHostTest by getting {
+            dependencies {
+                implementation(kotlin("test-junit"))
+            }
         }
     }
 }
