@@ -50,12 +50,6 @@ kotlin {
             }
         }
 
-        val commonTest by getting {
-            dependencies {
-                implementation(kotlin("test"))
-            }
-        }
-
         val androidHostTest by getting {
             dependencies {
                 implementation(kotlin("test-junit"))

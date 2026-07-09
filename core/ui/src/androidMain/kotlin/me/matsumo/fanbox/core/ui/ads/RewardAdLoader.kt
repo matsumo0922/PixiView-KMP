@@ -162,6 +162,7 @@ class RewardAdLoader(
     ) {
         if (rewardResult == null) return
 
+        // 復元時の orphan 判定が false/null を観測しないよう、showing を落とす前に結果を公開する。
         _showResult.value = RewardAdShowResult(
             requestId = requestId,
             isRewardEarned = rewardResult,
