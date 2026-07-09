@@ -11,6 +11,24 @@ data class RewardAdShowResult(
     val isRewardEarned: Boolean,
 )
 
+/** リワード広告の表示完了結果を表示要求 ID に基づいて消費する。 */
+fun handleRewardAdShowResult(
+    showResult: RewardAdShowResult?,
+    activeRequestId: Long?,
+    consumeShowResult: (RewardAdShowResult) -> Unit,
+    onActiveResultConsumed: (Boolean) -> Unit,
+) {
+    if (showResult == null) return
+
+    val isActiveResult = showResult.requestId == activeRequestId
+
+    consumeShowResult(showResult)
+
+    if (isActiveResult) {
+        onActiveResultConsumed(showResult.isRewardEarned)
+    }
+}
+
 /** リワード広告の表示完了結果を一度だけ確定する状態管理クラス。 */
 @OptIn(ExperimentalAtomicApi::class)
 internal class RewardAdShowState {

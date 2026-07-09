@@ -2,6 +2,7 @@ package me.matsumo.fanbox.core.ui.ads
 
 import android.app.Activity
 import android.content.Context
+import androidx.annotation.MainThread
 import com.google.android.gms.ads.AdError
 import com.google.android.gms.ads.AdRequest
 import com.google.android.gms.ads.FullScreenContentCallback
@@ -73,6 +74,12 @@ class RewardAdLoader(
         loadRewardAdInternal(isRetry = true)
     }
 
+    /**
+     * ロード済みのリワード広告を表示し、表示要求 ID を返す。
+     *
+     * 表示要求 ID はメインスレッドで単調増加させる。
+     */
+    @MainThread
     fun showRewardAd(activity: Activity): Long? {
         val rewardedAd = _rewardAd.value
 
@@ -155,19 +162,18 @@ class RewardAdLoader(
     ) {
         if (rewardResult == null) return
 
-        cleanupRewardAd(rewardedAd)
         _showResult.value = RewardAdShowResult(
             requestId = requestId,
             isRewardEarned = rewardResult,
         )
+        cleanupRewardAd(rewardedAd)
+        loadRewardAdInternal(isRetry = false)
     }
 
     private fun cleanupRewardAd(rewardedAd: RewardedAd) {
         rewardedAd.fullScreenContentCallback = null
         _rewardAd.value = null
         _isShowing.value = false
-
-        loadRewardAdInternal(isRetry = false)
     }
 
     fun consumeShowResult(showResult: RewardAdShowResult) {

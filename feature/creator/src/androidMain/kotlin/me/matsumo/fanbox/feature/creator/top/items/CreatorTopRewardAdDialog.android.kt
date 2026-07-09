@@ -21,6 +21,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
@@ -36,7 +37,7 @@ import me.matsumo.fanbox.core.resources.creator_download_require_plus_button_ad_
 import me.matsumo.fanbox.core.resources.creator_download_require_plus_message
 import me.matsumo.fanbox.core.resources.creator_download_require_plus_title
 import me.matsumo.fanbox.core.ui.ads.RewardAdLoader
-import me.matsumo.fanbox.core.ui.ads.RewardAdShowResult
+import me.matsumo.fanbox.core.ui.ads.handleRewardAdShowResult
 import me.matsumo.fanbox.core.ui.appName
 import me.matsumo.fanbox.core.ui.theme.LocalAdsSdkInitialized
 import me.matsumo.fanbox.core.ui.theme.bold
@@ -59,17 +60,37 @@ actual fun CreatorTopRewardAdDialog(
     val isRewardAdShowing by rewardAdLoader.isShowing.collectAsStateWithLifecycle()
     val rewardAdShowResult by rewardAdLoader.showResult.collectAsStateWithLifecycle()
     var activeRewardAdRequestId by rememberSaveable { mutableStateOf<Long?>(null) }
+    var startedRewardAdRequestId by remember { mutableStateOf<Long?>(null) }
 
     val isRewardAdReady = activity != null && rewardAd != null
     val canStartRewardAd = isAbleToReward && isRewardAdReady
     val hasActiveRewardAdRequest = activeRewardAdRequestId != null
-    val canRequestRewardAd = canStartRewardAd && !isRewardAdShowing
+    val isStartedRewardAdRequestActive =
+        startedRewardAdRequestId != null && startedRewardAdRequestId == activeRewardAdRequestId
+    val isRewardAdShowActive = isRewardAdShowing || isStartedRewardAdRequestActive
+    val hasRewardAdShowResult = rewardAdShowResult != null
+    val isRewardAdRequestWithoutResult = hasActiveRewardAdRequest && !hasRewardAdShowResult
+    val shouldClearOrphanedRewardAdRequest = isRewardAdRequestWithoutResult && !isRewardAdShowActive
+    val canRequestRewardAd = canStartRewardAd && !isRewardAdShowActive
     val isRewardAdButtonEnabled = canRequestRewardAd && !hasActiveRewardAdRequest
-    val shouldShowRewardAdProgress = rewardAd == null || isRewardAdShowing
+    val shouldShowRewardAdProgress = rewardAd == null || isRewardAdShowActive
     val isRewardAdProgressVisible = shouldShowRewardAdProgress || hasActiveRewardAdRequest
 
     LaunchedEffect(isAdsSdkInitialized) {
         rewardAdLoader.loadRewardAdIfNeeded(isAdsSdkInitialized)
+    }
+
+    LaunchedEffect(shouldClearOrphanedRewardAdRequest) {
+        if (shouldClearOrphanedRewardAdRequest) {
+            activeRewardAdRequestId = null
+            startedRewardAdRequestId = null
+        }
+    }
+
+    LaunchedEffect(isRewardAdShowing) {
+        if (isRewardAdShowing) {
+            startedRewardAdRequestId = null
+        }
     }
 
     LaunchedEffect(
@@ -82,6 +103,7 @@ actual fun CreatorTopRewardAdDialog(
             consumeShowResult = rewardAdLoader::consumeShowResult,
             onActiveResultConsumed = { isRewardEarned ->
                 activeRewardAdRequestId = null
+                startedRewardAdRequestId = null
 
                 if (isRewardEarned) {
                     onRewarded.invoke()
@@ -143,6 +165,7 @@ actual fun CreatorTopRewardAdDialog(
 
                             if (requestId != null) {
                                 activeRewardAdRequestId = requestId
+                                startedRewardAdRequestId = requestId
                             }
                         },
                         enabled = isRewardAdButtonEnabled,
@@ -164,22 +187,5 @@ actual fun CreatorTopRewardAdDialog(
                 }
             }
         }
-    }
-}
-
-private fun handleRewardAdShowResult(
-    showResult: RewardAdShowResult?,
-    activeRequestId: Long?,
-    consumeShowResult: (RewardAdShowResult) -> Unit,
-    onActiveResultConsumed: (Boolean) -> Unit,
-) {
-    if (showResult == null) return
-
-    val isActiveResult = showResult.requestId == activeRequestId
-
-    consumeShowResult(showResult)
-
-    if (isActiveResult) {
-        onActiveResultConsumed(showResult.isRewardEarned)
     }
 }
