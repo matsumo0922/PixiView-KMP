@@ -49,7 +49,7 @@ class RewardRepositoryTest {
 
     @Test
     fun rewardCountsAreResetAfterDateChanges() = runBlocking {
-        val rewardLogDataStore = RewardLogDataStore(createPreferenceHelper(), clock)
+        val rewardLogDataStore = RewardLogDataStore(createPreferenceHelper())
         val rewardRepository = RewardRepositoryImpl(
             rewardLogDataStore = rewardLogDataStore,
             ioDispatcher = Dispatchers.Unconfined,
@@ -68,7 +68,7 @@ class RewardRepositoryTest {
     }
 
     private fun createRewardRepository(): RewardRepository {
-        val rewardLogDataStore = RewardLogDataStore(createPreferenceHelper(), clock)
+        val rewardLogDataStore = RewardLogDataStore(createPreferenceHelper())
 
         return RewardRepositoryImpl(
             rewardLogDataStore = rewardLogDataStore,

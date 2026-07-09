@@ -23,24 +23,30 @@ class RewardRepositoryImpl(
 
     override suspend fun rewarded(usage: RewardUsage) {
         withContext(ioDispatcher) {
-            resetIfNeeded()
+            val date = currentDate()
+
+            resetIfNeeded(date)
             rewardLogDataStore.rewarded(usage)
         }
     }
 
     override suspend fun isAbleToReward(usage: RewardUsage): Boolean {
         return withContext(ioDispatcher) {
-            resetIfNeeded()
+            resetIfNeeded(currentDate())
             rewardLogDataStore.getRewardedCount(usage) < usage.dailyLimit
         }
     }
 
-    private suspend fun resetIfNeeded() {
-        val date = clock.now().format("yyyy-MM-dd")
+    private suspend fun resetIfNeeded(date: String) {
         val lastRewardDate = rewardLogDataStore.getRewardDate()
 
         if (lastRewardDate != date) {
             rewardLogDataStore.reset()
+            rewardLogDataStore.setRewardDate(date)
         }
+    }
+
+    private fun currentDate(): String {
+        return clock.now().format("yyyy-MM-dd")
     }
 }
