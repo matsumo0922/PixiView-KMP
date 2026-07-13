@@ -243,5 +243,12 @@
     "date": "2026/06/08",
     "logJp": "・フォロー画面が見られない問題の修正\n・軽微なUIの修正",
     "logEn": "・Fixed an issue where the follow screen could not be displayed.\n・Minor UI fixes"
+  },
+  {
+    "versionName": "2.3.4",
+    "versionCode": 73,
+    "date": "2026/07/14",
+    "logJp": "・投稿詳細画面が見られない問題の修正\n・軽微なUIの修正",
+    "logEn": "・Fixed an issue where the post detail screen could not be displayed.\n・Minor UI fixes"
   }
 ]
