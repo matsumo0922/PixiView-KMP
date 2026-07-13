@@ -321,6 +321,19 @@
     <string name="billing_plus_item_feature_description">成为第一批体验新功能添加的人！</string>
     <string name="billing_plus_item_support">优先支持</string>
     <string name="billing_plus_item_support_description">始终给予最优先的支持！</string>
+    <string name="billing_retention_title">Plus 权益仍然可用</string>
+    <string name="billing_retention_message">您的订阅已计划结束，但在当前周期结束前 Plus 仍处于有效状态。结束前，请确认这些可以帮助您继续舒适使用 PixiView 的选项。</string>
+    <string name="billing_retention_annual_title">年度方案可以减少续订压力</string>
+    <string name="billing_retention_annual_description">如果您正在使用月度方案，切换到年度方案后可以保留相同的 Plus 权益，并减少续订次数，长期价格也更划算。</string>
+    <string name="billing_retention_pause_title">离开前也可以查看暂停选项</string>
+    <string name="billing_retention_pause_description">如果只是想短暂休息，请打开商店的订阅管理页面，确认您的账户是否可以使用暂停或恢复续订选项。</string>
+    <string name="billing_retention_benefits_title">Plus 可继续使用这些功能</string>
+    <string name="billing_retention_benefit_hide_ads">浏览投稿时隐藏广告</string>
+    <string name="billing_retention_benefit_bulk_download">批量下载创作者投稿</string>
+    <string name="billing_retention_benefit_grid">使用网格显示和高级浏览设置</string>
+    <string name="billing_retention_benefit_support">支持应用持续开发</string>
+    <string name="billing_retention_primary_button">查看年度方案</string>
+    <string name="billing_retention_manage_button">管理订阅</string>
     <string name="billing_plus_cancel_title">已取消订阅计划</string>
     <string name="billing_plus_cancel_message">您已取消 %1$s+ 订阅计划，因此恢复为普通用户。
 

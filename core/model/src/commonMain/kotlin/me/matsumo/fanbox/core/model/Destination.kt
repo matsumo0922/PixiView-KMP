@@ -118,9 +118,17 @@ sealed interface Destination {
     @Serializable
     data object VersionHistoryBottomSheet : Destination
 
+    /** Plus 課金画面の BottomSheet 遷移情報。 */
     @Serializable
     data class BillingPlusBottomSheet(
         val referrer: String?,
+        val initialPlanType: BillingPlan.Type? = null,
+    ) : Destination
+
+    /** 解約予約ユーザー向けリテンション BottomSheet の遷移情報。 */
+    @Serializable
+    data class BillingRetentionBottomSheet(
+        val isAnnualOfferShown: Boolean,
     ) : Destination
 
     // Empty

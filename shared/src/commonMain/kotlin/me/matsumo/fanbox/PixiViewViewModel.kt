@@ -21,7 +21,9 @@ import me.matsumo.fanbox.core.common.PixiViewConfig
 import me.matsumo.fanbox.core.common.util.suspendRunCatching
 import me.matsumo.fanbox.core.datastore.LaunchLogDataStore
 import me.matsumo.fanbox.core.datastore.OldCookieDataStore
+import me.matsumo.fanbox.core.logs.category.BillingLog
 import me.matsumo.fanbox.core.logs.logger.LogConfigurator
+import me.matsumo.fanbox.core.logs.logger.send
 import me.matsumo.fanbox.core.model.DownloadState
 import me.matsumo.fanbox.core.model.ScreenState
 import me.matsumo.fanbox.core.model.Setting
@@ -54,6 +56,7 @@ class PixiViewViewModel(
     private val _isLoggedInFlow: MutableSharedFlow<Boolean> = MutableSharedFlow(replay = 1)
     private val _isAppLockedFlow: MutableStateFlow<Boolean> = MutableStateFlow(true)
     private val _metadataFlow: MutableStateFlow<FanboxMetaData> = MutableStateFlow(getFanboxMetadataDummy())
+    private val _isBillingSyncSucceededFlow: MutableStateFlow<Boolean> = MutableStateFlow(false)
 
     // インタースティシャル広告の頻度判定用。永続化せずプロセス内のみ保持する
     private var interstitialPostCloseCount = 0
@@ -67,6 +70,7 @@ class PixiViewViewModel(
             _metadataFlow,
             _isLoggedInFlow,
             _isAppLockedFlow,
+            _isBillingSyncSucceededFlow,
         ),
     ) { flows ->
         val setting = flows[0] as Setting
@@ -75,6 +79,7 @@ class PixiViewViewModel(
         val fanboxMetadata = flows[3] as FanboxMetaData
         val isLoggedIn = flows[4] as Boolean
         val isAppLocked = flows[5] as Boolean
+        val isBillingSyncSucceeded = flows[6] as Boolean
 
         ScreenState.Idle(
             MainUiState(
@@ -84,6 +89,7 @@ class PixiViewViewModel(
                 downloadState = downloadState,
                 isLoggedIn = isLoggedIn,
                 isAppLocked = if (setting.isUseAppLock) isAppLocked else false,
+                isBillingSyncSucceeded = isBillingSyncSucceeded,
             ),
         )
     }.stateIn(
@@ -120,14 +126,33 @@ class PixiViewViewModel(
 
     fun billingClientUpdate() {
         viewModelScope.launch {
+            _isBillingSyncSucceededFlow.emit(false)
+
             delay(3000)
 
             suspendRunCatching { billingClient.getPlusStatus() }.onSuccess { plusStatus ->
-                settingRepository.setPlusStatus(
-                    isPlusMode = plusStatus.isActive,
-                    isPlusTrial = plusStatus.isTrial,
-                )
+                settingRepository.setPlusStatus(plusStatus)
+                _isBillingSyncSucceededFlow.emit(true)
             }
+        }
+    }
+
+    @OptIn(ExperimentalTime::class)
+    fun recordBillingRetentionPromptShown() {
+        viewModelScope.launch {
+            val setting = settingRepository.setting.first()
+            val shownAtMillis = Clock.System.now().toEpochMilliseconds()
+
+            settingRepository.recordBillingRetentionPromptShown(
+                shownAtMillis = shownAtMillis,
+                unsubscribeDetectedAtMillis = setting.plusUnsubscribeDetectedAtMillis,
+            )
+
+            BillingLog.retentionPromptShown(
+                planType = setting.plusPlanType.name,
+                unsubscribeDetectedAtMillis = setting.plusUnsubscribeDetectedAtMillis,
+                isAnnualOfferShown = setting.shouldShowBillingRetentionAnnualOffer,
+            ).send()
         }
     }
 
@@ -243,4 +268,5 @@ data class MainUiState(
     val downloadState: DownloadState,
     val isLoggedIn: Boolean,
     val isAppLocked: Boolean,
+    val isBillingSyncSucceeded: Boolean,
 )

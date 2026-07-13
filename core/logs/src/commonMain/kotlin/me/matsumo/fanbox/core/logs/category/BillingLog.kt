@@ -39,6 +39,47 @@ sealed class BillingLog : LogCategory {
         }
     }
 
+    class RetentionPromptShown internal constructor(
+        private val planType: String,
+        private val unsubscribeDetectedAtMillis: Long?,
+        private val isAnnualOfferShown: Boolean,
+    ) : BillingLog() {
+        override val properties: JsonObject = buildJsonObject {
+            put("event_category", "billing")
+            put("event_name", "retention_prompt_shown")
+            put("plan_type", planType)
+            put("unsubscribe_detected_at_millis", unsubscribeDetectedAtMillis)
+            put("is_annual_offer_shown", isAnnualOfferShown)
+        }
+    }
+
+    class RetentionPromptAnnualClicked internal constructor() : BillingLog() {
+        override val properties: JsonObject = buildJsonObject {
+            put("event_category", "billing")
+            put("event_name", "retention_prompt_annual_clicked")
+        }
+    }
+
+    class RetentionPromptManageClicked internal constructor(
+        private val platform: String,
+    ) : BillingLog() {
+        override val properties: JsonObject = buildJsonObject {
+            put("event_category", "billing")
+            put("event_name", "retention_prompt_manage_clicked")
+            put("platform", platform)
+        }
+    }
+
+    class RetentionPromptDismissed internal constructor(
+        private val reason: String,
+    ) : BillingLog() {
+        override val properties: JsonObject = buildJsonObject {
+            put("event_category", "billing")
+            put("event_name", "retention_prompt_dismissed")
+            put("reason", reason)
+        }
+    }
+
     companion object {
         // 購入リクエスト
         fun purchase(
@@ -55,5 +96,25 @@ sealed class BillingLog : LogCategory {
         fun verify(
             isSuccess: Boolean,
         ) = Verify(isSuccess)
+
+        // リテンション UI 表示
+        fun retentionPromptShown(
+            planType: String,
+            unsubscribeDetectedAtMillis: Long?,
+            isAnnualOfferShown: Boolean,
+        ) = RetentionPromptShown(planType, unsubscribeDetectedAtMillis, isAnnualOfferShown)
+
+        // リテンション UI 年額 CTA
+        fun retentionPromptAnnualClicked() = RetentionPromptAnnualClicked()
+
+        // リテンション UI 購読管理 CTA
+        fun retentionPromptManageClicked(
+            platform: String,
+        ) = RetentionPromptManageClicked(platform)
+
+        // リテンション UI dismiss
+        fun retentionPromptDismissed(
+            reason: String,
+        ) = RetentionPromptDismissed(reason)
     }
 }

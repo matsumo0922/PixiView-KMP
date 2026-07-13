@@ -179,6 +179,8 @@ class BottomSheetNavigator(val sheetState: ModalBottomSheetState) : Navigator<De
                 // In this case, we will immediately pop without a transition as the sheet has
                 // already been hidden
                 else {
+                    val destination = backStackEntry.destination as Destination
+                    destination.onDismissed(backStackEntry)
                     state.pop(popUpTo = backStackEntry, saveState = false)
                 }
             },
@@ -191,7 +193,10 @@ class BottomSheetNavigator(val sheetState: ModalBottomSheetState) : Navigator<De
     }
 
     override fun createDestination(): Destination {
-        return Destination(this) { }
+        return Destination(
+            navigator = this,
+            content = {},
+        )
     }
 
     override fun navigate(
@@ -211,6 +216,7 @@ class BottomSheetNavigator(val sheetState: ModalBottomSheetState) : Navigator<De
     class Destination(
         navigator: BottomSheetNavigator,
         internal val content: @Composable ColumnScope.(NavBackStackEntry) -> Unit,
+        internal val onDismissed: (NavBackStackEntry) -> Unit = {},
     ) : NavDestination(navigator), FloatingWindow
 
     companion object {

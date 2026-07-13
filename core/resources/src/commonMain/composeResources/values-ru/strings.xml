@@ -324,6 +324,19 @@
     <string name="billing_plus_item_feature_description">Будьте первыми, кто опробует новые функции, когда они появятся!</string>
     <string name="billing_plus_item_support">Приоритетная поддержка</string>
     <string name="billing_plus_item_support_description">Всегда обеспечивает поддержку высшего уровня!</string>
+    <string name="billing_retention_title">Преимущества Plus ещё доступны</string>
+    <string name="billing_retention_message">Подписка запланирована к завершению, но Plus действует до конца текущего периода. Перед завершением проверьте варианты, которые помогут продолжить пользоваться PixiView с комфортом.</string>
+    <string name="billing_retention_annual_title">Годовой план уменьшает хлопоты с продлением</string>
+    <string name="billing_retention_annual_description">Если вы используете месячный план, переход на годовой сохранит те же преимущества Plus с меньшим числом продлений и более выгодной долгосрочной ценой.</string>
+    <string name="billing_retention_pause_title">Перед уходом можно проверить паузу</string>
+    <string name="billing_retention_pause_description">Если нужен только короткий перерыв, откройте страницу управления подпиской в магазине и проверьте, доступны ли пауза или варианты продления для вашего аккаунта.</string>
+    <string name="billing_retention_benefits_title">Plus сохраняет доступ к этим функциям</string>
+    <string name="billing_retention_benefit_hide_ads">Просмотр публикаций без рекламы</string>
+    <string name="billing_retention_benefit_bulk_download">Пакетное скачивание публикаций авторов</string>
+    <string name="billing_retention_benefit_grid">Сетка и расширенные настройки просмотра</string>
+    <string name="billing_retention_benefit_support">Поддержка дальнейшей разработки приложения</string>
+    <string name="billing_retention_primary_button">Посмотреть годовой план</string>
+    <string name="billing_retention_manage_button">Управлять подпиской</string>
     <string name="billing_plus_cancel_title">План отменён</string>
     <string name="billing_plus_cancel_message">Ваш план %1$s+ был отменён, поэтому вы вернулись к обычному пользователю. 
 

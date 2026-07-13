@@ -22,6 +22,7 @@ import me.matsumo.fanbox.core.model.BillingPlan
 import me.matsumo.fanbox.core.model.BillingPlusStatus
 import me.matsumo.fanbox.core.model.BillingTrialPeriod
 import kotlin.coroutines.resume
+import com.revenuecat.purchases.kmp.models.Package as RevenueCatPackage
 
 /** RevenueCat を利用して Plus 課金状態を扱うクライアント。 */
 class BillingClient(
@@ -37,36 +38,35 @@ class BillingClient(
 
     suspend fun getPlusStatus(): BillingPlusStatus = withContext(ioDispatcher) {
         val customerInfo = Purchases.sharedInstance.awaitCustomerInfo()
+        val availablePackages = getAvailablePackages()
 
-        return@withContext customerInfo.toBillingPlusStatus()
+        return@withContext customerInfo.toBillingPlusStatus(availablePackages)
     }
 
     suspend fun purchase(type: BillingPlan.Type): BillingPlusStatus = withContext(ioDispatcher) {
-        val product = planCache[type] ?: return@withContext BillingPlusStatus(
-            isActive = false,
-            isTrial = false,
-        )
+        val product = planCache[type] ?: return@withContext inactivePlusStatus()
         val result = Purchases.sharedInstance.awaitPurchase(product)
+        val availablePackages = getAvailablePackages()
 
-        return@withContext result.customerInfo.toBillingPlusStatus()
+        return@withContext result.customerInfo.toBillingPlusStatus(availablePackages)
     }
 
-    suspend fun restore(): BillingPlusStatus = suspendCancellableCoroutine { continuation ->
-        Purchases.sharedInstance.restorePurchases(
-            onSuccess = {
-                Napier.d { "restore success: $it" }
-                continuation.resume(it.toBillingPlusStatus())
-            },
-            onError = {
-                Napier.d { "restore error: $it" }
-                continuation.resume(
-                    BillingPlusStatus(
-                        isActive = false,
-                        isTrial = false,
-                    ),
-                )
-            },
-        )
+    suspend fun restore(): BillingPlusStatus = withContext(ioDispatcher) {
+        val customerInfo = suspendCancellableCoroutine<CustomerInfo?> { continuation ->
+            Purchases.sharedInstance.restorePurchases(
+                onSuccess = {
+                    Napier.d { "restore success: $it" }
+                    continuation.resume(it)
+                },
+                onError = {
+                    Napier.d { "restore error: $it" }
+                    continuation.resume(null)
+                },
+            )
+        }
+        val availablePackages = getAvailablePackages()
+
+        return@withContext customerInfo?.toBillingPlusStatus(availablePackages) ?: inactivePlusStatus()
     }
 
     suspend fun getPlans() = withContext(ioDispatcher) {
@@ -91,25 +91,51 @@ class BillingClient(
         }
     }
 
-    private fun PackageType.toBillingPlanType(): BillingPlan.Type = when (this) {
-        PackageType.MONTHLY -> BillingPlan.Type.MONTHLY
-        PackageType.ANNUAL -> BillingPlan.Type.ANNUAL
-        else -> BillingPlan.Type.UNKNOWN
+    private suspend fun getAvailablePackages(): List<RevenueCatPackage> {
+        return runCatching {
+            Purchases.sharedInstance
+                .awaitOfferings()
+                .current
+                ?.availablePackages
+                .orEmpty()
+        }.getOrElse { throwable ->
+            Napier.w(throwable) { "Failed to fetch offerings for plus status." }
+            emptyList()
+        }
     }
 
-    private fun CustomerInfo.toBillingPlusStatus(): BillingPlusStatus {
+    private fun CustomerInfo.toBillingPlusStatus(availablePackages: List<RevenueCatPackage>): BillingPlusStatus {
         val entitlement = entitlements[PLUS_ENTITLEMENT_ID]
 
         Napier.d { "entitlement: $entitlement" }
 
         val isActive = entitlement?.isActive == true
+        val willRenew = entitlement?.willRenew == true
         val isTrialPeriod = entitlement?.periodType == PeriodType.TRIAL
         // iOS でトライアル対応する場合は、この Android 限定ガードを見直す。
         val isTrial = isActive && isAndroidPlatform() && isTrialPeriod
+        val planType = resolveBillingPlanType(
+            entitlementProductIdentifier = entitlement?.productIdentifier,
+            entitlementProductPlanIdentifier = entitlement?.productPlanIdentifier,
+            availablePackages = availablePackages,
+        )
 
         return BillingPlusStatus(
             isActive = isActive,
             isTrial = isTrial,
+            willRenew = willRenew,
+            unsubscribeDetectedAtMillis = entitlement?.unsubscribeDetectedAtMillis,
+            planType = planType,
+        )
+    }
+
+    private fun inactivePlusStatus(): BillingPlusStatus {
+        return BillingPlusStatus(
+            isActive = false,
+            isTrial = false,
+            willRenew = false,
+            unsubscribeDetectedAtMillis = null,
+            planType = BillingPlan.Type.UNKNOWN,
         )
     }
 
@@ -147,5 +173,49 @@ class BillingClient(
 
         /** Android プラットフォーム名。 */
         private const val ANDROID_PLATFORM = "Android"
+    }
+}
+
+internal fun resolveBillingPlanType(
+    entitlementProductIdentifier: String?,
+    entitlementProductPlanIdentifier: String?,
+    availablePackages: List<RevenueCatPackage>,
+): BillingPlan.Type {
+    if (entitlementProductIdentifier.isNullOrBlank()) return BillingPlan.Type.UNKNOWN
+
+    val matchedPackages = availablePackages.filter { availablePackage ->
+        availablePackage.matchesEntitlementProduct(
+            entitlementProductIdentifier = entitlementProductIdentifier,
+            entitlementProductPlanIdentifier = entitlementProductPlanIdentifier,
+        )
+    }
+    val matchedPackage = matchedPackages.singleOrNull() ?: return BillingPlan.Type.UNKNOWN
+
+    return matchedPackage.packageType.toBillingPlanType()
+}
+
+private fun RevenueCatPackage.matchesEntitlementProduct(entitlementProductIdentifier: String, entitlementProductPlanIdentifier: String?): Boolean {
+    val planQualifiedProductId = entitlementProductPlanIdentifier?.let { planIdentifier ->
+        "$entitlementProductIdentifier:$planIdentifier"
+    }
+    val exactProductIdMatches = storeProduct.id == entitlementProductIdentifier
+    val planQualifiedProductIdMatches = storeProduct.id == planQualifiedProductId
+    val packageIdentifierMatches = identifier == entitlementProductIdentifier
+    val hasNoPlanIdentifier = entitlementProductPlanIdentifier == null
+    val productIdPrefixMatches = storeProduct.id.substringBefore(":") == entitlementProductIdentifier
+
+    return listOf(
+        exactProductIdMatches,
+        planQualifiedProductIdMatches,
+        packageIdentifierMatches,
+        hasNoPlanIdentifier && productIdPrefixMatches,
+    ).any { isMatched -> isMatched }
+}
+
+private fun PackageType.toBillingPlanType(): BillingPlan.Type {
+    return when (this) {
+        PackageType.MONTHLY -> BillingPlan.Type.MONTHLY
+        PackageType.ANNUAL -> BillingPlan.Type.ANNUAL
+        else -> BillingPlan.Type.UNKNOWN
     }
 }

@@ -10,6 +10,8 @@ plugins {
 kotlin {
     android {
         namespace = "me.matsumo.fanbox.core.model"
+
+        withHostTest {}
     }
 
     sourceSets {
@@ -21,6 +23,14 @@ kotlin {
             implementation(libs.ktor.core)
 
             api(libs.fankt.fanbox)
+        }
+
+        commonTest.dependencies {
+            implementation(kotlin("test"))
+        }
+
+        getByName("androidHostTest").dependencies {
+            implementation(kotlin("test-junit"))
         }
     }
 }

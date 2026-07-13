@@ -9,6 +9,8 @@ plugins {
 kotlin {
     android {
         namespace = "me.matsumo.fanbox.core.billing"
+
+        withHostTest {}
     }
 
     sourceSets {
@@ -21,6 +23,14 @@ kotlin {
             implementation(project(":core:resources"))
 
             implementation(libs.bundles.purchase)
+        }
+
+        commonTest.dependencies {
+            implementation(kotlin("test"))
+        }
+
+        getByName("androidHostTest").dependencies {
+            implementation(kotlin("test-junit"))
         }
     }
 }

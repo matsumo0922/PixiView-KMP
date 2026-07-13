@@ -13,6 +13,7 @@ internal fun PixiViewContent(
     bottomSheetNavigator: BottomSheetNavigator,
     navController: NavHostController,
     onPostDetailClosed: suspend () -> Unit,
+    onLibraryHomeVisibilityChanged: (Boolean) -> Unit,
     modifier: Modifier = Modifier,
 ) {
     Box(modifier) {
@@ -21,6 +22,7 @@ internal fun PixiViewContent(
             bottomSheetNavigator = bottomSheetNavigator,
             navController = navController,
             onPostDetailClosed = onPostDetailClosed,
+            onLibraryHomeVisibilityChanged = onLibraryHomeVisibilityChanged,
         )
     }
 }

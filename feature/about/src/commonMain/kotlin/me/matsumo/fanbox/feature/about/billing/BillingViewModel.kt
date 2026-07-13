@@ -31,6 +31,7 @@ class BillingViewModel(
 
     private val plans = MutableStateFlow(emptyList<BillingPlan>())
     private val selectedPlanType = MutableStateFlow(BillingPlan.Type.MONTHLY)
+    private var hasSelectedInitialPlan = false
 
     private val _messageEvent = Channel<BillingMessageEvent>(Channel.BUFFERED)
     val messageEvent = _messageEvent.receiveAsFlow()
@@ -71,6 +72,15 @@ class BillingViewModel(
         }
     }
 
+    fun selectInitialPlan(type: BillingPlan.Type) {
+        if (hasSelectedInitialPlan) return
+        hasSelectedInitialPlan = true
+
+        if (type != BillingPlan.Type.UNKNOWN) {
+            handleOnPlanSelected(type)
+        }
+    }
+
     private fun handleOnPlanSelected(type: BillingPlan.Type) {
         selectedPlanType.value = type
     }
@@ -80,10 +90,7 @@ class BillingViewModel(
             val result = suspendRunCatching { billingClient.purchase(selectedPlanType.value) }.getOrElse { inactivePlusStatus() }
 
             if (result.isActive) {
-                settingRepository.setPlusStatus(
-                    isPlusMode = result.isActive,
-                    isPlusTrial = result.isTrial,
-                )
+                settingRepository.setPlusStatus(result)
                 _messageEvent.trySend(BillingMessageEvent.Purchased)
             } else {
                 _messageEvent.trySend(BillingMessageEvent.SnackBar(Res.string.billing_plus_toast_purchased_error))
@@ -96,10 +103,7 @@ class BillingViewModel(
             val result = suspendRunCatching { billingClient.restore() }.getOrElse { inactivePlusStatus() }
 
             if (result.isActive) {
-                settingRepository.setPlusStatus(
-                    isPlusMode = result.isActive,
-                    isPlusTrial = result.isTrial,
-                )
+                settingRepository.setPlusStatus(result)
                 _messageEvent.trySend(BillingMessageEvent.Purchased)
             } else {
                 _messageEvent.trySend(BillingMessageEvent.SnackBar(Res.string.billing_plus_toast_verify_error))
@@ -112,6 +116,9 @@ private fun inactivePlusStatus(): BillingPlusStatus {
     return BillingPlusStatus(
         isActive = false,
         isTrial = false,
+        willRenew = false,
+        unsubscribeDetectedAtMillis = null,
+        planType = BillingPlan.Type.UNKNOWN,
     )
 }
 
