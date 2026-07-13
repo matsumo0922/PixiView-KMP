@@ -29,6 +29,23 @@ class SettingPlusStatusUpdateTest {
     }
 
     @Test
+    fun fromDoesNotSetCancellationStatusWithoutUnsubscribeDetection() {
+        val plusStatus = BillingPlusStatus(
+            isActive = true,
+            isTrial = false,
+            willRenew = false,
+            unsubscribeDetectedAtMillis = null,
+            planType = BillingPlan.Type.MONTHLY,
+        )
+
+        val update = SettingPlusStatusUpdate.from(Setting.default(), plusStatus)
+
+        assertTrue(update.isPlusMode)
+        assertFalse(update.isPlusSubscriptionSetToCancel)
+        assertEquals(null, update.plusUnsubscribeDetectedAtMillis)
+    }
+
+    @Test
     fun fromClearsSetToCancelStatusWhenSubscriptionWillRenewAgain() {
         val currentSetting = Setting.default().copy(
             isPlusMode = true,

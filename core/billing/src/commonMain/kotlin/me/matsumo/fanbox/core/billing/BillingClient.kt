@@ -125,7 +125,7 @@ class BillingClient(
             isTrial = isTrial,
             willRenew = willRenew,
             unsubscribeDetectedAtMillis = entitlement?.unsubscribeDetectedAtMillis,
-            planType = planType.takeIf { isActive } ?: BillingPlan.Type.UNKNOWN,
+            planType = planType,
         )
     }
 

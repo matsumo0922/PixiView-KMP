@@ -11,6 +11,6 @@ data class BillingPlusStatus(
     val unsubscribeDetectedAtMillis: Long?,
     val planType: BillingPlan.Type,
 ) {
-    /** Plus の有効期間内だが自動更新しない状態かどうか。 */
-    val isSetToCancel get() = isActive && !willRenew
+    /** Plus の有効期間内で、RevenueCat が解約を検知している状態かどうか。 */
+    val isSetToCancel get() = isActive && !willRenew && unsubscribeDetectedAtMillis != null
 }

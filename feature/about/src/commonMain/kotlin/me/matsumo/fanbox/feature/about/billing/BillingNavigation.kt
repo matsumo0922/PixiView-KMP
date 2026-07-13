@@ -6,7 +6,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.backhandler.BackHandler
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.toRoute
-import me.matsumo.fanbox.core.model.BillingPlan
+import me.matsumo.fanbox.core.logs.category.BillingLog
+import me.matsumo.fanbox.core.logs.logger.send
 import me.matsumo.fanbox.core.model.Destination
 import me.matsumo.fanbox.core.ui.component.sheet.bottomSheet
 
@@ -23,7 +24,7 @@ fun NavGraphBuilder.billingPlusBottomSheet(
 
         BillingPlusRoute(
             modifier = Modifier.fillMaxSize(),
-            initialPlanType = args.initialPlanTypeName.toBillingPlanType(),
+            initialPlanType = args.initialPlanType,
         )
     }
 }
@@ -32,7 +33,11 @@ fun NavGraphBuilder.billingPlusBottomSheet(
 fun NavGraphBuilder.billingRetentionBottomSheet(
     terminate: () -> Unit,
 ) {
-    bottomSheet<Destination.BillingRetentionBottomSheet> { entry ->
+    bottomSheet<Destination.BillingRetentionBottomSheet>(
+        onDismissed = {
+            BillingLog.retentionPromptDismissed(BILLING_RETENTION_DISMISS_SHEET).send()
+        },
+    ) { entry ->
         val args = entry.toRoute<Destination.BillingRetentionBottomSheet>()
 
         BillingRetentionRoute(
@@ -43,6 +48,5 @@ fun NavGraphBuilder.billingRetentionBottomSheet(
     }
 }
 
-private fun String?.toBillingPlanType(): BillingPlan.Type {
-    return BillingPlan.Type.entries.firstOrNull { planType -> planType.name == this } ?: BillingPlan.Type.MONTHLY
-}
+/** scrim タップやスワイプで BottomSheet が閉じたときの dismiss reason。 */
+private const val BILLING_RETENTION_DISMISS_SHEET = "sheet_dismiss"

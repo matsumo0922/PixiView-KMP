@@ -13,7 +13,9 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.navigation.NavDestination.Companion.hasRoute
 import androidx.navigation.NavHostController
+import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import me.matsumo.fanbox.MainUiState
 import me.matsumo.fanbox.core.model.Destination
@@ -34,8 +36,10 @@ internal fun PixiViewScreen(
 ) {
     val bottomSheetNavigator = rememberBottomSheetNavigator()
     val navController = rememberNavController(bottomSheetNavigator)
+    val currentBackStackEntry by navController.currentBackStackEntryAsState()
 
     var showPaywallFlag by remember { mutableStateOf(false) }
+    var isLibraryHomeVisible by remember { mutableStateOf(false) }
     var isAgreedTeams by remember {
         mutableStateOf(uiState.setting.isAgreedPrivacyPolicy && uiState.setting.isAgreedTermsOfService)
     }
@@ -75,11 +79,13 @@ internal fun PixiViewScreen(
                 bottomSheetNavigator = bottomSheetNavigator,
                 navController = navController,
                 onPostDetailClosed = onPostDetailClosed,
+                onLibraryHomeVisibilityChanged = { isLibraryHomeVisible = it },
             )
 
             HandleBillingRetentionPrompt(
                 uiState = uiState,
                 navController = navController,
+                isHomeVisible = isLibraryHomeVisible && currentBackStackEntry?.destination?.hasRoute<Destination.Library>() == true,
                 onBillingRetentionPromptShown = onBillingRetentionPromptShown,
             )
 
@@ -98,14 +104,15 @@ internal fun PixiViewScreen(
 private fun HandleBillingRetentionPrompt(
     uiState: MainUiState,
     navController: NavHostController,
+    isHomeVisible: Boolean,
     onBillingRetentionPromptShown: () -> Unit,
 ) {
     val currentOnBillingRetentionPromptShown by rememberUpdatedState(onBillingRetentionPromptShown)
     var shownPromptDedupeKey by remember { mutableStateOf<String?>(null) }
 
-    LaunchedEffect(uiState.setting, uiState.isBillingSyncSucceeded, uiState.isAppLocked) {
+    LaunchedEffect(uiState.setting, uiState.isBillingSyncSucceeded, uiState.isAppLocked, isHomeVisible) {
         val currentTimeMillis = Clock.System.now().toEpochMilliseconds()
-        val canShowPrompt = uiState.canShowBillingRetentionPrompt(currentTimeMillis)
+        val canShowPrompt = uiState.canShowBillingRetentionPrompt(currentTimeMillis, isHomeVisible)
         if (!canShowPrompt) return@LaunchedEffect
 
         val promptDedupeKey = uiState.setting.billingRetentionPromptDedupeKey
@@ -121,9 +128,10 @@ private fun HandleBillingRetentionPrompt(
     }
 }
 
-private fun MainUiState.canShowBillingRetentionPrompt(currentTimeMillis: Long): Boolean {
+private fun MainUiState.canShowBillingRetentionPrompt(currentTimeMillis: Long, isHomeVisible: Boolean): Boolean {
     if (!isBillingSyncSucceeded) return false
     if (isAppLocked) return false
+    if (!isHomeVisible) return false
 
     return setting.canShowBillingRetentionPrompt(currentTimeMillis)
 }

@@ -31,6 +31,7 @@ class BillingViewModel(
 
     private val plans = MutableStateFlow(emptyList<BillingPlan>())
     private val selectedPlanType = MutableStateFlow(BillingPlan.Type.MONTHLY)
+    private var hasSelectedInitialPlan = false
 
     private val _messageEvent = Channel<BillingMessageEvent>(Channel.BUFFERED)
     val messageEvent = _messageEvent.receiveAsFlow()
@@ -68,6 +69,15 @@ class BillingViewModel(
             is BillingViewEvent.OnPlanSelected -> handleOnPlanSelected(event.type)
             BillingViewEvent.OnPurchaseClicked -> handleOnPurchase()
             BillingViewEvent.OnRestoreClicked -> handleRestore()
+        }
+    }
+
+    fun selectInitialPlan(type: BillingPlan.Type) {
+        if (hasSelectedInitialPlan) return
+        hasSelectedInitialPlan = true
+
+        if (type != BillingPlan.Type.UNKNOWN) {
+            handleOnPlanSelected(type)
         }
     }
 

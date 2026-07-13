@@ -32,13 +32,13 @@ import org.koin.compose.viewmodel.koinViewModel
 @Composable
 internal fun BillingPlusRoute(
     modifier: Modifier = Modifier,
-    initialPlanType: BillingPlan.Type = BillingPlan.Type.MONTHLY,
+    initialPlanType: BillingPlan.Type? = null,
     viewModel: BillingViewModel = koinViewModel(),
 ) {
     val screenState by viewModel.screenState.collectAsStateWithLifecycle()
 
     LaunchedEffect(initialPlanType) {
-        viewModel.onViewEvent(BillingViewEvent.OnPlanSelected(initialPlanType))
+        initialPlanType?.let(viewModel::selectInitialPlan)
     }
 
     AsyncLoadContents(

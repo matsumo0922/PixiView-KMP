@@ -27,8 +27,6 @@ import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.DisposableEffect
-import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
@@ -71,46 +69,42 @@ internal fun BillingRetentionRoute(
     navigatorExtension: NavigatorExtension = koinInject(),
 ) {
     val navController = LocalNavController.current
-    val dismissState = remember { BillingRetentionDismissState() }
 
     BackHandler {
-        dismissState.dismissWithLog(
+        dismissBillingRetentionPrompt(
             reason = BILLING_RETENTION_DISMISS_BACK_BUTTON,
             terminate = terminate,
         )
-    }
-
-    DisposableEffect(Unit) {
-        onDispose {
-            dismissState.sendSheetDismissLogIfNeeded()
-        }
     }
 
     BillingRetentionScreen(
         modifier = modifier,
         isAnnualOfferShown = isAnnualOfferShown,
         onAnnualPlanClicked = {
-            dismissState.markHandled()
             BillingLog.retentionPromptAnnualClicked().send()
-            terminate()
             navController.navigate(
                 Destination.BillingPlusBottomSheet(
                     referrer = BILLING_RETENTION_REFERRER,
-                    initialPlanTypeName = BillingPlan.Type.ANNUAL.name,
+                    initialPlanType = BillingPlan.Type.ANNUAL,
                 ),
-            )
+            ) {
+                popUpTo<Destination.BillingRetentionBottomSheet> {
+                    inclusive = true
+                }
+            }
         },
         onManageSubscriptionClicked = {
             val subscriptionManagementUrl = currentPlatform.subscriptionManagementUrl()
 
             BillingLog.retentionPromptManageClicked(currentPlatform.name).send()
+            terminate()
             navigatorExtension.navigateToWebPage(
                 url = subscriptionManagementUrl,
                 referrer = BILLING_RETENTION_REFERRER,
             )
         },
         onDismissClicked = {
-            dismissState.dismissWithLog(
+            dismissBillingRetentionPrompt(
                 reason = BILLING_RETENTION_DISMISS_CLOSE_BUTTON,
                 terminate = terminate,
             )
@@ -394,27 +388,10 @@ private fun Platform.subscriptionManagementUrl(): String {
     }
 }
 
-/** リテンション BottomSheet の dismiss ログが重複しないように管理する状態。 */
-private class BillingRetentionDismissState {
-
-    private var isDismissHandled = false
-
-    fun markHandled() {
-        isDismissHandled = true
-    }
-
-    fun dismissWithLog(reason: String, terminate: () -> Unit) {
-        markHandled()
-        BillingLog.retentionPromptDismissed(reason).send()
-        terminate()
-    }
-
-    fun sendSheetDismissLogIfNeeded() {
-        if (isDismissHandled) return
-
-        markHandled()
-        BillingLog.retentionPromptDismissed(BILLING_RETENTION_DISMISS_SHEET).send()
-    }
+/** リテンション BottomSheet を理由付きで閉じる。 */
+private fun dismissBillingRetentionPrompt(reason: String, terminate: () -> Unit) {
+    BillingLog.retentionPromptDismissed(reason).send()
+    terminate()
 }
 
 /** リテンション BottomSheet から Plus 購入画面を開いたときの referrer。 */
@@ -425,9 +402,6 @@ private const val BILLING_RETENTION_DISMISS_CLOSE_BUTTON = "close_button"
 
 /** システム戻る操作で閉じたときの dismiss reason。 */
 private const val BILLING_RETENTION_DISMISS_BACK_BUTTON = "back"
-
-/** scrim タップやスワイプで BottomSheet が閉じたときの dismiss reason。 */
-private const val BILLING_RETENTION_DISMISS_SHEET = "sheet_dismiss"
 
 /** Play Store の PixiView 公開 applicationId 付き購読管理 URL。 */
 private const val ANDROID_SUBSCRIPTION_MANAGEMENT_URL = "https://play.google.com/store/account/subscriptions?package=caios.android.fanbox"

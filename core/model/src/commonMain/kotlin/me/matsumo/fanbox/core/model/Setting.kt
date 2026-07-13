@@ -75,6 +75,8 @@ data class Setting(
         if (isNewEpisode) return true
 
         val elapsedTimeMillis = currentTimeMillis - plusRetentionPromptLastShownAtMillis
+        val hasClockMovedBackwards = elapsedTimeMillis < 0L
+        if (hasClockMovedBackwards) return true
 
         return elapsedTimeMillis >= BILLING_RETENTION_PROMPT_INTERVAL_MILLIS
     }

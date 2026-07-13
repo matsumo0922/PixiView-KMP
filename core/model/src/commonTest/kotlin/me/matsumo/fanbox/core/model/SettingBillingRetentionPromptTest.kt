@@ -41,6 +41,16 @@ class SettingBillingRetentionPromptTest {
     }
 
     @Test
+    fun canShowBillingRetentionPromptReturnsTrueWhenClockMovesBackwards() {
+        val setting = setToCancelSetting().copy(
+            plusRetentionPromptLastShownAtMillis = CURRENT_TIME_MILLIS,
+            plusRetentionPromptLastShownUnsubscribeDetectedAtMillis = UNSUBSCRIBE_DETECTED_AT_MILLIS,
+        )
+
+        assertTrue(setting.canShowBillingRetentionPrompt(CURRENT_TIME_MILLIS - 1L))
+    }
+
+    @Test
     fun canShowBillingRetentionPromptReturnsTrueWhenUnsubscribeEpisodeChanged() {
         val setting = setToCancelSetting().copy(
             plusUnsubscribeDetectedAtMillis = NEW_UNSUBSCRIBE_DETECTED_AT_MILLIS,

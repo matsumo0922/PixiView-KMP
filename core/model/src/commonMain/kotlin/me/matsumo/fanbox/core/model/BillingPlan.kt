@@ -1,6 +1,7 @@
 package me.matsumo.fanbox.core.model
 
 import androidx.compose.runtime.Immutable
+import kotlinx.serialization.Serializable
 
 /** Plus の購入プランを表すモデル。 */
 @Immutable
@@ -12,6 +13,7 @@ data class BillingPlan(
     val trialPeriod: BillingTrialPeriod?,
 ) {
     /** Plus の購入プラン種別を表す列挙型。 */
+    @Serializable
     enum class Type {
         MONTHLY,
         ANNUAL,

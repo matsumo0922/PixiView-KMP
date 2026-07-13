@@ -28,12 +28,14 @@ fun NavGraphBuilder.bottomSheet(
     route: String,
     arguments: List<NamedNavArgument> = emptyList(),
     deepLinks: List<NavDeepLink> = emptyList(),
+    onDismissed: (NavBackStackEntry) -> Unit = {},
     content: @Composable ColumnScope.(backstackEntry: NavBackStackEntry) -> Unit,
 ) {
     addDestination(
         BottomSheetNavigator.Destination(
-            provider[BottomSheetNavigator::class],
-            content,
+            navigator = provider[BottomSheetNavigator::class],
+            content = content,
+            onDismissed = onDismissed,
         ).apply {
             this.route = route
             arguments.fastForEach { (argumentName, argument) ->
@@ -48,14 +50,16 @@ fun NavGraphBuilder.bottomSheet(
 
 inline fun <reified T : Any> NavGraphBuilder.bottomSheet(
     deepLinks: List<NavDeepLink> = emptyList(),
+    noinline onDismissed: (NavBackStackEntry) -> Unit = {},
     noinline content: @Composable ColumnScope.(backstackEntry: NavBackStackEntry) -> Unit,
 ) {
     destination(
         BottomSheetNavigatorDestinationBuilder(
-            provider[BottomSheetNavigator::class],
-            T::class,
-            emptyMap(),
-            content,
+            navigator = provider[BottomSheetNavigator::class],
+            route = T::class,
+            typeMap = emptyMap(),
+            content = content,
+            onDismissed = onDismissed,
         )
             .apply {
                 deepLinks.forEach { deepLink -> deepLink(deepLink) }
@@ -70,14 +74,17 @@ class BottomSheetNavigatorDestinationBuilder :
 
     private val composeNavigator: BottomSheetNavigator
     private val content: @Composable ColumnScope.(NavBackStackEntry) -> Unit
+    private val onDismissed: (NavBackStackEntry) -> Unit
 
     constructor(
         navigator: BottomSheetNavigator,
         route: String,
         content: @Composable ColumnScope.(NavBackStackEntry) -> Unit,
+        onDismissed: (NavBackStackEntry) -> Unit,
     ) : super(navigator, route) {
         this.composeNavigator = navigator
         this.content = content
+        this.onDismissed = onDismissed
     }
 
     constructor(
@@ -85,13 +92,19 @@ class BottomSheetNavigatorDestinationBuilder :
         route: KClass<*>,
         typeMap: Map<KType, @JvmSuppressWildcards NavType<*>>,
         content: @Composable ColumnScope.(NavBackStackEntry) -> Unit,
+        onDismissed: (NavBackStackEntry) -> Unit,
     ) : super(navigator, route, typeMap) {
         this.composeNavigator = navigator
         this.content = content
+        this.onDismissed = onDismissed
     }
 
     override fun instantiateDestination(): BottomSheetNavigator.Destination {
-        return BottomSheetNavigator.Destination(composeNavigator, content)
+        return BottomSheetNavigator.Destination(
+            navigator = composeNavigator,
+            content = content,
+            onDismissed = onDismissed,
+        )
     }
 
     override fun build(): BottomSheetNavigator.Destination {

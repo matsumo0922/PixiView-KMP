@@ -122,7 +122,7 @@ sealed interface Destination {
     @Serializable
     data class BillingPlusBottomSheet(
         val referrer: String?,
-        val initialPlanTypeName: String? = null,
+        val initialPlanType: BillingPlan.Type? = null,
     ) : Destination
 
     /** 解約予約ユーザー向けリテンション BottomSheet の遷移情報。 */

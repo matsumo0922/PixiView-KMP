@@ -15,6 +15,7 @@ import androidx.navigation.NavGraphBuilder
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.ComposeNavigator
 import androidx.navigation.compose.NavHost
+import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.coroutineScope
@@ -40,6 +41,7 @@ import me.matsumo.fanbox.feature.creator.follow.followingCreatorsScreen
 import me.matsumo.fanbox.feature.creator.payment.paymentsScreen
 import me.matsumo.fanbox.feature.creator.support.supportingCreatorsScreen
 import me.matsumo.fanbox.feature.creator.top.creatorTopScreen
+import me.matsumo.fanbox.feature.library.home.LibraryHomeRoute
 import me.matsumo.fanbox.feature.library.libraryScreen
 import me.matsumo.fanbox.feature.post.bookmark.bookmarkedPostsScreen
 import me.matsumo.fanbox.feature.post.detail.postDetailScreen
@@ -61,13 +63,20 @@ internal fun PixiViewNavHost(
     navController: NavHostController = rememberNavController(bottomSheetNavigator),
     startDestination: Destination = Destination.Library,
     onPostDetailClosed: suspend () -> Unit = {},
+    onLibraryHomeVisibilityChanged: (Boolean) -> Unit = {},
 ) {
     val bottomNavigationNavController = rememberNavController()
+    val bottomNavigationBackStackEntry by bottomNavigationNavController.currentBackStackEntryAsState()
     val scope = rememberCoroutineScope()
     val composeNavigator: ComposeNavigator = remember(navController) {
         navController.navigatorProvider.getNavigator(COMPOSE_NAVIGATOR_NAME)
     }
     val currentOnPostDetailClosed by rememberUpdatedState(onPostDetailClosed)
+    val currentOnLibraryHomeVisibilityChanged by rememberUpdatedState(onLibraryHomeVisibilityChanged)
+
+    LaunchedEffect(bottomNavigationBackStackEntry?.destination?.route) {
+        currentOnLibraryHomeVisibilityChanged(bottomNavigationBackStackEntry?.destination?.route == LibraryHomeRoute)
+    }
 
     HandleDeepLink(navController)
 

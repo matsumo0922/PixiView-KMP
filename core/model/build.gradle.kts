@@ -1,5 +1,3 @@
-@file:Suppress("UnusedPrivateProperty")
-
 plugins {
     id("pixiview.primitive.kmp.common")
     id("pixiview.primitive.android.library")
@@ -31,10 +29,8 @@ kotlin {
             implementation(kotlin("test"))
         }
 
-        val androidHostTest by getting {
-            dependencies {
-                implementation(kotlin("test-junit"))
-            }
+        getByName("androidHostTest").dependencies {
+            implementation(kotlin("test-junit"))
         }
     }
 }
