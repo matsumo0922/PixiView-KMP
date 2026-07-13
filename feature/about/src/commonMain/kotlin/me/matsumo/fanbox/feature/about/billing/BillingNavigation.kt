@@ -10,12 +10,15 @@ import me.matsumo.fanbox.core.logs.category.BillingLog
 import me.matsumo.fanbox.core.logs.logger.send
 import me.matsumo.fanbox.core.model.Destination
 import me.matsumo.fanbox.core.ui.component.sheet.bottomSheet
+import me.matsumo.fanbox.core.ui.customNavTypes
 
 @OptIn(ExperimentalComposeUiApi::class)
 fun NavGraphBuilder.billingPlusBottomSheet(
     terminate: () -> Unit,
 ) {
-    bottomSheet<Destination.BillingPlusBottomSheet> { entry ->
+    bottomSheet<Destination.BillingPlusBottomSheet>(
+        typeMap = customNavTypes,
+    ) { entry ->
         val args = entry.toRoute<Destination.BillingPlusBottomSheet>()
 
         BackHandler {

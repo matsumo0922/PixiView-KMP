@@ -5,6 +5,7 @@ import androidx.savedstate.SavedState
 import androidx.savedstate.read
 import androidx.savedstate.write
 import kotlinx.serialization.json.Json
+import me.matsumo.fanbox.core.model.BillingPlan
 import me.matsumo.fanbox.core.model.Destination
 import me.matsumo.fanbox.core.model.SimpleAlertContents
 import me.matsumo.fankt.fanbox.domain.model.id.FanboxCreatorId
@@ -31,11 +32,18 @@ val postDetailPagingTypeNavType = provideNavType<Destination.PostDetail.PagingTy
     decode = { Destination.PostDetail.PagingType.valueOf(it) },
 )
 
+val billingPlanTypeNavType = provideNavType<BillingPlan.Type?>(
+    encode = { it?.name ?: "null" },
+    decode = { if (it == "null") null else BillingPlan.Type.valueOf(it) },
+    isNullableAllowed = true,
+)
+
 val customNavTypes = mapOf(
     typeOf<FanboxPostId>() to PostIdNavType,
     typeOf<FanboxCreatorId>() to creatorIdNavType,
     typeOf<SimpleAlertContents>() to simpleAlertContentsNavType,
     typeOf<Destination.PostDetail.PagingType>() to postDetailPagingTypeNavType,
+    typeOf<BillingPlan.Type?>() to billingPlanTypeNavType,
 )
 
 private inline fun <reified T> provideNavType(
