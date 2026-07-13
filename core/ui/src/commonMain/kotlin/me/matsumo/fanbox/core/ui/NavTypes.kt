@@ -32,9 +32,9 @@ val postDetailPagingTypeNavType = provideNavType<Destination.PostDetail.PagingTy
     decode = { Destination.PostDetail.PagingType.valueOf(it) },
 )
 
-val billingPlanTypeNavType = provideNavType<BillingPlan.Type>(
-    encode = { it.name },
-    decode = { BillingPlan.Type.valueOf(it) },
+val billingPlanTypeNavType = provideNavType<BillingPlan.Type?>(
+    encode = { it?.name ?: "null" },
+    decode = { if (it == "null") null else BillingPlan.Type.valueOf(it) },
     isNullableAllowed = true,
 )
 
