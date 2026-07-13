@@ -49,6 +49,7 @@ fun NavGraphBuilder.bottomSheet(
 }
 
 inline fun <reified T : Any> NavGraphBuilder.bottomSheet(
+    typeMap: Map<KType, @JvmSuppressWildcards NavType<*>> = emptyMap(),
     deepLinks: List<NavDeepLink> = emptyList(),
     noinline onDismissed: (NavBackStackEntry) -> Unit = {},
     noinline content: @Composable ColumnScope.(backstackEntry: NavBackStackEntry) -> Unit,
@@ -57,7 +58,7 @@ inline fun <reified T : Any> NavGraphBuilder.bottomSheet(
         BottomSheetNavigatorDestinationBuilder(
             navigator = provider[BottomSheetNavigator::class],
             route = T::class,
-            typeMap = emptyMap(),
+            typeMap = typeMap,
             content = content,
             onDismissed = onDismissed,
         )
