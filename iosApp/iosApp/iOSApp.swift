@@ -1,6 +1,6 @@
 import UIKit
 import SwiftUI
-import ComposeApp
+import shared
 import GoogleMobileAds
 import FirebaseCore
 

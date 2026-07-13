@@ -20,21 +20,23 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
-import androidx.fragment.app.FragmentActivity
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import me.matsumo.fanbox.core.resources.Res
 import me.matsumo.fanbox.core.resources.creator_download_require_plus_button
 import me.matsumo.fanbox.core.resources.creator_download_require_plus_button_ad
 import me.matsumo.fanbox.core.resources.creator_download_require_plus_button_ad_over
-import me.matsumo.fanbox.core.resources.creator_download_require_plus_message
-import me.matsumo.fanbox.core.resources.creator_download_require_plus_title
 import me.matsumo.fanbox.core.ui.ads.RewardAdLoader
+import me.matsumo.fanbox.core.ui.ads.handleRewardAdShowResult
 import me.matsumo.fanbox.core.ui.appName
+import me.matsumo.fanbox.core.ui.theme.LocalAdsSdkInitialized
 import me.matsumo.fanbox.core.ui.theme.bold
 import org.jetbrains.compose.resources.stringResource
 import org.koin.compose.koinInject
@@ -42,20 +44,60 @@ import org.koin.compose.koinInject
 @Suppress("UnstableCollections", "ModifierMissing")
 @Composable
 actual fun CreatorTopRewardAdDialog(
+    title: String,
+    message: String,
     isAbleToReward: Boolean,
     onRewarded: () -> Unit,
     onClickShowPlus: () -> Unit,
     onDismissRequest: () -> Unit,
 ) {
-    val activity = LocalActivity.current as FragmentActivity
+    val activity = LocalActivity.current
+    val isAdsSdkInitialized = LocalAdsSdkInitialized.current
 
     val rewardAdLoader = koinInject<RewardAdLoader>()
     val rewardAd by rewardAdLoader.rewardAd.collectAsStateWithLifecycle()
+    val isRewardAdShowing by rewardAdLoader.isShowing.collectAsStateWithLifecycle()
+    val rewardAdShowResult by rewardAdLoader.showResult.collectAsStateWithLifecycle()
+    var activeRewardAdRequestId by rememberSaveable { mutableStateOf<Long?>(null) }
 
-    if (rewardAd == null) {
-        LaunchedEffect(true) {
-            rewardAdLoader.loadRewardAdIfNeeded()
+    val isRewardAdReady = activity != null && rewardAd != null
+    val canStartRewardAd = isAbleToReward && isRewardAdReady
+    val hasActiveRewardAdRequest = activeRewardAdRequestId != null
+    val canRequestRewardAd = canStartRewardAd && !isRewardAdShowing
+    val isRewardAdButtonEnabled = canRequestRewardAd && !hasActiveRewardAdRequest
+    val shouldShowRewardAdProgress = rewardAd == null || isRewardAdShowing
+    val isRewardAdProgressVisible = shouldShowRewardAdProgress || hasActiveRewardAdRequest
+
+    LaunchedEffect(isAdsSdkInitialized) {
+        rewardAdLoader.loadRewardAdIfNeeded(isAdsSdkInitialized)
+    }
+
+    LaunchedEffect(Unit) {
+        val restoredRequestId = activeRewardAdRequestId ?: return@LaunchedEffect
+        val isRestoredAdShowing = rewardAdLoader.isShowing.value
+        val hasRestoredResult = rewardAdLoader.showResult.value?.requestId == restoredRequestId
+
+        if (!isRestoredAdShowing && !hasRestoredResult) {
+            activeRewardAdRequestId = null
         }
+    }
+
+    LaunchedEffect(
+        key1 = rewardAdShowResult,
+        key2 = activeRewardAdRequestId,
+    ) {
+        handleRewardAdShowResult(
+            showResult = rewardAdShowResult,
+            activeRequestId = activeRewardAdRequestId,
+            consumeShowResult = rewardAdLoader::consumeShowResult,
+            onActiveResultConsumed = { isRewardEarned ->
+                activeRewardAdRequestId = null
+
+                if (isRewardEarned) {
+                    onRewarded.invoke()
+                }
+            },
+        )
     }
 
     Dialog(onDismissRequest = onDismissRequest) {
@@ -77,14 +119,14 @@ actual fun CreatorTopRewardAdDialog(
             ) {
                 Text(
                     modifier = Modifier.fillMaxWidth(),
-                    text = stringResource(Res.string.creator_download_require_plus_title),
+                    text = title,
                     style = MaterialTheme.typography.titleMedium.bold(),
                     color = MaterialTheme.colorScheme.onSurface,
                 )
 
                 Text(
                     modifier = Modifier.fillMaxWidth(),
-                    text = stringResource(Res.string.creator_download_require_plus_message, appName),
+                    text = message,
                     style = MaterialTheme.typography.bodyMedium,
                     color = MaterialTheme.colorScheme.onSurfaceVariant,
                 )
@@ -106,17 +148,20 @@ actual fun CreatorTopRewardAdDialog(
                     OutlinedButton(
                         modifier = Modifier.fillMaxWidth(),
                         onClick = {
-                            rewardAd?.show(activity) {
-                                onRewarded.invoke()
+                            val currentActivity = activity ?: return@OutlinedButton
+                            val requestId = rewardAdLoader.showRewardAd(currentActivity)
+
+                            if (requestId != null) {
+                                activeRewardAdRequestId = requestId
                             }
                         },
-                        enabled = rewardAd != null && isAbleToReward,
+                        enabled = isRewardAdButtonEnabled,
                     ) {
                         Row(
                             verticalAlignment = Alignment.CenterVertically,
                             horizontalArrangement = Arrangement.spacedBy(8.dp),
                         ) {
-                            if (rewardAd == null) {
+                            if (isRewardAdProgressVisible) {
                                 CircularProgressIndicator(
                                     modifier = Modifier.size(16.dp),
                                     strokeWidth = 2.dp,

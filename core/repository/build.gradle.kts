@@ -1,16 +1,20 @@
+@file:Suppress("UnusedPrivateProperty")
+
 plugins {
     id("pixiview.primitive.kmp.common")
-    id("pixiview.primitive.kmp.android.library")
+    id("pixiview.primitive.android.library")
     id("pixiview.primitive.kmp.android")
     id("pixiview.primitive.kmp.ios")
     id("pixiview.primitive.detekt")
 }
 
-android {
-    namespace = "me.matsumo.fanbox.core.repository"
-}
-
 kotlin {
+    android {
+        namespace = "me.matsumo.fanbox.core.repository"
+
+        withHostTest {}
+    }
+
     sourceSets {
         commonMain.dependencies {
             implementation(project(":core:model"))
@@ -33,6 +37,12 @@ kotlin {
 
         iosMain.dependencies {
             api(libs.ktor.darwin)
+        }
+
+        val androidHostTest by getting {
+            dependencies {
+                implementation(kotlin("test-junit"))
+            }
         }
     }
 }

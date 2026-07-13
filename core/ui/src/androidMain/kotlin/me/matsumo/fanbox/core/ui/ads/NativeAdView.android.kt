@@ -4,7 +4,10 @@ import android.annotation.SuppressLint
 import android.content.res.ColorStateList
 import android.view.LayoutInflater
 import android.view.View
-import android.view.ViewGroup
+import android.widget.Button
+import android.widget.ImageView
+import android.widget.RatingBar
+import android.widget.TextView
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -26,15 +29,16 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.viewinterop.AndroidViewBinding
+import androidx.compose.ui.viewinterop.AndroidView
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.view.isVisible
+import com.google.android.gms.ads.nativead.MediaView
 import com.google.android.gms.ads.nativead.NativeAd
 import io.github.aakira.napier.Napier
 import me.matsumo.fanbox.core.ui.R
-import me.matsumo.fanbox.core.ui.databinding.LayoutNativeAdsMediumBinding
 import me.matsumo.fanbox.core.ui.theme.LocalAdsSdkInitialized
 import org.koin.compose.koinInject
+import com.google.android.gms.ads.nativead.NativeAdView as GmsNativeAdView
 
 @SuppressLint("MissingPermission")
 @Composable
@@ -93,19 +97,18 @@ private fun NativeAdViewContent(
         buttonTextColor = buttonTextColor,
     )
 
-    AndroidViewBinding(
+    AndroidView(
         modifier = modifier.fillMaxWidth(),
-        factory = { inflater, parent, attachToParent ->
-            createNativeAdBinding(
-                inflater = inflater,
-                parent = parent,
-                attachToParent = attachToParent,
+        factory = { context ->
+            createNativeAdView(
+                context = context,
                 colorPalette = colorPalette,
             )
         },
-        update = {
+        update = { nativeAdView ->
+            val nativeAdRefs = nativeAdView.requireRefs()
             nativeAd?.let { loadedNativeAd ->
-                setupNativeAd(
+                nativeAdRefs.setupNativeAd(
                     nativeAd = loadedNativeAd,
                     key = key,
                 )
@@ -125,17 +128,30 @@ private fun NativeAdViewPlaceholder(
     )
 }
 
-private fun createNativeAdBinding(
-    inflater: LayoutInflater,
-    parent: ViewGroup,
-    attachToParent: Boolean,
+private fun createNativeAdView(
+    context: android.content.Context,
     colorPalette: NativeAdViewColorPalette,
-): LayoutNativeAdsMediumBinding {
-    val binding = LayoutNativeAdsMediumBinding.inflate(inflater, parent, attachToParent)
+): GmsNativeAdView {
+    val root = LayoutInflater.from(context)
+        .inflate(R.layout.layout_native_ads_medium, null, false) as GmsNativeAdView
+    val refs = NativeAdViewRefs(
+        root = root,
+        tvAdvertiser = root.findViewById(R.id.tv_advertiser),
+        tvBody = root.findViewById(R.id.tv_body),
+        btnCta = root.findViewById(R.id.btn_cta),
+        tvHeadline = root.findViewById(R.id.tv_headline),
+        ivAppIcon = root.findViewById(R.id.iv_app_icon),
+        tvPrice = root.findViewById(R.id.tv_price),
+        rtbStars = root.findViewById(R.id.rtb_stars),
+        tvStore = root.findViewById(R.id.tv_store),
+        tvAd = root.findViewById(R.id.tv_ad),
+        mvContent = root.findViewById(R.id.mv_content),
+    )
 
-    binding.applyColors(colorPalette = colorPalette)
+    refs.applyColors(colorPalette = colorPalette)
+    root.tag = refs
 
-    return binding
+    return root
 }
 
 /** ネイティブ広告ビューへ適用する色設定。 */
@@ -147,7 +163,27 @@ private data class NativeAdViewColorPalette(
     val buttonTextColor: Int,
 )
 
-private fun LayoutNativeAdsMediumBinding.applyColors(
+private data class NativeAdViewRefs(
+    val root: GmsNativeAdView,
+    val tvAdvertiser: TextView,
+    val tvBody: TextView,
+    val btnCta: Button,
+    val tvHeadline: TextView,
+    val ivAppIcon: ImageView,
+    val tvPrice: TextView,
+    val rtbStars: RatingBar,
+    val tvStore: TextView,
+    val tvAd: TextView,
+    val mvContent: MediaView,
+)
+
+private fun GmsNativeAdView.requireRefs(): NativeAdViewRefs {
+    return checkNotNull(tag as? NativeAdViewRefs) {
+        "NativeAdViewRefs is not attached to NativeAdView"
+    }
+}
+
+private fun NativeAdViewRefs.applyColors(
     colorPalette: NativeAdViewColorPalette,
 ) {
     tvAdvertiser.setTextColor(colorPalette.bodyTextColor)
@@ -160,7 +196,7 @@ private fun LayoutNativeAdsMediumBinding.applyColors(
     tvAd.setTextColor(colorPalette.bodyTextColor)
 }
 
-private fun LayoutNativeAdsMediumBinding.setupNativeAd(
+private fun NativeAdViewRefs.setupNativeAd(
     nativeAd: NativeAd,
     key: String,
 ) {
@@ -176,12 +212,12 @@ private fun LayoutNativeAdsMediumBinding.setupNativeAd(
     Napier.d("NativeAdView: setupNativeAd, ${tvPrice.text}, $key")
 }
 
-private fun LayoutNativeAdsMediumBinding.isSameNativeAdBound(nativeAd: NativeAd): Boolean {
+private fun NativeAdViewRefs.isSameNativeAdBound(nativeAd: NativeAd): Boolean {
     val boundNativeAd = root.getTag(R.id.tag_native_ad_view_bound_ad) as? NativeAd
     return boundNativeAd === nativeAd
 }
 
-private fun LayoutNativeAdsMediumBinding.registerNativeAdAssetViews() {
+private fun NativeAdViewRefs.registerNativeAdAssetViews() {
     root.advertiserView = tvAdvertiser
     root.bodyView = tvBody
     root.callToActionView = btnCta
@@ -193,7 +229,7 @@ private fun LayoutNativeAdsMediumBinding.registerNativeAdAssetViews() {
     root.mediaView = mvContent
 }
 
-private fun LayoutNativeAdsMediumBinding.bindNativeAdAssets(nativeAd: NativeAd) {
+private fun NativeAdViewRefs.bindNativeAdAssets(nativeAd: NativeAd) {
     tvAdvertiser.text = nativeAd.advertiser.orEmpty()
     tvBody.text = nativeAd.body.orEmpty()
     btnCta.text = nativeAd.callToAction.orEmpty()
@@ -208,7 +244,7 @@ private fun LayoutNativeAdsMediumBinding.bindNativeAdAssets(nativeAd: NativeAd) 
     mvContent.isVisible = nativeAd.mediaContent != null
 }
 
-private fun LayoutNativeAdsMediumBinding.adjustMediaViewAspectRatio(nativeAd: NativeAd) {
+private fun NativeAdViewRefs.adjustMediaViewAspectRatio(nativeAd: NativeAd) {
     val layoutParams = mvContent.layoutParams as? ConstraintLayout.LayoutParams ?: return
     val mediaAspectRatio = nativeAd.mediaContent?.aspectRatio ?: 0f
     val hasValidAspectRatio = mediaAspectRatio > 0f

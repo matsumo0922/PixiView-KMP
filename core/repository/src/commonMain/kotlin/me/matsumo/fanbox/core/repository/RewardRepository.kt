@@ -1,54 +1,50 @@
 package me.matsumo.fanbox.core.repository
 
 import kotlinx.coroutines.CoroutineDispatcher
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.SupervisorJob
-import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import me.matsumo.fanbox.core.common.util.format
 import me.matsumo.fanbox.core.datastore.RewardLogDataStore
+import me.matsumo.fanbox.core.model.RewardUsage
 import kotlin.time.Clock
 import kotlin.time.ExperimentalTime
 
+/** リワード広告による一時機能解放の利用状況を扱う Repository。 */
 interface RewardRepository {
-    fun rewarded()
-    suspend fun isAbleToReward(): Boolean
+    suspend fun rewarded(usage: RewardUsage)
+    suspend fun isAbleToReward(usage: RewardUsage): Boolean
 }
 
+@OptIn(ExperimentalTime::class)
 class RewardRepositoryImpl(
     private val rewardLogDataStore: RewardLogDataStore,
     private val ioDispatcher: CoroutineDispatcher,
+    private val clock: Clock = Clock.System,
 ) : RewardRepository {
 
-    private val scope = CoroutineScope(ioDispatcher + SupervisorJob())
-
-    init {
-        scope.launch {
-            resetIfNeeded()
+    override suspend fun rewarded(usage: RewardUsage) {
+        withContext(ioDispatcher) {
+            resetIfNeeded(currentDate())
+            rewardLogDataStore.rewarded(usage)
         }
     }
 
-    override fun rewarded() {
-        scope.launch {
-            rewardLogDataStore.rewarded()
+    override suspend fun isAbleToReward(usage: RewardUsage): Boolean {
+        return withContext(ioDispatcher) {
+            resetIfNeeded(currentDate())
+            rewardLogDataStore.getRewardedCount(usage) < usage.dailyLimit
         }
     }
 
-    override suspend fun isAbleToReward(): Boolean {
-        resetIfNeeded()
-        return rewardLogDataStore.getRewardedCount() < MAX_REWARD_COUNT
-    }
-
-    @OptIn(ExperimentalTime::class)
-    private suspend fun resetIfNeeded() {
-        val date = Clock.System.now().format("yyyy-MM-dd")
+    private suspend fun resetIfNeeded(date: String) {
         val lastRewardDate = rewardLogDataStore.getRewardDate()
 
         if (lastRewardDate != date) {
             rewardLogDataStore.reset()
+            rewardLogDataStore.setRewardDate(date)
         }
     }
 
-    companion object {
-        const val MAX_REWARD_COUNT = 1
+    private fun currentDate(): String {
+        return clock.now().format("yyyy-MM-dd")
     }
 }
