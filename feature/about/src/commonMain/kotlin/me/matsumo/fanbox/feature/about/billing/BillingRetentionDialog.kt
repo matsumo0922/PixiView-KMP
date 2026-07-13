@@ -3,29 +3,24 @@ package me.matsumo.fanbox.feature.about.billing
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Close
-import androidx.compose.material.icons.filled.DoNotDisturb
-import androidx.compose.material.icons.filled.Download
-import androidx.compose.material.icons.filled.GridView
 import androidx.compose.material.icons.filled.PauseCircle
 import androidx.compose.material.icons.filled.Savings
-import androidx.compose.material.icons.filled.VolunteerActivism
 import androidx.compose.material3.Button
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedButton
-import androidx.compose.material3.Surface
+import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.ExperimentalComposeUiApi
@@ -42,11 +37,6 @@ import me.matsumo.fanbox.core.model.currentPlatform
 import me.matsumo.fanbox.core.resources.Res
 import me.matsumo.fanbox.core.resources.billing_retention_annual_description
 import me.matsumo.fanbox.core.resources.billing_retention_annual_title
-import me.matsumo.fanbox.core.resources.billing_retention_benefit_bulk_download
-import me.matsumo.fanbox.core.resources.billing_retention_benefit_grid
-import me.matsumo.fanbox.core.resources.billing_retention_benefit_hide_ads
-import me.matsumo.fanbox.core.resources.billing_retention_benefit_support
-import me.matsumo.fanbox.core.resources.billing_retention_benefits_title
 import me.matsumo.fanbox.core.resources.billing_retention_manage_button
 import me.matsumo.fanbox.core.resources.billing_retention_message
 import me.matsumo.fanbox.core.resources.billing_retention_pause_description
@@ -120,22 +110,33 @@ private fun BillingRetentionScreen(
     onDismissClicked: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
-    Column(
-        modifier = modifier
-            .fillMaxSize()
-            .padding(24.dp)
-            .navigationBarsPadding(),
-        verticalArrangement = Arrangement.spacedBy(24.dp),
+    Scaffold(
+        modifier = modifier,
+        topBar = {
+            BillingRetentionHeader(
+                modifier = Modifier
+                    .statusBarsPadding()
+                    .fillMaxWidth(),
+                onDismissClicked = onDismissClicked,
+            )
+        },
+        bottomBar = {
+            BillingRetentionButtonSection(
+                modifier = Modifier
+                    .navigationBarsPadding()
+                    .fillMaxWidth(),
+                isAnnualOfferShown = isAnnualOfferShown,
+                onAnnualPlanClicked = onAnnualPlanClicked,
+                onManageSubscriptionClicked = onManageSubscriptionClicked,
+            )
+        },
+        containerColor = MaterialTheme.colorScheme.surface,
     ) {
-        BillingRetentionHeader(
-            modifier = Modifier.fillMaxWidth(),
-            onDismissClicked = onDismissClicked,
-        )
-
         Column(
             modifier = Modifier
                 .fillMaxWidth()
-                .weight(1f)
+                .padding(it)
+                .padding(24.dp)
                 .verticalScroll(rememberScrollState()),
             verticalArrangement = Arrangement.spacedBy(24.dp),
         ) {
@@ -147,27 +148,21 @@ private fun BillingRetentionScreen(
             )
 
             if (isAnnualOfferShown) {
-                BillingRetentionAnnualOffer(
+                BillingRetentionInfoRow(
                     modifier = Modifier.fillMaxWidth(),
+                    icon = Icons.Default.Savings,
+                    title = Res.string.billing_retention_annual_title,
+                    description = Res.string.billing_retention_annual_description,
                 )
             }
 
-            BillingRetentionPauseSection(
+            BillingRetentionInfoRow(
                 modifier = Modifier.fillMaxWidth(),
-            )
-
-            BillingRetentionBenefitSection(
-                modifier = Modifier.fillMaxWidth(),
+                icon = Icons.Default.PauseCircle,
+                title = Res.string.billing_retention_pause_title,
+                description = Res.string.billing_retention_pause_description,
             )
         }
-
-        BillingRetentionButtonSection(
-            modifier = Modifier.fillMaxWidth(),
-            isAnnualOfferShown = isAnnualOfferShown,
-            onAnnualPlanClicked = onAnnualPlanClicked,
-            onManageSubscriptionClicked = onManageSubscriptionClicked,
-            onDismissClicked = onDismissClicked,
-        )
     }
 }
 
@@ -177,8 +172,8 @@ private fun BillingRetentionHeader(
     modifier: Modifier = Modifier,
 ) {
     Row(
-        modifier = modifier,
-        verticalAlignment = Alignment.Top,
+        modifier = modifier.padding(horizontal = 24.dp),
+        verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.spacedBy(16.dp),
     ) {
         Text(
@@ -196,79 +191,6 @@ private fun BillingRetentionHeader(
                 contentDescription = stringResource(Res.string.common_close),
             )
         }
-    }
-}
-
-@Composable
-private fun BillingRetentionAnnualOffer(
-    modifier: Modifier = Modifier,
-) {
-    Surface(
-        modifier = modifier,
-        shape = MaterialTheme.shapes.medium,
-        color = MaterialTheme.colorScheme.primaryContainer,
-    ) {
-        BillingRetentionInfoRow(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(16.dp),
-            icon = Icons.Default.Savings,
-            title = Res.string.billing_retention_annual_title,
-            description = Res.string.billing_retention_annual_description,
-        )
-    }
-}
-
-@Composable
-private fun BillingRetentionPauseSection(
-    modifier: Modifier = Modifier,
-) {
-    BillingRetentionInfoRow(
-        modifier = modifier,
-        icon = Icons.Default.PauseCircle,
-        title = Res.string.billing_retention_pause_title,
-        description = Res.string.billing_retention_pause_description,
-    )
-}
-
-@Composable
-private fun BillingRetentionBenefitSection(
-    modifier: Modifier = Modifier,
-) {
-    Column(
-        modifier = modifier,
-        verticalArrangement = Arrangement.spacedBy(12.dp),
-    ) {
-        Text(
-            modifier = Modifier.fillMaxWidth(),
-            text = stringResource(Res.string.billing_retention_benefits_title),
-            style = MaterialTheme.typography.titleMedium,
-            color = MaterialTheme.colorScheme.onSurface,
-        )
-
-        BillingRetentionBenefitItem(
-            modifier = Modifier.fillMaxWidth(),
-            icon = Icons.Default.DoNotDisturb,
-            title = Res.string.billing_retention_benefit_hide_ads,
-        )
-
-        BillingRetentionBenefitItem(
-            modifier = Modifier.fillMaxWidth(),
-            icon = Icons.Default.Download,
-            title = Res.string.billing_retention_benefit_bulk_download,
-        )
-
-        BillingRetentionBenefitItem(
-            modifier = Modifier.fillMaxWidth(),
-            icon = Icons.Default.GridView,
-            title = Res.string.billing_retention_benefit_grid,
-        )
-
-        BillingRetentionBenefitItem(
-            modifier = Modifier.fillMaxWidth(),
-            icon = Icons.Default.VolunteerActivism,
-            title = Res.string.billing_retention_benefit_support,
-        )
     }
 }
 
@@ -312,42 +234,14 @@ private fun BillingRetentionInfoRow(
 }
 
 @Composable
-private fun BillingRetentionBenefitItem(
-    icon: ImageVector,
-    title: StringResource,
-    modifier: Modifier = Modifier,
-) {
-    Row(
-        modifier = modifier,
-        verticalAlignment = Alignment.CenterVertically,
-        horizontalArrangement = Arrangement.spacedBy(16.dp),
-    ) {
-        Icon(
-            modifier = Modifier.size(20.dp),
-            imageVector = icon,
-            contentDescription = null,
-            tint = MaterialTheme.colorScheme.primary,
-        )
-
-        Text(
-            modifier = Modifier.weight(1f),
-            text = stringResource(title),
-            style = MaterialTheme.typography.bodyMedium,
-            color = MaterialTheme.colorScheme.onSurface,
-        )
-    }
-}
-
-@Composable
 private fun BillingRetentionButtonSection(
     isAnnualOfferShown: Boolean,
     onAnnualPlanClicked: () -> Unit,
     onManageSubscriptionClicked: () -> Unit,
-    onDismissClicked: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
     Column(
-        modifier = modifier,
+        modifier = modifier.padding(horizontal = 24.dp),
         verticalArrangement = Arrangement.spacedBy(8.dp),
     ) {
         if (isAnnualOfferShown) {
@@ -367,15 +261,6 @@ private fun BillingRetentionButtonSection(
         ) {
             Text(
                 text = stringResource(Res.string.billing_retention_manage_button),
-            )
-        }
-
-        TextButton(
-            modifier = Modifier.fillMaxWidth(),
-            onClick = onDismissClicked,
-        ) {
-            Text(
-                text = stringResource(Res.string.common_close),
             )
         }
     }

@@ -347,8 +347,8 @@
     <string name="billing_plus_item_feature_description">新機能が追加された際にいち早く体験！</string>
     <string name="billing_plus_item_support">最優先サポート</string>
     <string name="billing_plus_item_support_description">いつでも最優先でサポート！</string>
-    <string name="billing_retention_title">Plus の特典はまだ利用できます</string>
-    <string name="billing_retention_message">現在の購読は終了予定ですが、期間が終わるまでは Plus が有効です。終了前に、PixiView を快適に使い続けるための選択肢を確認してみませんか。</string>
+    <string name="billing_retention_title">特典はまだ利用できます！</string>
+    <string name="billing_retention_message">現在の購読は終了予定ですが、期間が終わるまでは Plus が有効です。終了前に、Fanbox Viewer を快適に使い続けるための選択肢を確認してみませんか？</string>
     <string name="billing_retention_annual_title">年間プランなら更新の手間を減らせます</string>
     <string name="billing_retention_annual_description">月額プランをご利用中の場合、年間プランに切り替えると同じ Plus 特典を少ない更新回数と長期的にお得な価格で利用できます。</string>
     <string name="billing_retention_pause_title">やめる前に一時停止も確認できます</string>

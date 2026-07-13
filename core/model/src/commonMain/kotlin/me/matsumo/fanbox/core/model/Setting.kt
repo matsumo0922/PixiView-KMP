@@ -121,7 +121,7 @@ data class Setting(
 }
 
 /** リテンション UI の再表示を抑制するミリ秒数。 */
-private const val BILLING_RETENTION_PROMPT_INTERVAL_MILLIS = 86_400_000L
+private const val BILLING_RETENTION_PROMPT_INTERVAL_MILLIS = 5000L
 
 /** 解約検知時刻がないリテンション表示履歴のエピソードキー。 */
 private const val BILLING_RETENTION_PROMPT_UNKNOWN_EPISODE_KEY = "unknown"
