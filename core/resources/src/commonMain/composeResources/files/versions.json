@@ -250,5 +250,12 @@
     "date": "2026/07/14",
     "logJp": "・投稿詳細画面が見られない問題の修正\n・軽微なUIの修正",
     "logEn": "・Fixed an issue where the post detail screen could not be displayed.\n・Minor UI fixes"
+  },
+  {
+    "versionName": "2.3.5",
+    "versionCode": 75,
+    "date": "2026/07/23",
+    "logJp": "・クリエイター詳細画面が見られない問題の修正\n・支援者一覧画面が見られない問題の修正\n・決済履歴画面が見られない問題の修正\n・軽微なUIの修正",
+    "logEn": "・Fixed an issue where the creator detail screen could not be displayed.\n・Fixed an issue where the list of supporters could not be displayed.\n・Fixed an issue where the payment history screen could not be displayed.\n・Minor UI fixes"
   }
 ]
