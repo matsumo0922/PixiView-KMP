@@ -28,6 +28,13 @@ Kotlin プロジェクト共通のコーディング規約。整形など静的�
 - 変数名は役割が分かる名前にする。ループの添字も `i` ではなく `index` とする
 - KDoc は日本語で書く。対象は定数値 / `data class` / `enum` / `data object` / `object` / `class`（Activity / Fragment / Dialog / ViewModel を除く）
 
+### 型参照と import
+
+- コード本体では完全修飾名を使わず、対象を import して参照する
+- 通常のクラスは型名だけで参照する。`Hoge.Fuga` のように所有元を付けず、`Fuga` を import して `Fuga` と書く
+- `enum` の定数と `sealed class` / `sealed interface` の subtype は、型名を含む `Hoge.Fuga` まで許可する
+- `enum` または sealed hierarchy でも `Hoge.Fuga.Piyo` のような3段以上の参照は禁止する。先頭側を import で省略し、`Fuga.Piyo` と書く
+
 ### 分割
 
 - 同じ処理を2箇所目に書こうとした時点で、共通メソッドまたは共通クラスへ切り出す
