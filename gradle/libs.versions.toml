@@ -58,7 +58,7 @@ gms = "4.4.4"
 koin = "4.2.1"
 
 # matsumo
-fankt = "0.1.0"
+fankt = "0.1.1"
 
 # OpenAI
 openai = "4.1.0"
