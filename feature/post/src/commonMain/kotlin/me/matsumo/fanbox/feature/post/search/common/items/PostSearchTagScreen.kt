@@ -76,7 +76,9 @@ internal fun PostSearchTagScreen(
         ) {
             items(
                 count = pagingAdapter.itemCount,
-                key = pagingAdapter.itemKey { it.id.uniqueValue },
+                // fankt 0.1.0 で uniqueValue が削除された。ID だけではページングの境界で同じ投稿が
+                // 二度返ったときに Key was already used になるため index を併用する。
+                key = { index -> pagingAdapter.itemKey { "${it.id.value}-$index" }(index) },
                 contentType = pagingAdapter.itemContentType(),
             ) { index ->
                 pagingAdapter[index]?.let { post ->

@@ -1,6 +1,8 @@
 package me.matsumo.fanbox.feature.post.detail.items
 
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.lazy.LazyListScope
+import androidx.compose.ui.Modifier
 import kotlinx.collections.immutable.ImmutableList
 import me.matsumo.fanbox.core.model.Setting
 import me.matsumo.fankt.fanbox.domain.model.FanboxPost
@@ -59,8 +61,45 @@ internal fun LazyListScope.postDetailItems(
             )
         }
 
+        is FanboxPostDetail.Body.Text -> {
+            item {
+                ArticleUrlItem(
+                    modifier = Modifier.fillMaxWidth(),
+                    url = content.text,
+                )
+            }
+        }
+
+        is FanboxPostDetail.Body.Video -> {
+            item {
+                // fankt は既知のサービスについてのみ URL を復元する。復元できない場合は開く先が
+                // 無いため、未対応の要素として扱う。
+                val url = content.url
+
+                if (url != null) {
+                    ArticleUrlItem(
+                        modifier = Modifier.fillMaxWidth(),
+                        url = url,
+                    )
+                } else {
+                    ArticleUnsupportedItem(modifier = Modifier.fillMaxWidth())
+                }
+            }
+        }
+
+        is FanboxPostDetail.Body.Html -> {
+            item {
+                // html は検証されていないネットワークデータで、そのまま描画するとスクリプトや
+                // 外部リソースの読み込みを許すことになる。描画方法が決まるまで未対応として扱う。
+                ArticleUnsupportedItem(modifier = Modifier.fillMaxWidth())
+            }
+        }
+
         is FanboxPostDetail.Body.Unknown -> {
-            // do nothing
+            item {
+                // rawBodyJson は検証されていないネットワークデータのため表示しない。
+                ArticleUnsupportedItem(modifier = Modifier.fillMaxWidth())
+            }
         }
     }
 }

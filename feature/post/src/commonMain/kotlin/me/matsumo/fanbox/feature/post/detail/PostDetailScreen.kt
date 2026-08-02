@@ -120,7 +120,6 @@ import org.koin.compose.viewmodel.koinViewModel
 import org.koin.core.parameter.parametersOf
 import kotlin.time.ExperimentalTime
 import kotlin.uuid.ExperimentalUuidApi
-import kotlin.uuid.Uuid
 
 internal enum class PostDetailRevealKeys {
     Translate,
@@ -208,7 +207,10 @@ internal fun PostDetailRoute(
                     HorizontalPager(
                         modifier = Modifier.fillMaxSize(),
                         state = pagerState,
-                        key = { index -> paging[index]?.uniqueValue ?: Uuid.random().toString() },
+                        // fankt 0.1.0 で uniqueValue が削除された。ID だけでは同じ投稿が二度現れた
+                        // ときに Key was already used になるため index を併用する。index はページャ
+                        // の位置そのものなので、ID が未取得のページも一意になる。
+                        key = { index -> "${paging[index]?.value.orEmpty()}-$index" },
                         userScrollEnabled = uiState.setting.isUseInfinityPostDetail,
                     ) { index ->
                         paging[index]?.let { id ->
@@ -446,6 +448,10 @@ private fun PostDetailScreen(
             is FanboxPostDetail.Body.Article -> content.blocks.first() !is FanboxPostDetail.Body.Article.Block.Image
             is FanboxPostDetail.Body.File -> true
             is FanboxPostDetail.Body.Image -> false
+            // 先頭が画像で始まらない本文はヘッダーを重ねても隠れないため表示する。
+            is FanboxPostDetail.Body.Text -> true
+            is FanboxPostDetail.Body.Video -> true
+            is FanboxPostDetail.Body.Html -> true
             is FanboxPostDetail.Body.Unknown -> true
         }
     }.getOrDefault(true)

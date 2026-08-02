@@ -11,7 +11,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyListScope
-import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Delete
@@ -43,7 +43,6 @@ import coil3.annotation.ExperimentalCoilApi
 import coil3.compose.AsyncImage
 import coil3.compose.LocalPlatformContext
 import coil3.request.ImageRequest
-import kotlinx.datetime.toStdlibInstant
 import me.matsumo.fanbox.core.model.TranslationState
 import me.matsumo.fanbox.core.resources.Res
 import me.matsumo.fanbox.core.resources.common_delete
@@ -69,6 +68,7 @@ import me.matsumo.fankt.fanbox.domain.model.id.FanboxPostId
 import org.jetbrains.compose.resources.stringResource
 import kotlin.time.Clock
 import kotlin.time.ExperimentalTime
+import kotlin.time.Instant
 
 internal fun LazyListScope.postDetailCommentItems(
     isShowCommentEditor: Boolean,
@@ -143,16 +143,18 @@ internal fun LazyListScope.postDetailCommentItems(
     }
 
     if (comments.contents.isNotEmpty()) {
-        items(
+        itemsIndexed(
             items = comments.contents,
-            key = { comment -> comment.id.uniqueValue },
-        ) {
+            // fankt 0.1.0 で uniqueValue が削除された。ID だけでは同じコメントが二度現れたときに
+            // Key was already used になるため index を併用する。
+            key = { index, comment -> "${comment.id.value}-$index" },
+        ) { _, comment ->
             CommentItem(
                 modifier = Modifier
                     .padding(horizontal = 24.dp, top = 16.dp)
                     .fillMaxWidth(),
                 metaData = metaData,
-                comment = it,
+                comment = comment,
                 onClickCommentLike = onClickCommentLike,
                 onClickCommentReply = { body, parentFanboxCommentId, rootFanboxCommentId ->
                     onClickCommentReply.invoke(body, parentFanboxCommentId, rootFanboxCommentId)
@@ -436,9 +438,9 @@ private fun CommentEditor(
 
 @OptIn(ExperimentalTime::class)
 @Composable
-private fun kotlinx.datetime.Instant.toRelativeTimeString(): String {
+private fun Instant.toRelativeTimeString(): String {
     val now = Clock.System.now()
-    val duration = now - this.toStdlibInstant()
+    val duration = now - this
 
     return when {
         duration.inWholeDays > 0 -> stringResource(Res.string.unit_day_before, duration.inWholeDays)

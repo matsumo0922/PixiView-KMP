@@ -12,7 +12,7 @@ import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material.Text
 import androidx.compose.material.icons.Icons
@@ -223,16 +223,18 @@ private fun CreatorPostsDownloadScreen(
                 }
             }
 
-            items(
+            itemsIndexed(
                 items = posts,
-                key = { it.post.id.uniqueValue },
-            ) {
+                // fankt 0.1.0 で uniqueValue が削除された。ID だけでは同じ投稿が二度現れたときに
+                // Key was already used になるため index を併用する。
+                key = { index, item -> "${item.post.id.value}-$index" },
+            ) { _, item ->
                 CreatorPostsDownloadItem(
                     modifier = Modifier
                         .animateContentSize()
                         .fillMaxWidth()
                         .padding(horizontal = 16.dp),
-                    data = it,
+                    data = item,
                 )
             }
         }

@@ -13,6 +13,8 @@ import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.unit.dp
 import kotlinx.collections.immutable.ImmutableList
 import me.matsumo.fanbox.core.model.Setting
+import me.matsumo.fanbox.core.resources.Res
+import me.matsumo.fanbox.core.resources.post_detail_unsupported_content
 import me.matsumo.fanbox.core.ui.component.AdultContentThumbnail
 import me.matsumo.fanbox.core.ui.component.PostItem
 import me.matsumo.fanbox.core.ui.extensition.LocalFanboxMetadata
@@ -20,6 +22,7 @@ import me.matsumo.fankt.fanbox.domain.model.FanboxPost
 import me.matsumo.fankt.fanbox.domain.model.FanboxPostDetail
 import me.matsumo.fankt.fanbox.domain.model.id.FanboxCreatorId
 import me.matsumo.fankt.fanbox.domain.model.id.FanboxPostId
+import org.jetbrains.compose.resources.stringResource
 import sh.calvin.autolinktext.rememberAutoLinkText
 
 internal fun LazyListScope.postDetailArticleHeader(
@@ -101,8 +104,51 @@ internal fun LazyListScope.postDetailArticleHeader(
                     onClickCreator = onClickCreator,
                 )
             }
+
+            is FanboxPostDetail.Body.Article.Block.Embed -> {
+                // fankt は既知のサービスについてのみ URL を復元する。復元できない場合は開く先が
+                // 無いため、未対応の要素として扱う。
+                val embedUrl = it.url
+
+                if (embedUrl != null) {
+                    ArticleUrlItem(
+                        modifier = Modifier.fillMaxWidth(),
+                        url = embedUrl,
+                    )
+                } else {
+                    ArticleUnsupportedItem(modifier = Modifier.fillMaxWidth())
+                }
+            }
+
+            is FanboxPostDetail.Body.Article.Block.Unknown -> {
+                // rawJson は検証されていないネットワークデータのため表示しない。
+                ArticleUnsupportedItem(modifier = Modifier.fillMaxWidth())
+            }
         }
     }
+}
+
+/** 装飾情報を持たない文字列を、自動リンク付きのテキストとして表示する。 */
+@Composable
+internal fun ArticleUrlItem(
+    url: String,
+    modifier: Modifier = Modifier,
+) {
+    Text(
+        modifier = modifier.padding(16.dp),
+        text = AnnotatedString.rememberAutoLinkText(url),
+        style = MaterialTheme.typography.bodyMedium.copy(color = MaterialTheme.colorScheme.onSurface),
+    )
+}
+
+/** 描画方法が決まっていない要素の存在を示す。 */
+@Composable
+internal fun ArticleUnsupportedItem(modifier: Modifier = Modifier) {
+    Text(
+        modifier = modifier.padding(16.dp),
+        text = stringResource(Res.string.post_detail_unsupported_content),
+        style = MaterialTheme.typography.bodySmall.copy(color = MaterialTheme.colorScheme.onSurfaceVariant),
+    )
 }
 
 @Composable
@@ -130,19 +176,31 @@ private fun ArticleLinkItem(
     onClickCreator: (FanboxCreatorId) -> Unit,
     modifier: Modifier = Modifier,
 ) {
-    item.post?.also {
-        PostItem(
-            modifier = modifier.padding(16.dp),
-            post = it,
-            isHideAdultContents = isHideAdultContents,
-            isOverrideAdultContents = isOverrideAdultContents,
-            isTestUser = isTestUser,
-            isBookmarked = isBookmarked,
-            onClickPost = onClickPost,
-            onClickCreator = onClickCreator,
-            onClickPlanList = {},
-            onClickLike = onClickPostLike,
-            onClickBookmark = onClickPostBookmark,
-        )
+    val post = item.post
+    val url = item.url
+
+    when {
+        // FANBOX の投稿へのリンクはカードとして描画する。
+        post != null -> {
+            PostItem(
+                modifier = modifier.padding(16.dp),
+                post = post,
+                isHideAdultContents = isHideAdultContents,
+                isOverrideAdultContents = isOverrideAdultContents,
+                isTestUser = isTestUser,
+                isBookmarked = isBookmarked,
+                onClickPost = onClickPost,
+                onClickCreator = onClickCreator,
+                onClickPlanList = {},
+                onClickLike = onClickPostLike,
+                onClickBookmark = onClickPostBookmark,
+            )
+        }
+
+        // 外部サイトへのリンクは投稿として解決できない。fankt 0.1.0 が URL を保持するように
+        // なったため、リンク先を表示できる。html は未信頼のため使わない。
+        url != null -> ArticleUrlItem(modifier = modifier, url = url)
+
+        else -> ArticleUnsupportedItem(modifier = modifier)
     }
 }

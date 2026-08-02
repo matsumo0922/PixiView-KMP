@@ -7,6 +7,7 @@ import kotlinx.serialization.json.jsonPrimitive
 import org.junit.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertIs
+import kotlin.test.assertNotNull
 import kotlin.test.assertNull
 import kotlin.test.assertTrue
 
@@ -247,6 +248,33 @@ class BookmarkJsonMigrationTest {
 
         val id = Json.parseToJsonElement(result.json).jsonObject.getValue("id")
         assertTrue(id is kotlinx.serialization.json.JsonNull)
+    }
+
+    @Test
+    fun legacyJsonIsRestoredAsFanboxPost() {
+        val post = migrateBookmarkJson(legacyJson)
+
+        assertNotNull(post)
+        assertEquals("1234567", post.id.value)
+        assertEquals("sample title", post.title)
+        assertEquals(999L, post.user?.userId?.value)
+        assertEquals("creator-abc", post.user?.creatorId?.value)
+        assertEquals(500, post.feeRequired)
+        assertEquals(listOf("tagA", "tagB"), post.tags)
+    }
+
+    @Test
+    fun currentJsonIsRestoredAsFanboxPost() {
+        val post = migrateBookmarkJson(currentJson)
+
+        assertNotNull(post)
+        assertEquals("1234567", post.id.value)
+        assertEquals(999L, post.user?.userId?.value)
+    }
+
+    @Test
+    fun legacyAndCurrentJsonRestoreToTheSamePost() {
+        assertEquals(migrateBookmarkJson(currentJson), migrateBookmarkJson(legacyJson))
     }
 
     @Test

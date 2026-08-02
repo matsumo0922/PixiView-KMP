@@ -89,14 +89,6 @@ class PostDetailViewModel(
                 onFailure = { ScreenState.Error(Res.string.error_network) },
             )
         }
-
-        viewModelScope.launch {
-            fanboxRepository.bookmarkedPostsIds.collectLatest { bookmarkedPosts ->
-                _screenState.updateWhenIdle {
-                    it.copy(postDetail = it.postDetail.copy(isBookmarked = it.postDetail.id in bookmarkedPosts))
-                }
-            }
-        }
     }
 
     fun translate(postDetail: FanboxPostDetail) {

@@ -23,7 +23,7 @@ class CreatorPostsPagingSource(
 
         return suspendRunCatching {
             if (fanboxRepository.blockedCreators.first().contains(creatorId)) {
-                error("Blocked creator: $creatorId")
+                error("Blocked creator: ${creatorId.value}")
             }
 
             fanboxRepository.getCreatorPosts(

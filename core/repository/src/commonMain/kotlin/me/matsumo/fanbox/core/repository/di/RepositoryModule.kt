@@ -43,6 +43,7 @@ val repositoryModule = module {
             blockDataStore = get(),
             userDataStore = get(),
             ioDispatcher = get(),
+            cookieStorage = get(),
         )
     }
 

@@ -157,7 +157,7 @@ class DownloadPostsRepositoryImpl(
         return FanboxDownloadItems.Item(
             postId = postId,
             itemId = id,
-            name = "image-$postId-$id",
+            name = "image-${postId.value}-${id.value}",
             extension = extension,
             originalUrl = originalUrl,
             thumbnailUrl = thumbnailUrl,
@@ -169,7 +169,7 @@ class DownloadPostsRepositoryImpl(
         return FanboxDownloadItems.Item(
             postId = postId,
             itemId = id,
-            name = "file-$postId-$id",
+            name = "file-${postId.value}-${id.value}",
             extension = extension,
             originalUrl = url,
             thumbnailUrl = "",
@@ -181,11 +181,27 @@ class DownloadPostsRepositoryImpl(
         return suspendRunCatching {
             val fileType = userDataStore.setting.first().downloadFileType
             val url = if (item.extension.lowercase() != "gif" || fileType == DownloadFileType.ORIGINAL) item.originalUrl else item.thumbnailUrl
-            val channel = fanboxRepository.download(url, onDownload).body<ByteArray>()
+            // saveItem がバイト列を受け取る契約のため、チャンクをメモリ上に蓄積する。中断した
+            // 場合はここで組み立てた値ごと捨てられ、保存先には何も残らない。
+            val buffer = mutableListOf<ByteArray>()
+
+            fanboxRepository.download(
+                url = url,
+                onDownload = onDownload,
+                onChunk = { chunk -> buffer += chunk },
+            )
+
+            val bytes = ByteArray(buffer.sumOf { it.size }).also { target ->
+                var offset = 0
+                for (chunk in buffer) {
+                    chunk.copyInto(target, offset)
+                    offset += chunk.size
+                }
+            }
 
             onDownload.invoke(1f)
 
-            item to channel
+            item to bytes
         }.also {
             PostsLog.download(
                 type = "unknown",

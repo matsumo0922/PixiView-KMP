@@ -118,7 +118,7 @@ class PostByCreatorSearchViewModel(
         return _allPosts.first().filter { post ->
             val title = post.title.contains(query)
             val excerpt = post.excerpt.contains(query)
-            val id = post.id.toString().contains(query)
+            val id = post.id.value.contains(query)
 
             title || excerpt || id
         }
