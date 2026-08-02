@@ -1,7 +1,6 @@
 package me.matsumo.fanbox.core.datastore
 
 import kotlinx.serialization.json.Json
-import kotlinx.serialization.json.JsonObject
 import kotlinx.serialization.json.JsonPrimitive
 import kotlinx.serialization.json.jsonObject
 import kotlinx.serialization.json.jsonPrimitive
@@ -58,11 +57,7 @@ class BookmarkJsonMigrationTest {
         val result = normalizeBookmarkIdJson(legacyJson)
 
         assertIs<BookmarkJsonNormalization.Migrated>(result)
-
-        val migrated = Json.parseToJsonElement(result.json).jsonObject
-        val current = Json.parseToJsonElement(currentJson).jsonObject
-
-        assertEquals(current, JsonObject(migrated.filterKeys { it != "uniqueValue" }))
+        assertEquals(currentJson, result.json)
     }
 
     @Test
@@ -234,6 +229,24 @@ class BookmarkJsonMigrationTest {
             BookmarkJsonNormalization.Failure,
             normalizeBookmarkIdJson("""{"id":"1","user":{"userId":{"other":1},"name":"n"}}"""),
         )
+    }
+
+    @Test
+    fun malformedCreatorIdFails() {
+        assertEquals(
+            BookmarkJsonNormalization.Failure,
+            normalizeBookmarkIdJson("""{"id":"1","user":{"creatorId":{"other":1},"name":"n"}}"""),
+        )
+    }
+
+    @Test
+    fun idObjectWithNullValueUnwrapsToNull() {
+        val result = normalizeBookmarkIdJson("""{"id":{"value":null}}""")
+
+        assertIs<BookmarkJsonNormalization.Migrated>(result)
+
+        val id = Json.parseToJsonElement(result.json).jsonObject.getValue("id")
+        assertTrue(id is kotlinx.serialization.json.JsonNull)
     }
 
     @Test

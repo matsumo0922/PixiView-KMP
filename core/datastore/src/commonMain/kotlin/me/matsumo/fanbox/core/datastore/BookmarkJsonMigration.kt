@@ -46,8 +46,9 @@ internal sealed interface BookmarkJsonNormalization {
  * `"user":null` と `"userId":null` は正常な値としてそのまま保持する。フィールドの欠落も、null の
  * 補完はせず入力のまま残す。
  *
- * JSON object として解析できない入力、および ID が object でも primitive でも null でもない入力に
- * 対して [BookmarkJsonNormalization.Failure] を返す。
+ * JSON object として解析できない入力、ID が object でも primitive でも null でもない入力、および ID が
+ * `value` を持たない object か `value` が primitive でない object である入力に対して
+ * [BookmarkJsonNormalization.Failure] を返す。
  */
 internal fun normalizeBookmarkIdJson(json: String): BookmarkJsonNormalization {
     val root = runCatching { Json.parseToJsonElement(json) }.getOrNull() as? JsonObject
@@ -75,6 +76,8 @@ internal fun normalizeBookmarkIdJson(json: String): BookmarkJsonNormalization {
  * 正規化した要素と、入力から変化したかどうか。
  *
  * [element] が null のとき、その要素は入力に存在しなかったことを表す。呼び出し側はキーを追加しない。
+ * 存在しないキーが変換されることはないため、[element] が null なら [changed] は常に false である。
+ * 値が JSON の null である場合は [element] が [JsonNull] になり、Kotlin の null とは区別される。
  */
 private data class Normalized(val element: JsonElement?, val changed: Boolean)
 
@@ -111,8 +114,11 @@ private fun normalizeUser(user: JsonElement?): Normalized? {
  * 旧形式の `{"value": ...}` は内側の primitive へ展開する。既に primitive であるか [JsonNull] である
  * 場合、およびフィールド自体が存在しない場合は変換しない。
  *
- * それ以外の形（`value` を持たない object、`value` が primitive でない object、配列）に対して null を
- * 返す。
+ * [JsonNull] は [JsonPrimitive] のサブタイプであるため、`{"value":null}` は JSON の null へ展開される。
+ * 旧版の ID 型はいずれも `value` が非 nullable であり、この形は実データには現れない。
+ *
+ * それ以外の形（`value` を持たない object、`value` が object や配列である object、配列）に対して null
+ * を返す。
  */
 private fun normalizeId(id: JsonElement?): Normalized? {
     return when (id) {
