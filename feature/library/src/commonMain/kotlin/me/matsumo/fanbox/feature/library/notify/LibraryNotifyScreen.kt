@@ -104,12 +104,16 @@ private fun LibraryNotifyScreen(
             ) {
                 items(
                     count = pagingAdapter.itemCount,
-                    key = pagingAdapter.itemKey {
-                        when (it) {
-                            is FanboxBell.Comment -> "comment-${it.id}"
-                            is FanboxBell.Like -> "like-${it.id}"
-                            is FanboxBell.PostPublished -> "post-${it.id}"
-                        }
+                    // fankt 0.1.0 で ID が value class になり、文字列補間が型名を含む形に変わった。
+                    // 同じ通知が二度返っても Key was already used にならないよう index も併用する。
+                    key = { index ->
+                        pagingAdapter.itemKey {
+                            when (it) {
+                                is FanboxBell.Comment -> "comment-${it.id.value}-$index"
+                                is FanboxBell.Like -> "like-${it.id}-$index"
+                                is FanboxBell.PostPublished -> "post-${it.id.value}-$index"
+                            }
+                        }(index)
                     },
                     contentType = pagingAdapter.itemContentType(),
                 ) { index ->

@@ -5,12 +5,6 @@ import androidx.paging.PagingConfig
 import androidx.paging.PagingData
 import androidx.paging.cachedIn
 import com.multiplatform.webview.cookie.WebViewCookieManager
-import io.ktor.client.plugins.logging.LogLevel
-import io.ktor.client.plugins.onDownload
-import io.ktor.client.request.prepareGet
-import io.ktor.client.request.url
-import io.ktor.client.statement.HttpStatement
-import io.ktor.http.Cookie
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -31,6 +25,9 @@ import me.matsumo.fanbox.core.repository.paging.SearchCreatorsPagingSource
 import me.matsumo.fanbox.core.repository.paging.SearchPostsPagingSource
 import me.matsumo.fanbox.core.repository.paging.SupportedPostsPagingSource
 import me.matsumo.fankt.fanbox.Fanbox
+import me.matsumo.fankt.fanbox.FanboxCookieRecord
+import me.matsumo.fankt.fanbox.FanboxCookieStorage
+import me.matsumo.fankt.fanbox.FanboxLogLevel
 import me.matsumo.fankt.fanbox.domain.FanboxCursor
 import me.matsumo.fankt.fanbox.domain.PageCursorInfo
 import me.matsumo.fankt.fanbox.domain.PageNumberInfo
@@ -62,7 +59,7 @@ interface FanboxRepository {
 
     suspend fun logout()
     suspend fun setSessionId(sessionId: String)
-    suspend fun setCookies(cookies: List<Cookie>)
+    suspend fun setCookies(cookies: List<FanboxCookieRecord>)
     suspend fun updateCsrfToken()
     suspend fun getMetadata(): FanboxMetaData
 
@@ -181,7 +178,18 @@ interface FanboxRepository {
     suspend fun setCreatorAllPostsCache(creatorId: FanboxCreatorId, posts: List<FanboxPost>)
     suspend fun getCreatorAllPostsCache(creatorId: FanboxCreatorId): List<FanboxPost>?
 
-    suspend fun download(url: String, onDownload: (Float) -> Unit): HttpStatement
+    /**
+     * ダウンロードした内容を [onChunk] へ順に渡す。
+     *
+     * 各チャンクは独立した値で、次の読み出しは [onChunk] の完了を待つ。[onChunk] が投げた例外と
+     * 呼び出し側のキャンセルはそのまま伝播し、いずれの場合もレスポンスは解放される。ファイルへ
+     * 書き出す場合は一時的な保存先へ書き、この関数が正常に終わってから本来の位置へ移すこと。
+     */
+    suspend fun download(
+        url: String,
+        onDownload: (Float) -> Unit,
+        onChunk: suspend (ByteArray) -> Unit,
+    )
 }
 
 class FanboxRepositoryImpl(
@@ -189,13 +197,15 @@ class FanboxRepositoryImpl(
     private val blockDataStore: BlockDataStore,
     private val userDataStore: SettingDataStore,
     private val ioDispatcher: CoroutineDispatcher,
+    cookieStorage: FanboxCookieStorage,
 ) : FanboxRepository, KoinComponent {
 
     private val scope = CoroutineScope(SupervisorJob() + ioDispatcher)
 
     private val fanbox = Fanbox(
-        logLevel = LogLevel.INFO,
+        logLevel = FanboxLogLevel.INFO,
         ioDispatcher = ioDispatcher,
+        cookieStorage = cookieStorage,
     )
 
     private val creatorCache = mutableMapOf<FanboxCreatorId, FanboxCreatorDetail>()
@@ -233,7 +243,7 @@ class FanboxRepositoryImpl(
         fanbox.setFanboxSessionId(sessionId)
     }
 
-    override suspend fun setCookies(cookies: List<Cookie>) {
+    override suspend fun setCookies(cookies: List<FanboxCookieRecord>) {
         fanbox.setCookies(cookies, reset = true)
     }
 
@@ -459,7 +469,9 @@ class FanboxRepositoryImpl(
     }
 
     override suspend fun getBells(page: Int): PageNumberInfo<FanboxBell> {
-        return fanbox.getBells(page)
+        // 一覧を取得した時点で FANBOX 側の通知を既読にする。fankt 0.1.0 の既定は未読のまま残す
+        // 挙動だが、PixiView は従来どおり既読化する。
+        return fanbox.getBells(page, markNotificationsRead = true)
     }
 
     override suspend fun likePost(postId: FanboxPostId) {
@@ -478,8 +490,8 @@ class FanboxRepositoryImpl(
     ) {
         fanbox.addComment(
             postId = postId,
-            rootCommentId = rootCommentId ?: FanboxCommentId.EMPTY,
-            parentCommentId = parentCommentId ?: FanboxCommentId.EMPTY,
+            rootCommentId = rootCommentId,
+            parentCommentId = parentCommentId,
             body = comment,
         )
     }
@@ -524,12 +536,15 @@ class FanboxRepositoryImpl(
         return creatorAllPostsCache[creatorId]
     }
 
-    override suspend fun download(url: String, onDownload: (Float) -> Unit): HttpStatement {
-        return fanbox.getHttpClient().prepareGet {
-            url(url)
-            onDownload { bytesSentTotal, contentLength ->
-                onDownload.invoke(contentLength?.let { bytesSentTotal.toFloat() / it } ?: 0f)
-            }
-        }
+    override suspend fun download(
+        url: String,
+        onDownload: (Float) -> Unit,
+        onChunk: suspend (ByteArray) -> Unit,
+    ) {
+        fanbox.download(
+            url = url,
+            onProgress = onDownload,
+            onChunk = onChunk,
+        )
     }
 }

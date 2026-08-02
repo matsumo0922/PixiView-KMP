@@ -58,7 +58,7 @@ gms = "4.4.4"
 koin = "4.2.1"
 
 # matsumo
-fankt = "0.0.21"
+fankt = "0.1.0"
 
 # OpenAI
 openai = "4.1.0"
@@ -212,6 +212,7 @@ reveal-shapes = { module = "com.svenjacobs.reveal:reveal-shapes", version.ref = 
 
 # matsumo
 fankt-fanbox = { module = "me.matsumo.fankt:fanbox", version.ref = "fankt" }
+fankt-fanbox-persistence-room = { module = "me.matsumo.fankt:fanbox-persistence-room", version.ref = "fankt" }
 
 # OpenAI
 openai-client = { module = "com.aallam.openai:openai-client", version.ref = "openai" }

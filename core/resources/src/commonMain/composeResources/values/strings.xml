@@ -196,6 +196,7 @@
 
     <!-- PostDetail -->
     <string name="post_detail_title">Post details</string>
+    <string name="post_detail_unsupported_content">This content is not supported yet</string>
     <string name="post_detail_download_images">Download all images (%1$d)</string>
     <string name="post_detail_creator">Creator</string>
     <string name="post_detail_comment_title">Comment</string>

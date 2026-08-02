@@ -2,6 +2,7 @@ package me.matsumo.fanbox.core.datastore
 
 import androidx.datastore.preferences.core.edit
 import androidx.datastore.preferences.core.stringPreferencesKey
+import io.github.aakira.napier.Napier
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.MutableSharedFlow
@@ -53,13 +54,70 @@ class BookmarkDataStore(
         notify()
     }
 
+    /**
+     * 保存済みのブックマークを読み出す。
+     *
+     * fankt 0.0.21 以前が書き込んだ JSON は ID を object として持つため、現在の serializer では
+     * 読めない。読み出し時に新形式へ変換し、変換したものだけを書き戻す。変換できなかったエントリは
+     * 件数をログに残した上で読み飛ばす。
+     */
     suspend fun get(): List<FanboxPost> {
-        val map = cookiePreference.data.firstOrNull()?.asMap() ?: return emptyList()
-        val values = map.values.mapNotNull {
-            runCatching { Json.decodeFromString(FanboxPost.serializer(), it.toString()) }.getOrNull()
+        val entries = cookiePreference.data.firstOrNull()?.asMap() ?: return emptyList()
+
+        val posts = mutableListOf<FanboxPost>()
+        val migrated = mutableMapOf<String, String>()
+        var failureCount = 0
+
+        for ((key, rawValue) in entries) {
+            val json = rawValue.toString()
+
+            when (val normalization = normalizeBookmarkIdJson(json)) {
+                is BookmarkJsonNormalization.AlreadyCurrent -> Unit
+                is BookmarkJsonNormalization.Migrated -> migrated[key.name] = normalization.json
+                BookmarkJsonNormalization.Failure -> {
+                    failureCount++
+                    continue
+                }
+            }
+
+            val post = migrateBookmarkJson(json)
+
+            if (post != null) {
+                posts += post
+            } else {
+                failureCount++
+                migrated.remove(key.name)
+            }
         }
 
-        return values
+        if (failureCount > 0) {
+            Napier.e("Failed to restore $failureCount bookmark(s).")
+        }
+
+        if (migrated.isNotEmpty()) {
+            writeBackMigrated(migrated)
+        }
+
+        return posts
+    }
+
+    /**
+     * 旧形式から変換したエントリを書き戻す。
+     *
+     * [save] は書き込みのあとに [notify] を呼び、[notify] は [get] を呼ぶ。読み出しの途中でそれを
+     * 使うと再帰するため、ここでは DataStore を直接 1 回だけ編集する。
+     */
+    private suspend fun writeBackMigrated(migrated: Map<String, String>) {
+        runCatching {
+            cookiePreference.edit { preferences ->
+                for ((key, json) in migrated) {
+                    preferences[stringPreferencesKey(key)] = json
+                }
+            }
+        }.onFailure {
+            // 書き戻しに失敗しても読み出した内容は返せる。次回の読み出しで再び変換される。
+            Napier.e(it) { "Failed to write back ${migrated.size} migrated bookmark(s)." }
+        }
     }
 
     private suspend fun notify() {

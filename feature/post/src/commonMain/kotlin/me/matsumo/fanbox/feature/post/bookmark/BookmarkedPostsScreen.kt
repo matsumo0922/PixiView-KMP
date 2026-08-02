@@ -16,7 +16,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.GridItemSpan
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
-import androidx.compose.foundation.lazy.grid.items
+import androidx.compose.foundation.lazy.grid.itemsIndexed
 import androidx.compose.foundation.lazy.grid.rememberLazyGridState
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.HorizontalDivider
@@ -136,10 +136,13 @@ private fun BookmarkedPostsScreen(
                         verticalArrangement = Arrangement.spacedBy(16.dp),
                         horizontalArrangement = Arrangement.spacedBy(16.dp),
                     ) {
-                        items(
+                        itemsIndexed(
                             items = posts,
-                            key = { it.id.uniqueValue },
-                        ) { likedPost ->
+                            // fankt 0.1.0 で uniqueValue が削除された。ページングの境界で同じ投稿が
+                            // 二度返ることがあり、ID だけでは Key was already used になるため
+                            // index を併用する。
+                            key = { index, post -> "${post.id.value}-$index" },
+                        ) { _, likedPost ->
                             PostItem(
                                 modifier = Modifier
                                     .animateItem()

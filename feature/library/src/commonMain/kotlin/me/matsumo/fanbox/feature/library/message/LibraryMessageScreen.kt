@@ -5,7 +5,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Menu
@@ -97,13 +97,15 @@ private fun LibraryMessageScreen(
                     modifier = Modifier.drawVerticalScrollbar(state),
                     state = state,
                 ) {
-                    items(
+                    itemsIndexed(
                         items = messages,
-                        key = { it.id.uniqueValue },
-                    ) {
+                        // fankt 0.1.0 で uniqueValue が削除された。ID だけでは同じ要素が二度現れた
+                        // ときに Key was already used になるため index を併用する。
+                        key = { index, message -> "${message.id.value}-$index" },
+                    ) { _, message ->
                         LibraryMessageItem(
                             modifier = Modifier.fillMaxWidth(),
-                            message = it,
+                            message = message,
                             onClickCreator = onClickCreator,
                         )
 

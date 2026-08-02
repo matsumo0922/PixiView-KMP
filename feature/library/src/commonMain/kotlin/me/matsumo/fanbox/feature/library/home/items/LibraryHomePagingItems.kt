@@ -56,9 +56,11 @@ internal fun LibraryHomePagingItems(
             count = pagingAdapter.itemCount + if (setting.hasPrivilege) 0 else (pagingAdapter.itemCount / adInterval),
             key = { index ->
                 when {
-                    setting.hasPrivilege -> pagingAdapter.itemKey { it.id.uniqueValue }(index)
+                    // fankt 0.1.0 で uniqueValue が削除された。ID だけではページングの境界で同じ
+                    // 投稿が二度返ったときに Key was already used になるため index を併用する。
+                    setting.hasPrivilege -> pagingAdapter.itemKey { "${it.id.value}-$index" }(index)
                     (index + adOffset) % adInterval == 0 -> "ad-$index"
-                    else -> pagingAdapter.itemKey { it.id.uniqueValue }(index - ((index + adOffset) / adInterval))
+                    else -> pagingAdapter.itemKey { "${it.id.value}-$index" }(index - ((index + adOffset) / adInterval))
                 }
             },
         ) { index ->

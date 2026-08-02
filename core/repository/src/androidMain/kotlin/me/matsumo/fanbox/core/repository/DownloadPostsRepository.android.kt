@@ -13,8 +13,6 @@ import androidx.core.net.toUri
 import com.hippo.unifile.UniFile
 import io.github.aakira.napier.Napier
 import io.ktor.client.call.body
-import io.ktor.utils.io.ByteReadChannel
-import io.ktor.utils.io.readRemaining
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.async
 import kotlinx.coroutines.awaitAll
@@ -28,7 +26,6 @@ import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.isActive
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.suspendCancellableCoroutine
-import kotlinx.io.readByteArray
 import me.matsumo.fanbox.core.common.util.suspendRunCatching
 import me.matsumo.fanbox.core.datastore.SettingDataStore
 import me.matsumo.fanbox.core.logs.category.PostsLog
@@ -155,7 +152,7 @@ class DownloadPostsRepositoryImpl(
         return FanboxDownloadItems.Item(
             postId = postId,
             itemId = id,
-            name = "$namePrefix-$postId-$id",
+            name = "$namePrefix-${postId.value}-${id.value}",
             extension = extension,
             originalUrl = originalUrl,
             thumbnailUrl = thumbnailUrl,
@@ -167,7 +164,7 @@ class DownloadPostsRepositoryImpl(
         return FanboxDownloadItems.Item(
             postId = postId,
             itemId = id,
-            name = "file-$postId-$id",
+            name = "file-${postId.value}-${id.value}",
             extension = extension,
             originalUrl = url,
             thumbnailUrl = "",
@@ -182,19 +179,24 @@ class DownloadPostsRepositoryImpl(
 
             val tmpFile = File(context.cacheDir, "tmp-${item.name}.${item.extension}")
 
-            fanboxRepository.download(url, onDownload).execute { response ->
-                val channel = response.body<ByteReadChannel>()
+            // チャンクを追記していくため、中断した前回のダウンロードが残っていると先頭に
+            // 混入する。書き始める前に必ず消す。
+            tmpFile.delete()
 
-                while (!channel.isClosedForRead) {
-                    val packet = channel.readRemaining(DEFAULT_BUFFER_SIZE.toLong())
-
-                    while (!packet.exhausted()) {
-                        tmpFile.appendBytes(packet.readByteArray())
-                    }
-                }
-
-                onDownload.invoke(1f)
+            try {
+                fanboxRepository.download(
+                    url = url,
+                    onDownload = onDownload,
+                    onChunk = { chunk -> tmpFile.appendBytes(chunk) },
+                )
+            } catch (e: Throwable) {
+                // 失敗とキャンセルのどちらでも書きかけを残さない。CancellationException も
+                // ここを通るため、削除してからそのまま再送出する。
+                tmpFile.delete()
+                throw e
             }
+
+            onDownload.invoke(1f)
 
             item to tmpFile
         }.onFailure {

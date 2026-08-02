@@ -195,6 +195,7 @@
 
     <!-- PostDetail -->
     <string name="post_detail_title">投稿詳細</string>
+    <string name="post_detail_unsupported_content">この形式のコンテンツはまだ表示できません</string>
     <string name="post_detail_download_images">画像を全てダウンロード (%1$d枚)</string>
     <string name="post_detail_creator">クリエイター</string>
     <string name="post_detail_comment_title">コメント</string>

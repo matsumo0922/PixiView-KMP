@@ -3,6 +3,7 @@ package me.matsumo.fanbox.core.ui.component
 import androidx.compose.animation.animateContentSize
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.aspectRatio
@@ -15,6 +16,7 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.KeyboardArrowDown
+import androidx.compose.material.icons.filled.PlayCircleOutline
 import androidx.compose.material3.Button
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
@@ -27,6 +29,7 @@ import androidx.compose.material3.surfaceColorAtElevation
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
@@ -69,6 +72,11 @@ fun CreatorItem(
     var isEllipsized by rememberSaveable { mutableStateOf(false) }
     var isDisplayedAll by rememberSaveable { mutableStateOf(false) }
 
+    // Unknown はサムネイルを持たないためページャに空ページとして現れる。表示できるものだけを残す。
+    val displayableProfileItems = remember(creatorDetail.profileItems) {
+        creatorDetail.profileItems.filter { it !is FanboxCreatorDetail.ProfileItem.Unknown }
+    }
+
     Card(
         modifier = modifier
             .clip(RoundedCornerShape(8.dp))
@@ -93,26 +101,46 @@ fun CreatorItem(
                     contentScale = ContentScale.Crop,
                     contentDescription = null,
                 )
-            } else if (creatorDetail.profileItems.isNotEmpty()) {
+            } else if (displayableProfileItems.isNotEmpty()) {
                 HorizontalPager(
                     modifier = Modifier
                         .fillMaxWidth()
                         .aspectRatio(16 / 9f)
                         .clip(RoundedCornerShape(4.dp)),
-                    state = rememberPagerState { creatorDetail.profileItems.size },
-                ) {
-                    SubcomposeAsyncImage(
-                        modifier = Modifier.fillMaxWidth(),
-                        model = ImageRequest.Builder(LocalPlatformContext.current)
-                            .fanboxHeader()
-                            .data(creatorDetail.profileItems[it].thumbnailUrl)
-                            .build(),
-                        loading = {
-                            FadePlaceHolder()
-                        },
-                        contentScale = ContentScale.Crop,
-                        contentDescription = null,
-                    )
+                    state = rememberPagerState { displayableProfileItems.size },
+                ) { page ->
+                    val profileItem = displayableProfileItems[page]
+                    val thumbnailUrl = when (profileItem) {
+                        is FanboxCreatorDetail.ProfileItem.Image -> profileItem.thumbnailUrl
+                        is FanboxCreatorDetail.ProfileItem.Video -> profileItem.thumbnailUrl
+                        is FanboxCreatorDetail.ProfileItem.Unknown -> null
+                    }
+
+                    Box(modifier = Modifier.fillMaxWidth()) {
+                        SubcomposeAsyncImage(
+                            modifier = Modifier.fillMaxWidth(),
+                            model = ImageRequest.Builder(LocalPlatformContext.current)
+                                .fanboxHeader()
+                                .data(thumbnailUrl)
+                                .build(),
+                            loading = {
+                                FadePlaceHolder()
+                            },
+                            contentScale = ContentScale.Crop,
+                            contentDescription = null,
+                        )
+
+                        if (profileItem is FanboxCreatorDetail.ProfileItem.Video) {
+                            Icon(
+                                modifier = Modifier
+                                    .align(Alignment.Center)
+                                    .size(48.dp),
+                                imageVector = Icons.Default.PlayCircleOutline,
+                                tint = MaterialTheme.colorScheme.surface,
+                                contentDescription = null,
+                            )
+                        }
+                    }
                 }
             }
         }

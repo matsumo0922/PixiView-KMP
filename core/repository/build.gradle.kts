@@ -29,6 +29,7 @@ kotlin {
             implementation(libs.webview.compose)
 
             api(libs.kmp.paging.common)
+            api(libs.fankt.fanbox.persistence.room)
         }
 
         androidMain.dependencies {

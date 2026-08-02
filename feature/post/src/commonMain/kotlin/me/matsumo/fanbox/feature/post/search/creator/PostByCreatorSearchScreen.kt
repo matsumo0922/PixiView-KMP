@@ -14,7 +14,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
@@ -176,24 +176,26 @@ private fun PostByCreatorSearchScreen(
                 }
             }
 
-            items(
+            itemsIndexed(
                 items = searchedPosts,
-                key = { it.id.uniqueValue },
-            ) {
+                // fankt 0.1.0 で uniqueValue が削除された。ID だけでは同じ投稿が二度現れたときに
+                // Key was already used になるため index を併用する。
+                key = { index, post -> "${post.id.value}-$index" },
+            ) { _, post ->
                 PostItem(
                     modifier = Modifier
                         .animateItem()
                         .fillMaxWidth(),
-                    post = it,
+                    post = post,
                     onClickPost = onPostClicked,
                     onClickCreator = onCreatorPostsClicked,
                     onClickPlanList = onCreatorPlansClicked,
                     onClickLike = onLikeClicked,
-                    onClickBookmark = { _, isBookmarked -> onBookmarkClicked.invoke(it, isBookmarked) },
+                    onClickBookmark = { _, isBookmarked -> onBookmarkClicked.invoke(post, isBookmarked) },
                     isHideAdultContents = setting.isHideAdultContents,
                     isOverrideAdultContents = setting.isOverrideAdultContents,
                     isTestUser = setting.isTestUser,
-                    isBookmarked = bookmarkedPostIds.contains(it.id),
+                    isBookmarked = bookmarkedPostIds.contains(post.id),
                 )
             }
 
