@@ -63,8 +63,9 @@ internal fun WelcomeWebScreen(
     viewModel: WelcomeWebViewModel = koinViewModel(),
     snackExtension: ToastExtension = koinInject(),
 ) {
-    val fanboxUrl = "https://www.fanbox.cc/login"
-    val fanboxRedirectUrl = "https://www.fanbox.cc/creators/find"
+    val fanboxOrigin = "https://www.fanbox.cc"
+    val fanboxUrl = "$fanboxOrigin/login"
+    val fanboxRedirectUrl = "$fanboxOrigin/creators/find"
 
     val webViewState = rememberWebViewState("$fanboxUrl?return_to=$fanboxRedirectUrl")
     val scope = rememberCoroutineScope()
@@ -102,14 +103,17 @@ internal fun WelcomeWebScreen(
     }
 
     LaunchedEffect(webViewState.lastLoadedUrl) {
-        val oauthCookies = webViewState.cookieManager.getCookies("https://oauth.secure.pixiv.net")
-        val fanboxCookies = webViewState.cookieManager.getCookies("https://www.fanbox.cc")
+        // FANBOX オリジンの Cookie だけを保持する。ログインは oauth.secure.pixiv.net を経由するが、
+        // そのオリジンの Cookie は FANBOX のリクエストに不要であり、保存すると以降のすべての
+        // リクエストに送信され続ける。
+        val fanboxCookies = webViewState.cookieManager.getCookies(fanboxOrigin)
 
         currentCookies.clear()
-        currentCookies.addAll(fanboxCookies + oauthCookies)
+        currentCookies.addAll(fanboxCookies)
 
         if (webViewState.lastLoadedUrl == fanboxRedirectUrl) {
-            Napier.d { "try login. current url: ${webViewState.lastLoadedUrl}, cookies: $currentCookies" }
+            // Cookie の値は認証情報そのものであり、logcat に残すと他経路から読み取られうるため出力しない。
+            Napier.d { "try login. current url: ${webViewState.lastLoadedUrl}, cookies: ${currentCookies.map { it.name }}" }
             tryLogin()
         }
     }
