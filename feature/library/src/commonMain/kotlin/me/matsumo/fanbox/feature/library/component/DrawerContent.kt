@@ -264,7 +264,7 @@ private fun NavigationDrawerHeader(modifier: Modifier = Modifier) {
 
             Text(
                 modifier = Modifier.fillMaxWidth(),
-                text = "@${metadata.context?.user?.userId ?: "Unknown"}",
+                text = "@${metadata.context?.user?.userId?.value ?: "Unknown"}",
                 style = MaterialTheme.typography.bodySmall,
                 color = MaterialTheme.colorScheme.onSurfaceVariant,
             )

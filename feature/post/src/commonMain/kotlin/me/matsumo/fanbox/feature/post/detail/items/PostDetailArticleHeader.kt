@@ -176,19 +176,31 @@ private fun ArticleLinkItem(
     onClickCreator: (FanboxCreatorId) -> Unit,
     modifier: Modifier = Modifier,
 ) {
-    item.post?.also {
-        PostItem(
-            modifier = modifier.padding(16.dp),
-            post = it,
-            isHideAdultContents = isHideAdultContents,
-            isOverrideAdultContents = isOverrideAdultContents,
-            isTestUser = isTestUser,
-            isBookmarked = isBookmarked,
-            onClickPost = onClickPost,
-            onClickCreator = onClickCreator,
-            onClickPlanList = {},
-            onClickLike = onClickPostLike,
-            onClickBookmark = onClickPostBookmark,
-        )
+    val post = item.post
+    val url = item.url
+
+    when {
+        // FANBOX の投稿へのリンクはカードとして描画する。
+        post != null -> {
+            PostItem(
+                modifier = modifier.padding(16.dp),
+                post = post,
+                isHideAdultContents = isHideAdultContents,
+                isOverrideAdultContents = isOverrideAdultContents,
+                isTestUser = isTestUser,
+                isBookmarked = isBookmarked,
+                onClickPost = onClickPost,
+                onClickCreator = onClickCreator,
+                onClickPlanList = {},
+                onClickLike = onClickPostLike,
+                onClickBookmark = onClickPostBookmark,
+            )
+        }
+
+        // 外部サイトへのリンクは投稿として解決できない。fankt 0.1.0 が URL を保持するように
+        // なったため、リンク先を表示できる。html は未信頼のため使わない。
+        url != null -> ArticleUrlItem(modifier = modifier, url = url)
+
+        else -> ArticleUnsupportedItem(modifier = modifier)
     }
 }

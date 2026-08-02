@@ -23,7 +23,6 @@ kotlin {
             implementation(project(":core:logs"))
             implementation(project(":core:resources"))
 
-            implementation(libs.bundles.ktor)
             implementation(libs.ksoup)
             implementation(libs.openai.client)
             implementation(libs.webview.compose)
@@ -32,6 +31,8 @@ kotlin {
             api(libs.fankt.fanbox.persistence.room)
         }
 
+        // fankt 0.1.0 は Ktor を implementation で持つため、HTTP エンジンの提供は利用側の責務に
+        // なる。ソース上の参照は無いが、外すと実行時にエンジンが見つからず通信できない。
         androidMain.dependencies {
             api(libs.ktor.okhttp)
         }

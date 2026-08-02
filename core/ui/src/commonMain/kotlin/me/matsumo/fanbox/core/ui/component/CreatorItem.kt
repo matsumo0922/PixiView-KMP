@@ -232,7 +232,7 @@ private fun UserSection(
 
             Text(
                 modifier = Modifier.fillMaxWidth(),
-                text = "@${creatorDetail.user?.creatorId ?: "Unknown"}",
+                text = "@${creatorDetail.user?.creatorId?.value ?: "Unknown"}",
                 style = MaterialTheme.typography.bodySmall,
                 color = MaterialTheme.colorScheme.onSurfaceVariant,
             )

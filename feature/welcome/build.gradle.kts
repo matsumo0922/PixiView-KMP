@@ -1,3 +1,5 @@
+@file:Suppress("UnusedPrivateProperty")
+
 plugins {
     id("pixiview.primitive.kmp.common")
     id("pixiview.primitive.android.library")
@@ -10,6 +12,8 @@ plugins {
 kotlin {
     android {
         namespace = "me.matsumo.fanbox.feature.welcome"
+
+        withHostTest {}
     }
 
     sourceSets {
@@ -25,6 +29,12 @@ kotlin {
             implementation(libs.moko.permissions)
             implementation(libs.moko.permissions.compose)
             implementation(libs.webview.compose)
+        }
+
+        val androidHostTest by getting {
+            dependencies {
+                implementation(kotlin("test-junit"))
+            }
         }
     }
 }

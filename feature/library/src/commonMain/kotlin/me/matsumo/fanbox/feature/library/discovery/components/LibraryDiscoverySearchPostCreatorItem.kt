@@ -80,7 +80,7 @@ internal fun LibraryDiscoverySearchPostCreatorItem(
 
                 Text(
                     modifier = Modifier.fillMaxWidth(),
-                    text = "@${creatorDetail.creatorId}",
+                    text = "@${creatorDetail.creatorId.value}",
                     style = MaterialTheme.typography.bodySmall,
                     color = MaterialTheme.colorScheme.onSurfaceVariant,
                 )

@@ -125,7 +125,7 @@ internal fun CreatorTopHeader(
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(horizontal = 16.dp),
-            text = "@${creatorDetail.creatorId}",
+            text = "@${creatorDetail.creatorId.value}",
             style = MaterialTheme.typography.bodyMedium,
             color = MaterialTheme.colorScheme.onSurfaceVariant,
         )
