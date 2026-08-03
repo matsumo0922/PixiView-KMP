@@ -25,6 +25,10 @@ kotlin {
             implementation(libs.androidx.datastore)
             implementation(libs.androidx.datastore.proto)
             api(libs.androidx.datastore.preferences)
+
+            api(libs.fankt.fanbox)
+            api(libs.fankt.fanbox.persistence.room)
+            implementation(libs.ksafe)
         }
 
         val androidHostTest by getting {
