@@ -73,14 +73,31 @@ internal data class SecureCookiePayload(
 ## routing の決定（初回アクセス時に Mutex で 1 回だけ）
 
 ```
-secure を読む
-├─ レコードあり + マーカーあり  → SECURE。Room の cleanup が未了なら試みる
-├─ レコードあり + マーカー無し  → SECURE（destination-conflict。Room で上書きしない）
-└─ 空
+getKeyInfo(KEY) でキーの物理的な存在を確かめる
+├─ 非 null（キーは在る）
+│    └─ get(KEY) を読む
+│         ├─ レコードあり + マーカーあり → SECURE。Room の cleanup が未了なら試みる
+│         ├─ レコードあり + マーカー無し → SECURE（destination-conflict。Room で上書きしない）
+│         └─ 空（= 復号できなかった）    → SECURE。上書きしない
+└─ null（キーが無い＝真の初回）
      └─ Room を読む
           ├─ 空          → SECURE（マーカーだけ書く）
           └─ レコードあり → 移行を実行
 ```
+
+### `get()` の戻り値だけで分岐しない理由
+
+KSafe の `get()` は、恒久的な復号失敗を `defaultValue` に倒す（`KSafeCoreRead.kt:74`）。
+そのため「破損して読めない」と「そもそも保存されていない」が同じ戻り値になる。
+これだけで分岐すると、破損した payload の上に空の payload を書いてしまい、
+破損を後から検出する手がかりまで消す。
+
+`getKeyInfo(key)` はディスク上のメタデータから同期された `protectionMap` を参照するため
+（`KSafeCoreCacheMerge.kt:171-174`、`KSafeCore.kt:1076-1077`）、復号の成否と無関係に
+キーの存在を答える。キーが在るのに `get()` が空を返したら復号に失敗している。
+
+この場合は SECURE を選び、上書きしない。ユーザーには未ログインとして見えるが、
+ディスク上の ciphertext は残るので、破損と未ログインを区別する follow-up 対応の余地が残る。
 
 移行の順序は次を厳守する。
 
@@ -126,6 +143,18 @@ PixiView がパスを組み立てて消すと、他に開いている所有者�
 確定前でも空リストを 1 度流す。`FanboxRepository.sessionId` と、それを combine する
 UI 状態が値を出せなくなるのを防ぐため。
 
+### KSafe の Flow をそのまま流さない
+
+`FanboxCookieStorage` の契約は「すべての collector が現在の snapshot を少なくとも 1 度受け取る」
+ことを求める。一方 KSafe の `getFlow` は、一時的な復号失敗が起きた回の emission を
+`.filter { it !== transientDecryptSkip }` で丸ごと落とす（`KSafeCore.kt:786`）。
+端末ロック直後や Keystore が一時的に応答しない状況で最初の emission がこれに当たると、
+次に値が変わるまで一切流れず、契約に違反する。
+
+`SecureFanboxCookieStorage.cookies` は KSafe の Flow をそのまま公開せず、
+`onStart` で現在値を 1 度流してから後続の更新を流す形にする。
+現在値が取れない場合は空リストを流す。
+
 ## 併せて直す既存の不具合
 
 `PixiViewViewModel.kt:177-183` の `OldCookieDataStore` 取り込みに 3 点の問題がある。
@@ -148,15 +177,62 @@ if (sessionId != null) {
 ## logout
 
 `logout()` は現在 `setSessionId("")` を呼んでおり、空の `FANBOXSESSID` を保存する。
-セッションを削除する形に直し、secure と旧 Room の両方を消してから完了を報告する。
+セッションを削除する形に直す。
+
+secure と Room は別々のストアなので、両方の削除を 1 つの原子的な操作にはできない。
+片方だけ消えた状態でプロセスが落ちると、残った方から次回起動時にセッションが復活する。
+これを防ぐため、削除の前に **logout マーカー** を secure へ書く。
+
+```
+logout マーカーを secure へ書く（suspend put、commit を待つ）
+  → secure の Cookie を消す（suspend delete）
+  → Room を clear
+  → 両方が終わってから logout マーカーを消す
+```
+
+routing 決定は、logout マーカーが立っている場合は移行を行わず、
+Room と secure の両方を消してからマーカーを外す。
+どの段階で落ちても、次回起動時に「ログアウト途中だった」と分かる。
+
+削除は必ず suspend API（`put` / `delete` / `clearAll`）を使い、
+commit の完了を待ってから次の段階へ進む。`putDirect` / `deleteDirect` は
+書き込みをキューへ積むだけで完了を待たないため使わない。
+
 WebView の Cookie 削除に失敗しても、永続ストアの削除は行う。
 
-## Android のバックアップ除外
+## バックアップからの除外
+
+### Android
 
 `data_extraction_rules.xml` と `backup_rules.xml` で、KSafe の DataStore ファイルと
 `fankt.db`（sidecar を含む）をクラウドバックアップと端末間転送から除外する。
 Keystore の鍵は端末外に出ないため、暗号文だけが転送されても復号できないが、
 無意味な復元先を作らないため明示的に除外する。
+
+### iOS
+
+`fankt.db` は `NSDocumentDirectory` にあり、iOS はこのディレクトリを既定で
+iCloud バックアップの対象に含める。現在このリポジトリに除外の指定は無く、
+移行前の平文 Cookie が iCloud に入りうる。
+
+移行の完了後に `NSURLIsExcludedFromBackupKey` を `fankt.db` へ立てる。
+Keychain の item は `ThisDeviceOnly` なのでもともとバックアップされない。
+
+## ストレージの寿命
+
+`KSafe` は Koin の single で 1 つだけ持ち、`close()` を呼ばない。
+`close()` は同一プロセス内でインスタンスを作り直す場合のための API であり、
+呼んだ後はその instance への読み書きがすべて失敗する。
+アプリの生存期間中は開いたままにする。
+
+同じ理由で、同一ファイルに対して複数の `KSafe` を作らない。
+`KSafe.android.kt` は 1 ファイルにつき 1 つの DataStore を共有する仕組みを持つが、
+DI で 1 インスタンスに固定するほうが確実である。
+
+Room storage は移行完了後に `close()` する。fankt の KDoc は
+「storage 自身の単一並列度 ioDispatcher 上から close を呼ぶな」と禁じているが、
+PixiView の ioDispatcher は `Dispatchers.IO.limitedParallelism(24)` であり
+単一並列度ではないため、この条件には当たらない。
 
 ## telemetry
 
