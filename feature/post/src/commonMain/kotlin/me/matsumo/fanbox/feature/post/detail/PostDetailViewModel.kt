@@ -15,6 +15,7 @@ import me.matsumo.fanbox.core.common.util.suspendRunCatching
 import me.matsumo.fanbox.core.model.ScreenState
 import me.matsumo.fanbox.core.model.Setting
 import me.matsumo.fanbox.core.model.TranslationState
+import me.matsumo.fanbox.core.model.toScreenStateError
 import me.matsumo.fanbox.core.model.updateWhenIdle
 import me.matsumo.fanbox.core.repository.DownloadPostsRepository
 import me.matsumo.fanbox.core.repository.FanboxRepository
@@ -86,7 +87,7 @@ class PostDetailViewModel(
                 )
             }.fold(
                 onSuccess = { ScreenState.Idle(it) },
-                onFailure = { ScreenState.Error(Res.string.error_network) },
+                onFailure = { it.toScreenStateError() },
             )
         }
     }

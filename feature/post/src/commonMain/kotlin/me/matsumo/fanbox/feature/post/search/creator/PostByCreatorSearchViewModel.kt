@@ -19,11 +19,10 @@ import me.matsumo.fanbox.core.common.util.suspendRunCatching
 import me.matsumo.fanbox.core.model.Destination
 import me.matsumo.fanbox.core.model.ScreenState
 import me.matsumo.fanbox.core.model.Setting
+import me.matsumo.fanbox.core.model.toScreenStateError
 import me.matsumo.fanbox.core.model.updateWhenIdle
 import me.matsumo.fanbox.core.repository.FanboxRepository
 import me.matsumo.fanbox.core.repository.SettingRepository
-import me.matsumo.fanbox.core.resources.Res
-import me.matsumo.fanbox.core.resources.error_network
 import me.matsumo.fanbox.core.ui.customNavTypes
 import me.matsumo.fankt.fanbox.domain.model.FanboxCreatorDetail
 import me.matsumo.fankt.fanbox.domain.model.FanboxPost
@@ -73,7 +72,7 @@ class PostByCreatorSearchViewModel(
                 )
             }.fold(
                 onSuccess = { ScreenState.Idle(it) },
-                onFailure = { ScreenState.Error(Res.string.error_network) },
+                onFailure = { it.toScreenStateError() },
             )
 
             fetchPosts()

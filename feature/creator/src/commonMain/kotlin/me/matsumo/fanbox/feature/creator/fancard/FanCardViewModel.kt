@@ -13,6 +13,7 @@ import kotlinx.coroutines.launch
 import me.matsumo.fanbox.core.common.util.suspendRunCatching
 import me.matsumo.fanbox.core.model.Destination
 import me.matsumo.fanbox.core.model.ScreenState
+import me.matsumo.fanbox.core.model.toScreenStateError
 import me.matsumo.fanbox.core.repository.FanboxRepository
 import me.matsumo.fanbox.core.resources.Res
 import me.matsumo.fanbox.core.resources.common_back
@@ -47,9 +48,9 @@ class FanCardViewModel(
             }.fold(
                 onSuccess = { ScreenState.Idle(it) },
                 onFailure = {
-                    ScreenState.Error(
-                        message = Res.string.creator_fan_card_not_supported,
-                        retryTitle = Res.string.common_back,
+                    it.toScreenStateError(
+                        fallbackMessage = Res.string.creator_fan_card_not_supported,
+                        fallbackRetryTitle = Res.string.common_back,
                     )
                 },
             )

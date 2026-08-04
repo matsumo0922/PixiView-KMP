@@ -1,0 +1,35 @@
+# fanbox-session-recovery Specification
+
+## Purpose
+TBD - created by archiving change classify-fanbox-errors. Update Purpose after archive.
+## Requirements
+### Requirement: 認証切れを検知したら再ログインへ導く
+
+FANBOX API が認証切れを返したとき、アプリはログイン済み状態を解除し、利用者を再ログイン画面へ導かなければならない（MUST）。
+
+#### Scenario: 一覧取得中に認証切れが起きる
+
+- **WHEN** 任意の画面で FANBOX API が HTTP 401 を返す
+- **THEN** アプリはログイン済み状態を解除する
+- **AND** アプリは再ログイン画面へ遷移する
+
+#### Scenario: 認証切れ以外の失敗
+
+- **WHEN** FANBOX API がネットワーク断、サーバ障害、レート制限で失敗する
+- **THEN** アプリはログイン済み状態を維持する
+- **AND** アプリは再ログイン画面へ遷移しない
+
+#### Scenario: 再ログイン後の復帰
+
+- **WHEN** 利用者が再ログインを完了する
+- **THEN** アプリは通常の画面へ復帰する
+
+### Requirement: 認証切れの検知が重複しても遷移は重複しない
+
+同時に複数の API 呼び出しが認証切れを返しても、再ログイン画面への遷移は 1 度だけ起きなければならない（MUST）。
+
+#### Scenario: 複数の呼び出しが同時に 401 を返す
+
+- **WHEN** 複数の FANBOX API 呼び出しが同時に HTTP 401 を返す
+- **THEN** アプリは再ログイン画面へ 1 度だけ遷移する
+

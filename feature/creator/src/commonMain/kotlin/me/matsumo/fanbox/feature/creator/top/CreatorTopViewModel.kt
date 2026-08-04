@@ -21,6 +21,7 @@ import me.matsumo.fanbox.core.model.RewardUsage
 import me.matsumo.fanbox.core.model.ScreenState
 import me.matsumo.fanbox.core.model.Setting
 import me.matsumo.fanbox.core.model.TranslationState
+import me.matsumo.fanbox.core.model.toScreenStateError
 import me.matsumo.fanbox.core.model.updateWhenIdle
 import me.matsumo.fanbox.core.repository.FanboxRepository
 import me.matsumo.fanbox.core.repository.FlagRepository
@@ -97,7 +98,7 @@ class CreatorTopViewModel(
                 )
             }.fold(
                 onSuccess = { ScreenState.Idle(it) },
-                onFailure = { ScreenState.Error(Res.string.error_network) },
+                onFailure = { it.toScreenStateError() },
             )
         }
     }
