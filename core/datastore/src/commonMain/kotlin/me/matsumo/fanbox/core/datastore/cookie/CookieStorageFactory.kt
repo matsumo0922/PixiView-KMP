@@ -2,13 +2,15 @@ package me.matsumo.fanbox.core.datastore.cookie
 
 import eu.anifantakis.lib.ksafe.KSafe
 import io.github.aakira.napier.Napier
+import me.matsumo.fanbox.core.datastore.OldCookieDataStore
 import me.matsumo.fanbox.core.logs.category.SettingsLog
 import me.matsumo.fanbox.core.logs.logger.send
 
 /**
  * 移行を挟んだ Cookie 保存先を組み立てる。
  *
- * [kSafe] と、旧 Room を開く [legacyStorageFactory] を受け取り、[MigratingFanboxCookieStorage] を返す。
+ * [kSafe] と、旧 Room を開く [legacyStorageFactory]、Room 導入より前の保存先である
+ * [oldCookieDataStore] を受け取り、[MigratingFanboxCookieStorage] を返す。
  *
  * [kSafe] はアプリの生存期間中 1 つだけを使い、閉じないこと。`KSafe.close()` は同一プロセス内で
  * 作り直す場合のための操作であり、閉じた後はその実体への読み書きがすべて失敗する。
@@ -17,6 +19,7 @@ import me.matsumo.fanbox.core.logs.logger.send
 internal fun createMigratingCookieStorage(
     kSafe: KSafe,
     legacyStorageFactory: () -> LegacyCookieStorage?,
+    oldCookieDataStore: OldCookieDataStore,
 ): MigratingFanboxCookieStorage {
     val blobStore = KSafeCookieBlobStore(kSafe)
 
@@ -24,6 +27,7 @@ internal fun createMigratingCookieStorage(
         secureStorage = SecureFanboxCookieStorage(blobStore),
         blobStore = blobStore,
         legacyStorageFactory = legacyStorageFactory,
+        clearPreRoomSource = { oldCookieDataStore.save("") },
         onMigrationEvent = ::reportMigrationEvent,
     )
 }

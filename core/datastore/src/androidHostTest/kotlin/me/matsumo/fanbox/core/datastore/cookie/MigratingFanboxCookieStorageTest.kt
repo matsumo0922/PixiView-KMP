@@ -31,10 +31,12 @@ class MigratingFanboxCookieStorageTest {
         blobStore: FakeSecureCookieBlobStore,
         legacyStorage: FakeLegacyCookieStorage? = null,
         events: MutableList<CookieMigrationEvent> = mutableListOf(),
+        clearPreRoomSource: suspend () -> Unit = {},
     ) = MigratingFanboxCookieStorage(
         secureStorage = SecureFanboxCookieStorage(blobStore),
         blobStore = blobStore,
         legacyStorageFactory = { legacyStorage },
+        clearPreRoomSource = clearPreRoomSource,
         onMigrationEvent = { events.add(it) },
     )
 
@@ -251,6 +253,84 @@ class MigratingFanboxCookieStorageTest {
         storage(blobStore, FakeLegacyCookieStorage()).logout()
 
         assertFalse(blobStore.hasStoredPayload())
+    }
+
+    @Test
+    fun cookiesCollectorFollowsTheSwitchFromLegacyToSecure() = runBlocking {
+        val blobStore = FakeSecureCookieBlobStore().apply { saveFailure = IllegalStateException("commit failed") }
+        val legacyStorage = FakeLegacyCookieStorage(listOf(sessionCookie))
+        val storage = storage(blobStore, legacyStorage)
+
+        assertEquals(listOf(sessionCookie), storage.cookies.first())
+
+        blobStore.saveFailure = null
+
+        val newCookie = sessionCookie.copy(value = "new-session")
+        storage.upsert(newCookie)
+
+        assertEquals(listOf(newCookie), storage.cookies.first())
+    }
+
+    @Test
+    fun logoutClearsThePreRoomSourceWhileTheMarkerIsSet() = runBlocking {
+        val blobStore = FakeSecureCookieBlobStore(
+            SecureCookiePayload(records = listOf(sessionCookie.toSecureCookieRecord())),
+        )
+        var isPreRoomSourceCleared = false
+
+        storage(
+            blobStore = blobStore,
+            legacyStorage = FakeLegacyCookieStorage(),
+            clearPreRoomSource = { isPreRoomSourceCleared = true },
+        ).logout()
+
+        assertTrue(isPreRoomSourceCleared)
+        assertFalse(blobStore.hasStoredPayload())
+    }
+
+    @Test
+    fun logoutKeepsTheMarkerWhenThePreRoomSourceCannotBeCleared() = runBlocking {
+        val blobStore = FakeSecureCookieBlobStore(
+            SecureCookiePayload(records = listOf(sessionCookie.toSecureCookieRecord())),
+        )
+
+        storage(
+            blobStore = blobStore,
+            legacyStorage = FakeLegacyCookieStorage(),
+            clearPreRoomSource = { error("clear failed") },
+        ).logout()
+
+        assertTrue(blobStore.storedPayload().isLogoutInProgress)
+    }
+
+    @Test
+    fun writingIsRejectedWhileTheLogoutCleanupIsPending() = runBlocking {
+        val blobStore = FakeSecureCookieBlobStore(
+            SecureCookiePayload(records = listOf(sessionCookie.toSecureCookieRecord())),
+        )
+        val legacyStorage = FakeLegacyCookieStorage()
+        val storage = storage(
+            blobStore = blobStore,
+            legacyStorage = legacyStorage,
+            clearPreRoomSource = { error("clear failed") },
+        )
+
+        storage.logout()
+
+        assertFails { storage.upsert(sessionCookie.copy(value = "new-session")) }
+        assertTrue(blobStore.storedPayload().records.isEmpty())
+    }
+
+    @Test
+    fun writingResumesThePendingLogoutBeforeStoringTheSession() = runBlocking {
+        val blobStore = FakeSecureCookieBlobStore(SecureCookiePayload(isLogoutInProgress = true))
+        val storage = storage(blobStore, FakeLegacyCookieStorage())
+
+        val newCookie = sessionCookie.copy(value = "new-session")
+        storage.upsert(newCookie)
+
+        assertFalse(blobStore.storedPayload().isLogoutInProgress)
+        assertEquals(listOf(newCookie.toSecureCookieRecord()), blobStore.storedPayload().records)
     }
 
     @Test

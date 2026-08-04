@@ -17,6 +17,7 @@ actual val dataStoreHelperModule: Module = module {
         createCookieStorage(
             context = get(),
             ioDispatcher = get(),
+            oldCookieDataStore = get(),
         )
     }
 

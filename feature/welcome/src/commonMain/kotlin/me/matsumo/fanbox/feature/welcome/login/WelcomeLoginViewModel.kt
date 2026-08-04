@@ -12,6 +12,7 @@ import me.matsumo.fanbox.core.common.util.suspendRunCatching
 import me.matsumo.fanbox.core.model.ScreenState
 import me.matsumo.fanbox.core.repository.FanboxRepository
 import me.matsumo.fanbox.core.repository.SettingRepository
+import kotlin.random.Random
 
 class WelcomeLoginViewModel(
     private val settingRepository: SettingRepository,
@@ -39,10 +40,22 @@ class WelcomeLoginViewModel(
         }
     }
 
+    /**
+     * セッションを保存し、ログイン状態を取り直す。
+     *
+     * 保存先が資格情報を受け取れない場合、保存は例外になる。取りこぼすと失敗が画面に出ないため、
+     * 受け止めてログイン失敗として扱う。
+     */
     fun setSessionId(sessionId: String) {
         viewModelScope.launch {
-            fanboxRepository.setSessionId(sessionId)
-            fetchLoggedIn()
+            val isSaved = suspendRunCatching { fanboxRepository.setSessionId(sessionId) }.isSuccess
+
+            if (isSaved) {
+                fetchLoggedIn()
+            } else {
+                _screenState.value = ScreenState.Idle(false)
+                _triggerLoginError.send(Random.nextInt())
+            }
         }
     }
 

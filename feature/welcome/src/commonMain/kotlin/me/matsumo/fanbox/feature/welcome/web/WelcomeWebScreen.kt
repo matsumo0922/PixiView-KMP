@@ -75,8 +75,7 @@ internal fun WelcomeWebScreen(
     var isDisplayHelpDialog by remember { mutableStateOf(false) }
 
     suspend fun tryLogin() {
-        if (viewModel.checkSessionId(currentCookies)) {
-            viewModel.saveCookies(currentCookies)
+        if (viewModel.checkSessionId(currentCookies) && viewModel.saveCookies(currentCookies)) {
             terminate.invoke()
         } else {
             snackExtension.show(

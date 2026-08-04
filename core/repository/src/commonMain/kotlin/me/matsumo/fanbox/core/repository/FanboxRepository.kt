@@ -19,7 +19,6 @@ import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.withContext
 import me.matsumo.fanbox.core.datastore.BlockDataStore
 import me.matsumo.fanbox.core.datastore.BookmarkDataStore
-import me.matsumo.fanbox.core.datastore.OldCookieDataStore
 import me.matsumo.fanbox.core.datastore.SettingDataStore
 import me.matsumo.fanbox.core.datastore.cookie.MigratingFanboxCookieStorage
 import me.matsumo.fanbox.core.repository.paging.CreatorPostsPagingSource
@@ -207,7 +206,6 @@ class FanboxRepositoryImpl(
     private val bookmarkDataStore: BookmarkDataStore,
     private val blockDataStore: BlockDataStore,
     private val userDataStore: SettingDataStore,
-    private val oldCookieDataStore: OldCookieDataStore,
     private val ioDispatcher: CoroutineDispatcher,
     private val cookieStorage: MigratingFanboxCookieStorage,
 ) : FanboxRepository, KoinComponent {
@@ -248,8 +246,8 @@ class FanboxRepositoryImpl(
      * WebView の Cookie 削除に失敗しても、保存先の削除は行う。WebView 側の後始末より、
      * 資格情報を消し残さないことを優先する。
      *
-     * Room 導入より前の保存先も消す。取り込みに失敗して残っている場合、消さないと
-     * 次の起動でそこから取り込み直され、ログアウトしたはずのセッションが戻るため。
+     * Room 導入より前の保存先も [cookieStorage] が消す。ログアウト中の印が立っている間に
+     * 消すため、途中でプロセスが終わっても取り込み元だけが残ることはない。
      *
      * 呼び出し元が取り消されても最後まで行う。途中で止まると資格情報が消し残り、
      * どこかの保存先から復活するため。
@@ -262,7 +260,6 @@ class FanboxRepositoryImpl(
         }
 
         cookieStorage.logout()
-        oldCookieDataStore.save("")
 
         bookmarkDataStore.clear()
         blockDataStore.clear()

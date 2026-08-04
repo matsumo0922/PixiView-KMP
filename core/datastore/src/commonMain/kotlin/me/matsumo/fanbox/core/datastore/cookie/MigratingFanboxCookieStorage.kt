@@ -1,9 +1,14 @@
 package me.matsumo.fanbox.core.datastore.cookie
 
 import io.github.aakira.napier.Napier
+import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.NonCancellable
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.emitAll
+import kotlinx.coroutines.flow.filterNotNull
+import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
@@ -25,28 +30,48 @@ import me.matsumo.fankt.fanbox.FanboxCookieStorage
  * 3. 保存先を secure に決める
  * 4. Room を空にして閉じる
  */
+@OptIn(ExperimentalCoroutinesApi::class)
 class MigratingFanboxCookieStorage internal constructor(
     private val secureStorage: SecureFanboxCookieStorage,
     private val blobStore: SecureCookieBlobStore,
     private val legacyStorageFactory: () -> LegacyCookieStorage?,
+    private val clearPreRoomSource: suspend () -> Unit = {},
     private val onMigrationEvent: (CookieMigrationEvent) -> Unit = {},
 ) : FanboxCookieStorage {
 
     private val routingMutex = Mutex()
-    private var routing: CookieRouting? = null
+    private val routingState = MutableStateFlow<CookieRouting?>(null)
+
+    private var routing: CookieRouting?
+        get() = routingState.value
+        set(value) {
+            routingState.value = value
+        }
 
     /**
      * 現在の Cookie を流す。
      *
-     * 保存先が決まるまで待ってから、決まった保存先の Flow をそのまま流す。決まる前に
-     * 空リストを流さないこと。購読者は最初に受け取った値を現在の状態として扱うため、
-     * 保存済みのセッションがある端末で一度未ログインとして観測されてしまう。
+     * 保存先が決まるまで待ってから、決まった保存先の Flow を流す。決まる前に空リストを
+     * 流さないこと。購読者は最初に受け取った値を現在の状態として扱うため、保存済みの
+     * セッションがある端末で一度未ログインとして観測されてしまう。
+     *
+     * 保存先は移行のやり直しで Room から secure へ変わりうる。切り替わった後も購読を
+     * 続けられるよう、保存先そのものの変化を購読して流し直す。
      */
     override val cookies: Flow<List<FanboxCookieRecord>> = flow {
-        emitAll(readStorage().cookies)
+        readStorage()
+
+        emitAll(
+            routingState.filterNotNull()
+                .distinctUntilChanged()
+                .flatMapLatest { it.storage().cookies },
+        )
     }
 
-    override suspend fun snapshot(): List<FanboxCookieRecord> = readStorage().snapshot()
+    override suspend fun snapshot(): List<FanboxCookieRecord> = routingMutex.withLock {
+        // 移行のやり直しが Room を閉じるのと競合しないよう、読み出しも直列化する。
+        resolveRoutingLocked().storage().snapshot()
+    }
 
     override suspend fun upsert(cookie: FanboxCookieRecord) = mutate { it.upsert(cookie) }
 
@@ -82,7 +107,7 @@ class MigratingFanboxCookieStorage internal constructor(
         }
     }
 
-    /** 読み出しに使う保存先を返す。移行に失敗した場合は Room を読み続ける。 */
+    /** 保存先を決めさせる。移行に失敗した場合は Room を読み続ける。 */
     private suspend fun readStorage(): FanboxCookieStorage = resolveRouting().storage()
 
     /**
@@ -96,12 +121,32 @@ class MigratingFanboxCookieStorage internal constructor(
      */
     private suspend fun mutate(block: suspend (FanboxCookieStorage) -> Unit) {
         routingMutex.withLock {
-            val routing = routing ?: decideRouting().also { this.routing = it }
+            val routing = resolveRoutingLocked()
 
             if (routing is CookieRouting.Legacy) retryMigration(routing.legacyStorage)
 
+            requireCompletedLogout()
+
             block(secureStorage)
         }
+    }
+
+    /**
+     * ログアウトの後始末が終わっていることを確かめる。
+     *
+     * 印が残ったまま新しいセッションを保存すると、次回起動時にログアウトの続きとみなされて
+     * 消される。保存の前に後始末をやり直し、それも終わらない場合は例外を投げる。
+     */
+    private suspend fun requireCompletedLogout() {
+        val payload = runCatching { blobStore.load() }.getOrNull() ?: return
+
+        if (!payload.isLogoutInProgress) return
+
+        if (clearBothStores()) {
+            runCatching { blobStore.clear() }.onSuccess { return }
+        }
+
+        error("Failed to finish the pending logout; refusing to store a session that the next launch would delete.")
     }
 
     /**
@@ -123,9 +168,12 @@ class MigratingFanboxCookieStorage internal constructor(
     private suspend fun resolveRouting(): CookieRouting {
         routing?.let { return it }
 
-        return routingMutex.withLock {
-            routing ?: decideRouting().also { routing = it }
-        }
+        return routingMutex.withLock { resolveRoutingLocked() }
+    }
+
+    /** [routingMutex] を保持した状態で保存先を返す。まだ決まっていなければ決める。 */
+    private suspend fun resolveRoutingLocked(): CookieRouting {
+        return routing ?: decideRouting().also { routing = it }
     }
 
     /**
@@ -240,12 +288,18 @@ class MigratingFanboxCookieStorage internal constructor(
             Napier.w(failure) { "Failed to clear the secure Cookie storage." }
         }.isSuccess
 
+        // Room 導入より前の保存先も、印が立っている間に消す。印の外で消すと、その間に
+        // プロセスが終わった場合に取り込み元だけが残り、次回起動で復活する。
+        val isPreRoomSourceCleared = runCatching { clearPreRoomSource() }.onFailure { failure ->
+            Napier.w(failure) { "Failed to clear the pre-Room Cookie source." }
+        }.isSuccess
+
         val openedStorage = (routing as? CookieRouting.Legacy)?.legacyStorage
         val legacyStorage = openedStorage ?: runCatching { legacyStorageFactory() }.getOrElse { failure ->
             Napier.w(failure) { "Failed to open the legacy Cookie storage during logout." }
 
             return false
-        } ?: return isSecureCleared
+        } ?: return isSecureCleared && isPreRoomSourceCleared
 
         val isLegacyCleared = runCatching { legacyStorage.clear() }.onFailure { failure ->
             Napier.w(failure) { "Failed to clear the legacy Cookie storage." }
@@ -253,7 +307,7 @@ class MigratingFanboxCookieStorage internal constructor(
 
         legacyStorage.closeQuietly()
 
-        return isSecureCleared && isLegacyCleared
+        return isSecureCleared && isPreRoomSourceCleared && isLegacyCleared
     }
 
     private fun LegacyCookieStorage.closeQuietly() {

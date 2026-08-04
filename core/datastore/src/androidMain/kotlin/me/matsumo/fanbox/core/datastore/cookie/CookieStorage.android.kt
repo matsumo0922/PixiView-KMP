@@ -5,6 +5,7 @@ package me.matsumo.fanbox.core.datastore.cookie
 import android.content.Context
 import eu.anifantakis.lib.ksafe.KSafe
 import kotlinx.coroutines.CoroutineDispatcher
+import me.matsumo.fanbox.core.datastore.OldCookieDataStore
 import me.matsumo.fankt.fanbox.persistence.room.createRoomFanboxCookieStorage
 
 /**
@@ -16,6 +17,7 @@ import me.matsumo.fankt.fanbox.persistence.room.createRoomFanboxCookieStorage
 internal fun createCookieStorage(
     context: Context,
     ioDispatcher: CoroutineDispatcher,
+    oldCookieDataStore: OldCookieDataStore,
 ): MigratingFanboxCookieStorage {
     return createMigratingCookieStorage(
         kSafe = KSafe(context),
@@ -27,5 +29,6 @@ internal fun createCookieStorage(
                 ),
             )
         },
+        oldCookieDataStore = oldCookieDataStore,
     )
 }

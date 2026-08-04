@@ -16,6 +16,7 @@ actual val dataStoreHelperModule: Module = module {
     single<MigratingFanboxCookieStorage> {
         createCookieStorage(
             ioDispatcher = get(),
+            oldCookieDataStore = get(),
         )
     }
 

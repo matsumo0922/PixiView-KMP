@@ -6,6 +6,7 @@ import eu.anifantakis.lib.ksafe.KSafe
 import io.github.aakira.napier.Napier
 import kotlinx.cinterop.ExperimentalForeignApi
 import kotlinx.coroutines.CoroutineDispatcher
+import me.matsumo.fanbox.core.datastore.OldCookieDataStore
 import me.matsumo.fankt.fanbox.persistence.room.createRoomFanboxCookieStorage
 import platform.Foundation.NSDocumentDirectory
 import platform.Foundation.NSFileManager
@@ -21,6 +22,7 @@ import platform.Foundation.NSUserDomainMask
  */
 internal fun createCookieStorage(
     ioDispatcher: CoroutineDispatcher,
+    oldCookieDataStore: OldCookieDataStore,
 ): MigratingFanboxCookieStorage {
     excludeLegacyDatabaseFromBackup()
 
@@ -31,6 +33,7 @@ internal fun createCookieStorage(
                 createRoomFanboxCookieStorage(ioDispatcher = ioDispatcher),
             )
         },
+        oldCookieDataStore = oldCookieDataStore,
     )
 }
 
