@@ -60,6 +60,8 @@ override suspend fun getSupportedPlans(): List<FanboxCreatorPlan> {
 
 Napier への出力を行わないのは、fankt が `logLevel` の値によらず mismatch ごとに endpoint と indexPath を Napier へ出しているためである（`FanboxDiagnostics.kt:73-76`）。PixiView が同じ内容をもう 1 行出すと、1 件のスキップにつき 2 行がログに並ぶだけになる。観測先として確定している「Napier ログ + Crashlytics」のうち、Napier は fankt の既存出力が満たす。
 
+ただし Android では `Napier.base(DebugAntilog())` が `if (BuildConfig.DEBUG)` の内側にしかない（`androidApp/src/main/kotlin/me/matsumo/fanbox/PixiViewApplication.kt:33-35`）。release と billing の build type では antilog が 1 つも登録されず、fankt の `Napier.w` は無出力になる。iOS は `InitHelper.initNapier()` が build type と無関係に呼ばれるため常に出力される。したがって本番環境の観測は Android では Crashlytics、iOS では Napier が担う。Android release 用の antilog は追加しない。新しいログ出力経路を増やすと、この change が閉じたばかりの「リリースビルドで応答本文が出る」問題を再び開く方向に働くためである。spec の Scenario もこの実態に合わせて記述する。
+
 **代替案**: 差し替え可能な `FanboxSchemaMismatchReporter` インターフェースを `core:common` に新設する。却下した。呼び出し元は `FanboxRepositoryImpl` の 10 メソッドだけであり、差し替えの必要も他モジュールからの利用も無い。
 
 **代替案**: 専用の例外型 `FanboxSchemaMismatchException` を定義する。却下した。message に endpoint が入るため、型を分けなくても各イベントから endpoint を読める。Crashlytics のグルーピングは例外の型とスタックフレームに強く影響されるため、同じ呼び出し箇所からの記録が 1 つの issue にまとまる可能性はあるが、観測の目的は満たす。
