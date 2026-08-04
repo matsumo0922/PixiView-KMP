@@ -19,6 +19,7 @@ import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.withContext
 import me.matsumo.fanbox.core.datastore.BlockDataStore
 import me.matsumo.fanbox.core.datastore.BookmarkDataStore
+import me.matsumo.fanbox.core.datastore.OldCookieDataStore
 import me.matsumo.fanbox.core.datastore.SettingDataStore
 import me.matsumo.fanbox.core.datastore.cookie.MigratingFanboxCookieStorage
 import me.matsumo.fanbox.core.repository.paging.CreatorPostsPagingSource
@@ -68,6 +69,14 @@ interface FanboxRepository {
      * 保存先へ書いた内容を読み直す場合はこちらを使う。
      */
     suspend fun getStoredSessionId(): String?
+
+    /**
+     * Room 導入より前の保存先に残っているセッションを取り込む。取り込めた場合は true を返す。
+     *
+     * 読み出しから取り込み元の削除までをログアウトと同じ順序制御の下で行うため、
+     * 取り込みの途中でログアウトが挟まってもセッションは復活しない。
+     */
+    suspend fun importPreRoomSession(): Boolean
 
     suspend fun setCookies(cookies: List<FanboxCookieRecord>)
     suspend fun updateCsrfToken()
@@ -206,6 +215,7 @@ class FanboxRepositoryImpl(
     private val bookmarkDataStore: BookmarkDataStore,
     private val blockDataStore: BlockDataStore,
     private val userDataStore: SettingDataStore,
+    private val oldCookieDataStore: OldCookieDataStore,
     private val ioDispatcher: CoroutineDispatcher,
     private val cookieStorage: MigratingFanboxCookieStorage,
 ) : FanboxRepository, KoinComponent {
@@ -275,6 +285,23 @@ class FanboxRepositoryImpl(
 
     override suspend fun getStoredSessionId(): String? {
         return cookieStorage.snapshot().find { it.name == FANBOX_SESSION_ID_NAME }?.value
+    }
+
+    override suspend fun importPreRoomSession(): Boolean = withContext(ioDispatcher) {
+        cookieStorage.importPreRoomSession {
+            oldCookieDataStore.getSessionId()?.let { sessionId ->
+                // fankt の `setFanboxSessionId` が保存する形と同じにする。
+                FanboxCookieRecord(
+                    domain = ".fanbox.cc",
+                    path = "/",
+                    name = FANBOX_SESSION_ID_NAME,
+                    value = sessionId,
+                    expiresAtEpochMilliseconds = null,
+                    secure = true,
+                    hostOnly = false,
+                )
+            }
+        }
     }
 
     override suspend fun setCookies(cookies: List<FanboxCookieRecord>) {

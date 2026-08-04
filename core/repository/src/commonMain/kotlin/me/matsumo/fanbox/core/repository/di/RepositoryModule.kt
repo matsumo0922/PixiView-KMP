@@ -42,6 +42,7 @@ val repositoryModule = module {
             bookmarkDataStore = get(),
             blockDataStore = get(),
             userDataStore = get(),
+            oldCookieDataStore = get(),
             ioDispatcher = get(),
             cookieStorage = get(),
         )

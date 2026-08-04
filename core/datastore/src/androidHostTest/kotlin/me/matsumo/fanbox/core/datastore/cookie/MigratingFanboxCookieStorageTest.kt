@@ -334,6 +334,68 @@ class MigratingFanboxCookieStorageTest {
     }
 
     @Test
+    fun writingIsRejectedWhenTheLogoutStateCannotBeRead() = runBlocking {
+        val blobStore = FakeSecureCookieBlobStore(
+            SecureCookiePayload(records = listOf(sessionCookie.toSecureCookieRecord())),
+        ).apply { loadFailure = IllegalStateException("read failed") }
+        val storage = storage(blobStore, FakeLegacyCookieStorage())
+
+        assertFails { storage.upsert(sessionCookie.copy(value = "new-session")) }
+
+        Unit
+    }
+
+    @Test
+    fun writingIsRejectedWhenTheStoredLogoutStateCannotBeDecoded() = runBlocking {
+        val blobStore = FakeSecureCookieBlobStore(SecureCookiePayload(isLogoutInProgress = true))
+            .apply { isUnreadable = true }
+        val storage = storage(blobStore, FakeLegacyCookieStorage())
+
+        assertFails { storage.upsert(sessionCookie.copy(value = "new-session")) }
+        assertTrue(blobStore.storedPayload().isLogoutInProgress)
+    }
+
+    @Test
+    fun preRoomImportDoesNotRestoreASessionRemovedByAConcurrentLogout() = runBlocking {
+        val blobStore = FakeSecureCookieBlobStore(
+            SecureCookiePayload(records = listOf(sessionCookie.toSecureCookieRecord())),
+        )
+        val legacyStorage = FakeLegacyCookieStorage()
+        val storage = storage(
+            blobStore = blobStore,
+            legacyStorage = legacyStorage,
+            // 後始末を終えられない状態にして、印が残ったままログアウトが返るようにする。
+            clearPreRoomSource = { error("clear failed") },
+        )
+
+        storage.logout()
+
+        // 取り込み元を読んだ後にログアウトが挟まった状況にあたる。印が残っている間は
+        // 取り込みを行わない。行うと次回起動時に消されるセッションを保存してしまう。
+        val isImported = storage.importPreRoomSession { sessionCookie }
+
+        assertFalse(isImported)
+        assertEquals(emptyList(), blobStore.storedPayload().records)
+    }
+
+    @Test
+    fun preRoomImportStoresTheSessionAndClearsItsSource() = runBlocking {
+        val blobStore = FakeSecureCookieBlobStore()
+        var isPreRoomSourceCleared = false
+        val storage = storage(
+            blobStore = blobStore,
+            legacyStorage = FakeLegacyCookieStorage(),
+            clearPreRoomSource = { isPreRoomSourceCleared = true },
+        )
+
+        val isImported = storage.importPreRoomSession { sessionCookie }
+
+        assertTrue(isImported)
+        assertTrue(isPreRoomSourceCleared)
+        assertEquals(listOf(sessionCookie.toSecureCookieRecord()), blobStore.storedPayload().records)
+    }
+
+    @Test
     fun logoutKeepsTheMarkerWhenTheLegacyClearFails() = runBlocking {
         val blobStore = FakeSecureCookieBlobStore(
             SecureCookiePayload(records = listOf(sessionCookie.toSecureCookieRecord())),

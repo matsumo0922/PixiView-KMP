@@ -107,6 +107,33 @@ class MigratingFanboxCookieStorage internal constructor(
         }
     }
 
+    /**
+     * Room 導入より前の保存先に残っているセッションを取り込む。取り込めた場合は true を返す。
+     *
+     * 読み出しから取り込み元の削除までを、ログアウトと同じ [routingMutex] の下で行う。
+     * 読み出した後にログアウトが挟まると、消えたはずのセッションを取り込んで復活させるため。
+     *
+     * 取り込み元が空の場合は何もせず true を返す。
+     */
+    suspend fun importPreRoomSession(readPreRoomSession: suspend () -> FanboxCookieRecord?): Boolean {
+        return routingMutex.withLock {
+            val record = runCatching { readPreRoomSession() }.getOrElse { failure ->
+                Napier.w(failure) { "Failed to read the pre-Room Cookie source." }
+
+                return@withLock false
+            } ?: return@withLock true
+
+            runCatching {
+                resolveRoutingLocked().let { if (it is CookieRouting.Legacy) retryMigration(it.legacyStorage) }
+                requireCompletedLogout()
+                secureStorage.upsert(record)
+                clearPreRoomSource()
+            }.onFailure { failure ->
+                Napier.w(failure) { "Failed to import the pre-Room session; keeping the source for a later retry." }
+            }.isSuccess
+        }
+    }
+
     /** 保存先を決めさせる。移行に失敗した場合は Room を読み続ける。 */
     private suspend fun readStorage(): FanboxCookieStorage = resolveRouting().storage()
 
@@ -138,7 +165,19 @@ class MigratingFanboxCookieStorage internal constructor(
      * 消される。保存の前に後始末をやり直し、それも終わらない場合は例外を投げる。
      */
     private suspend fun requireCompletedLogout() {
-        val payload = runCatching { blobStore.load() }.getOrNull() ?: return
+        val payload = runCatching { blobStore.load() }.getOrElse { failure ->
+            // 印の有無を確かめられない間は保存しない。読めない理由が一時的なものでも、
+            // 実際には印が立っていた場合、保存したセッションは次回起動時に消えるため。
+            Napier.w(failure) { "Failed to read the logout state before writing." }
+
+            error("Failed to read the logout state; refusing to store a session that the next launch might delete.")
+        }
+
+        // 保存先に値があるのに初期値が返る場合は復号できていない。印が立っているかを
+        // 判断できないため、読めなかった場合と同じく保存しない。
+        if (payload.isEmpty && blobStore.hasStoredPayload()) {
+            error("Failed to decode the logout state; refusing to store a session that the next launch might delete.")
+        }
 
         if (!payload.isLogoutInProgress) return
 
@@ -153,16 +192,37 @@ class MigratingFanboxCookieStorage internal constructor(
      * 移行をやり直す。成功したら保存先を secure へ切り替える。
      *
      * 失敗した場合は、呼び出し元の書き込みを Room へ落とさないため例外を投げる。
+     *
+     * ここでは Room を閉じない。Room の Flow は閉じられると例外で終わる契約であり、
+     * すでに Cookie を購読している相手がいた場合、保存先の切り替えを受け取る前に
+     * 購読ごと終わってしまう。閉じるのは起動直後の移行だけとし、やり直しの場合は
+     * プロセスが終わるまで開いたままにする。
      */
     private suspend fun retryMigration(legacyStorage: LegacyCookieStorage) {
         val legacyRecords = legacyStorage.snapshot()
-        val migrated = migrateRecords(legacyRecords, legacyStorage)
 
-        if (migrated !is CookieRouting.Secure) {
+        val payload = SecureCookiePayload(
+            records = legacyRecords.map { it.canonicalized().toSecureCookieRecord() }.deduplicated(),
+            isMigrationCompleted = true,
+        )
+
+        onMigrationEvent(CookieMigrationEvent.Started(payload.records.size))
+
+        runCatching { blobStore.save(payload) }.onFailure { failure ->
+            Napier.w(failure) { "Failed to commit the migrated Cookie payload; keeping the legacy storage." }
+            onMigrationEvent(CookieMigrationEvent.FallbackUsed(MigrationStage.SECURE_COMMIT))
+
             error("Failed to migrate the Cookies into the secure storage; refusing to write them in plain text.")
         }
 
-        routing = migrated
+        routing = CookieRouting.Secure
+
+        runCatching { legacyStorage.clear() }.onFailure { failure ->
+            Napier.w(failure) { "Failed to clear the legacy Cookie storage after migration." }
+            onMigrationEvent(CookieMigrationEvent.CleanupPending)
+        }
+
+        onMigrationEvent(CookieMigrationEvent.Succeeded(payload.records.size))
     }
 
     private suspend fun resolveRouting(): CookieRouting {

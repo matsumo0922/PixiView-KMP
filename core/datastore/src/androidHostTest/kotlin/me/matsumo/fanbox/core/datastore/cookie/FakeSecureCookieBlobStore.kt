@@ -27,6 +27,9 @@ internal class FakeSecureCookieBlobStore(
     /** null 以外を入れると、[save] がその例外を投げる。 */
     var saveFailure: Throwable? = null
 
+    /** null 以外を入れると、[load] がその例外を投げる。 */
+    var loadFailure: Throwable? = null
+
     /** [save] が呼ばれた回数。 */
     var saveCount: Int = 0
         private set
@@ -36,6 +39,8 @@ internal class FakeSecureCookieBlobStore(
         private set
 
     override suspend fun load(): SecureCookiePayload {
+        loadFailure?.let { throw it }
+
         return if (isUnreadable) SecureCookiePayload() else state.value
     }
 
