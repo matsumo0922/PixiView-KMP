@@ -23,8 +23,13 @@ class OldCookieDataStore(
         return cookiePreference.data.firstOrNull()?.get(stringPreferencesKey(KEY_COOKIE))
     }
 
-    suspend fun getCookies(): List<String> {
-        return (get()?.split(";")?.filter { it.isNotBlank() } ?: emptyList())
+    /**
+     * 保存されている Cookie ヘッダから FANBOXSESSID の値を返す。無ければ null を返す。
+     *
+     * 値そのものは認証情報なので、ログや telemetry に出さないこと。
+     */
+    suspend fun getSessionId(): String? {
+        return parseOldSessionId(get())
     }
 
     companion object {

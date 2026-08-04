@@ -5,20 +5,23 @@ import androidx.paging.PagingConfig
 import androidx.paging.PagingData
 import androidx.paging.cachedIn
 import com.multiplatform.webview.cookie.WebViewCookieManager
+import io.github.aakira.napier.Napier
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.NonCancellable
 import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.receiveAsFlow
-import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import me.matsumo.fanbox.core.datastore.BlockDataStore
 import me.matsumo.fanbox.core.datastore.BookmarkDataStore
+import me.matsumo.fanbox.core.datastore.OldCookieDataStore
 import me.matsumo.fanbox.core.datastore.SettingDataStore
+import me.matsumo.fanbox.core.datastore.cookie.MigratingFanboxCookieStorage
 import me.matsumo.fanbox.core.repository.paging.CreatorPostsPagingSource
 import me.matsumo.fanbox.core.repository.paging.HomePostsPagingSource
 import me.matsumo.fanbox.core.repository.paging.SearchCreatorsPagingSource
@@ -26,7 +29,6 @@ import me.matsumo.fanbox.core.repository.paging.SearchPostsPagingSource
 import me.matsumo.fanbox.core.repository.paging.SupportedPostsPagingSource
 import me.matsumo.fankt.fanbox.Fanbox
 import me.matsumo.fankt.fanbox.FanboxCookieRecord
-import me.matsumo.fankt.fanbox.FanboxCookieStorage
 import me.matsumo.fankt.fanbox.FanboxLogLevel
 import me.matsumo.fankt.fanbox.domain.FanboxCursor
 import me.matsumo.fankt.fanbox.domain.PageCursorInfo
@@ -59,6 +61,15 @@ interface FanboxRepository {
 
     suspend fun logout()
     suspend fun setSessionId(sessionId: String)
+
+    /**
+     * Room 導入より前の保存先に残っているセッションを取り込む。取り込めた場合は true を返す。
+     *
+     * 読み出しから取り込み元の削除までをログアウトと同じ順序制御の下で行うため、
+     * 取り込みの途中でログアウトが挟まってもセッションは復活しない。
+     */
+    suspend fun importPreRoomSession(): Boolean
+
     suspend fun setCookies(cookies: List<FanboxCookieRecord>)
     suspend fun updateCsrfToken()
     suspend fun getMetadata(): FanboxMetaData
@@ -196,8 +207,9 @@ class FanboxRepositoryImpl(
     private val bookmarkDataStore: BookmarkDataStore,
     private val blockDataStore: BlockDataStore,
     private val userDataStore: SettingDataStore,
+    private val oldCookieDataStore: OldCookieDataStore,
     private val ioDispatcher: CoroutineDispatcher,
-    cookieStorage: FanboxCookieStorage,
+    private val cookieStorage: MigratingFanboxCookieStorage,
 ) : FanboxRepository, KoinComponent {
 
     private val scope = CoroutineScope(SupervisorJob() + ioDispatcher)
@@ -216,31 +228,68 @@ class FanboxRepositoryImpl(
     private var creatorPostsPager: Flow<PagingData<FanboxPost>>? = null
     private var searchPostsPager: Flow<PagingData<FanboxPost>>? = null
 
-    private val _logoutTrigger = Channel<Long>()
+    // ログアウトの完了を待つ呼び出し元を止めないため、受け手がいなくても送信が進む容量を持たせる。
+    private val _logoutTrigger = Channel<Long>(Channel.CONFLATED)
 
-    override val sessionId: Flow<String?> = fanbox.cookies.map { list -> list.find { it.name == "FANBOXSESSID" }?.value }
+    override val sessionId: Flow<String?> =
+        fanbox.cookies.map { list -> list.find { it.name == FANBOX_SESSION_ID_NAME }?.value }
     override val csrfToken: Flow<String?> = fanbox.csrfToken
     override val logoutTrigger: Flow<Long> = _logoutTrigger.receiveAsFlow()
 
     override val bookmarkedPostsIds: SharedFlow<List<FanboxPostId>> = bookmarkDataStore.data
     override val blockedCreators: SharedFlow<Set<FanboxCreatorId>> = blockDataStore.data
 
-    override suspend fun logout() {
-        CoroutineScope(ioDispatcher).launch {
+    /**
+     * ログアウトする。
+     *
+     * 保存先から資格情報を消し終えてから完了する。以前は空の `FANBOXSESSID` を保存していたが、
+     * それではセッションが残ったままになる。
+     *
+     * WebView の Cookie 削除に失敗しても、保存先の削除は行う。WebView 側の後始末より、
+     * 資格情報を消し残さないことを優先する。
+     *
+     * Room 導入より前の保存先も [cookieStorage] が消す。ログアウト中の印が立っている間に
+     * 消すため、途中でプロセスが終わっても取り込み元だけが残ることはない。
+     *
+     * 呼び出し元が取り消されても最後まで行う。途中で止まると資格情報が消し残り、
+     * どこかの保存先から復活するため。
+     */
+    override suspend fun logout() = withContext(ioDispatcher + NonCancellable) {
+        runCatching {
             withContext(Dispatchers.Main) { WebViewCookieManager().removeAllCookies() }
-
-            setSessionId("")
-            bookmarkDataStore.clear()
-            blockDataStore.clear()
-            userDataStore.setTestUser(false)
-            userDataStore.setFollowTabDefaultHome(false)
-
-            _logoutTrigger.send(Random.nextLong())
+        }.onFailure { failure ->
+            Napier.w(failure) { "Failed to remove the WebView Cookies during logout." }
         }
+
+        cookieStorage.logout()
+
+        bookmarkDataStore.clear()
+        blockDataStore.clear()
+        userDataStore.setTestUser(false)
+        userDataStore.setFollowTabDefaultHome(false)
+
+        _logoutTrigger.send(Random.nextLong())
     }
 
     override suspend fun setSessionId(sessionId: String) {
         fanbox.setFanboxSessionId(sessionId)
+    }
+
+    override suspend fun importPreRoomSession(): Boolean = withContext(ioDispatcher) {
+        cookieStorage.importPreRoomSession {
+            oldCookieDataStore.getSessionId()?.let { sessionId ->
+                // fankt の `setFanboxSessionId` が保存する形と同じにする。
+                FanboxCookieRecord(
+                    domain = ".fanbox.cc",
+                    path = "/",
+                    name = FANBOX_SESSION_ID_NAME,
+                    value = sessionId,
+                    expiresAtEpochMilliseconds = null,
+                    secure = true,
+                    hostOnly = false,
+                )
+            }
+        }
     }
 
     override suspend fun setCookies(cookies: List<FanboxCookieRecord>) {
@@ -548,3 +597,6 @@ class FanboxRepositoryImpl(
         )
     }
 }
+
+/** FANBOX のセッション Cookie の名前。 */
+private const val FANBOX_SESSION_ID_NAME = "FANBOXSESSID"

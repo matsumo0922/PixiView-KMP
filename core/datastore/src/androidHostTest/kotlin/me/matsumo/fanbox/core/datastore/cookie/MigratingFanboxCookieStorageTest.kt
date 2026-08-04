@@ -1,0 +1,564 @@
+package me.matsumo.fanbox.core.datastore.cookie
+
+import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.runBlocking
+import me.matsumo.fankt.fanbox.FanboxCookieRecord
+import org.junit.Test
+import kotlin.test.assertEquals
+import kotlin.test.assertFails
+import kotlin.test.assertFalse
+import kotlin.test.assertTrue
+
+/**
+ * 旧 Room から secure store への移行を検証するテスト。
+ *
+ * 受け入れ条件は「既存ユーザーがアプリ更新後もログイン状態を維持している」ことと、
+ * 「新規ログインが secure store のみに保存される」ことである。
+ */
+class MigratingFanboxCookieStorageTest {
+
+    private val sessionCookie = FanboxCookieRecord(
+        domain = "fanbox.cc",
+        path = "/",
+        name = "FANBOXSESSID",
+        value = "session-value",
+        expiresAtEpochMilliseconds = 1_800_000_000_000L,
+        secure = true,
+        hostOnly = false,
+    )
+
+    private fun storage(
+        blobStore: FakeSecureCookieBlobStore,
+        legacyStorage: FakeLegacyCookieStorage? = null,
+        events: MutableList<CookieMigrationEvent> = mutableListOf(),
+        clearPreRoomSource: suspend () -> Unit = {},
+    ) = MigratingFanboxCookieStorage(
+        secureStorage = SecureFanboxCookieStorage(blobStore),
+        blobStore = blobStore,
+        legacyStorageFactory = { legacyStorage },
+        clearPreRoomSource = clearPreRoomSource,
+        onMigrationEvent = { events.add(it) },
+    )
+
+    @Test
+    fun legacySessionSurvivesTheUpgrade() = runBlocking {
+        val blobStore = FakeSecureCookieBlobStore()
+        val legacyStorage = FakeLegacyCookieStorage(listOf(sessionCookie))
+
+        val migrated = storage(blobStore, legacyStorage).snapshot()
+
+        assertEquals(listOf(sessionCookie), migrated)
+        assertEquals(listOf(sessionCookie.toSecureCookieRecord()), blobStore.storedPayload().records)
+    }
+
+    @Test
+    fun legacyStorageIsClearedAfterTheSecureCommit() = runBlocking {
+        val blobStore = FakeSecureCookieBlobStore()
+        val legacyStorage = FakeLegacyCookieStorage(listOf(sessionCookie))
+
+        storage(blobStore, legacyStorage).snapshot()
+
+        assertEquals(emptyList(), legacyStorage.storedRecords())
+        assertTrue(legacyStorage.isClosed)
+    }
+
+    @Test
+    fun migrationMarksItselfCompleted() = runBlocking {
+        val blobStore = FakeSecureCookieBlobStore()
+
+        storage(blobStore, FakeLegacyCookieStorage(listOf(sessionCookie))).snapshot()
+
+        assertTrue(blobStore.storedPayload().isMigrationCompleted)
+    }
+
+    @Test
+    fun legacyStorageIsKeptWhenTheSecureCommitFails() = runBlocking {
+        val blobStore = FakeSecureCookieBlobStore().apply { saveFailure = IllegalStateException("commit failed") }
+        val legacyStorage = FakeLegacyCookieStorage(listOf(sessionCookie))
+
+        val records = storage(blobStore, legacyStorage).snapshot()
+
+        assertEquals(listOf(sessionCookie), records)
+        assertEquals(listOf(sessionCookie), legacyStorage.storedRecords())
+        assertFalse(legacyStorage.isClosed)
+    }
+
+    @Test
+    fun upsertAfterAFailedMigrationNeverWritesToTheLegacyStore() = runBlocking {
+        val blobStore = FakeSecureCookieBlobStore().apply { saveFailure = IllegalStateException("commit failed") }
+        val legacyStorage = FakeLegacyCookieStorage(listOf(sessionCookie))
+        val storage = storage(blobStore, legacyStorage)
+
+        storage.snapshot()
+
+        val newCookie = sessionCookie.copy(value = "new-session")
+
+        assertFails { storage.upsert(newCookie) }
+        assertEquals(listOf(sessionCookie), legacyStorage.storedRecords())
+    }
+
+    @Test
+    fun replaceAllAfterAFailedMigrationNeverWritesToTheLegacyStore() = runBlocking {
+        val blobStore = FakeSecureCookieBlobStore().apply { saveFailure = IllegalStateException("commit failed") }
+        val legacyStorage = FakeLegacyCookieStorage(listOf(sessionCookie))
+        val storage = storage(blobStore, legacyStorage)
+
+        storage.snapshot()
+
+        assertFails { storage.replaceAll(listOf(sessionCookie.copy(value = "new-session"))) }
+        assertEquals(listOf(sessionCookie), legacyStorage.storedRecords())
+    }
+
+    @Test
+    fun writingAfterTheSecureStoreRecoversMigratesAndUsesTheSecureStore() = runBlocking {
+        val blobStore = FakeSecureCookieBlobStore().apply { saveFailure = IllegalStateException("commit failed") }
+        val legacyStorage = FakeLegacyCookieStorage(listOf(sessionCookie))
+        val storage = storage(blobStore, legacyStorage)
+
+        storage.snapshot()
+        blobStore.saveFailure = null
+
+        val newCookie = sessionCookie.copy(value = "new-session")
+        storage.upsert(newCookie)
+
+        assertEquals(listOf(newCookie.toSecureCookieRecord()), blobStore.storedPayload().records)
+        assertEquals(emptyList(), legacyStorage.storedRecords())
+    }
+
+    @Test
+    fun failedMigrationIsReportedAsFallback() = runBlocking {
+        val events = mutableListOf<CookieMigrationEvent>()
+        val blobStore = FakeSecureCookieBlobStore().apply { saveFailure = IllegalStateException("commit failed") }
+
+        storage(blobStore, FakeLegacyCookieStorage(listOf(sessionCookie)), events).snapshot()
+
+        assertTrue(events.any { it is CookieMigrationEvent.FallbackUsed })
+    }
+
+    @Test
+    fun migratedStoreIsNotMigratedAgain() = runBlocking {
+        val payload = SecureCookiePayload(
+            records = listOf(sessionCookie.toSecureCookieRecord()),
+            isMigrationCompleted = true,
+        )
+        val blobStore = FakeSecureCookieBlobStore(payload)
+        val legacyStorage = FakeLegacyCookieStorage(listOf(sessionCookie.copy(value = "stale")))
+
+        val records = storage(blobStore, legacyStorage).snapshot()
+
+        assertEquals("session-value", records.single().value)
+        assertEquals(0, blobStore.saveCount)
+    }
+
+    @Test
+    fun unreadablePayloadIsNotOverwritten() = runBlocking {
+        val payload = SecureCookiePayload(
+            records = listOf(sessionCookie.toSecureCookieRecord()),
+            isMigrationCompleted = true,
+        )
+        val blobStore = FakeSecureCookieBlobStore(payload).apply { isUnreadable = true }
+
+        storage(blobStore, FakeLegacyCookieStorage()).snapshot()
+
+        assertEquals(0, blobStore.saveCount)
+        assertEquals(listOf(sessionCookie.toSecureCookieRecord()), blobStore.storedPayload().records)
+    }
+
+    @Test
+    fun emptyLegacyStoreStillMarksMigrationCompleted() = runBlocking {
+        val blobStore = FakeSecureCookieBlobStore()
+
+        storage(blobStore, FakeLegacyCookieStorage()).snapshot()
+
+        assertTrue(blobStore.storedPayload().isMigrationCompleted)
+    }
+
+    @Test
+    fun unopenableLegacyStorageLeavesMigrationRetryable() = runBlocking {
+        val blobStore = FakeSecureCookieBlobStore()
+        val storage = MigratingFanboxCookieStorage(
+            secureStorage = SecureFanboxCookieStorage(blobStore),
+            blobStore = blobStore,
+            legacyStorageFactory = { error("cannot open") },
+        )
+
+        storage.snapshot()
+
+        assertEquals(0, blobStore.saveCount)
+        assertFalse(blobStore.storedPayload().isMigrationCompleted)
+    }
+
+    @Test
+    fun logoutKeepsTheLegacyStorageOpenWhileItIsStillTheReadSource() = runBlocking {
+        val blobStore = FakeSecureCookieBlobStore().apply { saveFailure = IllegalStateException("commit failed") }
+        val legacyStorage = FakeLegacyCookieStorage(listOf(sessionCookie))
+        val storage = storage(blobStore, legacyStorage)
+
+        storage.snapshot()
+        blobStore.saveFailure = null
+        storage.logout()
+
+        assertFalse(legacyStorage.isClosed)
+        assertEquals(emptyList(), legacyStorage.storedRecords())
+    }
+
+    @Test
+    fun theLegacyStorageIsOpenedOnlyOnceAcrossRepeatedLogouts() = runBlocking {
+        val blobStore = FakeSecureCookieBlobStore().apply { saveFailure = IllegalStateException("commit failed") }
+        val legacyStorage = FakeLegacyCookieStorage(listOf(sessionCookie))
+        var openCount = 0
+        val storage = MigratingFanboxCookieStorage(
+            secureStorage = SecureFanboxCookieStorage(blobStore),
+            blobStore = blobStore,
+            legacyStorageFactory = {
+                openCount += 1
+                legacyStorage
+            },
+        )
+
+        // 移行 commit の失敗で Room へ fallback し、その後回復して secure へ切り替わる。
+        storage.snapshot()
+        blobStore.saveFailure = null
+        storage.logout()
+
+        // 切り替え後に routing から外れても、開いたままの実体を使い回す。
+        storage.upsert(sessionCookie)
+        storage.logout()
+
+        assertEquals(1, openCount)
+        assertFalse(legacyStorage.isClosed)
+    }
+
+    @Test
+    fun unreadableLegacyStorageLeavesMigrationRetryable() = runBlocking {
+        val blobStore = FakeSecureCookieBlobStore()
+        val legacyStorage = FakeLegacyCookieStorage(listOf(sessionCookie))
+            .apply { snapshotFailure = IllegalStateException("read failed") }
+
+        storage(blobStore, legacyStorage).snapshot()
+
+        assertEquals(0, blobStore.saveCount)
+        assertFalse(blobStore.storedPayload().isMigrationCompleted)
+        assertEquals(listOf(sessionCookie), legacyStorage.storedRecords())
+    }
+
+    @Test
+    fun newLoginIsWrittenOnlyToTheSecureStore() = runBlocking {
+        val blobStore = FakeSecureCookieBlobStore()
+        val legacyStorage = FakeLegacyCookieStorage()
+        val storage = storage(blobStore, legacyStorage)
+
+        storage.replaceAll(listOf(sessionCookie))
+
+        assertEquals(listOf(sessionCookie.toSecureCookieRecord()), blobStore.storedPayload().records)
+        assertEquals(emptyList(), legacyStorage.storedRecords())
+    }
+
+    @Test
+    fun cookiesFirstEmissionMatchesTheSecureSnapshot() = runBlocking {
+        val payload = SecureCookiePayload(
+            records = listOf(sessionCookie.toSecureCookieRecord()),
+            isMigrationCompleted = true,
+        )
+        val blobStore = FakeSecureCookieBlobStore(payload)
+
+        val firstEmission = storage(blobStore, FakeLegacyCookieStorage()).cookies.first()
+
+        assertEquals(listOf(sessionCookie), firstEmission)
+    }
+
+    @Test
+    fun cookiesFirstEmissionMatchesTheMigratedLegacySnapshot() = runBlocking {
+        val blobStore = FakeSecureCookieBlobStore()
+
+        val firstEmission = storage(blobStore, FakeLegacyCookieStorage(listOf(sessionCookie))).cookies.first()
+
+        assertEquals(listOf(sessionCookie), firstEmission)
+    }
+
+    @Test
+    fun cookiesFirstEmissionIsEmptyWithoutAStoredSession() = runBlocking {
+        val blobStore = FakeSecureCookieBlobStore()
+
+        val firstEmission = storage(blobStore, FakeLegacyCookieStorage()).cookies.first()
+
+        assertEquals(emptyList(), firstEmission)
+    }
+
+    @Test
+    fun logoutClearsBothStores() = runBlocking {
+        val payload = SecureCookiePayload(
+            records = listOf(sessionCookie.toSecureCookieRecord()),
+            isMigrationCompleted = true,
+        )
+        val blobStore = FakeSecureCookieBlobStore(payload)
+        val legacyStorage = FakeLegacyCookieStorage(listOf(sessionCookie))
+
+        storage(blobStore, legacyStorage).logout()
+
+        assertEquals(emptyList(), blobStore.storedPayload().records)
+        assertEquals(emptyList(), legacyStorage.storedRecords())
+    }
+
+    @Test
+    fun logoutRemovesTheStoredPayloadEntirely() = runBlocking {
+        val blobStore = FakeSecureCookieBlobStore(
+            SecureCookiePayload(records = listOf(sessionCookie.toSecureCookieRecord())),
+        )
+
+        storage(blobStore, FakeLegacyCookieStorage()).logout()
+
+        assertFalse(blobStore.hasStoredPayload())
+    }
+
+    @Test
+    fun cookiesCollectorFollowsTheSwitchFromLegacyToSecure() = runBlocking {
+        val blobStore = FakeSecureCookieBlobStore().apply { saveFailure = IllegalStateException("commit failed") }
+        val legacyStorage = FakeLegacyCookieStorage(listOf(sessionCookie))
+        val storage = storage(blobStore, legacyStorage)
+
+        assertEquals(listOf(sessionCookie), storage.cookies.first())
+
+        blobStore.saveFailure = null
+
+        val newCookie = sessionCookie.copy(value = "new-session")
+        storage.upsert(newCookie)
+
+        assertEquals(listOf(newCookie), storage.cookies.first())
+    }
+
+    @Test
+    fun logoutClearsThePreRoomSourceWhileTheMarkerIsSet() = runBlocking {
+        val blobStore = FakeSecureCookieBlobStore(
+            SecureCookiePayload(records = listOf(sessionCookie.toSecureCookieRecord())),
+        )
+        var isPreRoomSourceCleared = false
+
+        storage(
+            blobStore = blobStore,
+            legacyStorage = FakeLegacyCookieStorage(),
+            clearPreRoomSource = { isPreRoomSourceCleared = true },
+        ).logout()
+
+        assertTrue(isPreRoomSourceCleared)
+        assertFalse(blobStore.hasStoredPayload())
+    }
+
+    @Test
+    fun logoutKeepsTheMarkerWhenThePreRoomSourceCannotBeCleared() = runBlocking {
+        val blobStore = FakeSecureCookieBlobStore(
+            SecureCookiePayload(records = listOf(sessionCookie.toSecureCookieRecord())),
+        )
+
+        storage(
+            blobStore = blobStore,
+            legacyStorage = FakeLegacyCookieStorage(),
+            clearPreRoomSource = { error("clear failed") },
+        ).logout()
+
+        assertTrue(blobStore.storedPayload().isLogoutInProgress)
+    }
+
+    @Test
+    fun writingIsRejectedWhileTheLogoutCleanupIsPending() = runBlocking {
+        val blobStore = FakeSecureCookieBlobStore(
+            SecureCookiePayload(records = listOf(sessionCookie.toSecureCookieRecord())),
+        )
+        val legacyStorage = FakeLegacyCookieStorage()
+        val storage = storage(
+            blobStore = blobStore,
+            legacyStorage = legacyStorage,
+            clearPreRoomSource = { error("clear failed") },
+        )
+
+        storage.logout()
+
+        assertFails { storage.upsert(sessionCookie.copy(value = "new-session")) }
+        assertTrue(blobStore.storedPayload().records.isEmpty())
+    }
+
+    @Test
+    fun writingResumesThePendingLogoutBeforeStoringTheSession() = runBlocking {
+        val blobStore = FakeSecureCookieBlobStore(SecureCookiePayload(isLogoutInProgress = true))
+        val storage = storage(blobStore, FakeLegacyCookieStorage())
+
+        val newCookie = sessionCookie.copy(value = "new-session")
+        storage.upsert(newCookie)
+
+        assertFalse(blobStore.storedPayload().isLogoutInProgress)
+        assertEquals(listOf(newCookie.toSecureCookieRecord()), blobStore.storedPayload().records)
+    }
+
+    @Test
+    fun writingIsRejectedWhenTheLogoutStateCannotBeRead() = runBlocking {
+        val blobStore = FakeSecureCookieBlobStore(
+            SecureCookiePayload(records = listOf(sessionCookie.toSecureCookieRecord())),
+        ).apply { loadFailure = IllegalStateException("read failed") }
+        val storage = storage(blobStore, FakeLegacyCookieStorage())
+
+        assertFails { storage.upsert(sessionCookie.copy(value = "new-session")) }
+
+        Unit
+    }
+
+    @Test
+    fun writingIsRejectedWhenTheStoredLogoutStateCannotBeDecoded() = runBlocking {
+        val blobStore = FakeSecureCookieBlobStore(SecureCookiePayload(isLogoutInProgress = true))
+            .apply { isUnreadable = true }
+        val storage = storage(blobStore, FakeLegacyCookieStorage())
+
+        assertFails { storage.upsert(sessionCookie.copy(value = "new-session")) }
+        assertTrue(blobStore.storedPayload().isLogoutInProgress)
+    }
+
+    @Test
+    fun preRoomImportDoesNotRestoreASessionRemovedByAConcurrentLogout() = runBlocking {
+        val blobStore = FakeSecureCookieBlobStore(
+            SecureCookiePayload(records = listOf(sessionCookie.toSecureCookieRecord())),
+        )
+        val legacyStorage = FakeLegacyCookieStorage()
+        val storage = storage(
+            blobStore = blobStore,
+            legacyStorage = legacyStorage,
+            // 後始末を終えられない状態にして、印が残ったままログアウトが返るようにする。
+            clearPreRoomSource = { error("clear failed") },
+        )
+
+        storage.logout()
+
+        // 取り込み元を読んだ後にログアウトが挟まった状況にあたる。印が残っている間は
+        // 取り込みを行わない。行うと次回起動時に消されるセッションを保存してしまう。
+        val isImported = storage.importPreRoomSession { sessionCookie }
+
+        assertFalse(isImported)
+        assertEquals(emptyList(), blobStore.storedPayload().records)
+    }
+
+    @Test
+    fun preRoomImportDoesNotOverwriteTheMigratedSession() = runBlocking {
+        val currentSession = sessionCookie.copy(value = "migrated-session")
+        val blobStore = FakeSecureCookieBlobStore(
+            SecureCookiePayload(
+                records = listOf(currentSession.toSecureCookieRecord()),
+                isMigrationCompleted = true,
+            ),
+        )
+        var isPreRoomSourceCleared = false
+        val storage = storage(
+            blobStore = blobStore,
+            legacyStorage = FakeLegacyCookieStorage(),
+            clearPreRoomSource = { isPreRoomSourceCleared = true },
+        )
+
+        // 旧形式に残っているのは移行より前の値なので、現在の値を置き換えてはいけない。
+        val isImported = storage.importPreRoomSession { sessionCookie.copy(value = "stale-session") }
+
+        assertTrue(isImported)
+        assertTrue(isPreRoomSourceCleared)
+        assertEquals(listOf(currentSession.toSecureCookieRecord()), blobStore.storedPayload().records)
+    }
+
+    @Test
+    fun preRoomImportStoresTheSessionAndClearsItsSource() = runBlocking {
+        val blobStore = FakeSecureCookieBlobStore()
+        var isPreRoomSourceCleared = false
+        val storage = storage(
+            blobStore = blobStore,
+            legacyStorage = FakeLegacyCookieStorage(),
+            clearPreRoomSource = { isPreRoomSourceCleared = true },
+        )
+
+        val isImported = storage.importPreRoomSession { sessionCookie }
+
+        assertTrue(isImported)
+        assertTrue(isPreRoomSourceCleared)
+        assertEquals(listOf(sessionCookie.toSecureCookieRecord()), blobStore.storedPayload().records)
+    }
+
+    @Test
+    fun logoutKeepsTheMarkerWhenTheLegacyClearFails() = runBlocking {
+        val blobStore = FakeSecureCookieBlobStore(
+            SecureCookiePayload(records = listOf(sessionCookie.toSecureCookieRecord())),
+        )
+        val legacyStorage = FakeLegacyCookieStorage(listOf(sessionCookie))
+            .apply { clearFailure = IllegalStateException("clear failed") }
+
+        storage(blobStore, legacyStorage).logout()
+
+        assertTrue(blobStore.storedPayload().isLogoutInProgress)
+        assertTrue(blobStore.hasStoredPayload())
+    }
+
+    @Test
+    fun logoutKeepsTheMarkerWhenTheLegacyStoreCannotBeOpened() = runBlocking {
+        val blobStore = FakeSecureCookieBlobStore(
+            SecureCookiePayload(records = listOf(sessionCookie.toSecureCookieRecord())),
+        )
+        val storage = MigratingFanboxCookieStorage(
+            secureStorage = SecureFanboxCookieStorage(blobStore),
+            blobStore = blobStore,
+            legacyStorageFactory = { error("cannot open") },
+        )
+
+        storage.logout()
+
+        assertTrue(blobStore.storedPayload().isLogoutInProgress)
+    }
+
+    @Test
+    fun resumedLogoutKeepsTheMarkerWhenTheLegacyClearFails() = runBlocking {
+        val blobStore = FakeSecureCookieBlobStore(SecureCookiePayload(isLogoutInProgress = true))
+        val legacyStorage = FakeLegacyCookieStorage(listOf(sessionCookie))
+            .apply { clearFailure = IllegalStateException("clear failed") }
+
+        storage(blobStore, legacyStorage).snapshot()
+
+        assertTrue(blobStore.storedPayload().isLogoutInProgress)
+    }
+
+    @Test
+    fun interruptedLogoutIsResumedOnTheNextLaunch() = runBlocking {
+        val blobStore = FakeSecureCookieBlobStore(SecureCookiePayload(isLogoutInProgress = true))
+        val legacyStorage = FakeLegacyCookieStorage(listOf(sessionCookie))
+
+        val records = storage(blobStore, legacyStorage).snapshot()
+
+        assertEquals(emptyList(), records)
+        assertEquals(emptyList(), legacyStorage.storedRecords())
+    }
+
+    @Test
+    fun interruptedLogoutIsReported() = runBlocking {
+        val events = mutableListOf<CookieMigrationEvent>()
+        val blobStore = FakeSecureCookieBlobStore(SecureCookiePayload(isLogoutInProgress = true))
+
+        storage(blobStore, FakeLegacyCookieStorage(), events).snapshot()
+
+        assertTrue(events.contains(CookieMigrationEvent.LogoutResumed))
+    }
+
+    @Test
+    fun routingIsDecidedOnlyOnce() = runBlocking {
+        val blobStore = FakeSecureCookieBlobStore()
+        val legacyStorage = FakeLegacyCookieStorage(listOf(sessionCookie))
+        val storage = storage(blobStore, legacyStorage)
+
+        storage.snapshot()
+        storage.snapshot()
+        storage.snapshot()
+
+        assertEquals(1, legacyStorage.clearCount)
+    }
+
+    @Test
+    fun migrationSurvivesAFailedLegacyCleanup() = runBlocking {
+        val blobStore = FakeSecureCookieBlobStore()
+        val legacyStorage = FakeLegacyCookieStorage(listOf(sessionCookie))
+            .apply { clearFailure = IllegalStateException("clear failed") }
+
+        val records = storage(blobStore, legacyStorage).snapshot()
+
+        assertEquals(listOf(sessionCookie), records)
+        assertEquals(listOf(sessionCookie.toSecureCookieRecord()), blobStore.storedPayload().records)
+    }
+}

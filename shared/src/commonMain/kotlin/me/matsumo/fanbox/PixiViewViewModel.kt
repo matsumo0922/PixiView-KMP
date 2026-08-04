@@ -20,7 +20,6 @@ import me.matsumo.fanbox.core.billing.BillingClient
 import me.matsumo.fanbox.core.common.PixiViewConfig
 import me.matsumo.fanbox.core.common.util.suspendRunCatching
 import me.matsumo.fanbox.core.datastore.LaunchLogDataStore
-import me.matsumo.fanbox.core.datastore.OldCookieDataStore
 import me.matsumo.fanbox.core.logs.category.BillingLog
 import me.matsumo.fanbox.core.logs.logger.LogConfigurator
 import me.matsumo.fanbox.core.logs.logger.send
@@ -48,7 +47,6 @@ class PixiViewViewModel(
     private val fanboxRepository: FanboxRepository,
     private val downloadPostsRepository: DownloadPostsRepository,
     private val launchLogDataStore: LaunchLogDataStore,
-    private val oldCookieDataStore: OldCookieDataStore,
     private val billingClient: BillingClient,
     private val pixiViewConfig: PixiViewConfig,
 ) : ViewModel() {
@@ -174,13 +172,7 @@ class PixiViewViewModel(
         viewModelScope.launch {
             suspendRunCatching {
                 if (!settingRepository.setting.first().isTestUser) {
-                    val oldCookies = oldCookieDataStore.getCookies()
-                    val sessionId = oldCookies.map { it.split("=") }.firstOrNull { it.first() == "FANBOXSESSID" }?.get(1)
-
-                    if (sessionId != null) {
-                        fanboxRepository.setSessionId(sessionId)
-                        oldCookieDataStore.save("")
-                    }
+                    importOldSessionId()
 
                     _metadataFlow.value = suspendRunCatching { fanboxRepository.getMetadata() }.getOrElse { getFanboxMetadataDummy() }
 
@@ -191,6 +183,20 @@ class PixiViewViewModel(
                 Napier.d { "update home state. isLoggedIn: $it" }
                 _isLoggedInFlow.emit(it)
             }
+        }
+    }
+
+    /**
+     * Room 導入より前の保存先に残っているセッションを、現在の保存先へ取り込む。
+     *
+     * 読み出しから取り込み元の削除までは保存先の側で直列化する。取り込みの途中で
+     * ログアウトが挟まると、消えたはずのセッションを取り込んで復活させるため。
+     */
+    private suspend fun importOldSessionId() {
+        val isImported = suspendRunCatching { fanboxRepository.importPreRoomSession() }.getOrDefault(false)
+
+        if (!isImported) {
+            Napier.w { "Failed to import the legacy session; keeping the old source for a later retry." }
         }
     }
 
