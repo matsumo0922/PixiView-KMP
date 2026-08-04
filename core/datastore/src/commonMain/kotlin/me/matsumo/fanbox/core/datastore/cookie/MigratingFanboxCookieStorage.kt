@@ -267,11 +267,16 @@ class MigratingFanboxCookieStorage internal constructor(
     }
 
     private suspend fun migrateFromLegacy(): CookieRouting {
+        // 開けなかった保存先は中身が分からないため、移行の印を書かない。書くと次回起動で
+        // 読み直さなくなり、開けなかっただけのセッションを恒久的に見失う。
         val legacyStorage = runCatching { legacyStorageFactory() }.getOrElse { failure ->
             Napier.w(failure) { "Failed to open the legacy Cookie storage." }
-            null
+            onMigrationEvent(CookieMigrationEvent.FallbackUsed(MigrationStage.LEGACY_READ))
+
+            return CookieRouting.Secure
         }
 
+        // 保存先そのものが無い環境。移行するものが無いため印を書いて終わる。
         if (legacyStorage == null) {
             runCatching { blobStore.save(SecureCookiePayload(isMigrationCompleted = true)) }
 
@@ -342,6 +347,9 @@ class MigratingFanboxCookieStorage internal constructor(
      * 片方の削除が失敗しても、もう片方の削除は行う。資格情報の消し残しを減らすため。
      * 両方を消し終えた場合だけ true を返す。呼び出し元はこれが true の場合だけ
      * ログアウト中の印を外す。消し残したまま印を外すと、次回起動時に残りが移行されるため。
+     *
+     * 読み出しに使っている Room は閉じない。閉じると Cookie の購読が例外で終わり、
+     * 保存先が secure へ変わったことを購読者が受け取れなくなる。ここで開いた場合だけ閉じる。
      */
     private suspend fun clearBothStores(): Boolean {
         val isSecureCleared = runCatching { secureStorage.clear() }.onFailure { failure ->
@@ -365,7 +373,7 @@ class MigratingFanboxCookieStorage internal constructor(
             Napier.w(failure) { "Failed to clear the legacy Cookie storage." }
         }.isSuccess
 
-        legacyStorage.closeQuietly()
+        if (openedStorage == null) legacyStorage.closeQuietly()
 
         return isSecureCleared && isPreRoomSourceCleared && isLegacyCleared
     }
@@ -410,5 +418,4 @@ internal sealed interface CookieMigrationEvent {
 internal enum class MigrationStage {
     LEGACY_READ,
     SECURE_COMMIT,
-    LEGACY_CLEANUP,
 }

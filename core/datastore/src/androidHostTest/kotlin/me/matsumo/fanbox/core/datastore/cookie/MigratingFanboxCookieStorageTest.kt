@@ -174,6 +174,35 @@ class MigratingFanboxCookieStorageTest {
     }
 
     @Test
+    fun unopenableLegacyStorageLeavesMigrationRetryable() = runBlocking {
+        val blobStore = FakeSecureCookieBlobStore()
+        val storage = MigratingFanboxCookieStorage(
+            secureStorage = SecureFanboxCookieStorage(blobStore),
+            blobStore = blobStore,
+            legacyStorageFactory = { error("cannot open") },
+        )
+
+        storage.snapshot()
+
+        assertEquals(0, blobStore.saveCount)
+        assertFalse(blobStore.storedPayload().isMigrationCompleted)
+    }
+
+    @Test
+    fun logoutKeepsTheLegacyStorageOpenWhileItIsStillTheReadSource() = runBlocking {
+        val blobStore = FakeSecureCookieBlobStore().apply { saveFailure = IllegalStateException("commit failed") }
+        val legacyStorage = FakeLegacyCookieStorage(listOf(sessionCookie))
+        val storage = storage(blobStore, legacyStorage)
+
+        storage.snapshot()
+        blobStore.saveFailure = null
+        storage.logout()
+
+        assertFalse(legacyStorage.isClosed)
+        assertEquals(emptyList(), legacyStorage.storedRecords())
+    }
+
+    @Test
     fun unreadableLegacyStorageLeavesMigrationRetryable() = runBlocking {
         val blobStore = FakeSecureCookieBlobStore()
         val legacyStorage = FakeLegacyCookieStorage(listOf(sessionCookie))

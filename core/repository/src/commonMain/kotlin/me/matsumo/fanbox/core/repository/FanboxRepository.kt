@@ -63,14 +63,6 @@ interface FanboxRepository {
     suspend fun setSessionId(sessionId: String)
 
     /**
-     * 現在保存されているセッションを返す。無ければ null を返す。
-     *
-     * [sessionId] は購読を開始した時点の値を流すため、書き込んだ結果を確かめる用途には使えない。
-     * 保存先へ書いた内容を読み直す場合はこちらを使う。
-     */
-    suspend fun getStoredSessionId(): String?
-
-    /**
      * Room 導入より前の保存先に残っているセッションを取り込む。取り込めた場合は true を返す。
      *
      * 読み出しから取り込み元の削除までをログアウトと同じ順序制御の下で行うため、
@@ -281,10 +273,6 @@ class FanboxRepositoryImpl(
 
     override suspend fun setSessionId(sessionId: String) {
         fanbox.setFanboxSessionId(sessionId)
-    }
-
-    override suspend fun getStoredSessionId(): String? {
-        return cookieStorage.snapshot().find { it.name == FANBOX_SESSION_ID_NAME }?.value
     }
 
     override suspend fun importPreRoomSession(): Boolean = withContext(ioDispatcher) {
