@@ -106,6 +106,12 @@ class PixiViewViewModel(
         }
 
         viewModelScope.launch {
+            fanboxRepository.sessionInvalidatedTrigger.collectLatest {
+                _isLoggedInFlow.emit(false)
+            }
+        }
+
+        viewModelScope.launch {
             settingRepository.setting.collectLatest {
                 LogConfigurator.configure(
                     pixiViewConfig = pixiViewConfig,

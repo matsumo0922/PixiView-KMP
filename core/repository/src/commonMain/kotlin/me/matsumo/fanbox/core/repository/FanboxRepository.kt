@@ -31,6 +31,7 @@ import me.matsumo.fanbox.core.repository.paging.SearchPostsPagingSource
 import me.matsumo.fanbox.core.repository.paging.SupportedPostsPagingSource
 import me.matsumo.fankt.fanbox.Fanbox
 import me.matsumo.fankt.fanbox.FanboxCookieRecord
+import me.matsumo.fankt.fanbox.FanboxException
 import me.matsumo.fankt.fanbox.FanboxListItemSchemaMismatch
 import me.matsumo.fankt.fanbox.FanboxLogLevel
 import me.matsumo.fankt.fanbox.domain.FanboxCursor
@@ -61,6 +62,7 @@ interface FanboxRepository {
     val sessionId: Flow<String?>
     val csrfToken: Flow<String?>
     val logoutTrigger: Flow<Long>
+    val sessionInvalidatedTrigger: Flow<Long>
 
     suspend fun logout()
     suspend fun setSessionId(sessionId: String)
@@ -236,11 +238,13 @@ class FanboxRepositoryImpl(
 
     // ログアウトの完了を待つ呼び出し元を止めないため、受け手がいなくても送信が進む容量を持たせる。
     private val _logoutTrigger = Channel<Long>(Channel.CONFLATED)
+    private val _sessionInvalidatedTrigger = Channel<Long>(Channel.CONFLATED)
 
     override val sessionId: Flow<String?> =
         fanbox.cookies.map { list -> list.find { it.name == FANBOX_SESSION_ID_NAME }?.value }
     override val csrfToken: Flow<String?> = fanbox.csrfToken
     override val logoutTrigger: Flow<Long> = _logoutTrigger.receiveAsFlow()
+    override val sessionInvalidatedTrigger: Flow<Long> = _sessionInvalidatedTrigger.receiveAsFlow()
 
     override val bookmarkedPostsIds: SharedFlow<List<FanboxPostId>> = bookmarkDataStore.data
     override val blockedCreators: SharedFlow<Set<FanboxCreatorId>> = blockDataStore.data
@@ -321,22 +325,37 @@ class FanboxRepositoryImpl(
         )
     }
 
-    override suspend fun getMetadata(): FanboxMetaData {
-        return fanbox.getMetadata()
+    /**
+     * FANBOX API の認証切れを通知し、呼び出し元へ例外を再送出する。
+     *
+     * [logout] とセッション設定系は包まない。ログアウト中の 401 で [logoutTrigger] と二重に通知したり、
+     * セッションを設定する処理を認証済み API として扱ったりしないため。
+     */
+    private suspend fun <T> withSessionCheck(block: suspend () -> T): T {
+        return try {
+            block()
+        } catch (exception: FanboxException.Unauthorized) {
+            _sessionInvalidatedTrigger.send(Random.nextLong())
+            throw exception
+        }
+    }
+
+    override suspend fun getMetadata(): FanboxMetaData = withSessionCheck {
+        fanbox.getMetadata()
     }
 
     override suspend fun getHomePosts(
         cursor: FanboxCursor?,
         loadSize: Int,
-    ): PageCursorInfo<FanboxPost> {
-        return fanbox.getHomePosts(cursor, ::recordSchemaMismatch)
+    ): PageCursorInfo<FanboxPost> = withSessionCheck {
+        fanbox.getHomePosts(cursor, ::recordSchemaMismatch)
     }
 
     override suspend fun getSupportedPosts(
         cursor: FanboxCursor?,
         loadSize: Int,
-    ): PageCursorInfo<FanboxPost> {
-        return fanbox.getSupportedPosts(cursor, ::recordSchemaMismatch)
+    ): PageCursorInfo<FanboxPost> = withSessionCheck {
+        fanbox.getSupportedPosts(cursor, ::recordSchemaMismatch)
     }
 
     override suspend fun getCreatorPosts(
@@ -344,8 +363,8 @@ class FanboxRepositoryImpl(
         currentCursor: FanboxCursor,
         nextCursor: FanboxCursor?,
         loadSize: Int,
-    ): PageCursorInfo<FanboxPost> {
-        return fanbox.getCreatorPosts(
+    ): PageCursorInfo<FanboxPost> = withSessionCheck {
+        fanbox.getCreatorPosts(
             creatorId = creatorId,
             cursor = currentCursor,
             nextCursor = nextCursor,
@@ -357,27 +376,27 @@ class FanboxRepositoryImpl(
         query: String,
         creatorId: FanboxCreatorId?,
         page: Int,
-    ): PageNumberInfo<FanboxPost> {
-        return fanbox.getPostFromQuery(query, creatorId, page)
+    ): PageNumberInfo<FanboxPost> = withSessionCheck {
+        fanbox.getPostFromQuery(query, creatorId, page)
     }
 
-    override suspend fun getCreatorPostsPagination(creatorId: FanboxCreatorId): List<FanboxCursor> {
-        return fanbox.getCreatorPostsPagination(creatorId)
+    override suspend fun getCreatorPostsPagination(creatorId: FanboxCreatorId): List<FanboxCursor> = withSessionCheck {
+        fanbox.getCreatorPostsPagination(creatorId)
     }
 
     override suspend fun getCreatorFromQuery(
         query: String,
         page: Int,
-    ): PageNumberInfo<FanboxCreatorDetail> {
-        return fanbox.searchCreators(query, page)
+    ): PageNumberInfo<FanboxCreatorDetail> = withSessionCheck {
+        fanbox.searchCreators(query, page)
     }
 
-    override suspend fun getTagFromQuery(query: String): List<FanboxTag> {
-        return fanbox.searchTags(query)
+    override suspend fun getTagFromQuery(query: String): List<FanboxTag> = withSessionCheck {
+        fanbox.searchTags(query)
     }
 
-    override suspend fun getPostDetail(postId: FanboxPostId): FanboxPostDetail {
-        return fanbox.getPostDetail(postId)
+    override suspend fun getPostDetail(postId: FanboxPostId): FanboxPostDetail = withSessionCheck {
+        fanbox.getPostDetail(postId)
     }
 
     override suspend fun getPostDetailCached(postId: FanboxPostId): FanboxPostDetail =
@@ -388,8 +407,8 @@ class FanboxRepositoryImpl(
     override suspend fun getPostComment(
         postId: FanboxPostId,
         offset: Int,
-    ): PageOffsetInfo<FanboxComment> {
-        return fanbox.getPostComment(
+    ): PageOffsetInfo<FanboxComment> = withSessionCheck {
+        fanbox.getPostComment(
             postId = postId,
             offset = offset,
             onItemSchemaMismatch = ::recordSchemaMismatch,
@@ -498,20 +517,20 @@ class FanboxRepositoryImpl(
         ).flow
     }
 
-    override suspend fun getFollowingCreators(): List<FanboxCreatorDetail> {
-        return fanbox.getFollowingCreators(::recordSchemaMismatch)
+    override suspend fun getFollowingCreators(): List<FanboxCreatorDetail> = withSessionCheck {
+        fanbox.getFollowingCreators(::recordSchemaMismatch)
     }
 
-    override suspend fun getFollowingPixivCreators(): List<FanboxCreatorDetail> {
-        return fanbox.getFollowingPixivCreators(::recordSchemaMismatch)
+    override suspend fun getFollowingPixivCreators(): List<FanboxCreatorDetail> = withSessionCheck {
+        fanbox.getFollowingPixivCreators(::recordSchemaMismatch)
     }
 
-    override suspend fun getRecommendedCreators(): List<FanboxCreatorDetail> {
-        return fanbox.getRecommendedCreators(::recordSchemaMismatch)
+    override suspend fun getRecommendedCreators(): List<FanboxCreatorDetail> = withSessionCheck {
+        fanbox.getRecommendedCreators(::recordSchemaMismatch)
     }
 
-    override suspend fun getCreatorDetail(creatorId: FanboxCreatorId): FanboxCreatorDetail {
-        return fanbox.getCreatorDetail(creatorId)
+    override suspend fun getCreatorDetail(creatorId: FanboxCreatorId): FanboxCreatorDetail = withSessionCheck {
+        fanbox.getCreatorDetail(creatorId)
     }
 
     override suspend fun getCreatorDetailCached(creatorId: FanboxCreatorId): FanboxCreatorDetail =
@@ -519,49 +538,49 @@ class FanboxRepositoryImpl(
             creatorCache.getOrPut(creatorId) { getCreatorDetail(creatorId) }
         }
 
-    override suspend fun getCreatorTags(creatorId: FanboxCreatorId): List<FanboxTag> {
-        return fanbox.getCreatorTags(creatorId)
+    override suspend fun getCreatorTags(creatorId: FanboxCreatorId): List<FanboxTag> = withSessionCheck {
+        fanbox.getCreatorTags(creatorId)
     }
 
-    override suspend fun getSupportedPlans(): List<FanboxCreatorPlan> {
-        return fanbox.getSupportedPlans(::recordSchemaMismatch)
+    override suspend fun getSupportedPlans(): List<FanboxCreatorPlan> = withSessionCheck {
+        fanbox.getSupportedPlans(::recordSchemaMismatch)
     }
 
-    override suspend fun getCreatorPlans(creatorId: FanboxCreatorId): List<FanboxCreatorPlan> {
-        return fanbox.getCreatorPlans(creatorId, ::recordSchemaMismatch)
+    override suspend fun getCreatorPlans(creatorId: FanboxCreatorId): List<FanboxCreatorPlan> = withSessionCheck {
+        fanbox.getCreatorPlans(creatorId, ::recordSchemaMismatch)
     }
 
-    override suspend fun getCreatorPlan(creatorId: FanboxCreatorId): FanboxCreatorPlanDetail {
-        return fanbox.getCreatorPlanDetail(creatorId)
+    override suspend fun getCreatorPlan(creatorId: FanboxCreatorId): FanboxCreatorPlanDetail = withSessionCheck {
+        fanbox.getCreatorPlanDetail(creatorId)
     }
 
-    override suspend fun getPaidRecords(): List<FanboxPaidRecord> {
-        return fanbox.getPaidRecords()
+    override suspend fun getPaidRecords(): List<FanboxPaidRecord> = withSessionCheck {
+        fanbox.getPaidRecords()
     }
 
-    override suspend fun getUnpaidRecords(): List<FanboxPaidRecord> {
-        return fanbox.getUnpaidRecords()
+    override suspend fun getUnpaidRecords(): List<FanboxPaidRecord> = withSessionCheck {
+        fanbox.getUnpaidRecords()
     }
 
-    override suspend fun getNewsLetters(): List<FanboxNewsLetter> {
-        return fanbox.getNewsLetters()
+    override suspend fun getNewsLetters(): List<FanboxNewsLetter> = withSessionCheck {
+        fanbox.getNewsLetters()
     }
 
-    override suspend fun getBells(page: Int): PageNumberInfo<FanboxBell> {
+    override suspend fun getBells(page: Int): PageNumberInfo<FanboxBell> = withSessionCheck {
         // 一覧を取得した時点で FANBOX 側の通知を既読にする。fankt 0.1.0 の既定は未読のまま残す
         // 挙動だが、PixiView は従来どおり既読化する。
-        return fanbox.getBells(
+        fanbox.getBells(
             page = page,
             onItemSchemaMismatch = ::recordSchemaMismatch,
             markNotificationsRead = true,
         )
     }
 
-    override suspend fun likePost(postId: FanboxPostId) {
+    override suspend fun likePost(postId: FanboxPostId) = withSessionCheck {
         fanbox.likePost(postId)
     }
 
-    override suspend fun likeComment(commentId: FanboxCommentId) {
+    override suspend fun likeComment(commentId: FanboxCommentId) = withSessionCheck {
         fanbox.likeComment(commentId)
     }
 
@@ -570,7 +589,7 @@ class FanboxRepositoryImpl(
         comment: String,
         rootCommentId: FanboxCommentId?,
         parentCommentId: FanboxCommentId?,
-    ) {
+    ) = withSessionCheck {
         fanbox.addComment(
             postId = postId,
             rootCommentId = rootCommentId,
@@ -579,15 +598,15 @@ class FanboxRepositoryImpl(
         )
     }
 
-    override suspend fun deleteComment(commentId: FanboxCommentId) {
+    override suspend fun deleteComment(commentId: FanboxCommentId) = withSessionCheck {
         fanbox.deleteComment(commentId)
     }
 
-    override suspend fun followCreator(creatorUserId: FanboxUserId) {
+    override suspend fun followCreator(creatorUserId: FanboxUserId) = withSessionCheck {
         fanbox.followCreator(creatorUserId)
     }
 
-    override suspend fun unfollowCreator(creatorUserId: FanboxUserId) {
+    override suspend fun unfollowCreator(creatorUserId: FanboxUserId) = withSessionCheck {
         fanbox.unfollowCreator(creatorUserId)
     }
 
@@ -623,7 +642,7 @@ class FanboxRepositoryImpl(
         url: String,
         onDownload: (Float) -> Unit,
         onChunk: suspend (ByteArray) -> Unit,
-    ) {
+    ) = withSessionCheck {
         fanbox.download(
             url = url,
             onProgress = onDownload,

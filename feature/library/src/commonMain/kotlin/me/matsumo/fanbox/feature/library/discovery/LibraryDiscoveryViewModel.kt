@@ -11,6 +11,7 @@ import kotlinx.coroutines.launch
 import me.matsumo.fanbox.core.common.util.suspendRunCatching
 import me.matsumo.fanbox.core.model.ScreenState
 import me.matsumo.fanbox.core.model.Setting
+import me.matsumo.fanbox.core.model.toScreenStateError
 import me.matsumo.fanbox.core.model.updateWhenIdle
 import me.matsumo.fanbox.core.repository.FanboxRepository
 import me.matsumo.fanbox.core.repository.SettingRepository
@@ -55,7 +56,9 @@ class LibraryDiscoveryViewModel(
                 )
             }.fold(
                 onSuccess = { ScreenState.Idle(it) },
-                onFailure = { ScreenState.Error(Res.string.error_no_data_discovery) },
+                onFailure = {
+                    it.toScreenStateError(fallbackMessage = Res.string.error_no_data_discovery)
+                },
             )
         }
     }
