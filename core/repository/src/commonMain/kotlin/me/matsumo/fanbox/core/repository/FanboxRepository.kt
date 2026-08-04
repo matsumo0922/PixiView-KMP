@@ -17,6 +17,8 @@ import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.withContext
+import me.matsumo.fanbox.core.common.PixiViewConfig
+import me.matsumo.fanbox.core.common.util.recordException
 import me.matsumo.fanbox.core.datastore.BlockDataStore
 import me.matsumo.fanbox.core.datastore.BookmarkDataStore
 import me.matsumo.fanbox.core.datastore.OldCookieDataStore
@@ -29,6 +31,7 @@ import me.matsumo.fanbox.core.repository.paging.SearchPostsPagingSource
 import me.matsumo.fanbox.core.repository.paging.SupportedPostsPagingSource
 import me.matsumo.fankt.fanbox.Fanbox
 import me.matsumo.fankt.fanbox.FanboxCookieRecord
+import me.matsumo.fankt.fanbox.FanboxListItemSchemaMismatch
 import me.matsumo.fankt.fanbox.FanboxLogLevel
 import me.matsumo.fankt.fanbox.domain.FanboxCursor
 import me.matsumo.fankt.fanbox.domain.PageCursorInfo
@@ -210,12 +213,15 @@ class FanboxRepositoryImpl(
     private val oldCookieDataStore: OldCookieDataStore,
     private val ioDispatcher: CoroutineDispatcher,
     private val cookieStorage: MigratingFanboxCookieStorage,
+    private val pixiViewConfig: PixiViewConfig,
 ) : FanboxRepository, KoinComponent {
 
     private val scope = CoroutineScope(SupervisorJob() + ioDispatcher)
 
+    // fankt は NONE 以外の logLevel でスキーマ不一致ごとに応答本文の断片を出力する。断片には
+    // FANBOX と利用者のデータが残るため、リリースビルドでは NONE にして出力経路ごと閉じる。
     private val fanbox = Fanbox(
-        logLevel = FanboxLogLevel.INFO,
+        logLevel = if (pixiViewConfig.isDebug) FanboxLogLevel.INFO else FanboxLogLevel.NONE,
         ioDispatcher = ioDispatcher,
         cookieStorage = cookieStorage,
     )
@@ -300,6 +306,21 @@ class FanboxRepositoryImpl(
         fanbox.updateCsrfToken()
     }
 
+    /**
+     * fankt の list 応答でスキップされた項目をクラッシュレポート基盤へ記録する。
+     *
+     * [FanboxListItemSchemaMismatch] は endpoint と indexPath のみを持つため、
+     * 送信内容に FANBOX や利用者のデータは含まれない。
+     * ログ出力は fankt が同じ内容を Napier へ出すため行わない。
+     */
+    private fun recordSchemaMismatch(mismatch: FanboxListItemSchemaMismatch) {
+        recordException(
+            IllegalStateException(
+                "FANBOX list item schema mismatch. endpoint=${mismatch.endpoint}, indexPath=${mismatch.indexPath}",
+            ),
+        )
+    }
+
     override suspend fun getMetadata(): FanboxMetaData {
         return fanbox.getMetadata()
     }
@@ -308,14 +329,14 @@ class FanboxRepositoryImpl(
         cursor: FanboxCursor?,
         loadSize: Int,
     ): PageCursorInfo<FanboxPost> {
-        return fanbox.getHomePosts(cursor)
+        return fanbox.getHomePosts(cursor, ::recordSchemaMismatch)
     }
 
     override suspend fun getSupportedPosts(
         cursor: FanboxCursor?,
         loadSize: Int,
     ): PageCursorInfo<FanboxPost> {
-        return fanbox.getSupportedPosts(cursor)
+        return fanbox.getSupportedPosts(cursor, ::recordSchemaMismatch)
     }
 
     override suspend fun getCreatorPosts(
@@ -324,7 +345,12 @@ class FanboxRepositoryImpl(
         nextCursor: FanboxCursor?,
         loadSize: Int,
     ): PageCursorInfo<FanboxPost> {
-        return fanbox.getCreatorPosts(creatorId, currentCursor, nextCursor)
+        return fanbox.getCreatorPosts(
+            creatorId = creatorId,
+            cursor = currentCursor,
+            nextCursor = nextCursor,
+            onItemSchemaMismatch = ::recordSchemaMismatch,
+        )
     }
 
     override suspend fun getPostFromQuery(
@@ -363,7 +389,11 @@ class FanboxRepositoryImpl(
         postId: FanboxPostId,
         offset: Int,
     ): PageOffsetInfo<FanboxComment> {
-        return fanbox.getPostComment(postId, offset)
+        return fanbox.getPostComment(
+            postId = postId,
+            offset = offset,
+            onItemSchemaMismatch = ::recordSchemaMismatch,
+        )
     }
 
     override suspend fun getHomePostsPager(
@@ -469,15 +499,15 @@ class FanboxRepositoryImpl(
     }
 
     override suspend fun getFollowingCreators(): List<FanboxCreatorDetail> {
-        return fanbox.getFollowingCreators()
+        return fanbox.getFollowingCreators(::recordSchemaMismatch)
     }
 
     override suspend fun getFollowingPixivCreators(): List<FanboxCreatorDetail> {
-        return fanbox.getFollowingPixivCreators()
+        return fanbox.getFollowingPixivCreators(::recordSchemaMismatch)
     }
 
     override suspend fun getRecommendedCreators(): List<FanboxCreatorDetail> {
-        return fanbox.getRecommendedCreators()
+        return fanbox.getRecommendedCreators(::recordSchemaMismatch)
     }
 
     override suspend fun getCreatorDetail(creatorId: FanboxCreatorId): FanboxCreatorDetail {
@@ -494,11 +524,11 @@ class FanboxRepositoryImpl(
     }
 
     override suspend fun getSupportedPlans(): List<FanboxCreatorPlan> {
-        return fanbox.getSupportedPlans()
+        return fanbox.getSupportedPlans(::recordSchemaMismatch)
     }
 
     override suspend fun getCreatorPlans(creatorId: FanboxCreatorId): List<FanboxCreatorPlan> {
-        return fanbox.getCreatorPlans(creatorId)
+        return fanbox.getCreatorPlans(creatorId, ::recordSchemaMismatch)
     }
 
     override suspend fun getCreatorPlan(creatorId: FanboxCreatorId): FanboxCreatorPlanDetail {
@@ -520,7 +550,11 @@ class FanboxRepositoryImpl(
     override suspend fun getBells(page: Int): PageNumberInfo<FanboxBell> {
         // 一覧を取得した時点で FANBOX 側の通知を既読にする。fankt 0.1.0 の既定は未読のまま残す
         // 挙動だが、PixiView は従来どおり既読化する。
-        return fanbox.getBells(page, markNotificationsRead = true)
+        return fanbox.getBells(
+            page = page,
+            onItemSchemaMismatch = ::recordSchemaMismatch,
+            markNotificationsRead = true,
+        )
     }
 
     override suspend fun likePost(postId: FanboxPostId) {
