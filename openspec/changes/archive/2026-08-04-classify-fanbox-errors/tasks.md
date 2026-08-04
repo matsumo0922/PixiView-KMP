@@ -2,14 +2,14 @@
 
 ## 1. 分類器の実装
 
-- [ ] 1.1 `core/model/src/commonMain/kotlin/me/matsumo/fanbox/core/model/FanboxErrorKind.kt` に `enum class FanboxErrorKind` を定義し、各分類がどの `FanboxException` subtype に対応するかを KDoc に記述する
-- [ ] 1.2 同ファイルに `internal fun fanboxErrorKindOf(statusCode: Int?): FanboxErrorKind?` を実装する。401/403/404/429/5xx を分類し、それ以外と null は `null` を返す
-- [ ] 1.3 同ファイルに `Throwable.toFanboxErrorKind()` を実装する。`SchemaMismatch` と `Network` のみ型で分岐し、他の `FanboxException` は `fanboxErrorKindOf(statusCode)` に委ねる。中断は呼び出し側で除外済みである前提を KDoc に記述する
+- [x] 1.1 `core/model/src/commonMain/kotlin/me/matsumo/fanbox/core/model/FanboxErrorKind.kt` に `enum class FanboxErrorKind` を定義し、各分類がどの `FanboxException` subtype に対応するかを KDoc に記述する
+- [x] 1.2 同ファイルに `internal fun fanboxErrorKindOf(statusCode: Int?): FanboxErrorKind?` を実装する。401/403/404/429/5xx を分類し、それ以外と null は `null` を返す
+- [x] 1.3 同ファイルに `Throwable.toFanboxErrorKind()` を実装する。`SchemaMismatch` と `Network` のみ型で分岐し、他の `FanboxException` は `fanboxErrorKindOf(statusCode)` に委ねる。中断は呼び出し側で除外済みである前提を KDoc に記述する
 
 ## 2. 文言とファクトリ
 
-- [ ] 2.1 `core/resources/src/commonMain/composeResources/values/strings.xml` に `error_session_expired` / `error_forbidden` / `error_rate_limited` / `error_server` / `error_schema_mismatch` を追加する。他ロケールへは追加せず英語フォールバックとする
-- [ ] 2.2 `Throwable.toScreenStateError(fallbackMessage, fallbackRetryTitle)` を `core:model` に実装する。design.md の対応表に従い、`Unknown` のときのみ fallback の 2 つを使う
+- [x] 2.1 `core/resources/src/commonMain/composeResources/values/strings.xml` に `error_session_expired` / `error_forbidden` / `error_rate_limited` / `error_server` / `error_schema_mismatch` を追加する。他ロケールへは追加せず英語フォールバックとする
+- [x] 2.2 `Throwable.toScreenStateError(fallbackMessage, fallbackRetryTitle)` を `core:model` に実装する。design.md の対応表に従い、`Unknown` のときのみ fallback の 2 つを使う
 
 ## 3. ViewModel の置き換え
 
@@ -39,6 +39,6 @@
 - [x] 6.2 `./gradlew test` を通す
 - [x] 6.3 Android ビルドが通ることを確認する
 - [x] 6.4 iOS ビルドが通ることを確認する
-- [ ] 6.5 セッションを無効化した状態で任意の画面を開き、welcome フローへ差し替わることを確認する
+- [x] 6.5 セッションを無効化した状態で任意の画面を開き、welcome フローへ差し替わることを確認する
 - [x] 6.6 `ScreenState` / `FanboxErrorKind` / `FanboxRepository` の名前で README と AGENTS.md を grep し、誤りになった記述が無いか確認する
 - [x] 6.7 `openspec validate --all --strict` を通す
