@@ -1,5 +1,11 @@
 package me.matsumo.fanbox.core.common
 
+/**
+ * ビルドと実行環境から決まる設定値。
+ *
+ * [isDebug] はデバッグビルドで実行しているかを表す。診断ログの詳細度を切り替える用途で使い、
+ * リリースビルドで FANBOX の応答本文がログに出ないようにする。
+ */
 data class PixiViewConfig(
     val versionCode: String,
     val versionName: String,
@@ -17,6 +23,7 @@ data class PixiViewConfig(
     val deviceAbis: String,
     val openaiApiKey: String,
     val purchaseApiKey: String?,
+    val isDebug: Boolean,
 ) {
     companion object {
         fun dummy(): PixiViewConfig {
@@ -37,6 +44,7 @@ data class PixiViewConfig(
                 deviceAbis = "arm64-v8a,armeabi-v7a",
                 openaiApiKey = "1919191919",
                 purchaseApiKey = null,
+                isDebug = false,
             )
         }
     }

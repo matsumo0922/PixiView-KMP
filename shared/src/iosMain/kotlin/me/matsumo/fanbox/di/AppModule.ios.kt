@@ -11,7 +11,9 @@ import org.koin.dsl.module
 import platform.UIKit.UIDevice
 import platform.posix.uname
 import platform.posix.utsname
+import kotlin.experimental.ExperimentalNativeApi
 
+@OptIn(ExperimentalNativeApi::class)
 actual val appPlatformModule: Module = module {
     single {
         val device = UIDevice.currentDevice
@@ -37,6 +39,7 @@ actual val appPlatformModule: Module = module {
             deviceAbis = architectureName,
             openaiApiKey = BuildKonfig.OPENAI_API_KEY,
             purchaseApiKey = BuildKonfig.PURCHASE_IOS_API_KEY,
+            isDebug = Platform.isDebugBinary,
         )
     }
 }
