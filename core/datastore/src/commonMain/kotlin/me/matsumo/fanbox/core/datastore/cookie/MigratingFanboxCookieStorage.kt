@@ -42,6 +42,15 @@ class MigratingFanboxCookieStorage internal constructor(
     private val routingMutex = Mutex()
     private val routingState = MutableStateFlow<CookieRouting?>(null)
 
+    /**
+     * このプロセスが開いたまま持っている旧 Room。
+     *
+     * 同じ `fankt.db` に対して実体を 2 つ開いてはいけないため、閉じずに残した実体は
+     * ここで持ち続けて使い回す。保存先が secure へ切り替わって [routing] から外れた後も、
+     * ログアウト時の削除はこの実体で行う。
+     */
+    private var openedLegacyStorage: LegacyCookieStorage? = null
+
     private var routing: CookieRouting?
         get() = routingState.value
         set(value) {
@@ -269,7 +278,7 @@ class MigratingFanboxCookieStorage internal constructor(
     private suspend fun migrateFromLegacy(): CookieRouting {
         // 開けなかった保存先は中身が分からないため、移行の印を書かない。書くと次回起動で
         // 読み直さなくなり、開けなかっただけのセッションを恒久的に見失う。
-        val legacyStorage = runCatching { legacyStorageFactory() }.getOrElse { failure ->
+        val legacyStorage = runCatching { openLegacyStorage() }.getOrElse { failure ->
             Napier.w(failure) { "Failed to open the legacy Cookie storage." }
             onMigrationEvent(CookieMigrationEvent.FallbackUsed(MigrationStage.LEGACY_READ))
 
@@ -362,8 +371,8 @@ class MigratingFanboxCookieStorage internal constructor(
             Napier.w(failure) { "Failed to clear the pre-Room Cookie source." }
         }.isSuccess
 
-        val openedStorage = (routing as? CookieRouting.Legacy)?.legacyStorage
-        val legacyStorage = openedStorage ?: runCatching { legacyStorageFactory() }.getOrElse { failure ->
+        val wasAlreadyOpen = openedLegacyStorage != null
+        val legacyStorage = runCatching { openLegacyStorage() }.getOrElse { failure ->
             Napier.w(failure) { "Failed to open the legacy Cookie storage during logout." }
 
             return false
@@ -373,12 +382,26 @@ class MigratingFanboxCookieStorage internal constructor(
             Napier.w(failure) { "Failed to clear the legacy Cookie storage." }
         }.isSuccess
 
-        if (openedStorage == null) legacyStorage.closeQuietly()
+        if (!wasAlreadyOpen) legacyStorage.closeQuietly()
 
         return isSecureCleared && isPreRoomSourceCleared && isLegacyCleared
     }
 
+    /**
+     * 旧 Room を開く。既に開いている実体があればそれを返す。
+     *
+     * 同じ `fankt.db` に対して実体を 2 つ開くと、書き込みが衝突したり、片方の変更が
+     * もう片方の Flow に出なかったりする。開く操作はここだけに集める。
+     */
+    private fun openLegacyStorage(): LegacyCookieStorage? {
+        openedLegacyStorage?.let { return it }
+
+        return legacyStorageFactory()?.also { openedLegacyStorage = it }
+    }
+
     private fun LegacyCookieStorage.closeQuietly() {
+        if (openedLegacyStorage === this) openedLegacyStorage = null
+
         runCatching { close() }.onFailure { failure ->
             Napier.w(failure) { "Failed to close the legacy Cookie storage." }
         }

@@ -203,6 +203,33 @@ class MigratingFanboxCookieStorageTest {
     }
 
     @Test
+    fun theLegacyStorageIsOpenedOnlyOnceAcrossRepeatedLogouts() = runBlocking {
+        val blobStore = FakeSecureCookieBlobStore().apply { saveFailure = IllegalStateException("commit failed") }
+        val legacyStorage = FakeLegacyCookieStorage(listOf(sessionCookie))
+        var openCount = 0
+        val storage = MigratingFanboxCookieStorage(
+            secureStorage = SecureFanboxCookieStorage(blobStore),
+            blobStore = blobStore,
+            legacyStorageFactory = {
+                openCount += 1
+                legacyStorage
+            },
+        )
+
+        // 移行 commit の失敗で Room へ fallback し、その後回復して secure へ切り替わる。
+        storage.snapshot()
+        blobStore.saveFailure = null
+        storage.logout()
+
+        // 切り替え後に routing から外れても、開いたままの実体を使い回す。
+        storage.upsert(sessionCookie)
+        storage.logout()
+
+        assertEquals(1, openCount)
+        assertFalse(legacyStorage.isClosed)
+    }
+
+    @Test
     fun unreadableLegacyStorageLeavesMigrationRetryable() = runBlocking {
         val blobStore = FakeSecureCookieBlobStore()
         val legacyStorage = FakeLegacyCookieStorage(listOf(sessionCookie))
