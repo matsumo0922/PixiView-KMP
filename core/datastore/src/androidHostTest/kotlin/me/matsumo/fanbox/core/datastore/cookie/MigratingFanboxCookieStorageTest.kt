@@ -435,6 +435,30 @@ class MigratingFanboxCookieStorageTest {
     }
 
     @Test
+    fun preRoomImportDoesNotOverwriteTheMigratedSession() = runBlocking {
+        val currentSession = sessionCookie.copy(value = "migrated-session")
+        val blobStore = FakeSecureCookieBlobStore(
+            SecureCookiePayload(
+                records = listOf(currentSession.toSecureCookieRecord()),
+                isMigrationCompleted = true,
+            ),
+        )
+        var isPreRoomSourceCleared = false
+        val storage = storage(
+            blobStore = blobStore,
+            legacyStorage = FakeLegacyCookieStorage(),
+            clearPreRoomSource = { isPreRoomSourceCleared = true },
+        )
+
+        // 旧形式に残っているのは移行より前の値なので、現在の値を置き換えてはいけない。
+        val isImported = storage.importPreRoomSession { sessionCookie.copy(value = "stale-session") }
+
+        assertTrue(isImported)
+        assertTrue(isPreRoomSourceCleared)
+        assertEquals(listOf(currentSession.toSecureCookieRecord()), blobStore.storedPayload().records)
+    }
+
+    @Test
     fun preRoomImportStoresTheSessionAndClearsItsSource() = runBlocking {
         val blobStore = FakeSecureCookieBlobStore()
         var isPreRoomSourceCleared = false

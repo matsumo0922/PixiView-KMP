@@ -122,6 +122,9 @@ class MigratingFanboxCookieStorage internal constructor(
      * 読み出しから取り込み元の削除までを、ログアウトと同じ [routingMutex] の下で行う。
      * 読み出した後にログアウトが挟まると、消えたはずのセッションを取り込んで復活させるため。
      *
+     * 取り込み元は旧形式からの一方向の移行元であり、現在の保存先と並ぶ保存先ではない。
+     * 現在の保存先に既にセッションがある場合、取り込み元の値は古いため使わず、取り込み元だけを消す。
+     *
      * 取り込み元が空の場合は何もせず true を返す。
      */
     suspend fun importPreRoomSession(readPreRoomSession: suspend () -> FanboxCookieRecord?): Boolean {
@@ -135,7 +138,11 @@ class MigratingFanboxCookieStorage internal constructor(
             runCatching {
                 resolveRoutingLocked().let { if (it is CookieRouting.Legacy) retryMigration(it.legacyStorage) }
                 requireCompletedLogout()
-                secureStorage.upsert(record)
+
+                if (secureStorage.snapshot().none { it.identity == record.identity }) {
+                    secureStorage.upsert(record)
+                }
+
                 clearPreRoomSource()
             }.onFailure { failure ->
                 Napier.w(failure) { "Failed to import the pre-Room session; keeping the source for a later retry." }
