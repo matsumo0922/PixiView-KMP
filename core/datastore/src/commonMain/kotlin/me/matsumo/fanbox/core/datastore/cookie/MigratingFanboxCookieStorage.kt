@@ -1,11 +1,13 @@
 package me.matsumo.fanbox.core.datastore.cookie
 
 import io.github.aakira.napier.Napier
+import kotlinx.coroutines.NonCancellable
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.emitAll
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
+import kotlinx.coroutines.withContext
 import me.matsumo.fankt.fanbox.FanboxCookieRecord
 import me.matsumo.fankt.fanbox.FanboxCookieStorage
 
@@ -33,24 +35,30 @@ class MigratingFanboxCookieStorage internal constructor(
     private val routingMutex = Mutex()
     private var routing: CookieRouting? = null
 
+    /**
+     * 現在の Cookie を流す。
+     *
+     * 保存先が決まるまで待ってから、決まった保存先の Flow をそのまま流す。決まる前に
+     * 空リストを流さないこと。購読者は最初に受け取った値を現在の状態として扱うため、
+     * 保存済みのセッションがある端末で一度未ログインとして観測されてしまう。
+     */
     override val cookies: Flow<List<FanboxCookieRecord>> = flow {
-        emit(emptyList())
-        emitAll(activeStorage().cookies)
+        emitAll(readStorage().cookies)
     }
 
-    override suspend fun snapshot(): List<FanboxCookieRecord> = activeStorage().snapshot()
+    override suspend fun snapshot(): List<FanboxCookieRecord> = readStorage().snapshot()
 
-    override suspend fun upsert(cookie: FanboxCookieRecord) = activeStorage().upsert(cookie)
+    override suspend fun upsert(cookie: FanboxCookieRecord) = mutate { it.upsert(cookie) }
 
     override suspend fun delete(domain: String, path: String, name: String) =
-        activeStorage().delete(domain, path, name)
+        mutate { it.delete(domain, path, name) }
 
     override suspend fun deleteExpired(nowEpochMilliseconds: Long) =
-        activeStorage().deleteExpired(nowEpochMilliseconds)
+        mutate { it.deleteExpired(nowEpochMilliseconds) }
 
-    override suspend fun replaceAll(cookies: List<FanboxCookieRecord>) = activeStorage().replaceAll(cookies)
+    override suspend fun replaceAll(cookies: List<FanboxCookieRecord>) = mutate { it.replaceAll(cookies) }
 
-    override suspend fun clear() = activeStorage().clear()
+    override suspend fun clear() = mutate { it.clear() }
 
     /**
      * ログアウトする。
@@ -61,18 +69,56 @@ class MigratingFanboxCookieStorage internal constructor(
      * 終わってから消すため、途中で終わっても次回起動時にログアウト中だったと分かる。
      */
     suspend fun logout() {
-        routingMutex.withLock {
-            blobStore.save(SecureCookiePayload(isLogoutInProgress = true))
+        // 印を書いた後で呼び出し元が取り消されると、印が立ったまま削除が終わらない。
+        // その状態で新しいセッションを保存すると、次回起動時に消される。取り消しを受けない。
+        withContext(NonCancellable) {
+            routingMutex.withLock {
+                blobStore.save(SecureCookiePayload(isLogoutInProgress = true))
 
-            clearBothStores()
+                if (clearBothStores()) blobStore.clear()
 
-            blobStore.clear()
-
-            routing = CookieRouting.Secure
+                routing = CookieRouting.Secure
+            }
         }
     }
 
-    private suspend fun activeStorage(): FanboxCookieStorage = resolveRouting().storage()
+    /** 読み出しに使う保存先を返す。移行に失敗した場合は Room を読み続ける。 */
+    private suspend fun readStorage(): FanboxCookieStorage = resolveRouting().storage()
+
+    /**
+     * 書き込みを直列化して適用する。
+     *
+     * 書き込みは必ず secure へ行う。移行に失敗して Room を読んでいる間も、新しい資格情報を
+     * 平文の Room へ書かない。書き込みの直前に移行をやり直し、それも失敗した場合は例外を投げる。
+     *
+     * ログアウトと同じ [routingMutex] を取るため、ログアウトを跨いだ書き込みが
+     * 消したはずのセッションを書き戻したり、ログアウト後の新しいセッションを消したりしない。
+     */
+    private suspend fun mutate(block: suspend (FanboxCookieStorage) -> Unit) {
+        routingMutex.withLock {
+            val routing = routing ?: decideRouting().also { this.routing = it }
+
+            if (routing is CookieRouting.Legacy) retryMigration(routing.legacyStorage)
+
+            block(secureStorage)
+        }
+    }
+
+    /**
+     * 移行をやり直す。成功したら保存先を secure へ切り替える。
+     *
+     * 失敗した場合は、呼び出し元の書き込みを Room へ落とさないため例外を投げる。
+     */
+    private suspend fun retryMigration(legacyStorage: LegacyCookieStorage) {
+        val legacyRecords = legacyStorage.snapshot()
+        val migrated = migrateRecords(legacyRecords, legacyStorage)
+
+        if (migrated !is CookieRouting.Secure) {
+            error("Failed to migrate the Cookies into the secure storage; refusing to write them in plain text.")
+        }
+
+        routing = migrated
+    }
 
     private suspend fun resolveRouting(): CookieRouting {
         routing?.let { return it }
@@ -100,8 +146,9 @@ class MigratingFanboxCookieStorage internal constructor(
         if (payload.isLogoutInProgress) {
             onMigrationEvent(CookieMigrationEvent.LogoutResumed)
 
-            clearBothStores()
-            runCatching { blobStore.clear() }
+            // 両方を消し終えるまで印を残す。消し残したまま印を外すと、
+            // 次回起動時に残った資格情報を移行してしまう。
+            if (clearBothStores()) runCatching { blobStore.clear() }
 
             return CookieRouting.Secure
         }
@@ -185,20 +232,28 @@ class MigratingFanboxCookieStorage internal constructor(
      * secure と、まだ残っていれば Room の両方から Cookie を消す。
      *
      * 片方の削除が失敗しても、もう片方の削除は行う。資格情報の消し残しを減らすため。
+     * 両方を消し終えた場合だけ true を返す。呼び出し元はこれが true の場合だけ
+     * ログアウト中の印を外す。消し残したまま印を外すと、次回起動時に残りが移行されるため。
      */
-    private suspend fun clearBothStores() {
-        runCatching { secureStorage.clear() }.onFailure { failure ->
+    private suspend fun clearBothStores(): Boolean {
+        val isSecureCleared = runCatching { secureStorage.clear() }.onFailure { failure ->
             Napier.w(failure) { "Failed to clear the secure Cookie storage." }
-        }
+        }.isSuccess
 
         val openedStorage = (routing as? CookieRouting.Legacy)?.legacyStorage
-        val legacyStorage = openedStorage ?: runCatching { legacyStorageFactory() }.getOrNull() ?: return
+        val legacyStorage = openedStorage ?: runCatching { legacyStorageFactory() }.getOrElse { failure ->
+            Napier.w(failure) { "Failed to open the legacy Cookie storage during logout." }
 
-        runCatching { legacyStorage.clear() }.onFailure { failure ->
+            return false
+        } ?: return isSecureCleared
+
+        val isLegacyCleared = runCatching { legacyStorage.clear() }.onFailure { failure ->
             Napier.w(failure) { "Failed to clear the legacy Cookie storage." }
-        }
+        }.isSuccess
 
         legacyStorage.closeQuietly()
+
+        return isSecureCleared && isLegacyCleared
     }
 
     private fun LegacyCookieStorage.closeQuietly() {
