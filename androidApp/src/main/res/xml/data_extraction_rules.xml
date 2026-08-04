@@ -1,19 +1,23 @@
 <?xml version="1.0" encoding="utf-8"?><!--
-   Sample data extraction rules file; uncomment and customize as necessary.
-   See https://developer.android.com/about/versions/12/backup-restore#xml-changes
-   for details.
+   API 31 以上のバックアップと端末間転送の対象を定める。
+   https://developer.android.com/about/versions/12/backup-restore#xml-changes
+
+   FANBOX の認証 Cookie を持つファイルを除外する。secure store の内容は Keystore の鍵で
+   暗号化されており、鍵は端末外に出ないため転送先では復号できない。旧 Room DB は平文である。
+   いずれも転送しても使えないため、対象に含めない。
 -->
 <data-extraction-rules>
     <cloud-backup>
-        <!-- TODO: Use <include> and <exclude> to control what is backed up.
-        <include .../>
-        <exclude .../>
-        -->
+        <exclude domain="file" path="datastore/eu_anifantakis_ksafe_datastore.preferences_pb" />
+        <exclude domain="database" path="fankt.db" />
+        <exclude domain="database" path="fankt.db-wal" />
+        <exclude domain="database" path="fankt.db-shm" />
     </cloud-backup>
-    <!--
+
     <device-transfer>
-        <include .../>
-        <exclude .../>
+        <exclude domain="file" path="datastore/eu_anifantakis_ksafe_datastore.preferences_pb" />
+        <exclude domain="database" path="fankt.db" />
+        <exclude domain="database" path="fankt.db-wal" />
+        <exclude domain="database" path="fankt.db-shm" />
     </device-transfer>
-    -->
 </data-extraction-rules>

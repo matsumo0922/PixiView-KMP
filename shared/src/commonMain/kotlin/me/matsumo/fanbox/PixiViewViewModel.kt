@@ -174,13 +174,7 @@ class PixiViewViewModel(
         viewModelScope.launch {
             suspendRunCatching {
                 if (!settingRepository.setting.first().isTestUser) {
-                    val oldCookies = oldCookieDataStore.getCookies()
-                    val sessionId = oldCookies.map { it.split("=") }.firstOrNull { it.first() == "FANBOXSESSID" }?.get(1)
-
-                    if (sessionId != null) {
-                        fanboxRepository.setSessionId(sessionId)
-                        oldCookieDataStore.save("")
-                    }
+                    importOldSessionId()
 
                     _metadataFlow.value = suspendRunCatching { fanboxRepository.getMetadata() }.getOrElse { getFanboxMetadataDummy() }
 
@@ -191,6 +185,27 @@ class PixiViewViewModel(
                 Napier.d { "update home state. isLoggedIn: $it" }
                 _isLoggedInFlow.emit(it)
             }
+        }
+    }
+
+    /**
+     * Room 導入より前の保存先に残っているセッションを、現在の保存先へ取り込む。
+     *
+     * 旧ソースを消すのは、書き込んだ値が保存先から読み出せることを確かめた後にする。
+     * 書き込みに失敗した場合に取り込み元が失われると、やり直せなくなるため。
+     */
+    private suspend fun importOldSessionId() {
+        val oldSessionId = oldCookieDataStore.getSessionId() ?: return
+
+        val isImported = suspendRunCatching {
+            fanboxRepository.setSessionId(oldSessionId)
+            fanboxRepository.getStoredSessionId() == oldSessionId
+        }.getOrDefault(false)
+
+        if (isImported) {
+            oldCookieDataStore.save("")
+        } else {
+            Napier.w { "Failed to import the legacy session; keeping the old source for a later retry." }
         }
     }
 
