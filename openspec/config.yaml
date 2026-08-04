@@ -1,0 +1,18 @@
+schema: spec-driven
+
+context: |
+  PixiView は pixivFANBOX の非公式 Android / iOS クライアントである。
+  Kotlin Multiplatform、Compose Multiplatform、Material 3 を使用し、Gradle Convention Plugin でビルド構成を共通化する。
+  モジュールは application、feature、core の責務に分かれ、依存方向は README の Architecture に従う。
+  実装規約と worktree 運用は AGENTS.md を正とし、CLAUDE.md からも同じ規約を参照する。
+  ドキュメントと KDoc は日本語、コミットメッセージと PR title は英語で記述する。
+
+rules:
+  proposal:
+    - 日本語で記述し、変更の目的、対象範囲、非対象範囲、ドキュメント影響を明示する
+  specs:
+    - 現在形で振る舞いを記述し、各 Requirement に検証可能な Scenario を含める
+  design:
+    - 実コードと既存ドキュメントを根拠にし、影響するモジュールと依存方向を明示する
+  tasks:
+    - 実装、テスト、静的解析、影響するドキュメントの確認を完了条件に含める

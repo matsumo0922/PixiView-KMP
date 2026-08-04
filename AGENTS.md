@@ -15,6 +15,14 @@ cd ../pixiview-<task-slug>
 
 - `local.properties` は git 管理外なので、`git worktree add` ではコピーされない。ビルドに必要な情報が記載されているため、worktree 作成直後に必ず元 checkout からコピーする。
 
+## OpenSpec 運用
+
+- 仕様変更は実装前に `/opsx:propose` で change artifact を作成し、合意後に `/opsx:apply` で実装する
+- 実装済みの delta spec は `/opsx:sync` で main spec に反映し、完了した change は `/opsx:archive` でアーカイブする
+- OpenSpec artifact の検証には `openspec validate --all --strict` を使用する
+- `.codex/skills` を OpenSpec skill の正本とし、Claude Code は `.claude/skills` の symlink から同じ skill を参照する
+- OpenSpec が生成した skill と command は直接編集せず、CLI 更新後に `openspec update` で再生成する
+
 <!-- agents-rules:kotlin:begin -->
 <!-- この区間は Agents リポジトリが管理する。編集は Agents の rules/kotlin.md で行い、make link-project で更新する -->
 # Kotlin / Jetpack Compose 規約
