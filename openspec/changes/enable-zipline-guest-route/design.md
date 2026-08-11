@@ -75,7 +75,13 @@ guest 自体の失敗（`GuestParseResult.GuestFailure`）は、fankt が当該�
 
 **配信先へ到達できない利用者には配信済みの修正が届かない** → 本 change の受け入れ条件は「従来どおり表示される」ことであり、これは満たされる。修正を届け続けるには #140 を要する。
 
-**guest の初回起動が投稿詳細の表示を遅らせうる** → 未計測。bundle の取得と QuickJS の起動に要する時間は実機で確認する。
+**配信先へ到達できない経路で最初の投稿詳細の表示が待たされる** → fankt は manifest の取得に明示的なタイムアウトを設定していない（`HttpTimeout` は fankt 全体に存在せず、guest 用クライアントの設定は `expectSuccess` と `followRedirects` のみ。`Fanbox.kt:209`）。応答が返らない経路ではプラットフォームの既定のタイムアウトまで待ってから直接経路へ移る。配信先が明示的に拒否を返す場合（404 など）は即座に退避するため、この遅延は「パケットが黙って落ちる」経路に限られる。
+
+保証を「表示の成立」へ狭め、所要時間を対象外とした。タイムアウトの設定は fankt 側の変更を要するため、本 change では扱わず follow-up とする。
+
+**guest の初回起動そのものが表示を遅らせうる** → 未計測。bundle の取得と QuickJS の起動に要する時間は実機で確認する。
+
+**guest の診断が logLevel と無関係にログへ出る** → `FanboxDiagnosticSink` は `Napier.w` へ無条件に報告する（`Fanbox.kt:204`）。ただしこの経路は guest 固有ではなく、既に一覧系の repository へ渡されている（`Fanbox.kt:215-239`）。報告内容は `FanboxDiagnostics.sanitizeFragment` で認証情報を伏せたうえで 2048 文字に切り詰められ、応答本文の断片は `logLevel != NONE` の場合に限られる。本 change が導入する経路ではないため対処しない。
 
 ## Migration Plan
 
