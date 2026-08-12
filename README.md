@@ -127,6 +127,19 @@ graph LR
   model --> common
 ```
 
+## Remote parsing updates
+When FANBOX changes the shape of its responses, the app stops being able to read them, and a fix
+would otherwise reach you only through a store update. To close that gap, the app fetches a signed
+bundle that builds and interprets the post detail request, and runs that instead of the parsing
+built into the release.
+
+This is used only to keep up with changes to the FANBOX API. It does not add features, and it does
+not change what the app does with your data.
+
+The bundle is verified against a public key compiled into the app. One that fails verification is
+not executed. When the delivery target cannot be reached, the app parses responses with its own
+built-in path, exactly as it did before this mechanism existed.
+
 ## Contribute
 
 This app uses Gradle's Convention Plugins to standardize the build logic, and all the logic is written in a module called `build-logic`. For information on this approach, see [nowinandroid](https://github.com/matsumo0922/nowinandroid/tree/main/build-logic).
