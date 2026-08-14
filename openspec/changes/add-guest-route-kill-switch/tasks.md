@@ -16,5 +16,5 @@
 - [x] 3.1 `./gradlew :core:repository:testAndroidHostTest :core:repository:detekt` を通す（AGP 9 の KMP では `test` ではなくこのタスク名）
 - [x] 3.2 リリースビルドが通ることを確認する
 - [x] 3.3 Firebase コンソールに `android_guest_route_kill_switch` を boolean として作成する（リポジトリ外の作業。人間が行う）
-- [ ] 3.4 実機で、フラグを `true` へ倒して再起動すると guest が起動しないこと、`false` へ戻して再起動すると起動することを確認する（人間が行う）
-- [ ] 3.5 実機で、新規インストール直後の初回起動（Remote Config を一度も取得していない状態）で guest が起動することを確認する。design.md D3 が依拠する「値の無い boolean は `false` を返す」の成立確認（人間が行う）
+- [x] 3.4 実機で、フラグを `true` へ倒して再起動すると guest が起動しないこと、`false` へ戻して再起動すると起動することを確認する（人間が行う）
+- [x] 3.5 実機で、新規インストール直後の初回起動（Remote Config を一度も取得していない状態）で guest が起動することを確認する。design.md D3 が依拠する「値の無い boolean は `false` を返す」の成立確認（人間が行う）
