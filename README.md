@@ -129,9 +129,12 @@ graph LR
 
 ## Remote parsing updates
 When FANBOX changes the shape of its responses, the app stops being able to read them, and a fix
-would otherwise reach you only through a store update. To close that gap, the app fetches a signed
-bundle that builds and interprets the post detail request, and runs that instead of the parsing
-built into the release.
+would otherwise reach you only through a store update. To close that gap, the Android app fetches a
+signed bundle that builds and interprets the post detail request, and runs that instead of the
+parsing built into the release.
+
+This applies to Android only. iOS parses responses with the code shipped in the release, so a fix
+reaches iOS through a store update.
 
 This is used only to keep up with changes to the FANBOX API. It does not add features, and it does
 not change what the app does with your data.
