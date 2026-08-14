@@ -12,7 +12,7 @@ iOS では、アプリはこれらを伴わずに `Fanbox` を生成しなけれ
 
 配信先と鍵は Android の source set に置き、iOS のバイナリへ含めない。
 
-#### Scenario: Android で配信先と公開鍵を伴って生成する
+#### Scenario: 配信先と公開鍵を伴って生成する
 
 - **WHEN** Android で `FanboxRepositoryImpl` が `Fanbox` を生成する
 - **THEN** アプリは配信先の manifest URL、信頼する鍵名、Ed25519 公開鍵を渡す
