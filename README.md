@@ -143,6 +143,13 @@ The bundle is verified against a public key compiled into the app. One that fail
 not executed. When the delivery target cannot be reached, the app parses responses with its own
 built-in path, exactly as it did before this mechanism existed.
 
+Execution can also be stopped remotely, independently of what is published at the delivery target.
+The app reads a flag from Firebase Remote Config when it starts, and skips the delivered bundle
+entirely while that flag is set. Until that flag has been read at least once — on a first launch, or
+on a device that cannot reach Remote Config — the app runs the delivered bundle, so losing access to
+the flag never costs you the fix it carries. Stopping is therefore not immediate: the flag reaches a
+device on its next fetch, and applies the next time the app starts.
+
 ## Contribute
 
 This app uses Gradle's Convention Plugins to standardize the build logic, and all the logic is written in a module called `build-logic`. For information on this approach, see [nowinandroid](https://github.com/matsumo0922/nowinandroid/tree/main/build-logic).

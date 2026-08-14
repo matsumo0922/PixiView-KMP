@@ -1,6 +1,10 @@
 package me.matsumo.fanbox.core.repository
 
+import com.google.firebase.Firebase
+import com.google.firebase.remoteconfig.remoteConfig
+import com.google.firebase.remoteconfig.remoteConfigSettings
 import kotlinx.coroutines.CoroutineDispatcher
+import me.matsumo.fanbox.core.common.util.recordException
 import me.matsumo.fankt.fanbox.Fanbox
 import me.matsumo.fankt.fanbox.FanboxCookieStorage
 import me.matsumo.fankt.fanbox.FanboxLogLevel
@@ -32,15 +36,46 @@ internal const val GUEST_TRUSTED_ED25519_PUBLIC_KEY_HEX =
     "5c45794e6a3c11de4ad637bbfc1714071eb3c8a9bb7139f4a3f88dc75a36146e"
 
 /**
- * 配信先と公開鍵を渡して [Fanbox] を生成する。これにより投稿詳細の解析が配信済みの guest で実行され、
- * FANBOX の仕様変更への追従がアプリの更新を経ずに届く。配信先へ到達できない場合は fankt が guest を
- * 経由しない直接経路へ退避する。
+ * guest を起動しないことを指示する Remote Config のキー。
+ *
+ * 「停止」の向きで定義している。Remote Config は活性化済みの値も既定値も無い boolean に `false` を
+ * 返すため、この向きなら値を一度も取得できていない端末がそのまま「停止していない」になる。既定値の
+ * 登録が要らず、その完了を待たずに値を読む競合も生じない。
+ *
+ * 綴りが Firebase コンソールの設定と食い違うと、症状は「フラグを倒しても止まらない」という無言の
+ * 失敗になる。変更する際はコンソールの表示と実際に照合すること。
+ */
+private const val GUEST_ROUTE_KILL_SWITCH_KEY = "android_guest_route_kill_switch"
+
+/**
+ * Remote Config を取得しに行く最短の間隔。
+ *
+ * Firebase の既定は 12 時間で、停止を決めてから端末へ届くまでの遅延がそのぶん延びる。停止スイッチは
+ * 障害対応の道具であるため 1 時間へ縮める。
+ */
+private const val REMOTE_CONFIG_FETCH_INTERVAL_SECONDS = 3600L
+
+/**
+ * 停止フラグが立っていない限り、配信先と公開鍵を渡して [Fanbox] を生成する。これにより投稿詳細の解析が
+ * 配信済みの guest で実行され、FANBOX の仕様変更への追従がアプリの更新を経ずに届く。配信先へ到達
+ * できない場合は fankt が guest を経由しない直接経路へ退避する。
+ *
+ * 停止フラグが立っている場合は配信先も公開鍵も渡さない。配信先への取得そのものが起きないため、配信元を
+ * 操作できない場合や manifest の取得が返らない場合でも guest を止められる。
  */
 internal actual fun createFanbox(
     logLevel: FanboxLogLevel,
     ioDispatcher: CoroutineDispatcher,
     cookieStorage: FanboxCookieStorage,
 ): Fanbox {
+    if (isGuestRouteKilled()) {
+        return Fanbox(
+            logLevel = logLevel,
+            ioDispatcher = ioDispatcher,
+            cookieStorage = cookieStorage,
+        )
+    }
+
     return Fanbox(
         guestManifestUrl = GUEST_MANIFEST_URL,
         guestTrustedKeyName = GUEST_TRUSTED_KEY_NAME,
@@ -49,4 +84,27 @@ internal actual fun createFanbox(
         ioDispatcher = ioDispatcher,
         cookieStorage = cookieStorage,
     )
+}
+
+/**
+ * 活性化済みの停止フラグを読む。取得は背景で始め、取得した値は次回の起動で読まれる。
+ *
+ * 参照が失敗した場合は guest を起動する側へ倒す。guest 経路は「どの失敗も直接経路へ退避する」で
+ * 一貫しており、停止スイッチ自身がアプリを落とすとこの一貫性が反転して Firebase の不調がアプリの
+ * 起動不能になる。記録の呼び出しも守るのは、記録先の Crashlytics が Remote Config と同じ既定の
+ * FirebaseApp を要し、参照が失敗する状況では記録もまた失敗するため。
+ */
+private fun isGuestRouteKilled(): Boolean = runCatching {
+    val remoteConfig = Firebase.remoteConfig
+
+    remoteConfig.setConfigSettingsAsync(
+        remoteConfigSettings {
+            minimumFetchIntervalInSeconds = REMOTE_CONFIG_FETCH_INTERVAL_SECONDS
+        },
+    ).addOnCompleteListener { remoteConfig.fetchAndActivate() }
+
+    remoteConfig.getBoolean(GUEST_ROUTE_KILL_SWITCH_KEY)
+}.getOrElse { failure ->
+    runCatching { recordException(failure) }
+    false
 }
