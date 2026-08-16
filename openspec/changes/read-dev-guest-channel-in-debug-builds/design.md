@@ -2,7 +2,7 @@
 
 `createFanbox` は `expect` / `actual` で分かれており、Android の actual だけが配信先と公開鍵を `Fanbox` へ渡す。配信先と鍵を Android の source set に置くことで iOS のバイナリへ含めない構成であり、これは `fanbox-guest-route` の既存 Requirement が定めている。
 
-呼び出しは `FanboxRepositoryImpl` の 1 箇所だけで、`PixiViewConfig` を既に保持している。現在は `isDebug` から導出した `logLevel` を渡しており、`isDebug` そのものは渡していない。
+呼び出しは `FanboxRepositoryImpl` の 1 箇所だけで、`SettingDataStore` を `userDataStore` として既に保持している。生成はコンストラクタの property 初期化で同期的に起きる。
 
 ```kotlin
 private val fanbox = createFanbox(
@@ -12,67 +12,93 @@ private val fanbox = createFanbox(
 )
 ```
 
-`FanboxRepositoryImpl` は Koin の `single` であり `createdAtStart` を持たないため、この生成は最初の注入時に起きる。
+`FanboxRepositoryImpl` は Koin の `single` であり `createdAtStart` を持たないため、この生成は最初の注入時に一度だけ起きる。
+
+`Setting` の所在は次のとおりで、同期的に読める値が保存済みの値とは限らない。
+
+```kotlin
+val setting = settingPreference.data.map { ... }.stateIn(
+    scope = CoroutineScope(ioDispatcher),
+    started = SharingStarted.WhileSubscribed(1000),
+    initialValue = Setting.default(),
+)
+```
 
 ## Goals / Non-Goals
 
 **Goals:**
 
-- debug ビルドが dev チャンネルを読み、昇格前の bundle を実機で確認できること
-- リリースビルドの参照先が現在から変わらないこと
-- 停止フラグ（#139）が両方のビルドで従来どおり機能すること
+- developer mode が有効な端末だけが dev チャンネルを読み、昇格前の bundle を実機で確認できること
+- developer mode が無効な場合の参照先が現在から変わらないこと
+- 停止フラグ（#139）が developer mode の値によらず従来どおり機能すること
 
 **Non-Goals:**
 
-- 実行時のチャンネル切り替え（`isDeveloperMode` などによる）
-- ストア版から dev チャンネルを読む手段
+- 同一セッション内での切り替え（アプリの再起動なしに配信先を変える）
+- ビルドの種別による分岐
 - iOS での guest の起動
 
 ## Decisions
 
-### D1. `createFanbox` に `isDebug: Boolean` を足す（agent 仮決め）
+### D1. 判断の入力は `Setting.isDeveloperMode` とし、ビルドの種別では分岐しない（ユーザー確認済み）
 
-判断に要るのは `isDebug` そのものであり、呼び出し側が既に持っている。検討した代替は次のとおり。
+release でも billing でも、developer mode が有効なら dev チャンネルを読む。
 
-- **`PixiViewConfig` を渡す**: 必要なのは 1 つの Boolean で、config 全体への依存は広すぎる
-- **androidMain で `ApplicationInfo.FLAG_DEBUGGABLE` から導出する**: `Context` が要り、`core/repository` はそれを持たない。同じ導出は `AppModule.android.kt` で既に行われ `PixiViewConfig.isDebug` になっている。同じ判定を 2 箇所で行わない
-- **`logLevel` から導出する**（`NONE` 以外なら dev）: 診断の詳細度と配信先の選択という別の関心を 1 つの値へ束ねることになる。片方だけ変えたい場合に破綻する
+当初はビルドの種別（`PixiViewConfig.isDebug`）で分岐する案を採っていたが、`isDebug` は `ApplicationInfo.FLAG_DEBUGGABLE` から算出されるため、`isDebuggable = true` を持つ `billing` build type も同じ扱いになる。`billing` は release と同じ keystore で署名され `applicationIdSuffix` を持たない構成であり、「debug ビルドだけ」という前提と食い違っていた。判断の入力を設定へ移すことで、ビルドの種別と配信先の対応を考えなくてよくなる。
 
-### D2. 配信先は 2 つの定数に分け、関数内で選ぶ（agent 仮決め）
+### D2. 保存済みの `Setting` を生成時に一度だけ読む（agent 仮決め）
 
-`GUEST_MANIFEST_URL` を「prod」「dev」の 2 定数に分け、`isDebug` で選ぶ。定数の形を保つことで、どちらの URL にも所在の意味を KDoc で書ける。URL を組み立てる形（基底 URL + チャンネル名の連結）は取らない。連結は 2 つしかない選択肢のために組み立ての規則を持ち込む。
+`SettingDataStore.setting` は `SharingStarted.WhileSubscribed(1000)` の `StateFlow` で、初期値は `Setting.default()` である。購読が始まる前に `value` を読めば `isDeveloperMode` は常に `false` になる。新しいプロセスで `Fanbox` を生成する時点では購読が始まっている保証が無いため、この読み方では「有効にしても何も起きない」という無言の失敗になる。
 
-### D3. `Setting.isDeveloperMode` では切り替えない（ユーザー確認済み）
+`StateFlow` に対する `first()` も同じで、現在値を即座に返すだけで保存済みの値を待たない。
 
-`createFanbox` は `FanboxRepositoryImpl` のコンストラクタで同期的に呼ばれる。`isDeveloperMode` は `SettingDataStore` の Flow であり同期的に読めない。読むには `runBlocking` を挟むか `Fanbox` の生成を遅延させる構造変更が要り、後者は #139 の design D2 で「同一セッション内での差し替えは採らない」と判断した論点と同じ壁に当たる。
+そこで `SettingDataStore` に保存済みの値を一度読む suspend 関数を足し、`FanboxRepositoryImpl` の生成時に `runBlocking` で読む。読むのは起動ごとに一度きりで、対象は既に読み込まれている単一の preferences ファイルである。
 
-加えて `isDeveloperMode` は `Setting.hasPrivilege` と `canBulkDownload` を通じて有料機能を解放する。`PixiViewConfig.developerPassword` はリリース APK へ焼き込まれ逆コンパイルで取得しうるため、そこへ遠隔コードの取得先の選択を足すと漏洩時の影響範囲が広がる。
+検討した代替は次のとおり。
 
-### D4. iOS の actual は引数を受け取るが使わない（agent 仮決め）
+- **`Fanbox` の生成を遅延させ、値が読めてから作る**: `fanbox` は同期的な property として多数のメソッドから参照されており、遅延させると呼び出し側まで suspend が波及する。#139 の design D2 で「同一セッション内での差し替えは採らない」と判断した論点にも当たる
+- **同期的に読める別の保存先へ値を写す**: 書き込みのたびに二重に保存する機構が増える。反映の時点は結局「次回起動」で変わらず、得るものが無い
+- **`setting.value` をそのまま読む**: 上記のとおり無言の失敗になる
 
-`expect` の signature は共通であるため、iOS の actual にも `isDebug` が現れる。iOS は配信先を渡さないので値は使わない。iOS 側だけ signature を変える手段は無く、配信先を commonMain へ移す案は「配信先と鍵を Android の source set に置く」既存 Requirement に反する。
+### D3. 反映は次回のアプリ起動から（agent 仮決め）
 
-### D5. 停止フラグの分岐は変更しない（agent 仮決め）
+`Fanbox` はプロセスごとに一度だけ生成されるため、developer mode を切り替えても同一セッション中の配信先は変わらない。#139 の停止フラグと同じ反映時点であり、利用者から見た規則が一つで済む。
 
-チャンネルの選択は「停止フラグが立っていない」側の枝の中だけで起きる。フラグが立っていれば配信先を渡さない挙動は両ビルドで変わらない。
+### D4. 読み取りに失敗した場合は昇格済みチャンネルへ倒す（agent 仮決め）
 
-### D6. どちらのチャンネルを読んだかはアプリから観測できない（agent 仮決め）
+保存済みの値を読めなかった場合は developer mode を無効とみなす。未検証の配信物を実行しない側が fail-safe であり、この向きなら読み取りの失敗が「開発者向けの機能が効かない」に留まる。
+
+### D5. 配信先は 2 つの定数に分け、関数内で選ぶ（agent 仮決め）
+
+`GUEST_MANIFEST_URL` を prod / dev の 2 定数に分け、引数で選ぶ。定数の形を保つことで、どちらの URL にも所在の意味を KDoc で書ける。基底 URL とチャンネル名の連結は、2 つしかない選択肢のために組み立ての規則を持ち込む。
+
+### D6. iOS の actual は引数を受け取るが使わない（agent 仮決め）
+
+`expect` の signature は共通であるため iOS の actual にも引数が現れる。iOS は配信先を渡さないので値は使わない。配信先を commonMain へ移す案は「配信先と鍵を Android の source set に置く」既存 Requirement に反する。
+
+### D7. 停止フラグの分岐は変更しない（agent 仮決め）
+
+チャンネルの選択は「停止フラグが立っていない」側の枝の中だけで起きる。フラグが立っていれば配信先を渡さない挙動は developer mode の値によらない。
+
+### D8. どちらのチャンネルを読んだかはアプリから観測できない（agent 仮決め）
 
 guest が起動したかどうかは `FanboxZipline` スレッドの有無で分かるが、このスレッドはロードを試みる前に作られるため、存在は「配信設定が渡された」ことしか示さない。どちらの URL を読んだかを示す出力はアプリにもライブラリにも無い。
 
-したがって選択の正しさは unit test で示し、実機では「debug ビルドで guest が退避せずに動作する」ことの確認に留める。両者を合わせても「dev チャンネルを読んだ」ことの直接の観測にはならない。この限界は受け入れ条件 4 の解釈として記録する。
+したがって受け入れ条件 4 の確認は次の 3 つを合わせて行う。(1) 選択のロジックを unit test で固定する (2) ビルド成果物に dev チャンネルの URL が実際に含まれることを確認する (3) 実機で guest が退避せずに動作することを確認する。「その URL へ取得しに行った」ことの直接の観測は含まれない。
 
 ## Risks / Trade-offs
 
-- **dev チャンネルには昇格前の bundle が乗る** → debug ビルドは壊れた bundle を実行しうる。これは意図した挙動であり、そのために dev チャンネルがある。退避の経路は変わらないため、bundle が壊れていても投稿詳細の取得自体は直接経路で成立する
-- **iOS の actual に使わない引数が残る** → 静的解析が未使用引数を指摘する可能性がある。指摘された場合は expect/actual の制約であることを示す抑制で閉じる
-- **実機での確認がチャンネルを直接は示さない**（D6） → 選択の証明は unit test に依る
+- **`developerPassword` を取得した第三者が、リリース版で dev チャンネルを読める**（ユーザー確認済みの受容） → `PixiViewConfig.developerPassword` はリリース APK へ焼き込まれ逆コンパイルで取得しうる。取得した者は自分の端末で developer mode を有効にし、昇格前の bundle を実行させられる。ただし公開鍵の検証は変わらず働くため、実行できるのは fankt が署名した未昇格のコードに限られ、任意のコードではない。また `isDeveloperMode` は `Setting.hasPrivilege` を通じて既に有料機能を解放しており、パスワードの漏洩による影響はこの change 以前から存在する
+- **生成時に同期的な読み取りが 1 回入る**（D2） → 起動ごとに一度、単一の preferences ファイルを読む。`FanboxRepository` を最初に注入するスレッドがその間ブロックされる
+- **dev チャンネルには昇格前の bundle が乗る** → developer mode の端末は壊れた bundle を実行しうる。これは意図した挙動である。退避の経路は変わらないため、bundle が壊れていても投稿詳細の取得自体は直接経路で成立する
+- **iOS の actual に使わない引数が残る**（D6） → 静的解析が未使用引数を指摘する可能性がある。指摘された場合は expect/actual の制約であることを示す抑制で閉じる
+- **実機での確認がチャンネルを直接は示さない**（D8） → 選択の証明は unit test と成果物の検査に依る
 
 ## Migration Plan
 
-リリースビルドの参照先は変わらないため、利用者側の影響は無い。debug ビルドは次回のビルドから dev チャンネルを読む。
+developer mode が無効な端末の参照先は変わらないため、利用者側の影響は無い。developer mode が有効な端末は次回の起動から dev チャンネルを読む。
 
-rollback は 2 定数を 1 つに戻して分岐を外せば足りる。
+rollback は 2 定数を 1 つに戻して分岐を外せば足りる。`SettingDataStore` へ足した読み取り関数は他から使われないため、併せて外せる。
 
 ## Open Questions
 
