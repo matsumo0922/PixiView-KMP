@@ -16,7 +16,9 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.receiveAsFlow
+import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.withContext
+import kotlinx.coroutines.withTimeoutOrNull
 import me.matsumo.fanbox.core.common.PixiViewConfig
 import me.matsumo.fanbox.core.common.util.recordException
 import me.matsumo.fanbox.core.datastore.BlockDataStore
@@ -56,6 +58,7 @@ import me.matsumo.fankt.fanbox.domain.model.id.FanboxPostId
 import me.matsumo.fankt.fanbox.domain.model.id.FanboxUserId
 import org.koin.core.component.KoinComponent
 import kotlin.random.Random
+import kotlin.time.Duration.Companion.milliseconds
 
 interface FanboxRepository {
     val bookmarkedPostsIds: SharedFlow<List<FanboxPostId>>
@@ -218,9 +221,39 @@ interface FanboxRepository {
  */
 internal expect fun createFanbox(
     logLevel: FanboxLogLevel,
+    isDeveloperMode: Boolean,
     ioDispatcher: CoroutineDispatcher,
     cookieStorage: FanboxCookieStorage,
 ): Fanbox
+
+/**
+ * 保存済みの設定を読む上限。
+ *
+ * 読み取りは最初のコンポジションを行う thread をブロックする。単一の preferences ファイルの読み取りは
+ * 通常これより 2 桁短い時間で終わるため、上限に達するのは病的に遅いストレージに限られる。打ち切った
+ * 場合に失うのは開発者向けの配信先の切り替えだけで、起動そのものは続く。
+ */
+private val STORED_SETTING_READ_TIMEOUT = 500.milliseconds
+
+/**
+ * 保存済みの developer mode を読む。読めなければ無効として扱う。
+ *
+ * [Fanbox] の生成は同期的に起き、`setting` は購読が始まるまで既定値を返すため、保存済みの値をここで
+ * 待つ。この待ちは最初のコンポジションを行う thread で起きるので上限を設ける。
+ *
+ * 失敗と打ち切りのいずれも「無効」へ倒す。未検証の配信物を実行しない側が安全であり、この向きなら
+ * 読み取りの不調は、開発者向けの切り替えが効かないことに留まる。
+ */
+private fun loadDeveloperMode(userDataStore: SettingDataStore): Boolean = runCatching {
+    runBlocking {
+        withTimeoutOrNull(STORED_SETTING_READ_TIMEOUT) {
+            userDataStore.loadStoredSetting().isDeveloperMode
+        }
+    }
+}.getOrElse { failure ->
+    Napier.w(failure) { "Failed to read the stored developer mode; treating it as disabled." }
+    null
+} ?: false
 
 class FanboxRepositoryImpl(
     private val bookmarkDataStore: BookmarkDataStore,
@@ -238,6 +271,7 @@ class FanboxRepositoryImpl(
     // FANBOX と利用者のデータが残るため、リリースビルドでは NONE にして出力経路ごと閉じる。
     private val fanbox = createFanbox(
         logLevel = if (pixiViewConfig.isDebug) FanboxLogLevel.INFO else FanboxLogLevel.NONE,
+        isDeveloperMode = loadDeveloperMode(userDataStore),
         ioDispatcher = ioDispatcher,
         cookieStorage = cookieStorage,
     )

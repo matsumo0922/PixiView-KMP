@@ -143,6 +143,12 @@ The bundle is verified against a public key compiled into the app. One that fail
 not executed. When the delivery target cannot be reached, the app parses responses with its own
 built-in path, exactly as it did before this mechanism existed.
 
+What the app fetches is not whatever was published most recently. A bundle reaches the delivery
+target the app reads only when someone promotes it there deliberately; work that has not been
+promoted stays on a separate target the app does not read. Turning on developer mode switches the app
+to that separate target, which is how a bundle gets checked before it is promoted. The change applies
+the next time the app starts.
+
 Execution can also be stopped remotely, independently of what is published at the delivery target.
 The app reads a flag from Firebase Remote Config when it starts, and skips the delivered bundle
 entirely while that flag is set. Until that flag has been read at least once — on a first launch, or
