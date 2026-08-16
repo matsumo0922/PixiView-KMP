@@ -52,21 +52,27 @@ release でも billing でも、developer mode が有効なら dev チャンネ�
 
 `StateFlow` に対する `first()` も同じで、現在値を即座に返すだけで保存済みの値を待たない。
 
-そこで `SettingDataStore` に保存済みの値を一度読む suspend 関数を足し、`FanboxRepositoryImpl` の生成時に `runBlocking` で読む。読むのは起動ごとに一度きりで、対象は既に読み込まれている単一の preferences ファイルである。
+そこで `SettingDataStore` に保存済みの値を一度読む suspend 関数を足し、`FanboxRepositoryImpl` の生成時に `runBlocking` で読む。読むのは起動ごとに一度きりで、対象は単一の preferences ファイルである。
+
+**この読み取りは main thread で起きる。** `FanboxRepositoryImpl` は Koin の `single` であり、最初の解決はルート Composable `PixiViewApp` の既定引数 `viewModel: PixiViewViewModel = koinViewModel()` の評価、すなわち最初のコンポジションで起きる。`PixiViewViewModel` はコンストラクタで `FanboxRepository` を受け取る。
+
+そのため読み取りには上限を設け、超えた場合は developer mode を無効とみなす。無制限のブロックを、上限付きのブロックと fail-safe な既定へ縮退させる。期待値は単一ファイルの読み取り相当であり、上限に達するのはストレージが著しく遅い状況に限られる。その状況で失うのは開発者向けの切り替えだけで、通常の起動は続く。
 
 検討した代替は次のとおり。
 
 - **`Fanbox` の生成を遅延させ、値が読めてから作る**: `fanbox` は同期的な property として多数のメソッドから参照されており、遅延させると呼び出し側まで suspend が波及する。#139 の design D2 で「同一セッション内での差し替えは採らない」と判断した論点にも当たる
-- **同期的に読める別の保存先へ値を写す**: 書き込みのたびに二重に保存する機構が増える。反映の時点は結局「次回起動」で変わらず、得るものが無い
+- **`fanbox` を `by lazy` にして、最初の使用まで読み取りを遅らせる**: `sessionId` と `csrfToken` が property の初期化で `fanbox` に触れるため、コンストラクタの時点で強制される。遅延にならない
+- **`setting` の `started` を `SharingStarted.Eagerly` へ変え、`value` を同期的に読む**: Koin は `PixiViewViewModel` のコンストラクタ引数を順に解決するため、`SettingDataStore` の生成は `FanboxRepositoryImpl` の直前に起きる。購読を即座に始めても最初のディスク読み取りは間に合わず、`value` は `Setting.default()` のままになる。ブロックを避けられる代わりに developer mode が一度も効かない
+- **同期的に読める別の保存先へ値を写す**: 書き込みのたびに二重に保存する機構が増える。読み取り自体はやはりディスクを伴い、反映の時点も「次回起動」で変わらない
 - **`setting.value` をそのまま読む**: 上記のとおり無言の失敗になる
 
 ### D3. 反映は次回のアプリ起動から（agent 仮決め）
 
 `Fanbox` はプロセスごとに一度だけ生成されるため、developer mode を切り替えても同一セッション中の配信先は変わらない。#139 の停止フラグと同じ反映時点であり、利用者から見た規則が一つで済む。
 
-### D4. 読み取りに失敗した場合は昇格済みチャンネルへ倒す（agent 仮決め）
+### D4. 読み取りに失敗した場合と上限を超えた場合は昇格済みチャンネルへ倒す（agent 仮決め）
 
-保存済みの値を読めなかった場合は developer mode を無効とみなす。未検証の配信物を実行しない側が fail-safe であり、この向きなら読み取りの失敗が「開発者向けの機能が効かない」に留まる。
+保存済みの値を読めなかった場合、および上限時間内に読めなかった場合は developer mode を無効とみなす。未検証の配信物を実行しない側が fail-safe であり、この向きなら読み取りの失敗が「開発者向けの機能が効かない」に留まる。
 
 ### D5. 配信先は 2 つの定数に分け、関数内で選ぶ（agent 仮決め）
 
@@ -89,7 +95,7 @@ guest が起動したかどうかは `FanboxZipline` スレッドの有無で分
 ## Risks / Trade-offs
 
 - **`developerPassword` を取得した第三者が、リリース版で dev チャンネルを読める**（ユーザー確認済みの受容） → `PixiViewConfig.developerPassword` はリリース APK へ焼き込まれ逆コンパイルで取得しうる。取得した者は自分の端末で developer mode を有効にし、昇格前の bundle を実行させられる。ただし公開鍵の検証は変わらず働くため、実行できるのは fankt が署名した未昇格のコードに限られ、任意のコードではない。また `isDeveloperMode` は `Setting.hasPrivilege` を通じて既に有料機能を解放しており、パスワードの漏洩による影響はこの change 以前から存在する
-- **生成時に同期的な読み取りが 1 回入る**（D2） → 起動ごとに一度、単一の preferences ファイルを読む。`FanboxRepository` を最初に注入するスレッドがその間ブロックされる
+- **起動時の main thread に同期的な読み取りが 1 回入る**（D2） → developer mode の値によらず、すべてのビルド・すべての利用者で毎起動 1 回起きる。ブロックされるのは最初のコンポジションを行う main thread である。上限を設けて最悪時間を有界にし、超過時は安全側へ倒すが、上限までの遅延自体は残る。既存コードに production の `runBlocking` は無く、これが最初の 1 件になる（既存の 4 件はいずれもテスト）
 - **dev チャンネルには昇格前の bundle が乗る** → developer mode の端末は壊れた bundle を実行しうる。これは意図した挙動である。退避の経路は変わらないため、bundle が壊れていても投稿詳細の取得自体は直接経路で成立する
 - **iOS の actual に使わない引数が残る**（D6） → 静的解析が未使用引数を指摘する可能性がある。指摘された場合は expect/actual の制約であることを示す抑制で閉じる
 - **実機での確認がチャンネルを直接は示さない**（D8） → 選択の証明は unit test と成果物の検査に依る

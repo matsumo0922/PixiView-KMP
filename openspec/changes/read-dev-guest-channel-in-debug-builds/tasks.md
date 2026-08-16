@@ -1,11 +1,11 @@
 ## 1. 保存済みの設定を読む
 
-- [ ] 1.1 `SettingDataStore` に、保存済みの `Setting` を一度読む suspend 関数を足す
+- [ ] 1.1 `SettingDataStore` に、保存済みの `Setting` を一度読む suspend 関数を足す（`setting`（StateFlow）ではなく、その元になっている preferences の Flow を読むこと。StateFlow から読むと購読前は既定値が返る）
 
 ## 2. 配信先の選択
 
 - [ ] 2.1 `expect fun createFanbox` に `isDeveloperMode: Boolean` を足す
-- [ ] 2.2 `FanboxRepositoryImpl` の生成時に保存済みの値を一度読み、読めなければ無効として `createFanbox` へ渡す
+- [ ] 2.2 `FanboxRepositoryImpl` の生成時に保存済みの値を一度読み、読めない場合と上限時間を超えた場合は無効として `createFanbox` へ渡す
 - [ ] 2.3 `FanboxFactory.android.kt` の配信先を prod / dev の 2 定数に分け、引数で選ぶ
 - [ ] 2.4 `FanboxFactory.ios.kt` の actual に引数を足す（値は使わない）
 
