@@ -281,4 +281,38 @@ class PostDetailMapperTest {
         val videoBody = assertIs<Body.Video>(fanboxPostDetail.copy(body = fanktVideoBody).toPostDetail().body)
         assertEquals(fanktVideoBody.url, videoBody.url)
     }
+
+    /**
+     * [FanboxPostDetail.FileItem.asImageItem] と [asVideoItem] が fankt の元実装と同じ結果を返すことを確認する。
+     * 拡張子ごとの判定ロジックを独自に再実装しているため、fankt 側の値と突き合わせる。
+     */
+    @Test
+    fun fileItemDerivedConversionMethodsMatchFanktValues() {
+        val fanktImageExtensionFile = fileItem.copy(extension = "jpg")
+        val fanktVideoExtensionFile = fileItem.copy(extension = "mp4")
+        val fanktUnmatchedExtensionFile = fileItem.copy(extension = "pdf")
+
+        val imageExtensionFile = fanboxPostDetail.copy(
+            body = FanktBody.File(text = "file text", files = listOf(fanktImageExtensionFile)),
+        ).toPostDetail().let { assertIs<Body.File>(it.body).files.single() }
+        val videoExtensionFile = fanboxPostDetail.copy(
+            body = FanktBody.File(text = "file text", files = listOf(fanktVideoExtensionFile)),
+        ).toPostDetail().let { assertIs<Body.File>(it.body).files.single() }
+        val unmatchedExtensionFile = fanboxPostDetail.copy(
+            body = FanktBody.File(text = "file text", files = listOf(fanktUnmatchedExtensionFile)),
+        ).toPostDetail().let { assertIs<Body.File>(it.body).files.single() }
+
+        assertEquals(fanktImageExtensionFile.asImageItem()?.originalUrl, imageExtensionFile.asImageItem()?.originalUrl)
+        assertEquals(fanktImageExtensionFile.asVideoItem(), null)
+        assertEquals(imageExtensionFile.asVideoItem(), null)
+
+        assertEquals(fanktVideoExtensionFile.asVideoItem()?.url, videoExtensionFile.asVideoItem()?.url)
+        assertEquals(fanktVideoExtensionFile.asImageItem(), null)
+        assertEquals(videoExtensionFile.asImageItem(), null)
+
+        assertEquals(fanktUnmatchedExtensionFile.asImageItem(), null)
+        assertEquals(fanktUnmatchedExtensionFile.asVideoItem(), null)
+        assertEquals(unmatchedExtensionFile.asImageItem(), null)
+        assertEquals(unmatchedExtensionFile.asVideoItem(), null)
+    }
 }
