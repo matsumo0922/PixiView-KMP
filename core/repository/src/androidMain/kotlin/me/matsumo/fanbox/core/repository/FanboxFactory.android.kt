@@ -3,11 +3,16 @@ package me.matsumo.fanbox.core.repository
 import com.google.firebase.Firebase
 import com.google.firebase.remoteconfig.remoteConfig
 import com.google.firebase.remoteconfig.remoteConfigSettings
+import io.github.aakira.napier.Napier
 import kotlinx.coroutines.CoroutineDispatcher
+import kotlinx.coroutines.runBlocking
+import kotlinx.coroutines.withTimeoutOrNull
 import me.matsumo.fanbox.core.common.util.recordException
+import me.matsumo.fanbox.core.datastore.SettingDataStore
 import me.matsumo.fankt.fanbox.Fanbox
 import me.matsumo.fankt.fanbox.FanboxCookieStorage
 import me.matsumo.fankt.fanbox.FanboxLogLevel
+import kotlin.time.Duration.Companion.milliseconds
 
 /**
  * 投稿詳細の解析処理を配信する manifest の所在。
@@ -40,6 +45,35 @@ private const val GUEST_DEV_MANIFEST_URL =
 internal fun guestManifestUrl(isDeveloperMode: Boolean): String {
     return if (isDeveloperMode) GUEST_DEV_MANIFEST_URL else GUEST_MANIFEST_URL
 }
+
+/**
+ * 保存済みの設定を読む上限。
+ *
+ * 読み取りは最初のコンポジションを行う thread をブロックする。単一の preferences ファイルの読み取りは
+ * 通常これより 2 桁短い時間で終わるため、上限に達するのは病的に遅いストレージに限られる。打ち切った
+ * 場合に失うのは開発者向けの配信先の切り替えだけで、起動そのものは続く。
+ */
+private val STORED_SETTING_READ_TIMEOUT = 500.milliseconds
+
+/**
+ * 保存済みの developer mode を読む。読めなければ無効として扱う。
+ *
+ * [Fanbox] の生成は同期的に起き、`SettingDataStore.setting` は購読が始まるまで既定値を返すため、
+ * 保存済みの値をここで待つ。この待ちは最初のコンポジションを行う thread で起きるので上限を設ける。
+ *
+ * 失敗と打ち切りのいずれも「無効」へ倒す。未検証の配信物を実行しない側が安全であり、この向きなら
+ * 読み取りの不調は、開発者向けの切り替えが効かないことに留まる。
+ *
+ * 読み取りそのものを [load] として受け取るのは、失敗と打ち切りの経路をテストから通せるようにするため。
+ */
+internal fun loadDeveloperMode(load: suspend () -> Boolean): Boolean = runCatching {
+    runBlocking {
+        withTimeoutOrNull(STORED_SETTING_READ_TIMEOUT) { load() }
+    }
+}.getOrElse { failure ->
+    Napier.w(failure) { "Failed to read the stored developer mode; treating it as disabled." }
+    null
+} ?: false
 
 /** 配信物の署名に使う鍵の名前。fankt 側の署名設定と一致している必要がある。 */
 private const val GUEST_TRUSTED_KEY_NAME = "fanboxGuest"
@@ -87,7 +121,7 @@ private const val REMOTE_CONFIG_FETCH_INTERVAL_SECONDS = 3600L
  */
 internal actual fun createFanbox(
     logLevel: FanboxLogLevel,
-    isDeveloperMode: Boolean,
+    settingDataStore: SettingDataStore,
     ioDispatcher: CoroutineDispatcher,
     cookieStorage: FanboxCookieStorage,
 ): Fanbox {
@@ -98,6 +132,8 @@ internal actual fun createFanbox(
             cookieStorage = cookieStorage,
         )
     }
+
+    val isDeveloperMode = loadDeveloperMode { settingDataStore.loadStoredSetting().isDeveloperMode }
 
     return Fanbox(
         guestManifestUrl = guestManifestUrl(isDeveloperMode),

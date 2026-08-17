@@ -82,9 +82,15 @@ release でも billing でも、developer mode が有効なら dev チャンネ�
 
 `GUEST_MANIFEST_URL` を prod / dev の 2 定数に分け、引数で選ぶ。定数の形を保つことで、どちらの URL にも所在の意味を KDoc で書ける。基底 URL とチャンネル名の連結は、2 つしかない選択肢のために組み立ての規則を持ち込む。
 
-### D6. iOS の actual は引数を受け取るが使わない（agent 仮決め）
+### D6. `createFanbox` へ渡すのは読み取った値ではなく設定の所在（agent 仮決め）
 
-`expect` の signature は共通であるため iOS の actual にも引数が現れる。iOS は配信先を渡さないので値は使わない。配信先を commonMain へ移す案は「配信先と鍵を Android の source set に置く」既存 Requirement に反する。
+`expect` の signature は共通であるため、iOS の actual にも引数が現れて使われないままになる。ここで渡すものが読み取り済みの `Boolean` だと、読み取り自体は commonMain の呼び出し側で起きるため、値を捨てる iOS も毎起動その待ちを負う。iOS は配信先を渡さず guest を起動しないため、この待ちに対応する便益が無い。
+
+そこで `SettingDataStore` を渡し、読み取りは Android の actual の中で行う。iOS の actual は受け取った所在に触れないため、読み取りそのものが起きない。
+
+この配置は停止フラグとも噛み合う。読み取りは `isGuestRouteKilled()` が偽の枝の中だけで起きるので、停止フラグが立っている端末では待ちも消える。
+
+配信先を commonMain へ移す案は「配信先と鍵を Android の source set に置く」既存 Requirement に反するため採らない。
 
 ### D7. 停止フラグの分岐は変更しない（agent 仮決め）
 
@@ -99,7 +105,7 @@ guest が起動したかどうかは `FanboxZipline` スレッドの有無で分
 ## Risks / Trade-offs
 
 - **`developerPassword` を取得した第三者が、リリース版で dev チャンネルを読める**（ユーザー確認済みの受容） → `PixiViewConfig.developerPassword` はリリース APK へ焼き込まれ逆コンパイルで取得しうる。取得した者は自分の端末で developer mode を有効にし、昇格前の bundle を実行させられる。ただし公開鍵の検証は変わらず働くため、実行できるのは fankt が署名した未昇格のコードに限られ、任意のコードではない。また `isDeveloperMode` は `Setting.hasPrivilege` を通じて既に有料機能を解放しており、パスワードの漏洩による影響はこの change 以前から存在する
-- **起動時の main thread に同期的な読み取りが 1 回入る**（D2） → developer mode の値によらず、すべてのビルド・すべての利用者で毎起動 1 回起きる。ブロックされるのは最初のコンポジションを行う main thread である。上限を設けて最悪時間を有界にし、超過時は安全側へ倒すが、上限までの遅延自体は残る。既存コードに production の `runBlocking` は無く、これが最初の 1 件になる（既存の 4 件はいずれもテスト）
+- **起動時の main thread に同期的な読み取りが 1 回入る**（D2） → Android で、停止フラグが立っていない限り、developer mode の値によらず毎起動 1 回起きる。ブロックされるのは最初のコンポジションを行う main thread である。上限を設けて最悪時間を有界にし、超過時は安全側へ倒すが、上限までの遅延自体は残る。既存コードに production の `runBlocking` は無く、これが最初の 1 件になる（既存の 4 件はいずれもテスト）。iOS と停止中の端末では起きない（D6）
 - **dev チャンネルには昇格前の bundle が乗る** → developer mode の端末は壊れた bundle を実行しうる。これは意図した挙動である。退避の経路は変わらないため、bundle が壊れていても投稿詳細の取得自体は直接経路で成立する
 - **iOS の actual に使わない引数が残る**（D6） → 静的解析が未使用引数を指摘する可能性がある。指摘された場合は expect/actual の制約であることを示す抑制で閉じる
 - **実機での確認がチャンネルを直接は示さない**（D8） → 選択の証明は unit test と成果物の検査に依る

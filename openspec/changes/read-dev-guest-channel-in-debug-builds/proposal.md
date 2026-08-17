@@ -6,11 +6,11 @@ matsumo0922/fankt#107 で guest bundle の配信が 2 チャンネルへ分か�
 
 ## What Changes
 
-- `createFanbox` が `isDeveloperMode` を受け取り、有効なら dev チャンネル、無効なら昇格済みチャンネルの manifest URL を渡す。ビルドの種別では分岐しない
+- `createFanbox` が `SettingDataStore` を受け取り、developer mode が有効なら dev チャンネル、無効なら昇格済みチャンネルの manifest URL を渡す。ビルドの種別では分岐しない
 - `SettingDataStore` に、保存済みの `Setting` を一度読む suspend 関数を足す。`Setting.isDeveloperMode` は `SharingStarted.WhileSubscribed` の `StateFlow` にあり、購読が始まる前に `value` を読むと既定値が返るため、`Fanbox` の生成時点では現在の実装では読めない
-- `FanboxRepositoryImpl` の生成時に一度だけその値を読み、`createFanbox` へ渡す
+- 読み取りは Android の actual の中で、停止フラグが立っていない場合にだけ行う。上限を超えた場合と失敗した場合は無効とみなす
 - 配信先を prod / dev の 2 つの定数に分ける
-- iOS の `createFanbox` は引数を受け取るが使わない
+- iOS の `createFanbox` は引数を受け取るが触れないため、読み取りは起きない
 
 ## Capabilities
 
@@ -25,8 +25,8 @@ matsumo0922/fankt#107 で guest bundle の配信が 2 チャンネルへ分か�
 ## Impact
 
 - `core/datastore/src/commonMain/.../SettingDataStore.kt`（保存済みの値を読む関数）
-- `core/repository/src/commonMain/.../FanboxRepository.kt`（`expect fun createFanbox` の引数、生成時の読み取り）
-- `core/repository/src/androidMain/.../FanboxFactory.android.kt`（配信先の定数と分岐）
+- `core/repository/src/commonMain/.../FanboxRepository.kt`（`expect fun createFanbox` の引数）
+- `core/repository/src/androidMain/.../FanboxFactory.android.kt`（配信先の定数と分岐、保存済みの値の読み取り）
 - `core/repository/src/iosMain/.../FanboxFactory.ios.kt`（引数の追加のみ）
 - `README.md` の `Remote parsing updates` 節
 - developer mode が無効な場合の挙動は変わらない。参照先の URL は現在と同一である
