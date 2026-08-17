@@ -3,14 +3,22 @@ package me.matsumo.fanbox.core.repository
 import com.google.firebase.Firebase
 import com.google.firebase.remoteconfig.remoteConfig
 import com.google.firebase.remoteconfig.remoteConfigSettings
+import io.github.aakira.napier.Napier
 import kotlinx.coroutines.CoroutineDispatcher
+import kotlinx.coroutines.runBlocking
+import kotlinx.coroutines.withTimeoutOrNull
 import me.matsumo.fanbox.core.common.util.recordException
+import me.matsumo.fanbox.core.datastore.SettingDataStore
 import me.matsumo.fankt.fanbox.Fanbox
 import me.matsumo.fankt.fanbox.FanboxCookieStorage
 import me.matsumo.fankt.fanbox.FanboxLogLevel
+import kotlin.time.Duration.Companion.milliseconds
 
 /**
  * 投稿詳細の解析処理を配信する manifest の所在。
+ *
+ * ここへ置かれるのは手動で昇格した配信物だけである。fankt の `main` へ入った変更は dev チャンネルへ
+ * 配信され、昇格を実行するまでこのパスの内容は変わらない。
  *
  * パスに含まれる版は host と guest のあいだの API の版であり、この版のあいだは互換な bundle だけが
  * 配信される。版が上がった配信物は別のパスへ置かれるため、更新前のアプリが解釈できない bundle を
@@ -18,6 +26,54 @@ import me.matsumo.fankt.fanbox.FanboxLogLevel
  */
 private const val GUEST_MANIFEST_URL =
     "https://matsumo0922.github.io/fankt/zipline/v1/manifest.zipline.json"
+
+/**
+ * 昇格前の配信物が置かれる manifest の所在。
+ *
+ * fankt の `main` へ入った変更がそのまま配信されるため、検証を経ていない bundle が置かれている。
+ * 昇格の前に実機で確かめるためにあり、developer mode を有効にした端末だけが参照する。
+ */
+private const val GUEST_DEV_MANIFEST_URL =
+    "https://matsumo0922.github.io/fankt/zipline/v1-dev/manifest.zipline.json"
+
+/**
+ * 参照する配信先を選ぶ。
+ *
+ * ビルドの種別では分岐しない。`isDebuggable` を持つビルドは debug だけではなく、種別が増えるたびに
+ * どちらを読むかを判断し直すことになる。
+ */
+internal fun guestManifestUrl(isDeveloperMode: Boolean): String {
+    return if (isDeveloperMode) GUEST_DEV_MANIFEST_URL else GUEST_MANIFEST_URL
+}
+
+/**
+ * 保存済みの設定を読む上限。
+ *
+ * 読み取りは最初のコンポジションを行う thread をブロックする。単一の preferences ファイルの読み取りは
+ * 通常これより 2 桁短い時間で終わるため、上限に達するのは病的に遅いストレージに限られる。打ち切った
+ * 場合に失うのは開発者向けの配信先の切り替えだけで、起動そのものは続く。
+ */
+private val STORED_SETTING_READ_TIMEOUT = 500.milliseconds
+
+/**
+ * 保存済みの developer mode を読む。読めなければ無効として扱う。
+ *
+ * [Fanbox] の生成は同期的に起き、`SettingDataStore.setting` は購読が始まるまで既定値を返すため、
+ * 保存済みの値をここで待つ。この待ちは最初のコンポジションを行う thread で起きるので上限を設ける。
+ *
+ * 失敗と打ち切りのいずれも「無効」へ倒す。未検証の配信物を実行しない側が安全であり、この向きなら
+ * 読み取りの不調は、開発者向けの切り替えが効かないことに留まる。
+ *
+ * 読み取りそのものを [load] として受け取るのは、失敗と打ち切りの経路をテストから通せるようにするため。
+ */
+internal fun loadDeveloperMode(load: suspend () -> Boolean): Boolean = runCatching {
+    runBlocking {
+        withTimeoutOrNull(STORED_SETTING_READ_TIMEOUT) { load() }
+    }
+}.getOrElse { failure ->
+    Napier.w(failure) { "Failed to read the stored developer mode; treating it as disabled." }
+    null
+} ?: false
 
 /** 配信物の署名に使う鍵の名前。fankt 側の署名設定と一致している必要がある。 */
 private const val GUEST_TRUSTED_KEY_NAME = "fanboxGuest"
@@ -65,6 +121,7 @@ private const val REMOTE_CONFIG_FETCH_INTERVAL_SECONDS = 3600L
  */
 internal actual fun createFanbox(
     logLevel: FanboxLogLevel,
+    settingDataStore: SettingDataStore,
     ioDispatcher: CoroutineDispatcher,
     cookieStorage: FanboxCookieStorage,
 ): Fanbox {
@@ -76,8 +133,10 @@ internal actual fun createFanbox(
         )
     }
 
+    val isDeveloperMode = loadDeveloperMode { settingDataStore.loadStoredSetting().isDeveloperMode }
+
     return Fanbox(
-        guestManifestUrl = GUEST_MANIFEST_URL,
+        guestManifestUrl = guestManifestUrl(isDeveloperMode),
         guestTrustedKeyName = GUEST_TRUSTED_KEY_NAME,
         guestTrustedEd25519PublicKey = GUEST_TRUSTED_ED25519_PUBLIC_KEY_HEX.hexToByteArray(),
         logLevel = logLevel,

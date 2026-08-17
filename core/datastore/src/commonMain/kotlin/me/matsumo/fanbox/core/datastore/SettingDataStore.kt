@@ -35,6 +35,16 @@ class SettingDataStore(
         initialValue = Setting.default(),
     )
 
+    /**
+     * 保存済みの [Setting] を読む。
+     *
+     * [setting] は購読がある間だけ流れるため、購読が始まる前に読むと保存済みの値ではなく
+     * [Setting.default] が返る。生成直後に同期的な判断へ使う値はこちらから読む。
+     */
+    suspend fun loadStoredSetting(): Setting = withContext(ioDispatcher) {
+        settingPreference.data.first().deserialize(formatter, Setting.serializer(), Setting.default())
+    }
+
     suspend fun setPixiViewId(id: String) = withContext(ioDispatcher) {
         if (setting.first().pixiViewId == id) return@withContext
 

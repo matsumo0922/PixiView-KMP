@@ -218,6 +218,7 @@ interface FanboxRepository {
  */
 internal expect fun createFanbox(
     logLevel: FanboxLogLevel,
+    settingDataStore: SettingDataStore,
     ioDispatcher: CoroutineDispatcher,
     cookieStorage: FanboxCookieStorage,
 ): Fanbox
@@ -238,6 +239,7 @@ class FanboxRepositoryImpl(
     // FANBOX と利用者のデータが残るため、リリースビルドでは NONE にして出力経路ごと閉じる。
     private val fanbox = createFanbox(
         logLevel = if (pixiViewConfig.isDebug) FanboxLogLevel.INFO else FanboxLogLevel.NONE,
+        settingDataStore = userDataStore,
         ioDispatcher = ioDispatcher,
         cookieStorage = cookieStorage,
     )
