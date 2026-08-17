@@ -11,6 +11,11 @@ fankt の型を扱ってよいのは `core/repository`（変換層とその呼�
 - **WHEN** `FanboxRepository` の interface 宣言を読む
 - **THEN** 引数、戻り値、プロパティの型はすべてアプリ所有のモデルか標準ライブラリの型である
 
+#### Scenario: UI 層から呼ばれる他のリポジトリも fankt の型を要求しない
+
+- **WHEN** `feature/*` から呼ばれる `TranslationRepository` と `DownloadPostsRepository` の公開宣言を読む
+- **THEN** 引数と戻り値の型はすべてアプリ所有のモデルか標準ライブラリの型である
+
 #### Scenario: UI 層のソースに fankt の import が現れない
 
 - **WHEN** `feature/*`、`core/ui`、`core/model`、`shared` のソースを走査する

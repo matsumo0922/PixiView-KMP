@@ -31,7 +31,9 @@ fankt 側の domain model は 24 ファイル / 749 行で、大半は素朴な 
 
 ### D2 ID は value class を維持する（ユーザー確認済み）
 
-`@JvmInline value class PostId(val value: String)` として fankt と 1:1 に対応させる。`PostId` と `CreatorId` の取り違えをコンパイラが検出できる状態を保つ。`value` が `String` である点も fankt と同じなので、`NavTypes.kt` の URL エンコード（`encode = { it.value }`）と `BlockDataStore` の `stringSetPreferencesKey` はどちらも表現が変わらない。
+`@JvmInline value class PostId(val value: String)` として fankt と 1:1 に対応させる。`PostId` と `CreatorId` の取り違えをコンパイラが検出できる状態を保つ。
+
+内側の型は fankt に合わせる。`UserId` だけが `Long` で、残りの 6 種（`PostId` / `PostItemId` / `CreatorId` / `CommentId` / `PlanId` / `NewsLetterId`）は `String` である。`NavTypes.kt` が符号化するのは `PostId` と `CreatorId` の 2 種で、どちらも `encode = { it.value }` の独自ラムダを通るため、`@Serializable` の有無によらず符号化文字列は変わらない。`BlockDataStore` の `stringSetPreferencesKey` も `CreatorId.value` をそのまま使う。
 
 採らなかった案：素の `String`。変換層は消えるが、参照数の多い `PostId`（142）と `CreatorId`（140）で型の取り違えが起きうる。
 
@@ -63,15 +65,44 @@ issue #137 の未決事項「変換層の置き場所（`core/repository` 内か
 
 `PostDetail` / `CreatorDetail` / `Comment` / `Bell` などは表示専用で、アプリから fankt へ戻す経路がない。使われない逆変換を書かない。
 
+**`core/repository` には `FanboxRepository` 以外にも、fankt 型を公開シグネチャに持ち `feature/*` から呼ばれるものが 2 つある。** どちらも逆変換を必要とせず、型の差し替えだけで済む。
+
+| 対象 | 公開シグネチャ | 逆変換が不要な理由 |
+| --- | --- | --- |
+| `TranslationRepository.translate` | `FanboxPostDetail` / `PageOffsetInfo<FanboxComment>` を受けて同じ型を返す | 翻訳 API へ送る payload はアプリ所有の `TransPostDetail` / `TransComments` であり、fankt の型は serialize されない。`core/model/translation` の `toTrans()` / `toFanboxPostDetail()` / `toFanboxComments()` をアプリ所有のモデルへ差し替えれば、fankt へ戻す経路は消える |
+| `DownloadPostsRepository` | `requestDownloadPost(post: FanboxPost, …)` / `requestDownloadImages(…, images: List<FanboxPostDetail.ImageItem>)` / `getSaveDirectory(requestType: …)` | 受け取った投稿は保存先ディレクトリ名（`post.user?.name`）と一覧表示にしか使わず、fankt の API へは渡らない |
+
+`core/model/translation` は受け入れ条件が名指しする `core/model` の一部であるため、`Trans*` に fankt 型を残す選択肢は取れない。
+
 ### D6 ページング型もアプリ所有にする（agent 仮決め）
 
 `PageCursorInfo<T>` / `PageNumberInfo<T>` / `PageOffsetInfo<T>` / `FanboxCursor` は `me.matsumo.fankt.fanbox.domain` にあり、`FanboxRepository` の戻り値に現れる。受け入れ条件が `me.matsumo.fankt` の型全般を対象にしているため、これらも `core/model/fanbox` へ写す（`PageCursorInfo` / `PageNumberInfo` / `PageOffsetInfo` / `Cursor`）。
 
-### D7 派生プロパティは app-owned モデルへ移植する（agent 仮決め）
+### D7 派生メンバーは、アプリが呼ぶものだけを移植する（agent 仮決め）
 
-`FanboxPostDetail.browserUrl`、`Body.imageItems` / `fileItems`、`Block.Embed.url`、`Body.Video.url`、`FileItem.asImageItem()` / `asVideoItem()` は fankt 側で計算されている。app-owned モデルへ同じ実装を移す。
+fankt 0.1.3 の domain model が持つ派生メンバーは次の 13 個である（`model/*.kt` と `FanboxCursor.kt` の全数）。
 
-これは意図した重複である。分離の目的は「fankt が変わってもアプリが壊れない」ことであり、これらの派生ロジックが fankt 側で変わってもアプリは追随しなくてよい。逆に、FANBOX の URL 形式が変わった場合はアプリ側も直す必要がある。
+| # | 派生メンバー | 移植 |
+| --- | --- | --- |
+| 1 | `FanboxPostDetail.browserUrl` | する |
+| 2 | `FanboxPostDetail.Body.imageItems` | する |
+| 3 | `FanboxPostDetail.Body.fileItems` | する |
+| 4 | `FanboxPostDetail.Body.Article.Block.Embed.url` | する |
+| 5 | `FanboxPostDetail.Body.Video.url` | する |
+| 6 | `FanboxPostDetail.FileItem.asImageItem()` | する |
+| 7 | `FanboxPostDetail.FileItem.asVideoItem()` | する |
+| 8 | `FanboxCreatorDetail.supportingBrowserUrl` | する |
+| 9 | `FanboxCreatorDetail.ProfileItem.Video.url` | する |
+| 10 | `FanboxCreatorPlan.planBrowserUrl` | する |
+| 11 | `FanboxCreatorPlan.supportingBrowserUrl` | する |
+| 12 | `FanboxCreatorDetail.Platform.fromUrl(url)` | しない |
+| 13 | `FanboxPaymentMethod.fromString(string)` | しない |
+
+12 と 13 は fankt がレスポンスからモデルを組み立てるための companion factory で、アプリからの呼び出しは 1 件もない。アプリが受け取るのは組み立て済みの `ProfileLink.link` と `paymentMethod` である。移植すると使われないコードになるうえ、`Platform.fromUrl` は fankt の `internal` な `FanboxUrlParts` に依存するため、アプリ側では URL パーサを新たに用意することになる。書かない。
+
+`FanboxCursor.kt` の `String.translateToCursor()` も `internal` で、fankt が `nextUrl` を解釈するための関数である。アプリの公開契約には現れない。
+
+1〜11 は意図した重複である。分離の目的は「fankt が変わってもアプリが壊れない」ことであり、これらの派生ロジックが fankt 側で変わってもアプリは追随しなくてよい。逆に、FANBOX の URL 形式が変わった場合はアプリ側も直す必要がある。
 
 ### D8 `FanboxDownloadItems.RequestType.Post` を `WholePost` へ改名する（agent 仮決め）
 

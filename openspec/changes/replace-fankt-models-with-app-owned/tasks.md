@@ -10,7 +10,7 @@
 - [ ] 1.1 `core/model/src/commonMain/.../core/model/fanbox/` に ID の value class 7 種（`PostId` / `PostItemId` / `CreatorId` / `UserId` / `CommentId` / `PlanId` / `NewsLetterId`）を定義する
 - [ ] 1.2 葉のモデル（`Cover` / `Tag` / `User` / `Creator` / `PaymentMethod`）を定義する
 - [ ] 1.3 集約のモデル（`Post` / `CreatorDetail` / `CreatorPlan` / `CreatorPlanDetail` / `Comment` / `Bell` / `MetaData` / `NewsLetter` / `PaidRecord`）を定義する
-- [ ] 1.4 `PostDetail` と `Body` の sealed 階層、`OtherPost` / `ImageItem` / `VideoItem` / `FileItem` を定義し、派生プロパティ（D7）を移植する
+- [ ] 1.4 `PostDetail` と `Body` の sealed 階層、`OtherPost` / `ImageItem` / `VideoItem` / `FileItem` を定義し、D7 の表で「する」とした派生メンバー 11 個を移植する
 - [ ] 1.5 ページング型（`PageCursorInfo` / `PageNumberInfo` / `PageOffsetInfo` / `Cursor`）を定義する
 - [ ] 1.6 Composable から参照するモデルへ `@Immutable` を付ける（AGENTS.md の Compose 規約）
 - [ ] 1.7 各 `data class` / `enum` / `value class` に日本語 KDoc を付ける
@@ -27,18 +27,19 @@
 - [ ] 3.2 `Body` の 7 variant と記事ブロックの 6 variant がすべて変換されることを固定する
 - [ ] 3.3 未知の variant が生の JSON を保持することを固定する
 - [ ] 3.4 ID / `Post` / `Cursor` の往復が元の値へ戻ることを固定する
-- [ ] 3.5 派生プロパティ（`browserUrl` / `Embed.url` / `Video.url` / `asImageItem` / `asVideoItem`）が fankt と同じ値を返すことを固定する
+- [ ] 3.5 D7 の派生メンバー 11 個が fankt と同じ値を返すことを固定する
 
 ## 4. 公開契約の置き換え（段 3 / `-swap`）
 
 - [ ] 4.1 `FanboxRepository` の interface とその実装をアプリ所有のモデルへ差し替え、`BookmarkDataStore` / `BlockDataStore` との境界で変換する
 - [ ] 4.2 `core/repository/paging/` の 5 本の `PagingSource` を差し替える
-- [ ] 4.3 `core/model` の既存ファイル（`Destination` / `FanboxDownloadItems` / `PostDownloader` / `TransPostDetail` / `TransComments`）を差し替え、`RequestType.Post` を `WholePost` へ改名する（D8）
-- [ ] 4.4 `core/ui` の 6 ファイルを差し替える（`NavTypes` の符号化が変わらないことを含む）
-- [ ] 4.5 `feature/post` 27 ファイルを差し替える
-- [ ] 4.6 `feature/creator` 21 ファイルを差し替える
-- [ ] 4.7 `feature/library` 14 ファイルを差し替える
-- [ ] 4.8 `feature/setting` 3 / `feature/welcome` 1 / `shared` 1 を差し替える
+- [ ] 4.3 `TranslationRepository` の `translate` 2 つと、`DownloadPostsRepository` の interface および android / ios の実装を差し替える（D5）
+- [ ] 4.4 `core/model` の既存ファイル（`Destination` / `FanboxDownloadItems` / `PostDownloader` / `TransPostDetail` / `TransComments`）を差し替え、`RequestType.Post` を `WholePost` へ改名する（D8）
+- [ ] 4.5 `core/ui` の 6 ファイルを差し替える（`NavTypes` の符号化が変わらないことを含む）
+- [ ] 4.6 `feature/post` 27 ファイルを差し替える
+- [ ] 4.7 `feature/creator` 21 ファイルを差し替える
+- [ ] 4.8 `feature/library` 14 ファイルを差し替える
+- [ ] 4.9 `feature/setting` 3 / `feature/welcome` 1 / `shared` 1 を差し替える
 
 ## 5. 永続化の非退行（段 3 / `-swap`）
 
