@@ -18,4 +18,4 @@
 - [x] 4.1 配信先の選択を検証する最小のテストを `androidHostTest` に置き、`testAndroidHostTest` で通す
 - [x] 4.2 detekt とリリースビルドが通ることを確認する
 - [x] 4.3 リリースの成果物に両チャンネルの URL が残っていることを確認する（選択は実行時に起きるため、R8 が dev 側の定数を落とすと developer mode が効かなくなる）
-- [ ] 4.4 実機で、developer mode を有効にした状態で guest が退避せずに投稿詳細を取得できることを確認する
+- [x] 4.4 実機で、developer mode を有効にした状態で guest が退避せずに投稿詳細を取得できることを確認する
