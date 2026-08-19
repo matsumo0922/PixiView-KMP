@@ -17,9 +17,9 @@ import me.matsumo.fanbox.core.model.fanbox.Comment
 import me.matsumo.fanbox.core.model.fanbox.PageOffsetInfo
 import me.matsumo.fanbox.core.model.fanbox.PostDetail
 import me.matsumo.fanbox.core.model.translation.TransString
-import me.matsumo.fanbox.core.model.translation.toFanboxComments
-import me.matsumo.fanbox.core.model.translation.toFanboxPostDetail
 import me.matsumo.fanbox.core.model.translation.toTrans
+import me.matsumo.fanbox.core.model.translation.toTranslatedComments
+import me.matsumo.fanbox.core.model.translation.toTranslatedPostDetail
 import kotlin.time.Duration.Companion.seconds
 
 class TranslationRepository(
@@ -53,14 +53,14 @@ class TranslationRepository(
         val transPostDetail = postDetail.toTrans()
         val result = translate(transPostDetail, locale)
 
-        result.toFanboxPostDetail(postDetail)
+        result.toTranslatedPostDetail(postDetail)
     }
 
     suspend fun translate(comments: PageOffsetInfo<Comment>, locale: Locale): PageOffsetInfo<Comment> = withContext(ioDispatcher) {
         val transComments = comments.toTrans()
         val result = translate(transComments, locale)
 
-        result.toFanboxComments(comments)
+        result.toTranslatedComments(comments)
     }
 
     private fun buildChatCompletionRequest(json: String, locale: Locale): ChatCompletionRequest {

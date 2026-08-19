@@ -21,7 +21,7 @@ fun PageOffsetInfo<Comment>.toTrans(): TransComments {
     )
 }
 
-fun TransComments.toFanboxComments(original: PageOffsetInfo<Comment>): PageOffsetInfo<Comment> {
+fun TransComments.toTranslatedComments(original: PageOffsetInfo<Comment>): PageOffsetInfo<Comment> {
     var index = 0
 
     fun replaceCommentBody(comment: Comment): Comment {

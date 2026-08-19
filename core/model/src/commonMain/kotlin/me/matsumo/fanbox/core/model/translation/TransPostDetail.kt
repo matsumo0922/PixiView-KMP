@@ -26,7 +26,7 @@ fun PostDetail.toTrans(): TransPostDetail {
     )
 }
 
-fun TransPostDetail.toFanboxPostDetail(original: PostDetail): PostDetail {
+fun TransPostDetail.toTranslatedPostDetail(original: PostDetail): PostDetail {
     var index = 0
     val newBody = when (val originalBody = original.body) {
         is PostDetail.Body.Article -> {
