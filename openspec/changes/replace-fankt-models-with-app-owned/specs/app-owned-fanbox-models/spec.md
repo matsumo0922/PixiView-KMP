@@ -2,16 +2,18 @@
 
 ### Requirement: アプリの公開契約は fankt の domain model を露出しない
 
-`FanboxRepository` の public API、`feature/*`、`core/ui`、`core/model`、`shared` は、fankt の domain model（`me.matsumo.fankt.fanbox.domain.*`）を参照してはならない（MUST NOT）。これらの層はアプリが所有するモデル（`me.matsumo.fanbox.core.model.fanbox.*`）だけを扱う。
+`FanboxRepository` の public API、`feature/*`、`core/ui`、`core/model`、`shared` は、fankt の domain model（`me.matsumo.fankt.fanbox.domain.*`）を参照してはならない（MUST NOT）。これらの層が扱う FANBOX のモデルは、アプリが所有するもの（`me.matsumo.fanbox.core.model.fanbox.*`）に限る。
 
-fankt の型を扱ってよいのは `core/repository`（変換層とその呼び出し元）と `core/datastore`（cookie / session の基盤契約と、ブックマークの保存形式）に限る。
+fankt の domain model を扱ってよいのは `core/repository`（変換層とその呼び出し元）と `core/datastore`（ブックマークの保存形式）に限る。
 
-#### Scenario: リポジトリの公開宣言に fankt の型が現れない
+domain model ではない fankt の契約は、この要件の対象ではなく層を問わず参照してよい。例外（`FanboxException`）、cookie と session（`FanboxCookieRecord` / `FanboxCookieStorage` / `FanboxSessionId`）、エントリポイント（`Fanbox` / `FanboxLogLevel`）、スキーマ不一致の診断（`FanboxListItemSchemaMismatch`）が該当する。
+
+#### Scenario: リポジトリの公開宣言に domain model が現れない
 
 - **WHEN** `FanboxRepository` の interface 宣言を読む
-- **THEN** 引数、戻り値、プロパティの型はすべてアプリ所有のモデルか標準ライブラリの型である
+- **THEN** FANBOX のモデルを表す引数・戻り値・プロパティはすべてアプリ所有のモデルであり、fankt の型が残るのは cookie を渡す引数だけである
 
-#### Scenario: UI 層から呼ばれる他のリポジトリも fankt の型を要求しない
+#### Scenario: UI 層から呼ばれる他のリポジトリも domain model を要求しない
 
 - **WHEN** `feature/*` から呼ばれる `TranslationRepository` と `DownloadPostsRepository` の公開宣言を読む
 - **THEN** 引数と戻り値の型はすべてアプリ所有のモデルか標準ライブラリの型である

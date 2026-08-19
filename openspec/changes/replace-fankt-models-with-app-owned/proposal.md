@@ -15,7 +15,7 @@ PixiView は fankt の domain model（`me.matsumo.fankt.fanbox.domain.model.*`�
 
 ### New Capabilities
 
-- `app-owned-fanbox-models`: アプリが所有する FANBOX モデルと、fankt モデルとの変換層。アプリの公開契約から fankt 型を外すこと、変換が値を落とさないこと、既存の永続化データが読めることを規定する
+- `app-owned-fanbox-models`: アプリが所有する FANBOX モデルと、fankt モデルとの変換層。アプリの公開契約から fankt の domain model を外すこと、変換が値を落とさないこと、既存の永続化データが読めることを規定する
 
 ### Modified Capabilities
 
@@ -24,8 +24,8 @@ PixiView は fankt の domain model（`me.matsumo.fankt.fanbox.domain.model.*`�
 ## Impact
 
 - **新規**：`core/model/src/commonMain/.../core/model/fanbox/`（app-owned モデル）、`core/repository/src/commonMain/.../repository/mapper/`（変換層）
-- **変更**：`core/repository`（`FanboxRepository` と実装、`paging/*` 5 本、`TranslationRepository`、`DownloadPostsRepository` の interface と android / ios 実装）、`feature/post` 27 / `feature/creator` 21 / `feature/library` 14 / `core/ui` 6 / `core/model` 6 / `feature/setting` 3 / `shared` 1 / `feature/welcome` 1
-- **変更しない**：`core/datastore`（11 ファイル）。cookie / session 系（`FanboxCookieStorage` / `FanboxCookieRecord` / `FanboxSessionId`）は domain model ではなく fankt が要求する基盤契約であり、本 issue の対象外
+- **変更**：`core/repository`（`FanboxRepository` と実装、`paging/*` 5 本、`TranslationRepository`、`DownloadPostsRepository` の interface と android / ios 実装）、`feature/post` / `feature/creator` / `feature/library` / `core/ui` / `core/model` の既存ファイル / `feature/setting` / `shared`
+- **変更しない**：`core/datastore`（11 ファイル）、`core/model/FanboxErrorKind.kt`、`feature/welcome/WebViewCookieConverter.kt`。cookie / session 系（`FanboxCookieStorage` / `FanboxCookieRecord` / `FanboxSessionId`）と例外（`FanboxException`）は domain model ではなく fankt が要求する契約であり、本 issue の対象外
 - **依存**：fankt 0.1.3。バージョンは変えない
 - **ドキュメント影響**：あり（`README.md` の Architecture 節、`core/model` と `core/repository` の責務記述）
 
