@@ -1,5 +1,6 @@
 package me.matsumo.fanbox.core.repository
 
+import me.matsumo.fanbox.core.model.fanbox.MetaData
 import me.matsumo.fanbox.core.repository.mapper.toMetaData
 import me.matsumo.fankt.fanbox.domain.model.FanboxMetaData
 import me.matsumo.fankt.fanbox.domain.model.FanboxMetaData.Context
@@ -45,6 +46,24 @@ class MetaDataMapperTest {
         csrfToken = "token",
     )
 
+    private val flagReaders: List<(MetaData.Context.User) -> Boolean> = listOf(
+        { it.hasAdultContent },
+        { it.hasUnpaidPayments },
+        { it.isCreator },
+        { it.isMailAddressOutdated },
+        { it.isSupporter },
+        { it.showAdultContent },
+    )
+
+    private val allFlagsDown: Context.User = requireNotNull(fanboxMetaData.context).user.copy(
+        hasAdultContent = false,
+        hasUnpaidPayments = false,
+        isCreator = false,
+        isMailAddressOutdated = false,
+        isSupporter = false,
+        showAdultContent = false,
+    )
+
     /** 入れ子を含む全フィールドが写ることを確認する。真偽値の取り違えを含む。 */
     @Test
     fun metaDataConversionPreservesAllFields() {
@@ -75,6 +94,22 @@ class MetaDataMapperTest {
         assertEquals(300L, user?.userId?.value)
     }
 
+    /**
+     * 6 つの真偽値がそれぞれ自分のフィールドへ写ることを確認する。
+     *
+     * 同じ値どうしの取り違えは、真偽値を並べた fixture では検出できない。1 つだけを立てた入力を
+     * 6 通り作り、立った先が 1 つだけであることを見る。
+     */
+    @Test
+    fun eachUserFlagIsMappedToItsOwnField() {
+        assertOnlyThisFlagIsRaised({ it.copy(hasAdultContent = true) }, { it.hasAdultContent })
+        assertOnlyThisFlagIsRaised({ it.copy(hasUnpaidPayments = true) }, { it.hasUnpaidPayments })
+        assertOnlyThisFlagIsRaised({ it.copy(isCreator = true) }, { it.isCreator })
+        assertOnlyThisFlagIsRaised({ it.copy(isMailAddressOutdated = true) }, { it.isMailAddressOutdated })
+        assertOnlyThisFlagIsRaised({ it.copy(isSupporter = true) }, { it.isSupporter })
+        assertOnlyThisFlagIsRaised({ it.copy(showAdultContent = true) }, { it.showAdultContent })
+    }
+
     /** context が無い場合も安全に変換できることを確認する。 */
     @Test
     fun metaDataConversionHandlesMissingContext() {
@@ -83,5 +118,16 @@ class MetaDataMapperTest {
         assertNull(metaData.apiUrl)
         assertNull(metaData.context)
         assertEquals("token", metaData.csrfToken)
+    }
+
+    private fun assertOnlyThisFlagIsRaised(
+        raiseOne: (Context.User) -> Context.User,
+        readBack: (MetaData.Context.User) -> Boolean,
+    ) {
+        val context = requireNotNull(fanboxMetaData.context).copy(user = raiseOne(allFlagsDown))
+        val user = requireNotNull(fanboxMetaData.copy(context = context).toMetaData().context).user
+
+        assertEquals(1, flagReaders.count { reader -> reader(user) })
+        assertEquals(true, readBack(user))
     }
 }
