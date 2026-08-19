@@ -16,18 +16,18 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import me.matsumo.fanbox.core.common.util.toFileSizeString
+import me.matsumo.fanbox.core.model.fanbox.PostDetail
 import me.matsumo.fanbox.core.resources.Res
 import me.matsumo.fanbox.core.resources.common_download
 import me.matsumo.fanbox.core.ui.component.video.VideoPlayer
 import me.matsumo.fanbox.core.ui.theme.bold
 import me.matsumo.fanbox.core.ui.theme.center
-import me.matsumo.fankt.fanbox.domain.model.FanboxPostDetail
 import org.jetbrains.compose.resources.stringResource
 
 @Composable
 internal fun PostDetailFileItem(
-    item: FanboxPostDetail.FileItem,
-    onClickDownload: (FanboxPostDetail.FileItem) -> Unit,
+    item: PostDetail.FileItem,
+    onClickDownload: (PostDetail.FileItem) -> Unit,
     modifier: Modifier = Modifier,
 ) {
     val videoItem = item.asVideoItem()

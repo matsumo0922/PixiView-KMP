@@ -43,6 +43,8 @@ import coil3.request.ImageRequest
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.toImmutableList
 import kotlinx.coroutines.launch
+import me.matsumo.fanbox.core.model.fanbox.CreatorDetail
+import me.matsumo.fanbox.core.model.fanbox.UserId
 import me.matsumo.fanbox.core.resources.Res
 import me.matsumo.fanbox.core.resources.common_follow
 import me.matsumo.fanbox.core.resources.common_supporting
@@ -67,18 +69,16 @@ import me.matsumo.fanbox.core.ui.extensition.FadePlaceHolder
 import me.matsumo.fanbox.core.ui.extensition.asCoilImage
 import me.matsumo.fanbox.core.ui.extensition.fanboxHeader
 import me.matsumo.fanbox.core.ui.theme.bold
-import me.matsumo.fankt.fanbox.domain.model.FanboxCreatorDetail
-import me.matsumo.fankt.fanbox.domain.model.id.FanboxUserId
 import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.resources.stringResource
 
 @Composable
 internal fun CreatorTopHeader(
-    creatorDetail: FanboxCreatorDetail,
+    creatorDetail: CreatorDetail,
     onClickLink: (String) -> Unit,
     onClickDescription: (String) -> Unit,
-    onClickFollow: suspend (FanboxUserId) -> Result<Unit>,
-    onClickUnfollow: suspend (FanboxUserId) -> Result<Unit>,
+    onClickFollow: suspend (UserId) -> Result<Unit>,
+    onClickUnfollow: suspend (UserId) -> Result<Unit>,
     onClickSupporting: (String) -> Unit,
     modifier: Modifier = Modifier,
 ) {
@@ -202,7 +202,7 @@ private fun FollowStateButton(
 
 @Composable
 private fun ProfileLinkItem(
-    profileLinks: ImmutableList<FanboxCreatorDetail.ProfileLink>,
+    profileLinks: ImmutableList<CreatorDetail.ProfileLink>,
     onClickLink: (String) -> Unit,
     modifier: Modifier = Modifier,
 ) {
@@ -225,16 +225,16 @@ private fun ProfileLinkItem(
                         .padding(4.dp),
                     painter = painterResource(
                         when (profileLink.link) {
-                            FanboxCreatorDetail.Platform.BOOTH -> Res.drawable.vec_booth
-                            FanboxCreatorDetail.Platform.FACEBOOK -> Res.drawable.vec_facebook
-                            FanboxCreatorDetail.Platform.FANZA -> Res.drawable.vec_fanza
-                            FanboxCreatorDetail.Platform.INSTAGRAM -> Res.drawable.vec_instagram
-                            FanboxCreatorDetail.Platform.LINE -> Res.drawable.vec_line
-                            FanboxCreatorDetail.Platform.PIXIV -> Res.drawable.vec_pixiv
-                            FanboxCreatorDetail.Platform.TUMBLR -> Res.drawable.vec_tumblr
-                            FanboxCreatorDetail.Platform.TWITTER -> Res.drawable.vec_twitter
-                            FanboxCreatorDetail.Platform.YOUTUBE -> Res.drawable.vec_youtube
-                            FanboxCreatorDetail.Platform.UNKNOWN -> Res.drawable.vec_unknown_link
+                            CreatorDetail.Platform.BOOTH -> Res.drawable.vec_booth
+                            CreatorDetail.Platform.FACEBOOK -> Res.drawable.vec_facebook
+                            CreatorDetail.Platform.FANZA -> Res.drawable.vec_fanza
+                            CreatorDetail.Platform.INSTAGRAM -> Res.drawable.vec_instagram
+                            CreatorDetail.Platform.LINE -> Res.drawable.vec_line
+                            CreatorDetail.Platform.PIXIV -> Res.drawable.vec_pixiv
+                            CreatorDetail.Platform.TUMBLR -> Res.drawable.vec_tumblr
+                            CreatorDetail.Platform.TWITTER -> Res.drawable.vec_twitter
+                            CreatorDetail.Platform.YOUTUBE -> Res.drawable.vec_youtube
+                            CreatorDetail.Platform.UNKNOWN -> Res.drawable.vec_unknown_link
                         },
                     ),
                     tint = MaterialTheme.colorScheme.onSurfaceVariant,
@@ -247,7 +247,7 @@ private fun ProfileLinkItem(
 
 @Composable
 private fun HeaderTop(
-    creatorDetail: FanboxCreatorDetail,
+    creatorDetail: CreatorDetail,
     isSupported: Boolean,
     isFollowed: Boolean,
     onClickSupport: () -> Unit,
@@ -386,7 +386,7 @@ private fun DescriptionItem(
 }
 
 @Composable
-private fun createTags(creatorDetail: FanboxCreatorDetail): List<String> {
+private fun createTags(creatorDetail: CreatorDetail): List<String> {
     return mutableListOf<String>().apply {
         if (creatorDetail.isSupported) {
             add(stringResource(Res.string.creator_tag_is_supported))

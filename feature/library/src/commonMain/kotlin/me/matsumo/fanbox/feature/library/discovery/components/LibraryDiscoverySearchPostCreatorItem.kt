@@ -27,17 +27,17 @@ import androidx.compose.ui.unit.dp
 import coil3.compose.AsyncImage
 import coil3.compose.LocalPlatformContext
 import coil3.request.ImageRequest
+import me.matsumo.fanbox.core.model.fanbox.CreatorDetail
+import me.matsumo.fanbox.core.model.fanbox.CreatorId
 import me.matsumo.fanbox.core.resources.Res
 import me.matsumo.fanbox.core.resources.im_default_user
 import me.matsumo.fanbox.core.ui.extensition.asCoilImage
 import me.matsumo.fanbox.core.ui.theme.bold
-import me.matsumo.fankt.fanbox.domain.model.FanboxCreatorDetail
-import me.matsumo.fankt.fanbox.domain.model.id.FanboxCreatorId
 
 @Composable
 internal fun LibraryDiscoverySearchPostCreatorItem(
-    creatorDetail: FanboxCreatorDetail,
-    onSearchPostClicked: (FanboxCreatorId) -> Unit,
+    creatorDetail: CreatorDetail,
+    onSearchPostClicked: (CreatorId) -> Unit,
     modifier: Modifier = Modifier,
 ) {
     Card(

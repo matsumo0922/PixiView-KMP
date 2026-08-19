@@ -71,6 +71,13 @@ import me.matsumo.fanbox.core.model.RewardUsage
 import me.matsumo.fanbox.core.model.Setting
 import me.matsumo.fanbox.core.model.SimpleAlertContents
 import me.matsumo.fanbox.core.model.TranslationState
+import me.matsumo.fanbox.core.model.fanbox.CreatorDetail
+import me.matsumo.fanbox.core.model.fanbox.CreatorId
+import me.matsumo.fanbox.core.model.fanbox.CreatorPlan
+import me.matsumo.fanbox.core.model.fanbox.Post
+import me.matsumo.fanbox.core.model.fanbox.PostId
+import me.matsumo.fanbox.core.model.fanbox.Tag
+import me.matsumo.fanbox.core.model.fanbox.UserId
 import me.matsumo.fanbox.core.resources.Res
 import me.matsumo.fanbox.core.resources.billing_plus_toast_require_plus
 import me.matsumo.fanbox.core.resources.creator_download_require_plus_title
@@ -104,13 +111,6 @@ import me.matsumo.fanbox.feature.creator.top.items.CreatorTopPostsScreen
 import me.matsumo.fanbox.feature.creator.top.items.CreatorTopRewardAdDialog
 import me.matsumo.fanbox.feature.creator.top.items.CreatorTopRewardAdPreloader
 import me.matsumo.fanbox.feature.creator.top.items.CreatorTopTopAppBar
-import me.matsumo.fankt.fanbox.domain.model.FanboxCreatorDetail
-import me.matsumo.fankt.fanbox.domain.model.FanboxCreatorPlan
-import me.matsumo.fankt.fanbox.domain.model.FanboxPost
-import me.matsumo.fankt.fanbox.domain.model.FanboxTag
-import me.matsumo.fankt.fanbox.domain.model.id.FanboxCreatorId
-import me.matsumo.fankt.fanbox.domain.model.id.FanboxPostId
-import me.matsumo.fankt.fanbox.domain.model.id.FanboxUserId
 import org.jetbrains.compose.resources.StringResource
 import org.jetbrains.compose.resources.stringResource
 import org.koin.compose.koinInject
@@ -228,24 +228,24 @@ private fun CreatorTopScreen(
     isBlocked: Boolean,
     rewardAvailability: CreatorTopRewardAvailability,
     shouldShowReveal: Boolean,
-    creatorDetail: FanboxCreatorDetail,
+    creatorDetail: CreatorDetail,
     setting: Setting,
-    bookmarkedPostsIds: ImmutableList<FanboxPostId>,
-    creatorPlans: ImmutableList<FanboxCreatorPlan>,
-    creatorTags: ImmutableList<FanboxTag>,
-    creatorPostsPaging: LazyPagingItems<FanboxPost>,
+    bookmarkedPostsIds: ImmutableList<PostId>,
+    creatorPlans: ImmutableList<CreatorPlan>,
+    creatorTags: ImmutableList<Tag>,
+    creatorPostsPaging: LazyPagingItems<Post>,
     descriptionTransState: TranslationState<String>,
-    onClickSearch: (FanboxCreatorId) -> Unit,
-    onClickAllDownload: (FanboxCreatorId) -> Unit,
+    onClickSearch: (CreatorId) -> Unit,
+    onClickAllDownload: (CreatorId) -> Unit,
     onClickBillingPlus: (String?) -> Unit,
-    onClickPost: (FanboxPostId) -> Unit,
-    onClickPostLike: (FanboxPostId) -> Unit,
-    onClickPostBookmark: (FanboxPost, Boolean) -> Unit,
-    onClickPlan: (FanboxCreatorPlan) -> Unit,
-    onClickTag: (FanboxTag) -> Unit,
+    onClickPost: (PostId) -> Unit,
+    onClickPostLike: (PostId) -> Unit,
+    onClickPostBookmark: (Post, Boolean) -> Unit,
+    onClickPlan: (CreatorPlan) -> Unit,
+    onClickTag: (Tag) -> Unit,
     onClickLink: (String) -> Unit,
-    onClickFollow: suspend (FanboxUserId) -> Result<Unit>,
-    onClickUnfollow: suspend (FanboxUserId) -> Result<Unit>,
+    onClickFollow: suspend (UserId) -> Result<Unit>,
+    onClickUnfollow: suspend (UserId) -> Result<Unit>,
     onShowBlockDialog: (SimpleAlertContents) -> Unit,
     onShowUnblockDialog: (SimpleAlertContents) -> Unit,
     onClickTranslateDescription: (String) -> Unit,

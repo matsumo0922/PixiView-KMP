@@ -12,6 +12,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import kotlinx.collections.immutable.ImmutableList
+import me.matsumo.fanbox.core.model.fanbox.CreatorPlan
 import me.matsumo.fanbox.core.resources.Res
 import me.matsumo.fanbox.core.resources.creator_plans_for_ios_error
 import me.matsumo.fanbox.core.resources.creator_plans_for_ios_error_button
@@ -19,13 +20,12 @@ import me.matsumo.fanbox.core.resources.creator_plans_for_ios_error_description
 import me.matsumo.fanbox.core.ui.extensition.Platform
 import me.matsumo.fanbox.core.ui.extensition.currentPlatform
 import me.matsumo.fanbox.core.ui.view.ErrorView
-import me.matsumo.fankt.fanbox.domain.model.FanboxCreatorPlan
 
 @Composable
 internal fun CreatorTopPlansScreen(
     state: LazyListState,
-    creatorPlans: ImmutableList<FanboxCreatorPlan>,
-    onClickPlan: (FanboxCreatorPlan) -> Unit,
+    creatorPlans: ImmutableList<CreatorPlan>,
+    onClickPlan: (CreatorPlan) -> Unit,
     onClickFanbox: () -> Unit,
     modifier: Modifier = Modifier,
 ) {

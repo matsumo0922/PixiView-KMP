@@ -19,16 +19,16 @@ import me.matsumo.fanbox.core.common.util.suspendRunCatching
 import me.matsumo.fanbox.core.model.Destination
 import me.matsumo.fanbox.core.model.ScreenState
 import me.matsumo.fanbox.core.model.Setting
+import me.matsumo.fanbox.core.model.fanbox.CreatorDetail
+import me.matsumo.fanbox.core.model.fanbox.CreatorId
+import me.matsumo.fanbox.core.model.fanbox.Post
+import me.matsumo.fanbox.core.model.fanbox.PostId
+import me.matsumo.fanbox.core.model.fanbox.UserId
 import me.matsumo.fanbox.core.model.toScreenStateError
 import me.matsumo.fanbox.core.model.updateWhenIdle
 import me.matsumo.fanbox.core.repository.FanboxRepository
 import me.matsumo.fanbox.core.repository.SettingRepository
 import me.matsumo.fanbox.core.ui.customNavTypes
-import me.matsumo.fankt.fanbox.domain.model.FanboxCreatorDetail
-import me.matsumo.fankt.fanbox.domain.model.FanboxPost
-import me.matsumo.fankt.fanbox.domain.model.id.FanboxCreatorId
-import me.matsumo.fankt.fanbox.domain.model.id.FanboxPostId
-import me.matsumo.fankt.fanbox.domain.model.id.FanboxUserId
 
 class PostByCreatorSearchViewModel(
     savedStateHandle: SavedStateHandle,
@@ -39,7 +39,7 @@ class PostByCreatorSearchViewModel(
 
     private val creatorId = savedStateHandle.toRoute<Destination.PostByCreatorSearch>(customNavTypes).creatorId
 
-    private val _allPosts = MutableSharedFlow<List<FanboxPost>>(replay = 1)
+    private val _allPosts = MutableSharedFlow<List<Post>>(replay = 1)
     private val _query = MutableStateFlow("")
     private val _screenState = MutableStateFlow<ScreenState<PostByCreatorSearchUiState>>(ScreenState.Loading)
 
@@ -86,7 +86,7 @@ class PostByCreatorSearchViewModel(
             return
         }
 
-        val posts = mutableListOf<FanboxPost>()
+        val posts = mutableListOf<Post>()
         val paginate = withContext(ioDispatcher) { fanboxRepository.getCreatorPostsPagination(creatorId) }
         val max = paginate.sumOf { it.limit ?: 10 }
 
@@ -113,7 +113,7 @@ class PostByCreatorSearchViewModel(
         }
     }
 
-    private suspend fun searchPosts(query: String): List<FanboxPost> {
+    private suspend fun searchPosts(query: String): List<Post> {
         return _allPosts.first().filter { post ->
             val title = post.title.contains(query)
             val excerpt = post.excerpt.contains(query)
@@ -127,19 +127,19 @@ class PostByCreatorSearchViewModel(
         _query.value = query
     }
 
-    suspend fun follow(creatorUserId: FanboxUserId): Result<Unit> {
+    suspend fun follow(creatorUserId: UserId): Result<Unit> {
         return suspendRunCatching {
             fanboxRepository.unfollowCreator(creatorUserId)
         }
     }
 
-    suspend fun unfollow(creatorUserId: FanboxUserId): Result<Unit> {
+    suspend fun unfollow(creatorUserId: UserId): Result<Unit> {
         return suspendRunCatching {
             fanboxRepository.unfollowCreator(creatorUserId)
         }
     }
 
-    fun postLike(postId: FanboxPostId) {
+    fun postLike(postId: PostId) {
         viewModelScope.launch {
             suspendRunCatching {
                 fanboxRepository.likePost(postId)
@@ -147,7 +147,7 @@ class PostByCreatorSearchViewModel(
         }
     }
 
-    fun postBookmark(post: FanboxPost, isBookmarked: Boolean) {
+    fun postBookmark(post: Post, isBookmarked: Boolean) {
         viewModelScope.launch {
             (screenState.value as? ScreenState.Idle)?.also {
                 if (isBookmarked) {
@@ -162,11 +162,11 @@ class PostByCreatorSearchViewModel(
 
 @Stable
 data class PostByCreatorSearchUiState(
-    val creatorId: FanboxCreatorId,
-    val creatorDetail: FanboxCreatorDetail,
+    val creatorId: CreatorId,
+    val creatorDetail: CreatorDetail,
     val setting: Setting,
-    val bookmarkedPostsIds: List<FanboxPostId>,
-    val searchedPosts: List<FanboxPost>,
+    val bookmarkedPostsIds: List<PostId>,
+    val searchedPosts: List<Post>,
     val progress: Float,
     val isPrepared: Boolean,
 )

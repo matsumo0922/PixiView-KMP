@@ -11,6 +11,8 @@ import androidx.savedstate.read
 import androidx.savedstate.write
 import me.matsumo.fanbox.core.model.BillingPlan
 import me.matsumo.fanbox.core.model.Destination
+import me.matsumo.fanbox.core.model.fanbox.CreatorId
+import me.matsumo.fanbox.core.model.fanbox.PostId
 import me.matsumo.fanbox.core.ui.component.sheet.BottomSheetNavigator
 import me.matsumo.fanbox.core.ui.component.sheet.BottomSheetNavigatorDestinationBuilder
 import kotlin.reflect.typeOf
@@ -106,6 +108,24 @@ class NavTypesTest {
             content = {},
             onDismissed = {},
         ).build()
+    }
+
+    /**
+     * 投稿 ID の符号化が置き換え前と変わらないことを確認する。
+     *
+     * 符号化された文字列は既存のリンクに現れる。形が変わると解決できなくなる。
+     */
+    @Test
+    fun postIdNavTypeEncodesTheRawValue() {
+        assertEquals("post-1", PostIdNavType.serializeAsValue(PostId("post-1")))
+        assertEquals(PostId("post-1"), PostIdNavType.parseValue("post-1"))
+    }
+
+    /** クリエイター ID の符号化が置き換え前と変わらないことを確認する。 */
+    @Test
+    fun creatorIdNavTypeEncodesTheRawValue() {
+        assertEquals("creator-1", creatorIdNavType.serializeAsValue(CreatorId("creator-1")))
+        assertEquals(CreatorId("creator-1"), creatorIdNavType.parseValue("creator-1"))
     }
 
     @Suppress("UNCHECKED_CAST")

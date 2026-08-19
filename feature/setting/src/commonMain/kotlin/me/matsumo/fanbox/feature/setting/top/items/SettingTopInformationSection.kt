@@ -8,6 +8,7 @@ import androidx.compose.ui.platform.LocalClipboardManager
 import androidx.compose.ui.text.AnnotatedString
 import me.matsumo.fanbox.core.common.PixiViewConfig
 import me.matsumo.fanbox.core.model.Setting
+import me.matsumo.fanbox.core.model.fanbox.MetaData
 import me.matsumo.fanbox.core.resources.Res
 import me.matsumo.fanbox.core.resources.setting_top_information
 import me.matsumo.fanbox.core.resources.setting_top_information_csrf_token
@@ -15,13 +16,12 @@ import me.matsumo.fanbox.core.resources.setting_top_information_fanbox_session_i
 import me.matsumo.fanbox.core.resources.setting_top_information_id
 import me.matsumo.fanbox.core.resources.setting_top_information_version
 import me.matsumo.fanbox.core.ui.component.SettingTextItem
-import me.matsumo.fankt.fanbox.domain.model.FanboxMetaData
 import org.jetbrains.compose.resources.stringResource
 
 @Composable
 internal fun SettingTopInformationSection(
     setting: Setting,
-    fanboxMetaData: FanboxMetaData,
+    fanboxMetaData: MetaData,
     fanboxSessionId: String,
     config: PixiViewConfig,
     modifier: Modifier = Modifier,

@@ -21,7 +21,7 @@ import com.eygraber.compose.placeholder.material3.fade
 import com.eygraber.compose.placeholder.material3.shimmer
 import com.eygraber.compose.placeholder.placeholder
 import io.github.aakira.napier.Napier
-import me.matsumo.fankt.fanbox.domain.model.FanboxMetaData
+import me.matsumo.fanbox.core.model.fanbox.MetaData
 import org.jetbrains.compose.resources.DrawableResource
 
 @Immutable
@@ -107,16 +107,16 @@ fun IndicatorPlaceHolder(
     }
 }
 
-fun getFanboxMetadataDummy() = FanboxMetaData(
+fun getFanboxMetadataDummy() = MetaData(
     apiUrl = "https://duckduckgo.com/?q=sodales",
-    context = FanboxMetaData.Context(
-        privacyPolicy = FanboxMetaData.Context.PrivacyPolicy(
+    context = MetaData.Context(
+        privacyPolicy = MetaData.Context.PrivacyPolicy(
             policyUrl = "https://search.yahoo.com/search?p=commodo",
             revisionHistoryUrl = "https://search.yahoo.com/search?p=lorem",
             shouldShowNotice = false,
             updateDate = "vix",
         ),
-        user = FanboxMetaData.Context.User(
+        user = MetaData.Context.User(
             creatorId = null,
             fanboxUserStatus = 8439,
             hasAdultContent = false,

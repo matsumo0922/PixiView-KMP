@@ -44,6 +44,12 @@ import coil3.compose.AsyncImage
 import coil3.compose.LocalPlatformContext
 import coil3.request.ImageRequest
 import me.matsumo.fanbox.core.model.TranslationState
+import me.matsumo.fanbox.core.model.fanbox.Comment
+import me.matsumo.fanbox.core.model.fanbox.CommentId
+import me.matsumo.fanbox.core.model.fanbox.MetaData
+import me.matsumo.fanbox.core.model.fanbox.PageOffsetInfo
+import me.matsumo.fanbox.core.model.fanbox.PostDetail
+import me.matsumo.fanbox.core.model.fanbox.PostId
 import me.matsumo.fanbox.core.resources.Res
 import me.matsumo.fanbox.core.resources.common_delete
 import me.matsumo.fanbox.core.resources.common_see_more
@@ -59,12 +65,6 @@ import me.matsumo.fanbox.core.ui.extensition.asCoilImage
 import me.matsumo.fanbox.core.ui.extensition.padding
 import me.matsumo.fanbox.core.ui.theme.bold
 import me.matsumo.fanbox.core.ui.theme.center
-import me.matsumo.fankt.fanbox.domain.PageOffsetInfo
-import me.matsumo.fankt.fanbox.domain.model.FanboxComment
-import me.matsumo.fankt.fanbox.domain.model.FanboxMetaData
-import me.matsumo.fankt.fanbox.domain.model.FanboxPostDetail
-import me.matsumo.fankt.fanbox.domain.model.id.FanboxCommentId
-import me.matsumo.fankt.fanbox.domain.model.id.FanboxPostId
 import org.jetbrains.compose.resources.stringResource
 import kotlin.time.Clock
 import kotlin.time.ExperimentalTime
@@ -72,16 +72,16 @@ import kotlin.time.Instant
 
 internal fun LazyListScope.postDetailCommentItems(
     isShowCommentEditor: Boolean,
-    postDetail: FanboxPostDetail,
-    comments: PageOffsetInfo<FanboxComment>,
-    commentsTransState: TranslationState<PageOffsetInfo<FanboxComment>>,
-    metaData: FanboxMetaData,
-    onClickLoadMore: (FanboxPostId, Int) -> Unit,
-    onClickCommentLike: (FanboxCommentId) -> Unit,
-    onClickCommentReply: (String, FanboxCommentId, FanboxCommentId) -> Unit,
-    onClickCommentDelete: (FanboxCommentId) -> Unit,
+    postDetail: PostDetail,
+    comments: PageOffsetInfo<Comment>,
+    commentsTransState: TranslationState<PageOffsetInfo<Comment>>,
+    metaData: MetaData,
+    onClickLoadMore: (PostId, Int) -> Unit,
+    onClickCommentLike: (CommentId) -> Unit,
+    onClickCommentReply: (String, CommentId, CommentId) -> Unit,
+    onClickCommentDelete: (CommentId) -> Unit,
     onClickShowCommentEditor: (Boolean) -> Unit,
-    onClickTranslate: (PageOffsetInfo<FanboxComment>) -> Unit,
+    onClickTranslate: (PageOffsetInfo<Comment>) -> Unit,
 ) {
     item {
         Column(
@@ -131,8 +131,8 @@ internal fun LazyListScope.postDetailCommentItems(
                         .padding(top = 24.dp)
                         .padding(horizontal = 8.dp)
                         .fillMaxWidth(),
-                    parentFanboxCommentId = FanboxCommentId("0"),
-                    rootFanboxCommentId = FanboxCommentId("0"),
+                    parentFanboxCommentId = CommentId("0"),
+                    rootFanboxCommentId = CommentId("0"),
                     metaData = metaData,
                     onClickCommentReply = { body, parentFanboxCommentId, rootFanboxCommentId ->
                         onClickCommentReply.invoke(body, parentFanboxCommentId, rootFanboxCommentId)
@@ -218,11 +218,11 @@ internal fun LazyListScope.postDetailCommentItems(
 @OptIn(ExperimentalTime::class)
 @Composable
 private fun CommentItem(
-    comment: FanboxComment,
-    metaData: FanboxMetaData,
-    onClickCommentLike: (FanboxCommentId) -> Unit,
-    onClickCommentReply: (String, FanboxCommentId, FanboxCommentId) -> Unit,
-    onClickCommentDelete: (FanboxCommentId) -> Unit,
+    comment: Comment,
+    metaData: MetaData,
+    onClickCommentLike: (CommentId) -> Unit,
+    onClickCommentReply: (String, CommentId, CommentId) -> Unit,
+    onClickCommentDelete: (CommentId) -> Unit,
     modifier: Modifier = Modifier,
 ) {
     var isShowReplyEditor by rememberSaveable(comment) { mutableStateOf(false) }
@@ -381,10 +381,10 @@ private fun CommentItem(
 @OptIn(ExperimentalCoilApi::class)
 @Composable
 private fun CommentEditor(
-    parentFanboxCommentId: FanboxCommentId,
-    rootFanboxCommentId: FanboxCommentId,
-    metaData: FanboxMetaData,
-    onClickCommentReply: (String, FanboxCommentId, FanboxCommentId) -> Unit,
+    parentFanboxCommentId: CommentId,
+    rootFanboxCommentId: CommentId,
+    metaData: MetaData,
+    onClickCommentReply: (String, CommentId, CommentId) -> Unit,
     modifier: Modifier = Modifier,
 ) {
     var isError by rememberSaveable { mutableStateOf(false) }

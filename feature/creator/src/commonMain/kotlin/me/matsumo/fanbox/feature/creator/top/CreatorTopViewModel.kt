@@ -21,6 +21,12 @@ import me.matsumo.fanbox.core.model.RewardUsage
 import me.matsumo.fanbox.core.model.ScreenState
 import me.matsumo.fanbox.core.model.Setting
 import me.matsumo.fanbox.core.model.TranslationState
+import me.matsumo.fanbox.core.model.fanbox.CreatorDetail
+import me.matsumo.fanbox.core.model.fanbox.CreatorPlan
+import me.matsumo.fanbox.core.model.fanbox.Post
+import me.matsumo.fanbox.core.model.fanbox.PostId
+import me.matsumo.fanbox.core.model.fanbox.Tag
+import me.matsumo.fanbox.core.model.fanbox.UserId
 import me.matsumo.fanbox.core.model.toScreenStateError
 import me.matsumo.fanbox.core.model.updateWhenIdle
 import me.matsumo.fanbox.core.repository.FanboxRepository
@@ -31,12 +37,6 @@ import me.matsumo.fanbox.core.repository.TranslationRepository
 import me.matsumo.fanbox.core.resources.Res
 import me.matsumo.fanbox.core.resources.error_network
 import me.matsumo.fanbox.core.ui.customNavTypes
-import me.matsumo.fankt.fanbox.domain.model.FanboxCreatorDetail
-import me.matsumo.fankt.fanbox.domain.model.FanboxCreatorPlan
-import me.matsumo.fankt.fanbox.domain.model.FanboxPost
-import me.matsumo.fankt.fanbox.domain.model.FanboxTag
-import me.matsumo.fankt.fanbox.domain.model.id.FanboxPostId
-import me.matsumo.fankt.fanbox.domain.model.id.FanboxUserId
 import org.jetbrains.compose.resources.getString
 
 class CreatorTopViewModel(
@@ -49,7 +49,7 @@ class CreatorTopViewModel(
 ) : ViewModel() {
 
     private val creatorId = savedStateHandle.toRoute<Destination.CreatorTop>(customNavTypes).creatorId
-    private var postsPagingCache: Flow<PagingData<FanboxPost>>? = null
+    private var postsPagingCache: Flow<PagingData<Post>>? = null
 
     private val _screenState = MutableStateFlow<ScreenState<CreatorTopUiState>>(ScreenState.Loading)
     val screenState = _screenState.asStateFlow()
@@ -113,19 +113,19 @@ class CreatorTopViewModel(
         }
     }
 
-    suspend fun follow(creatorUserId: FanboxUserId): Result<Unit> {
+    suspend fun follow(creatorUserId: UserId): Result<Unit> {
         return suspendRunCatching {
             fanboxRepository.followCreator(creatorUserId)
         }
     }
 
-    suspend fun unfollow(creatorUserId: FanboxUserId): Result<Unit> {
+    suspend fun unfollow(creatorUserId: UserId): Result<Unit> {
         return suspendRunCatching {
             fanboxRepository.unfollowCreator(creatorUserId)
         }
     }
 
-    fun postLike(postId: FanboxPostId) {
+    fun postLike(postId: PostId) {
         viewModelScope.launch {
             suspendRunCatching {
                 fanboxRepository.likePost(postId)
@@ -133,7 +133,7 @@ class CreatorTopViewModel(
         }
     }
 
-    fun postBookmark(post: FanboxPost, isBookmarked: Boolean) {
+    fun postBookmark(post: Post, isBookmarked: Boolean) {
         viewModelScope.launch {
             (screenState.value as? ScreenState.Idle)?.also {
                 suspendRunCatching {
@@ -226,11 +226,11 @@ data class CreatorTopRewardAvailability(
 @Stable
 data class CreatorTopUiState(
     val setting: Setting,
-    val bookmarkedPostsIds: List<FanboxPostId>,
-    val creatorDetail: FanboxCreatorDetail,
-    val creatorPlans: List<FanboxCreatorPlan>,
-    val creatorTags: List<FanboxTag>,
-    val creatorPostsPaging: Flow<PagingData<FanboxPost>>,
+    val bookmarkedPostsIds: List<PostId>,
+    val creatorDetail: CreatorDetail,
+    val creatorPlans: List<CreatorPlan>,
+    val creatorTags: List<Tag>,
+    val creatorPostsPaging: Flow<PagingData<Post>>,
     val isBlocked: Boolean,
     val rewardAvailability: CreatorTopRewardAvailability,
     val shouldShowReveal: Boolean,

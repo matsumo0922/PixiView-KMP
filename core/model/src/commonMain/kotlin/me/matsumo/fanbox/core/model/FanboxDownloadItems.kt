@@ -1,19 +1,19 @@
 package me.matsumo.fanbox.core.model
 
-import me.matsumo.fankt.fanbox.domain.model.FanboxPost
-import me.matsumo.fankt.fanbox.domain.model.id.FanboxPostId
-import me.matsumo.fankt.fanbox.domain.model.id.FanboxPostItemId
+import me.matsumo.fanbox.core.model.fanbox.Post
+import me.matsumo.fanbox.core.model.fanbox.PostId
+import me.matsumo.fanbox.core.model.fanbox.PostItemId
 
 data class FanboxDownloadItems(
-    val postId: FanboxPostId,
+    val postId: PostId,
     val title: String,
     val items: List<Item>,
     val requestType: RequestType,
     val key: String,
 ) {
     data class Item(
-        val postId: FanboxPostId,
-        val itemId: FanboxPostItemId,
+        val postId: PostId,
+        val itemId: PostItemId,
         val name: String,
         val extension: String,
         val originalUrl: String,
@@ -30,8 +30,8 @@ data class FanboxDownloadItems(
     sealed interface RequestType {
         data object Image : RequestType
         data object File : RequestType
-        data class Post(
-            val post: FanboxPost?,
+        data class WholePost(
+            val post: Post?,
             val isIgnoreFiles: Boolean,
         ) : RequestType
     }

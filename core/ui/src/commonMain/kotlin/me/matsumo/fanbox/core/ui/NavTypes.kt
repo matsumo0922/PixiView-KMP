@@ -8,18 +8,18 @@ import kotlinx.serialization.json.Json
 import me.matsumo.fanbox.core.model.BillingPlan
 import me.matsumo.fanbox.core.model.Destination
 import me.matsumo.fanbox.core.model.SimpleAlertContents
-import me.matsumo.fankt.fanbox.domain.model.id.FanboxCreatorId
-import me.matsumo.fankt.fanbox.domain.model.id.FanboxPostId
+import me.matsumo.fanbox.core.model.fanbox.CreatorId
+import me.matsumo.fanbox.core.model.fanbox.PostId
 import kotlin.reflect.typeOf
 
-val PostIdNavType = provideNavType<FanboxPostId>(
+val PostIdNavType = provideNavType<PostId>(
     encode = { it.value },
-    decode = { FanboxPostId(it) },
+    decode = { PostId(it) },
 )
 
-val creatorIdNavType = provideNavType<FanboxCreatorId>(
+val creatorIdNavType = provideNavType<CreatorId>(
     encode = { it.value },
-    decode = { FanboxCreatorId(it) },
+    decode = { CreatorId(it) },
 )
 
 val simpleAlertContentsNavType = provideNavType<SimpleAlertContents>(
@@ -39,8 +39,8 @@ val billingPlanTypeNavType = provideNavType<BillingPlan.Type?>(
 )
 
 val customNavTypes = mapOf(
-    typeOf<FanboxPostId>() to PostIdNavType,
-    typeOf<FanboxCreatorId>() to creatorIdNavType,
+    typeOf<PostId>() to PostIdNavType,
+    typeOf<CreatorId>() to creatorIdNavType,
     typeOf<SimpleAlertContents>() to simpleAlertContentsNavType,
     typeOf<Destination.PostDetail.PagingType>() to postDetailPagingTypeNavType,
     typeOf<BillingPlan.Type?>() to billingPlanTypeNavType,

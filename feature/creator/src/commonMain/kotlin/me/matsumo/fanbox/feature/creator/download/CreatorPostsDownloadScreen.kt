@@ -42,6 +42,7 @@ import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.toImmutableList
 import kotlinx.coroutines.launch
 import me.matsumo.fanbox.core.model.Destination
+import me.matsumo.fanbox.core.model.fanbox.CreatorDetail
 import me.matsumo.fanbox.core.resources.Res
 import me.matsumo.fanbox.core.resources.creator_posts_download_button
 import me.matsumo.fanbox.core.resources.creator_posts_download_dialog_title
@@ -55,7 +56,6 @@ import me.matsumo.fanbox.core.ui.view.LoadingDialog
 import me.matsumo.fanbox.feature.creator.download.items.CreatorPostsDownloadItem
 import me.matsumo.fanbox.feature.creator.download.items.CreatorPostsDownloadSettingsSection
 import me.matsumo.fanbox.feature.creator.download.items.CreatorPostsDownloadUserSection
-import me.matsumo.fankt.fanbox.domain.model.FanboxCreatorDetail
 import org.jetbrains.compose.resources.stringResource
 import org.koin.compose.koinInject
 import org.koin.compose.viewmodel.koinViewModel
@@ -117,7 +117,7 @@ internal fun CreatorPostsDownloadRoute(
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 private fun CreatorPostsDownloadScreen(
-    creatorDetail: FanboxCreatorDetail,
+    creatorDetail: CreatorDetail,
     posts: ImmutableList<CreatorPostsDownloadData>,
     isIgnoreFreePosts: Boolean,
     isIgnoreFiles: Boolean,

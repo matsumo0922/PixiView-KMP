@@ -18,14 +18,14 @@ import me.matsumo.fanbox.core.common.util.suspendRunCatching
 import me.matsumo.fanbox.core.model.Destination
 import me.matsumo.fanbox.core.model.Flag
 import me.matsumo.fanbox.core.model.Setting
+import me.matsumo.fanbox.core.model.fanbox.Post
+import me.matsumo.fanbox.core.model.fanbox.PostId
 import me.matsumo.fanbox.core.repository.FanboxRepository
 import me.matsumo.fanbox.core.repository.FlagRepository
 import me.matsumo.fanbox.core.repository.SettingRepository
 import me.matsumo.fanbox.core.ui.customNavTypes
 import me.matsumo.fanbox.core.ui.extensition.createStaticPaging
 import me.matsumo.fanbox.core.ui.extensition.emptyPaging
-import me.matsumo.fankt.fanbox.domain.model.FanboxPost
-import me.matsumo.fankt.fanbox.domain.model.id.FanboxPostId
 
 class PostDetailRootViewModel(
     savedStateHandle: SavedStateHandle,
@@ -88,7 +88,7 @@ class PostDetailRootViewModel(
         }
     }
 
-    fun postBookmark(post: FanboxPost, isBookmarked: Boolean) {
+    fun postBookmark(post: Post, isBookmarked: Boolean) {
         viewModelScope.launch {
             suspendRunCatching {
                 if (isBookmarked) {
@@ -107,15 +107,15 @@ class PostDetailRootViewModel(
         }
     }
 
-    private fun Flow<PagingData<FanboxPost>>.toIdFlow(): Flow<PagingData<FanboxPostId>> {
+    private fun Flow<PagingData<Post>>.toIdFlow(): Flow<PagingData<PostId>> {
         return map { list -> list.map { it.id } }
     }
 }
 
 @Stable
 data class PostDetailRootUiState(
-    val paging: Flow<PagingData<FanboxPostId>>?,
+    val paging: Flow<PagingData<PostId>>?,
     val setting: Setting,
-    val bookmarkedPostIds: List<FanboxPostId>,
+    val bookmarkedPostIds: List<PostId>,
     val shouldShowReveal: Boolean,
 )

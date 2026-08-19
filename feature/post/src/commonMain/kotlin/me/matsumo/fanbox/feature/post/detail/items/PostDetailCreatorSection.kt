@@ -25,6 +25,10 @@ import androidx.compose.ui.unit.dp
 import coil3.compose.AsyncImage
 import coil3.compose.LocalPlatformContext
 import coil3.request.ImageRequest
+import me.matsumo.fanbox.core.model.fanbox.CreatorDetail
+import me.matsumo.fanbox.core.model.fanbox.CreatorId
+import me.matsumo.fanbox.core.model.fanbox.PostDetail
+import me.matsumo.fanbox.core.model.fanbox.UserId
 import me.matsumo.fanbox.core.resources.Res
 import me.matsumo.fanbox.core.resources.common_follow
 import me.matsumo.fanbox.core.resources.common_supporting
@@ -33,19 +37,15 @@ import me.matsumo.fanbox.core.resources.im_default_user
 import me.matsumo.fanbox.core.resources.post_detail_creator
 import me.matsumo.fanbox.core.ui.extensition.asCoilImage
 import me.matsumo.fanbox.core.ui.theme.bold
-import me.matsumo.fankt.fanbox.domain.model.FanboxCreatorDetail
-import me.matsumo.fankt.fanbox.domain.model.FanboxPostDetail
-import me.matsumo.fankt.fanbox.domain.model.id.FanboxCreatorId
-import me.matsumo.fankt.fanbox.domain.model.id.FanboxUserId
 import org.jetbrains.compose.resources.stringResource
 
 @Composable
 internal fun PostDetailCreatorSection(
-    postDetail: FanboxPostDetail,
-    creatorDetail: FanboxCreatorDetail,
-    onClickCreator: (FanboxCreatorId) -> Unit,
-    onClickFollow: (FanboxUserId) -> Unit,
-    onClickUnfollow: (FanboxUserId) -> Unit,
+    postDetail: PostDetail,
+    creatorDetail: CreatorDetail,
+    onClickCreator: (CreatorId) -> Unit,
+    onClickFollow: (UserId) -> Unit,
+    onClickUnfollow: (UserId) -> Unit,
     onClickSupporting: (String) -> Unit,
     modifier: Modifier = Modifier,
 ) {
@@ -82,10 +82,10 @@ internal fun PostDetailCreatorSection(
 
 @Composable
 private fun CreatorItem(
-    postDetail: FanboxPostDetail,
-    creatorDetail: FanboxCreatorDetail,
-    onClickFollow: (FanboxUserId) -> Unit,
-    onClickUnfollow: (FanboxUserId) -> Unit,
+    postDetail: PostDetail,
+    creatorDetail: CreatorDetail,
+    onClickFollow: (UserId) -> Unit,
+    onClickUnfollow: (UserId) -> Unit,
     onClickSupporting: (String) -> Unit,
     modifier: Modifier = Modifier,
 ) {

@@ -18,14 +18,14 @@ import app.cash.paging.compose.LazyPagingItems
 import app.cash.paging.compose.itemKey
 import kotlinx.collections.immutable.ImmutableList
 import me.matsumo.fanbox.core.model.Setting
+import me.matsumo.fanbox.core.model.fanbox.CreatorId
+import me.matsumo.fanbox.core.model.fanbox.Post
+import me.matsumo.fanbox.core.model.fanbox.PostId
 import me.matsumo.fanbox.core.ui.ads.NativeAdView
 import me.matsumo.fanbox.core.ui.component.PostGridItem
 import me.matsumo.fanbox.core.ui.component.PostItem
 import me.matsumo.fanbox.core.ui.extensition.drawVerticalScrollbar
 import me.matsumo.fanbox.core.ui.view.PagingErrorSection
-import me.matsumo.fankt.fanbox.domain.model.FanboxPost
-import me.matsumo.fankt.fanbox.domain.model.id.FanboxCreatorId
-import me.matsumo.fankt.fanbox.domain.model.id.FanboxPostId
 
 @Composable
 internal fun LibraryHomePagingItems(
@@ -33,15 +33,15 @@ internal fun LibraryHomePagingItems(
     columns: Int,
     adOffset: Int,
     adInterval: Int,
-    pagingAdapter: LazyPagingItems<FanboxPost>,
+    pagingAdapter: LazyPagingItems<Post>,
     setting: Setting,
-    bookmarkedPostsIds: ImmutableList<FanboxPostId>,
+    bookmarkedPostsIds: ImmutableList<PostId>,
     isGridMode: Boolean,
-    onClickPost: (FanboxPostId) -> Unit,
-    onClickPostLike: (FanboxPostId) -> Unit,
-    onClickPostBookmark: (FanboxPost, Boolean) -> Unit,
-    onClickCreator: (FanboxCreatorId) -> Unit,
-    onClickPlanList: (FanboxCreatorId) -> Unit,
+    onClickPost: (PostId) -> Unit,
+    onClickPostLike: (PostId) -> Unit,
+    onClickPostBookmark: (Post, Boolean) -> Unit,
+    onClickCreator: (CreatorId) -> Unit,
+    onClickPlanList: (CreatorId) -> Unit,
     modifier: Modifier = Modifier,
 ) {
     LazyVerticalGrid(

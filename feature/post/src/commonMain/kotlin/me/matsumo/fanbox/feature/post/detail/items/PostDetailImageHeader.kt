@@ -10,18 +10,18 @@ import androidx.compose.material3.Text
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.unit.dp
+import me.matsumo.fanbox.core.model.fanbox.PostDetail
 import me.matsumo.fanbox.core.ui.component.AdultContentThumbnail
 import me.matsumo.fanbox.core.ui.extensition.LocalFanboxMetadata
-import me.matsumo.fankt.fanbox.domain.model.FanboxPostDetail
 import sh.calvin.autolinktext.rememberAutoLinkText
 
 internal fun LazyListScope.postDetailImageHeader(
-    content: FanboxPostDetail.Body.Image,
+    content: PostDetail.Body.Image,
     isAdultContents: Boolean,
     isOverrideAdultContents: Boolean,
     isTestUser: Boolean,
-    onClickImage: (FanboxPostDetail.ImageItem) -> Unit,
-    onClickDownload: (List<FanboxPostDetail.ImageItem>) -> Unit,
+    onClickImage: (PostDetail.ImageItem) -> Unit,
+    onClickDownload: (List<PostDetail.ImageItem>) -> Unit,
 ) {
     items(content.images) {
         val metadata = LocalFanboxMetadata.current

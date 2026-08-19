@@ -26,6 +26,7 @@ import me.matsumo.fanbox.core.logs.logger.send
 import me.matsumo.fanbox.core.model.DownloadState
 import me.matsumo.fanbox.core.model.ScreenState
 import me.matsumo.fanbox.core.model.Setting
+import me.matsumo.fanbox.core.model.fanbox.MetaData
 import me.matsumo.fanbox.core.repository.DownloadPostsRepository
 import me.matsumo.fanbox.core.repository.FanboxRepository
 import me.matsumo.fanbox.core.repository.SettingRepository
@@ -34,7 +35,6 @@ import me.matsumo.fanbox.core.resources.error_no_data
 import me.matsumo.fanbox.core.resources.home_app_lock_message
 import me.matsumo.fanbox.core.resources.home_app_lock_title
 import me.matsumo.fanbox.core.ui.extensition.getFanboxMetadataDummy
-import me.matsumo.fankt.fanbox.domain.model.FanboxMetaData
 import org.jetbrains.compose.resources.getString
 import kotlin.time.Clock
 import kotlin.time.Duration.Companion.minutes
@@ -53,7 +53,7 @@ class PixiViewViewModel(
 
     private val _isLoggedInFlow: MutableSharedFlow<Boolean> = MutableSharedFlow(replay = 1)
     private val _isAppLockedFlow: MutableStateFlow<Boolean> = MutableStateFlow(true)
-    private val _metadataFlow: MutableStateFlow<FanboxMetaData> = MutableStateFlow(getFanboxMetadataDummy())
+    private val _metadataFlow: MutableStateFlow<MetaData> = MutableStateFlow(getFanboxMetadataDummy())
     private val _isBillingSyncSucceededFlow: MutableStateFlow<Boolean> = MutableStateFlow(false)
 
     // インタースティシャル広告の頻度判定用。永続化せずプロセス内のみ保持する
@@ -74,7 +74,7 @@ class PixiViewViewModel(
         val setting = flows[0] as Setting
         val sessionId = flows[1] as String?
         val downloadState = flows[2] as DownloadState
-        val fanboxMetadata = flows[3] as FanboxMetaData
+        val fanboxMetadata = flows[3] as MetaData
         val isLoggedIn = flows[4] as Boolean
         val isAppLocked = flows[5] as Boolean
         val isBillingSyncSucceeded = flows[6] as Boolean
@@ -276,7 +276,7 @@ private const val INTERSTITIAL_AD_COOLDOWN_SECONDS = 180L
 data class MainUiState(
     val setting: Setting,
     val sessionId: String,
-    val fanboxMetadata: FanboxMetaData,
+    val fanboxMetadata: MetaData,
     val downloadState: DownloadState,
     val isLoggedIn: Boolean,
     val isAppLocked: Boolean,

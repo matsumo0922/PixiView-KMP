@@ -29,18 +29,18 @@ import androidx.compose.ui.unit.dp
 import coil3.compose.AsyncImage
 import coil3.compose.LocalPlatformContext
 import coil3.request.ImageRequest
+import me.matsumo.fanbox.core.model.fanbox.CreatorId
+import me.matsumo.fanbox.core.model.fanbox.PostDetail
 import me.matsumo.fanbox.core.resources.Res
 import me.matsumo.fanbox.core.resources.im_default_user
 import me.matsumo.fanbox.core.ui.extensition.asCoilImage
 import me.matsumo.fanbox.core.ui.theme.bold
-import me.matsumo.fankt.fanbox.domain.model.FanboxPostDetail
-import me.matsumo.fankt.fanbox.domain.model.id.FanboxCreatorId
 
 @Composable
 internal fun PostDetailBottomBar(
-    postDetail: FanboxPostDetail?,
+    postDetail: PostDetail?,
     isBookmarked: Boolean,
-    onCreatorClicked: (FanboxCreatorId) -> Unit,
+    onCreatorClicked: (CreatorId) -> Unit,
     onBookmarkClicked: (Boolean) -> Unit,
     modifier: Modifier = Modifier,
 ) {

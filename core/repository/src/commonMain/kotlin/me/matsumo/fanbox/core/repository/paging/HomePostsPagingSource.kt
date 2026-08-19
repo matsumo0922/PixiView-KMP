@@ -3,28 +3,28 @@ package me.matsumo.fanbox.core.repository.paging
 import androidx.paging.PagingSource
 import androidx.paging.PagingState
 import kotlinx.coroutines.flow.first
+import me.matsumo.fanbox.core.model.fanbox.Cursor
+import me.matsumo.fanbox.core.model.fanbox.Post
 import me.matsumo.fanbox.core.repository.FanboxRepository
-import me.matsumo.fankt.fanbox.domain.FanboxCursor
-import me.matsumo.fankt.fanbox.domain.model.FanboxPost
 import kotlin.coroutines.cancellation.CancellationException
 
 class HomePostsPagingSource(
     private val fanboxRepository: FanboxRepository,
     private val isHideRestricted: Boolean,
-) : PagingSource<FanboxCursor, FanboxPost>() {
+) : PagingSource<Cursor, Post>() {
 
     override val keyReuseSupported: Boolean = true
 
-    override suspend fun load(params: LoadParams<FanboxCursor>): LoadResult<FanboxCursor, FanboxPost> {
+    override suspend fun load(params: LoadParams<Cursor>): LoadResult<Cursor, Post> {
         return try {
             val blockedCreators = fanboxRepository.blockedCreators.first()
             var cursor = params.key
-            val visitedCursor = mutableSetOf<FanboxCursor?>()
-            var loadResult: LoadResult<FanboxCursor, FanboxPost>? = null
+            val visitedCursor = mutableSetOf<Cursor?>()
+            var loadResult: LoadResult<Cursor, Post>? = null
 
             while (loadResult == null) {
                 if (!visitedCursor.add(cursor)) {
-                    loadResult = LoadResult.Page<FanboxCursor, FanboxPost>(
+                    loadResult = LoadResult.Page<Cursor, Post>(
                         data = emptyList(),
                         nextKey = null,
                         prevKey = null,
@@ -58,7 +58,7 @@ class HomePostsPagingSource(
                 }
             }
 
-            loadResult ?: LoadResult.Page<FanboxCursor, FanboxPost>(
+            loadResult ?: LoadResult.Page<Cursor, Post>(
                 data = emptyList(),
                 nextKey = null,
                 prevKey = null,
@@ -70,5 +70,5 @@ class HomePostsPagingSource(
         }
     }
 
-    override fun getRefreshKey(state: PagingState<FanboxCursor, FanboxPost>): FanboxCursor? = null
+    override fun getRefreshKey(state: PagingState<Cursor, Post>): Cursor? = null
 }

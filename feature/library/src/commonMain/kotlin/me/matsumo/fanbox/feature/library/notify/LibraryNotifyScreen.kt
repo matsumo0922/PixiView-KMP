@@ -24,6 +24,8 @@ import app.cash.paging.compose.collectAsLazyPagingItems
 import app.cash.paging.compose.itemContentType
 import app.cash.paging.compose.itemKey
 import me.matsumo.fanbox.core.model.Destination
+import me.matsumo.fanbox.core.model.fanbox.Bell
+import me.matsumo.fanbox.core.model.fanbox.PostId
 import me.matsumo.fanbox.core.resources.Res
 import me.matsumo.fanbox.core.resources.error_no_data_notify
 import me.matsumo.fanbox.core.resources.library_navigation_notify
@@ -35,8 +37,6 @@ import me.matsumo.fanbox.core.ui.extensition.PixiViewNavigationType
 import me.matsumo.fanbox.core.ui.extensition.drawVerticalScrollbar
 import me.matsumo.fanbox.core.ui.view.PagingErrorSection
 import me.matsumo.fanbox.feature.library.notify.items.LibraryNotifyBellItem
-import me.matsumo.fankt.fanbox.domain.model.FanboxBell
-import me.matsumo.fankt.fanbox.domain.model.id.FanboxPostId
 import org.jetbrains.compose.resources.stringResource
 import org.koin.compose.viewmodel.koinViewModel
 
@@ -67,9 +67,9 @@ internal fun LibraryNotifyRoute(
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 private fun LibraryNotifyScreen(
-    pagingAdapter: LazyPagingItems<FanboxBell>,
+    pagingAdapter: LazyPagingItems<Bell>,
     openDrawer: () -> Unit,
-    onClickBell: (FanboxPostId) -> Unit,
+    onClickBell: (PostId) -> Unit,
     modifier: Modifier = Modifier,
 ) {
     val navigationType = LocalNavigationType.current.type
@@ -109,9 +109,9 @@ private fun LibraryNotifyScreen(
                     key = { index ->
                         pagingAdapter.itemKey {
                             when (it) {
-                                is FanboxBell.Comment -> "comment-${it.id.value}-$index"
-                                is FanboxBell.Like -> "like-${it.id}-$index"
-                                is FanboxBell.PostPublished -> "post-${it.id.value}-$index"
+                                is Bell.Comment -> "comment-${it.id.value}-$index"
+                                is Bell.Like -> "like-${it.id}-$index"
+                                is Bell.PostPublished -> "post-${it.id.value}-$index"
                             }
                         }(index)
                     },

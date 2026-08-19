@@ -3,16 +3,16 @@ package me.matsumo.fanbox.feature.library.notify.paging
 import androidx.paging.PagingSource
 import androidx.paging.PagingState
 import me.matsumo.fanbox.core.common.util.suspendRunCatching
+import me.matsumo.fanbox.core.model.fanbox.Bell
 import me.matsumo.fanbox.core.repository.FanboxRepository
-import me.matsumo.fankt.fanbox.domain.model.FanboxBell
 
 class LibraryNotifyPagingSource(
     private val fanboxRepository: FanboxRepository,
-) : PagingSource<Int, FanboxBell>() {
+) : PagingSource<Int, Bell>() {
 
     override val keyReuseSupported: Boolean = true
 
-    override suspend fun load(params: LoadParams<Int>): LoadResult<Int, FanboxBell> {
+    override suspend fun load(params: LoadParams<Int>): LoadResult<Int, Bell> {
         return suspendRunCatching {
             fanboxRepository.getBells(params.key ?: 1)
         }.fold(
@@ -29,5 +29,5 @@ class LibraryNotifyPagingSource(
         )
     }
 
-    override fun getRefreshKey(state: PagingState<Int, FanboxBell>): Int? = null
+    override fun getRefreshKey(state: PagingState<Int, Bell>): Int? = null
 }

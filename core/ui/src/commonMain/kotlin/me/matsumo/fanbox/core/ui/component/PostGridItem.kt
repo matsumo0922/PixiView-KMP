@@ -23,15 +23,15 @@ import androidx.compose.ui.unit.dp
 import coil3.compose.LocalPlatformContext
 import coil3.compose.SubcomposeAsyncImage
 import coil3.request.ImageRequest
+import me.matsumo.fanbox.core.model.fanbox.Post
+import me.matsumo.fanbox.core.model.fanbox.PostId
 import me.matsumo.fanbox.core.ui.extensition.SimmerPlaceHolder
 import me.matsumo.fanbox.core.ui.extensition.fanboxHeader
-import me.matsumo.fankt.fanbox.domain.model.FanboxPost
-import me.matsumo.fankt.fanbox.domain.model.id.FanboxPostId
 
 @Composable
 fun PostGridItem(
-    post: FanboxPost,
-    onClickPost: (FanboxPostId) -> Unit,
+    post: Post,
+    onClickPost: (PostId) -> Unit,
     isHideAdultContents: Boolean,
     isOverrideAdultContents: Boolean,
     modifier: Modifier = Modifier,

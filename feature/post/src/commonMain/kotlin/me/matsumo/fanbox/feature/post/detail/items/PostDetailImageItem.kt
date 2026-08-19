@@ -22,6 +22,7 @@ import coil3.compose.LocalPlatformContext
 import coil3.compose.SubcomposeAsyncImage
 import coil3.request.ImageRequest
 import coil3.size.Size
+import me.matsumo.fanbox.core.model.fanbox.PostDetail
 import me.matsumo.fanbox.core.resources.Res
 import me.matsumo.fanbox.core.resources.error_ios_gif_support
 import me.matsumo.fanbox.core.ui.extensition.Platform
@@ -30,14 +31,13 @@ import me.matsumo.fanbox.core.ui.extensition.currentPlatform
 import me.matsumo.fanbox.core.ui.extensition.fanboxHeader
 import me.matsumo.fanbox.core.ui.theme.center
 import me.matsumo.fanbox.feature.post.image.items.PostImageMenuDialog
-import me.matsumo.fankt.fanbox.domain.model.FanboxPostDetail
 import org.jetbrains.compose.resources.stringResource
 
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
 internal fun PostDetailImageItem(
-    item: FanboxPostDetail.ImageItem,
-    onClickImage: (FanboxPostDetail.ImageItem) -> Unit,
+    item: PostDetail.ImageItem,
+    onClickImage: (PostDetail.ImageItem) -> Unit,
     onClickDownload: () -> Unit,
     onClickAllDownload: () -> Unit,
     modifier: Modifier = Modifier,

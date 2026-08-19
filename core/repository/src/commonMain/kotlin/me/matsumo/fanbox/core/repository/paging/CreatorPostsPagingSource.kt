@@ -4,20 +4,20 @@ import androidx.paging.PagingSource
 import androidx.paging.PagingState
 import kotlinx.coroutines.flow.first
 import me.matsumo.fanbox.core.common.util.suspendRunCatching
+import me.matsumo.fanbox.core.model.fanbox.CreatorId
+import me.matsumo.fanbox.core.model.fanbox.Cursor
+import me.matsumo.fanbox.core.model.fanbox.Post
 import me.matsumo.fanbox.core.repository.FanboxRepository
-import me.matsumo.fankt.fanbox.domain.FanboxCursor
-import me.matsumo.fankt.fanbox.domain.model.FanboxPost
-import me.matsumo.fankt.fanbox.domain.model.id.FanboxCreatorId
 
 class CreatorPostsPagingSource(
-    private val creatorId: FanboxCreatorId,
-    private val cursors: List<FanboxCursor>,
+    private val creatorId: CreatorId,
+    private val cursors: List<Cursor>,
     private val fanboxRepository: FanboxRepository,
-) : PagingSource<Int, FanboxPost>() {
+) : PagingSource<Int, Post>() {
 
     override val keyReuseSupported: Boolean = true
 
-    override suspend fun load(params: LoadParams<Int>): LoadResult<Int, FanboxPost> {
+    override suspend fun load(params: LoadParams<Int>): LoadResult<Int, Post> {
         val currentIndex = params.key ?: 0
         val nextIndex = currentIndex + 1
 
@@ -46,5 +46,5 @@ class CreatorPostsPagingSource(
         )
     }
 
-    override fun getRefreshKey(state: PagingState<Int, FanboxPost>): Int? = null
+    override fun getRefreshKey(state: PagingState<Int, Post>): Int? = null
 }

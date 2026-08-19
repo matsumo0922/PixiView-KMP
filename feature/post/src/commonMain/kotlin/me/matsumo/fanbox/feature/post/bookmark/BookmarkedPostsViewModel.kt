@@ -11,14 +11,14 @@ import kotlinx.coroutines.launch
 import me.matsumo.fanbox.core.common.util.suspendRunCatching
 import me.matsumo.fanbox.core.model.ScreenState
 import me.matsumo.fanbox.core.model.Setting
+import me.matsumo.fanbox.core.model.fanbox.Post
+import me.matsumo.fanbox.core.model.fanbox.PostId
 import me.matsumo.fanbox.core.model.toScreenStateError
 import me.matsumo.fanbox.core.model.updateWhenIdle
 import me.matsumo.fanbox.core.repository.FanboxRepository
 import me.matsumo.fanbox.core.repository.SettingRepository
 import me.matsumo.fanbox.core.resources.Res
 import me.matsumo.fanbox.core.resources.error_no_data
-import me.matsumo.fankt.fanbox.domain.model.FanboxPost
-import me.matsumo.fankt.fanbox.domain.model.id.FanboxPostId
 
 class BookmarkedPostsViewModel(
     private val settingRepository: SettingRepository,
@@ -78,7 +78,7 @@ class BookmarkedPostsViewModel(
         }
     }
 
-    fun postLike(postId: FanboxPostId) {
+    fun postLike(postId: PostId) {
         viewModelScope.launch {
             suspendRunCatching {
                 fanboxRepository.likePost(postId)
@@ -86,7 +86,7 @@ class BookmarkedPostsViewModel(
         }
     }
 
-    fun postBookmark(post: FanboxPost, isBookmarked: Boolean) {
+    fun postBookmark(post: Post, isBookmarked: Boolean) {
         viewModelScope.launch {
             suspendRunCatching {
                 if (isBookmarked) {
@@ -102,6 +102,6 @@ class BookmarkedPostsViewModel(
 @Stable
 data class LikedPostsUiState(
     val setting: Setting,
-    val posts: List<FanboxPost>,
-    val bookmarkedPostIds: List<FanboxPostId>,
+    val posts: List<Post>,
+    val bookmarkedPostIds: List<PostId>,
 )

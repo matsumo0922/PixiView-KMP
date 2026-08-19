@@ -9,9 +9,9 @@ import kotlinx.coroutines.launch
 import me.matsumo.fanbox.core.common.util.format
 import me.matsumo.fanbox.core.common.util.suspendRunCatching
 import me.matsumo.fanbox.core.model.ScreenState
+import me.matsumo.fanbox.core.model.fanbox.PaidRecord
 import me.matsumo.fanbox.core.model.toScreenStateError
 import me.matsumo.fanbox.core.repository.FanboxRepository
-import me.matsumo.fankt.fanbox.domain.model.FanboxPaidRecord
 import kotlin.time.ExperimentalTime
 import kotlin.time.Instant
 
@@ -42,7 +42,7 @@ class PaymentsViewModel(
     }
 
     @OptIn(ExperimentalTime::class)
-    private fun List<FanboxPaidRecord>.translate(): List<Payment> {
+    private fun List<PaidRecord>.translate(): List<Payment> {
         val paymentDates = map { it.paymentDateTime }.distinctBy { it.format("yyyy-MM-dd") }
 
         return paymentDates.map { paymentDate ->
@@ -64,5 +64,5 @@ data class Payment
 @OptIn(ExperimentalTime::class)
 constructor(
     val paymentDateTime: Instant,
-    val paidRecords: List<FanboxPaidRecord>,
+    val paidRecords: List<PaidRecord>,
 )

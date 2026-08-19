@@ -80,7 +80,7 @@ internal fun DownloadQueueItem(
     val actualThumbnailItems: List<@Composable () -> Unit> = when (val type = items.requestType) {
         FanboxDownloadItems.RequestType.File -> thumbnailItems
         FanboxDownloadItems.RequestType.Image -> thumbnailItems
-        is FanboxDownloadItems.RequestType.Post -> {
+        is FanboxDownloadItems.RequestType.WholePost -> {
             listOf(
                 {
                     CoverThumbnail(
@@ -132,7 +132,7 @@ internal fun DownloadQueueItem(
                         }
 
                         else -> {
-                            if (items.requestType is FanboxDownloadItems.RequestType.Post) {
+                            if (items.requestType is FanboxDownloadItems.RequestType.WholePost) {
                                 stringResource(Res.string.queue_item_post)
                             } else {
                                 stringResource(Res.string.unit_tag, items.items.size)

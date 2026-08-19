@@ -9,15 +9,15 @@ import androidx.compose.material3.Text
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.unit.dp
-import me.matsumo.fankt.fanbox.domain.model.FanboxPostDetail
+import me.matsumo.fanbox.core.model.fanbox.PostDetail
 import sh.calvin.autolinktext.rememberAutoLinkText
 
 internal fun LazyListScope.postDetailFileHeader(
     isAutoImagePreview: Boolean,
-    content: FanboxPostDetail.Body.File,
-    onClickImage: (FanboxPostDetail.ImageItem) -> Unit,
-    onClickFile: (FanboxPostDetail.FileItem) -> Unit,
-    onClickDownload: (List<FanboxPostDetail.ImageItem>) -> Unit,
+    content: PostDetail.Body.File,
+    onClickImage: (PostDetail.ImageItem) -> Unit,
+    onClickFile: (PostDetail.FileItem) -> Unit,
+    onClickDownload: (List<PostDetail.ImageItem>) -> Unit,
 ) {
     items(content.files) {
         val imageItem = it.asImageItem()
