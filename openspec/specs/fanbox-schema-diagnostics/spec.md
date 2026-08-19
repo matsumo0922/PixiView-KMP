@@ -1,7 +1,7 @@
 # fanbox-schema-diagnostics Specification
 
 ## Purpose
-TBD - created by archiving change adopt-tolerant-list-callbacks. Update Purpose after archive.
+スキーマ不一致でスキップされた項目を観測する手段を規定する。ログとクラッシュレポート基盤への記録、送る内容をエンドポイント識別子と項目位置に限ること、およびリリースビルドで応答本文の断片を出力しないことを扱う。
 ## Requirements
 ### Requirement: スキーマ不一致の発生を観測できる
 

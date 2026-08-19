@@ -1,7 +1,7 @@
 # fanbox-error-classification Specification
 
 ## Purpose
-TBD - created by archiving change classify-fanbox-errors. Update Purpose after archive.
+画面のエラー状態へ変換される FANBOX API の失敗の分類を規定する。認証切れからその他までの 8 種別への振り分け、種別ごとの表示文言、および分類を持たない従来のエラー表示が変わらず成立することを扱う。
 ## Requirements
 ### Requirement: 画面のエラー状態に変換される FANBOX API の失敗を種別ごとに分類する
 

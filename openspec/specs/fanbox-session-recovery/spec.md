@@ -1,7 +1,7 @@
 # fanbox-session-recovery Specification
 
 ## Purpose
-TBD - created by archiving change classify-fanbox-errors. Update Purpose after archive.
+FANBOX API の認証切れからの復帰を規定する。ログイン済み状態を解除して再ログイン画面へ導くこと、認証切れ以外の失敗では導かないこと、および同時に複数の認証切れを受け取っても遷移が重複しないことを扱う。
 ## Requirements
 ### Requirement: 認証切れを検知したら再ログインへ導く
 
