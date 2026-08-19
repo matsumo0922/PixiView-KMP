@@ -7,27 +7,27 @@
 
 ## 1. モデル定義（段 2 / `-defs`）
 
-- [ ] 1.1 `core/model/src/commonMain/.../core/model/fanbox/` に ID の value class 7 種（`PostId` / `PostItemId` / `CreatorId` / `UserId` / `CommentId` / `PlanId` / `NewsLetterId`）を定義する
-- [ ] 1.2 葉のモデル（`Cover` / `Tag` / `User` / `Creator` / `PaymentMethod`）を定義する
-- [ ] 1.3 集約のモデル（`Post` / `CreatorDetail` / `CreatorPlan` / `CreatorPlanDetail` / `Comment` / `Bell` / `MetaData` / `NewsLetter` / `PaidRecord`）を定義する
-- [ ] 1.4 `PostDetail` と `Body` の sealed 階層、`OtherPost` / `ImageItem` / `VideoItem` / `FileItem` を定義し、D7 の表で「する」とした派生メンバー 11 個を移植する
-- [ ] 1.5 ページング型（`PageCursorInfo` / `PageNumberInfo` / `PageOffsetInfo` / `Cursor`）を定義する
-- [ ] 1.6 Composable から参照するモデルへ `@Immutable` を付ける（AGENTS.md の Compose 規約）
-- [ ] 1.7 各 `data class` / `enum` / `value class` に日本語 KDoc を付ける
+- [x] 1.1 `core/model/src/commonMain/.../core/model/fanbox/` に ID の value class 7 種（`PostId` / `PostItemId` / `CreatorId` / `UserId` / `CommentId` / `PlanId` / `NewsLetterId`）を定義する
+- [x] 1.2 葉のモデル（`Cover` / `Tag` / `User` / `Creator` / `PaymentMethod`）を定義する
+- [x] 1.3 集約のモデル（`Post` / `CreatorDetail` / `CreatorPlan` / `CreatorPlanDetail` / `Comment` / `Bell` / `MetaData` / `NewsLetter` / `PaidRecord`）を定義する
+- [x] 1.4 `PostDetail` と `Body` の sealed 階層、`OtherPost` / `ImageItem` / `VideoItem` / `FileItem` を定義し、D7 の表で「する」とした派生メンバー 11 個を移植する
+- [x] 1.5 ページング型（`PageCursorInfo` / `PageNumberInfo` / `PageOffsetInfo` / `Cursor`）を定義する
+- [x] 1.6 Composable から参照するモデルへ `@Immutable` を付ける（AGENTS.md の Compose 規約）
+- [x] 1.7 各 `data class` / `enum` / `value class` に日本語 KDoc を付ける
 
 ## 2. 変換層（段 2 / `-defs`）
 
-- [ ] 2.1 `core/repository/src/commonMain/.../repository/mapper/` に fankt → app の変換を全型分置く
-- [ ] 2.2 app → fankt の変換を D5 の表が挙げる 3 種（ID 4 つ / `Post` / `Cursor`）に限って置く
-- [ ] 2.3 `PostDetail.Body` と記事ブロックの変換を、`when` を exhaustive に書いて全 variant 分置く
+- [x] 2.1 `core/repository/src/commonMain/.../repository/mapper/` に fankt → app の変換を全型分置く
+- [x] 2.2 app → fankt の変換を D5 の表が挙げる 3 種（ID 4 つ / `Post` / `Cursor`）に限って置く
+- [x] 2.3 `PostDetail.Body` と記事ブロックの変換を、`when` を exhaustive に書いて全 variant 分置く
 
 ## 3. 変換のテスト（段 2 / `-defs`）
 
-- [ ] 3.1 全フィールドを埋めた `FanboxPost` / `FanboxPostDetail` / `FanboxCreatorDetail` の変換で、各フィールドが写ることを固定する
-- [ ] 3.2 `Body` の 7 variant と記事ブロックの 6 variant がすべて変換されることを固定する
-- [ ] 3.3 未知の variant が生の JSON を保持することを固定する
-- [ ] 3.4 ID / `Post` / `Cursor` の往復が元の値へ戻ることを固定する
-- [ ] 3.5 D7 の派生メンバー 11 個が fankt と同じ値を返すことを固定する
+- [x] 3.1 全フィールドを埋めた `FanboxPost` / `FanboxPostDetail` / `FanboxCreatorDetail` の変換で、各フィールドが写ることを固定する
+- [x] 3.2 `Body` の 7 variant と記事ブロックの 6 variant がすべて変換されることを固定する
+- [x] 3.3 未知の variant が生の JSON を保持することを固定する
+- [x] 3.4 ID / `Post` / `Cursor` の往復が元の値へ戻ることを固定する
+- [x] 3.5 D7 の派生メンバー 11 個が fankt と同じ値を返すことを固定する
 
 ## 4. 公開契約の置き換え（段 3 / `-swap`）
 
