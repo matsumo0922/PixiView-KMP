@@ -18,7 +18,7 @@
 ## 2. 変換層（段 2 / `-defs`）
 
 - [x] 2.1 `core/repository/src/commonMain/.../repository/mapper/` に fankt → app の変換を全型分置く
-- [x] 2.2 app → fankt の変換を D5 の 4 種（ID / `Post` / `Cursor`、およびページング型）に限って置く
+- [x] 2.2 app → fankt の変換を D5 の表が挙げる 3 種（ID 4 つ / `Post` / `Cursor`）に限って置く
 - [x] 2.3 `PostDetail.Body` と記事ブロックの変換を、`when` を exhaustive に書いて全 variant 分置く
 
 ## 3. 変換のテスト（段 2 / `-defs`）
@@ -39,7 +39,7 @@
 - [x] 4.6 `feature/post` 27 ファイルを差し替える
 - [x] 4.7 `feature/creator` 21 ファイルを差し替える
 - [x] 4.8 `feature/library` 14 ファイルを差し替える
-- [x] 4.9 `feature/setting` 3 / `feature/welcome` 1 / `shared` 1 を差し替える
+- [x] 4.9 `feature/setting` と `shared` を差し替える（`feature/welcome` の fankt 参照は cookie の契約のみで対象外）
 
 ## 5. 永続化の非退行（段 3 / `-swap`）
 

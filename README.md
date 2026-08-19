@@ -131,9 +131,12 @@ The FANBOX models the screens work with are owned by this app and live in `core/
 `fankt` library has its own models, and `core/repository` converts between the two. A change to a
 `fankt` model therefore stops at that conversion layer instead of reaching the screens.
 
-`core/datastore` is the one other place that holds `fankt` types. It keeps the cookie storage
-contract that `fankt` requires, and it writes bookmarks with `fankt`'s own serializer so that
-bookmarks saved by an earlier version stay readable.
+`core/datastore` writes bookmarks with `fankt`'s own serializer, so bookmarks saved by an earlier
+version stay readable. That is a persistence boundary, not a screen one.
+
+Contracts that are not models still come straight from `fankt`, wherever they are needed: the
+exception type the network layer throws, the cookie and session storage `fankt` requires, and the
+client entry point itself. Those are not part of the conversion described above.
 
 ## Remote parsing updates
 When FANBOX changes the shape of its responses, the app stops being able to read them, and a fix
