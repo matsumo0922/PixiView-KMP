@@ -1,7 +1,7 @@
 # fanbox-list-tolerance Specification
 
 ## Purpose
-TBD - created by archiving change adopt-tolerant-list-callbacks. Update Purpose after archive.
+FANBOX の list API の応答が一部の項目だけスキーマに一致しない場合の扱いを規定する。デコードできた項目を成功として返し全体を失敗させないこと、およびスキップの発生を画面に表示しないことを扱う。
 ## Requirements
 ### Requirement: 支援プラン一覧は部分的なスキーマ不一致で全体が失敗しない
 

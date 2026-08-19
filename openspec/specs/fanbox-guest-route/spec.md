@@ -1,7 +1,7 @@
 # fanbox-guest-route Specification
 
 ## Purpose
-TBD - created by archiving change enable-zipline-guest-route. Update Purpose after archive.
+配信された Zipline guest bundle で投稿詳細の取得を処理する経路を規定する。配信先と信頼する公開鍵を fankt へ渡す条件、developer mode による配信チャンネルの選択、配信先へ到達できない場合に直接経路へ退避すること、Remote Config から guest の実行を遠隔で停止できること、および遠隔から解析処理を取得する旨の README への記載を扱う。
 ## Requirements
 ### Requirement: 投稿詳細の取得に配信済み guest を使う
 
