@@ -22,7 +22,7 @@ kotlin {
             implementation(compose.components.resources)
             implementation(libs.ktor.core)
 
-            api(libs.fankt.fanbox)
+            implementation(libs.fankt.fanbox)
         }
 
         commonTest.dependencies {
