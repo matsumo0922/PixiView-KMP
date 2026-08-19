@@ -28,18 +28,18 @@ import coil3.compose.LocalPlatformContext
 import coil3.compose.SubcomposeAsyncImage
 import coil3.request.ImageRequest
 import me.matsumo.fanbox.core.common.util.format
+import me.matsumo.fanbox.core.model.fanbox.CreatorPlanDetail
 import me.matsumo.fanbox.core.resources.Res
 import me.matsumo.fanbox.core.resources.im_fanbox_logo_dark
 import me.matsumo.fanbox.core.resources.im_fanbox_logo_light
 import me.matsumo.fanbox.core.ui.extensition.FadePlaceHolder
 import me.matsumo.fanbox.core.ui.extensition.fanboxHeader
-import me.matsumo.fankt.fanbox.domain.model.FanboxCreatorPlanDetail
 import org.jetbrains.compose.resources.painterResource
 import kotlin.time.ExperimentalTime
 
 @Composable
 internal fun FanCardItem(
-    planDetail: FanboxCreatorPlanDetail,
+    planDetail: CreatorPlanDetail,
     isDisplayName: Boolean,
     modifier: Modifier = Modifier,
 ) {
@@ -91,7 +91,7 @@ internal fun FanCardItem(
 @OptIn(ExperimentalTime::class)
 @Composable
 private fun NameItem(
-    planDetail: FanboxCreatorPlanDetail,
+    planDetail: CreatorPlanDetail,
     isDisplayName: Boolean,
     modifier: Modifier = Modifier,
 ) {
@@ -133,7 +133,7 @@ private fun NameItem(
 
 @Composable
 private fun TitleItem(
-    planDetail: FanboxCreatorPlanDetail,
+    planDetail: CreatorPlanDetail,
     modifier: Modifier = Modifier,
 ) {
     Column(

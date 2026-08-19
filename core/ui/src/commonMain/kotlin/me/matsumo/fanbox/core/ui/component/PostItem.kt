@@ -43,6 +43,9 @@ import coil3.compose.SubcomposeAsyncImage
 import coil3.request.ImageRequest
 import io.github.aakira.napier.Napier
 import me.matsumo.fanbox.core.common.util.format
+import me.matsumo.fanbox.core.model.fanbox.CreatorId
+import me.matsumo.fanbox.core.model.fanbox.Post
+import me.matsumo.fanbox.core.model.fanbox.PostId
 import me.matsumo.fanbox.core.resources.Res
 import me.matsumo.fanbox.core.resources.fanbox_free_fee
 import me.matsumo.fanbox.core.resources.im_default_user
@@ -51,19 +54,16 @@ import me.matsumo.fanbox.core.ui.extensition.FadePlaceHolder
 import me.matsumo.fanbox.core.ui.extensition.asCoilImage
 import me.matsumo.fanbox.core.ui.extensition.fanboxHeader
 import me.matsumo.fanbox.core.ui.theme.bold
-import me.matsumo.fankt.fanbox.domain.model.FanboxPost
-import me.matsumo.fankt.fanbox.domain.model.id.FanboxCreatorId
-import me.matsumo.fankt.fanbox.domain.model.id.FanboxPostId
 import org.jetbrains.compose.resources.stringResource
 
 @Composable
 fun PostItem(
-    post: FanboxPost,
-    onClickPost: (FanboxPostId) -> Unit,
-    onClickCreator: (FanboxCreatorId) -> Unit,
-    onClickPlanList: (FanboxCreatorId) -> Unit,
-    onClickLike: (FanboxPostId) -> Unit,
-    onClickBookmark: (FanboxPostId, Boolean) -> Unit,
+    post: Post,
+    onClickPost: (PostId) -> Unit,
+    onClickCreator: (CreatorId) -> Unit,
+    onClickPlanList: (CreatorId) -> Unit,
+    onClickLike: (PostId) -> Unit,
+    onClickBookmark: (PostId, Boolean) -> Unit,
     isHideAdultContents: Boolean,
     isOverrideAdultContents: Boolean,
     isTestUser: Boolean,
@@ -209,8 +209,8 @@ fun PostItem(
 
 @Composable
 private fun UserSection(
-    post: FanboxPost,
-    onClickCreator: (FanboxCreatorId?) -> Unit,
+    post: Post,
+    onClickCreator: (CreatorId?) -> Unit,
     modifier: Modifier = Modifier,
 ) {
     Row(

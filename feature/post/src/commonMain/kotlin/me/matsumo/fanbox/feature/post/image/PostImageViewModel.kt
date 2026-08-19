@@ -8,11 +8,11 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 import me.matsumo.fanbox.core.common.util.suspendRunCatching
 import me.matsumo.fanbox.core.model.ScreenState
+import me.matsumo.fanbox.core.model.fanbox.PostDetail
+import me.matsumo.fanbox.core.model.fanbox.PostId
 import me.matsumo.fanbox.core.model.toScreenStateError
 import me.matsumo.fanbox.core.repository.DownloadPostsRepository
 import me.matsumo.fanbox.core.repository.FanboxRepository
-import me.matsumo.fankt.fanbox.domain.model.FanboxPostDetail
-import me.matsumo.fankt.fanbox.domain.model.id.FanboxPostId
 
 class PostImageViewModel(
     private val fanboxRepository: FanboxRepository,
@@ -23,7 +23,7 @@ class PostImageViewModel(
 
     val screenState = _screenState.asStateFlow()
 
-    fun fetch(postId: FanboxPostId) {
+    fun fetch(postId: PostId) {
         viewModelScope.launch {
             _screenState.value = ScreenState.Loading
             _screenState.value = suspendRunCatching {
@@ -37,12 +37,12 @@ class PostImageViewModel(
         }
     }
 
-    fun downloadImages(postId: FanboxPostId, title: String, imageItems: List<FanboxPostDetail.ImageItem>) {
+    fun downloadImages(postId: PostId, title: String, imageItems: List<PostDetail.ImageItem>) {
         downloadPostsRepository.requestDownloadImages(postId, title, imageItems)
     }
 }
 
 @Stable
 data class PostImageUiState(
-    val postDetail: FanboxPostDetail,
+    val postDetail: PostDetail,
 )

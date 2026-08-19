@@ -16,6 +16,7 @@ import kotlinx.collections.immutable.persistentMapOf
 import me.matsumo.fanbox.core.common.PixiViewConfig
 import me.matsumo.fanbox.core.model.ThemeColorConfig
 import me.matsumo.fanbox.core.model.ThemeConfig
+import me.matsumo.fanbox.core.model.fanbox.MetaData
 import me.matsumo.fanbox.core.ui.extensition.FanboxSessionId
 import me.matsumo.fanbox.core.ui.extensition.LocalFanboxMetadata
 import me.matsumo.fanbox.core.ui.extensition.LocalFanboxSessionId
@@ -34,7 +35,6 @@ import me.matsumo.fanbox.core.ui.theme.color.LightPurpleColorScheme
 import me.matsumo.fanbox.core.ui.view.LocalNativeViewsProvider
 import me.matsumo.fanbox.core.ui.view.NativeView
 import me.matsumo.fanbox.core.ui.view.NativeViews
-import me.matsumo.fankt.fanbox.domain.model.FanboxMetaData
 
 val LightDefaultColorScheme = lightColorScheme(
     primary = Purple40,
@@ -97,7 +97,7 @@ val LocalColorScheme = staticCompositionLocalOf { LightDefaultColorScheme }
 @Composable
 fun PixiViewTheme(
     sessionId: String = "",
-    fanboxMetadata: FanboxMetaData = getFanboxMetadataDummy(),
+    fanboxMetadata: MetaData = getFanboxMetadataDummy(),
     pixiViewConfig: PixiViewConfig = PixiViewConfig.dummy(),
     isAdsSdkInitialized: Boolean = true,
     themeConfig: ThemeConfig = ThemeConfig.System,

@@ -35,13 +35,13 @@ import coil3.compose.LocalPlatformContext
 import coil3.compose.SubcomposeAsyncImage
 import coil3.request.ImageRequest
 import io.github.aakira.napier.Napier
+import me.matsumo.fanbox.core.model.fanbox.Post
 import me.matsumo.fanbox.core.resources.Res
 import me.matsumo.fanbox.core.resources.fanbox_free_fee
 import me.matsumo.fanbox.core.resources.unit_jpy
 import me.matsumo.fanbox.core.ui.extensition.fanboxHeader
 import me.matsumo.fanbox.core.ui.theme.bold
 import me.matsumo.fanbox.feature.creator.download.CreatorPostsDownloadData
-import me.matsumo.fankt.fanbox.domain.model.FanboxPost
 import org.jetbrains.compose.resources.stringResource
 
 @Composable
@@ -119,7 +119,7 @@ internal fun CreatorPostsDownloadItem(
 
 @Composable
 private fun CommentLikeItem(
-    post: FanboxPost,
+    post: Post,
     modifier: Modifier = Modifier,
 ) {
     val likeColor = if (post.isLiked) Color(0xffe0405e) else MaterialTheme.colorScheme.onSurfaceVariant

@@ -42,6 +42,9 @@ import coil3.compose.AsyncImage
 import coil3.compose.LocalPlatformContext
 import coil3.compose.SubcomposeAsyncImage
 import coil3.request.ImageRequest
+import me.matsumo.fanbox.core.model.fanbox.CreatorDetail
+import me.matsumo.fanbox.core.model.fanbox.CreatorId
+import me.matsumo.fanbox.core.model.fanbox.UserId
 import me.matsumo.fanbox.core.resources.Res
 import me.matsumo.fanbox.core.resources.common_follow
 import me.matsumo.fanbox.core.resources.common_supporting
@@ -52,17 +55,14 @@ import me.matsumo.fanbox.core.ui.extensition.SimmerPlaceHolder
 import me.matsumo.fanbox.core.ui.extensition.asCoilImage
 import me.matsumo.fanbox.core.ui.extensition.fanboxHeader
 import me.matsumo.fanbox.core.ui.theme.bold
-import me.matsumo.fankt.fanbox.domain.model.FanboxCreatorDetail
-import me.matsumo.fankt.fanbox.domain.model.id.FanboxCreatorId
-import me.matsumo.fankt.fanbox.domain.model.id.FanboxUserId
 import org.jetbrains.compose.resources.stringResource
 
 @Composable
 fun CreatorItem(
-    creatorDetail: FanboxCreatorDetail,
-    onClickCreator: (FanboxCreatorId) -> Unit,
-    onClickFollow: (FanboxUserId) -> Unit,
-    onClickUnfollow: (FanboxUserId) -> Unit,
+    creatorDetail: CreatorDetail,
+    onClickCreator: (CreatorId) -> Unit,
+    onClickFollow: (UserId) -> Unit,
+    onClickUnfollow: (UserId) -> Unit,
     onClickSupporting: (String) -> Unit,
     modifier: Modifier = Modifier,
     isFollowed: Boolean = creatorDetail.isFollowed,
@@ -74,7 +74,7 @@ fun CreatorItem(
 
     // Unknown はサムネイルを持たないためページャに空ページとして現れる。表示できるものだけを残す。
     val displayableProfileItems = remember(creatorDetail.profileItems) {
-        creatorDetail.profileItems.filter { it !is FanboxCreatorDetail.ProfileItem.Unknown }
+        creatorDetail.profileItems.filter { it !is CreatorDetail.ProfileItem.Unknown }
     }
 
     Card(
@@ -111,9 +111,9 @@ fun CreatorItem(
                 ) { page ->
                     val profileItem = displayableProfileItems[page]
                     val thumbnailUrl = when (profileItem) {
-                        is FanboxCreatorDetail.ProfileItem.Image -> profileItem.thumbnailUrl
-                        is FanboxCreatorDetail.ProfileItem.Video -> profileItem.thumbnailUrl
-                        is FanboxCreatorDetail.ProfileItem.Unknown -> null
+                        is CreatorDetail.ProfileItem.Image -> profileItem.thumbnailUrl
+                        is CreatorDetail.ProfileItem.Video -> profileItem.thumbnailUrl
+                        is CreatorDetail.ProfileItem.Unknown -> null
                     }
 
                     Box(modifier = Modifier.fillMaxWidth()) {
@@ -130,7 +130,7 @@ fun CreatorItem(
                             contentDescription = null,
                         )
 
-                        if (profileItem is FanboxCreatorDetail.ProfileItem.Video) {
+                        if (profileItem is CreatorDetail.ProfileItem.Video) {
                             Icon(
                                 modifier = Modifier
                                     .align(Alignment.Center)
@@ -196,10 +196,10 @@ fun CreatorItem(
 
 @Composable
 private fun UserSection(
-    creatorDetail: FanboxCreatorDetail,
+    creatorDetail: CreatorDetail,
     isFollowed: Boolean,
-    onClickFollow: (FanboxUserId) -> Unit,
-    onClickUnfollow: (FanboxUserId) -> Unit,
+    onClickFollow: (UserId) -> Unit,
+    onClickUnfollow: (UserId) -> Unit,
     onClickSupporting: (String) -> Unit,
     modifier: Modifier = Modifier,
 ) {

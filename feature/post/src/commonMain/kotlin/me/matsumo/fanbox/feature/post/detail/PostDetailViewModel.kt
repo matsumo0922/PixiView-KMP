@@ -15,6 +15,15 @@ import me.matsumo.fanbox.core.common.util.suspendRunCatching
 import me.matsumo.fanbox.core.model.ScreenState
 import me.matsumo.fanbox.core.model.Setting
 import me.matsumo.fanbox.core.model.TranslationState
+import me.matsumo.fanbox.core.model.fanbox.Comment
+import me.matsumo.fanbox.core.model.fanbox.CommentId
+import me.matsumo.fanbox.core.model.fanbox.CreatorDetail
+import me.matsumo.fanbox.core.model.fanbox.MetaData
+import me.matsumo.fanbox.core.model.fanbox.PageOffsetInfo
+import me.matsumo.fanbox.core.model.fanbox.Post
+import me.matsumo.fanbox.core.model.fanbox.PostDetail
+import me.matsumo.fanbox.core.model.fanbox.PostId
+import me.matsumo.fanbox.core.model.fanbox.UserId
 import me.matsumo.fanbox.core.model.toScreenStateError
 import me.matsumo.fanbox.core.model.updateWhenIdle
 import me.matsumo.fanbox.core.repository.DownloadPostsRepository
@@ -27,19 +36,10 @@ import me.matsumo.fanbox.core.resources.post_detail_comment_comment_failed
 import me.matsumo.fanbox.core.resources.post_detail_comment_commented
 import me.matsumo.fanbox.core.resources.post_detail_comment_delete_failed
 import me.matsumo.fanbox.core.resources.post_detail_comment_delete_success
-import me.matsumo.fankt.fanbox.domain.PageOffsetInfo
-import me.matsumo.fankt.fanbox.domain.model.FanboxComment
-import me.matsumo.fankt.fanbox.domain.model.FanboxCreatorDetail
-import me.matsumo.fankt.fanbox.domain.model.FanboxMetaData
-import me.matsumo.fankt.fanbox.domain.model.FanboxPost
-import me.matsumo.fankt.fanbox.domain.model.FanboxPostDetail
-import me.matsumo.fankt.fanbox.domain.model.id.FanboxCommentId
-import me.matsumo.fankt.fanbox.domain.model.id.FanboxPostId
-import me.matsumo.fankt.fanbox.domain.model.id.FanboxUserId
 import org.jetbrains.compose.resources.StringResource
 
 class PostDetailViewModel(
-    private val postId: FanboxPostId,
+    private val postId: PostId,
     private val settingRepository: SettingRepository,
     private val fanboxRepository: FanboxRepository,
     private val translationRepository: TranslationRepository,
@@ -92,7 +92,7 @@ class PostDetailViewModel(
         }
     }
 
-    fun translate(postDetail: FanboxPostDetail) {
+    fun translate(postDetail: PostDetail) {
         viewModelScope.launch {
             (screenState.value as? ScreenState.Idle)?.also { data ->
                 if (data.data.bodyTransState is TranslationState.Translated) return@launch
@@ -120,7 +120,7 @@ class PostDetailViewModel(
         }
     }
 
-    fun translate(comments: PageOffsetInfo<FanboxComment>) {
+    fun translate(comments: PageOffsetInfo<Comment>) {
         viewModelScope.launch {
             (screenState.value as? ScreenState.Idle)?.also { data ->
                 _screenState.updateWhenIdle { it.copy(commentsTransState = TranslationState.Loading) }
@@ -144,7 +144,7 @@ class PostDetailViewModel(
         }
     }
 
-    fun postLike(postId: FanboxPostId) {
+    fun postLike(postId: PostId) {
         viewModelScope.launch {
             suspendRunCatching {
                 fanboxRepository.likePost(postId)
@@ -152,7 +152,7 @@ class PostDetailViewModel(
         }
     }
 
-    fun postBookmark(post: FanboxPost, isBookmarked: Boolean) {
+    fun postBookmark(post: Post, isBookmarked: Boolean) {
         viewModelScope.launch {
             suspendRunCatching {
                 if (isBookmarked) {
@@ -164,7 +164,7 @@ class PostDetailViewModel(
         }
     }
 
-    fun loadMoreComment(postId: FanboxPostId, offset: Int) {
+    fun loadMoreComment(postId: PostId, offset: Int) {
         viewModelScope.launch {
             suspendRunCatching {
                 val comments = fanboxRepository.getPostComment(postId, offset)
@@ -181,7 +181,7 @@ class PostDetailViewModel(
         }
     }
 
-    fun commentLike(commentId: FanboxCommentId) {
+    fun commentLike(commentId: CommentId) {
         viewModelScope.launch {
             suspendRunCatching {
                 fanboxRepository.likeComment(commentId)
@@ -189,7 +189,7 @@ class PostDetailViewModel(
         }
     }
 
-    fun commentReply(postId: FanboxPostId, body: String, parentFanboxCommentId: FanboxCommentId, rootFanboxCommentId: FanboxCommentId) {
+    fun commentReply(postId: PostId, body: String, parentFanboxCommentId: CommentId, rootFanboxCommentId: CommentId) {
         viewModelScope.launch {
             (screenState.value as? ScreenState.Idle)?.also { data ->
                 _screenState.value = suspendRunCatching {
@@ -216,7 +216,7 @@ class PostDetailViewModel(
         }
     }
 
-    fun commentDelete(postId: FanboxPostId, commentId: FanboxCommentId) {
+    fun commentDelete(postId: PostId, commentId: CommentId) {
         viewModelScope.launch {
             (screenState.value as? ScreenState.Idle)?.also { data ->
                 _screenState.value = suspendRunCatching {
@@ -243,7 +243,7 @@ class PostDetailViewModel(
         }
     }
 
-    fun follow(creatorUserId: FanboxUserId) {
+    fun follow(creatorUserId: UserId) {
         viewModelScope.launch {
             (screenState.value as? ScreenState.Idle)?.also { data ->
                 val creatorDetail = suspendRunCatching {
@@ -258,7 +258,7 @@ class PostDetailViewModel(
         }
     }
 
-    fun unfollow(creatorUserId: FanboxUserId) {
+    fun unfollow(creatorUserId: UserId) {
         viewModelScope.launch {
             (screenState.value as? ScreenState.Idle)?.also { data ->
                 val creatorDetail = suspendRunCatching {
@@ -281,11 +281,11 @@ class PostDetailViewModel(
         }
     }
 
-    fun downloadImages(postId: FanboxPostId, title: String, imageItems: List<FanboxPostDetail.ImageItem>) {
+    fun downloadImages(postId: PostId, title: String, imageItems: List<PostDetail.ImageItem>) {
         downloadPostsRepository.requestDownloadImages(postId, title, imageItems)
     }
 
-    fun downloadFiles(postId: FanboxPostId, title: String, fileItems: List<FanboxPostDetail.FileItem>) {
+    fun downloadFiles(postId: PostId, title: String, fileItems: List<PostDetail.FileItem>) {
         downloadPostsRepository.requestDownloadFiles(postId, title, fileItems)
     }
 }
@@ -293,12 +293,12 @@ class PostDetailViewModel(
 @Stable
 data class PostDetailUiState(
     val setting: Setting,
-    val metaData: FanboxMetaData,
-    val bookmarkedPostIds: List<FanboxPostId>,
-    val creatorDetail: FanboxCreatorDetail,
-    val postDetail: FanboxPostDetail,
-    val comments: PageOffsetInfo<FanboxComment>,
-    val bodyTransState: TranslationState<FanboxPostDetail> = TranslationState.None,
-    val commentsTransState: TranslationState<PageOffsetInfo<FanboxComment>> = TranslationState.None,
+    val metaData: MetaData,
+    val bookmarkedPostIds: List<PostId>,
+    val creatorDetail: CreatorDetail,
+    val postDetail: PostDetail,
+    val comments: PageOffsetInfo<Comment>,
+    val bodyTransState: TranslationState<PostDetail> = TranslationState.None,
+    val commentsTransState: TranslationState<PageOffsetInfo<Comment>> = TranslationState.None,
     val messageToast: StringResource? = null,
 )

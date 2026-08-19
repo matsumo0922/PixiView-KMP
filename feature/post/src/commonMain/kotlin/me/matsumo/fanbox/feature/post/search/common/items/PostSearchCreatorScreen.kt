@@ -29,6 +29,10 @@ import app.cash.paging.compose.itemContentType
 import app.cash.paging.compose.itemKey
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.coroutines.launch
+import me.matsumo.fanbox.core.model.fanbox.CreatorDetail
+import me.matsumo.fanbox.core.model.fanbox.CreatorId
+import me.matsumo.fanbox.core.model.fanbox.Tag
+import me.matsumo.fanbox.core.model.fanbox.UserId
 import me.matsumo.fanbox.core.resources.Res
 import me.matsumo.fanbox.core.resources.common_creator
 import me.matsumo.fanbox.core.resources.common_tag
@@ -40,20 +44,16 @@ import me.matsumo.fanbox.core.ui.extensition.PixiViewNavigationType
 import me.matsumo.fanbox.core.ui.extensition.drawVerticalScrollbar
 import me.matsumo.fanbox.core.ui.theme.bold
 import me.matsumo.fanbox.core.ui.view.PagingErrorSection
-import me.matsumo.fankt.fanbox.domain.model.FanboxCreatorDetail
-import me.matsumo.fankt.fanbox.domain.model.FanboxTag
-import me.matsumo.fankt.fanbox.domain.model.id.FanboxCreatorId
-import me.matsumo.fankt.fanbox.domain.model.id.FanboxUserId
 import org.jetbrains.compose.resources.stringResource
 
 @Composable
 internal fun PostSearchCreatorScreen(
-    pagingAdapter: LazyPagingItems<FanboxCreatorDetail>,
-    suggestTags: ImmutableList<FanboxTag>,
-    onClickCreator: (FanboxCreatorId) -> Unit,
+    pagingAdapter: LazyPagingItems<CreatorDetail>,
+    suggestTags: ImmutableList<Tag>,
+    onClickCreator: (CreatorId) -> Unit,
     onClickTag: (String) -> Unit,
-    onClickFollow: suspend (FanboxUserId) -> Result<Unit>,
-    onClickUnfollow: suspend (FanboxUserId) -> Result<Unit>,
+    onClickFollow: suspend (UserId) -> Result<Unit>,
+    onClickUnfollow: suspend (UserId) -> Result<Unit>,
     onClickSupporting: (String) -> Unit,
     modifier: Modifier = Modifier,
 ) {

@@ -11,14 +11,14 @@ import kotlinx.coroutines.launch
 import me.matsumo.fanbox.core.common.util.suspendRunCatching
 import me.matsumo.fanbox.core.model.Destination
 import me.matsumo.fanbox.core.model.ScreenState
+import me.matsumo.fanbox.core.model.fanbox.CreatorDetail
+import me.matsumo.fanbox.core.model.fanbox.Cursor
+import me.matsumo.fanbox.core.model.fanbox.Post
 import me.matsumo.fanbox.core.model.toScreenStateError
 import me.matsumo.fanbox.core.model.updateWhenIdle
 import me.matsumo.fanbox.core.repository.DownloadPostsRepository
 import me.matsumo.fanbox.core.repository.FanboxRepository
 import me.matsumo.fanbox.core.ui.customNavTypes
-import me.matsumo.fankt.fanbox.domain.FanboxCursor
-import me.matsumo.fankt.fanbox.domain.model.FanboxCreatorDetail
-import me.matsumo.fankt.fanbox.domain.model.FanboxPost
 
 class CreatorPostsDownloadViewModel(
     savedStateHandle: SavedStateHandle,
@@ -60,11 +60,11 @@ class CreatorPostsDownloadViewModel(
     }
 
     suspend fun fetchPosts(
-        paginate: List<FanboxCursor>,
+        paginate: List<Cursor>,
         updateCallback: (Float) -> Unit,
     ) {
         val max = paginate.sumOf { it.limit ?: 10 }
-        val posts = mutableListOf<FanboxPost>()
+        val posts = mutableListOf<Post>()
 
         for (cursor in paginate) {
             posts.addAll(fanboxRepository.getCreatorPosts(creatorId, cursor, null).contents)
@@ -134,8 +134,8 @@ class CreatorPostsDownloadViewModel(
 
 @Stable
 data class CreatorPostsDownloadUiState(
-    val creatorDetail: FanboxCreatorDetail,
-    val postsPaginate: List<FanboxCursor>,
+    val creatorDetail: CreatorDetail,
+    val postsPaginate: List<Cursor>,
     val posts: List<CreatorPostsDownloadData>,
     val targetPosts: List<CreatorPostsDownloadData>,
     val ignoreKeyword: String,
@@ -146,6 +146,6 @@ data class CreatorPostsDownloadUiState(
 
 @Stable
 data class CreatorPostsDownloadData(
-    val post: FanboxPost,
+    val post: Post,
     var isDownloaded: Boolean,
 )

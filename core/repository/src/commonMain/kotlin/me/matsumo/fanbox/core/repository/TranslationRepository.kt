@@ -13,13 +13,13 @@ import kotlinx.coroutines.IO
 import kotlinx.coroutines.withContext
 import kotlinx.serialization.json.Json
 import me.matsumo.fanbox.core.common.PixiViewConfig
+import me.matsumo.fanbox.core.model.fanbox.Comment
+import me.matsumo.fanbox.core.model.fanbox.PageOffsetInfo
+import me.matsumo.fanbox.core.model.fanbox.PostDetail
 import me.matsumo.fanbox.core.model.translation.TransString
 import me.matsumo.fanbox.core.model.translation.toFanboxComments
 import me.matsumo.fanbox.core.model.translation.toFanboxPostDetail
 import me.matsumo.fanbox.core.model.translation.toTrans
-import me.matsumo.fankt.fanbox.domain.PageOffsetInfo
-import me.matsumo.fankt.fanbox.domain.model.FanboxComment
-import me.matsumo.fankt.fanbox.domain.model.FanboxPostDetail
 import kotlin.time.Duration.Companion.seconds
 
 class TranslationRepository(
@@ -49,14 +49,14 @@ class TranslationRepository(
         result.body
     }
 
-    suspend fun translate(postDetail: FanboxPostDetail, locale: Locale): FanboxPostDetail = withContext(ioDispatcher) {
+    suspend fun translate(postDetail: PostDetail, locale: Locale): PostDetail = withContext(ioDispatcher) {
         val transPostDetail = postDetail.toTrans()
         val result = translate(transPostDetail, locale)
 
         result.toFanboxPostDetail(postDetail)
     }
 
-    suspend fun translate(comments: PageOffsetInfo<FanboxComment>, locale: Locale): PageOffsetInfo<FanboxComment> = withContext(ioDispatcher) {
+    suspend fun translate(comments: PageOffsetInfo<Comment>, locale: Locale): PageOffsetInfo<Comment> = withContext(ioDispatcher) {
         val transComments = comments.toTrans()
         val result = translate(transComments, locale)
 

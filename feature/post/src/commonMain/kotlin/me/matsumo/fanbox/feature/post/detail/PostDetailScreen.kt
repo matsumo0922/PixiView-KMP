@@ -69,6 +69,17 @@ import me.matsumo.fanbox.core.model.ScreenState
 import me.matsumo.fanbox.core.model.Setting
 import me.matsumo.fanbox.core.model.SimpleAlertContents
 import me.matsumo.fanbox.core.model.TranslationState
+import me.matsumo.fanbox.core.model.fanbox.Comment
+import me.matsumo.fanbox.core.model.fanbox.CommentId
+import me.matsumo.fanbox.core.model.fanbox.Cover
+import me.matsumo.fanbox.core.model.fanbox.CreatorDetail
+import me.matsumo.fanbox.core.model.fanbox.CreatorId
+import me.matsumo.fanbox.core.model.fanbox.MetaData
+import me.matsumo.fanbox.core.model.fanbox.PageOffsetInfo
+import me.matsumo.fanbox.core.model.fanbox.Post
+import me.matsumo.fanbox.core.model.fanbox.PostDetail
+import me.matsumo.fanbox.core.model.fanbox.PostId
+import me.matsumo.fanbox.core.model.fanbox.UserId
 import me.matsumo.fanbox.core.resources.Res
 import me.matsumo.fanbox.core.resources.error_network
 import me.matsumo.fanbox.core.resources.queue_added
@@ -103,17 +114,6 @@ import me.matsumo.fanbox.feature.post.detail.items.postDetailCardSection
 import me.matsumo.fanbox.feature.post.detail.items.postDetailCommentItems
 import me.matsumo.fanbox.feature.post.detail.items.postDetailItems
 import me.matsumo.fanbox.feature.post.detail.items.postDetailTagsSection
-import me.matsumo.fankt.fanbox.domain.PageOffsetInfo
-import me.matsumo.fankt.fanbox.domain.model.FanboxComment
-import me.matsumo.fankt.fanbox.domain.model.FanboxCover
-import me.matsumo.fankt.fanbox.domain.model.FanboxCreatorDetail
-import me.matsumo.fankt.fanbox.domain.model.FanboxMetaData
-import me.matsumo.fankt.fanbox.domain.model.FanboxPost
-import me.matsumo.fankt.fanbox.domain.model.FanboxPostDetail
-import me.matsumo.fankt.fanbox.domain.model.id.FanboxCommentId
-import me.matsumo.fankt.fanbox.domain.model.id.FanboxCreatorId
-import me.matsumo.fankt.fanbox.domain.model.id.FanboxPostId
-import me.matsumo.fankt.fanbox.domain.model.id.FanboxUserId
 import org.jetbrains.compose.resources.stringResource
 import org.koin.compose.koinInject
 import org.koin.compose.viewmodel.koinViewModel
@@ -128,7 +128,7 @@ internal enum class PostDetailRevealKeys {
 @OptIn(ExperimentalUuidApi::class, ExperimentalComposeUiApi::class, ExperimentalTime::class)
 @Composable
 internal fun PostDetailRoute(
-    postId: FanboxPostId,
+    postId: PostId,
     navigateTo: (Destination) -> Unit,
     navigateToCommentDeleteDialog: (SimpleAlertContents, () -> Unit) -> Unit,
     terminate: () -> Unit,
@@ -138,7 +138,7 @@ internal fun PostDetailRoute(
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
     val paging = uiState.paging?.collectAsLazyPagingItems()
 
-    val postDetailMap = remember { mutableStateMapOf<FanboxPostId, FanboxPostDetail>() }
+    val postDetailMap = remember { mutableStateMapOf<PostId, PostDetail>() }
     var currentPostId by remember { mutableStateOf(postId) }
     val snackbarHostState = remember { SnackbarHostState() }
     val scope = rememberCoroutineScope()
@@ -245,13 +245,13 @@ internal fun PostDetailRoute(
 
 @Composable
 private fun PostDetailView(
-    postId: FanboxPostId,
+    postId: PostId,
     shouldShowReveal: Boolean,
     revealState: RevealState,
     snackbarHostState: SnackbarHostState,
     navigateTo: (Destination) -> Unit,
     navigateToCommentDeleteDialog: (SimpleAlertContents, () -> Unit) -> Unit,
-    onPostDetailFetched: (FanboxPostDetail) -> Unit,
+    onPostDetailFetched: (PostDetail) -> Unit,
     onRevealCompleted: () -> Unit,
     terminate: () -> Unit,
     modifier: Modifier = Modifier,
@@ -384,33 +384,33 @@ private fun PostDetailView(
 @Composable
 private fun PostDetailScreen(
     revealState: RevealState,
-    postDetail: FanboxPostDetail,
-    comments: PageOffsetInfo<FanboxComment>,
-    creatorDetail: FanboxCreatorDetail,
-    bookmarkedPostIds: ImmutableList<FanboxPostId>,
+    postDetail: PostDetail,
+    comments: PageOffsetInfo<Comment>,
+    creatorDetail: CreatorDetail,
+    bookmarkedPostIds: ImmutableList<PostId>,
     setting: Setting,
-    metaData: FanboxMetaData,
-    bodyTransState: TranslationState<FanboxPostDetail>,
-    commentsTransState: TranslationState<PageOffsetInfo<FanboxComment>>,
+    metaData: MetaData,
+    bodyTransState: TranslationState<PostDetail>,
+    commentsTransState: TranslationState<PageOffsetInfo<Comment>>,
     shouldShowReveal: Boolean,
-    onClickBodyTranslate: (FanboxPostDetail) -> Unit,
-    onClickCommentsTranslate: (PageOffsetInfo<FanboxComment>) -> Unit,
-    onClickPost: (FanboxPostId) -> Unit,
-    onClickPostLike: (FanboxPostId) -> Unit,
-    onClickPostBookmark: (FanboxPost, Boolean) -> Unit,
-    onClickCommentLoadMore: (FanboxPostId, Int) -> Unit,
-    onClickCommentLike: (FanboxCommentId) -> Unit,
-    onClickCommentReply: (String, FanboxCommentId, FanboxCommentId) -> Unit,
-    onClickCommentDelete: (FanboxCommentId) -> Unit,
+    onClickBodyTranslate: (PostDetail) -> Unit,
+    onClickCommentsTranslate: (PageOffsetInfo<Comment>) -> Unit,
+    onClickPost: (PostId) -> Unit,
+    onClickPostLike: (PostId) -> Unit,
+    onClickPostBookmark: (Post, Boolean) -> Unit,
+    onClickCommentLoadMore: (PostId, Int) -> Unit,
+    onClickCommentLike: (CommentId) -> Unit,
+    onClickCommentReply: (String, CommentId, CommentId) -> Unit,
+    onClickCommentDelete: (CommentId) -> Unit,
     onClickTag: (String) -> Unit,
-    onClickCreator: (FanboxCreatorId) -> Unit,
-    onClickImage: (FanboxPostDetail.ImageItem) -> Unit,
-    onClickFile: (FanboxPostDetail.FileItem) -> Unit,
-    onClickDownloadImages: (List<FanboxPostDetail.ImageItem>) -> Unit,
-    onClickCreatorPosts: (FanboxCreatorId) -> Unit,
-    onClickCreatorPlans: (FanboxCreatorId) -> Unit,
-    onClickFollow: (FanboxUserId) -> Unit,
-    onClickUnfollow: (FanboxUserId) -> Unit,
+    onClickCreator: (CreatorId) -> Unit,
+    onClickImage: (PostDetail.ImageItem) -> Unit,
+    onClickFile: (PostDetail.FileItem) -> Unit,
+    onClickDownloadImages: (List<PostDetail.ImageItem>) -> Unit,
+    onClickCreatorPosts: (CreatorId) -> Unit,
+    onClickCreatorPlans: (CreatorId) -> Unit,
+    onClickFollow: (UserId) -> Unit,
+    onClickUnfollow: (UserId) -> Unit,
     onClickOpenBrowser: (String) -> Unit,
     onClickBillingPlus: (String?) -> Unit,
     onRevealCompleted: () -> Unit,
@@ -445,14 +445,14 @@ private fun PostDetailScreen(
 
     val isShowHeader = runCatching {
         when (val content = postDetail.body) {
-            is FanboxPostDetail.Body.Article -> content.blocks.first() !is FanboxPostDetail.Body.Article.Block.Image
-            is FanboxPostDetail.Body.File -> true
-            is FanboxPostDetail.Body.Image -> false
+            is PostDetail.Body.Article -> content.blocks.first() !is PostDetail.Body.Article.Block.Image
+            is PostDetail.Body.File -> true
+            is PostDetail.Body.Image -> false
             // 先頭が画像で始まらない本文はヘッダーを重ねても隠れないため表示する。
-            is FanboxPostDetail.Body.Text -> true
-            is FanboxPostDetail.Body.Video -> true
-            is FanboxPostDetail.Body.Html -> true
-            is FanboxPostDetail.Body.Unknown -> true
+            is PostDetail.Body.Text -> true
+            is PostDetail.Body.Video -> true
+            is PostDetail.Body.Html -> true
+            is PostDetail.Body.Unknown -> true
         }
     }.getOrDefault(true)
 
@@ -601,7 +601,7 @@ private fun PostDetailScreen(
 @OptIn(ExperimentalTime::class)
 @Composable
 private fun PostDetailHeader(
-    post: FanboxPostDetail,
+    post: PostDetail,
     modifier: Modifier = Modifier,
 ) {
     Box(modifier) {
@@ -712,12 +712,12 @@ private fun RevealOverlayScope.RevealOverlayContent(
     }
 }
 
-private fun FanboxPostDetail.adPost(): FanboxPost {
-    return FanboxPost(
+private fun PostDetail.adPost(): Post {
+    return Post(
         id = id,
         title = title,
         excerpt = excerpt,
-        cover = FanboxCover(
+        cover = Cover(
             url = coverImageUrl ?: body.imageItems.firstOrNull()?.thumbnailUrl.orEmpty(),
             type = "From Detail",
         ),

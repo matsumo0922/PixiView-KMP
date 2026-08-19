@@ -127,6 +127,14 @@ graph LR
   model --> common
 ```
 
+The FANBOX models the screens work with are owned by this app and live in `core/model`. The
+`fankt` library has its own models, and `core/repository` converts between the two. A change to a
+`fankt` model therefore stops at that conversion layer instead of reaching the screens.
+
+`core/datastore` is the one other place that holds `fankt` types. It keeps the cookie storage
+contract that `fankt` requires, and it writes bookmarks with `fankt`'s own serializer so that
+bookmarks saved by an earlier version stay readable.
+
 ## Remote parsing updates
 When FANBOX changes the shape of its responses, the app stops being able to read them, and a fix
 would otherwise reach you only through a store update. To close that gap, the Android app fetches a

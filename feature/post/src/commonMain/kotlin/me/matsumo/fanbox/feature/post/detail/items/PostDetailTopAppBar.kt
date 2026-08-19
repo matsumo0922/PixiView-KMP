@@ -31,19 +31,19 @@ import com.svenjacobs.reveal.RevealShape
 import com.svenjacobs.reveal.RevealState
 import com.svenjacobs.reveal.revealable
 import me.matsumo.fanbox.core.model.TranslationState
+import me.matsumo.fanbox.core.model.fanbox.PostDetail
 import me.matsumo.fanbox.feature.post.detail.PostDetailRevealKeys
-import me.matsumo.fankt.fanbox.domain.model.FanboxPostDetail
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 internal fun PostDetailTopAppBar(
     state: LazyListState,
     revealState: RevealState,
-    postDetail: FanboxPostDetail,
-    bodyTransState: TranslationState<FanboxPostDetail>,
+    postDetail: PostDetail,
+    bodyTransState: TranslationState<PostDetail>,
     isShowHeader: Boolean,
     onClickNavigateUp: () -> Unit,
-    onClickTranslate: (FanboxPostDetail) -> Unit,
+    onClickTranslate: (PostDetail) -> Unit,
     onClickMenu: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
@@ -67,9 +67,9 @@ internal fun PostDetailTopAppBar(
     val threshold = remember(state) {
         val headerSize = if (isShowHeader) 1 else 0
         val itemSize = when (val content = postDetail.body) {
-            is FanboxPostDetail.Body.Article -> content.blocks.size
-            is FanboxPostDetail.Body.File -> content.files.size
-            is FanboxPostDetail.Body.Image -> content.images.size
+            is PostDetail.Body.Article -> content.blocks.size
+            is PostDetail.Body.File -> content.files.size
+            is PostDetail.Body.Image -> content.images.size
             else -> 0
         }
 

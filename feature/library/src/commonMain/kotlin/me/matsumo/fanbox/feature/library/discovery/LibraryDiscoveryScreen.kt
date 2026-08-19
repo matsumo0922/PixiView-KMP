@@ -40,6 +40,9 @@ import kotlinx.coroutines.launch
 import me.matsumo.fanbox.core.model.Destination
 import me.matsumo.fanbox.core.model.ScreenState
 import me.matsumo.fanbox.core.model.Setting
+import me.matsumo.fanbox.core.model.fanbox.CreatorDetail
+import me.matsumo.fanbox.core.model.fanbox.CreatorId
+import me.matsumo.fanbox.core.model.fanbox.UserId
 import me.matsumo.fanbox.core.resources.Res
 import me.matsumo.fanbox.core.resources.billing_plus_toast_require_plus
 import me.matsumo.fanbox.core.resources.creator_following_pixiv
@@ -58,9 +61,6 @@ import me.matsumo.fanbox.core.ui.extensition.ToastExtension
 import me.matsumo.fanbox.core.ui.extensition.drawVerticalScrollbar
 import me.matsumo.fanbox.core.ui.theme.bold
 import me.matsumo.fanbox.feature.library.discovery.components.LibraryDiscoverySearchPostCreatorItem
-import me.matsumo.fankt.fanbox.domain.model.FanboxCreatorDetail
-import me.matsumo.fankt.fanbox.domain.model.id.FanboxCreatorId
-import me.matsumo.fankt.fanbox.domain.model.id.FanboxUserId
 import org.jetbrains.compose.resources.stringResource
 import org.koin.compose.koinInject
 import org.koin.compose.viewmodel.koinViewModel
@@ -99,7 +99,7 @@ internal fun LibraryDiscoveryRoute(
             followingPixivCreators = uiState.followingPixivCreators.toImmutableList(),
             openDrawer = openDrawer,
             fetch = viewModel::fetch,
-            onClickSearch = { navigateTo(Destination.PostSearch(FanboxCreatorId(""), null, null)) },
+            onClickSearch = { navigateTo(Destination.PostSearch(CreatorId(""), null, null)) },
             onClickPostByCreatorSearch = { navigateTo(Destination.PostByCreatorSearch(it)) },
             onClickCreator = { navigateTo(Destination.CreatorTop(it, true)) },
             onClickFollow = viewModel::follow,
@@ -117,16 +117,16 @@ internal fun LibraryDiscoveryRoute(
 @Composable
 private fun LibraryDiscoveryScreen(
     setting: Setting,
-    followingCreators: ImmutableList<FanboxCreatorDetail>,
-    recommendedCreators: ImmutableList<FanboxCreatorDetail>,
-    followingPixivCreators: ImmutableList<FanboxCreatorDetail>,
+    followingCreators: ImmutableList<CreatorDetail>,
+    recommendedCreators: ImmutableList<CreatorDetail>,
+    followingPixivCreators: ImmutableList<CreatorDetail>,
     openDrawer: () -> Unit,
     fetch: () -> Unit,
     onClickSearch: () -> Unit,
-    onClickPostByCreatorSearch: (FanboxCreatorId) -> Unit,
-    onClickCreator: (FanboxCreatorId) -> Unit,
-    onClickFollow: suspend (FanboxUserId) -> Result<Unit>,
-    onClickUnfollow: suspend (FanboxUserId) -> Result<Unit>,
+    onClickPostByCreatorSearch: (CreatorId) -> Unit,
+    onClickCreator: (CreatorId) -> Unit,
+    onClickFollow: suspend (UserId) -> Result<Unit>,
+    onClickUnfollow: suspend (UserId) -> Result<Unit>,
     onClickSupporting: (String) -> Unit,
     onClickBillingPlus: (String?) -> Unit,
     modifier: Modifier = Modifier,

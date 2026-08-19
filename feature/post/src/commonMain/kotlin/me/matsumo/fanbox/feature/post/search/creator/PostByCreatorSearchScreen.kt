@@ -37,6 +37,11 @@ import kotlinx.coroutines.launch
 import me.matsumo.fanbox.core.common.util.format
 import me.matsumo.fanbox.core.model.Destination
 import me.matsumo.fanbox.core.model.Setting
+import me.matsumo.fanbox.core.model.fanbox.CreatorDetail
+import me.matsumo.fanbox.core.model.fanbox.CreatorId
+import me.matsumo.fanbox.core.model.fanbox.Post
+import me.matsumo.fanbox.core.model.fanbox.PostId
+import me.matsumo.fanbox.core.model.fanbox.UserId
 import me.matsumo.fanbox.core.resources.Res
 import me.matsumo.fanbox.core.resources.creator_posts_download_dialog_title
 import me.matsumo.fanbox.core.resources.error_no_data
@@ -49,11 +54,6 @@ import me.matsumo.fanbox.core.ui.extensition.plus
 import me.matsumo.fanbox.core.ui.theme.bold
 import me.matsumo.fanbox.core.ui.view.ErrorView
 import me.matsumo.fanbox.feature.post.search.common.items.PostSearchTopBar
-import me.matsumo.fankt.fanbox.domain.model.FanboxCreatorDetail
-import me.matsumo.fankt.fanbox.domain.model.FanboxPost
-import me.matsumo.fankt.fanbox.domain.model.id.FanboxCreatorId
-import me.matsumo.fankt.fanbox.domain.model.id.FanboxPostId
-import me.matsumo.fankt.fanbox.domain.model.id.FanboxUserId
 import org.jetbrains.compose.resources.stringResource
 import org.koin.compose.koinInject
 import org.koin.compose.viewmodel.koinViewModel
@@ -102,20 +102,20 @@ internal fun PostByCreatorSearchRoute(
 private fun PostByCreatorSearchScreen(
     query: String,
     setting: Setting,
-    creatorDetail: FanboxCreatorDetail,
-    searchedPosts: ImmutableList<FanboxPost>,
-    bookmarkedPostIds: ImmutableList<FanboxPostId>,
+    creatorDetail: CreatorDetail,
+    searchedPosts: ImmutableList<Post>,
+    bookmarkedPostIds: ImmutableList<PostId>,
     progress: Float,
     isPrepared: Boolean,
     onQueryChanged: (String) -> Unit,
-    onPostClicked: (FanboxPostId) -> Unit,
-    onCreatorPostsClicked: (FanboxCreatorId) -> Unit,
-    onCreatorPlansClicked: (FanboxCreatorId) -> Unit,
-    onFollowClicked: suspend (FanboxUserId) -> Result<Unit>,
-    onUnfollowClicked: suspend (FanboxUserId) -> Result<Unit>,
+    onPostClicked: (PostId) -> Unit,
+    onCreatorPostsClicked: (CreatorId) -> Unit,
+    onCreatorPlansClicked: (CreatorId) -> Unit,
+    onFollowClicked: suspend (UserId) -> Result<Unit>,
+    onUnfollowClicked: suspend (UserId) -> Result<Unit>,
     onSupportingClicked: (String) -> Unit,
-    onLikeClicked: (FanboxPostId) -> Unit,
-    onBookmarkClicked: (FanboxPost, Boolean) -> Unit,
+    onLikeClicked: (PostId) -> Unit,
+    onBookmarkClicked: (Post, Boolean) -> Unit,
     onBackClicked: () -> Unit,
     modifier: Modifier = Modifier,
 ) {

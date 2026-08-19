@@ -47,7 +47,6 @@ import me.matsumo.fanbox.core.model.fanbox.Tag
 import me.matsumo.fanbox.core.model.fanbox.UserId
 import me.matsumo.fanbox.core.repository.mapper.toBell
 import me.matsumo.fanbox.core.repository.mapper.toComment
-import me.matsumo.fanbox.core.repository.mapper.toCommentId
 import me.matsumo.fanbox.core.repository.mapper.toCreatorDetail
 import me.matsumo.fanbox.core.repository.mapper.toCreatorId
 import me.matsumo.fanbox.core.repository.mapper.toCreatorPlan
@@ -69,7 +68,6 @@ import me.matsumo.fanbox.core.repository.mapper.toPost
 import me.matsumo.fanbox.core.repository.mapper.toPostDetail
 import me.matsumo.fanbox.core.repository.mapper.toPostId
 import me.matsumo.fanbox.core.repository.mapper.toTag
-import me.matsumo.fanbox.core.repository.mapper.toUserId
 import me.matsumo.fanbox.core.repository.paging.CreatorPostsPagingSource
 import me.matsumo.fanbox.core.repository.paging.HomePostsPagingSource
 import me.matsumo.fanbox.core.repository.paging.SearchCreatorsPagingSource

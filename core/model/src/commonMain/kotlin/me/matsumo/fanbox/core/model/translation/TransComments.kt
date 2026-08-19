@@ -1,30 +1,30 @@
 package me.matsumo.fanbox.core.model.translation
 
 import kotlinx.serialization.Serializable
-import me.matsumo.fankt.fanbox.domain.PageOffsetInfo
-import me.matsumo.fankt.fanbox.domain.model.FanboxComment
+import me.matsumo.fanbox.core.model.fanbox.Comment
+import me.matsumo.fanbox.core.model.fanbox.PageOffsetInfo
 
 @Serializable
 data class TransComments(
     val comments: List<String>,
 )
 
-private fun flatCooments(comments: List<FanboxComment>): List<FanboxComment> {
+private fun flatCooments(comments: List<Comment>): List<Comment> {
     return comments.flatMap {
         listOf(it) + flatCooments(it.replies)
     }
 }
 
-fun PageOffsetInfo<FanboxComment>.toTrans(): TransComments {
+fun PageOffsetInfo<Comment>.toTrans(): TransComments {
     return TransComments(
         comments = flatCooments(contents).map { it.body },
     )
 }
 
-fun TransComments.toFanboxComments(original: PageOffsetInfo<FanboxComment>): PageOffsetInfo<FanboxComment> {
+fun TransComments.toFanboxComments(original: PageOffsetInfo<Comment>): PageOffsetInfo<Comment> {
     var index = 0
 
-    fun replaceCommentBody(comment: FanboxComment): FanboxComment {
+    fun replaceCommentBody(comment: Comment): Comment {
         val newBody = comments[index++]
 
         return comment.copy(

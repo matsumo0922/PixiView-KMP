@@ -3,19 +3,19 @@ package me.matsumo.fanbox.core.repository.paging
 import androidx.paging.PagingSource
 import androidx.paging.PagingState
 import me.matsumo.fanbox.core.common.util.suspendRunCatching
+import me.matsumo.fanbox.core.model.fanbox.CreatorId
+import me.matsumo.fanbox.core.model.fanbox.Post
 import me.matsumo.fanbox.core.repository.FanboxRepository
-import me.matsumo.fankt.fanbox.domain.model.FanboxPost
-import me.matsumo.fankt.fanbox.domain.model.id.FanboxCreatorId
 
 class SearchPostsPagingSource(
     private val fanboxRepository: FanboxRepository,
-    private val creatorId: FanboxCreatorId?,
+    private val creatorId: CreatorId?,
     private val tag: String,
-) : PagingSource<Int, FanboxPost>() {
+) : PagingSource<Int, Post>() {
 
     override val keyReuseSupported: Boolean = true
 
-    override suspend fun load(params: LoadParams<Int>): LoadResult<Int, FanboxPost> {
+    override suspend fun load(params: LoadParams<Int>): LoadResult<Int, Post> {
         return suspendRunCatching {
             fanboxRepository.getPostFromQuery(tag, creatorId, params.key ?: 0)
         }.fold(
@@ -32,5 +32,5 @@ class SearchPostsPagingSource(
         )
     }
 
-    override fun getRefreshKey(state: PagingState<Int, FanboxPost>): Int? = null
+    override fun getRefreshKey(state: PagingState<Int, Post>): Int? = null
 }

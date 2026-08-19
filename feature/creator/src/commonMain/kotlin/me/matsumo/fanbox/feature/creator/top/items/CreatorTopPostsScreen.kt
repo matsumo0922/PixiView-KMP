@@ -43,6 +43,10 @@ import coil3.compose.SubcomposeAsyncImage
 import coil3.request.ImageRequest
 import kotlinx.collections.immutable.ImmutableList
 import me.matsumo.fanbox.core.model.Setting
+import me.matsumo.fanbox.core.model.fanbox.CreatorId
+import me.matsumo.fanbox.core.model.fanbox.Post
+import me.matsumo.fanbox.core.model.fanbox.PostId
+import me.matsumo.fanbox.core.model.fanbox.Tag
 import me.matsumo.fanbox.core.ui.ads.NativeAdView
 import me.matsumo.fanbox.core.ui.component.PostGridItem
 import me.matsumo.fanbox.core.ui.component.PostItem
@@ -55,24 +59,20 @@ import me.matsumo.fanbox.core.ui.extensition.drawVerticalScrollbar
 import me.matsumo.fanbox.core.ui.extensition.fanboxHeader
 import me.matsumo.fanbox.core.ui.theme.bold
 import me.matsumo.fanbox.core.ui.view.PagingErrorSection
-import me.matsumo.fankt.fanbox.domain.model.FanboxPost
-import me.matsumo.fankt.fanbox.domain.model.FanboxTag
-import me.matsumo.fankt.fanbox.domain.model.id.FanboxCreatorId
-import me.matsumo.fankt.fanbox.domain.model.id.FanboxPostId
 
 @Composable
 internal fun CreatorTopPostsScreen(
     state: LazyGridState,
     setting: Setting,
-    bookmarkedPostsIds: ImmutableList<FanboxPostId>,
-    pagingAdapter: LazyPagingItems<FanboxPost>,
-    creatorTags: ImmutableList<FanboxTag>,
-    onClickPost: (FanboxPostId) -> Unit,
-    onClickPostBookmark: (FanboxPost, Boolean) -> Unit,
-    onClickCreator: (FanboxCreatorId) -> Unit,
-    onClickTag: (FanboxTag) -> Unit,
-    onClickPostLike: (FanboxPostId) -> Unit,
-    onClickPlanList: (FanboxCreatorId) -> Unit,
+    bookmarkedPostsIds: ImmutableList<PostId>,
+    pagingAdapter: LazyPagingItems<Post>,
+    creatorTags: ImmutableList<Tag>,
+    onClickPost: (PostId) -> Unit,
+    onClickPostBookmark: (Post, Boolean) -> Unit,
+    onClickCreator: (CreatorId) -> Unit,
+    onClickTag: (Tag) -> Unit,
+    onClickPostLike: (PostId) -> Unit,
+    onClickPlanList: (CreatorId) -> Unit,
     modifier: Modifier = Modifier,
 ) {
     val adOffset: Int
@@ -129,16 +129,16 @@ private fun PagingItems(
     adOffset: Int,
     adInterval: Int,
     setting: Setting,
-    bookmarkedPostIds: ImmutableList<FanboxPostId>,
-    pagingAdapter: LazyPagingItems<FanboxPost>,
-    creatorTags: ImmutableList<FanboxTag>,
+    bookmarkedPostIds: ImmutableList<PostId>,
+    pagingAdapter: LazyPagingItems<Post>,
+    creatorTags: ImmutableList<Tag>,
     isGridMode: Boolean,
-    onClickPost: (FanboxPostId) -> Unit,
-    onClickPostBookmark: (FanboxPost, Boolean) -> Unit,
-    onClickCreator: (FanboxCreatorId) -> Unit,
-    onClickTag: (FanboxTag) -> Unit,
-    onClickPostLike: (FanboxPostId) -> Unit,
-    onClickPlanList: (FanboxCreatorId) -> Unit,
+    onClickPost: (PostId) -> Unit,
+    onClickPostBookmark: (Post, Boolean) -> Unit,
+    onClickCreator: (CreatorId) -> Unit,
+    onClickTag: (Tag) -> Unit,
+    onClickPostLike: (PostId) -> Unit,
+    onClickPlanList: (CreatorId) -> Unit,
     modifier: Modifier = Modifier,
 ) {
     LazyVerticalGrid(
@@ -233,8 +233,8 @@ private fun PagingItems(
 
 @Composable
 private fun TagItem(
-    tag: FanboxTag,
-    onClickTag: (FanboxTag) -> Unit,
+    tag: Tag,
+    onClickTag: (Tag) -> Unit,
     modifier: Modifier = Modifier,
 ) {
     Box(

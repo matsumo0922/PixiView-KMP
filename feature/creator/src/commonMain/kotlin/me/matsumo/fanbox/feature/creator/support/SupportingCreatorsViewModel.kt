@@ -8,9 +8,9 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 import me.matsumo.fanbox.core.common.util.suspendRunCatching
 import me.matsumo.fanbox.core.model.ScreenState
+import me.matsumo.fanbox.core.model.fanbox.CreatorPlan
 import me.matsumo.fanbox.core.model.toScreenStateError
 import me.matsumo.fanbox.core.repository.FanboxRepository
-import me.matsumo.fankt.fanbox.domain.model.FanboxCreatorPlan
 
 class SupportingCreatorsViewModel(
     private val fanboxRepository: FanboxRepository,
@@ -41,5 +41,5 @@ class SupportingCreatorsViewModel(
 
 @Stable
 data class SupportingCreatorsUiState(
-    val supportedPlans: List<FanboxCreatorPlan>,
+    val supportedPlans: List<CreatorPlan>,
 )

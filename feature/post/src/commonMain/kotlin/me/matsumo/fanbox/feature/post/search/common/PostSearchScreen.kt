@@ -18,16 +18,16 @@ import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.toImmutableList
 import me.matsumo.fanbox.core.model.Destination
 import me.matsumo.fanbox.core.model.Setting
+import me.matsumo.fanbox.core.model.fanbox.CreatorDetail
+import me.matsumo.fanbox.core.model.fanbox.CreatorId
+import me.matsumo.fanbox.core.model.fanbox.Post
+import me.matsumo.fanbox.core.model.fanbox.PostId
+import me.matsumo.fanbox.core.model.fanbox.Tag
+import me.matsumo.fanbox.core.model.fanbox.UserId
 import me.matsumo.fanbox.core.ui.extensition.NavigatorExtension
 import me.matsumo.fanbox.feature.post.search.common.items.PostSearchCreatorScreen
 import me.matsumo.fanbox.feature.post.search.common.items.PostSearchTagScreen
 import me.matsumo.fanbox.feature.post.search.common.items.PostSearchTopBar
-import me.matsumo.fankt.fanbox.domain.model.FanboxCreatorDetail
-import me.matsumo.fankt.fanbox.domain.model.FanboxPost
-import me.matsumo.fankt.fanbox.domain.model.FanboxTag
-import me.matsumo.fankt.fanbox.domain.model.id.FanboxCreatorId
-import me.matsumo.fankt.fanbox.domain.model.id.FanboxPostId
-import me.matsumo.fankt.fanbox.domain.model.id.FanboxUserId
 import org.koin.compose.koinInject
 import org.koin.compose.viewmodel.koinViewModel
 
@@ -70,7 +70,7 @@ internal fun PostSearchRoute(
         onClickSupporting = { navigatorExtension.navigateToWebPage(it, "") },
         onSearch = {
             if (uiState.query.isNotBlank()) {
-                navigateTo(Destination.PostSearch(it.creatorId ?: FanboxCreatorId(""), it.creatorQuery, it.tag))
+                navigateTo(Destination.PostSearch(it.creatorId ?: CreatorId(""), it.creatorQuery, it.tag))
             } else {
                 viewModel.search(it)
             }
@@ -84,19 +84,19 @@ private fun PostSearchScreen(
     query: String,
     initialQuery: String,
     setting: Setting,
-    bookmarkedPosts: ImmutableList<FanboxPostId>,
-    suggestTags: ImmutableList<FanboxTag>,
-    creatorPaging: LazyPagingItems<FanboxCreatorDetail>,
-    tagPaging: LazyPagingItems<FanboxPost>,
+    bookmarkedPosts: ImmutableList<PostId>,
+    suggestTags: ImmutableList<Tag>,
+    creatorPaging: LazyPagingItems<CreatorDetail>,
+    tagPaging: LazyPagingItems<Post>,
     onSearch: (PostSearchQuery) -> Unit,
     onTerminate: () -> Unit,
-    onClickPost: (FanboxPostId) -> Unit,
-    onClickPostLike: (FanboxPostId) -> Unit,
-    onClickPostBookmark: (FanboxPost, Boolean) -> Unit,
-    onClickCreatorPosts: (FanboxCreatorId) -> Unit,
-    onClickCreatorPlans: (FanboxCreatorId) -> Unit,
-    onClickFollow: suspend (FanboxUserId) -> Result<Unit>,
-    onClickUnfollow: suspend (FanboxUserId) -> Result<Unit>,
+    onClickPost: (PostId) -> Unit,
+    onClickPostLike: (PostId) -> Unit,
+    onClickPostBookmark: (Post, Boolean) -> Unit,
+    onClickCreatorPosts: (CreatorId) -> Unit,
+    onClickCreatorPlans: (CreatorId) -> Unit,
+    onClickFollow: suspend (UserId) -> Result<Unit>,
+    onClickUnfollow: suspend (UserId) -> Result<Unit>,
     onClickSupporting: (String) -> Unit,
     modifier: Modifier = Modifier,
 ) {
@@ -155,7 +155,7 @@ private fun PostSearchScreen(
 }
 
 internal fun buildQuery(
-    creatorId: FanboxCreatorId,
+    creatorId: CreatorId,
     creatorQuery: String?,
     tag: String?,
 ): String {
@@ -178,7 +178,7 @@ internal fun buildQuery(
 
 internal fun buildQuery(query: PostSearchQuery): String {
     return buildQuery(
-        creatorId = query.creatorId ?: FanboxCreatorId(""),
+        creatorId = query.creatorId ?: CreatorId(""),
         creatorQuery = query.creatorQuery,
         tag = query.tag,
     )
@@ -188,7 +188,7 @@ internal fun parseQuery(query: String): PostSearchQuery {
     val queryList = query.split(" ").filter { it.isNotBlank() }
 
     var mode = PostSearchMode.Unknown
-    var creatorId: FanboxCreatorId? = null
+    var creatorId: CreatorId? = null
     var creatorQuery: String? = null
     var tag: String? = null
 
@@ -196,7 +196,7 @@ internal fun parseQuery(query: String): PostSearchQuery {
         when {
             it.startsWith("from:@") -> {
                 mode = PostSearchMode.Tag
-                creatorId = FanboxCreatorId(it.removePrefix("from:@"))
+                creatorId = CreatorId(it.removePrefix("from:@"))
             }
 
             it.startsWith("#") -> {

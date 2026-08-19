@@ -26,6 +26,7 @@ import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.toImmutableList
 import me.matsumo.fanbox.core.common.util.format
 import me.matsumo.fanbox.core.model.Destination
+import me.matsumo.fanbox.core.model.fanbox.CreatorId
 import me.matsumo.fanbox.core.resources.Res
 import me.matsumo.fanbox.core.resources.error_no_data
 import me.matsumo.fanbox.core.resources.error_no_data_payments
@@ -36,7 +37,6 @@ import me.matsumo.fanbox.core.ui.extensition.drawVerticalScrollbar
 import me.matsumo.fanbox.core.ui.view.EmptyView
 import me.matsumo.fanbox.feature.creator.payment.items.MonthItem
 import me.matsumo.fanbox.feature.creator.payment.items.PaymentItem
-import me.matsumo.fankt.fanbox.domain.model.id.FanboxCreatorId
 import org.jetbrains.compose.resources.stringResource
 import org.koin.compose.viewmodel.koinViewModel
 import kotlin.time.ExperimentalTime
@@ -68,7 +68,7 @@ internal fun PaymentsRoute(
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 private fun PaymentsScreen(
-    onClickCreatorPosts: (FanboxCreatorId) -> Unit,
+    onClickCreatorPosts: (CreatorId) -> Unit,
     onTerminate: () -> Unit,
     payments: ImmutableList<Payment>,
     modifier: Modifier = Modifier,

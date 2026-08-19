@@ -27,6 +27,9 @@ import coil3.compose.AsyncImage
 import coil3.compose.LocalPlatformContext
 import coil3.compose.SubcomposeAsyncImage
 import coil3.request.ImageRequest
+import me.matsumo.fanbox.core.model.fanbox.CreatorId
+import me.matsumo.fanbox.core.model.fanbox.CreatorPlan
+import me.matsumo.fanbox.core.model.fanbox.PaymentMethod
 import me.matsumo.fanbox.core.resources.Res
 import me.matsumo.fanbox.core.resources.creator_supporting_fan_card
 import me.matsumo.fanbox.core.resources.creator_supporting_payment_method_card
@@ -40,17 +43,14 @@ import me.matsumo.fanbox.core.ui.extensition.SimmerPlaceHolder
 import me.matsumo.fanbox.core.ui.extensition.asCoilImage
 import me.matsumo.fanbox.core.ui.extensition.fanboxHeader
 import me.matsumo.fanbox.core.ui.theme.bold
-import me.matsumo.fankt.fanbox.domain.model.FanboxCreatorPlan
-import me.matsumo.fankt.fanbox.domain.model.FanboxPaymentMethod
-import me.matsumo.fankt.fanbox.domain.model.id.FanboxCreatorId
 import org.jetbrains.compose.resources.stringResource
 
 @Composable
 internal fun SupportingCreatorItem(
-    supportingPlan: FanboxCreatorPlan,
+    supportingPlan: CreatorPlan,
     onClickPlanDetail: (String) -> Unit,
-    onClickFanCard: (FanboxCreatorId) -> Unit,
-    onClickCreatorPosts: (FanboxCreatorId) -> Unit,
+    onClickFanCard: (CreatorId) -> Unit,
+    onClickCreatorPosts: (CreatorId) -> Unit,
     modifier: Modifier = Modifier,
 ) {
     Card(
@@ -129,8 +129,8 @@ internal fun SupportingCreatorItem(
 
 @Composable
 private fun UserSection(
-    plan: FanboxCreatorPlan,
-    onClickCreator: (FanboxCreatorId) -> Unit,
+    plan: CreatorPlan,
+    onClickCreator: (CreatorId) -> Unit,
     modifier: Modifier = Modifier,
 ) {
     Row(
@@ -172,10 +172,10 @@ private fun UserSection(
                 Text(
                     modifier = Modifier.fillMaxWidth(),
                     text = when (plan.paymentMethod) {
-                        FanboxPaymentMethod.CARD -> stringResource(Res.string.creator_supporting_payment_method_card)
-                        FanboxPaymentMethod.PAYPAL -> stringResource(Res.string.creator_supporting_payment_method_paypal)
-                        FanboxPaymentMethod.CVS -> stringResource(Res.string.creator_supporting_payment_method_cvs)
-                        FanboxPaymentMethod.UNKNOWN -> stringResource(Res.string.creator_supporting_payment_method_unknown)
+                        PaymentMethod.CARD -> stringResource(Res.string.creator_supporting_payment_method_card)
+                        PaymentMethod.PAYPAL -> stringResource(Res.string.creator_supporting_payment_method_paypal)
+                        PaymentMethod.CVS -> stringResource(Res.string.creator_supporting_payment_method_cvs)
+                        PaymentMethod.UNKNOWN -> stringResource(Res.string.creator_supporting_payment_method_unknown)
                     },
                     style = MaterialTheme.typography.bodySmall,
                     color = MaterialTheme.colorScheme.onSurfaceVariant,

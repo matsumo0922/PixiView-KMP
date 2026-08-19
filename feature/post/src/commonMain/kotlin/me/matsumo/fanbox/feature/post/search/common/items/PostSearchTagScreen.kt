@@ -21,6 +21,9 @@ import app.cash.paging.compose.itemContentType
 import app.cash.paging.compose.itemKey
 import kotlinx.collections.immutable.ImmutableList
 import me.matsumo.fanbox.core.model.Setting
+import me.matsumo.fanbox.core.model.fanbox.CreatorId
+import me.matsumo.fanbox.core.model.fanbox.Post
+import me.matsumo.fanbox.core.model.fanbox.PostId
 import me.matsumo.fanbox.core.resources.Res
 import me.matsumo.fanbox.core.resources.error_no_data_search
 import me.matsumo.fanbox.core.ui.LazyPagingItemsLoadContents
@@ -29,20 +32,17 @@ import me.matsumo.fanbox.core.ui.extensition.LocalNavigationType
 import me.matsumo.fanbox.core.ui.extensition.PixiViewNavigationType
 import me.matsumo.fanbox.core.ui.extensition.drawVerticalScrollbar
 import me.matsumo.fanbox.core.ui.view.PagingErrorSection
-import me.matsumo.fankt.fanbox.domain.model.FanboxPost
-import me.matsumo.fankt.fanbox.domain.model.id.FanboxCreatorId
-import me.matsumo.fankt.fanbox.domain.model.id.FanboxPostId
 
 @Composable
 internal fun PostSearchTagScreen(
-    pagingAdapter: LazyPagingItems<FanboxPost>,
+    pagingAdapter: LazyPagingItems<Post>,
     setting: Setting,
-    bookmarkedPosts: ImmutableList<FanboxPostId>,
-    onClickPost: (FanboxPostId) -> Unit,
-    onClickPostLike: (FanboxPostId) -> Unit,
-    onClickPostBookmark: (FanboxPost, Boolean) -> Unit,
-    onClickCreator: (FanboxCreatorId) -> Unit,
-    onClickPlanList: (FanboxCreatorId) -> Unit,
+    bookmarkedPosts: ImmutableList<PostId>,
+    onClickPost: (PostId) -> Unit,
+    onClickPostLike: (PostId) -> Unit,
+    onClickPostBookmark: (Post, Boolean) -> Unit,
+    onClickCreator: (CreatorId) -> Unit,
+    onClickPlanList: (CreatorId) -> Unit,
     modifier: Modifier = Modifier,
 ) {
     val keyboardController = LocalSoftwareKeyboardController.current

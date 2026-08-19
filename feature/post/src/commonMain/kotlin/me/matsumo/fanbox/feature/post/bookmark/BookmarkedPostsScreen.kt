@@ -32,6 +32,9 @@ import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.toImmutableList
 import me.matsumo.fanbox.core.model.Destination
 import me.matsumo.fanbox.core.model.Setting
+import me.matsumo.fanbox.core.model.fanbox.CreatorId
+import me.matsumo.fanbox.core.model.fanbox.Post
+import me.matsumo.fanbox.core.model.fanbox.PostId
 import me.matsumo.fanbox.core.resources.Res
 import me.matsumo.fanbox.core.resources.bookmark_empty_description
 import me.matsumo.fanbox.core.resources.bookmark_empty_title
@@ -42,9 +45,6 @@ import me.matsumo.fanbox.core.ui.extensition.PixiViewNavigationType
 import me.matsumo.fanbox.core.ui.extensition.drawVerticalScrollbar
 import me.matsumo.fanbox.core.ui.view.ErrorView
 import me.matsumo.fanbox.feature.post.bookmark.items.BookmarkedPostsTopBar
-import me.matsumo.fankt.fanbox.domain.model.FanboxPost
-import me.matsumo.fankt.fanbox.domain.model.id.FanboxCreatorId
-import me.matsumo.fankt.fanbox.domain.model.id.FanboxPostId
 import org.koin.compose.viewmodel.koinViewModel
 
 @Composable
@@ -81,14 +81,14 @@ internal fun BookmarkedPostsRoute(
 @Composable
 private fun BookmarkedPostsScreen(
     setting: Setting,
-    posts: ImmutableList<FanboxPost>,
-    bookmarkedPostIds: ImmutableList<FanboxPostId>,
+    posts: ImmutableList<Post>,
+    bookmarkedPostIds: ImmutableList<PostId>,
     onSearch: (String) -> Unit,
-    onClickPost: (FanboxPostId) -> Unit,
-    onCLickPostLike: (FanboxPostId) -> Unit,
-    onClickPostBookmark: (FanboxPost, Boolean) -> Unit,
-    onClickCreatorPosts: (FanboxCreatorId) -> Unit,
-    onClickCreatorPlans: (FanboxCreatorId) -> Unit,
+    onClickPost: (PostId) -> Unit,
+    onCLickPostLike: (PostId) -> Unit,
+    onClickPostBookmark: (Post, Boolean) -> Unit,
+    onClickCreatorPosts: (CreatorId) -> Unit,
+    onClickCreatorPlans: (CreatorId) -> Unit,
     onTerminate: () -> Unit,
     modifier: Modifier = Modifier,
 ) {

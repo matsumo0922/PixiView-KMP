@@ -31,6 +31,7 @@ import me.matsumo.fanbox.core.model.Destination
 import me.matsumo.fanbox.core.model.DownloadFileType
 import me.matsumo.fanbox.core.model.Setting
 import me.matsumo.fanbox.core.model.SimpleAlertContents
+import me.matsumo.fanbox.core.model.fanbox.MetaData
 import me.matsumo.fanbox.core.resources.Res
 import me.matsumo.fanbox.core.resources.billing_plus_toast_require_plus
 import me.matsumo.fanbox.core.resources.setting_title
@@ -48,7 +49,6 @@ import me.matsumo.fanbox.feature.setting.top.items.SettingTopGeneralSection
 import me.matsumo.fanbox.feature.setting.top.items.SettingTopInformationSection
 import me.matsumo.fanbox.feature.setting.top.items.SettingTopOthersSection
 import me.matsumo.fanbox.feature.setting.top.items.SettingTopThemeSection
-import me.matsumo.fankt.fanbox.domain.model.FanboxMetaData
 import org.jetbrains.compose.resources.stringResource
 import org.koin.compose.koinInject
 import org.koin.compose.viewmodel.koinViewModel
@@ -163,7 +163,7 @@ internal fun SettingTopRoute(
 @Composable
 private fun SettingTopScreen(
     setting: Setting,
-    metaData: FanboxMetaData,
+    metaData: MetaData,
     fanboxSessionId: String,
     config: PixiViewConfig,
     onClickThemeSetting: () -> Unit,

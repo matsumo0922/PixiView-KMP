@@ -17,16 +17,16 @@ import androidx.compose.ui.unit.dp
 import coil3.compose.LocalPlatformContext
 import coil3.compose.SubcomposeAsyncImage
 import coil3.request.ImageRequest
+import me.matsumo.fanbox.core.model.fanbox.CreatorDetail
 import me.matsumo.fanbox.core.resources.Res
 import me.matsumo.fanbox.core.resources.im_default_user
 import me.matsumo.fanbox.core.ui.extensition.FadePlaceHolder
 import me.matsumo.fanbox.core.ui.extensition.asCoilImage
 import me.matsumo.fanbox.core.ui.theme.bold
-import me.matsumo.fankt.fanbox.domain.model.FanboxCreatorDetail
 
 @Composable
 internal fun CreatorPostsDownloadUserSection(
-    creatorDetail: FanboxCreatorDetail,
+    creatorDetail: CreatorDetail,
     modifier: Modifier = Modifier,
 ) {
     Row(

@@ -13,15 +13,15 @@ import kotlinx.coroutines.launch
 import kotlinx.serialization.Serializable
 import me.matsumo.fanbox.core.common.util.suspendRunCatching
 import me.matsumo.fanbox.core.model.Setting
+import me.matsumo.fanbox.core.model.fanbox.CreatorDetail
+import me.matsumo.fanbox.core.model.fanbox.CreatorId
+import me.matsumo.fanbox.core.model.fanbox.Post
+import me.matsumo.fanbox.core.model.fanbox.PostId
+import me.matsumo.fanbox.core.model.fanbox.Tag
+import me.matsumo.fanbox.core.model.fanbox.UserId
 import me.matsumo.fanbox.core.repository.FanboxRepository
 import me.matsumo.fanbox.core.repository.SettingRepository
 import me.matsumo.fanbox.core.ui.extensition.emptyPaging
-import me.matsumo.fankt.fanbox.domain.model.FanboxCreatorDetail
-import me.matsumo.fankt.fanbox.domain.model.FanboxPost
-import me.matsumo.fankt.fanbox.domain.model.FanboxTag
-import me.matsumo.fankt.fanbox.domain.model.id.FanboxCreatorId
-import me.matsumo.fankt.fanbox.domain.model.id.FanboxPostId
-import me.matsumo.fankt.fanbox.domain.model.id.FanboxUserId
 
 class PostSearchViewModel(
     private val settingRepository: SettingRepository,
@@ -94,19 +94,19 @@ class PostSearchViewModel(
         }
     }
 
-    suspend fun follow(creatorUserId: FanboxUserId): Result<Unit> {
+    suspend fun follow(creatorUserId: UserId): Result<Unit> {
         return suspendRunCatching {
             fanboxRepository.followCreator(creatorUserId)
         }
     }
 
-    suspend fun unfollow(creatorUserId: FanboxUserId): Result<Unit> {
+    suspend fun unfollow(creatorUserId: UserId): Result<Unit> {
         return suspendRunCatching {
             fanboxRepository.unfollowCreator(creatorUserId)
         }
     }
 
-    fun postLike(postId: FanboxPostId) {
+    fun postLike(postId: PostId) {
         viewModelScope.launch {
             suspendRunCatching {
                 fanboxRepository.likePost(postId)
@@ -114,7 +114,7 @@ class PostSearchViewModel(
         }
     }
 
-    fun postBookmark(post: FanboxPost, isBookmarked: Boolean) {
+    fun postBookmark(post: Post, isBookmarked: Boolean) {
         viewModelScope.launch {
             suspendRunCatching {
                 if (isBookmarked) {
@@ -131,11 +131,11 @@ class PostSearchViewModel(
 data class PostSearchUiState(
     val query: String,
     val setting: Setting,
-    val bookmarkedPosts: List<FanboxPostId>,
-    val suggestTags: List<FanboxTag>,
-    val creatorPaging: Flow<PagingData<FanboxCreatorDetail>>,
-    val tagPaging: Flow<PagingData<FanboxPost>>,
-    val postPaging: Flow<PagingData<FanboxPost>>,
+    val bookmarkedPosts: List<PostId>,
+    val suggestTags: List<Tag>,
+    val creatorPaging: Flow<PagingData<CreatorDetail>>,
+    val tagPaging: Flow<PagingData<Post>>,
+    val postPaging: Flow<PagingData<Post>>,
 )
 
 enum class PostSearchMode {
@@ -148,7 +148,7 @@ enum class PostSearchMode {
 @Serializable
 data class PostSearchQuery(
     val mode: PostSearchMode,
-    val creatorId: FanboxCreatorId?,
+    val creatorId: CreatorId?,
     val creatorQuery: String?,
     val postQuery: String?,
     val tag: String?,

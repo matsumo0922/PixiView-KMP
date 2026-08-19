@@ -16,6 +16,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import kotlinx.coroutines.flow.collectLatest
+import me.matsumo.fanbox.core.model.fanbox.CreatorPlanDetail
 import me.matsumo.fanbox.core.resources.Res
 import me.matsumo.fanbox.core.resources.common_downloaded
 import me.matsumo.fanbox.core.resources.error_network
@@ -25,7 +26,6 @@ import me.matsumo.fanbox.core.ui.component.PixiViewTopBar
 import me.matsumo.fanbox.core.ui.extensition.LocalSnackbarHostState
 import me.matsumo.fanbox.core.ui.extensition.ToastExtension
 import me.matsumo.fanbox.feature.creator.fancard.items.FanCardItem
-import me.matsumo.fankt.fanbox.domain.model.FanboxCreatorPlanDetail
 import org.koin.compose.koinInject
 import org.koin.compose.viewmodel.koinViewModel
 
@@ -62,7 +62,7 @@ internal fun FanCardRoute(
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 private fun FanCardScreen(
-    planDetail: FanboxCreatorPlanDetail,
+    planDetail: CreatorPlanDetail,
     onTerminate: () -> Unit,
     modifier: Modifier = Modifier,
 ) {

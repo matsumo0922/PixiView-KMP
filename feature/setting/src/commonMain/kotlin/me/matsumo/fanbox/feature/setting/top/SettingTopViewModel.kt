@@ -16,6 +16,7 @@ import me.matsumo.fanbox.core.model.DownloadFileType
 import me.matsumo.fanbox.core.model.Flag
 import me.matsumo.fanbox.core.model.ScreenState
 import me.matsumo.fanbox.core.model.Setting
+import me.matsumo.fanbox.core.model.fanbox.MetaData
 import me.matsumo.fanbox.core.repository.FanboxRepository
 import me.matsumo.fanbox.core.repository.FlagRepository
 import me.matsumo.fanbox.core.repository.SettingRepository
@@ -24,7 +25,6 @@ import me.matsumo.fanbox.core.resources.error_no_data
 import me.matsumo.fanbox.core.resources.home_app_lock_message
 import me.matsumo.fanbox.core.resources.home_app_lock_title
 import me.matsumo.fanbox.core.ui.extensition.getFanboxMetadataDummy
-import me.matsumo.fankt.fanbox.domain.model.FanboxMetaData
 import org.jetbrains.compose.resources.getString
 
 class SettingTopViewModel(
@@ -139,7 +139,7 @@ class SettingTopViewModel(
 @Stable
 data class SettingTopUiState(
     val setting: Setting,
-    val metaData: FanboxMetaData,
+    val metaData: MetaData,
     val fanboxSessionId: String,
     val config: PixiViewConfig,
 )

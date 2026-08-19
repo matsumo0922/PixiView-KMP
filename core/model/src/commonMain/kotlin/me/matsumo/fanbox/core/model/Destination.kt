@@ -1,8 +1,8 @@
 package me.matsumo.fanbox.core.model
 
 import kotlinx.serialization.Serializable
-import me.matsumo.fankt.fanbox.domain.model.id.FanboxCreatorId
-import me.matsumo.fankt.fanbox.domain.model.id.FanboxPostId
+import me.matsumo.fanbox.core.model.fanbox.CreatorId
+import me.matsumo.fanbox.core.model.fanbox.PostId
 
 @Serializable
 sealed interface Destination {
@@ -12,7 +12,7 @@ sealed interface Destination {
 
     @Serializable
     data class PostDetail(
-        val postId: FanboxPostId,
+        val postId: PostId,
         val pagingType: PagingType = PagingType.Unknown,
     ) : Destination {
         @Serializable
@@ -27,20 +27,20 @@ sealed interface Destination {
 
     @Serializable
     data class PostImage(
-        val postId: FanboxPostId,
+        val postId: PostId,
         val index: Int,
     ) : Destination
 
     @Serializable
     data class PostSearch(
-        val creatorId: FanboxCreatorId,
+        val creatorId: CreatorId,
         val creatorQuery: String?,
         val tag: String?,
     ) : Destination
 
     @Serializable
     data class PostByCreatorSearch(
-        val creatorId: FanboxCreatorId,
+        val creatorId: CreatorId,
     ) : Destination
 
     @Serializable
@@ -48,13 +48,13 @@ sealed interface Destination {
 
     @Serializable
     data class CreatorTop(
-        val creatorId: FanboxCreatorId,
+        val creatorId: CreatorId,
         val isPosts: Boolean = true,
     ) : Destination
 
     @Serializable
     data class CreatorPostsDownload(
-        val creatorId: FanboxCreatorId,
+        val creatorId: CreatorId,
     ) : Destination
 
     @Serializable
@@ -68,7 +68,7 @@ sealed interface Destination {
 
     @Serializable
     data class FanCard(
-        val creatorId: FanboxCreatorId,
+        val creatorId: CreatorId,
     ) : Destination
 
     @Serializable

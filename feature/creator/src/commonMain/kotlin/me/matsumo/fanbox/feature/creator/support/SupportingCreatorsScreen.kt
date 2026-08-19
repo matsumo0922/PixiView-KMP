@@ -26,6 +26,8 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.toImmutableList
 import me.matsumo.fanbox.core.model.Destination
+import me.matsumo.fanbox.core.model.fanbox.CreatorId
+import me.matsumo.fanbox.core.model.fanbox.CreatorPlan
 import me.matsumo.fanbox.core.resources.Res
 import me.matsumo.fanbox.core.resources.error_no_data
 import me.matsumo.fanbox.core.resources.error_no_data_supported
@@ -38,8 +40,6 @@ import me.matsumo.fanbox.core.ui.extensition.PixiViewNavigationType
 import me.matsumo.fanbox.core.ui.extensition.drawVerticalScrollbar
 import me.matsumo.fanbox.core.ui.view.EmptyView
 import me.matsumo.fanbox.feature.creator.support.item.SupportingCreatorItem
-import me.matsumo.fankt.fanbox.domain.model.FanboxCreatorPlan
-import me.matsumo.fankt.fanbox.domain.model.id.FanboxCreatorId
 import org.jetbrains.compose.resources.stringResource
 import org.koin.compose.koinInject
 import org.koin.compose.viewmodel.koinViewModel
@@ -74,10 +74,10 @@ internal fun SupportingCreatorsRoute(
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 private fun SupportingCreatorsScreen(
-    supportedCreators: ImmutableList<FanboxCreatorPlan>,
+    supportedCreators: ImmutableList<CreatorPlan>,
     onClickPlanDetail: (String) -> Unit,
-    onClickFanCard: (FanboxCreatorId) -> Unit,
-    onClickCreatorPosts: (FanboxCreatorId) -> Unit,
+    onClickFanCard: (CreatorId) -> Unit,
+    onClickCreatorPosts: (CreatorId) -> Unit,
     terminate: () -> Unit,
     modifier: Modifier = Modifier,
 ) {

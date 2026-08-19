@@ -11,11 +11,11 @@ import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 import me.matsumo.fanbox.core.common.util.suspendRunCatching
 import me.matsumo.fanbox.core.model.Setting
+import me.matsumo.fanbox.core.model.fanbox.Post
+import me.matsumo.fanbox.core.model.fanbox.PostId
 import me.matsumo.fanbox.core.repository.FanboxRepository
 import me.matsumo.fanbox.core.repository.SettingRepository
 import me.matsumo.fanbox.core.ui.extensition.emptyPaging
-import me.matsumo.fankt.fanbox.domain.model.FanboxPost
-import me.matsumo.fankt.fanbox.domain.model.id.FanboxPostId
 
 class LibraryHomeViewModel(
     private val settingRepository: SettingRepository,
@@ -55,7 +55,7 @@ class LibraryHomeViewModel(
         }
     }
 
-    fun postLike(postId: FanboxPostId) {
+    fun postLike(postId: PostId) {
         viewModelScope.launch {
             suspendRunCatching {
                 fanboxRepository.likePost(postId)
@@ -63,7 +63,7 @@ class LibraryHomeViewModel(
         }
     }
 
-    fun postBookmark(post: FanboxPost, isBookmarked: Boolean) {
+    fun postBookmark(post: Post, isBookmarked: Boolean) {
         viewModelScope.launch {
             suspendRunCatching {
                 if (isBookmarked) {
@@ -79,7 +79,7 @@ class LibraryHomeViewModel(
 @Stable
 data class LibraryUiState(
     val setting: Setting,
-    val bookmarkedPostsIds: List<FanboxPostId>,
-    val homePaging: Flow<PagingData<FanboxPost>>,
-    val supportedPaging: Flow<PagingData<FanboxPost>>,
+    val bookmarkedPostsIds: List<PostId>,
+    val homePaging: Flow<PagingData<Post>>,
+    val supportedPaging: Flow<PagingData<Post>>,
 )
