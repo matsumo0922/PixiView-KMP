@@ -12,12 +12,7 @@ import me.matsumo.fanbox.core.repository.mapper.toFanboxCreatorId
 import me.matsumo.fanbox.core.repository.mapper.toFanboxCursor
 import me.matsumo.fanbox.core.repository.mapper.toFanboxPostId
 import me.matsumo.fanbox.core.repository.mapper.toFanboxUserId
-import me.matsumo.fanbox.core.repository.mapper.toFanktPageCursorInfo
-import me.matsumo.fanbox.core.repository.mapper.toFanktPageNumberInfo
-import me.matsumo.fanbox.core.repository.mapper.toFanktPageOffsetInfo
 import me.matsumo.fanbox.core.repository.mapper.toPageCursorInfo
-import me.matsumo.fanbox.core.repository.mapper.toPageNumberInfo
-import me.matsumo.fanbox.core.repository.mapper.toPageOffsetInfo
 import me.matsumo.fanbox.core.repository.mapper.toPostId
 import me.matsumo.fanbox.core.repository.mapper.toUserId
 import me.matsumo.fankt.fanbox.domain.FanboxCursor
@@ -28,10 +23,8 @@ import me.matsumo.fankt.fanbox.domain.model.id.FanboxUserId
 import org.junit.Test
 import kotlin.test.assertEquals
 import me.matsumo.fankt.fanbox.domain.PageCursorInfo as FanktPageCursorInfo
-import me.matsumo.fankt.fanbox.domain.PageNumberInfo as FanktPageNumberInfo
-import me.matsumo.fankt.fanbox.domain.PageOffsetInfo as FanktPageOffsetInfo
 
-/** ID・Cursor・ページング型の fankt ↔ app 往復変換が元の値へ戻ることを検証するテスト。 */
+/** ID と Cursor の fankt ↔ app 往復変換が元の値へ戻ることを検証するテスト。 */
 class IdCursorPagingRoundTripTest {
 
     @Test
@@ -87,45 +80,6 @@ class IdCursorPagingRoundTripTest {
         )
 
         assertEquals(original, original.toCursor().toFanboxCursor())
-    }
-
-    @Test
-    fun pageCursorInfoRoundTripReturnsOriginalValue() {
-        val original = FanktPageCursorInfo(
-            contents = listOf("a", "b"),
-            cursor = FanboxCursor(
-                firstPublishedDatetime = null,
-                maxPublishedDatetime = null,
-                firstId = "1",
-                maxId = "2",
-                limit = 10,
-            ),
-        )
-
-        assertEquals(
-            original,
-            original.toPageCursorInfo { it }.toFanktPageCursorInfo { it },
-        )
-    }
-
-    @Test
-    fun pageNumberInfoRoundTripReturnsOriginalValue() {
-        val original = FanktPageNumberInfo(contents = listOf("a", "b"), nextPage = 2)
-
-        assertEquals(
-            original,
-            original.toPageNumberInfo { it }.toFanktPageNumberInfo { it },
-        )
-    }
-
-    @Test
-    fun pageOffsetInfoRoundTripReturnsOriginalValue() {
-        val original = FanktPageOffsetInfo(contents = listOf("a", "b"), offset = 20)
-
-        assertEquals(
-            original,
-            original.toPageOffsetInfo { it }.toFanktPageOffsetInfo { it },
-        )
     }
 
     /** 空リストや null カーソルでもページング型が破綻しないことを確認する。 */

@@ -14,13 +14,6 @@ fun <T, R> FanktPageCursorInfo<T>.toPageCursorInfo(contentMapper: (T) -> R): Pag
     )
 }
 
-fun <T, R> PageCursorInfo<T>.toFanktPageCursorInfo(contentMapper: (T) -> R): FanktPageCursorInfo<R> {
-    return FanktPageCursorInfo(
-        contents = contents.map(contentMapper),
-        cursor = cursor?.toFanboxCursor(),
-    )
-}
-
 fun <T, R> FanktPageNumberInfo<T>.toPageNumberInfo(contentMapper: (T) -> R): PageNumberInfo<R> {
     return PageNumberInfo(
         contents = contents.map(contentMapper),
@@ -28,22 +21,8 @@ fun <T, R> FanktPageNumberInfo<T>.toPageNumberInfo(contentMapper: (T) -> R): Pag
     )
 }
 
-fun <T, R> PageNumberInfo<T>.toFanktPageNumberInfo(contentMapper: (T) -> R): FanktPageNumberInfo<R> {
-    return FanktPageNumberInfo(
-        contents = contents.map(contentMapper),
-        nextPage = nextPage,
-    )
-}
-
 fun <T, R> FanktPageOffsetInfo<T>.toPageOffsetInfo(contentMapper: (T) -> R): PageOffsetInfo<R> {
     return PageOffsetInfo(
-        contents = contents.map(contentMapper),
-        offset = offset,
-    )
-}
-
-fun <T, R> PageOffsetInfo<T>.toFanktPageOffsetInfo(contentMapper: (T) -> R): FanktPageOffsetInfo<R> {
-    return FanktPageOffsetInfo(
         contents = contents.map(contentMapper),
         offset = offset,
     )
