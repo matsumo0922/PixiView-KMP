@@ -409,9 +409,7 @@ private fun PostDetailCommentHeader(
             )
 
             IconButton(
-
                 onClick = { onClickTranslate.invoke(comments) },
-
             ) {
                 if (commentsTransState is TranslationState.Loading) {
                     CircularProgressIndicator(
@@ -427,9 +425,7 @@ private fun PostDetailCommentHeader(
             }
 
             IconButton(
-
                 onClick = { onClickShowCommentEditor.invoke(!isShowCommentEditor) },
-
             ) {
                 Icon(
                     imageVector = Icons.Default.Edit,
