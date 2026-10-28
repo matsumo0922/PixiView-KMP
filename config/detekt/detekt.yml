@@ -1,5 +1,5 @@
 # 共通 detekt 設定テンプレート
-# 前提バージョン: detekt 1.23.8 / detekt-formatting / io.nlopez.compose.rules:detekt:0.4.23
+# 前提バージョン: detekt 2.0.0-alpha.6 / detekt-rules-ktlint-wrapper / io.nlopez.compose.rules:detekt:0.6.8
 # 導入手順と閾値の調整方針は同ディレクトリの README.md を参照
 
 complexity:
@@ -7,7 +7,7 @@ complexity:
   # 論理演算子2つ以上（条件3つ以上）の条件式を検出する。Boolean 変数への切り出し方は rules/kotlin.md を参照
   ComplexCondition:
     active: true
-    threshold: 3
+    allowedConditions: 2
   LongMethod:
     active: true
     # Composable は UI 構造の記述で行数が伸びるため除外
@@ -89,13 +89,18 @@ style:
   MaxChainedCallsOnSameLine:
     active: true
     maxChainedCalls: 2
-  UnusedPrivateMember:
+  # UnusedPrivateFunction / UnusedPrivateProperty は型情報が必要なため、full モードのタスクでだけ実行される（README.md の「実行タスク」を参照）
+  UnusedPrivateFunction:
     active: true
-    # Compose の Preview 関数と Test でモックしているものは無効化
+    # Compose の Preview 関数は呼び出されないため除外
+    ignoreAnnotated:
+      - 'Preview'
+  UnusedPrivateProperty:
+    active: true
+    # Test でモックしているプロパティは除外
     ignoreAnnotated:
       - 'RelaxedMockK'
       - 'InjectMockKs'
-      - 'Preview'
 
 comments:
   # UndocumentedPublicClass は Activity / Fragment / Dialog / ViewModel をクラス名で除外できないため使わない。
@@ -108,7 +113,7 @@ potential-bugs:
     # `!!` を許容している。導入プロジェクトで検出量を確認の上、有効化を検討する
     active: false
 
-formatting:
+ktlint:
   active: true
   autoCorrect: true
   MaximumLineLength:

@@ -1,5 +1,5 @@
 # Kotlin プロジェクト共通の EditorConfig テンプレート
-# IDE のフォーマッタに trailing comma を適用し、detekt-formatting の TrailingComma ルールと対で使う
+# IDE のフォーマッタに trailing comma を適用し、detekt の ktlint ルールセットの TrailingComma ルールと対で使う
 
 [*.{kt,kts}]
 indent_size = 4
