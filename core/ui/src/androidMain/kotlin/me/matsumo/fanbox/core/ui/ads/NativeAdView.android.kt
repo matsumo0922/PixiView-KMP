@@ -236,12 +236,9 @@ private fun NativeAdViewRefs.adjustMediaViewAspectRatio(nativeAd: NativeAd) {
     val mediaAspectRatio = nativeAd.mediaContent?.aspectRatio ?: 0f
     val hasValidAspectRatio = mediaAspectRatio > 0f
 
-    layoutParams.dimensionRatio = if (hasValidAspectRatio) "H,$mediaAspectRatio:1" else DEFAULT_MEDIA_ASPECT_RATIO
+    layoutParams.dimensionRatio = if (hasValidAspectRatio) "H,$mediaAspectRatio:1" else "H,16:9"
     mvContent.layoutParams = layoutParams
 }
 
 /** SDK 初期化前にネイティブ広告枠として確保する高さ。 */
 private val NativeAdPlaceholderHeight = 60.dp
-
-/** メディアアスペクト比を取得できない場合に使用する既定比率（横:縦）。 */
-private const val DEFAULT_MEDIA_ASPECT_RATIO = "H,16:9"

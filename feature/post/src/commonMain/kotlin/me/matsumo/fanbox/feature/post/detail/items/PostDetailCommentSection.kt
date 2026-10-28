@@ -85,7 +85,9 @@ internal fun LazyListScope.postDetailCommentItems(
 ) {
     item {
         PostDetailCommentHeader(
-            modifier = Modifier.fillMaxWidth(),
+            modifier = Modifier
+                .padding(horizontal = 16.dp, top = 16.dp)
+                .fillMaxWidth(),
             isShowCommentEditor = isShowCommentEditor,
             comments = comments,
             commentsTransState = commentsTransState,
@@ -118,7 +120,7 @@ internal fun LazyListScope.postDetailCommentItems(
         }
     } else {
         item {
-            Text(
+            PostDetailEmptyComment(
                 modifier = Modifier
                     .alpha(if (!isShowCommentEditor) 1f else 0f)
                     .padding(
@@ -127,9 +129,6 @@ internal fun LazyListScope.postDetailCommentItems(
                         end = 16.dp,
                     )
                     .fillMaxWidth(),
-                text = stringResource(Res.string.post_detail_comment_empty),
-                style = MaterialTheme.typography.bodyMedium.center(),
-                color = MaterialTheme.colorScheme.onSurfaceVariant,
             )
         }
     }
@@ -137,7 +136,9 @@ internal fun LazyListScope.postDetailCommentItems(
     comments.offset?.let { offset ->
         item {
             PostDetailCommentLoadMore(
-                modifier = Modifier.fillMaxWidth(),
+                modifier = Modifier
+                    .padding(horizontal = 16.dp, top = 16.dp)
+                    .fillMaxWidth(),
                 postId = postDetail.id,
                 offset = offset,
                 onClickLoadMore = onClickLoadMore,
@@ -393,9 +394,7 @@ private fun PostDetailCommentHeader(
     modifier: Modifier = Modifier,
 ) {
     Column(
-        modifier = modifier
-            .padding(horizontal = 16.dp, top = 16.dp)
-            .fillMaxWidth(),
+        modifier = modifier,
     ) {
         Row(
             modifier = Modifier.fillMaxWidth(),
@@ -409,7 +408,11 @@ private fun PostDetailCommentHeader(
                 color = MaterialTheme.colorScheme.onSurface,
             )
 
-            IconButton(onClick = { onClickTranslate.invoke(comments) }) {
+            IconButton(
+
+                onClick = { onClickTranslate.invoke(comments) },
+
+            ) {
                 if (commentsTransState is TranslationState.Loading) {
                     CircularProgressIndicator(
                         modifier = Modifier.padding(4.dp),
@@ -423,7 +426,11 @@ private fun PostDetailCommentHeader(
                 }
             }
 
-            IconButton(onClick = { onClickShowCommentEditor.invoke(!isShowCommentEditor) }) {
+            IconButton(
+
+                onClick = { onClickShowCommentEditor.invoke(!isShowCommentEditor) },
+
+            ) {
                 Icon(
                     imageVector = Icons.Default.Edit,
                     tint = MaterialTheme.colorScheme.onSurface,
@@ -458,9 +465,7 @@ private fun PostDetailCommentLoadMore(
     modifier: Modifier = Modifier,
 ) {
     Box(
-        modifier = modifier
-            .padding(horizontal = 16.dp, top = 16.dp)
-            .fillMaxWidth(),
+        modifier = modifier,
     ) {
         Button(
             modifier = Modifier
@@ -486,4 +491,16 @@ private fun PostDetailCommentLoadMore(
             }
         }
     }
+}
+
+@Composable
+private fun PostDetailEmptyComment(
+    modifier: Modifier = Modifier,
+) {
+    Text(
+        modifier = modifier,
+        text = stringResource(Res.string.post_detail_comment_empty),
+        style = MaterialTheme.typography.bodyMedium.center(),
+        color = MaterialTheme.colorScheme.onSurfaceVariant,
+    )
 }

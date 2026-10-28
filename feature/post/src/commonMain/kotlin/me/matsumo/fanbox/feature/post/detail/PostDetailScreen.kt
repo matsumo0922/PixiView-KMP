@@ -77,6 +77,8 @@ import me.matsumo.fanbox.core.model.fanbox.MetaData
 import me.matsumo.fanbox.core.model.fanbox.PageOffsetInfo
 import me.matsumo.fanbox.core.model.fanbox.Post
 import me.matsumo.fanbox.core.model.fanbox.PostDetail
+import me.matsumo.fanbox.core.model.fanbox.PostDetail.Body
+import me.matsumo.fanbox.core.model.fanbox.PostDetail.Body.Article.Block
 import me.matsumo.fanbox.core.model.fanbox.PostId
 import me.matsumo.fanbox.core.model.fanbox.UserId
 import me.matsumo.fanbox.core.resources.Res
@@ -445,24 +447,7 @@ private fun PostDetailScreen(
         }
     }
 
-    val isShowHeader = runCatching {
-        when (val content = postDetail.body) {
-            is PostDetail.Body.Article -> content.blocks.first() !is PostDetail.Body.Article.Block.Image
-
-            is PostDetail.Body.File -> true
-
-            is PostDetail.Body.Image -> false
-
-            // 先頭が画像で始まらない本文はヘッダーを重ねても隠れないため表示する。
-            is PostDetail.Body.Text -> true
-
-            is PostDetail.Body.Video -> true
-
-            is PostDetail.Body.Html -> true
-
-            is PostDetail.Body.Unknown -> true
-        }
-    }.getOrDefault(true)
+    val isShowHeader = postDetail.body.shouldShowHeader()
 
     Box(modifier) {
         LazyColumn(
@@ -738,3 +723,9 @@ private fun PostDetail.adPost(): Post = Post(
     user = user,
     tags = tags,
 )
+
+private fun Body.shouldShowHeader(): Boolean = when (this) {
+    is Body.Article -> blocks.firstOrNull() !is Block.Image
+    is Body.Image -> false
+    is Body.File, is Body.Text, is Body.Video, is Body.Html, is Body.Unknown -> true
+}

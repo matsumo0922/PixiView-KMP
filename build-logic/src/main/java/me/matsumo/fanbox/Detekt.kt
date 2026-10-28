@@ -4,28 +4,25 @@ import dev.detekt.gradle.Detekt
 import dev.detekt.gradle.extensions.DetektExtension
 import dev.detekt.gradle.report.ReportMergeTask
 import org.gradle.api.Project
-import org.gradle.api.tasks.TaskProvider
 import org.gradle.kotlin.dsl.getByType
 import org.gradle.kotlin.dsl.named
 import org.gradle.kotlin.dsl.register
 
-@Suppress("UNCHECKED_CAST")
 internal fun Project.configureDetekt() {
-    extensions.getByType<DetektExtension>().apply {
-        toolVersion.set(libs.version("detekt"))
-        // 並列処理
-        parallel.set(true)
-        // Detektの設定ファイル
-        config.setFrom(files("${project.rootDir}/config/detekt/detekt.yml"))
-        // baseline 設定ファイル
-        baseline.set(file("${project.rootDir}/config/detekt/baseline.xml"))
-        // デフォルト設定の上に自分の設定ファイルを適用する
-        buildUponDefaultConfig.set(true)
-        // ルール違反があった場合に失敗させる
-        ignoreFailures.set(false)
-        // ルール違反の自動修正を試みる
-        autoCorrect.set(false)
-    }
+    val extension = extensions.getByType<DetektExtension>()
+    extension.toolVersion.set(libs.version("detekt"))
+    // 並列処理
+    extension.parallel.set(true)
+    // Detektの設定ファイル
+    extension.config.setFrom(files("${project.rootDir}/config/detekt/detekt.yml"))
+    // baseline 設定ファイル
+    extension.baseline.set(file("${project.rootDir}/config/detekt/baseline.xml"))
+    // デフォルト設定の上に自分の設定ファイルを適用する
+    extension.buildUponDefaultConfig.set(true)
+    // ルール違反があった場合に失敗させる
+    extension.ignoreFailures.set(false)
+    // ルール違反の自動修正を試みる
+    extension.autoCorrect.set(false)
 
     // 各モジュールでの Detekt 実行結果を一つにまとめるタスク（CIでコメントする際に使用）
     // FYI: https://detekt.dev/docs/introduction/reporting/#kotlin-dsl
@@ -34,7 +31,7 @@ internal fun Project.configureDetekt() {
             output.set(rootProject.layout.buildDirectory.file("reports/detekt/merge.xml"))
         }
     } else {
-        rootProject.tasks.named("reportMerge") as TaskProvider<ReportMergeTask>
+        rootProject.tasks.named<ReportMergeTask>("reportMerge")
     }
 
     val reportFile = layout.buildDirectory.file("reports/detekt/detekt.xml")

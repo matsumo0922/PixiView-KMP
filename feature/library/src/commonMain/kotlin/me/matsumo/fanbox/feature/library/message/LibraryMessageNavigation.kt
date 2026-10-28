@@ -21,7 +21,7 @@ fun NavGraphBuilder.libraryMessageScreen(openDrawer: () -> Unit, navigateTo: (De
     composable(
         route = LIBRARY_MESSAGE_ROUTE,
     ) {
-        LIBRARY_MESSAGE_ROUTE(
+        LibraryMessageRoute(
             modifier = Modifier.fillMaxSize(),
             openDrawer = openDrawer,
             navigateTo = navigateTo,

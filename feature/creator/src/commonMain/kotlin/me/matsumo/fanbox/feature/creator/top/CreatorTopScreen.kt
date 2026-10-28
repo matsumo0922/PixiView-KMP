@@ -17,9 +17,12 @@ import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.statusBars
 import androidx.compose.foundation.layout.statusBarsPadding
+import androidx.compose.foundation.lazy.LazyListState
+import androidx.compose.foundation.lazy.grid.LazyGridState
 import androidx.compose.foundation.lazy.grid.rememberLazyGridState
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.pager.HorizontalPager
+import androidx.compose.foundation.pager.PagerState
 import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
@@ -158,7 +161,11 @@ internal fun CreatorTopRoute(
             revealCanvasState = revealCanvasState,
             revealState = revealState,
             overlayContent = { key ->
-                RevealOverlayContent(key, revealOverlayContainerColor, revealOverlayContentColor)
+                RevealOverlayContent(
+                    key = key,
+                    containerColor = revealOverlayContainerColor,
+                    contentColor = revealOverlayContentColor,
+                )
             },
         ) {
             CreatorTopScreen(
@@ -275,10 +282,7 @@ private fun CreatorTopScreen(
     var isShowMenuDialog by remember { mutableStateOf(false) }
     var isVisibleFAB by remember { mutableStateOf(false) }
 
-    val canRewardBulkDownload = !setting.canBulkDownload && rewardAvailability.bulkDownload
-    val canRewardCreatorSearch = !setting.hasPrivilege && rewardAvailability.creatorSearch
-    val canRewardCreatorTranslation = !setting.hasPrivilege && rewardAvailability.creatorTranslation
-    val shouldPreloadRewardAd = canRewardBulkDownload || canRewardCreatorSearch || canRewardCreatorTranslation
+    val shouldPreloadRewardAd = shouldPreloadCreatorRewardAd(setting, rewardAvailability)
 
     val tabs = listOf(
         CreatorTab.POSTS,
@@ -357,14 +361,13 @@ private fun CreatorTopScreen(
                             label = stringResource(tab.titleRes),
                             onClick = {
                                 scope.launch {
-                                    if (pagerState.currentPage != index) {
-                                        pagerState.animateScrollToPage(index)
-                                    } else {
-                                        when (tabs[index]) {
-                                            CreatorTab.POSTS -> postsGridState.animateScrollToItem(0)
-                                            CreatorTab.PLANS -> plansListState.animateScrollToItem(0)
-                                        }
-                                    }
+                                    scrollCreatorTab(
+                                        pagerState = pagerState,
+                                        index = index,
+                                        tab = tabs[index],
+                                        postsGridState = postsGridState,
+                                        plansListState = plansListState,
+                                    )
                                 }
                             },
                         )
@@ -489,11 +492,13 @@ private fun CreatorTopScreen(
                 onReward.invoke(activeRewardUsage)
                 rewardUsage = null
 
-                when (activeRewardUsage) {
-                    RewardUsage.BulkDownload -> onClickAllDownload.invoke(creatorDetail.creatorId)
-                    RewardUsage.CreatorSearch -> onClickSearch.invoke(creatorDetail.creatorId)
-                    RewardUsage.CreatorTranslation -> onClickTranslateDescription.invoke(creatorDetail.description)
-                }
+                executeCreatorReward(
+                    usage = activeRewardUsage,
+                    creatorDetail = creatorDetail,
+                    onClickAllDownload = onClickAllDownload,
+                    onClickSearch = onClickSearch,
+                    onClickTranslateDescription = onClickTranslateDescription,
+                )
             },
             onClickShowPlus = {
                 onClickBillingPlus.invoke(activeRewardUsage.billingPlusKey())
@@ -508,12 +513,10 @@ private fun CreatorTopScreen(
     }
 
     if (isShowMenuDialog) {
-        if (isShowMenuDialog) {
-            CreatorTopMenuDialog(
-                onClickBlock = { onShowBlockDialog.invoke(SimpleAlertContents.CreatorBlock) },
-                onDismissRequest = { isShowMenuDialog = false },
-            )
-        }
+        CreatorTopMenuDialog(
+            onClickBlock = { onShowBlockDialog.invoke(SimpleAlertContents.CreatorBlock) },
+            onDismissRequest = { isShowMenuDialog = false },
+        )
     }
 
     if (isShowDescriptionDialog) {
@@ -622,4 +625,44 @@ private fun RewardUsage.billingPlusKey(): String = when (this) {
     RewardUsage.BulkDownload -> "all_download"
     RewardUsage.CreatorSearch -> "search_post_by_creator"
     RewardUsage.CreatorTranslation -> "translate"
+}
+
+private fun shouldPreloadCreatorRewardAd(setting: Setting, availability: CreatorTopRewardAvailability): Boolean {
+    val canRewardBulkDownload = !setting.canBulkDownload && availability.bulkDownload
+    val canRewardCreatorSearch = !setting.hasPrivilege && availability.creatorSearch
+    val canRewardCreatorTranslation = !setting.hasPrivilege && availability.creatorTranslation
+
+    val hasRewardableUsage = canRewardBulkDownload || canRewardCreatorSearch || canRewardCreatorTranslation
+    return hasRewardableUsage
+}
+
+private suspend fun scrollCreatorTab(
+    pagerState: PagerState,
+    index: Int,
+    tab: CreatorTab,
+    postsGridState: LazyGridState,
+    plansListState: LazyListState,
+) {
+    if (pagerState.currentPage != index) {
+        pagerState.animateScrollToPage(index)
+    } else {
+        when (tab) {
+            CreatorTab.POSTS -> postsGridState.animateScrollToItem(0)
+            CreatorTab.PLANS -> plansListState.animateScrollToItem(0)
+        }
+    }
+}
+
+private fun executeCreatorReward(
+    usage: RewardUsage,
+    creatorDetail: CreatorDetail,
+    onClickAllDownload: (CreatorId) -> Unit,
+    onClickSearch: (CreatorId) -> Unit,
+    onClickTranslateDescription: (String) -> Unit,
+) {
+    when (usage) {
+        RewardUsage.BulkDownload -> onClickAllDownload.invoke(creatorDetail.creatorId)
+        RewardUsage.CreatorSearch -> onClickSearch.invoke(creatorDetail.creatorId)
+        RewardUsage.CreatorTranslation -> onClickTranslateDescription.invoke(creatorDetail.description)
+    }
 }

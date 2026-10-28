@@ -21,5 +21,9 @@ plugins {
 }
 
 tasks.named<Detekt>("detekt") {
-    setSource(files("build.gradle.kts", "settings.gradle.kts", "build-logic").asFileTree)
+    setSource(
+        files("build.gradle.kts", "settings.gradle.kts", "build-logic").asFileTree.matching {
+            exclude("**/build/**", "**/resources/**")
+        },
+    )
 }

@@ -31,7 +31,7 @@ internal fun CreatorTopPlansScreen(
         LazyColumn(
             modifier = modifier,
             state = state,
-            contentPadding = PaddingValues(top = 16.dp, bottom = 144.dp),
+            contentPadding = PaddingValues(top = 16.dp, bottom = 160.dp),
             verticalArrangement = Arrangement.spacedBy(16.dp),
         ) {
             item {

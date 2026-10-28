@@ -15,7 +15,10 @@ import kotlinx.collections.immutable.ImmutableList
 import me.matsumo.fanbox.core.model.Setting
 import me.matsumo.fanbox.core.model.fanbox.CreatorId
 import me.matsumo.fanbox.core.model.fanbox.Post
-import me.matsumo.fanbox.core.model.fanbox.PostDetail
+import me.matsumo.fanbox.core.model.fanbox.PostDetail.Body
+import me.matsumo.fanbox.core.model.fanbox.PostDetail.Body.Article.Block
+import me.matsumo.fanbox.core.model.fanbox.PostDetail.FileItem
+import me.matsumo.fanbox.core.model.fanbox.PostDetail.ImageItem
 import me.matsumo.fanbox.core.model.fanbox.PostId
 import me.matsumo.fanbox.core.resources.Res
 import me.matsumo.fanbox.core.resources.post_detail_unsupported_content
@@ -26,7 +29,7 @@ import org.jetbrains.compose.resources.stringResource
 import sh.calvin.autolinktext.rememberAutoLinkText
 
 internal fun LazyListScope.postDetailArticleHeader(
-    content: PostDetail.Body.Article,
+    content: Body.Article,
     setting: Setting,
     bookmarkedPostIds: ImmutableList<PostId>,
     isAdultContents: Boolean,
@@ -35,9 +38,9 @@ internal fun LazyListScope.postDetailArticleHeader(
     onClickPostLike: (PostId) -> Unit,
     onClickPostBookmark: (Post, Boolean) -> Unit,
     onClickCreator: (CreatorId) -> Unit,
-    onClickImage: (PostDetail.ImageItem) -> Unit,
-    onClickFile: (PostDetail.FileItem) -> Unit,
-    onClickDownload: (List<PostDetail.ImageItem>) -> Unit,
+    onClickImage: (ImageItem) -> Unit,
+    onClickFile: (FileItem) -> Unit,
+    onClickDownload: (List<ImageItem>) -> Unit,
 ) {
     items(content.blocks) { block ->
         PostDetailArticleBlock(
@@ -61,8 +64,8 @@ internal fun LazyListScope.postDetailArticleHeader(
 
 @Composable
 private fun PostDetailArticleBlock(
-    block: PostDetail.Body.Article.Block,
-    content: PostDetail.Body.Article,
+    block: Block,
+    content: Body.Article,
     setting: Setting,
     bookmarkedPostIds: ImmutableList<PostId>,
     isAdultContents: Boolean,
@@ -71,22 +74,22 @@ private fun PostDetailArticleBlock(
     onClickPostLike: (PostId) -> Unit,
     onClickPostBookmark: (Post, Boolean) -> Unit,
     onClickCreator: (CreatorId) -> Unit,
-    onClickImage: (PostDetail.ImageItem) -> Unit,
-    onClickFile: (PostDetail.FileItem) -> Unit,
-    onClickDownload: (List<PostDetail.ImageItem>) -> Unit,
+    onClickImage: (ImageItem) -> Unit,
+    onClickFile: (FileItem) -> Unit,
+    onClickDownload: (List<ImageItem>) -> Unit,
     modifier: Modifier = Modifier,
 ) {
     val metadata = LocalFanboxMetadata.current
 
     when (block) {
-        is PostDetail.Body.Article.Block.Text -> {
+        is Block.Text -> {
             ArticleTextItem(
                 modifier = modifier,
                 item = block,
             )
         }
 
-        is PostDetail.Body.Article.Block.Image -> {
+        is Block.Image -> {
             val shouldHideAdultContent = !setting.isAllowedShowAdultContents && metadata.context?.user?.showAdultContent == false && isAdultContents
             if (shouldHideAdultContent) {
                 AdultContentThumbnail(
@@ -107,7 +110,7 @@ private fun PostDetailArticleBlock(
             }
         }
 
-        is PostDetail.Body.Article.Block.File -> {
+        is Block.File -> {
             val imageItem = block.item.asImageItem()
 
             if (isAutoImagePreview && imageItem != null) {
@@ -127,7 +130,7 @@ private fun PostDetailArticleBlock(
             }
         }
 
-        is PostDetail.Body.Article.Block.Link -> {
+        is Block.Link -> {
             ArticleLinkItem(
                 modifier = modifier,
                 item = block,
@@ -142,7 +145,7 @@ private fun PostDetailArticleBlock(
             )
         }
 
-        is PostDetail.Body.Article.Block.Embed -> {
+        is Block.Embed -> {
             // fankt は既知のサービスについてのみ URL を復元する。復元できない場合は開く先が
             // 無いため、未対応の要素として扱う。
             val embedUrl = block.url
@@ -157,7 +160,7 @@ private fun PostDetailArticleBlock(
             }
         }
 
-        is PostDetail.Body.Article.Block.Unknown -> {
+        is Block.Unknown -> {
             // rawJson は検証されていないネットワークデータのため表示しない。
             ArticleUnsupportedItem(modifier = modifier)
         }
@@ -191,7 +194,7 @@ internal fun ArticleUnsupportedItem(
 
 @Composable
 private fun ArticleTextItem(
-    item: PostDetail.Body.Article.Block.Text,
+    item: Block.Text,
     modifier: Modifier = Modifier,
 ) {
     Text(
@@ -203,7 +206,7 @@ private fun ArticleTextItem(
 
 @Composable
 private fun ArticleLinkItem(
-    item: PostDetail.Body.Article.Block.Link,
+    item: Block.Link,
     isHideAdultContents: Boolean,
     isOverrideAdultContents: Boolean,
     isTestUser: Boolean,

@@ -13,6 +13,8 @@ import me.matsumo.fanbox.core.model.SettingPlusStatusUpdate
 import me.matsumo.fanbox.core.model.ThemeColorConfig
 import me.matsumo.fanbox.core.model.ThemeConfig
 
+// 設定項目ごとの型付き操作を同じ Repository の契約にまとめる。
+@Suppress("TooManyFunctions")
 interface SettingRepository {
 
     val setting: StateFlow<Setting>

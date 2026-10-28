@@ -2,6 +2,7 @@ package me.matsumo.fanbox.feature.welcome.login
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -114,13 +115,14 @@ internal fun WelcomeLoginScreen(
                     .background(MaterialTheme.colorScheme.surface)
                     .padding(24.dp),
                 verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.spacedBy(24.dp),
             ) {
                 FirstSection(
                     modifier = Modifier.weight(1f),
                 )
 
                 Column(
-                    modifier = Modifier.weight(1f).padding(start = 24.dp),
+                    modifier = Modifier.weight(1f),
                 ) {
                     Box(Modifier.weight(2f))
 

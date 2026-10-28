@@ -73,11 +73,7 @@ actual fun CreatorTopRewardAdDialog(
     }
 
     LaunchedEffect(Unit) {
-        val restoredRequestId = activeRewardAdRequestId ?: return@LaunchedEffect
-        val isRestoredAdShowing = rewardAdLoader.isShowing.value
-        val hasRestoredResult = rewardAdLoader.showResult.value?.requestId == restoredRequestId
-
-        if (!isRestoredAdShowing && !hasRestoredResult) {
+        if (rewardAdLoader.shouldClearRestoredRequest(activeRewardAdRequestId)) {
             activeRewardAdRequestId = null
         }
     }
@@ -175,4 +171,11 @@ actual fun CreatorTopRewardAdDialog(
             }
         }
     }
+}
+
+private fun RewardAdLoader.shouldClearRestoredRequest(requestId: Long?): Boolean {
+    if (requestId == null) return false
+
+    val hasRestoredResult = showResult.value?.requestId == requestId
+    return !isShowing.value && !hasRestoredResult
 }

@@ -126,7 +126,7 @@ class ZoomableState(
         if (size.height == 0) {
             0f
         } else {
-            abs(dismissDragAbsoluteOffsetY) / (size.height * DISMISS_DRAG_THRESHOLD)
+            abs(dismissDragAbsoluteOffsetY) / (size.height * 0.25f)
         }
     }
 
@@ -149,12 +149,12 @@ class ZoomableState(
             0f
         } else {
             val progress = (dismissDragAbsoluteOffsetY / maxOffset).coerceIn(-1f, 1f)
-            childSize.height / DISMISS_DRAG_RESISTANCE_FACTOR * sin(progress * PI.toFloat() / 2)
+            childSize.height / 2f * sin(progress * PI.toFloat() / 2)
         }
     }
 
     internal val shouldDismiss: Boolean
-        get() = abs(dismissDragAbsoluteOffsetY) > size.height * DISMISS_DRAG_THRESHOLD
+        get() = abs(dismissDragAbsoluteOffsetY) > size.height * 0.25f
 
     internal var size: IntSize
         get() = sizeState
@@ -411,9 +411,6 @@ internal value class HorizontalEdge private constructor(private val value: Int) 
 }
 
 private const val PX_VISIBILITY_THRESHOLD = 0.5f
-
-internal const val DISMISS_DRAG_RESISTANCE_FACTOR = 2f
-internal const val DISMISS_DRAG_THRESHOLD = 0.25f
 
 object ZoomableDefaults {
     /**

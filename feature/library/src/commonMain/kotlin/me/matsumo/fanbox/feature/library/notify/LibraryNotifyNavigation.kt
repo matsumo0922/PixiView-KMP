@@ -23,7 +23,7 @@ fun NavGraphBuilder.libraryNotifyScreen(openDrawer: () -> Unit, navigateTo: (Des
     composable(
         route = LIBRARY_NOTIFY_ROUTE,
     ) {
-        LIBRARY_NOTIFY_ROUTE(
+        LibraryNotifyRoute(
             modifier = Modifier
                 .fillMaxSize()
                 .background(MaterialTheme.colorScheme.background),

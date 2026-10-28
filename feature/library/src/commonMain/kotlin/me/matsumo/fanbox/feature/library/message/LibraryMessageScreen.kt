@@ -38,7 +38,7 @@ import org.jetbrains.compose.resources.stringResource
 import org.koin.compose.viewmodel.koinViewModel
 
 @Composable
-internal fun LIBRARY_MESSAGE_ROUTE(
+internal fun LibraryMessageRoute(
     openDrawer: () -> Unit,
     navigateTo: (Destination) -> Unit,
     modifier: Modifier = Modifier,

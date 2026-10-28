@@ -41,7 +41,7 @@ import org.jetbrains.compose.resources.stringResource
 import org.koin.compose.viewmodel.koinViewModel
 
 @Composable
-internal fun LIBRARY_NOTIFY_ROUTE(
+internal fun LibraryNotifyRoute(
     openDrawer: () -> Unit,
     navigateTo: (Destination) -> Unit,
     modifier: Modifier = Modifier,

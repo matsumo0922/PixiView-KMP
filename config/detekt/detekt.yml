@@ -4,18 +4,13 @@
 
 complexity:
   active: true
-  # 論理演算子2つ以上（条件3つ以上）の条件式を検出する。Boolean 変数への切り出し方は rules/kotlin.md を参照
+  # 論理演算子2つ以上（条件3つ以上）の条件式を検出する。Boolean 変数への切り出し方は AGENTS.md を参照
   ComplexCondition:
     active: true
     allowedConditions: 2
   LongMethod:
     active: true
     # Composable は UI 構造の記述で行数が伸びるため除外
-    ignoreAnnotated:
-      - 'Composable'
-  CyclomaticComplexMethod:
-    active: true
-    # UI の宣言的な分岐は処理アルゴリズムの複雑さとして数えない。
     ignoreAnnotated:
       - 'Composable'
   LongParameterList:
@@ -26,9 +21,8 @@ complexity:
       - 'Composable'
   TooManyFunctions:
     active: true
-    # Repository の公開 API はドメイン単位でまとまるため、汎用テンプレートの10件より広くする。
-    allowedFunctionsPerInterface: 60
-    allowedFunctionsPerClass: 30
+    allowedFunctionsPerInterface: 15
+    allowedFunctionsPerClass: 15
     ignoreOverridden: true
     # テストケースの数は production class の責務の数として扱わない。
     excludes:
@@ -60,7 +54,7 @@ naming:
     active: false
   TopLevelPropertyNaming:
     active: false
-  # 一文字変数を検出する（`i` ではなく `index`）。命名の意味づけは rules/kotlin.md を参照
+  # 一文字変数を検出する（`i` ではなく `index`）。命名の意味づけは AGENTS.md を参照
   VariableMinLength:
     active: true
     minimumVariableNameLength: 2
@@ -102,7 +96,7 @@ style:
   MaxChainedCallsOnSameLine:
     active: true
     maxChainedCalls: 2
-  # UnusedPrivateFunction / UnusedPrivateProperty は型情報が必要なため、full モードのタスクでだけ実行される（README.md の「実行タスク」を参照）
+  # UnusedPrivateFunction / UnusedPrivateProperty は型情報が必要なため、full モードのタスクでだけ実行される（README-JA.md の「静的解析」を参照）
   UnusedPrivateFunction:
     active: true
     # Compose の Preview 関数は呼び出されないため除外
@@ -117,7 +111,7 @@ style:
 
 comments:
   # UndocumentedPublicClass は Activity / Fragment / Dialog / ViewModel をクラス名で除外できないため使わない。
-  # KDoc の規約（対象クラスと日本語での記述）は rules/kotlin.md で扱う
+  # KDoc の規約（対象クラスと日本語での記述）は AGENTS.md で扱う
   active: false
 
 potential-bugs:

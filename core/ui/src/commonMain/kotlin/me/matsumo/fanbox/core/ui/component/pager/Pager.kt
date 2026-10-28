@@ -27,14 +27,12 @@ import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.calculateEndPadding
 import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.LazyItemScope
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.Stable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.movableContentOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.runtime.snapshotFlow
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -414,10 +412,6 @@ internal fun Pager(
     }
 
     val pagerScope = remember(state) { PagerScopeImpl(state) }
-    val currentContent by rememberUpdatedState(content)
-    val pageContent = remember(pagerScope) {
-        movableContentOf<Int> { page -> currentContent.invoke(pagerScope, page) }
-    }
 
     // We only consume nested flings in the main-axis, allowing cross-axis flings to propagate
     // as normal
@@ -427,6 +421,18 @@ internal fun Pager(
             consumeVertical = isVertical,
             pagerState = state,
         )
+    }
+
+    val pageContent: @Composable LazyItemScope.(Int) -> Unit = { page ->
+        val pageSize = if (isVertical) Modifier.fillParentMaxHeight() else Modifier.fillParentMaxWidth()
+        Box(
+            modifier = Modifier
+                .nestedScroll(consumeFlingNestedScrollConnection)
+                .then(pageSize)
+                .wrapContentSize(),
+        ) {
+            pagerScope.content(page)
+        }
     }
 
     if (isVertical) {
@@ -443,20 +449,8 @@ internal fun Pager(
             items(
                 count = count,
                 key = key,
-            ) { page ->
-                Box(
-                    Modifier
-                        // We don't any nested flings to continue in the pager, so we add a
-                        // connection which consumes them.
-                        // See: https://github.com/google/accompanist/issues/347
-                        .nestedScroll(connection = consumeFlingNestedScrollConnection)
-                        // Constraint the content height to be <= than the height of the pager.
-                        .fillParentMaxHeight()
-                        .wrapContentSize(),
-                ) {
-                    pageContent(page)
-                }
-            }
+                itemContent = pageContent,
+            )
         }
     } else {
         LazyRow(
@@ -472,20 +466,8 @@ internal fun Pager(
             items(
                 count = count,
                 key = key,
-            ) { page ->
-                Box(
-                    Modifier
-                        // We don't any nested flings to continue in the pager, so we add a
-                        // connection which consumes them.
-                        // See: https://github.com/google/accompanist/issues/347
-                        .nestedScroll(connection = consumeFlingNestedScrollConnection)
-                        // Constraint the content width to be <= than the width of the pager.
-                        .fillParentMaxWidth()
-                        .wrapContentSize(),
-                ) {
-                    pageContent(page)
-                }
-            }
+                itemContent = pageContent,
+            )
         }
     }
 }

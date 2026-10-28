@@ -142,13 +142,16 @@ root と `build-logic` の Kotlin ファイルおよび各モジュールの Kot
 関数定義の改行は、引数が3つ以上、またはデフォルト引数を持つ場合に引数ごとに改行する。
 `FunctionSignature` はデフォルト引数の有無を判別しないため無効にし、この規約は手動で確認する。
 呼び出し側の名前付き引数、引数ごとの改行、Modifier の先頭配置も手動レビューの対象となる。
+Composable の PascalCase と画面名の prefix も手動で確認する。
 行長は折り返しの基準にしない。
 
-関数数の上限は interface が60、class が30で、override とテストケースを数えない。
-Repository の公開 API を保ったまま責務を確認するための閾値とする。
-Composable は宣言的な UI の分岐を含むため `CyclomaticComplexMethod` の対象外とし、複合条件の分割は `ComplexCondition` で確認する。
+関数数の上限は interface と class ともに15で、override とテストケースを数えない。
+`FanboxRepository`、`SettingRepository`、`SettingDataStore` は既存の集約 API と型付き setter を維持するため、理由付きで個別に除外する。
+Composable も `CyclomaticComplexMethod` の対象とし、UI から処理の判定を切り出す。
+複合条件の分割は `ComplexCondition` で確認する。
 `ModifierMissing` は public、internal、private を対象とし、Preview を除外する。
 
+通常の `detekt` の集計には、型情報が必要なルールを含めない。
 型情報が必要なルールは `:core:model:detektMainAndroid` などのタスクで確認する。
 これらのタスクは detekt が生成した source set の範囲を使う。
 KMP の `expect` / `actual` に関する解析エラーが出る場合は、型解決付きルールの結果を個別に検証し、実際のコンパイル結果と区別する。

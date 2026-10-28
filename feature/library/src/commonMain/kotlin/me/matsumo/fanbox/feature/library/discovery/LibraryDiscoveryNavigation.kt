@@ -21,7 +21,7 @@ fun NavGraphBuilder.libraryDiscoveryScreen(openDrawer: () -> Unit, navigateTo: (
     composable(
         route = LIBRARY_DISCOVERY_ROUTE,
     ) {
-        LIBRARY_DISCOVERY_ROUTE(
+        LibraryDiscoveryRoute(
             modifier = Modifier.fillMaxSize(),
             openDrawer = openDrawer,
             navigateTo = navigateTo,

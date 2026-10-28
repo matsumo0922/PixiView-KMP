@@ -82,6 +82,8 @@ import me.matsumo.fankt.fanbox.FanboxLogLevel
 import org.koin.core.component.KoinComponent
 import kotlin.random.Random
 
+// 認証と FANBOX 操作の既存 API を集約する窓口として、呼び出し側の契約を維持する。
+@Suppress("TooManyFunctions")
 interface FanboxRepository {
     val bookmarkedPostsIds: SharedFlow<List<PostId>>
     val blockedCreators: SharedFlow<Set<CreatorId>>

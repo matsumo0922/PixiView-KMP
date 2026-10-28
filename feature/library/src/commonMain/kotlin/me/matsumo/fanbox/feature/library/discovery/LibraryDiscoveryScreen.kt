@@ -65,7 +65,7 @@ import org.koin.compose.koinInject
 import org.koin.compose.viewmodel.koinViewModel
 
 @Composable
-internal fun LIBRARY_DISCOVERY_ROUTE(
+internal fun LibraryDiscoveryRoute(
     openDrawer: () -> Unit,
     navigateTo: (Destination) -> Unit,
     modifier: Modifier = Modifier,
@@ -204,7 +204,7 @@ private fun LibraryDiscoveryScreen(
                         TitleItem(
                             modifier = Modifier
                                 .fillMaxWidth()
-                                .padding(top = 8.dp),
+                                .padding(top = if (followingCreators.isNotEmpty()) 24.dp else 0.dp),
                             title = stringResource(Res.string.creator_following_pixiv),
                         )
                     }
@@ -242,7 +242,7 @@ private fun LibraryDiscoveryScreen(
                         TitleItem(
                             modifier = Modifier
                                 .fillMaxWidth()
-                                .padding(top = 8.dp),
+                                .padding(top = if (followingCreators.isNotEmpty() || followingPixivCreators.isNotEmpty()) 24.dp else 0.dp),
                             title = stringResource(Res.string.creator_recommended),
                         )
                     }

@@ -171,15 +171,13 @@ private fun PagingItems(
         items(
             count = pagingAdapter.itemCount + if (setting.hasPrivilege) 0 else (pagingAdapter.itemCount / adInterval),
             key = { index ->
-                when {
-                    // fankt 0.1.0 で uniqueValue が削除された。ID だけではページングの境界で同じ
-                    // 投稿が二度返ったときに Key was already used になるため index を併用する。
-                    setting.hasPrivilege -> pagingAdapter.itemKey { "${it.id.value}-$index" }(index)
-
-                    (index + adOffset) % adInterval == 0 -> "ad-$index"
-
-                    else -> pagingAdapter.itemKey { "${it.id.value}-$index" }(index - ((index + adOffset) / adInterval))
-                }
+                creatorPostItemKey(
+                    pagingAdapter = pagingAdapter,
+                    index = index,
+                    hasPrivilege = setting.hasPrivilege,
+                    adOffset = adOffset,
+                    adInterval = adInterval,
+                )
             },
         ) { index ->
             if ((index + adOffset) % adInterval == 0 && !setting.hasPrivilege) {
@@ -309,4 +307,19 @@ private fun TagItem(
             }
         }
     }
+}
+
+private fun creatorPostItemKey(
+    pagingAdapter: LazyPagingItems<Post>,
+    index: Int,
+    hasPrivilege: Boolean,
+    adOffset: Int,
+    adInterval: Int,
+): Any = when {
+    // 同じ投稿がページ境界に現れても key が衝突しないよう index を併用する。
+    hasPrivilege -> pagingAdapter.itemKey { "${it.id.value}-$index" }(index)
+
+    (index + adOffset) % adInterval == 0 -> "ad-$index"
+
+    else -> pagingAdapter.itemKey { "${it.id.value}-$index" }(index - ((index + adOffset) / adInterval))
 }

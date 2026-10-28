@@ -89,13 +89,14 @@ internal fun WelcomeTopScreen(
                 .background(MaterialTheme.colorScheme.surface)
                 .padding(24.dp),
             verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.spacedBy(24.dp),
         ) {
             FirstSection(
                 modifier = Modifier.weight(1f),
             )
 
             Column(
-                modifier = Modifier.weight(1f).padding(start = 24.dp),
+                modifier = Modifier.weight(1f),
             ) {
                 Box(Modifier.weight(2f))
 

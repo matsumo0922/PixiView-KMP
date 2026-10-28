@@ -9,6 +9,7 @@ import me.matsumo.fanbox.core.model.Setting
 import me.matsumo.fanbox.core.model.fanbox.CreatorId
 import me.matsumo.fanbox.core.model.fanbox.Post
 import me.matsumo.fanbox.core.model.fanbox.PostDetail
+import me.matsumo.fanbox.core.model.fanbox.PostDetail.Body
 import me.matsumo.fanbox.core.model.fanbox.PostId
 
 internal fun LazyListScope.postDetailItems(
@@ -24,7 +25,7 @@ internal fun LazyListScope.postDetailItems(
     onClickDownload: (List<PostDetail.ImageItem>) -> Unit,
 ) {
     when (val content = post.body) {
-        is PostDetail.Body.Article -> {
+        is Body.Article -> {
             postDetailArticleHeader(
                 content = content,
                 setting = setting,
@@ -41,7 +42,7 @@ internal fun LazyListScope.postDetailItems(
             )
         }
 
-        is PostDetail.Body.Image -> {
+        is Body.Image -> {
             postDetailImageHeader(
                 content = content,
                 isAdultContents = post.hasAdultContent,
@@ -52,7 +53,7 @@ internal fun LazyListScope.postDetailItems(
             )
         }
 
-        is PostDetail.Body.File -> {
+        is Body.File -> {
             postDetailFileHeader(
                 content = content,
                 isAutoImagePreview = setting.isAutoImagePreview,
@@ -62,7 +63,7 @@ internal fun LazyListScope.postDetailItems(
             )
         }
 
-        else -> item {
+        is Body.Text, is Body.Video, is Body.Html, is Body.Unknown -> item {
             PostDetailOtherContent(
                 modifier = Modifier.fillMaxWidth(),
                 content = content,
@@ -73,12 +74,12 @@ internal fun LazyListScope.postDetailItems(
 
 @Composable
 private fun PostDetailOtherContent(
-    content: PostDetail.Body,
+    content: Body,
     modifier: Modifier = Modifier,
 ) {
     val url = when (content) {
-        is PostDetail.Body.Text -> content.text
-        is PostDetail.Body.Video -> content.url
+        is Body.Text -> content.text
+        is Body.Video -> content.url
         else -> null
     }
 
