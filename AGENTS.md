@@ -35,11 +35,29 @@ Kotlin プロジェクト共通のコーディング規約。整形など静的�
 - `enum` の定数と `sealed class` / `sealed interface` の subtype は、型名を含む `Hoge.Fuga` まで許可する
 - `enum` または sealed hierarchy でも `Hoge.Fuga.Piyo` のような3段以上の参照は禁止する。先頭側を import で省略し、`Fuga.Piyo` と書く
 
+### 標準 API と extension
+
+- platform API を直接呼ぶ前に、対応する ktx extension があるか確認して使う
+- `Bitmap.createBitmap(w, h, config)` ではなく `androidx.core.graphics.createBitmap(w, h)` を使う
+- `canvas.save()` / `restore()` の対で囲む処理は `withScale` / `withTranslation` / `withRotation` / `withClip` / `withMatrix` を使う。状態を戻し損ねる種類のバグを scope で防げる
+- ミリ秒の `Long` を渡す API では `kotlin.time.Duration` を使う（`300L` ではなく `300.milliseconds`）。単位が型に載るため取り違えが起きない
+
 ### 分割
 
 - 同じ処理を2箇所目に書こうとした時点で、共通メソッドまたは共通クラスへ切り出す
 - ラムダ本体は3文以内に収める。4文以上、または分岐を2つ以上含む場合はメソッドへ切り出す
 - 論理演算子（`&&` / `||`）を2つ以上含む条件式は、意味を表す名前の Boolean 変数に切り出してから比較に使う
+
+### 定数
+
+- 参照箇所が1〜2箇所しかない値は定数へ切り出さず、使用箇所へ直接書く。比率、角度、書式文字列、log tag のいずれも対象とする
+- 参照箇所は「宣言を除いた、コード本体からの参照」で数える。KDoc の `[Xxx]` 参照は数に含めない
+- 定数名は参照箇所から値を隠す。`side * BadgeSizeRatio` は宣言まで辿らないと `0.3f` だと分からず、読む手間だけが増える
+- 値に理由が要る場合は、定数の KDoc ではなく使用箇所のコメントとして書く
+- 次のものは参照が1箇所でも定数のまま残す。インライン化すると意味が変わる
+    - 複数の分岐で比較対象になる sentinel（`if (text == UnavailableText)` のような値）。リテラルを散らすと、値を変えたときに片方だけ直す事故になる
+    - `remember` の key として同一性が比較される値。呼び出しごとに新しい instance を作ると key が毎回変わり、再計算が走る
+    - `Paint` のように、生成を避けて process 内で共有している instance
 
 ### 段落
 
@@ -67,8 +85,17 @@ fun purchase(item: Item): Result<Receipt> {
 ### 引数
 
 - 関数定義は引数2つまでなら1行で書く。デフォルト引数を含む場合は引数ごとに改行する
-- 関数呼び出しは引数2つまでなら名前付き引数なしで1行で書く。次のいずれかに該当する場合は、引数ごとに改行して名前付き引数を使う: 引数が3つ以上 / 同じ型・形の引数が連続する / 引数内にメソッドチェーン・匿名オブジェクト・計算式が入る
-- Java メソッドは名前付き引数を使えないため、1行が長くなる場合は改行だけ行う
+- 関数呼び出しは引数2つまでなら名前付き引数なしで1行で書く。次のいずれかに該当する場合は、引数ごとに改行して名前付き引数を使う: 引数が3つ以上 / 同じ型・形の引数が連続する /
+  引数内にメソッドチェーン・匿名オブジェクト・計算式・関数呼び出しが入る
+- 行の長さは基準にしない。`Text(stringResource(R.string.ok))` は短くても、引数内で関数を呼んでいるため改行する
+- Java メソッドは名前付き引数を使えないため、maxLength 制限に当たらない限り、改行せず1行で呼び出す
+
+### テスト
+
+- テストは production の関数を呼ぶ。同じ算出をテスト側へ書き写さない。複製したテストは production が壊れても通る
+- 検証したいロジックが platform 依存の処理へ埋まっている場合は、純粋関数として切り出してからテストする
+- 境界値は「等しい」で代用しない。「過ぎている」を検証するなら、同値ではなく実際に過ぎた入力を渡す
+- 修正に対するテストは、修正を戻すと落ちることを一度確認する
 
 ## Jetpack Compose
 
@@ -106,12 +133,32 @@ internal fun RecipeDetailTopAppBar(...)
 
 ### レイアウト
 
+- Composable を定義する際は必ず引数に Modifier を定義し、デフォルト引数として `Modifier` を渡すこと。なお、デフォルト引数を持つ引数が複数ある場合はその中で一番最初に定義すること
+- `@Preview` を付けた Composable は対象外とする。呼び出し元が preview host だけであり、Modifier を渡す経路がない
+- Dialog も対象とする。material3 の Dialog は Modifier を受け取るため、渡す先がある
+- 内部で Modifier のチェインを組み立てる場合は、受け取った Modifier を起点にする。`Modifier.size(x)` と書くと引数が無視され、外部からの指定が効かない
+- size やマージンとして使われる padding などは外部から Modifier を通じて指定するべきであり、特段の事情がない限り内部でサイズや padding を固定化しない
+- Composable 自体を if で描画しない時などは内部で `if (!isVisible) return` のように早期リターンするのではなく、その Composable の呼び出し下で分岐する
+- 特に指示がなくかつ利用可能な場合は、material3 component を積極的に用い、material2 を混ぜない
 - `Column` / `Row` の子要素間の間隔は `Arrangement.spacedBy` と各要素の `Modifier.padding` で調整する。固定サイズの `Spacer`（`Spacer(Modifier.width(8.dp))` など）は間隔調整に使わない
 - `Spacer(Modifier.weight(1f))` のような比率ベースの `Spacer` は使ってよい
+- `dp` や `sp`、比率などのレイアウト固有の数値は別途定数には切り出さず、値を直接使う
+
+```kotlin
+@Composable
+private fun Badge(
+    side: Dp,
+    modifier: Modifier = Modifier,
+) {
+    // 起点を modifier にする。Modifier.size(side) と書くと引数が捨てられる
+    Box(modifier = modifier.size(side))
+}
+```
 
 ### 呼び出し
 
-- Composable の呼び出しは名前付き引数を使い、引数ごとに改行する。引数が1つで短い場合のみ、1行・名前付き引数なしで書いてよい
+- Composable の呼び出しは名前付き引数を使い、引数ごとに必ず改行する。
+- 例外は、引数が1つでその値が識別子1つの場合（`IconButton(onDelete)`）。名前付きにも改行にもしない
 - `modifier` 引数は呼び出し時の引数の先頭に置く
 - `Modifier` のチェインが2リンク以上になる場合は、リンクごとに改行する
 
