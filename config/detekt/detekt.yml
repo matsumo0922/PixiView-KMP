@@ -1,5 +1,28 @@
+# 共通 detekt 設定テンプレート
+# 前提バージョン: detekt 1.23.8 / detekt-formatting / io.nlopez.compose.rules:detekt:0.4.23
+# 導入手順と閾値の調整方針は同ディレクトリの README.md を参照
+
 complexity:
-  active: false
+  active: true
+  # 論理演算子2つ以上（条件3つ以上）の条件式を検出する。Boolean 変数への切り出し方は rules/kotlin.md を参照
+  ComplexCondition:
+    active: true
+    threshold: 3
+  LongMethod:
+    active: true
+    # Composable は UI 構造の記述で行数が伸びるため除外
+    ignoreAnnotated:
+      - 'Composable'
+  LongParameterList:
+    active: true
+    ignoreDefaultParameters: true
+    # Composable は引数が多くなる設計のため除外
+    ignoreAnnotated:
+      - 'Composable'
+  TooManyFunctions:
+    active: true
+    # 小さな private Composable へ分割するスタイルと衝突するため private は数えない
+    ignorePrivate: true
 
 coroutines:
   active: true
@@ -10,7 +33,7 @@ empty-blocks:
 exceptions:
   active: true
   TooGenericExceptionCaught:
-    # 認証系ライブラリは Throwable などを既に投げているため無効化
+    # 認証系ライブラリが Throwable などを投げるため無効化。導入プロジェクトで検出量を確認の上、有効化を検討する
     active: false
 
 naming:
@@ -24,6 +47,10 @@ naming:
     active: false
   TopLevelPropertyNaming:
     active: false
+  # 一文字変数を検出する（`i` ではなく `index`）。命名の意味づけは rules/kotlin.md を参照
+  VariableMinLength:
+    active: true
+    minimumVariableNameLength: 2
 
 performance:
   active: true
@@ -37,29 +64,31 @@ style:
   MagicNumber:
     active: false
   ReturnCount:
-    # 早期 return 数の制限はなくても良さそうなので無効化
+    # 早期 return を多用するスタイルのため無効化
     active: false
   ThrowsCount:
-    # throw 数の制限はなくても良さそうなので無効化
     active: false
   LoopWithTooManyJumpStatements:
-    # break 数の制限はなくても良さそうなので無効化
     active: false
   ForbiddenComment:
-    # 開発時のコメントを削除する必要はないので無効化
+    # 開発時のコメントを削除する必要はないため無効化
     active: false
   DestructuringDeclarationWithTooManyEntries:
-    # Compose の ConstraintLayout#createRefs などで用いることがあるため無効化
+    # Compose の ConstraintLayout#createRefs などで用いるため無効化
     active: false
-  # 空のコレクションを表すときは empty... を強制する
+  # 空のコレクションは emptyList() などの empty 系で生成する
   UseEmptyCounterpart:
     active: true
-  # プロパティ、メソッド、companion object の順番を強制する
+  # プロパティ、メソッド、companion object の順序を強制する
   ClassOrdering:
     active: true
-  # 複数行の for, while... は中括弧を強制する
+  # 複数行の for / while に中括弧を強制する
   MandatoryBracesLoops:
     active: true
+  # メソッドチェーンは1行に2呼び出しまで。3呼び出し以上は改行する
+  MaxChainedCallsOnSameLine:
+    active: true
+    maxChainedCalls: 2
   UnusedPrivateMember:
     active: true
     # Compose の Preview 関数と Test でモックしているものは無効化
@@ -68,9 +97,15 @@ style:
       - 'InjectMockKs'
       - 'Preview'
 
+comments:
+  # UndocumentedPublicClass は Activity / Fragment / Dialog / ViewModel をクラス名で除外できないため使わない。
+  # KDoc の規約（対象クラスと日本語での記述）は rules/kotlin.md で扱う
+  active: false
+
 potential-bugs:
   active: true
   UnsafeCallOnNullableType:
+    # `!!` を許容している。導入プロジェクトで検出量を確認の上、有効化を検討する
     active: false
 
 formatting:
@@ -78,17 +113,22 @@ formatting:
   autoCorrect: true
   MaximumLineLength:
     active: false
+  # 引数の折り返しは行長ではなく引数の数で判断するため無効化し、FunctionSignature で強制する
   ArgumentListWrapping:
-    maxLineLength: 999
-  ParameterListWrapping:
-    maxLineLength: 999
-  # ワイルドカードは使用しない
-  NoWildcardImports:
     active: false
-  # 定義箇所での TrailingComma を強制
+  ParameterListWrapping:
+    active: false
+  # 引数3つ以上の関数定義を複数行に強制する。引数2つまでの1行定義の規約は rules/kotlin.md を参照
+  FunctionSignature:
+    active: true
+    forceMultilineWhenParameterCountGreaterOrEqualThan: 3
+  NoWildcardImports:
+    # style ルールセットの WildcardImport で検出するため、二重報告を避けて無効化
+    active: false
+  # 定義箇所での trailing comma を強制する
   TrailingCommaOnDeclarationSite:
     active: true
-  # 呼び出し箇所での TrailingComma を強制
+  # 呼び出し箇所での trailing comma を強制する
   TrailingCommaOnCallSite:
     active: true
   PackageName:
@@ -96,7 +136,23 @@ formatting:
   Filename:
     active: false
 
-TwitterCompose:
-  CompositionLocalAllowlist:
-    active: false
+Compose:
   active: true
+  # Composable に modifier 引数を必須にする
+  ModifierMissing:
+    active: true
+  # modifier 引数のデフォルト値 `Modifier` を強制する
+  ModifierWithoutDefault:
+    active: true
+  # 必須引数 → デフォルト引数（modifier が先頭）→ 末尾ラムダ の宣言順を強制する
+  ComposableParamOrder:
+    active: true
+  # ラムダ引数名を現在形（onClick / onChange）に強制する
+  ParameterNaming:
+    active: true
+  # Composable 引数の List / Map / Set を検出し、Immutable なコレクション型を強制する（opt-in のため明示有効化）
+  UnstableCollections:
+    active: true
+  CompositionLocalAllowlist:
+    # CompositionLocal の利用を許可リスト制にはしない
+    active: false
