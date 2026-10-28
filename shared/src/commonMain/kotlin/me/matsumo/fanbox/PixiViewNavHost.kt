@@ -41,7 +41,7 @@ import me.matsumo.fanbox.feature.creator.follow.followingCreatorsScreen
 import me.matsumo.fanbox.feature.creator.payment.paymentsScreen
 import me.matsumo.fanbox.feature.creator.support.supportingCreatorsScreen
 import me.matsumo.fanbox.feature.creator.top.creatorTopScreen
-import me.matsumo.fanbox.feature.library.home.LibraryHomeRoute
+import me.matsumo.fanbox.feature.library.home.LIBRARY_HOME_ROUTE
 import me.matsumo.fanbox.feature.library.libraryScreen
 import me.matsumo.fanbox.feature.post.bookmark.bookmarkedPostsScreen
 import me.matsumo.fanbox.feature.post.detail.postDetailScreen
@@ -62,8 +62,8 @@ internal fun PixiViewNavHost(
     bottomSheetNavigator: BottomSheetNavigator = rememberBottomSheetNavigator(),
     navController: NavHostController = rememberNavController(bottomSheetNavigator),
     startDestination: Destination = Destination.Library,
-    onPostDetailClosed: suspend () -> Unit = {},
-    onLibraryHomeVisibilityChanged: (Boolean) -> Unit = {},
+    onPostDetailClose: suspend () -> Unit = {},
+    onLibraryHomeVisibilityChange: (Boolean) -> Unit = {},
 ) {
     val bottomNavigationNavController = rememberNavController()
     val bottomNavigationBackStackEntry by bottomNavigationNavController.currentBackStackEntryAsState()
@@ -71,11 +71,11 @@ internal fun PixiViewNavHost(
     val composeNavigator: ComposeNavigator = remember(navController) {
         navController.navigatorProvider.getNavigator(COMPOSE_NAVIGATOR_NAME)
     }
-    val currentOnPostDetailClosed by rememberUpdatedState(onPostDetailClosed)
-    val currentOnLibraryHomeVisibilityChanged by rememberUpdatedState(onLibraryHomeVisibilityChanged)
+    val currentOnPostDetailClosed by rememberUpdatedState(onPostDetailClose)
+    val currentOnLibraryHomeVisibilityChanged by rememberUpdatedState(onLibraryHomeVisibilityChange)
 
     LaunchedEffect(bottomNavigationBackStackEntry?.destination?.route) {
-        currentOnLibraryHomeVisibilityChanged(bottomNavigationBackStackEntry?.destination?.route == LibraryHomeRoute)
+        currentOnLibraryHomeVisibilityChanged(bottomNavigationBackStackEntry?.destination?.route == LIBRARY_HOME_ROUTE)
     }
 
     HandleDeepLink(navController)
@@ -84,7 +84,7 @@ internal fun PixiViewNavHost(
         observePostDetailClosedEntries(
             navController = navController,
             composeNavigator = composeNavigator,
-            onPostDetailClosed = { currentOnPostDetailClosed() },
+            onPostDetailClose = { currentOnPostDetailClosed() },
         )
     }
 
@@ -113,7 +113,7 @@ internal fun PixiViewNavHost(
 private suspend fun observePostDetailClosedEntries(
     navController: NavHostController,
     composeNavigator: ComposeNavigator,
-    onPostDetailClosed: suspend () -> Unit,
+    onPostDetailClose: suspend () -> Unit,
 ) = coroutineScope {
     val pendingClosedEntryIds = mutableSetOf<String>()
     var previousBackStack = composeNavigator.backStack.value
@@ -125,7 +125,7 @@ private suspend fun observePostDetailClosedEntries(
             dispatchCompletedPostDetailClosedEntries(
                 pendingClosedEntryIds = pendingClosedEntryIds,
                 visibleEntries = navController.visibleEntries.value,
-                onPostDetailClosed = onPostDetailClosed,
+                onPostDetailClose = onPostDetailClose,
             )
         }
     }
@@ -135,7 +135,7 @@ private suspend fun observePostDetailClosedEntries(
             dispatchCompletedPostDetailClosedEntries(
                 pendingClosedEntryIds = pendingClosedEntryIds,
                 visibleEntries = visibleEntries,
-                onPostDetailClosed = onPostDetailClosed,
+                onPostDetailClose = onPostDetailClose,
             )
         }
     }
@@ -144,7 +144,7 @@ private suspend fun observePostDetailClosedEntries(
 private suspend fun dispatchCompletedPostDetailClosedEntries(
     pendingClosedEntryIds: MutableSet<String>,
     visibleEntries: List<NavBackStackEntry>,
-    onPostDetailClosed: suspend () -> Unit,
+    onPostDetailClose: suspend () -> Unit,
 ) {
     val visibleEntryIds = visibleEntries.map { visibleEntry -> visibleEntry.id }.toSet()
     val completedEntryIds = pendingClosedEntryIds.filter { pendingEntryId ->
@@ -153,13 +153,11 @@ private suspend fun dispatchCompletedPostDetailClosedEntries(
 
     for (completedEntryId in completedEntryIds) {
         pendingClosedEntryIds.remove(completedEntryId)
-        onPostDetailClosed()
+        onPostDetailClose()
     }
 }
 
-private fun List<NavBackStackEntry>.findClosedPostDetailEntryIds(
-    currentBackStack: List<NavBackStackEntry>,
-): List<String> {
+private fun List<NavBackStackEntry>.findClosedPostDetailEntryIds(currentBackStack: List<NavBackStackEntry>): List<String> {
     val currentEntryIds = currentBackStack.map { currentEntry -> currentEntry.id }.toSet()
 
     return mapNotNull { previousEntry ->
@@ -197,6 +195,29 @@ private fun NavGraphBuilder.applyNavGraph(
         navigateTo = { mainNavController.navigate(it) },
     )
 
+    applyPostDestinations(
+        scope = scope,
+        mainNavController = mainNavController,
+        subNavController = subNavController,
+    )
+
+    applyCreatorDestinations(
+        scope = scope,
+        mainNavController = mainNavController,
+        subNavController = subNavController,
+    )
+
+    applySettingsDestinations(
+        scope = scope,
+        mainNavController = mainNavController,
+        subNavController = subNavController,
+    )
+}
+private fun NavGraphBuilder.applyPostDestinations(
+    scope: CoroutineScope,
+    mainNavController: NavHostController,
+    subNavController: NavHostController,
+) {
     postDetailScreen(
         navigateTo = { mainNavController.navigate(it) },
         navigateToCommentDeleteDialog = { contents, onResult ->
@@ -226,7 +247,13 @@ private fun NavGraphBuilder.applyNavGraph(
         navigateTo = { mainNavController.navigate(it) },
         terminate = { mainNavController.popBackStack() },
     )
+}
 
+private fun NavGraphBuilder.applyCreatorDestinations(
+    scope: CoroutineScope,
+    mainNavController: NavHostController,
+    subNavController: NavHostController,
+) {
     creatorTopScreen(
         navigateTo = { mainNavController.navigate(it) },
         navigateToAlertDialog = { contents, onPositive, onNegative ->
@@ -265,7 +292,13 @@ private fun NavGraphBuilder.applyNavGraph(
         navigateTo = { mainNavController.navigate(it) },
         terminate = { subNavController.popBackStack() },
     )
+}
 
+private fun NavGraphBuilder.applySettingsDestinations(
+    scope: CoroutineScope,
+    mainNavController: NavHostController,
+    subNavController: NavHostController,
+) {
     aboutScreen(
         navigateTo = { mainNavController.navigate(it) },
         terminate = { subNavController.popBackStack() },

@@ -10,7 +10,6 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
@@ -72,9 +71,9 @@ internal fun WelcomeTopScreen(
                 .padding(24.dp),
             horizontalAlignment = Alignment.CenterHorizontally,
         ) {
-            Spacer(modifier = Modifier.height(24.dp))
-
-            FirstSection()
+            FirstSection(
+                modifier = Modifier.padding(top = 24.dp),
+            )
 
             SecondSection(
                 modifier = Modifier.weight(1f),
@@ -95,9 +94,9 @@ internal fun WelcomeTopScreen(
                 modifier = Modifier.weight(1f),
             )
 
-            Spacer(modifier = Modifier.width(24.dp))
-
-            Column(Modifier.weight(1f)) {
+            Column(
+                modifier = Modifier.weight(1f).padding(start = 24.dp),
+            ) {
                 Box(Modifier.weight(2f))
 
                 SecondSection(
@@ -176,7 +175,7 @@ private fun SecondSection(
                 isChecked = isAgreedTermsOfService,
                 link = stringResource(Res.string.welcome_team_of_service),
                 body = stringResource(Res.string.welcome_agree, stringResource(Res.string.welcome_team_of_service)),
-                onChecked = { isAgreedTermsOfService = it },
+                onCheck = { isAgreedTermsOfService = it },
                 onClickLink = { navigateToWebPage.invoke(teamOfServiceUri) },
             )
 
@@ -184,15 +183,13 @@ private fun SecondSection(
                 isChecked = isAgreedPrivacyPolicy,
                 link = stringResource(Res.string.welcome_privacy_policy),
                 body = stringResource(Res.string.welcome_agree, stringResource(Res.string.welcome_privacy_policy)),
-                onChecked = { isAgreedPrivacyPolicy = it },
+                onCheck = { isAgreedPrivacyPolicy = it },
                 onClickLink = { navigateToWebPage.invoke(privacyPolicyUri) },
             )
         }
 
-        Spacer(modifier = Modifier.height(24.dp))
-
         WelcomeIndicatorItem(
-            modifier = Modifier.padding(bottom = 24.dp),
+            modifier = Modifier.padding(vertical = 24.dp),
             max = 2,
             step = 1,
         )
@@ -225,7 +222,7 @@ private fun CheckBoxLinkButton(
     isChecked: Boolean,
     link: String,
     body: String,
-    onChecked: (Boolean) -> Unit,
+    onCheck: (Boolean) -> Unit,
     onClickLink: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
@@ -256,7 +253,7 @@ private fun CheckBoxLinkButton(
         Checkbox(
             modifier = Modifier.size(12.dp),
             checked = isChecked,
-            onCheckedChange = onChecked,
+            onCheckedChange = onCheck,
         )
 
         ClickableText(

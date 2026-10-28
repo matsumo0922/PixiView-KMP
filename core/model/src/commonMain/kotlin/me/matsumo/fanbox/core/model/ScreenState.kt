@@ -29,13 +29,11 @@ sealed class TranslationState<out T> {
     ) : TranslationState<T>()
 }
 
-fun <T> ScreenState<T>.updateWhenIdle(action: (T) -> T): ScreenState<T> {
-    return if (this is ScreenState.Idle) {
-        val newData = action(data)
-        ScreenState.Idle(newData)
-    } else {
-        this
-    }
+fun <T> ScreenState<T>.updateWhenIdle(action: (T) -> T): ScreenState<T> = if (this is ScreenState.Idle) {
+    val newData = action(data)
+    ScreenState.Idle(newData)
+} else {
+    this
 }
 
 fun <T> MutableStateFlow<ScreenState<T>>.updateWhenIdle(action: (T) -> T) {

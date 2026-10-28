@@ -84,7 +84,11 @@ class MigratingFanboxCookieStorage internal constructor(
 
     override suspend fun upsert(cookie: FanboxCookieRecord) = mutate { it.upsert(cookie) }
 
-    override suspend fun delete(domain: String, path: String, name: String) =
+    override suspend fun delete(
+        domain: String,
+        path: String,
+        name: String,
+    ) =
         mutate { it.delete(domain, path, name) }
 
     override suspend fun deleteExpired(nowEpochMilliseconds: Long) =
@@ -248,9 +252,7 @@ class MigratingFanboxCookieStorage internal constructor(
     }
 
     /** [routingMutex] を保持した状態で保存先を返す。まだ決まっていなければ決める。 */
-    private suspend fun resolveRoutingLocked(): CookieRouting {
-        return routing ?: decideRouting().also { routing = it }
-    }
+    private suspend fun resolveRoutingLocked(): CookieRouting = routing ?: decideRouting().also { routing = it }
 
     /**
      * 保存先を決める。この関数は [routingMutex] を保持した状態で 1 度だけ呼ばれる。
@@ -328,10 +330,7 @@ class MigratingFanboxCookieStorage internal constructor(
      * 代わりに保存の完了そのものを根拠とする。保存が失敗した場合は例外になるため、
      * 例外なく戻ったことが保存済みであることを示す。
      */
-    private suspend fun migrateRecords(
-        legacyRecords: List<FanboxCookieRecord>,
-        legacyStorage: LegacyCookieStorage,
-    ): CookieRouting {
+    private suspend fun migrateRecords(legacyRecords: List<FanboxCookieRecord>, legacyStorage: LegacyCookieStorage): CookieRouting {
         onMigrationEvent(CookieMigrationEvent.Started(legacyRecords.size))
 
         val payload = SecureCookiePayload(
@@ -433,7 +432,9 @@ class MigratingFanboxCookieStorage internal constructor(
  * fankt の `RoomFanboxCookieStorage` を、移行に必要な操作だけに絞って受け取るための型。
  * テストから差し替えられるように interface で切っている。
  */
-internal interface LegacyCookieStorage : FanboxCookieStorage, AutoCloseable
+internal interface LegacyCookieStorage :
+    FanboxCookieStorage,
+    AutoCloseable
 
 /** 移行の経過。Cookie の値や、資格情報から導いた識別子を含めないこと。 */
 internal sealed interface CookieMigrationEvent {

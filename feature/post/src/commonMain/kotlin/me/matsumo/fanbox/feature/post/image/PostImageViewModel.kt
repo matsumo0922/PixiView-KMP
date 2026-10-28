@@ -37,7 +37,11 @@ class PostImageViewModel(
         }
     }
 
-    fun downloadImages(postId: PostId, title: String, imageItems: List<PostDetail.ImageItem>) {
+    fun downloadImages(
+        postId: PostId,
+        title: String,
+        imageItems: List<PostDetail.ImageItem>,
+    ) {
         downloadPostsRepository.requestDownloadImages(postId, title, imageItems)
     }
 }

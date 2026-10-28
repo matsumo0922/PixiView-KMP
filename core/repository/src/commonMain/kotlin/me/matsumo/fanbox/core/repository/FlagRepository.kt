@@ -16,7 +16,5 @@ internal class FlagRepositoryImpl(
         flagDataStore.setFlag(key, value)
     }
 
-    override suspend fun getFlag(key: Flag, default: Boolean): Boolean {
-        return flagDataStore.getFlag(key, default)
-    }
+    override suspend fun getFlag(key: Flag, default: Boolean): Boolean = flagDataStore.getFlag(key, default)
 }

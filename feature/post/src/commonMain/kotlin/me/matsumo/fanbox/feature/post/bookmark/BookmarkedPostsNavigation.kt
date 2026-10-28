@@ -6,10 +6,7 @@ import androidx.navigation.NavGraphBuilder
 import androidx.navigation.compose.composable
 import me.matsumo.fanbox.core.model.Destination
 
-fun NavGraphBuilder.bookmarkedPostsScreen(
-    navigateTo: (Destination) -> Unit,
-    terminate: () -> Unit,
-) {
+fun NavGraphBuilder.bookmarkedPostsScreen(navigateTo: (Destination) -> Unit, terminate: () -> Unit) {
     composable<Destination.BookmarkedPosts> {
         BookmarkedPostsRoute(
             modifier = Modifier.fillMaxSize(),

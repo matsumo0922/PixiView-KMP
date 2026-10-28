@@ -37,13 +37,11 @@ class RewardLogDataStore(
         }
     }
 
-    suspend fun getRewardedCount(usage: RewardUsage): Int {
-        return preference.data.map { it[rewardedCountKey(usage)] ?: 0 }.first()
-    }
+    suspend fun getRewardedCount(usage: RewardUsage): Int = preference.data.map {
+        it[rewardedCountKey(usage)] ?: 0
+    }.first()
 
-    suspend fun getRewardDate(): String? {
-        return preference.data.map { it[stringPreferencesKey(KEY_REWARD_DATE)] }.first()
-    }
+    suspend fun getRewardDate(): String? = preference.data.map { it[stringPreferencesKey(KEY_REWARD_DATE)] }.first()
 
     private fun rewardedCountKey(usage: RewardUsage) = intPreferencesKey("${KEY_REWARDED_COUNT}_${usage.storageKey}")
 

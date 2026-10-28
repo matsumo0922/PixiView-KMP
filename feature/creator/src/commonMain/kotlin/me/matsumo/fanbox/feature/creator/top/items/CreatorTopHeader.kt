@@ -4,7 +4,6 @@ import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -108,23 +107,19 @@ internal fun CreatorTopHeader(
             onClickLink = { onClickLink.invoke(it) },
         )
 
-        Spacer(modifier = Modifier.size(16.dp))
-
         Text(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(horizontal = 16.dp),
+                .padding(start = 16.dp, top = 16.dp, end = 16.dp),
             text = creatorDetail.user?.name.orEmpty(),
             style = MaterialTheme.typography.titleLarge.bold(),
             color = MaterialTheme.colorScheme.onSurface,
         )
 
-        Spacer(modifier = Modifier.size(4.dp))
-
         Text(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(horizontal = 16.dp),
+                .padding(start = 16.dp, top = 4.dp, end = 16.dp),
             text = "@${creatorDetail.creatorId.value}",
             style = MaterialTheme.typography.bodyMedium,
             color = MaterialTheme.colorScheme.onSurfaceVariant,
@@ -316,7 +311,9 @@ private fun HeaderTop(
                 it.layoutId == "icon"
             }!!.measure(Constraints.fixed(80.dp.roundToPx(), 80.dp.roundToPx()))
             val backgroundPlaceable = measurables.find { it.layoutId == "background" }!!.measure(constraints)
-            val buttonPlaceable = measurables.find { it.layoutId == "button" }!!.measure(Constraints.fixedWidth(128.dp.roundToPx()))
+            val buttonPlaceable = measurables.find {
+                it.layoutId == "button"
+            }!!.measure(Constraints.fixedWidth(128.dp.roundToPx()))
             val linksPlaceable = measurables.find { it.layoutId == "links" }!!.measure(
                 Constraints.fixedWidth(constraints.maxWidth - iconPlaceable.width - buttonPlaceable.width - 16.dp.roundToPx() * 4),
             )
@@ -386,22 +383,20 @@ private fun DescriptionItem(
 }
 
 @Composable
-private fun createTags(creatorDetail: CreatorDetail): List<String> {
-    return mutableListOf<String>().apply {
-        if (creatorDetail.isSupported) {
-            add(stringResource(Res.string.creator_tag_is_supported))
-        }
+private fun createTags(creatorDetail: CreatorDetail): List<String> = mutableListOf<String>().apply {
+    if (creatorDetail.isSupported) {
+        add(stringResource(Res.string.creator_tag_is_supported))
+    }
 
-        if (creatorDetail.hasAdultContent) {
-            add(stringResource(Res.string.creator_tag_has_adult_content))
-        }
+    if (creatorDetail.hasAdultContent) {
+        add(stringResource(Res.string.creator_tag_has_adult_content))
+    }
 
-        if (creatorDetail.isAcceptingRequest) {
-            add(stringResource(Res.string.creator_tag_is_accepting_request))
-        }
+    if (creatorDetail.isAcceptingRequest) {
+        add(stringResource(Res.string.creator_tag_is_accepting_request))
+    }
 
-        if (creatorDetail.hasBoothShop) {
-            add(stringResource(Res.string.creator_tag_has_booth_shop))
-        }
+    if (creatorDetail.hasBoothShop) {
+        add(stringResource(Res.string.creator_tag_has_booth_shop))
     }
 }

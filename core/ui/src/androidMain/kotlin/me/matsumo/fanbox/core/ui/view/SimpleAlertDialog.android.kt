@@ -21,7 +21,6 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
 import me.matsumo.fanbox.core.ui.theme.bold
 
-@Suppress("UnstableCollections", "ModifierMissing")
 @Composable
 actual fun SimpleAlertDialog(
     title: String,
@@ -31,12 +30,13 @@ actual fun SimpleAlertDialog(
     onClickPositive: () -> Unit,
     onClickNegative: () -> Unit,
     isCaution: Boolean,
+    modifier: Modifier,
 ) {
     Dialog(
         onDismissRequest = onClickNegative,
     ) {
         Column(
-            modifier = Modifier
+            modifier = modifier
                 .fillMaxWidth()
                 .wrapContentHeight()
                 .clip(RoundedCornerShape(16.dp))

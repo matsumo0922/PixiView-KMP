@@ -42,8 +42,12 @@ class LibraryDiscoveryViewModel(
         viewModelScope.launch {
             _screenState.value = ScreenState.Loading
             _screenState.value = suspendRunCatching {
-                val followingCreators = suspendRunCatching { fanboxRepository.getFollowingCreators() }.getOrElse { emptyList() }
-                val recommendedCreators = suspendRunCatching { fanboxRepository.getRecommendedCreators() }.getOrElse { emptyList() }
+                val followingCreators = suspendRunCatching {
+                    fanboxRepository.getFollowingCreators()
+                }.getOrElse { emptyList() }
+                val recommendedCreators = suspendRunCatching {
+                    fanboxRepository.getRecommendedCreators()
+                }.getOrElse { emptyList() }
                 val followingPixivCreators = suspendRunCatching {
                     fanboxRepository.getFollowingPixivCreators()
                 }.getOrElse { emptyList() }
@@ -63,16 +67,12 @@ class LibraryDiscoveryViewModel(
         }
     }
 
-    suspend fun follow(creatorUserId: UserId): Result<Unit> {
-        return suspendRunCatching {
-            fanboxRepository.followCreator(creatorUserId)
-        }
+    suspend fun follow(creatorUserId: UserId): Result<Unit> = suspendRunCatching {
+        fanboxRepository.followCreator(creatorUserId)
     }
 
-    suspend fun unfollow(creatorUserId: UserId): Result<Unit> {
-        return suspendRunCatching {
-            fanboxRepository.unfollowCreator(creatorUserId)
-        }
+    suspend fun unfollow(creatorUserId: UserId): Result<Unit> = suspendRunCatching {
+        fanboxRepository.unfollowCreator(creatorUserId)
     }
 }
 

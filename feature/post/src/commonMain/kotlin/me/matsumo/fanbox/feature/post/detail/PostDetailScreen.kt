@@ -4,12 +4,11 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
@@ -118,6 +117,7 @@ import org.jetbrains.compose.resources.stringResource
 import org.koin.compose.koinInject
 import org.koin.compose.viewmodel.koinViewModel
 import org.koin.core.parameter.parametersOf
+import kotlin.time.Duration.Companion.milliseconds
 import kotlin.time.ExperimentalTime
 import kotlin.uuid.ExperimentalUuidApi
 
@@ -173,8 +173,8 @@ internal fun PostDetailRoute(
                         modifier = Modifier.fillMaxWidth(),
                         postDetail = postDetailMap[currentPostId],
                         isBookmarked = uiState.bookmarkedPostIds.contains(currentPostId),
-                        onCreatorClicked = { navigateTo(Destination.CreatorTop(it, true)) },
-                        onBookmarkClicked = { isBookmarked ->
+                        onCreatorClick = { navigateTo(Destination.CreatorTop(it, true)) },
+                        onBookmarkClick = { isBookmarked ->
                             postDetailMap[currentPostId]?.let { viewModel.postBookmark(it.adPost(), isBookmarked) }
                         },
                     )
@@ -222,8 +222,8 @@ internal fun PostDetailRoute(
                                 snackbarHostState = snackbarHostState,
                                 navigateTo = navigateTo,
                                 navigateToCommentDeleteDialog = navigateToCommentDeleteDialog,
-                                onPostDetailFetched = { postDetailMap[id] = it },
-                                onRevealCompleted = viewModel::finishReveal,
+                                onPostDetailFetch = { postDetailMap[id] = it },
+                                onRevealComplete = viewModel::finishReveal,
                                 terminate = terminate,
                             )
                         }
@@ -251,8 +251,8 @@ private fun PostDetailView(
     snackbarHostState: SnackbarHostState,
     navigateTo: (Destination) -> Unit,
     navigateToCommentDeleteDialog: (SimpleAlertContents, () -> Unit) -> Unit,
-    onPostDetailFetched: (PostDetail) -> Unit,
-    onRevealCompleted: () -> Unit,
+    onPostDetailFetch: (PostDetail) -> Unit,
+    onRevealComplete: () -> Unit,
     terminate: () -> Unit,
     modifier: Modifier = Modifier,
     viewModel: PostDetailViewModel = koinViewModel(key = postId.value) {
@@ -366,7 +366,7 @@ private fun PostDetailView(
             onClickUnfollow = viewModel::unfollow,
             onClickOpenBrowser = { navigatorExtension.navigateToWebPage(it, "") },
             onClickBillingPlus = { navigateTo(Destination.BillingPlusBottomSheet(it)) },
-            onRevealCompleted = onRevealCompleted,
+            onRevealComplete = onRevealComplete,
             onTerminate = terminate,
         )
 
@@ -376,7 +376,7 @@ private fun PostDetailView(
         }
 
         LaunchedEffect(uiState.postDetail) {
-            onPostDetailFetched.invoke(uiState.postDetail)
+            onPostDetailFetch.invoke(uiState.postDetail)
         }
     }
 }
@@ -413,7 +413,7 @@ private fun PostDetailScreen(
     onClickUnfollow: (UserId) -> Unit,
     onClickOpenBrowser: (String) -> Unit,
     onClickBillingPlus: (String?) -> Unit,
-    onRevealCompleted: () -> Unit,
+    onRevealComplete: () -> Unit,
     onTerminate: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
@@ -429,16 +429,18 @@ private fun PostDetailScreen(
     LaunchedEffect(comments) {
         if (isShowCommentEditor) {
             val commentItems = comments.contents.flatMap { comment -> listOf(comment) + comment.replies }
-            isShowCommentEditor = !commentItems.any { comment -> comment.user?.name == metaData.context?.user?.name && comment.body == latestComment }
+            isShowCommentEditor = !commentItems.any { comment ->
+                comment.user?.name == metaData.context?.user?.name && comment.body == latestComment
+            }
         }
     }
 
     if (shouldShowReveal) {
         LaunchedEffect(shouldShowReveal) {
-            delay(500)
+            delay(500.milliseconds)
             revealState.revealByStep(
                 keys = listOf(PostDetailRevealKeys.Translate),
-                onCompleted = onRevealCompleted,
+                onCompleted = onRevealComplete,
             )
         }
     }
@@ -446,12 +448,18 @@ private fun PostDetailScreen(
     val isShowHeader = runCatching {
         when (val content = postDetail.body) {
             is PostDetail.Body.Article -> content.blocks.first() !is PostDetail.Body.Article.Block.Image
+
             is PostDetail.Body.File -> true
+
             is PostDetail.Body.Image -> false
+
             // 先頭が画像で始まらない本文はヘッダーを重ねても隠れないため表示する。
             is PostDetail.Body.Text -> true
+
             is PostDetail.Body.Video -> true
+
             is PostDetail.Body.Html -> true
+
             is PostDetail.Body.Unknown -> true
         }
     }.getOrDefault(true)
@@ -460,6 +468,7 @@ private fun PostDetailScreen(
         LazyColumn(
             modifier = Modifier.fillMaxSize(),
             state = state,
+            contentPadding = PaddingValues(bottom = 128.dp),
         ) {
             if (isShowHeader) {
                 item {
@@ -563,10 +572,6 @@ private fun PostDetailScreen(
                     }
                 },
             )
-
-            item {
-                Spacer(modifier = Modifier.height(128.dp))
-            }
         }
 
         PostDetailTopAppBar(
@@ -590,12 +595,13 @@ private fun PostDetailScreen(
         )
     }
 
-    PostDetailMenuDialog(
-        isVisible = isShowMenu,
-        onClickOpenBrowser = { onClickOpenBrowser.invoke(postDetail.browserUrl) },
-        onClickAllDownload = { onClickDownloadImages.invoke(postDetail.body.imageItems) },
-        onDismissRequest = { isShowMenu = false },
-    )
+    if (isShowMenu) {
+        PostDetailMenuDialog(
+            onClickOpenBrowser = { onClickOpenBrowser.invoke(postDetail.browserUrl) },
+            onClickAllDownload = { onClickDownloadImages.invoke(postDetail.body.imageItems) },
+            onDismissRequest = { isShowMenu = false },
+        )
+    }
 }
 
 @OptIn(ExperimentalTime::class)
@@ -695,11 +701,12 @@ private fun RevealOverlayScope.RevealOverlayContent(
     key: Key,
     containerColor: Color,
     contentColor: Color,
+    modifier: Modifier = Modifier,
 ) {
     when (key) {
         PostDetailRevealKeys.Translate -> {
             OverlayText(
-                modifier = Modifier.align(
+                modifier = modifier.align(
                     horizontalAlignment = Alignment.End,
                     verticalArrangement = RevealOverlayArrangement.Bottom,
                 ),
@@ -712,24 +719,22 @@ private fun RevealOverlayScope.RevealOverlayContent(
     }
 }
 
-private fun PostDetail.adPost(): Post {
-    return Post(
-        id = id,
-        title = title,
-        excerpt = excerpt,
-        cover = Cover(
-            url = coverImageUrl ?: body.imageItems.firstOrNull()?.thumbnailUrl.orEmpty(),
-            type = "From Detail",
-        ),
-        hasAdultContent = hasAdultContent,
-        isLiked = isLiked,
-        isRestricted = isRestricted,
-        likeCount = likeCount,
-        commentCount = commentCount,
-        updatedDatetime = updatedDatetime,
-        publishedDatetime = publishedDatetime,
-        feeRequired = feeRequired,
-        user = user,
-        tags = tags,
-    )
-}
+private fun PostDetail.adPost(): Post = Post(
+    id = id,
+    title = title,
+    excerpt = excerpt,
+    cover = Cover(
+        url = coverImageUrl ?: body.imageItems.firstOrNull()?.thumbnailUrl.orEmpty(),
+        type = "From Detail",
+    ),
+    hasAdultContent = hasAdultContent,
+    isLiked = isLiked,
+    isRestricted = isRestricted,
+    likeCount = likeCount,
+    commentCount = commentCount,
+    updatedDatetime = updatedDatetime,
+    publishedDatetime = publishedDatetime,
+    feeRequired = feeRequired,
+    user = user,
+    tags = tags,
+)

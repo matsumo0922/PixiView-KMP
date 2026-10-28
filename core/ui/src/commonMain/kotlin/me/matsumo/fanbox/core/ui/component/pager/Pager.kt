@@ -31,7 +31,10 @@ import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.Stable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.movableContentOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.runtime.snapshotFlow
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -57,7 +60,7 @@ import me.matsumo.fanbox.core.ui.component.snapper.rememberSnapperFlingBehavior
 /**
  * Library-wide switch to turn on debug logging.
  */
-internal const val DebugLog = false
+internal const val DEBUG_LOG = false
 
 @Deprecated(
     """
@@ -411,6 +414,10 @@ internal fun Pager(
     }
 
     val pagerScope = remember(state) { PagerScopeImpl(state) }
+    val currentContent by rememberUpdatedState(content)
+    val pageContent = remember(pagerScope) {
+        movableContentOf<Int> { page -> currentContent.invoke(pagerScope, page) }
+    }
 
     // We only consume nested flings in the main-axis, allowing cross-axis flings to propagate
     // as normal
@@ -447,7 +454,7 @@ internal fun Pager(
                         .fillParentMaxHeight()
                         .wrapContentSize(),
                 ) {
-                    pagerScope.content(page)
+                    pageContent(page)
                 }
             }
         }
@@ -476,7 +483,7 @@ internal fun Pager(
                         .fillParentMaxWidth()
                         .wrapContentSize(),
                 ) {
-                    pagerScope.content(page)
+                    pageContent(page)
                 }
             }
         }
@@ -496,34 +503,27 @@ private class ConsumeFlingNestedScrollConnection(
         // We can consume all resting fling scrolls so that they don't propagate up to the
         // Pager
         NestedScrollSource.Fling -> available.consume(consumeHorizontal, consumeVertical)
+
         else -> Offset.Zero
     }
 
-    override suspend fun onPostFling(consumed: Velocity, available: Velocity): Velocity {
-        return if (pagerState.currentPageOffset != 0f) {
-            // The Pager is already scrolling. This means that a nested scroll child was
-            // scrolled to end, and the Pager can use this fling
-            Velocity.Zero
-        } else {
-            // A nested scroll child is still scrolling. We can consume all post fling
-            // velocity on the main-axis so that it doesn't propagate up to the Pager
-            available.consume(consumeHorizontal, consumeVertical)
-        }
+    override suspend fun onPostFling(consumed: Velocity, available: Velocity): Velocity = if (pagerState.currentPageOffset != 0f) {
+        // The Pager is already scrolling. This means that a nested scroll child was
+        // scrolled to end, and the Pager can use this fling
+        Velocity.Zero
+    } else {
+        // A nested scroll child is still scrolling. We can consume all post fling
+        // velocity on the main-axis so that it doesn't propagate up to the Pager
+        available.consume(consumeHorizontal, consumeVertical)
     }
 }
 
-private fun Offset.consume(
-    consumeHorizontal: Boolean,
-    consumeVertical: Boolean,
-): Offset = Offset(
+private fun Offset.consume(consumeHorizontal: Boolean, consumeVertical: Boolean): Offset = Offset(
     x = if (consumeHorizontal) this.x else 0f,
     y = if (consumeVertical) this.y else 0f,
 )
 
-private fun Velocity.consume(
-    consumeHorizontal: Boolean,
-    consumeVertical: Boolean,
-): Velocity = Velocity(
+private fun Velocity.consume(consumeHorizontal: Boolean, consumeVertical: Boolean): Velocity = Velocity(
     x = if (consumeHorizontal) this.x else 0f,
     y = if (consumeVertical) this.y else 0f,
 )
@@ -574,6 +574,4 @@ The androidx.compose equivalent of Pager is androidx.compose.foundation.pager.Pa
 For more migration information, please visit https://google.github.io/accompanist/pager/#migration
 """,
 )
-public fun PagerScope.calculateCurrentOffsetForPage(page: Int): Float {
-    return (currentPage - page) + currentPageOffset
-}
+public fun PagerScope.calculateCurrentOffsetForPage(page: Int): Float = (currentPage - page) + currentPageOffset

@@ -83,26 +83,18 @@ class RewardLogDataStoreTest {
         assertEquals("2026-07-10", rewardLogDataStore.getRewardDate())
     }
 
-    private fun createPreferenceHelper(): PreferenceHelper {
-        return object : PreferenceHelper {
-            private val stores = mutableMapOf<String, DataStore<Preferences>>()
+    private fun createPreferenceHelper(): PreferenceHelper = object : PreferenceHelper {
+        private val stores = mutableMapOf<String, DataStore<Preferences>>()
 
-            override fun create(name: String): DataStore<Preferences> {
-                return stores.getOrPut(name) { createDataStore(name) }
-            }
+        override fun create(name: String): DataStore<Preferences> = stores.getOrPut(name) { createDataStore(name) }
 
-            override fun delete(name: String) = Unit
-        }
+        override fun delete(name: String) = Unit
     }
 
-    private fun createPreferenceHelper(dataStore: DataStore<Preferences>): PreferenceHelper {
-        return object : PreferenceHelper {
-            override fun create(name: String): DataStore<Preferences> {
-                return dataStore
-            }
+    private fun createPreferenceHelper(dataStore: DataStore<Preferences>): PreferenceHelper = object : PreferenceHelper {
+        override fun create(name: String): DataStore<Preferences> = dataStore
 
-            override fun delete(name: String) = Unit
-        }
+        override fun delete(name: String) = Unit
     }
 
     private fun createDataStore(name: String): DataStore<Preferences> {

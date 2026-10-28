@@ -62,7 +62,7 @@ data class Setting(
 
     /** プロセス内のリテンション UI 二重表示を防ぐための表示履歴キー。 */
     val billingRetentionPromptDedupeKey
-        get() = "${plusUnsubscribeDetectedAtMillis ?: BILLING_RETENTION_PROMPT_UNKNOWN_EPISODE_KEY}:$plusRetentionPromptLastShownAtMillis"
+        get() = "${plusUnsubscribeDetectedAtMillis ?: "unknown"}:$plusRetentionPromptLastShownAtMillis"
 
     /** 指定時刻でリテンション UI を表示できるかどうか。 */
     fun canShowBillingRetentionPrompt(currentTimeMillis: Long): Boolean {
@@ -78,50 +78,42 @@ data class Setting(
         val hasClockMovedBackwards = elapsedTimeMillis < 0L
         if (hasClockMovedBackwards) return true
 
-        return elapsedTimeMillis >= BILLING_RETENTION_PROMPT_INTERVAL_MILLIS
+        return elapsedTimeMillis >= 1.days.inWholeMilliseconds
     }
 
     /** アプリ設定の初期値を生成するオブジェクト。 */
     companion object Companion {
         @OptIn(ExperimentalTime::class)
-        fun default(): Setting {
-            return Setting(
-                pixiViewId = "",
-                themeConfig = ThemeConfig.System,
-                themeColorConfig = ThemeColorConfig.Blue,
-                translateLanguage = Locale.current.language,
-                downloadFileType = DownloadFileType.ORIGINAL,
-                imageSaveDirectory = "",
-                fileSaveDirectory = "",
-                postSaveDirectory = "",
-                firstLaunchTime = -1L,
-                isAgreedPrivacyPolicy = false,
-                isAgreedTermsOfService = false,
-                isUseAppLock = false,
-                isUseDynamicColor = false,
-                isUseGridMode = false,
-                isUseInfinityPostDetail = false,
-                isDefaultFollowTabInHome = false,
-                isHideAdultContents = true,
-                isOverrideAdultContents = true,
-                isHideRestricted = false,
-                isAutoImagePreview = false,
-                isTestUser = false,
-                isDeveloperMode = false,
-                isPlusMode = false,
-                isPlusTrial = false,
-                isPlusSubscriptionSetToCancel = false,
-                plusUnsubscribeDetectedAtMillis = null,
-                plusPlanType = BillingPlan.Type.UNKNOWN,
-                plusRetentionPromptLastShownAtMillis = -1L,
-                plusRetentionPromptLastShownUnsubscribeDetectedAtMillis = null,
-            )
-        }
+        fun default(): Setting = Setting(
+            pixiViewId = "",
+            themeConfig = ThemeConfig.System,
+            themeColorConfig = ThemeColorConfig.Blue,
+            translateLanguage = Locale.current.language,
+            downloadFileType = DownloadFileType.ORIGINAL,
+            imageSaveDirectory = "",
+            fileSaveDirectory = "",
+            postSaveDirectory = "",
+            firstLaunchTime = -1L,
+            isAgreedPrivacyPolicy = false,
+            isAgreedTermsOfService = false,
+            isUseAppLock = false,
+            isUseDynamicColor = false,
+            isUseGridMode = false,
+            isUseInfinityPostDetail = false,
+            isDefaultFollowTabInHome = false,
+            isHideAdultContents = true,
+            isOverrideAdultContents = true,
+            isHideRestricted = false,
+            isAutoImagePreview = false,
+            isTestUser = false,
+            isDeveloperMode = false,
+            isPlusMode = false,
+            isPlusTrial = false,
+            isPlusSubscriptionSetToCancel = false,
+            plusUnsubscribeDetectedAtMillis = null,
+            plusPlanType = BillingPlan.Type.UNKNOWN,
+            plusRetentionPromptLastShownAtMillis = -1L,
+            plusRetentionPromptLastShownUnsubscribeDetectedAtMillis = null,
+        )
     }
 }
-
-/** リテンション UI の再表示を抑制するミリ秒数。 */
-private const val BILLING_RETENTION_PROMPT_INTERVAL_MILLIS = 86_400_000L
-
-/** 解約検知時刻がないリテンション表示履歴のエピソードキー。 */
-private const val BILLING_RETENTION_PROMPT_UNKNOWN_EPISODE_KEY = "unknown"

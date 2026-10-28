@@ -86,9 +86,7 @@ sealed class PostsLog : LogCategory {
         ) = Download(type, postId, itemId, extension, isSuccess)
 
         // 投稿にいいねをした際のログ
-        fun like(
-            postId: String,
-        ) = Like(postId)
+        fun like(postId: String) = Like(postId)
 
         // 投稿にコメントをした際のログ
         fun comment(
@@ -99,15 +97,9 @@ sealed class PostsLog : LogCategory {
         ) = Comment(postId, parentFanboxCommentId, rootFanboxCommentId, comment)
 
         // コメントにいいねをした際のログ
-        fun likeComment(
-            postId: String,
-            commentId: String,
-        ) = LikeComment(postId, commentId)
+        fun likeComment(postId: String, commentId: String) = LikeComment(postId, commentId)
 
         // コメントを削除した際のログ
-        fun deleteComment(
-            postId: String,
-            commentId: String,
-        ) = DeleteComment(postId, commentId)
+        fun deleteComment(postId: String, commentId: String) = DeleteComment(postId, commentId)
     }
 }

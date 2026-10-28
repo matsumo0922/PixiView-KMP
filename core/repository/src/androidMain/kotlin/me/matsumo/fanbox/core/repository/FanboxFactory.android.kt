@@ -42,9 +42,7 @@ private const val GUEST_DEV_MANIFEST_URL =
  * ビルドの種別では分岐しない。`isDebuggable` を持つビルドは debug だけではなく、種別が増えるたびに
  * どちらを読むかを判断し直すことになる。
  */
-internal fun guestManifestUrl(isDeveloperMode: Boolean): String {
-    return if (isDeveloperMode) GUEST_DEV_MANIFEST_URL else GUEST_MANIFEST_URL
-}
+internal fun guestManifestUrl(isDeveloperMode: Boolean): String = if (isDeveloperMode) GUEST_DEV_MANIFEST_URL else GUEST_MANIFEST_URL
 
 /**
  * 保存済みの設定を読む上限。

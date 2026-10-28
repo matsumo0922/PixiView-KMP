@@ -84,62 +84,16 @@ internal fun LazyListScope.postDetailCommentItems(
     onClickTranslate: (PageOffsetInfo<Comment>) -> Unit,
 ) {
     item {
-        Column(
-            modifier = Modifier
-                .padding(horizontal = 16.dp, top = 16.dp)
-                .fillMaxWidth(),
-        ) {
-            Row(
-                modifier = Modifier.fillMaxWidth(),
-                verticalAlignment = Alignment.CenterVertically,
-                horizontalArrangement = Arrangement.spacedBy(8.dp),
-            ) {
-                Text(
-                    modifier = Modifier.weight(1f),
-                    text = stringResource(Res.string.post_detail_comment_title),
-                    style = MaterialTheme.typography.titleMedium,
-                    color = MaterialTheme.colorScheme.onSurface,
-                )
-
-                IconButton(onClick = { onClickTranslate.invoke(comments) }) {
-                    if (commentsTransState is TranslationState.Loading) {
-                        CircularProgressIndicator(
-                            modifier = Modifier.padding(4.dp),
-                        )
-                    } else {
-                        Icon(
-                            imageVector = Icons.Default.Translate,
-                            tint = MaterialTheme.colorScheme.onSurface,
-                            contentDescription = null,
-                        )
-                    }
-                }
-
-                IconButton(onClick = { onClickShowCommentEditor.invoke(!isShowCommentEditor) }) {
-                    Icon(
-                        imageVector = Icons.Default.Edit,
-                        tint = MaterialTheme.colorScheme.onSurface,
-                        contentDescription = null,
-                    )
-                }
-            }
-
-            AnimatedVisibility(visible = isShowCommentEditor) {
-                CommentEditor(
-                    modifier = Modifier
-                        .animateContentSize()
-                        .padding(top = 24.dp)
-                        .padding(horizontal = 8.dp)
-                        .fillMaxWidth(),
-                    parentFanboxCommentId = CommentId("0"),
-                    rootFanboxCommentId = CommentId("0"),
-                    metaData = metaData,
-                    onClickCommentReply = { body, parentFanboxCommentId, rootFanboxCommentId ->
-                        onClickCommentReply.invoke(body, parentFanboxCommentId, rootFanboxCommentId)
-                    },
-                )
-            }
-        }
+        PostDetailCommentHeader(
+            modifier = Modifier.fillMaxWidth(),
+            isShowCommentEditor = isShowCommentEditor,
+            comments = comments,
+            commentsTransState = commentsTransState,
+            metaData = metaData,
+            onClickShowCommentEditor = onClickShowCommentEditor,
+            onClickCommentReply = onClickCommentReply,
+            onClickTranslate = onClickTranslate,
+        )
     }
 
     if (comments.contents.isNotEmpty()) {
@@ -180,37 +134,14 @@ internal fun LazyListScope.postDetailCommentItems(
         }
     }
 
-    if (comments.offset != null) {
+    comments.offset?.let { offset ->
         item {
-            Box(
-                modifier = Modifier
-                    .padding(horizontal = 16.dp, top = 16.dp)
-                    .fillMaxWidth(),
-            ) {
-                Button(
-                    modifier = Modifier
-                        .padding(top = 24.dp)
-                        .align(Alignment.Center),
-                    onClick = { onClickLoadMore.invoke(postDetail.id, comments.offset!!) },
-                ) {
-                    Row(
-                        verticalAlignment = Alignment.CenterVertically,
-                    ) {
-                        Icon(
-                            imageVector = Icons.Default.KeyboardArrowDown,
-                            tint = MaterialTheme.colorScheme.onPrimary,
-                            contentDescription = null,
-                        )
-
-                        Text(
-                            modifier = Modifier.padding(start = 8.dp),
-                            text = stringResource(Res.string.common_see_more),
-                            style = MaterialTheme.typography.bodyMedium,
-                            color = MaterialTheme.colorScheme.onPrimary,
-                        )
-                    }
-                }
-            }
+            PostDetailCommentLoadMore(
+                modifier = Modifier.fillMaxWidth(),
+                postId = postDetail.id,
+                offset = offset,
+                onClickLoadMore = onClickLoadMore,
+            )
         }
     }
 }
@@ -447,5 +378,112 @@ private fun Instant.toRelativeTimeString(): String {
         duration.inWholeHours > 0 -> stringResource(Res.string.unit_hour_before, duration.inWholeHours)
         duration.inWholeMinutes > 0 -> stringResource(Res.string.unit_minute_before, duration.inWholeMinutes)
         else -> stringResource(Res.string.unit_second_before, duration.inWholeSeconds)
+    }
+}
+
+@Composable
+private fun PostDetailCommentHeader(
+    isShowCommentEditor: Boolean,
+    comments: PageOffsetInfo<Comment>,
+    commentsTransState: TranslationState<PageOffsetInfo<Comment>>,
+    metaData: MetaData,
+    onClickShowCommentEditor: (Boolean) -> Unit,
+    onClickCommentReply: (String, CommentId, CommentId) -> Unit,
+    onClickTranslate: (PageOffsetInfo<Comment>) -> Unit,
+    modifier: Modifier = Modifier,
+) {
+    Column(
+        modifier = modifier
+            .padding(horizontal = 16.dp, top = 16.dp)
+            .fillMaxWidth(),
+    ) {
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.spacedBy(8.dp),
+        ) {
+            Text(
+                modifier = Modifier.weight(1f),
+                text = stringResource(Res.string.post_detail_comment_title),
+                style = MaterialTheme.typography.titleMedium,
+                color = MaterialTheme.colorScheme.onSurface,
+            )
+
+            IconButton(onClick = { onClickTranslate.invoke(comments) }) {
+                if (commentsTransState is TranslationState.Loading) {
+                    CircularProgressIndicator(
+                        modifier = Modifier.padding(4.dp),
+                    )
+                } else {
+                    Icon(
+                        imageVector = Icons.Default.Translate,
+                        tint = MaterialTheme.colorScheme.onSurface,
+                        contentDescription = null,
+                    )
+                }
+            }
+
+            IconButton(onClick = { onClickShowCommentEditor.invoke(!isShowCommentEditor) }) {
+                Icon(
+                    imageVector = Icons.Default.Edit,
+                    tint = MaterialTheme.colorScheme.onSurface,
+                    contentDescription = null,
+                )
+            }
+        }
+
+        AnimatedVisibility(visible = isShowCommentEditor) {
+            CommentEditor(
+                modifier = Modifier
+                    .animateContentSize()
+                    .padding(top = 24.dp)
+                    .padding(horizontal = 8.dp)
+                    .fillMaxWidth(),
+                parentFanboxCommentId = CommentId("0"),
+                rootFanboxCommentId = CommentId("0"),
+                metaData = metaData,
+                onClickCommentReply = { body, parentFanboxCommentId, rootFanboxCommentId ->
+                    onClickCommentReply.invoke(body, parentFanboxCommentId, rootFanboxCommentId)
+                },
+            )
+        }
+    }
+}
+
+@Composable
+private fun PostDetailCommentLoadMore(
+    postId: PostId,
+    offset: Int,
+    onClickLoadMore: (PostId, Int) -> Unit,
+    modifier: Modifier = Modifier,
+) {
+    Box(
+        modifier = modifier
+            .padding(horizontal = 16.dp, top = 16.dp)
+            .fillMaxWidth(),
+    ) {
+        Button(
+            modifier = Modifier
+                .padding(top = 24.dp)
+                .align(Alignment.Center),
+            onClick = { onClickLoadMore.invoke(postId, offset) },
+        ) {
+            Row(
+                verticalAlignment = Alignment.CenterVertically,
+            ) {
+                Icon(
+                    imageVector = Icons.Default.KeyboardArrowDown,
+                    tint = MaterialTheme.colorScheme.onPrimary,
+                    contentDescription = null,
+                )
+
+                Text(
+                    modifier = Modifier.padding(start = 8.dp),
+                    text = stringResource(Res.string.common_see_more),
+                    style = MaterialTheme.typography.bodyMedium,
+                    color = MaterialTheme.colorScheme.onPrimary,
+                )
+            }
+        }
     }
 }

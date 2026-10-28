@@ -125,6 +125,34 @@ graph LR
   model --> common
 ```
 
+## 静的解析
+
+静的解析は detekt 2.0.0-alpha.6、ktlint wrapper、Compose rules 0.6.8 を使う。
+root と `build-logic` の Kotlin ファイルおよび各モジュールの Kotlin ファイルを、次のコマンドで確認する。
+
+```bash
+./gradlew detekt reportMerge --continue
+./gradlew :androidApp:lintDebug
+```
+
+自動整形には `./gradlew detekt --auto-correct --continue` を使い、続けて自動修正を付けないコマンドを実行する。
+統合した Checkstyle レポートは `build/reports/detekt/merge.xml`、モジュールごとの HTML レポートは各モジュールの `build/reports/detekt/detekt.html` に出力する。
+統合対象は通常の `detekt` の結果で、型解決タスクの結果は混ぜない。
+
+関数定義の改行は、引数が3つ以上、またはデフォルト引数を持つ場合に引数ごとに改行する。
+`FunctionSignature` はデフォルト引数の有無を判別しないため無効にし、この規約は手動で確認する。
+呼び出し側の名前付き引数、引数ごとの改行、Modifier の先頭配置も手動レビューの対象となる。
+行長は折り返しの基準にしない。
+
+関数数の上限は interface が60、class が30で、override とテストケースを数えない。
+Repository の公開 API を保ったまま責務を確認するための閾値とする。
+Composable は宣言的な UI の分岐を含むため `CyclomaticComplexMethod` の対象外とし、複合条件の分割は `ComplexCondition` で確認する。
+`ModifierMissing` は public、internal、private を対象とし、Preview を除外する。
+
+型情報が必要なルールは `:core:model:detektMainAndroid` などのタスクで確認する。
+これらのタスクは detekt が生成した source set の範囲を使う。
+KMP の `expect` / `actual` に関する解析エラーが出る場合は、型解決付きルールの結果を個別に検証し、実際のコンパイル結果と区別する。
+
 ## Contribute
 
 このアプリは Gradle の Convention Plugins を用いてビルドのロジックを共通化しており、`build-logic` というモジュールに全てのロジックが記述されています。このアプローチに関しては、[nowinandroid](https://github.com/matsumo0922/nowinandroid/tree/main/build-logic) をご覧ください。

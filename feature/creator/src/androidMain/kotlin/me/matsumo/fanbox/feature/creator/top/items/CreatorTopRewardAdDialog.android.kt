@@ -41,15 +41,15 @@ import me.matsumo.fanbox.core.ui.theme.bold
 import org.jetbrains.compose.resources.stringResource
 import org.koin.compose.koinInject
 
-@Suppress("UnstableCollections", "ModifierMissing")
 @Composable
 actual fun CreatorTopRewardAdDialog(
     title: String,
     message: String,
     isAbleToReward: Boolean,
-    onRewarded: () -> Unit,
+    onReward: () -> Unit,
     onClickShowPlus: () -> Unit,
     onDismissRequest: () -> Unit,
+    modifier: Modifier,
 ) {
     val activity = LocalActivity.current
     val isAdsSdkInitialized = LocalAdsSdkInitialized.current
@@ -94,7 +94,7 @@ actual fun CreatorTopRewardAdDialog(
                 activeRewardAdRequestId = null
 
                 if (isRewardEarned) {
-                    onRewarded.invoke()
+                    onReward.invoke()
                 }
             },
         )
@@ -102,7 +102,7 @@ actual fun CreatorTopRewardAdDialog(
 
     Dialog(onDismissRequest = onDismissRequest) {
         Column(
-            modifier = Modifier
+            modifier = modifier
                 .clip(RoundedCornerShape(8.dp))
                 .background(MaterialTheme.colorScheme.surface)
                 .verticalScroll(rememberScrollState())

@@ -8,12 +8,10 @@ class InterstitialAdStateImpl : InterstitialAdState {
         // Implement iOS-specific ad loading logic
     }
 
-    override suspend fun show(): Boolean {
-        return true
-    }
+    override suspend fun show(): Boolean = true
 }
 
 @Composable
-actual fun rememberInterstitialAdState(adUnitId: String, enable: Boolean): InterstitialAdState {
-    return remember { InterstitialAdStateImpl() }
+actual fun rememberInterstitialAdState(adUnitId: String, enable: Boolean): InterstitialAdState = remember {
+    InterstitialAdStateImpl()
 }

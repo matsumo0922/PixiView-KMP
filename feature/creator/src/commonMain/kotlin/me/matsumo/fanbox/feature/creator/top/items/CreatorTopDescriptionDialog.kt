@@ -35,12 +35,13 @@ import sh.calvin.autolinktext.rememberAutoLinkText
 internal fun CreatorTopDescriptionDialog(
     description: String,
     translationState: TranslationState<String>,
-    onTranslateClicked: (String) -> Unit,
+    onTranslateClick: (String) -> Unit,
     onDismissRequest: () -> Unit,
+    modifier: Modifier = Modifier,
 ) {
     BasicAlertDialog(onDismissRequest) {
         Column(
-            modifier = Modifier
+            modifier = modifier
                 .heightIn(max = getScreenSizeDp().height * 0.7f)
                 .clip(RoundedCornerShape(16.dp))
                 .background(MaterialTheme.colorScheme.background)
@@ -60,7 +61,7 @@ internal fun CreatorTopDescriptionDialog(
                 verticalAlignment = Alignment.CenterVertically,
                 horizontalArrangement = Arrangement.spacedBy(16.dp),
             ) {
-                IconButton(onClick = { onTranslateClicked(description) }) {
+                IconButton(onClick = { onTranslateClick(description) }) {
                     if (translationState is TranslationState.Loading) {
                         CircularProgressIndicator(
                             modifier = Modifier.padding(4.dp),

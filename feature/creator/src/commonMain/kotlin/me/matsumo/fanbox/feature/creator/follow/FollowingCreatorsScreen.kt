@@ -127,7 +127,9 @@ private fun FollowingCreatorsScreen(
                 horizontalArrangement = Arrangement.spacedBy(16.dp),
             ) {
                 items(followingCreators.toList()) { followingCreator ->
-                    var isFollowed by rememberSaveable(followingCreator.isFollowed) { mutableStateOf(followingCreator.isFollowed) }
+                    var isFollowed by rememberSaveable(followingCreator.isFollowed) {
+                        mutableStateOf(followingCreator.isFollowed)
+                    }
 
                     CreatorItem(
                         modifier = Modifier.fillMaxWidth(),

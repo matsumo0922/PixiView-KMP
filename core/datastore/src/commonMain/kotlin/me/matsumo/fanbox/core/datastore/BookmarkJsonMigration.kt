@@ -7,7 +7,7 @@ import kotlinx.serialization.json.JsonObject
 import kotlinx.serialization.json.JsonPrimitive
 import me.matsumo.fankt.fanbox.domain.model.FanboxPost
 
-/**
+/*
  * 保存済みブックマークの JSON を、fankt 0.1.0 の serializer が読める形式へ正規化する。
  *
  * fankt 0.1.0 で ID 型が `data class` から `@JvmInline value class` へ変わったため、
@@ -120,14 +120,12 @@ private fun normalizeUser(user: JsonElement?): Normalized? {
  * それ以外の形（`value` を持たない object、`value` が object や配列である object、配列）に対して null
  * を返す。
  */
-private fun normalizeId(id: JsonElement?): Normalized? {
-    return when (id) {
-        null -> Normalized(null, changed = false)
-        is JsonNull -> Normalized(id, changed = false)
-        is JsonPrimitive -> Normalized(id, changed = false)
-        is JsonObject -> (id["value"] as? JsonPrimitive)?.let { Normalized(it, changed = true) }
-        else -> null
-    }
+private fun normalizeId(id: JsonElement?): Normalized? = when (id) {
+    null -> Normalized(null, changed = false)
+    is JsonNull -> Normalized(id, changed = false)
+    is JsonPrimitive -> Normalized(id, changed = false)
+    is JsonObject -> (id["value"] as? JsonPrimitive)?.let { Normalized(it, changed = true) }
+    else -> null
 }
 
 /**

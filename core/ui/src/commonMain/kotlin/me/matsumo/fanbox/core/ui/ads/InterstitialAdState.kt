@@ -8,7 +8,4 @@ interface InterstitialAdState {
 }
 
 @Composable
-expect fun rememberInterstitialAdState(
-    adUnitId: String,
-    enable: Boolean,
-): InterstitialAdState
+expect fun rememberInterstitialAdState(adUnitId: String, enable: Boolean): InterstitialAdState

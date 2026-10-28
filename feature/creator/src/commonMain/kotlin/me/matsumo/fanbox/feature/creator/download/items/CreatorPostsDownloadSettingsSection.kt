@@ -44,7 +44,7 @@ internal fun CreatorPostsDownloadSettingsSection(
             title = Res.string.creator_posts_download_ignore_free,
             description = Res.string.creator_posts_download_ignore_free_description,
             value = isIgnoreFreePosts,
-            onValueChanged = onClickIgnoreFreePosts,
+            onValueChange = onClickIgnoreFreePosts,
         )
 
         SettingSwitchItem(
@@ -52,7 +52,7 @@ internal fun CreatorPostsDownloadSettingsSection(
             title = Res.string.creator_posts_download_ignore_file,
             description = Res.string.creator_posts_download_ignore_file_description,
             value = isIgnoreFiles,
-            onValueChanged = onClickIgnoreFiles,
+            onValueChange = onClickIgnoreFiles,
         )
 
         OutlinedTextField(

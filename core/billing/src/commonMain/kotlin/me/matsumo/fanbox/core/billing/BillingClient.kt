@@ -91,17 +91,15 @@ class BillingClient(
         }
     }
 
-    private suspend fun getAvailablePackages(): List<RevenueCatPackage> {
-        return runCatching {
-            Purchases.sharedInstance
-                .awaitOfferings()
-                .current
-                ?.availablePackages
-                .orEmpty()
-        }.getOrElse { throwable ->
-            Napier.w(throwable) { "Failed to fetch offerings for plus status." }
-            emptyList()
-        }
+    private suspend fun getAvailablePackages(): List<RevenueCatPackage> = runCatching {
+        Purchases.sharedInstance
+            .awaitOfferings()
+            .current
+            ?.availablePackages
+            .orEmpty()
+    }.getOrElse { throwable ->
+        Napier.w(throwable) { "Failed to fetch offerings for plus status." }
+        emptyList()
     }
 
     private fun CustomerInfo.toBillingPlusStatus(availablePackages: List<RevenueCatPackage>): BillingPlusStatus {
@@ -129,15 +127,13 @@ class BillingClient(
         )
     }
 
-    private fun inactivePlusStatus(): BillingPlusStatus {
-        return BillingPlusStatus(
-            isActive = false,
-            isTrial = false,
-            willRenew = false,
-            unsubscribeDetectedAtMillis = null,
-            planType = BillingPlan.Type.UNKNOWN,
-        )
-    }
+    private fun inactivePlusStatus(): BillingPlusStatus = BillingPlusStatus(
+        isActive = false,
+        isTrial = false,
+        willRenew = false,
+        unsubscribeDetectedAtMillis = null,
+        planType = BillingPlan.Type.UNKNOWN,
+    )
 
     private fun StoreProduct.getTrialPeriod(): BillingTrialPeriod? {
         val freePhase = subscriptionOptions?.freeTrial?.freePhase ?: return null
@@ -145,26 +141,20 @@ class BillingClient(
         return freePhase.billingPeriod.toBillingTrialPeriod()
     }
 
-    private fun Period.toBillingTrialPeriod(): BillingTrialPeriod {
-        return BillingTrialPeriod(
-            value = value,
-            unit = unit.toBillingTrialPeriodUnit(),
-        )
+    private fun Period.toBillingTrialPeriod(): BillingTrialPeriod = BillingTrialPeriod(
+        value = value,
+        unit = unit.toBillingTrialPeriodUnit(),
+    )
+
+    private fun PeriodUnit.toBillingTrialPeriodUnit(): BillingTrialPeriod.Unit = when (this) {
+        PeriodUnit.DAY -> BillingTrialPeriod.Unit.DAY
+        PeriodUnit.WEEK -> BillingTrialPeriod.Unit.WEEK
+        PeriodUnit.MONTH -> BillingTrialPeriod.Unit.MONTH
+        PeriodUnit.YEAR -> BillingTrialPeriod.Unit.YEAR
+        PeriodUnit.UNKNOWN -> BillingTrialPeriod.Unit.UNKNOWN
     }
 
-    private fun PeriodUnit.toBillingTrialPeriodUnit(): BillingTrialPeriod.Unit {
-        return when (this) {
-            PeriodUnit.DAY -> BillingTrialPeriod.Unit.DAY
-            PeriodUnit.WEEK -> BillingTrialPeriod.Unit.WEEK
-            PeriodUnit.MONTH -> BillingTrialPeriod.Unit.MONTH
-            PeriodUnit.YEAR -> BillingTrialPeriod.Unit.YEAR
-            PeriodUnit.UNKNOWN -> BillingTrialPeriod.Unit.UNKNOWN
-        }
-    }
-
-    private fun isAndroidPlatform(): Boolean {
-        return pixiViewConfig.platform.equals(ANDROID_PLATFORM, ignoreCase = true)
-    }
+    private fun isAndroidPlatform(): Boolean = pixiViewConfig.platform.equals(ANDROID_PLATFORM, ignoreCase = true)
 
     /** BillingClient で利用する固定値。 */
     companion object {
@@ -212,10 +202,8 @@ private fun RevenueCatPackage.matchesEntitlementProduct(entitlementProductIdenti
     ).any { isMatched -> isMatched }
 }
 
-private fun PackageType.toBillingPlanType(): BillingPlan.Type {
-    return when (this) {
-        PackageType.MONTHLY -> BillingPlan.Type.MONTHLY
-        PackageType.ANNUAL -> BillingPlan.Type.ANNUAL
-        else -> BillingPlan.Type.UNKNOWN
-    }
+private fun PackageType.toBillingPlanType(): BillingPlan.Type = when (this) {
+    PackageType.MONTHLY -> BillingPlan.Type.MONTHLY
+    PackageType.ANNUAL -> BillingPlan.Type.ANNUAL
+    else -> BillingPlan.Type.UNKNOWN
 }

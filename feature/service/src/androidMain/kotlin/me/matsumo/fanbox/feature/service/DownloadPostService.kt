@@ -24,6 +24,7 @@ import me.matsumo.fanbox.core.resources.notify_download_channel_name
 import me.matsumo.fanbox.core.resources.post_detail_downloading
 import org.jetbrains.compose.resources.getString
 import org.koin.android.ext.android.inject
+import kotlin.time.Duration.Companion.milliseconds
 
 class DownloadPostService : Service() {
 
@@ -39,9 +40,11 @@ class DownloadPostService : Service() {
 
     override fun onBind(intent: Intent?): IBinder? = null
 
-    override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
-        return START_STICKY
-    }
+    override fun onStartCommand(
+        intent: Intent?,
+        flags: Int,
+        startId: Int,
+    ): Int = START_STICKY
 
     override fun onCreate() {
         super.onCreate()
@@ -59,7 +62,7 @@ class DownloadPostService : Service() {
                         progress = it.progress,
                     )
                 } else if (reservingPosts.value.isEmpty()) {
-                    delay(3000)
+                    delay(3000.milliseconds)
                     setForegroundService(false)
                 }
             }
@@ -93,19 +96,23 @@ class DownloadPostService : Service() {
         this.isForeground = isForeground
     }
 
-    private fun createNotify(context: Context, title: String, message: String, subMessage: String, progress: Float): Notification {
-        return NotificationCompat.Builder(context, notifyConfig.channelId)
-            .setSmallIcon(R.drawable.vec_app_icon_foreground)
-            .setContentTitle(title)
-            .setContentText(message)
-            .setSubText(subMessage)
-            .setAutoCancel(false)
-            .setColorized(true)
-            .setProgress(100, (progress * 100).toInt(), false)
-            .setVisibility(NotificationCompat.VISIBILITY_PRIVATE)
-            .setCategory(Notification.CATEGORY_SERVICE)
-            .build()
-    }
+    private fun createNotify(
+        context: Context,
+        title: String,
+        message: String,
+        subMessage: String,
+        progress: Float,
+    ): Notification = NotificationCompat.Builder(context, notifyConfig.channelId)
+        .setSmallIcon(R.drawable.vec_app_icon_foreground)
+        .setContentTitle(title)
+        .setContentText(message)
+        .setSubText(subMessage)
+        .setAutoCancel(false)
+        .setColorized(true)
+        .setProgress(100, (progress * 100).toInt(), false)
+        .setVisibility(NotificationCompat.VISIBILITY_PRIVATE)
+        .setCategory(Notification.CATEGORY_SERVICE)
+        .build()
 
     private suspend fun createNotifyChannel() {
         if (manager.getNotificationChannel(notifyConfig.channelId) != null) return

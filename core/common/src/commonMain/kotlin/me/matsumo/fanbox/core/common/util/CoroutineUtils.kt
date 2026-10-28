@@ -5,6 +5,7 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.ensureActive
 import kotlin.coroutines.cancellation.CancellationException
 import kotlin.coroutines.coroutineContext
+import kotlin.time.Duration.Companion.milliseconds
 
 suspend fun <T> suspendRunCatching(block: suspend () -> T): Result<T> = try {
     Result.success(block())
@@ -21,6 +22,6 @@ suspend fun <T> suspendRunCatching(block: suspend () -> T): Result<T> = try {
 suspend fun waitFor(flagChecker: () -> Boolean) {
     while (!flagChecker()) {
         coroutineContext.ensureActive()
-        delay(100)
+        delay(100.milliseconds)
     }
 }

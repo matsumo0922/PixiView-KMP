@@ -6,10 +6,7 @@ import androidx.navigation.NavGraphBuilder
 import androidx.navigation.compose.composable
 import me.matsumo.fanbox.core.model.Destination
 
-fun NavGraphBuilder.paymentsScreen(
-    navigateTo: (Destination) -> Unit,
-    terminate: () -> Unit,
-) {
+fun NavGraphBuilder.paymentsScreen(navigateTo: (Destination) -> Unit, terminate: () -> Unit) {
     composable<Destination.Payments> {
         PaymentsRoute(
             modifier = Modifier.fillMaxSize(),

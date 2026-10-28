@@ -13,6 +13,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.Stable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.Saver
@@ -71,10 +72,8 @@ private class CollapsingToolbarScaffoldStateSaver : Saver<CollapsingToolbarScaff
 fun rememberCollapsingToolbarScaffoldState(
     toolbarState: CollapsingToolbarState = rememberCollapsingToolbarState(),
     initialOffsetY: Int = 0,
-): CollapsingToolbarScaffoldState {
-    return rememberSaveable(toolbarState, initialOffsetY, saver = CollapsingToolbarScaffoldStateSaver()) {
-        CollapsingToolbarScaffoldState(toolbarState, initialOffsetY)
-    }
+): CollapsingToolbarScaffoldState = rememberSaveable(toolbarState, initialOffsetY, saver = CollapsingToolbarScaffoldStateSaver()) {
+    CollapsingToolbarScaffoldState(toolbarState, initialOffsetY)
 }
 
 interface CollapsingToolbarScaffoldScope {
@@ -189,9 +188,7 @@ internal object CollapsingToolbarScaffoldScopeInstance : CollapsingToolbarScaffo
 private class ScaffoldChildAlignmentModifier(
     private val alignment: Alignment,
 ) : ParentDataModifier {
-    override fun Density.modifyParentData(parentData: Any?): Any {
-        return (parentData as? ScaffoldParentData) ?: ScaffoldParentData(alignment)
-    }
+    override fun Density.modifyParentData(parentData: Any?): Any = (parentData as? ScaffoldParentData) ?: ScaffoldParentData(alignment)
 }
 
 private data class ScaffoldParentData(
@@ -242,7 +239,7 @@ class CollapsingToolbarState(
         get() = scrollableState.isScrollInProgress
 
     private var maxHeightState by mutableStateOf(Int.MAX_VALUE)
-    private var minHeightState by mutableStateOf(0)
+    private var minHeightState by mutableIntStateOf(0)
 
     val progress: Float
         @FloatRange(from = 0.0, to = 1.0)
@@ -282,7 +279,9 @@ class CollapsingToolbarState(
     )
     fun feedScroll(value: Float): Float = dispatchRawDelta(value)
 
-    suspend fun expand(duration: Int = 200) {
+    suspend fun expand(
+        duration: Int = 200,
+    ) {
         val anim = AnimationState(height.toFloat())
 
         scroll {
@@ -294,7 +293,9 @@ class CollapsingToolbarState(
         }
     }
 
-    suspend fun collapse(duration: Int = 200) {
+    suspend fun collapse(
+        duration: Int = 200,
+    ) {
         val anim = AnimationState(height.toFloat())
 
         scroll {
@@ -322,21 +323,16 @@ class CollapsingToolbarState(
 
     override fun dispatchRawDelta(delta: Float): Float = scrollableState.dispatchRawDelta(delta)
 
-    override suspend fun scroll(
-        scrollPriority: MutatePriority,
-        block: suspend ScrollScope.() -> Unit,
-    ) = scrollableState.scroll(scrollPriority, block)
+    override suspend fun scroll(scrollPriority: MutatePriority, block: suspend ScrollScope.() -> Unit) = scrollableState.scroll(scrollPriority, block)
 }
 
 @Composable
 fun rememberCollapsingToolbarState(
     initial: Int = Int.MAX_VALUE,
-): CollapsingToolbarState {
-    return remember {
-        CollapsingToolbarState(
-            initial = initial,
-        )
-    }
+): CollapsingToolbarState = remember {
+    CollapsingToolbarState(
+        initial = initial,
+    )
 }
 
 @Composable
@@ -360,10 +356,7 @@ fun CollapsingToolbar(
 private class CollapsingToolbarMeasurePolicy(
     private val collapsingToolbarState: CollapsingToolbarState,
 ) : MeasurePolicy {
-    override fun MeasureScope.measure(
-        measurables: List<Measurable>,
-        constraints: Constraints,
-    ): MeasureResult {
+    override fun MeasureScope.measure(measurables: List<Measurable>, constraints: Constraints): MeasureResult {
         val placeables = measurables.map {
             it.measure(
                 constraints.copy(
@@ -421,11 +414,13 @@ private class CollapsingToolbarMeasurePolicy(
 
                         placeable.place(offset.x, offset.y)
                     }
+
                     is CollapsingToolbarParallaxData ->
                         placeable.placeRelative(
                             x = 0,
                             y = -((maxHeight - minHeight) * (1 - progress) * strategy.ratio).roundToInt(),
                         )
+
                     else -> placeable.placeRelative(0, 0)
                 }
             }
@@ -438,62 +433,48 @@ interface CollapsingToolbarScope {
 
     fun Modifier.road(whenCollapsed: Alignment, whenExpanded: Alignment): Modifier
 
-    fun Modifier.parallax(ratio: Float = 0.2f): Modifier
+    fun Modifier.parallax(
+        ratio: Float = 0.2f,
+    ): Modifier
 
     fun Modifier.pin(): Modifier
 }
 
 internal object CollapsingToolbarScopeInstance : CollapsingToolbarScope {
-    override fun Modifier.progress(listener: ProgressListener): Modifier {
-        return this.then(ProgressUpdateListenerModifier(listener))
-    }
+    override fun Modifier.progress(listener: ProgressListener): Modifier = this.then(ProgressUpdateListenerModifier(listener))
 
-    override fun Modifier.road(whenCollapsed: Alignment, whenExpanded: Alignment): Modifier {
-        return this.then(RoadModifier(whenCollapsed, whenExpanded))
-    }
+    override fun Modifier.road(whenCollapsed: Alignment, whenExpanded: Alignment): Modifier = this.then(RoadModifier(whenCollapsed, whenExpanded))
 
-    override fun Modifier.parallax(ratio: Float): Modifier {
-        return this.then(ParallaxModifier(ratio))
-    }
+    override fun Modifier.parallax(ratio: Float): Modifier = this.then(ParallaxModifier(ratio))
 
-    override fun Modifier.pin(): Modifier {
-        return this.then(PinModifier())
-    }
+    override fun Modifier.pin(): Modifier = this.then(PinModifier())
 }
 
 internal class RoadModifier(
     private val whenCollapsed: Alignment,
     private val whenExpanded: Alignment,
 ) : ParentDataModifier {
-    override fun Density.modifyParentData(parentData: Any?): Any {
-        return CollapsingToolbarRoadData(
-            this@RoadModifier.whenCollapsed,
-            this@RoadModifier.whenExpanded,
-            (parentData as? CollapsingToolbarData)?.progressListener,
-        )
-    }
+    override fun Density.modifyParentData(parentData: Any?): Any = CollapsingToolbarRoadData(
+        this@RoadModifier.whenCollapsed,
+        this@RoadModifier.whenExpanded,
+        (parentData as? CollapsingToolbarData)?.progressListener,
+    )
 }
 
 internal class ParallaxModifier(
     private val ratio: Float,
 ) : ParentDataModifier {
-    override fun Density.modifyParentData(parentData: Any?): Any {
-        return CollapsingToolbarParallaxData(ratio, (parentData as? CollapsingToolbarData)?.progressListener)
-    }
+    override fun Density.modifyParentData(parentData: Any?): Any = CollapsingToolbarParallaxData(ratio, (parentData as? CollapsingToolbarData)?.progressListener)
 }
 
 internal class PinModifier : ParentDataModifier {
-    override fun Density.modifyParentData(parentData: Any?): Any {
-        return CollapsingToolbarPinData((parentData as? CollapsingToolbarData)?.progressListener)
-    }
+    override fun Density.modifyParentData(parentData: Any?): Any = CollapsingToolbarPinData((parentData as? CollapsingToolbarData)?.progressListener)
 }
 
 internal class ProgressUpdateListenerModifier(
     private val listener: ProgressListener,
 ) : ParentDataModifier {
-    override fun Density.modifyParentData(parentData: Any?): Any {
-        return CollapsingToolbarProgressData(listener)
-    }
+    override fun Density.modifyParentData(parentData: Any?): Any = CollapsingToolbarProgressData(listener)
 }
 
 fun interface ProgressListener {

@@ -228,10 +228,7 @@ private class AdaptiveSheetState(
         /**
          * The default [saver] implementation for [AdaptiveSheetState].
          */
-        fun saver(
-            skipPartiallyExpanded: Boolean,
-            confirmValueChange: (SheetValue) -> Boolean,
-        ) = Saver<AdaptiveSheetState, SheetValue>(
+        fun saver(skipPartiallyExpanded: Boolean, confirmValueChange: (SheetValue) -> Boolean) = Saver<AdaptiveSheetState, SheetValue>(
             save = { it.currentValue },
             restore = { savedValue ->
                 AdaptiveSheetState(skipPartiallyExpanded, savedValue, confirmValueChange, false)
@@ -245,15 +242,13 @@ private class AdaptiveSheetState(
 private fun rememberAdaptiveSheetState(
     skipPartiallyExpanded: Boolean = false,
     confirmValueChange: (SheetValue) -> Boolean = { true },
-): AdaptiveSheetState {
-    return rememberSaveable(
-        skipPartiallyExpanded,
-        confirmValueChange,
-        saver = AdaptiveSheetState.saver(
-            skipPartiallyExpanded = skipPartiallyExpanded,
-            confirmValueChange = confirmValueChange,
-        ),
-    ) {
-        AdaptiveSheetState(skipPartiallyExpanded, SheetValue.Hidden, confirmValueChange, false)
-    }
+): AdaptiveSheetState = rememberSaveable(
+    skipPartiallyExpanded,
+    confirmValueChange,
+    saver = AdaptiveSheetState.saver(
+        skipPartiallyExpanded = skipPartiallyExpanded,
+        confirmValueChange = confirmValueChange,
+    ),
+) {
+    AdaptiveSheetState(skipPartiallyExpanded, SheetValue.Hidden, confirmValueChange, false)
 }

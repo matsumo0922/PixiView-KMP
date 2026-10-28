@@ -19,18 +19,14 @@ class OldCookieDataStore(
         }
     }
 
-    suspend fun get(): String? {
-        return cookiePreference.data.firstOrNull()?.get(stringPreferencesKey(KEY_COOKIE))
-    }
+    suspend fun get(): String? = cookiePreference.data.firstOrNull()?.get(stringPreferencesKey(KEY_COOKIE))
 
     /**
      * 保存されている Cookie ヘッダから FANBOXSESSID の値を返す。無ければ null を返す。
      *
      * 値そのものは認証情報なので、ログや telemetry に出さないこと。
      */
-    suspend fun getSessionId(): String? {
-        return parseOldSessionId(get())
-    }
+    suspend fun getSessionId(): String? = parseOldSessionId(get())
 
     companion object {
         private const val KEY_COOKIE = "cookie"

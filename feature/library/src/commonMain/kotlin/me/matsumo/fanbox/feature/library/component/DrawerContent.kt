@@ -229,7 +229,9 @@ fun DrawerContent(
 }
 
 @Composable
-private fun NavigationDrawerHeader(modifier: Modifier = Modifier) {
+private fun NavigationDrawerHeader(
+    modifier: Modifier = Modifier,
+) {
     val metadata = LocalFanboxMetadata.current
 
     Row(

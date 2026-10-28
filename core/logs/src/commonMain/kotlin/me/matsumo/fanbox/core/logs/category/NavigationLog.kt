@@ -35,10 +35,7 @@ sealed class NavigationLog : LogCategory {
 
     companion object {
         // 画面遷移したときのログ
-        fun navigate(
-            screenRoute: String,
-            referer: String,
-        ) = Navigate(screenRoute, referer)
+        fun navigate(screenRoute: String, referer: String) = Navigate(screenRoute, referer)
 
         // 外部リンクを開いたときのログ
         fun openUrl(

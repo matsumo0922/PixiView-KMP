@@ -9,10 +9,7 @@ import kotlinx.collections.immutable.toImmutableList
 import me.matsumo.fanbox.core.ui.component.TagItems
 import me.matsumo.fanbox.core.ui.extensition.padding
 
-internal fun LazyListScope.postDetailTagsSection(
-    tags: ImmutableList<String>,
-    onClickTag: (String) -> Unit,
-) {
+internal fun LazyListScope.postDetailTagsSection(tags: ImmutableList<String>, onClickTag: (String) -> Unit) {
     if (tags.isNotEmpty()) {
         item {
             TagItems(

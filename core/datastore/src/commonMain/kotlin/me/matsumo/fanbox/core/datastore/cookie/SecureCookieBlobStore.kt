@@ -65,9 +65,7 @@ internal class KSafeCookieBlobStore(
             .onStart { emit(runCatching { load() }.getOrElse { SecureCookiePayload() }) }
             .distinctUntilChanged()
 
-    override suspend fun load(): SecureCookiePayload {
-        return kSafe.get(KEY_COOKIE_PAYLOAD, SecureCookiePayload())
-    }
+    override suspend fun load(): SecureCookiePayload = kSafe.get(KEY_COOKIE_PAYLOAD, SecureCookiePayload())
 
     override suspend fun save(payload: SecureCookiePayload) {
         kSafe.put(KEY_COOKIE_PAYLOAD, payload)
@@ -77,9 +75,7 @@ internal class KSafeCookieBlobStore(
         kSafe.delete(KEY_COOKIE_PAYLOAD)
     }
 
-    override fun hasStoredPayload(): Boolean {
-        return kSafe.getKeyInfo(KEY_COOKIE_PAYLOAD) != null
-    }
+    override fun hasStoredPayload(): Boolean = kSafe.getKeyInfo(KEY_COOKIE_PAYLOAD) != null
 
     private companion object {
         const val KEY_COOKIE_PAYLOAD = "fanbox_cookie_payload"

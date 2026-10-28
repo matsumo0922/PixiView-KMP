@@ -50,6 +50,7 @@ import androidx.media3.ui.PlayerView
 import kotlinx.coroutines.delay
 import me.matsumo.fanbox.core.ui.extensition.LocalFanboxSessionId
 import me.matsumo.fanbox.core.ui.view.LoadingView
+import kotlin.time.Duration.Companion.milliseconds
 
 @OptIn(UnstableApi::class)
 @Composable
@@ -106,7 +107,7 @@ actual fun VideoPlayer(url: String, modifier: Modifier) {
 
     LaunchedEffect(isDisplayController) {
         if (isDisplayController) {
-            delay(2000)
+            delay(2000.milliseconds)
             isDisplayController = false
         }
     }
@@ -152,7 +153,7 @@ actual fun VideoPlayer(url: String, modifier: Modifier) {
                 ControllerView(
                     modifier = Modifier.fillMaxSize(),
                     isPlaying = isPlaying,
-                    onPlayPauseClicked = {
+                    onPlayPauseClick = {
                         isPlaying = it
                         exoPlayer.playWhenReady = it
                     },
@@ -165,13 +166,13 @@ actual fun VideoPlayer(url: String, modifier: Modifier) {
 @Composable
 private fun ControllerView(
     isPlaying: Boolean,
-    onPlayPauseClicked: (Boolean) -> Unit,
+    onPlayPauseClick: (Boolean) -> Unit,
     modifier: Modifier = Modifier,
 ) {
     Box(modifier.background(Color.Black.copy(alpha = 0.4f))) {
         IconButton(
             modifier = Modifier.align(Alignment.Center),
-            onClick = { onPlayPauseClicked(!isPlaying) },
+            onClick = { onPlayPauseClick(!isPlaying) },
         ) {
             if (isPlaying) {
                 Icon(
@@ -193,9 +194,7 @@ private fun ControllerView(
 }
 
 @Composable
-private fun IntSize.toDpSize(): DpSize {
-    return with(LocalDensity.current) { DpSize(width.toDp(), height.toDp()) }
-}
+private fun IntSize.toDpSize(): DpSize = with(LocalDensity.current) { DpSize(width.toDp(), height.toDp()) }
 
 @OptIn(UnstableApi::class)
 private fun getMediaSourceFactory(sessionId: String): MediaSource.Factory {

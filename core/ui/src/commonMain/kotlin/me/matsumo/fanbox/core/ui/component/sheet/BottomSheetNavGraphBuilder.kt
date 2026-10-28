@@ -70,8 +70,7 @@ inline fun <reified T : Any> NavGraphBuilder.bottomSheet(
 
 /** DSL for constructing a new [ComposeNavigator.Destination] */
 @NavDestinationDsl
-class BottomSheetNavigatorDestinationBuilder :
-    NavDestinationBuilder<BottomSheetNavigator.Destination> {
+class BottomSheetNavigatorDestinationBuilder : NavDestinationBuilder<BottomSheetNavigator.Destination> {
 
     private val composeNavigator: BottomSheetNavigator
     private val content: @Composable ColumnScope.(NavBackStackEntry) -> Unit
@@ -100,15 +99,11 @@ class BottomSheetNavigatorDestinationBuilder :
         this.onDismissed = onDismissed
     }
 
-    override fun instantiateDestination(): BottomSheetNavigator.Destination {
-        return BottomSheetNavigator.Destination(
-            navigator = composeNavigator,
-            content = content,
-            onDismissed = onDismissed,
-        )
-    }
+    override fun instantiateDestination(): BottomSheetNavigator.Destination = BottomSheetNavigator.Destination(
+        navigator = composeNavigator,
+        content = content,
+        onDismissed = onDismissed,
+    )
 
-    override fun build(): BottomSheetNavigator.Destination {
-        return super.build()
-    }
+    override fun build(): BottomSheetNavigator.Destination = super.build()
 }

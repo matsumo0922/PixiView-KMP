@@ -2,6 +2,7 @@ package me.matsumo.fanbox.feature.post.detail.items
 
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.lazy.LazyListScope
+import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import kotlinx.collections.immutable.ImmutableList
 import me.matsumo.fanbox.core.model.Setting
@@ -61,45 +62,33 @@ internal fun LazyListScope.postDetailItems(
             )
         }
 
-        is PostDetail.Body.Text -> {
-            item {
-                ArticleUrlItem(
-                    modifier = Modifier.fillMaxWidth(),
-                    url = content.text,
-                )
-            }
+        else -> item {
+            PostDetailOtherContent(
+                modifier = Modifier.fillMaxWidth(),
+                content = content,
+            )
         }
+    }
+}
 
-        is PostDetail.Body.Video -> {
-            item {
-                // fankt は既知のサービスについてのみ URL を復元する。復元できない場合は開く先が
-                // 無いため、未対応の要素として扱う。
-                val url = content.url
+@Composable
+private fun PostDetailOtherContent(
+    content: PostDetail.Body,
+    modifier: Modifier = Modifier,
+) {
+    val url = when (content) {
+        is PostDetail.Body.Text -> content.text
+        is PostDetail.Body.Video -> content.url
+        else -> null
+    }
 
-                if (url != null) {
-                    ArticleUrlItem(
-                        modifier = Modifier.fillMaxWidth(),
-                        url = url,
-                    )
-                } else {
-                    ArticleUnsupportedItem(modifier = Modifier.fillMaxWidth())
-                }
-            }
-        }
-
-        is PostDetail.Body.Html -> {
-            item {
-                // html は検証されていないネットワークデータで、そのまま描画するとスクリプトや
-                // 外部リソースの読み込みを許すことになる。描画方法が決まるまで未対応として扱う。
-                ArticleUnsupportedItem(modifier = Modifier.fillMaxWidth())
-            }
-        }
-
-        is PostDetail.Body.Unknown -> {
-            item {
-                // rawBodyJson は検証されていないネットワークデータのため表示しない。
-                ArticleUnsupportedItem(modifier = Modifier.fillMaxWidth())
-            }
-        }
+    // HTML や未知の本文は検証されていないネットワークデータのため描画しない。
+    if (url != null) {
+        ArticleUrlItem(
+            modifier = modifier,
+            url = url,
+        )
+    } else {
+        ArticleUnsupportedItem(modifier)
     }
 }

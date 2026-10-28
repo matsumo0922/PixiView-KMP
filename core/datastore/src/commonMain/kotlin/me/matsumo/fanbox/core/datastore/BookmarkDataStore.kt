@@ -73,7 +73,9 @@ class BookmarkDataStore(
 
             when (val normalization = normalizeBookmarkIdJson(json)) {
                 is BookmarkJsonNormalization.AlreadyCurrent -> Unit
+
                 is BookmarkJsonNormalization.Migrated -> migrated[key.name] = normalization.json
+
                 BookmarkJsonNormalization.Failure -> {
                     failureCount++
                     continue

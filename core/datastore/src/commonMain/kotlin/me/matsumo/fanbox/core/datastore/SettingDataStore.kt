@@ -7,6 +7,7 @@ import androidx.datastore.preferences.core.stringPreferencesKey
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.SharingStarted
+import kotlinx.coroutines.flow.WhileSubscribed
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
@@ -19,6 +20,7 @@ import me.matsumo.fanbox.core.model.Setting
 import me.matsumo.fanbox.core.model.SettingPlusStatusUpdate
 import me.matsumo.fanbox.core.model.ThemeColorConfig
 import me.matsumo.fanbox.core.model.ThemeConfig
+import kotlin.time.Duration.Companion.seconds
 
 class SettingDataStore(
     private val preferenceHelper: PreferenceHelper,
@@ -31,7 +33,7 @@ class SettingDataStore(
         it.deserialize(formatter, Setting.serializer(), Setting.default())
     }.stateIn(
         scope = CoroutineScope(ioDispatcher),
-        started = SharingStarted.WhileSubscribed(1000),
+        started = SharingStarted.WhileSubscribed(stopTimeout = 1.seconds),
         initialValue = Setting.default(),
     )
 

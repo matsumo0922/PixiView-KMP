@@ -3,6 +3,7 @@ package primitive
 import org.gradle.api.Plugin
 import org.gradle.api.Project
 
+/** Android ライブラリの共通プラグインを適用する。 */
 class AndroidLibraryPlugin : Plugin<Project> {
     override fun apply(target: Project) {
         with(target) {

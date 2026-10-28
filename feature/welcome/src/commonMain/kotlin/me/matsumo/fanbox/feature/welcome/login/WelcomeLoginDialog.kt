@@ -70,7 +70,9 @@ internal fun WelcomeLoginDialog(
             Text(
                 modifier = Modifier
                     .clip(RoundedCornerShape(8.dp))
-                    .clickable { onClickHelp.invoke("https://github.com/matsumo0922/PixiView-KMP/blob/master/FANBOXSESSID.md") }
+                    .clickable {
+                        onClickHelp.invoke("https://github.com/matsumo0922/PixiView-KMP/blob/master/FANBOXSESSID.md")
+                    }
                     .fillMaxWidth()
                     .padding(8.dp),
                 text = "https://github.com/matsumo0922/PixiView-KMP/blob/master/FANBOXSESSID.md",

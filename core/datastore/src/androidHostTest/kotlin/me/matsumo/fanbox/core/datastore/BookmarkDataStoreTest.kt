@@ -114,11 +114,9 @@ class BookmarkDataStoreTest {
         assertEquals("not json", dataStore.data.first()[stringPreferencesKey("broken")])
     }
 
-    private fun createPreferenceHelper(dataStore: DataStore<Preferences>): PreferenceHelper {
-        return object : PreferenceHelper {
-            override fun create(name: String): DataStore<Preferences> = dataStore
-            override fun delete(name: String) = Unit
-        }
+    private fun createPreferenceHelper(dataStore: DataStore<Preferences>): PreferenceHelper = object : PreferenceHelper {
+        override fun create(name: String): DataStore<Preferences> = dataStore
+        override fun delete(name: String) = Unit
     }
 
     private fun createDataStore(): DataStore<Preferences> {

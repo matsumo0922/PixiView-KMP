@@ -29,8 +29,6 @@ sealed class ApplicationLog : LogCategory {
         fun open() = Open()
 
         // アプリを閉じたときのログ
-        fun close(
-            stayTime: Long,
-        ) = Close(stayTime)
+        fun close(stayTime: Long) = Close(stayTime)
     }
 }

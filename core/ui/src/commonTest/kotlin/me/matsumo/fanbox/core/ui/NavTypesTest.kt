@@ -26,21 +26,19 @@ class NavTypesTest {
 
     private val referrerNavType = object : NavType<String>(isNullableAllowed = false) {
 
-        override fun get(bundle: SavedState, key: String): String? {
-            return bundle.read { getStringOrNull(key) }
-        }
+        override fun get(bundle: SavedState, key: String): String? = bundle.read { getStringOrNull(key) }
 
-        override fun parseValue(value: String): String {
-            return value
-        }
+        override fun parseValue(value: String): String = value
 
-        override fun put(bundle: SavedState, key: String, value: String) {
+        override fun put(
+            bundle: SavedState,
+            key: String,
+            value: String,
+        ) {
             bundle.write { putString(key, value) }
         }
 
-        override fun serializeAsValue(value: String): String {
-            return value
-        }
+        override fun serializeAsValue(value: String): String = value
     }
 
     @Test

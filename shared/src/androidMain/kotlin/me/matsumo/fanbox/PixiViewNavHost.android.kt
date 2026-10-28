@@ -102,7 +102,7 @@ private fun RequestDomainVerification(
 
     if (shouldRequest) {
         RequestDomainVerificationDialog(
-            onRequestClicked = {
+            onRequestClick = {
                 runCatching {
                     activity.startActivity(Intent(Settings.ACTION_APP_OPEN_BY_DEFAULT_SETTINGS, Uri.parse("package:${activity.packageName}")))
                 }.onFailure {
@@ -111,7 +111,7 @@ private fun RequestDomainVerification(
                     shouldRequest = false
                 }
             },
-            onCancelClicked = { isChecked ->
+            onCancelClick = { isChecked ->
                 if (isChecked) {
                     scope.launch {
                         flagRepository.setFlag(Flag.SHOULD_REQUEST_DOMAIN_VERIFICATION, false)
@@ -128,8 +128,8 @@ private fun RequestDomainVerification(
 
 @Composable
 private fun RequestDomainVerificationDialog(
-    onRequestClicked: () -> Unit,
-    onCancelClicked: (Boolean) -> Unit,
+    onRequestClick: () -> Unit,
+    onCancelClick: (Boolean) -> Unit,
     onDismissRequest: () -> Unit,
 ) {
     val (isChecked, setChecked) = remember { mutableStateOf(false) }
@@ -194,14 +194,14 @@ private fun RequestDomainVerificationDialog(
 
                 Button(
                     modifier = Modifier.fillMaxWidth(),
-                    onClick = onRequestClicked,
+                    onClick = onRequestClick,
                 ) {
                     Text(text = stringResource(Res.string.domain_validation_request_button))
                 }
 
                 OutlinedButton(
                     modifier = Modifier.fillMaxWidth(),
-                    onClick = { onCancelClicked.invoke(isChecked) },
+                    onClick = { onCancelClick.invoke(isChecked) },
                 ) {
                     Text(text = stringResource(Res.string.common_cancel))
                 }

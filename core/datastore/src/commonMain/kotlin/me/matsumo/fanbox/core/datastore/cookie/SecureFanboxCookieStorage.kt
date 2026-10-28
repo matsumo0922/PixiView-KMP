@@ -24,9 +24,7 @@ internal class SecureFanboxCookieStorage(
     override val cookies: Flow<List<FanboxCookieRecord>> =
         blobStore.payloads.records().map { records -> records.map(SecureCookieRecord::toFanboxCookieRecord) }
 
-    override suspend fun snapshot(): List<FanboxCookieRecord> {
-        return blobStore.load().records.map(SecureCookieRecord::toFanboxCookieRecord)
-    }
+    override suspend fun snapshot(): List<FanboxCookieRecord> = blobStore.load().records.map(SecureCookieRecord::toFanboxCookieRecord)
 
     override suspend fun upsert(cookie: FanboxCookieRecord) {
         val replacement = cookie.canonicalized()
@@ -36,7 +34,11 @@ internal class SecureFanboxCookieStorage(
         }
     }
 
-    override suspend fun delete(domain: String, path: String, name: String) {
+    override suspend fun delete(
+        domain: String,
+        path: String,
+        name: String,
+    ) {
         val identity = CookieIdentity(domain.canonicalDomain(), path.canonicalPath(), name)
 
         mutate { records -> records.filterNot { it.identity == identity } }

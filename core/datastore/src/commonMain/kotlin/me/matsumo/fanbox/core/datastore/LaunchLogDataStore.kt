@@ -26,9 +26,7 @@ class LaunchLogDataStore(
         }
     }
 
-    suspend fun getLaunchCount(): Int {
-        return data.first()
-    }
+    suspend fun getLaunchCount(): Int = data.first()
 
     companion object {
         const val KEY_LAUNCH_COUNT = "launch_count"

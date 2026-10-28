@@ -5,7 +5,6 @@ import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.grid.GridCells
@@ -66,7 +65,7 @@ import org.koin.compose.koinInject
 import org.koin.compose.viewmodel.koinViewModel
 
 @Composable
-internal fun LibraryDiscoveryRoute(
+internal fun LIBRARY_DISCOVERY_ROUTE(
     openDrawer: () -> Unit,
     navigateTo: (Destination) -> Unit,
     modifier: Modifier = Modifier,
@@ -104,7 +103,7 @@ internal fun LibraryDiscoveryRoute(
             onClickCreator = { navigateTo(Destination.CreatorTop(it, true)) },
             onClickFollow = viewModel::follow,
             onClickUnfollow = viewModel::unfollow,
-            onClickSupporting = { navigatorExtension.navigateToWebPage(it, LibraryDiscoveryRoute) },
+            onClickSupporting = { navigatorExtension.navigateToWebPage(it, LIBRARY_DISCOVERY_ROUTE) },
             onClickBillingPlus = {
                 scope.launch { toastExtension.show(snackbarHostState, requirePlus) }
                 navigateTo(Destination.BillingPlusBottomSheet(it))
@@ -189,7 +188,7 @@ private fun LibraryDiscoveryScreen(
                         LibraryDiscoverySearchPostCreatorItem(
                             modifier = Modifier.fillMaxWidth(),
                             creatorDetail = creatorDetail,
-                            onSearchPostClicked = {
+                            onSearchPostClick = {
                                 if (setting.hasPrivilege) {
                                     onClickPostByCreatorSearch.invoke(it)
                                 } else {
@@ -198,16 +197,14 @@ private fun LibraryDiscoveryScreen(
                             },
                         )
                     }
-
-                    item {
-                        Spacer(modifier = Modifier.height(8.dp))
-                    }
                 }
 
                 if (followingPixivCreators.isNotEmpty()) {
                     item(span = { GridItemSpan(maxLineSpan) }) {
                         TitleItem(
-                            modifier = Modifier.fillMaxWidth(),
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(top = 8.dp),
                             title = stringResource(Res.string.creator_following_pixiv),
                         )
                     }
@@ -238,16 +235,14 @@ private fun LibraryDiscoveryScreen(
                             onClickSupporting = onClickSupporting,
                         )
                     }
-
-                    item {
-                        Spacer(modifier = Modifier.height(8.dp))
-                    }
                 }
 
                 if (recommendedCreators.isNotEmpty()) {
                     item(span = { GridItemSpan(maxLineSpan) }) {
                         TitleItem(
-                            modifier = Modifier.fillMaxWidth(),
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(top = 8.dp),
                             title = stringResource(Res.string.creator_recommended),
                         )
                     }

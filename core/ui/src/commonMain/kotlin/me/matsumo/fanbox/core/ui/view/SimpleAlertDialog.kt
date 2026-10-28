@@ -3,6 +3,7 @@
 package me.matsumo.fanbox.core.ui.view
 
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.Modifier
 import androidx.navigation.NavController
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.compose.dialog
@@ -30,9 +31,7 @@ fun NavController.navigateToSimpleAlertDialog(
     )
 }
 
-fun NavGraphBuilder.simpleAlertDialogDialog(
-    onResult: (Boolean) -> Unit,
-) {
+fun NavGraphBuilder.simpleAlertDialogDialog(onResult: (Boolean) -> Unit) {
     dialog<Destination.SimpleAlertDialog>(
         typeMap = customNavTypes,
     ) { entry ->
@@ -59,4 +58,5 @@ expect fun SimpleAlertDialog(
     onClickPositive: () -> Unit,
     onClickNegative: () -> Unit,
     isCaution: Boolean,
+    modifier: Modifier = Modifier,
 )

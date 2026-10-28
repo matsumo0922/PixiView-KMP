@@ -28,10 +28,7 @@ data class SettingPlusStatusUpdate(
 
     /** Plus 課金状態の設定更新内容を生成するオブジェクト。 */
     companion object {
-        fun from(
-            currentSetting: Setting,
-            plusStatus: BillingPlusStatus,
-        ): SettingPlusStatusUpdate {
+        fun from(currentSetting: Setting, plusStatus: BillingPlusStatus): SettingPlusStatusUpdate {
             val isPlusMode = plusStatus.isActive
             val normalizedIsPlusTrial = isPlusMode && plusStatus.isTrial
             val normalizedIsSetToCancel = isPlusMode && plusStatus.isSetToCancel

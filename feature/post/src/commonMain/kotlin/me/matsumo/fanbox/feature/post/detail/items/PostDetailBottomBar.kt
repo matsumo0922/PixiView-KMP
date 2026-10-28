@@ -40,8 +40,8 @@ import me.matsumo.fanbox.core.ui.theme.bold
 internal fun PostDetailBottomBar(
     postDetail: PostDetail?,
     isBookmarked: Boolean,
-    onCreatorClicked: (CreatorId) -> Unit,
-    onBookmarkClicked: (Boolean) -> Unit,
+    onCreatorClick: (CreatorId) -> Unit,
+    onBookmarkClick: (Boolean) -> Unit,
     modifier: Modifier = Modifier,
 ) {
     val bookmarkColor = if (isBookmarked) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.onSurfaceVariant
@@ -62,7 +62,7 @@ internal fun PostDetailBottomBar(
                 modifier = Modifier
                     .clip(CircleShape)
                     .size(36.dp)
-                    .clickable { it?.user?.creatorId?.let(onCreatorClicked) },
+                    .clickable { it?.user?.creatorId?.let(onCreatorClick) },
                 model = ImageRequest.Builder(LocalPlatformContext.current).error(Res.drawable.im_default_user.asCoilImage())
                     .data(it?.user?.iconUrl).build(),
                 contentDescription = null,
@@ -90,7 +90,7 @@ internal fun PostDetailBottomBar(
             }
 
             IconButton(
-                onClick = { onBookmarkClicked.invoke(!isBookmarked) },
+                onClick = { onBookmarkClick.invoke(!isBookmarked) },
             ) {
                 Icon(
                     imageVector = if (isBookmarked) Icons.Default.Bookmark else Icons.Outlined.BookmarkBorder,

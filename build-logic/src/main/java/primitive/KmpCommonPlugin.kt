@@ -6,6 +6,7 @@ import org.gradle.api.Project
 import org.gradle.kotlin.dsl.configure
 import org.jetbrains.kotlin.gradle.dsl.KotlinMultiplatformExtension
 
+/** Kotlin Multiplatform の共通依存と階層構造を設定する。 */
 class KmpCommonPlugin : Plugin<Project> {
     override fun apply(target: Project) {
         with(target) {

@@ -136,12 +136,10 @@ fun PixiViewTheme(
 }
 
 @Composable
-fun shouldUseDarkTheme(themeConfig: ThemeConfig): Boolean {
-    return when (themeConfig) {
-        ThemeConfig.System -> isSystemInDarkTheme()
-        ThemeConfig.Light -> false
-        ThemeConfig.Dark -> true
-    }
+fun shouldUseDarkTheme(themeConfig: ThemeConfig): Boolean = when (themeConfig) {
+    ThemeConfig.System -> isSystemInDarkTheme()
+    ThemeConfig.Light -> false
+    ThemeConfig.Dark -> true
 }
 
 fun getColorTheme(themeColorConfig: ThemeColorConfig, shouldUseDarkTheme: Boolean) = when (themeColorConfig) {

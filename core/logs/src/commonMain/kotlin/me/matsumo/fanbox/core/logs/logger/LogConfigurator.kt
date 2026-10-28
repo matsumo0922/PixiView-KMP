@@ -41,10 +41,7 @@ object LogConfigurator : KoinComponent {
         sender.sendLog(log)
     }
 
-    fun configure(
-        pixiViewConfig: PixiViewConfig,
-        setting: Setting,
-    ) {
+    fun configure(pixiViewConfig: PixiViewConfig, setting: Setting) {
         filter = LogFilter(pixiViewConfig, setting, "PixiView")
         sender.init(setting)
 

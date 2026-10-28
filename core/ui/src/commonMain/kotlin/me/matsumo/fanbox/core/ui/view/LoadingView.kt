@@ -38,11 +38,11 @@ fun LoadingView(
     }
 }
 
-@Suppress("ModifierMissing")
 @Composable
 fun LoadingDialog(
     progress: Float,
     text: StringResource,
+    modifier: Modifier = Modifier,
 ) {
     Dialog(
         onDismissRequest = { /* do nothing */ },
@@ -52,7 +52,7 @@ fun LoadingDialog(
         ),
     ) {
         Column(
-            modifier = Modifier
+            modifier = modifier
                 .fillMaxWidth()
                 .wrapContentHeight()
                 .clip(RoundedCornerShape(16.dp))

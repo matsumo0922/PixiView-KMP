@@ -6,6 +6,7 @@ import androidx.lifecycle.viewModelScope
 import dev.icerock.moko.biometry.BiometryAuthenticator
 import dev.icerock.moko.resources.desc.desc
 import kotlinx.coroutines.flow.SharingStarted
+import kotlinx.coroutines.flow.WhileSubscribed
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
@@ -26,6 +27,7 @@ import me.matsumo.fanbox.core.resources.home_app_lock_message
 import me.matsumo.fanbox.core.resources.home_app_lock_title
 import me.matsumo.fanbox.core.ui.extensition.getFanboxMetadataDummy
 import org.jetbrains.compose.resources.getString
+import kotlin.time.Duration.Companion.seconds
 
 class SettingTopViewModel(
     private val settingRepository: SettingRepository,
@@ -45,14 +47,12 @@ class SettingTopViewModel(
         )
     }.stateIn(
         scope = viewModelScope,
-        started = SharingStarted.WhileSubscribed(5_000),
+        started = SharingStarted.WhileSubscribed(stopTimeout = 5.seconds),
         initialValue = ScreenState.Loading,
     )
 
-    suspend fun logout(): Result<Unit> {
-        return suspendRunCatching {
-            fanboxRepository.logout()
-        }
+    suspend fun logout(): Result<Unit> = suspendRunCatching {
+        fanboxRepository.logout()
     }
 
     fun setAppLock(isAppLock: Boolean) {

@@ -19,7 +19,11 @@ internal class RoomLegacyCookieStorage(
 
     override suspend fun upsert(cookie: FanboxCookieRecord) = delegate.upsert(cookie)
 
-    override suspend fun delete(domain: String, path: String, name: String) =
+    override suspend fun delete(
+        domain: String,
+        path: String,
+        name: String,
+    ) =
         delegate.delete(domain, path, name)
 
     override suspend fun deleteExpired(nowEpochMilliseconds: Long) =

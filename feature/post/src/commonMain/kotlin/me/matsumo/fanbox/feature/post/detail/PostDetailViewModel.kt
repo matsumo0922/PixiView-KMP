@@ -37,6 +37,7 @@ import me.matsumo.fanbox.core.resources.post_detail_comment_commented
 import me.matsumo.fanbox.core.resources.post_detail_comment_delete_failed
 import me.matsumo.fanbox.core.resources.post_detail_comment_delete_success
 import org.jetbrains.compose.resources.StringResource
+import kotlin.time.Duration.Companion.milliseconds
 
 class PostDetailViewModel(
     private val postId: PostId,
@@ -103,7 +104,7 @@ class PostDetailViewModel(
                     translationRepository.translate(postDetail, Locale(data.data.setting.translateLanguage))
                 }.onSuccess {
                     _screenState.value = ScreenState.Loading
-                    delay(500)
+                    delay(500.milliseconds)
                 }.fold(
                     onSuccess = { TranslationState.Translated(it) },
                     onFailure = { TranslationState.None },
@@ -189,7 +190,12 @@ class PostDetailViewModel(
         }
     }
 
-    fun commentReply(postId: PostId, body: String, parentFanboxCommentId: CommentId, rootFanboxCommentId: CommentId) {
+    fun commentReply(
+        postId: PostId,
+        body: String,
+        parentFanboxCommentId: CommentId,
+        rootFanboxCommentId: CommentId,
+    ) {
         viewModelScope.launch {
             (screenState.value as? ScreenState.Idle)?.also { data ->
                 _screenState.value = suspendRunCatching {
@@ -281,11 +287,19 @@ class PostDetailViewModel(
         }
     }
 
-    fun downloadImages(postId: PostId, title: String, imageItems: List<PostDetail.ImageItem>) {
+    fun downloadImages(
+        postId: PostId,
+        title: String,
+        imageItems: List<PostDetail.ImageItem>,
+    ) {
         downloadPostsRepository.requestDownloadImages(postId, title, imageItems)
     }
 
-    fun downloadFiles(postId: PostId, title: String, fileItems: List<PostDetail.FileItem>) {
+    fun downloadFiles(
+        postId: PostId,
+        title: String,
+        fileItems: List<PostDetail.FileItem>,
+    ) {
         downloadPostsRepository.requestDownloadFiles(postId, title, fileItems)
     }
 }

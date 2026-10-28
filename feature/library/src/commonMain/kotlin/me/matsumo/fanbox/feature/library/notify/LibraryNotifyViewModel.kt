@@ -9,6 +9,7 @@ import androidx.paging.PagingData
 import androidx.paging.cachedIn
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.SharingStarted
+import kotlinx.coroutines.flow.WhileSubscribed
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
 import me.matsumo.fanbox.core.model.ScreenState
@@ -17,6 +18,7 @@ import me.matsumo.fanbox.core.model.fanbox.Bell
 import me.matsumo.fanbox.core.repository.FanboxRepository
 import me.matsumo.fanbox.core.repository.SettingRepository
 import me.matsumo.fanbox.feature.library.notify.paging.LibraryNotifyPagingSource
+import kotlin.time.Duration.Companion.seconds
 
 class LibraryNotifyViewModel(
     private val fanboxRepository: FanboxRepository,
@@ -42,7 +44,7 @@ class LibraryNotifyViewModel(
         )
     }.stateIn(
         scope = viewModelScope,
-        started = SharingStarted.WhileSubscribed(5_000),
+        started = SharingStarted.WhileSubscribed(stopTimeout = 5.seconds),
         initialValue = ScreenState.Loading,
     )
 }

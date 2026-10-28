@@ -13,22 +13,20 @@ class PostSearchCreatorPagingSource(
 
     override val keyReuseSupported: Boolean = true
 
-    override suspend fun load(params: LoadParams<Int>): LoadResult<Int, CreatorDetail> {
-        return suspendRunCatching {
-            fanboxRepository.getCreatorFromQuery(query, params.key ?: 0)
-        }.fold(
-            onSuccess = {
-                LoadResult.Page(
-                    data = it.contents,
-                    nextKey = it.nextPage,
-                    prevKey = null,
-                )
-            },
-            onFailure = {
-                LoadResult.Error(it)
-            },
-        )
-    }
+    override suspend fun load(params: LoadParams<Int>): LoadResult<Int, CreatorDetail> = suspendRunCatching {
+        fanboxRepository.getCreatorFromQuery(query, params.key ?: 0)
+    }.fold(
+        onSuccess = {
+            LoadResult.Page(
+                data = it.contents,
+                nextKey = it.nextPage,
+                prevKey = null,
+            )
+        },
+        onFailure = {
+            LoadResult.Error(it)
+        },
+    )
 
     override fun getRefreshKey(state: PagingState<Int, CreatorDetail>): Int? = null
 }

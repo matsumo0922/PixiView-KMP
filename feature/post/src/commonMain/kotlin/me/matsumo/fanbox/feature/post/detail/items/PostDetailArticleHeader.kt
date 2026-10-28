@@ -39,91 +39,127 @@ internal fun LazyListScope.postDetailArticleHeader(
     onClickFile: (PostDetail.FileItem) -> Unit,
     onClickDownload: (List<PostDetail.ImageItem>) -> Unit,
 ) {
-    items(content.blocks) {
-        val metadata = LocalFanboxMetadata.current
+    items(content.blocks) { block ->
+        PostDetailArticleBlock(
+            modifier = Modifier.fillMaxWidth(),
+            block = block,
+            content = content,
+            setting = setting,
+            bookmarkedPostIds = bookmarkedPostIds,
+            isAdultContents = isAdultContents,
+            isAutoImagePreview = isAutoImagePreview,
+            onClickPost = onClickPost,
+            onClickPostLike = onClickPostLike,
+            onClickPostBookmark = onClickPostBookmark,
+            onClickCreator = onClickCreator,
+            onClickImage = onClickImage,
+            onClickFile = onClickFile,
+            onClickDownload = onClickDownload,
+        )
+    }
+}
 
-        when (it) {
-            is PostDetail.Body.Article.Block.Text -> {
-                ArticleTextItem(
-                    modifier = Modifier.fillMaxWidth(),
-                    item = it,
-                )
-            }
+@Composable
+private fun PostDetailArticleBlock(
+    block: PostDetail.Body.Article.Block,
+    content: PostDetail.Body.Article,
+    setting: Setting,
+    bookmarkedPostIds: ImmutableList<PostId>,
+    isAdultContents: Boolean,
+    isAutoImagePreview: Boolean,
+    onClickPost: (PostId) -> Unit,
+    onClickPostLike: (PostId) -> Unit,
+    onClickPostBookmark: (Post, Boolean) -> Unit,
+    onClickCreator: (CreatorId) -> Unit,
+    onClickImage: (PostDetail.ImageItem) -> Unit,
+    onClickFile: (PostDetail.FileItem) -> Unit,
+    onClickDownload: (List<PostDetail.ImageItem>) -> Unit,
+    modifier: Modifier = Modifier,
+) {
+    val metadata = LocalFanboxMetadata.current
 
-            is PostDetail.Body.Article.Block.Image -> {
-                if (!setting.isAllowedShowAdultContents && metadata.context?.user?.showAdultContent == false && isAdultContents) {
-                    AdultContentThumbnail(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .aspectRatio(it.item.aspectRatio),
-                        coverImageUrl = it.item.thumbnailUrl,
-                        isTestUser = setting.isTestUser,
-                    )
-                } else {
-                    PostDetailImageItem(
-                        modifier = Modifier.fillMaxWidth(),
-                        item = it.item,
-                        onClickImage = onClickImage,
-                        onClickDownload = { onClickDownload.invoke(listOf(it.item)) },
-                        onClickAllDownload = { onClickDownload.invoke(content.imageItems) },
-                    )
-                }
-            }
+    when (block) {
+        is PostDetail.Body.Article.Block.Text -> {
+            ArticleTextItem(
+                modifier = modifier,
+                item = block,
+            )
+        }
 
-            is PostDetail.Body.Article.Block.File -> {
-                val imageItem = it.item.asImageItem()
-
-                if (isAutoImagePreview && imageItem != null) {
-                    PostDetailImageItem(
-                        modifier = Modifier.fillMaxWidth(),
-                        item = imageItem,
-                        onClickImage = onClickImage,
-                        onClickDownload = { onClickDownload.invoke(listOf(imageItem)) },
-                        onClickAllDownload = { onClickDownload.invoke(content.imageItems) },
-                    )
-                } else {
-                    PostDetailFileItem(
-                        modifier = Modifier.fillMaxWidth(),
-                        item = it.item,
-                        onClickDownload = onClickFile,
-                    )
-                }
-            }
-
-            is PostDetail.Body.Article.Block.Link -> {
-                ArticleLinkItem(
-                    modifier = Modifier.fillMaxWidth(),
-                    item = it,
-                    isHideAdultContents = setting.isHideAdultContents,
-                    isOverrideAdultContents = setting.isAllowedShowAdultContents,
+        is PostDetail.Body.Article.Block.Image -> {
+            val shouldHideAdultContent = !setting.isAllowedShowAdultContents && metadata.context?.user?.showAdultContent == false && isAdultContents
+            if (shouldHideAdultContent) {
+                AdultContentThumbnail(
+                    modifier = modifier
+                        .fillMaxWidth()
+                        .aspectRatio(block.item.aspectRatio),
+                    coverImageUrl = block.item.thumbnailUrl,
                     isTestUser = setting.isTestUser,
-                    isBookmarked = bookmarkedPostIds.contains(it.post?.id),
-                    onClickPost = onClickPost,
-                    onClickPostLike = onClickPostLike,
-                    onClickPostBookmark = { _, isLiked -> it.post?.let { onClickPostBookmark.invoke(it, isLiked) } },
-                    onClickCreator = onClickCreator,
+                )
+            } else {
+                PostDetailImageItem(
+                    modifier = modifier,
+                    item = block.item,
+                    onClickImage = onClickImage,
+                    onClickDownload = { onClickDownload.invoke(listOf(block.item)) },
+                    onClickAllDownload = { onClickDownload.invoke(content.imageItems) },
                 )
             }
+        }
 
-            is PostDetail.Body.Article.Block.Embed -> {
-                // fankt は既知のサービスについてのみ URL を復元する。復元できない場合は開く先が
-                // 無いため、未対応の要素として扱う。
-                val embedUrl = it.url
+        is PostDetail.Body.Article.Block.File -> {
+            val imageItem = block.item.asImageItem()
 
-                if (embedUrl != null) {
-                    ArticleUrlItem(
-                        modifier = Modifier.fillMaxWidth(),
-                        url = embedUrl,
-                    )
-                } else {
-                    ArticleUnsupportedItem(modifier = Modifier.fillMaxWidth())
-                }
+            if (isAutoImagePreview && imageItem != null) {
+                PostDetailImageItem(
+                    modifier = modifier,
+                    item = imageItem,
+                    onClickImage = onClickImage,
+                    onClickDownload = { onClickDownload.invoke(listOf(imageItem)) },
+                    onClickAllDownload = { onClickDownload.invoke(content.imageItems) },
+                )
+            } else {
+                PostDetailFileItem(
+                    modifier = modifier,
+                    item = block.item,
+                    onClickDownload = onClickFile,
+                )
             }
+        }
 
-            is PostDetail.Body.Article.Block.Unknown -> {
-                // rawJson は検証されていないネットワークデータのため表示しない。
-                ArticleUnsupportedItem(modifier = Modifier.fillMaxWidth())
+        is PostDetail.Body.Article.Block.Link -> {
+            ArticleLinkItem(
+                modifier = modifier,
+                item = block,
+                isHideAdultContents = setting.isHideAdultContents,
+                isOverrideAdultContents = setting.isAllowedShowAdultContents,
+                isTestUser = setting.isTestUser,
+                isBookmarked = bookmarkedPostIds.contains(block.post?.id),
+                onClickPost = onClickPost,
+                onClickPostLike = onClickPostLike,
+                onClickPostBookmark = { _, isLiked -> block.post?.let { onClickPostBookmark.invoke(it, isLiked) } },
+                onClickCreator = onClickCreator,
+            )
+        }
+
+        is PostDetail.Body.Article.Block.Embed -> {
+            // fankt は既知のサービスについてのみ URL を復元する。復元できない場合は開く先が
+            // 無いため、未対応の要素として扱う。
+            val embedUrl = block.url
+
+            if (embedUrl != null) {
+                ArticleUrlItem(
+                    modifier = modifier,
+                    url = embedUrl,
+                )
+            } else {
+                ArticleUnsupportedItem(modifier = modifier)
             }
+        }
+
+        is PostDetail.Body.Article.Block.Unknown -> {
+            // rawJson は検証されていないネットワークデータのため表示しない。
+            ArticleUnsupportedItem(modifier = modifier)
         }
     }
 }
@@ -143,7 +179,9 @@ internal fun ArticleUrlItem(
 
 /** 描画方法が決まっていない要素の存在を示す。 */
 @Composable
-internal fun ArticleUnsupportedItem(modifier: Modifier = Modifier) {
+internal fun ArticleUnsupportedItem(
+    modifier: Modifier = Modifier,
+) {
     Text(
         modifier = modifier.padding(16.dp),
         text = stringResource(Res.string.post_detail_unsupported_content),

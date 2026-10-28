@@ -83,16 +83,16 @@ internal fun PostByCreatorSearchRoute(
             bookmarkedPostIds = uiState.bookmarkedPostsIds.toImmutableList(),
             progress = uiState.progress,
             isPrepared = uiState.isPrepared,
-            onQueryChanged = viewModel::updateQuery,
-            onPostClicked = { navigateTo(Destination.PostDetail(it, Destination.PostDetail.PagingType.Unknown)) },
-            onCreatorPostsClicked = { navigateTo(Destination.CreatorTop(it, true)) },
-            onCreatorPlansClicked = { navigateTo(Destination.CreatorTop(it, false)) },
-            onFollowClicked = viewModel::follow,
-            onUnfollowClicked = viewModel::unfollow,
-            onSupportingClicked = { navigatorExtension.navigateToWebPage(it, "") },
-            onLikeClicked = viewModel::postLike,
-            onBookmarkClicked = viewModel::postBookmark,
-            onBackClicked = terminate,
+            onQueryChange = viewModel::updateQuery,
+            onPostClick = { navigateTo(Destination.PostDetail(it, Destination.PostDetail.PagingType.Unknown)) },
+            onCreatorPostsClick = { navigateTo(Destination.CreatorTop(it, true)) },
+            onCreatorPlansClick = { navigateTo(Destination.CreatorTop(it, false)) },
+            onFollowClick = viewModel::follow,
+            onUnfollowClick = viewModel::unfollow,
+            onSupportingClick = { navigatorExtension.navigateToWebPage(it, "") },
+            onLikeClick = viewModel::postLike,
+            onBookmarkClick = viewModel::postBookmark,
+            onBackClick = terminate,
         )
     }
 }
@@ -107,16 +107,16 @@ private fun PostByCreatorSearchScreen(
     bookmarkedPostIds: ImmutableList<PostId>,
     progress: Float,
     isPrepared: Boolean,
-    onQueryChanged: (String) -> Unit,
-    onPostClicked: (PostId) -> Unit,
-    onCreatorPostsClicked: (CreatorId) -> Unit,
-    onCreatorPlansClicked: (CreatorId) -> Unit,
-    onFollowClicked: suspend (UserId) -> Result<Unit>,
-    onUnfollowClicked: suspend (UserId) -> Result<Unit>,
-    onSupportingClicked: (String) -> Unit,
-    onLikeClicked: (PostId) -> Unit,
-    onBookmarkClicked: (Post, Boolean) -> Unit,
-    onBackClicked: () -> Unit,
+    onQueryChange: (String) -> Unit,
+    onPostClick: (PostId) -> Unit,
+    onCreatorPostsClick: (CreatorId) -> Unit,
+    onCreatorPlansClick: (CreatorId) -> Unit,
+    onFollowClick: suspend (UserId) -> Result<Unit>,
+    onUnfollowClick: suspend (UserId) -> Result<Unit>,
+    onSupportingClick: (String) -> Unit,
+    onLikeClick: (PostId) -> Unit,
+    onBookmarkClick: (Post, Boolean) -> Unit,
+    onBackClick: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
     val scope = rememberCoroutineScope()
@@ -128,9 +128,9 @@ private fun PostByCreatorSearchScreen(
             PostSearchTopBar(
                 query = "",
                 initialQuery = query,
-                onClickTerminate = onBackClicked,
+                onClickTerminate = onBackClick,
                 onClickSearch = {},
-                onQueryChanged = onQueryChanged,
+                onQueryChange = onQueryChange,
                 scrollBehavior = scrollBehavior,
             )
         },
@@ -142,25 +142,27 @@ private fun PostByCreatorSearchScreen(
             contentPadding = padding + PaddingValues(16.dp),
         ) {
             item("creator") {
-                var isFollowed by rememberSaveable(creatorDetail.isFollowed) { mutableStateOf(creatorDetail.isFollowed) }
+                var isFollowed by rememberSaveable(creatorDetail.isFollowed) {
+                    mutableStateOf(creatorDetail.isFollowed)
+                }
 
                 CreatorItem(
                     modifier = Modifier.fillMaxWidth(),
                     creatorDetail = creatorDetail,
-                    onClickCreator = onCreatorPostsClicked,
+                    onClickCreator = onCreatorPostsClick,
                     onClickFollow = {
                         scope.launch {
                             isFollowed = true
-                            isFollowed = onFollowClicked(it).isSuccess
+                            isFollowed = onFollowClick(it).isSuccess
                         }
                     },
                     onClickUnfollow = {
                         scope.launch {
                             isFollowed = false
-                            isFollowed = !onUnfollowClicked(it).isSuccess
+                            isFollowed = !onUnfollowClick(it).isSuccess
                         }
                     },
-                    onClickSupporting = onSupportingClicked,
+                    onClickSupporting = onSupportingClick,
                     isFollowed = isFollowed,
                     isShowCoverImage = false,
                     isShowDescription = false,
@@ -187,11 +189,11 @@ private fun PostByCreatorSearchScreen(
                         .animateItem()
                         .fillMaxWidth(),
                     post = post,
-                    onClickPost = onPostClicked,
-                    onClickCreator = onCreatorPostsClicked,
-                    onClickPlanList = onCreatorPlansClicked,
-                    onClickLike = onLikeClicked,
-                    onClickBookmark = { _, isBookmarked -> onBookmarkClicked.invoke(post, isBookmarked) },
+                    onClickPost = onPostClick,
+                    onClickCreator = onCreatorPostsClick,
+                    onClickPlanList = onCreatorPlansClick,
+                    onClickLike = onLikeClick,
+                    onClickBookmark = { _, isBookmarked -> onBookmarkClick.invoke(post, isBookmarked) },
                     isHideAdultContents = setting.isHideAdultContents,
                     isOverrideAdultContents = setting.isOverrideAdultContents,
                     isTestUser = setting.isTestUser,
@@ -199,7 +201,8 @@ private fun PostByCreatorSearchScreen(
                 )
             }
 
-            if (query.isNotBlank() && searchedPosts.isEmpty() && isPrepared) {
+            val shouldShowEmptyResult = query.isNotBlank() && searchedPosts.isEmpty() && isPrepared
+            if (shouldShowEmptyResult) {
                 item("empty") {
                     ErrorView(
                         modifier = Modifier.fillMaxWidth(),

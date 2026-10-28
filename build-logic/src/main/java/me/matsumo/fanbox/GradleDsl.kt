@@ -9,69 +9,47 @@ import org.gradle.api.provider.Provider
 import org.gradle.kotlin.dsl.DependencyHandlerScope
 import org.gradle.kotlin.dsl.configure
 
-fun DependencyHandlerScope.implementation(
-    artifact: Dependency,
-) {
+fun DependencyHandlerScope.implementation(artifact: Dependency) {
     add("implementation", artifact)
 }
 
-fun DependencyHandlerScope.implementation(
-    artifact: MinimalExternalModuleDependency,
-) {
+fun DependencyHandlerScope.implementation(artifact: MinimalExternalModuleDependency) {
     add("implementation", artifact)
 }
 
-fun DependencyHandlerScope.implementation(
-    artifact: ExternalModuleDependencyBundle
-) {
+fun DependencyHandlerScope.implementation(artifact: ExternalModuleDependencyBundle) {
     add("implementation", artifact)
 }
 
-fun DependencyHandlerScope.implementation(
-    provider: Provider<ExternalModuleDependencyBundle>
-) {
+fun DependencyHandlerScope.implementation(provider: Provider<ExternalModuleDependencyBundle>) {
     add("implementation", provider)
 }
 
-fun DependencyHandlerScope.debugImplementation(
-    artifact: MinimalExternalModuleDependency,
-) {
+fun DependencyHandlerScope.debugImplementation(artifact: MinimalExternalModuleDependency) {
     add("debugImplementation", artifact)
 }
 
-fun DependencyHandlerScope.androidTestImplementation(
-    artifact: Dependency,
-) {
+fun DependencyHandlerScope.androidTestImplementation(artifact: Dependency) {
     add("androidTestImplementation", artifact)
 }
 
-fun DependencyHandlerScope.androidTestImplementation(
-    artifact: MinimalExternalModuleDependency,
-) {
+fun DependencyHandlerScope.androidTestImplementation(artifact: MinimalExternalModuleDependency) {
     add("androidTestImplementation", artifact)
 }
 
-fun DependencyHandlerScope.testImplementation(
-    artifact: MinimalExternalModuleDependency,
-) {
+fun DependencyHandlerScope.testImplementation(artifact: MinimalExternalModuleDependency) {
     add("testImplementation", artifact)
 }
 
-fun DependencyHandlerScope.implementationPlatform(
-    artifact: MinimalExternalModuleDependency,
-) {
+fun DependencyHandlerScope.implementationPlatform(artifact: MinimalExternalModuleDependency) {
     add("implementation", platform(artifact))
 }
 
-fun DependencyHandlerScope.lintChecks(
-    artifact: MinimalExternalModuleDependency,
-) {
+fun DependencyHandlerScope.lintChecks(artifact: MinimalExternalModuleDependency) {
     add("lintChecks", artifact)
 }
 
-private fun DependencyHandlerScope.api(
-    artifact: MinimalExternalModuleDependency,
-) {
+private fun DependencyHandlerScope.api(artifact: MinimalExternalModuleDependency) {
     add("api", artifact)
 }
 

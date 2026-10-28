@@ -2,9 +2,7 @@ package me.matsumo.fanbox.feature.creator.top.items
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.PaddingValues
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyListState
@@ -33,7 +31,7 @@ internal fun CreatorTopPlansScreen(
         LazyColumn(
             modifier = modifier,
             state = state,
-            contentPadding = PaddingValues(vertical = 16.dp),
+            contentPadding = PaddingValues(top = 16.dp, bottom = 144.dp),
             verticalArrangement = Arrangement.spacedBy(16.dp),
         ) {
             item {
@@ -44,10 +42,6 @@ internal fun CreatorTopPlansScreen(
                     creatorPlans = creatorPlans,
                     onClickPlan = onClickPlan,
                 )
-            }
-
-            item {
-                Spacer(modifier = Modifier.height(128.dp))
             }
         }
     } else {

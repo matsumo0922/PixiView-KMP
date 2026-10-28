@@ -7,9 +7,7 @@ import androidx.navigation.compose.composable
 import me.matsumo.fanbox.core.model.Destination
 import me.matsumo.fanbox.core.ui.customNavTypes
 
-fun NavGraphBuilder.fanCardScreen(
-    terminate: () -> Unit,
-) {
+fun NavGraphBuilder.fanCardScreen(terminate: () -> Unit) {
     composable<Destination.FanCard>(
         typeMap = customNavTypes,
     ) {

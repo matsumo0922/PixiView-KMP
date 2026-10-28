@@ -15,19 +15,13 @@ internal class RewardAdShowState {
         }
     }
 
-    fun completeByDismissal(): Boolean? {
-        return complete(isRewardEarned.load())
-    }
+    fun completeByDismissal(): Boolean? = complete(isRewardEarned.load())
 
-    fun completeWithoutReward(): Boolean? {
-        return complete(isRewardEarned = false)
-    }
+    fun completeWithoutReward(): Boolean? = complete(isRewardEarned = false)
 
-    private fun complete(isRewardEarned: Boolean): Boolean? {
-        return if (isCompleted.compareAndSet(false, true)) {
-            isRewardEarned
-        } else {
-            null
-        }
+    private fun complete(isRewardEarned: Boolean): Boolean? = if (isCompleted.compareAndSet(false, true)) {
+        isRewardEarned
+    } else {
+        null
     }
 }

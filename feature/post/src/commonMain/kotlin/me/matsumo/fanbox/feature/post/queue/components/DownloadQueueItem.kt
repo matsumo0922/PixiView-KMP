@@ -52,7 +52,7 @@ import org.jetbrains.compose.resources.stringResource
 @Composable
 internal fun DownloadQueueItem(
     items: FanboxDownloadItems,
-    onCancelClicked: (String) -> Unit,
+    onCancelClick: (String) -> Unit,
     modifier: Modifier = Modifier,
     progress: Float = -1f,
 ) {
@@ -79,7 +79,9 @@ internal fun DownloadQueueItem(
 
     val actualThumbnailItems: List<@Composable () -> Unit> = when (val type = items.requestType) {
         FanboxDownloadItems.RequestType.File -> thumbnailItems
+
         FanboxDownloadItems.RequestType.Image -> thumbnailItems
+
         is FanboxDownloadItems.RequestType.WholePost -> {
             listOf(
                 {
@@ -150,7 +152,7 @@ internal fun DownloadQueueItem(
             }
 
             if (progress == -1f) {
-                IconButton(onClick = { onCancelClicked.invoke(items.key) }) {
+                IconButton(onClick = { onCancelClick.invoke(items.key) }) {
                     Icon(
                         imageVector = Icons.Filled.Close,
                         contentDescription = null,

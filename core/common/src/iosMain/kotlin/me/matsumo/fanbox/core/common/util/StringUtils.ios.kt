@@ -52,12 +52,10 @@ actual fun String.format(vararg args: Any?): String {
     return returnString
 }
 
-actual fun getAvailableLanguageTags(): List<String> {
-    return NSLocale.availableLocaleIdentifiers().map { localeId ->
-        when (localeId) {
-            is String -> localeId
-            is NSString -> localeId.toString()
-            else -> localeId.toString()
-        }
+actual fun getAvailableLanguageTags(): List<String> = NSLocale.availableLocaleIdentifiers().map { localeId ->
+    when (localeId) {
+        is String -> localeId
+        is NSString -> localeId.toString()
+        else -> localeId.toString()
     }
 }

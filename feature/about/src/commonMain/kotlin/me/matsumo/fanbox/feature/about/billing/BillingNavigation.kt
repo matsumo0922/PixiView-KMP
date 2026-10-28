@@ -13,9 +13,7 @@ import me.matsumo.fanbox.core.ui.component.sheet.bottomSheet
 import me.matsumo.fanbox.core.ui.customNavTypes
 
 @OptIn(ExperimentalComposeUiApi::class)
-fun NavGraphBuilder.billingPlusBottomSheet(
-    terminate: () -> Unit,
-) {
+fun NavGraphBuilder.billingPlusBottomSheet(terminate: () -> Unit) {
     bottomSheet<Destination.BillingPlusBottomSheet>(
         typeMap = customNavTypes,
     ) { entry ->
@@ -33,9 +31,7 @@ fun NavGraphBuilder.billingPlusBottomSheet(
 }
 
 @OptIn(ExperimentalComposeUiApi::class)
-fun NavGraphBuilder.billingRetentionBottomSheet(
-    terminate: () -> Unit,
-) {
+fun NavGraphBuilder.billingRetentionBottomSheet(terminate: () -> Unit) {
     bottomSheet<Destination.BillingRetentionBottomSheet>(
         onDismissed = {
             BillingLog.retentionPromptDismissed(BILLING_RETENTION_DISMISS_SHEET).send()

@@ -86,10 +86,12 @@ internal fun DownloadQueueScreen(
                                 modifier = Modifier
                                     .animateItem()
                                     .fillMaxWidth()
-                                    .clickable { navigateTo(Destination.PostDetail(items.postId, Destination.PostDetail.PagingType.Unknown)) },
+                                    .clickable {
+                                        navigateTo(Destination.PostDetail(items.postId, Destination.PostDetail.PagingType.Unknown))
+                                    },
                                 items = items,
                                 progress = currentState.progress.takeIf { items.key == currentState.items.key } ?: -1f,
-                                onCancelClicked = { viewModel.cancelDownload(it) },
+                                onCancelClick = { viewModel.cancelDownload(it) },
                             )
                         }
                     }

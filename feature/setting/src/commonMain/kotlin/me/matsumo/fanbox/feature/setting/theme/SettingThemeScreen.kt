@@ -144,7 +144,7 @@ private fun SettingThemeDialog(
                     description = Res.string.setting_theme_theme_dynamic_color_description,
                     isEnabled = currentPlatform == Platform.Android,
                     value = if (currentPlatform == Platform.Android) setting.isUseDynamicColor else false,
-                    onValueChanged = {
+                    onValueChange = {
                         if (setting.hasPrivilege) {
                             onClickDynamicColor.invoke(it)
                         } else {

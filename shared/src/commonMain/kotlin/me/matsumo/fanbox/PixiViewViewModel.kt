@@ -10,6 +10,7 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
+import kotlinx.coroutines.flow.WhileSubscribed
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.first
@@ -37,7 +38,9 @@ import me.matsumo.fanbox.core.resources.home_app_lock_title
 import me.matsumo.fanbox.core.ui.extensition.getFanboxMetadataDummy
 import org.jetbrains.compose.resources.getString
 import kotlin.time.Clock
+import kotlin.time.Duration.Companion.milliseconds
 import kotlin.time.Duration.Companion.minutes
+import kotlin.time.Duration.Companion.seconds
 import kotlin.time.ExperimentalTime
 import kotlin.uuid.ExperimentalUuidApi
 import kotlin.uuid.Uuid
@@ -51,10 +54,10 @@ class PixiViewViewModel(
     private val pixiViewConfig: PixiViewConfig,
 ) : ViewModel() {
 
-    private val _isLoggedInFlow: MutableSharedFlow<Boolean> = MutableSharedFlow(replay = 1)
-    private val _isAppLockedFlow: MutableStateFlow<Boolean> = MutableStateFlow(true)
-    private val _metadataFlow: MutableStateFlow<MetaData> = MutableStateFlow(getFanboxMetadataDummy())
-    private val _isBillingSyncSucceededFlow: MutableStateFlow<Boolean> = MutableStateFlow(false)
+    private val isLoggedInFlow: MutableSharedFlow<Boolean> = MutableSharedFlow(replay = 1)
+    private val isAppLockedFlow: MutableStateFlow<Boolean> = MutableStateFlow(true)
+    private val metadataFlow: MutableStateFlow<MetaData> = MutableStateFlow(getFanboxMetadataDummy())
+    private val isBillingSyncSucceededFlow: MutableStateFlow<Boolean> = MutableStateFlow(false)
 
     // インタースティシャル広告の頻度判定用。永続化せずプロセス内のみ保持する
     private var interstitialPostCloseCount = 0
@@ -65,10 +68,10 @@ class PixiViewViewModel(
             settingRepository.setting,
             fanboxRepository.sessionId,
             downloadPostsRepository.downloadState,
-            _metadataFlow,
-            _isLoggedInFlow,
-            _isAppLockedFlow,
-            _isBillingSyncSucceededFlow,
+            metadataFlow,
+            isLoggedInFlow,
+            isAppLockedFlow,
+            isBillingSyncSucceededFlow,
         ),
     ) { flows ->
         val setting = flows[0] as Setting
@@ -92,7 +95,7 @@ class PixiViewViewModel(
         )
     }.stateIn(
         scope = viewModelScope,
-        started = SharingStarted.WhileSubscribed(5000),
+        started = SharingStarted.WhileSubscribed(stopTimeout = 5.seconds),
         initialValue = ScreenState.Loading,
     )
 
@@ -101,13 +104,13 @@ class PixiViewViewModel(
 
         viewModelScope.launch {
             fanboxRepository.logoutTrigger.collectLatest {
-                _isLoggedInFlow.emit(false)
+                isLoggedInFlow.emit(false)
             }
         }
 
         viewModelScope.launch {
             fanboxRepository.sessionInvalidatedTrigger.collectLatest {
-                _isLoggedInFlow.emit(false)
+                isLoggedInFlow.emit(false)
             }
         }
 
@@ -130,13 +133,13 @@ class PixiViewViewModel(
 
     fun billingClientUpdate() {
         viewModelScope.launch {
-            _isBillingSyncSucceededFlow.emit(false)
+            isBillingSyncSucceededFlow.emit(false)
 
-            delay(3000)
+            delay(3000.milliseconds)
 
             suspendRunCatching { billingClient.getPlusStatus() }.onSuccess { plusStatus ->
                 settingRepository.setPlusStatus(plusStatus)
-                _isBillingSyncSucceededFlow.emit(true)
+                isBillingSyncSucceededFlow.emit(true)
             }
         }
     }
@@ -180,14 +183,16 @@ class PixiViewViewModel(
                 if (!settingRepository.setting.first().isTestUser) {
                     importOldSessionId()
 
-                    _metadataFlow.value = suspendRunCatching { fanboxRepository.getMetadata() }.getOrElse { getFanboxMetadataDummy() }
+                    metadataFlow.value = suspendRunCatching {
+                        fanboxRepository.getMetadata()
+                    }.getOrElse { getFanboxMetadataDummy() }
 
                     fanboxRepository.updateCsrfToken()
                     fanboxRepository.getNewsLetters()
                 }
             }.isSuccess.also {
                 Napier.d { "update home state. isLoggedIn: $it" }
-                _isLoggedInFlow.emit(it)
+                isLoggedInFlow.emit(it)
             }
         }
     }
@@ -208,14 +213,12 @@ class PixiViewViewModel(
 
     fun setAppLock(isAppLock: Boolean) {
         viewModelScope.launch {
-            _isAppLockedFlow.emit(if (settingRepository.setting.first().isUseAppLock) isAppLock else false)
+            isAppLockedFlow.emit(if (settingRepository.setting.first().isUseAppLock) isAppLock else false)
         }
     }
 
     @OptIn(ExperimentalTime::class)
-    suspend fun onPostDetailClosedForInterstitialAd(
-        showInterstitialAd: suspend () -> Boolean,
-    ) {
+    suspend fun onPostDetailClosedForInterstitialAd(showInterstitialAd: suspend () -> Boolean) {
         val setting = settingRepository.setting.first()
         if (!setting.canHandlePostDetailInterstitialAd()) return
 
@@ -248,9 +251,7 @@ class PixiViewViewModel(
     )
 }
 
-private fun Setting.canHandlePostDetailInterstitialAd(): Boolean {
-    return !hasPrivilege && shouldShowInterstitialAd
-}
+private fun Setting.canHandlePostDetailInterstitialAd(): Boolean = !hasPrivilege && shouldShowInterstitialAd
 
 private fun shouldShowPostDetailInterstitialAd(
     postCloseCount: Int,

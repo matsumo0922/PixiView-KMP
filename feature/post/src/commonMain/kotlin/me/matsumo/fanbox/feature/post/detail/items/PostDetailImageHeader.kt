@@ -26,7 +26,8 @@ internal fun LazyListScope.postDetailImageHeader(
     items(content.images) {
         val metadata = LocalFanboxMetadata.current
 
-        if (!isOverrideAdultContents && metadata.context?.user?.showAdultContent == false && isAdultContents) {
+        val shouldHideAdultContent = !isOverrideAdultContents && metadata.context?.user?.showAdultContent == false && isAdultContents
+        if (shouldHideAdultContent) {
             AdultContentThumbnail(
                 modifier = Modifier
                     .fillMaxWidth()

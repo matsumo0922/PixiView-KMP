@@ -24,7 +24,9 @@ import org.koin.dsl.koinConfiguration
 import org.koin.dsl.module
 
 @OptIn(KoinExperimentalAPI::class)
-class PixiViewApplication : Application(), KoinStartup {
+class PixiViewApplication :
+    Application(),
+    KoinStartup {
 
     override fun onCreate() {
         super.onCreate()

@@ -113,9 +113,7 @@ public fun rememberLazyListSnapperLayoutInfo(
     lazyListState: LazyListState,
     snapOffsetForItem: (layoutInfo: SnapperLayoutInfo, item: SnapperLayoutItemInfo) -> Int = SnapOffsets.Center,
     @Suppress("UNUSED_PARAMETER") endContentPadding: Dp = 0.dp,
-): LazyListSnapperLayoutInfo {
-    return rememberLazyListSnapperLayoutInfo(lazyListState, snapOffsetForItem)
-}
+): LazyListSnapperLayoutInfo = rememberLazyListSnapperLayoutInfo(lazyListState, snapOffsetForItem)
 
 /**
  * Create and remember a [SnapperLayoutInfo] which works with [LazyListState].
@@ -200,17 +198,13 @@ public class LazyListSnapperLayoutInfo(
             snapOffsetForItem(this, currentItem)
     }
 
-    override fun canScrollTowardsStart(): Boolean {
-        return lazyListState.layoutInfo.visibleItemsInfo.firstOrNull()?.let {
-            it.index > 0 || it.offset < startScrollOffset
-        } ?: false
-    }
+    override fun canScrollTowardsStart(): Boolean = lazyListState.layoutInfo.visibleItemsInfo.firstOrNull()?.let {
+        it.index > 0 || it.offset < startScrollOffset
+    } ?: false
 
-    override fun canScrollTowardsEnd(): Boolean {
-        return lazyListState.layoutInfo.visibleItemsInfo.lastOrNull()?.let {
-            it.index < itemCount - 1 || (it.offset + it.size) > endScrollOffset
-        } ?: false
-    }
+    override fun canScrollTowardsEnd(): Boolean = lazyListState.layoutInfo.visibleItemsInfo.lastOrNull()?.let {
+        it.index < itemCount - 1 || (it.offset + it.size) > endScrollOffset
+    } ?: false
 
     override fun determineTargetIndex(
         velocity: Float,
@@ -298,7 +292,9 @@ public class LazyListSnapperLayoutInfo(
         // the calculated mean contains an item spacing for each visible item
         // (not just spacing between items)
         return when (val distance = end - start) {
-            0 -> -1f // If we don't have a distance, return -1
+            0 -> -1f
+
+            // If we don't have a distance, return -1
             else -> (distance + calculateItemSpacing()) / visibleItemsInfo.size.toFloat()
         }
     }

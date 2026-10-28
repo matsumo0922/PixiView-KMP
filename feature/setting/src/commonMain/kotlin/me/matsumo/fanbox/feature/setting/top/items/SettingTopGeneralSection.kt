@@ -49,7 +49,7 @@ internal fun SettingTopGeneralSection(
             title = Res.string.setting_top_general_app_lock,
             description = Res.string.setting_top_general_app_lock_description,
             value = setting.isUseAppLock,
-            onValueChanged = onClickAppLock,
+            onValueChange = onClickAppLock,
         )
 
         SettingSwitchItem(
@@ -57,7 +57,7 @@ internal fun SettingTopGeneralSection(
             title = Res.string.setting_top_general_default_follow_tab,
             description = Res.string.setting_top_general_default_follow_tab_description,
             value = setting.isDefaultFollowTabInHome,
-            onValueChanged = onClickFollowTabDefaultHome,
+            onValueChange = onClickFollowTabDefaultHome,
         )
 
         SettingSwitchItem(
@@ -65,7 +65,7 @@ internal fun SettingTopGeneralSection(
             title = Res.string.setting_top_general_hide_adult_contents,
             description = Res.string.setting_top_general_hide_adult_contents_description,
             value = setting.isHideAdultContents,
-            onValueChanged = onClickHideAdultContents,
+            onValueChange = onClickHideAdultContents,
         )
 
         SettingSwitchItem(
@@ -73,7 +73,7 @@ internal fun SettingTopGeneralSection(
             title = Res.string.setting_top_general_override_adult_contents_setting,
             description = Res.string.setting_top_general_override_adult_contents_setting_description,
             value = setting.isOverrideAdultContents,
-            onValueChanged = onClickOverrideAdultContents,
+            onValueChange = onClickOverrideAdultContents,
         )
 
         SettingSwitchItem(
@@ -81,7 +81,7 @@ internal fun SettingTopGeneralSection(
             title = Res.string.setting_top_general_hide_restricted_contents,
             description = Res.string.setting_top_general_hide_restricted_contents_description,
             value = setting.isHideRestricted,
-            onValueChanged = onClickHideRestricted,
+            onValueChange = onClickHideRestricted,
         )
 
         SettingSwitchItem(
@@ -89,7 +89,7 @@ internal fun SettingTopGeneralSection(
             title = Res.string.setting_top_general_grid_mode,
             description = Res.string.setting_top_general_grid_mode_description,
             value = setting.isUseGridMode,
-            onValueChanged = onClickGridMode,
+            onValueChange = onClickGridMode,
         )
 
         SettingSwitchItem(
@@ -97,7 +97,7 @@ internal fun SettingTopGeneralSection(
             title = Res.string.setting_top_general_infinity_post_detail,
             description = Res.string.setting_top_general_infinity_post_detail_description,
             value = setting.isUseInfinityPostDetail,
-            onValueChanged = onClickInfinityPostDetail,
+            onValueChange = onClickInfinityPostDetail,
         )
 
         SettingSwitchItem(
@@ -105,7 +105,7 @@ internal fun SettingTopGeneralSection(
             title = Res.string.setting_top_general_auto_image_preview,
             description = Res.string.setting_top_general_auto_image_preview_description,
             value = setting.isAutoImagePreview,
-            onValueChanged = onClickAutoImagePreview,
+            onValueChange = onClickAutoImagePreview,
         )
     }
 }

@@ -43,6 +43,7 @@ import coil3.compose.LocalPlatformContext
 import coil3.compose.SubcomposeAsyncImage
 import coil3.request.ImageRequest
 import me.matsumo.fanbox.core.model.fanbox.CreatorDetail
+import me.matsumo.fanbox.core.model.fanbox.CreatorDetail.ProfileItem
 import me.matsumo.fanbox.core.model.fanbox.CreatorId
 import me.matsumo.fanbox.core.model.fanbox.UserId
 import me.matsumo.fanbox.core.resources.Res
@@ -74,7 +75,7 @@ fun CreatorItem(
 
     // Unknown はサムネイルを持たないためページャに空ページとして現れる。表示できるものだけを残す。
     val displayableProfileItems = remember(creatorDetail.profileItems) {
-        creatorDetail.profileItems.filter { it !is CreatorDetail.ProfileItem.Unknown }
+        creatorDetail.profileItems.filter { it !is ProfileItem.Unknown }
     }
 
     Card(
@@ -111,9 +112,9 @@ fun CreatorItem(
                 ) { page ->
                     val profileItem = displayableProfileItems[page]
                     val thumbnailUrl = when (profileItem) {
-                        is CreatorDetail.ProfileItem.Image -> profileItem.thumbnailUrl
-                        is CreatorDetail.ProfileItem.Video -> profileItem.thumbnailUrl
-                        is CreatorDetail.ProfileItem.Unknown -> null
+                        is ProfileItem.Image -> profileItem.thumbnailUrl
+                        is ProfileItem.Video -> profileItem.thumbnailUrl
+                        is ProfileItem.Unknown -> null
                     }
 
                     Box(modifier = Modifier.fillMaxWidth()) {
@@ -130,7 +131,7 @@ fun CreatorItem(
                             contentDescription = null,
                         )
 
-                        if (profileItem is CreatorDetail.ProfileItem.Video) {
+                        if (profileItem is ProfileItem.Video) {
                             Icon(
                                 modifier = Modifier
                                     .align(Alignment.Center)
@@ -241,19 +242,25 @@ private fun UserSection(
         when {
             creatorDetail.isSupported -> {
                 Button(onClick = { onClickSupporting.invoke(creatorDetail.supportingBrowserUrl) }) {
-                    Text(stringResource(Res.string.common_supporting))
+                    Text(
+                        text = stringResource(Res.string.common_supporting),
+                    )
                 }
             }
 
             isFollowed -> {
                 OutlinedButton(onClick = { creatorDetail.user?.userId?.let(onClickUnfollow) }) {
-                    Text(stringResource(Res.string.common_unfollow))
+                    Text(
+                        text = stringResource(Res.string.common_unfollow),
+                    )
                 }
             }
 
             else -> {
                 Button(onClick = { creatorDetail.user?.userId?.let(onClickFollow) }) {
-                    Text(stringResource(Res.string.common_follow))
+                    Text(
+                        text = stringResource(Res.string.common_follow),
+                    )
                 }
             }
         }

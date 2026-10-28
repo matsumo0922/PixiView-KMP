@@ -47,6 +47,11 @@ import org.jetbrains.compose.resources.StringResource
 import org.jetbrains.compose.resources.stringResource
 
 internal fun LazyListScope.billingDescriptionSection() {
+    billingCoreBenefits()
+    billingPersonalizationBenefits()
+}
+
+private fun LazyListScope.billingCoreBenefits() {
     item {
         PlusItem(
             modifier = Modifier.fillMaxWidth(),
@@ -82,7 +87,9 @@ internal fun LazyListScope.billingDescriptionSection() {
             icon = Icons.Outlined.HideImage,
         )
     }
+}
 
+private fun LazyListScope.billingPersonalizationBenefits() {
     item {
         PlusItem(
             modifier = Modifier.fillMaxWidth(),

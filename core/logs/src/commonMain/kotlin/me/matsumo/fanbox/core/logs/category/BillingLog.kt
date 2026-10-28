@@ -82,20 +82,13 @@ sealed class BillingLog : LogCategory {
 
     companion object {
         // 購入リクエスト
-        fun purchase(
-            referrer: String,
-            isSuccess: Boolean,
-        ) = Purchase(referrer, isSuccess)
+        fun purchase(referrer: String, isSuccess: Boolean) = Purchase(referrer, isSuccess)
 
         // 消費リクエスト
-        fun consume(
-            isSuccess: Boolean,
-        ) = Consume(isSuccess)
+        fun consume(isSuccess: Boolean) = Consume(isSuccess)
 
         // 検証リクエスト
-        fun verify(
-            isSuccess: Boolean,
-        ) = Verify(isSuccess)
+        fun verify(isSuccess: Boolean) = Verify(isSuccess)
 
         // リテンション UI 表示
         fun retentionPromptShown(
@@ -108,13 +101,9 @@ sealed class BillingLog : LogCategory {
         fun retentionPromptAnnualClicked() = RetentionPromptAnnualClicked()
 
         // リテンション UI 購読管理 CTA
-        fun retentionPromptManageClicked(
-            platform: String,
-        ) = RetentionPromptManageClicked(platform)
+        fun retentionPromptManageClicked(platform: String) = RetentionPromptManageClicked(platform)
 
         // リテンション UI dismiss
-        fun retentionPromptDismissed(
-            reason: String,
-        ) = RetentionPromptDismissed(reason)
+        fun retentionPromptDismissed(reason: String) = RetentionPromptDismissed(reason)
     }
 }

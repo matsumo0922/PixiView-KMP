@@ -77,16 +77,12 @@ class RewardRepositoryTest {
         )
     }
 
-    private fun createPreferenceHelper(): PreferenceHelper {
-        return object : PreferenceHelper {
-            private val stores = mutableMapOf<String, DataStore<Preferences>>()
+    private fun createPreferenceHelper(): PreferenceHelper = object : PreferenceHelper {
+        private val stores = mutableMapOf<String, DataStore<Preferences>>()
 
-            override fun create(name: String): DataStore<Preferences> {
-                return stores.getOrPut(name) { createDataStore(name) }
-            }
+        override fun create(name: String): DataStore<Preferences> = stores.getOrPut(name) { createDataStore(name) }
 
-            override fun delete(name: String) = Unit
-        }
+        override fun delete(name: String) = Unit
     }
 
     private fun createDataStore(name: String): DataStore<Preferences> {
@@ -105,8 +101,6 @@ class RewardRepositoryTest {
     private class MutableClock(
         var instant: Instant,
     ) : Clock {
-        override fun now(): Instant {
-            return instant
-        }
+        override fun now(): Instant = instant
     }
 }

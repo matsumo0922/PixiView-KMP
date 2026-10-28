@@ -78,10 +78,8 @@ val Teal80 = Color(0xFFA2CED9)
 val Teal90 = Color(0xFFBEEAF6)
 
 @Composable
-fun ColorScheme.applyTonalElevation(backgroundColor: Color, elevation: Dp): Color {
-    return if (backgroundColor == surface) {
-        surfaceColorAtElevation(elevation)
-    } else {
-        backgroundColor
-    }
+fun ColorScheme.applyTonalElevation(backgroundColor: Color, elevation: Dp): Color = if (backgroundColor == surface) {
+    surfaceColorAtElevation(elevation)
+} else {
+    backgroundColor
 }

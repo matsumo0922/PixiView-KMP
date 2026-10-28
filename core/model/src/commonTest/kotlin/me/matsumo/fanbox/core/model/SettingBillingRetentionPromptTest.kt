@@ -29,13 +29,23 @@ class SettingBillingRetentionPromptTest {
     }
 
     @Test
+    fun canShowBillingRetentionPromptReturnsTrueAtOneDayInterval() {
+        val setting = setToCancelSetting().copy(
+            plusRetentionPromptLastShownAtMillis = CURRENT_TIME_MILLIS,
+            plusRetentionPromptLastShownUnsubscribeDetectedAtMillis = UNSUBSCRIBE_DETECTED_AT_MILLIS,
+        )
+
+        assertTrue(setting.canShowBillingRetentionPrompt(CURRENT_TIME_MILLIS + ONE_DAY_MILLIS))
+    }
+
+    @Test
     fun canShowBillingRetentionPromptReturnsTrueAfterOneDayInterval() {
         val setting = setToCancelSetting().copy(
             plusRetentionPromptLastShownAtMillis = CURRENT_TIME_MILLIS,
             plusRetentionPromptLastShownUnsubscribeDetectedAtMillis = UNSUBSCRIBE_DETECTED_AT_MILLIS,
         )
 
-        val nextTimeMillis = CURRENT_TIME_MILLIS + ONE_DAY_MILLIS
+        val nextTimeMillis = CURRENT_TIME_MILLIS + ONE_DAY_MILLIS + 1L
 
         assertTrue(setting.canShowBillingRetentionPrompt(nextTimeMillis))
     }
@@ -103,14 +113,12 @@ class SettingBillingRetentionPromptTest {
         )
     }
 
-    private fun setToCancelSetting(): Setting {
-        return Setting.default().copy(
-            isPlusMode = true,
-            isPlusSubscriptionSetToCancel = true,
-            plusUnsubscribeDetectedAtMillis = UNSUBSCRIBE_DETECTED_AT_MILLIS,
-            plusPlanType = BillingPlan.Type.MONTHLY,
-        )
-    }
+    private fun setToCancelSetting(): Setting = Setting.default().copy(
+        isPlusMode = true,
+        isPlusSubscriptionSetToCancel = true,
+        plusUnsubscribeDetectedAtMillis = UNSUBSCRIBE_DETECTED_AT_MILLIS,
+        plusPlanType = BillingPlan.Type.MONTHLY,
+    )
 
     /** テストで利用する固定値をまとめるオブジェクト。 */
     private companion object {

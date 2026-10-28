@@ -6,9 +6,7 @@ import androidx.compose.ui.unit.DpSize
 import androidx.compose.ui.unit.dp
 
 @Composable
-actual fun getScreenSizeDp(): DpSize {
-    return DpSize(
-        width = LocalConfiguration.current.screenWidthDp.dp,
-        height = LocalConfiguration.current.screenHeightDp.dp,
-    )
-}
+actual fun getScreenSizeDp(): DpSize = DpSize(
+    width = LocalConfiguration.current.screenWidthDp.dp,
+    height = LocalConfiguration.current.screenHeightDp.dp,
+)

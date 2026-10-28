@@ -176,13 +176,11 @@ internal fun buildQuery(
     return queryList.joinToString(" ")
 }
 
-internal fun buildQuery(query: PostSearchQuery): String {
-    return buildQuery(
-        creatorId = query.creatorId ?: CreatorId(""),
-        creatorQuery = query.creatorQuery,
-        tag = query.tag,
-    )
-}
+internal fun buildQuery(query: PostSearchQuery): String = buildQuery(
+    creatorId = query.creatorId ?: CreatorId(""),
+    creatorQuery = query.creatorQuery,
+    tag = query.tag,
+)
 
 internal fun parseQuery(query: String): PostSearchQuery {
     val queryList = query.split(" ").filter { it.isNotBlank() }

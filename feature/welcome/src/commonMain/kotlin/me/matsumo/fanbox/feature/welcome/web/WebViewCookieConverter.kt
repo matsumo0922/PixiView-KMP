@@ -16,18 +16,16 @@ import com.multiplatform.webview.cookie.Cookie as WebViewCookie
  * fankt の Room storage も schema v3 で全レコードをドメイン Cookie として保存するため、ここで true を
  * 立てても永続化を経た時点で false に戻る。
  */
-internal fun List<WebViewCookie>.toFanboxCookieRecords(nowEpochMilliseconds: Long): List<FanboxCookieRecord> {
-    return map { cookie ->
-        FanboxCookieRecord(
-            domain = cookie.domain ?: FANBOX_COOKIE_DOMAIN,
-            path = cookie.path ?: "/",
-            name = cookie.name,
-            value = cookie.value,
-            expiresAtEpochMilliseconds = cookie.expiresAtEpochMilliseconds(nowEpochMilliseconds),
-            secure = cookie.isSecure ?: false,
-            hostOnly = false,
-        )
-    }
+internal fun List<WebViewCookie>.toFanboxCookieRecords(nowEpochMilliseconds: Long): List<FanboxCookieRecord> = map { cookie ->
+    FanboxCookieRecord(
+        domain = cookie.domain ?: FANBOX_COOKIE_DOMAIN,
+        path = cookie.path ?: "/",
+        name = cookie.name,
+        value = cookie.value,
+        expiresAtEpochMilliseconds = cookie.expiresAtEpochMilliseconds(nowEpochMilliseconds),
+        secure = cookie.isSecure ?: false,
+        hostOnly = false,
+    )
 }
 
 /**

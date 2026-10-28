@@ -18,12 +18,12 @@ internal fun ColumnScope.SheetContentHost(
     backStackEntry: NavBackStackEntry?,
     sheetState: ModalBottomSheetState,
     saveableStateHolder: SaveableStateHolder,
-    onSheetShown: (entry: NavBackStackEntry) -> Unit,
-    onSheetDismissed: (entry: NavBackStackEntry) -> Unit,
+    onSheetShow: (entry: NavBackStackEntry) -> Unit,
+    onSheetDismiss: (entry: NavBackStackEntry) -> Unit,
 ) {
     if (backStackEntry != null) {
-        val currentOnSheetShown by rememberUpdatedState(onSheetShown)
-        val currentOnSheetDismissed by rememberUpdatedState(onSheetDismissed)
+        val currentOnSheetShown by rememberUpdatedState(onSheetShow)
+        val currentOnSheetDismissed by rememberUpdatedState(onSheetDismiss)
         LaunchedEffect(sheetState, backStackEntry) {
             snapshotFlow { sheetState.isVisible }
                 // We are only interested in changes in the sheet's visibility

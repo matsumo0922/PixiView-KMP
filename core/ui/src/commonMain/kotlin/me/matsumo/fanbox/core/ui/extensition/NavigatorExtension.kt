@@ -19,7 +19,7 @@ interface NavigatorExtension {
 typealias NavResultCallback<T> = (T) -> Unit
 
 // A SavedStateHandle key is used to set/get NavResultCallback<T>
-private const val NavResultCallbackKey = "NavResultCallbackKey"
+private const val NAV_RESULT_CALLBACK_KEY = "NavResultCallbackKey"
 private val navResultLambdas = mutableMapOf<String, NavResultCallback<*>>()
 
 /**
@@ -28,7 +28,7 @@ private val navResultLambdas = mutableMapOf<String, NavResultCallback<*>>()
  * @param callback The navigation result callback.
  */
 fun <T> NavController.setNavResultCallback(callback: NavResultCallback<T>) {
-    navResultLambdas[NavResultCallbackKey] = callback
+    navResultLambdas[NAV_RESULT_CALLBACK_KEY] = callback
 }
 
 /**
@@ -36,9 +36,7 @@ fun <T> NavController.setNavResultCallback(callback: NavResultCallback<T>) {
  *
  * @return The navigation result callback if the previous backstack entry exists
  */
-fun <T> NavController.getNavResultCallback(): NavResultCallback<T>? {
-    return navResultLambdas.remove(NavResultCallbackKey) as? NavResultCallback<T>
-}
+fun <T> NavController.getNavResultCallback(): NavResultCallback<T>? = navResultLambdas.remove(NAV_RESULT_CALLBACK_KEY) as? NavResultCallback<T>
 
 /**
  *  Attempts to pop the controller's back stack and returns the result.

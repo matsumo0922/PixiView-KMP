@@ -63,14 +63,12 @@ class TranslationRepository(
         result.toTranslatedComments(comments)
     }
 
-    private fun buildChatCompletionRequest(json: String, locale: Locale): ChatCompletionRequest {
-        return ChatCompletionRequest(
-            model = ModelId("gpt-4o-mini"),
-            messages = listOf(
-                ChatMessage.System("You are an API that translates JSON to \"${locale.language}\". All responses must be in JSON, and the structure of the passed JSON must be retained, translating only the value part."),
-                ChatMessage.User(json),
-            ),
-            responseFormat = ChatResponseFormat.JsonObject,
-        )
-    }
+    private fun buildChatCompletionRequest(json: String, locale: Locale): ChatCompletionRequest = ChatCompletionRequest(
+        model = ModelId("gpt-4o-mini"),
+        messages = listOf(
+            ChatMessage.System("You are an API that translates JSON to \"${locale.language}\". All responses must be in JSON, and the structure of the passed JSON must be retained, translating only the value part."),
+            ChatMessage.User(json),
+        ),
+        responseFormat = ChatResponseFormat.JsonObject,
+    )
 }

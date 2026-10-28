@@ -76,7 +76,7 @@ internal fun SettingTopOthersSection(
             title = Res.string.setting_top_others_developer_mode,
             description = Res.string.setting_top_others_developer_mode_description,
             value = setting.isDeveloperMode,
-            onValueChanged = onClickDeveloperMode,
+            onValueChange = onClickDeveloperMode,
         )
     }
 }

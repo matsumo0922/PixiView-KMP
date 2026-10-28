@@ -70,7 +70,7 @@ internal fun BillingRetentionRoute(
     BillingRetentionScreen(
         modifier = modifier,
         isAnnualOfferShown = isAnnualOfferShown,
-        onAnnualPlanClicked = {
+        onAnnualPlanClick = {
             BillingLog.retentionPromptAnnualClicked().send()
             navController.navigate(
                 Destination.BillingPlusBottomSheet(
@@ -83,7 +83,7 @@ internal fun BillingRetentionRoute(
                 }
             }
         },
-        onManageSubscriptionClicked = {
+        onManageSubscriptionClick = {
             val subscriptionManagementUrl = currentPlatform.subscriptionManagementUrl()
 
             BillingLog.retentionPromptManageClicked(currentPlatform.name).send()
@@ -93,7 +93,7 @@ internal fun BillingRetentionRoute(
                 referrer = BILLING_RETENTION_REFERRER,
             )
         },
-        onDismissClicked = {
+        onDismissClick = {
             dismissBillingRetentionPrompt(
                 reason = BILLING_RETENTION_DISMISS_CLOSE_BUTTON,
                 terminate = terminate,
@@ -105,9 +105,9 @@ internal fun BillingRetentionRoute(
 @Composable
 private fun BillingRetentionScreen(
     isAnnualOfferShown: Boolean,
-    onAnnualPlanClicked: () -> Unit,
-    onManageSubscriptionClicked: () -> Unit,
-    onDismissClicked: () -> Unit,
+    onAnnualPlanClick: () -> Unit,
+    onManageSubscriptionClick: () -> Unit,
+    onDismissClick: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
     Scaffold(
@@ -117,7 +117,7 @@ private fun BillingRetentionScreen(
                 modifier = Modifier
                     .statusBarsPadding()
                     .fillMaxWidth(),
-                onDismissClicked = onDismissClicked,
+                onDismissClick = onDismissClick,
             )
         },
         bottomBar = {
@@ -126,8 +126,8 @@ private fun BillingRetentionScreen(
                     .navigationBarsPadding()
                     .fillMaxWidth(),
                 isAnnualOfferShown = isAnnualOfferShown,
-                onAnnualPlanClicked = onAnnualPlanClicked,
-                onManageSubscriptionClicked = onManageSubscriptionClicked,
+                onAnnualPlanClick = onAnnualPlanClick,
+                onManageSubscriptionClick = onManageSubscriptionClick,
             )
         },
         containerColor = MaterialTheme.colorScheme.surface,
@@ -168,7 +168,7 @@ private fun BillingRetentionScreen(
 
 @Composable
 private fun BillingRetentionHeader(
-    onDismissClicked: () -> Unit,
+    onDismissClick: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
     Row(
@@ -184,7 +184,7 @@ private fun BillingRetentionHeader(
         )
 
         IconButton(
-            onClick = onDismissClicked,
+            onClick = onDismissClick,
         ) {
             Icon(
                 imageVector = Icons.Default.Close,
@@ -236,8 +236,8 @@ private fun BillingRetentionInfoRow(
 @Composable
 private fun BillingRetentionButtonSection(
     isAnnualOfferShown: Boolean,
-    onAnnualPlanClicked: () -> Unit,
-    onManageSubscriptionClicked: () -> Unit,
+    onAnnualPlanClick: () -> Unit,
+    onManageSubscriptionClick: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
     Column(
@@ -247,7 +247,7 @@ private fun BillingRetentionButtonSection(
         if (isAnnualOfferShown) {
             Button(
                 modifier = Modifier.fillMaxWidth(),
-                onClick = onAnnualPlanClicked,
+                onClick = onAnnualPlanClick,
             ) {
                 Text(
                     text = stringResource(Res.string.billing_retention_primary_button),
@@ -257,7 +257,7 @@ private fun BillingRetentionButtonSection(
 
         OutlinedButton(
             modifier = Modifier.fillMaxWidth(),
-            onClick = onManageSubscriptionClicked,
+            onClick = onManageSubscriptionClick,
         ) {
             Text(
                 text = stringResource(Res.string.billing_retention_manage_button),
@@ -266,11 +266,9 @@ private fun BillingRetentionButtonSection(
     }
 }
 
-private fun Platform.subscriptionManagementUrl(): String {
-    return when (this) {
-        Platform.Android -> ANDROID_SUBSCRIPTION_MANAGEMENT_URL
-        Platform.IOS -> IOS_SUBSCRIPTION_MANAGEMENT_URL
-    }
+private fun Platform.subscriptionManagementUrl(): String = when (this) {
+    Platform.Android -> ANDROID_SUBSCRIPTION_MANAGEMENT_URL
+    Platform.IOS -> IOS_SUBSCRIPTION_MANAGEMENT_URL
 }
 
 /** リテンション BottomSheet を理由付きで閉じる。 */

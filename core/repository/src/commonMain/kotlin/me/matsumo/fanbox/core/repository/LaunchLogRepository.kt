@@ -9,7 +9,5 @@ class LaunchLogRepository(
         launchLogDataStore.launch()
     }
 
-    suspend fun getLaunchCount(): Int {
-        return launchLogDataStore.getLaunchCount()
-    }
+    suspend fun getLaunchCount(): Int = launchLogDataStore.getLaunchCount()
 }

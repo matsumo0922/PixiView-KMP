@@ -1,6 +1,6 @@
-# 共通 detekt 設定テンプレート
+# PixiView の Kotlin / Compose 静的解析設定
 # 前提バージョン: detekt 2.0.0-alpha.6 / detekt-rules-ktlint-wrapper / io.nlopez.compose.rules:detekt:0.6.8
-# 導入手順と閾値の調整方針は同ディレクトリの README.md を参照
+# 実行方法と手動レビューの対象は README-JA.md の「静的解析」を参照
 
 complexity:
   active: true
@@ -13,6 +13,11 @@ complexity:
     # Composable は UI 構造の記述で行数が伸びるため除外
     ignoreAnnotated:
       - 'Composable'
+  CyclomaticComplexMethod:
+    active: true
+    # UI の宣言的な分岐は処理アルゴリズムの複雑さとして数えない。
+    ignoreAnnotated:
+      - 'Composable'
   LongParameterList:
     active: true
     ignoreDefaultParameters: true
@@ -21,6 +26,14 @@ complexity:
       - 'Composable'
   TooManyFunctions:
     active: true
+    # Repository の公開 API はドメイン単位でまとまるため、汎用テンプレートの10件より広くする。
+    allowedFunctionsPerInterface: 60
+    allowedFunctionsPerClass: 30
+    ignoreOverridden: true
+    # テストケースの数は production class の責務の数として扱わない。
+    excludes:
+      - '**/commonTest/**'
+      - '**/androidHostTest/**'
     # 小さな private Composable へ分割するスタイルと衝突するため private は数えない
     ignorePrivate: true
 
@@ -118,15 +131,22 @@ ktlint:
   autoCorrect: true
   MaximumLineLength:
     active: false
-  # 引数の折り返しは行長ではなく引数の数で判断するため無効化し、FunctionSignature で強制する
+  # 呼び出しの改行は引数の数・形で判断するため、行長による折り返しを無効化する
   ArgumentListWrapping:
     active: false
   ParameterListWrapping:
     active: false
-  # 引数3つ以上の関数定義を複数行に強制する。引数2つまでの1行定義の規約は rules/kotlin.md を参照
+  # デフォルト引数の有無による改行を判別できないため、関数定義の改行は手動レビューする。
   FunctionSignature:
+    active: false
+  ClassSignature:
     active: true
-    forceMultilineWhenParameterCountGreaterOrEqualThan: 3
+    forceMultilineWhenParameterCountGreaterOrEqualThan: '3'
+    maxLineLength: -1
+  BinaryExpressionWrapping:
+    maxLineLength: -1
+  FunctionLiteral:
+    maxLineLength: -1
   NoWildcardImports:
     # style ルールセットの WildcardImport で検出するため、二重報告を避けて無効化
     active: false
@@ -146,6 +166,9 @@ Compose:
   # Composable に modifier 引数を必須にする
   ModifierMissing:
     active: true
+    checkModifiersForVisibility: all
+    ignoreAnnotated:
+      - 'Preview'
   # modifier 引数のデフォルト値 `Modifier` を強制する
   ModifierWithoutDefault:
     active: true
@@ -155,6 +178,9 @@ Compose:
   # ラムダ引数名を現在形（onClick / onChange）に強制する
   ParameterNaming:
     active: true
+    # Restricted は表示対象を修飾する形容詞であり、過去形のイベント名ではない。
+    allowedLambdaParameterNames:
+      - 'onClickHideRestricted'
   # Composable 引数の List / Map / Set を検出し、Immutable なコレクション型を強制する（opt-in のため明示有効化）
   UnstableCollections:
     active: true

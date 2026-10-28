@@ -1,6 +1,6 @@
 package me.matsumo.fanbox.core.ui.animation
 
-/**
+/*
  * Fork from https://github.com/mxalbert1996/Zoomable
  */
 
@@ -16,6 +16,7 @@ import androidx.compose.runtime.Immutable
 import androidx.compose.runtime.Stable
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableFloatStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.Saver
@@ -53,9 +54,9 @@ import kotlin.math.sin
  */
 @Composable
 fun rememberZoomableState(
-    minScale: Float = ZoomableDefaults.MinScale,
-    maxScale: Float = ZoomableDefaults.MaxScale,
-    doubleTapScale: Float = ZoomableDefaults.DoubleTapScale,
+    minScale: Float = ZoomableDefaults.MIN_SCALE,
+    maxScale: Float = ZoomableDefaults.MAX_SCALE,
+    doubleTapScale: Float = ZoomableDefaults.DOUBLE_TAP_SCALE,
     overZoomConfig: OverZoomConfig? = null,
     initialScale: Float = minScale,
     initialTranslationX: Float = 0f,
@@ -84,14 +85,14 @@ fun rememberZoomableState(
 @Stable
 class ZoomableState(
     private val decayAnimationSpec: DecayAnimationSpec<Float>,
-    initialScale: Float = ZoomableDefaults.MinScale,
+    initialScale: Float = ZoomableDefaults.MIN_SCALE,
     initialTranslationX: Float = 0f,
     initialTranslationY: Float = 0f,
 ) {
     /**
      * The minimum [scale] value.
      */
-    var minScale: Float = ZoomableDefaults.MinScale
+    var minScale: Float = ZoomableDefaults.MIN_SCALE
         set(value) {
             if (field != value) {
                 field = value
@@ -102,7 +103,7 @@ class ZoomableState(
     /**
      * The maximum [scale] value.
      */
-    var maxScale: Float = ZoomableDefaults.MaxScale
+    var maxScale: Float = ZoomableDefaults.MAX_SCALE
         set(value) {
             if (field != value) {
                 field = value
@@ -115,7 +116,7 @@ class ZoomableState(
     /**
      * The [scale] value to animate to when a double tap happens.
      */
-    var doubleTapScale: Float = ZoomableDefaults.DoubleTapScale
+    var doubleTapScale: Float = ZoomableDefaults.DOUBLE_TAP_SCALE
 
     /**
      * Current progress of the dismiss drag ranging from 0.0 to 1.0.
@@ -125,21 +126,21 @@ class ZoomableState(
         if (size.height == 0) {
             0f
         } else {
-            abs(dismissDragAbsoluteOffsetY) / (size.height * DismissDragThreshold)
+            abs(dismissDragAbsoluteOffsetY) / (size.height * DISMISS_DRAG_THRESHOLD)
         }
     }
 
     private val velocityTracker = VelocityTracker()
-    private var _scale by mutableStateOf(initialScale)
-    private var _translationX = Animatable(initialTranslationX, PxVisibilityThreshold)
-    private var _translationY = Animatable(initialTranslationY, PxVisibilityThreshold)
-    private var _size by mutableStateOf(IntSize.Zero)
-    private var _childSize by mutableStateOf(Size.Zero)
+    private var _scale by mutableFloatStateOf(initialScale)
+    private var translationXAnimation = Animatable(initialTranslationX, PX_VISIBILITY_THRESHOLD)
+    private var translationYAnimation = Animatable(initialTranslationY, PX_VISIBILITY_THRESHOLD)
+    private var sizeState by mutableStateOf(IntSize.Zero)
+    private var childSizeState by mutableStateOf(Size.Zero)
 
     internal var boundOffset by mutableStateOf(IntOffset.Zero)
         private set
 
-    internal var dismissDragAbsoluteOffsetY by mutableStateOf(0f)
+    internal var dismissDragAbsoluteOffsetY by mutableFloatStateOf(0f)
         private set
 
     internal val dismissDragOffsetY: Float by derivedStateOf {
@@ -148,27 +149,27 @@ class ZoomableState(
             0f
         } else {
             val progress = (dismissDragAbsoluteOffsetY / maxOffset).coerceIn(-1f, 1f)
-            childSize.height / DismissDragResistanceFactor * sin(progress * PI.toFloat() / 2)
+            childSize.height / DISMISS_DRAG_RESISTANCE_FACTOR * sin(progress * PI.toFloat() / 2)
         }
     }
 
     internal val shouldDismiss: Boolean
-        get() = abs(dismissDragAbsoluteOffsetY) > size.height * DismissDragThreshold
+        get() = abs(dismissDragAbsoluteOffsetY) > size.height * DISMISS_DRAG_THRESHOLD
 
     internal var size: IntSize
-        get() = _size
+        get() = sizeState
         set(value) {
-            if (_size != value) {
-                _size = value
+            if (sizeState != value) {
+                sizeState = value
                 updateBounds()
             }
         }
 
     internal var childSize: Size
-        get() = _childSize
+        get() = childSizeState
         set(value) {
-            if (_childSize != value) {
-                _childSize = value
+            if (childSizeState != value) {
+                childSizeState = value
                 updateBounds()
             }
         }
@@ -187,13 +188,13 @@ class ZoomableState(
      * Current translationX of [Zoomable].
      */
     val translationX: Float
-        get() = _translationX.value
+        get() = translationXAnimation.value
 
     /**
      * Current translationY of [Zoomable].
      */
     val translationY: Float
-        get() = _translationY.value
+        get() = translationYAnimation.value
 
     internal val minSnapScale: Float
         get() = max(minScale, overZoomConfig?.minSnapScale ?: 0f)
@@ -207,9 +208,9 @@ class ZoomableState(
 
     internal val horizontalEdge: HorizontalEdge
         get() = when {
-            _translationX.upperBound == _translationX.lowerBound -> HorizontalEdge.Both
-            _translationX.run { value >= upperBound!! - PxVisibilityThreshold } -> HorizontalEdge.Left
-            _translationX.run { value <= lowerBound!! + PxVisibilityThreshold } -> HorizontalEdge.Right
+            translationXAnimation.upperBound == translationXAnimation.lowerBound -> HorizontalEdge.Both
+            translationXAnimation.run { value >= upperBound!! - PX_VISIBILITY_THRESHOLD } -> HorizontalEdge.Left
+            translationXAnimation.run { value <= lowerBound!! + PX_VISIBILITY_THRESHOLD } -> HorizontalEdge.Right
             else -> HorizontalEdge.None
         }
 
@@ -223,8 +224,8 @@ class ZoomableState(
         boundOffset = IntOffset((offsetX / 2f).roundToInt(), (offsetY / 2f).roundToInt())
         val maxX = offsetX.coerceAtLeast(0f) / 2f
         val maxY = offsetY.coerceAtLeast(0f) / 2f
-        _translationX.updateBounds(-maxX, maxX)
-        _translationY.updateBounds(-maxY, maxY)
+        translationXAnimation.updateBounds(-maxX, maxX)
+        translationYAnimation.updateBounds(-maxY, maxY)
     }
 
     internal fun calculateTargetTranslation(centroid: Offset): Offset =
@@ -259,8 +260,8 @@ class ZoomableState(
                 if (targetTranslation != Offset.Unspecified) {
                     val fraction = if (range == 0f) 1f else (value - initialScale) / range
                     val translation = lerp(initialTranslation, targetTranslation, fraction)
-                    _translationX.snapTo(translation.x)
-                    _translationY.snapTo(translation.y)
+                    translationXAnimation.snapTo(translation.x)
+                    translationYAnimation.snapTo(translation.y)
                 }
             }
         }
@@ -283,8 +284,8 @@ class ZoomableState(
             animationSpec = animationSpec,
         ) { value, _ ->
             launch {
-                _translationX.snapTo(value.x)
-                _translationY.snapTo(value.y)
+                translationXAnimation.snapTo(value.x)
+                translationYAnimation.snapTo(value.y)
             }
         }
     }
@@ -293,13 +294,13 @@ class ZoomableState(
         coroutineScope {
             flingJob = coroutineContext[Job]
             launch {
-                _translationX.animateDecay(
+                translationXAnimation.animateDecay(
                     initialVelocity = velocity.x,
                     animationSpec = decayAnimationSpec,
                 )
             }
             launch {
-                _translationY.animateDecay(
+                translationYAnimation.animateDecay(
                     initialVelocity = velocity.y,
                     animationSpec = decayAnimationSpec,
                 )
@@ -315,12 +316,16 @@ class ZoomableState(
         isGestureInProgress = true
     }
 
-    internal suspend fun onTransform(centroid: Offset, pan: Offset, zoom: Float) {
+    internal suspend fun onTransform(
+        centroid: Offset,
+        pan: Offset,
+        zoom: Float,
+    ) {
         var targetTranslation = calculateTargetTranslation(centroid - pan)
         scale *= zoom
         targetTranslation = targetTranslation * scale - size.toSize().center + centroid
-        _translationX.snapTo(targetTranslation.x)
-        _translationY.snapTo(targetTranslation.y)
+        translationXAnimation.snapTo(targetTranslation.x)
+        translationYAnimation.snapTo(targetTranslation.y)
     }
 
     internal fun onTransformEnd() {
@@ -328,8 +333,8 @@ class ZoomableState(
     }
 
     internal suspend fun onDrag(dragAmount: Offset) {
-        _translationX.snapTo(_translationX.value + dragAmount.x)
-        _translationY.snapTo(_translationY.value + dragAmount.y)
+        translationXAnimation.snapTo(translationXAnimation.value + dragAmount.x)
+        translationYAnimation.snapTo(translationYAnimation.value + dragAmount.y)
     }
 
     internal suspend fun onDragEnd() {
@@ -405,26 +410,26 @@ internal value class HorizontalEdge private constructor(private val value: Int) 
     }
 }
 
-private const val PxVisibilityThreshold = 0.5f
+private const val PX_VISIBILITY_THRESHOLD = 0.5f
 
-internal const val DismissDragResistanceFactor = 2f
-internal const val DismissDragThreshold = 0.25f
+internal const val DISMISS_DRAG_RESISTANCE_FACTOR = 2f
+internal const val DISMISS_DRAG_THRESHOLD = 0.25f
 
 object ZoomableDefaults {
     /**
      * The default value for [ZoomableState.minScale].
      */
-    const val MinScale = 1f
+    const val MIN_SCALE = 1f
 
     /**
      * The default value for [ZoomableState.maxScale].
      */
-    const val MaxScale = 4f
+    const val MAX_SCALE = 4f
 
     /**
      * The default value for [ZoomableState.doubleTapScale].
      */
-    const val DoubleTapScale = 2f
+    const val DOUBLE_TAP_SCALE = 2f
 }
 
 /**
@@ -442,9 +447,12 @@ class OverZoomConfig(
 ) {
     operator fun contains(scale: Float): Boolean = scale in minSnapScale..maxSnapScale
 
-    override fun equals(other: Any?): Boolean =
-        this === other || other is OverZoomConfig &&
-            minSnapScale == other.minSnapScale && maxSnapScale == other.maxSnapScale
+    override fun equals(other: Any?): Boolean {
+        if (this === other) return true
+        if (other !is OverZoomConfig) return false
+
+        return minSnapScale == other.minSnapScale && maxSnapScale == other.maxSnapScale
+    }
 
     override fun hashCode(): Int {
         var result = minSnapScale.hashCode()

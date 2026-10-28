@@ -7,6 +7,7 @@ import androidx.compose.runtime.staticCompositionLocalOf
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.Dp
 
+/** 画面背景の色と tonal elevation。 */
 @Immutable
 data class BackgroundTheme(
     val color: Color = Color.Unspecified,

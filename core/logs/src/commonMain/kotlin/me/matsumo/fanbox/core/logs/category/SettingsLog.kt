@@ -33,9 +33,7 @@ sealed class SettingsLog : LogCategory {
 
     companion object {
         // アプリの設定が初期化された際に出力されるログ
-        fun init(
-            settings: String,
-        ) = Init(settings)
+        fun init(settings: String) = Init(settings)
 
         // アプリの設定が更新された際に出力されるログ
         fun update(

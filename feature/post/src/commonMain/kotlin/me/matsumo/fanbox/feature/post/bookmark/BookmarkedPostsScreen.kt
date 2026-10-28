@@ -153,7 +153,9 @@ private fun BookmarkedPostsScreen(
                                 isTestUser = setting.isTestUser,
                                 isBookmarked = bookmarkedPostIds.contains(likedPost.id),
                                 onClickPost = onClickPost,
-                                onClickBookmark = { _, isBookmarked -> onClickPostBookmark.invoke(likedPost, isBookmarked) },
+                                onClickBookmark = { _, isBookmarked ->
+                                    onClickPostBookmark.invoke(likedPost, isBookmarked)
+                                },
                                 onClickCreator = onClickCreatorPosts,
                                 onClickLike = onCLickPostLike,
                                 onClickPlanList = onClickCreatorPlans,

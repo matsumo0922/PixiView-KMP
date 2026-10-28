@@ -129,29 +129,27 @@ class RewardAdLoader(
         rewardedAd: RewardedAd,
         showState: RewardAdShowState,
         requestId: Long,
-    ): FullScreenContentCallback {
-        return object : FullScreenContentCallback() {
-            override fun onAdFailedToShowFullScreenContent(error: AdError) {
-                Napier.d { "onAdFailedToShowFullScreenContent: ${error.message}" }
-                completeRewardAdShow(
-                    rewardedAd = rewardedAd,
-                    rewardResult = showState.completeWithoutReward(),
-                    requestId = requestId,
-                )
-            }
+    ): FullScreenContentCallback = object : FullScreenContentCallback() {
+        override fun onAdFailedToShowFullScreenContent(error: AdError) {
+            Napier.d { "onAdFailedToShowFullScreenContent: ${error.message}" }
+            completeRewardAdShow(
+                rewardedAd = rewardedAd,
+                rewardResult = showState.completeWithoutReward(),
+                requestId = requestId,
+            )
+        }
 
-            override fun onAdShowedFullScreenContent() {
-                Napier.d { "onAdShowedFullScreenContent" }
-            }
+        override fun onAdShowedFullScreenContent() {
+            Napier.d { "onAdShowedFullScreenContent" }
+        }
 
-            override fun onAdDismissedFullScreenContent() {
-                Napier.d { "onAdDismissedFullScreenContent" }
-                completeRewardAdShow(
-                    rewardedAd = rewardedAd,
-                    rewardResult = showState.completeByDismissal(),
-                    requestId = requestId,
-                )
-            }
+        override fun onAdDismissedFullScreenContent() {
+            Napier.d { "onAdDismissedFullScreenContent" }
+            completeRewardAdShow(
+                rewardedAd = rewardedAd,
+                rewardResult = showState.completeByDismissal(),
+                requestId = requestId,
+            )
         }
     }
 

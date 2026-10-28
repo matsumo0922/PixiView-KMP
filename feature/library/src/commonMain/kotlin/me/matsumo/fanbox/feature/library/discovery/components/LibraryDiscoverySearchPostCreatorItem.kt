@@ -37,13 +37,13 @@ import me.matsumo.fanbox.core.ui.theme.bold
 @Composable
 internal fun LibraryDiscoverySearchPostCreatorItem(
     creatorDetail: CreatorDetail,
-    onSearchPostClicked: (CreatorId) -> Unit,
+    onSearchPostClick: (CreatorId) -> Unit,
     modifier: Modifier = Modifier,
 ) {
     Card(
         modifier = modifier
             .clip(RoundedCornerShape(8.dp))
-            .clickable { onSearchPostClicked.invoke(creatorDetail.creatorId) },
+            .clickable { onSearchPostClick.invoke(creatorDetail.creatorId) },
         shape = RoundedCornerShape(8.dp),
         colors = CardDefaults.cardColors(MaterialTheme.colorScheme.surfaceColorAtElevation(2.dp)),
     ) {

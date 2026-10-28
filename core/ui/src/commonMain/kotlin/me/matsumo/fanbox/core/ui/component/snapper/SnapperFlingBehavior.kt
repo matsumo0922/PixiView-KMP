@@ -50,7 +50,9 @@ public object SnapperFlingBehaviorDefaults {
      * The default implementation for the `snapIndex` parameter of
      * [rememberSnapperFlingBehavior] and [SnapperFlingBehavior].
      */
-    public val SnapIndex: (SnapperLayoutInfo, startIndex: Int, targetIndex: Int) -> Int = { _, _, targetIndex -> targetIndex }
+    public val SnapIndex: (SnapperLayoutInfo, startIndex: Int, targetIndex: Int) -> Int = { _, _, targetIndex ->
+        targetIndex
+    }
 }
 
 /**
@@ -226,9 +228,7 @@ public abstract class SnapperLayoutItemInfo {
     public abstract val offset: Int
     public abstract val size: Int
 
-    override fun toString(): String {
-        return "SnapperLayoutItemInfo(index=$index, offset=$offset, size=$size)"
-    }
+    override fun toString(): String = "SnapperLayoutItemInfo(index=$index, offset=$offset, size=$size)"
 }
 
 /**
@@ -329,9 +329,7 @@ public class SnapperFlingBehavior private constructor(
     public var animationTarget: Int? by mutableStateOf(null)
         private set
 
-    override suspend fun ScrollScope.performFling(
-        initialVelocity: Float,
-    ): Float {
+    override suspend fun ScrollScope.performFling(initialVelocity: Float): Float {
         // If we're at the start/end of the scroll range, we don't snap and assume the user
         // wanted to scroll here.
         if (!layoutInfo.canScrollTowardsStart() || !layoutInfo.canScrollTowardsEnd()) {
@@ -365,10 +363,7 @@ public class SnapperFlingBehavior private constructor(
         return flingToIndex(index = targetIndex, initialVelocity = initialVelocity)
     }
 
-    private suspend fun ScrollScope.flingToIndex(
-        index: Int,
-        initialVelocity: Float,
-    ): Float {
+    private suspend fun ScrollScope.flingToIndex(index: Int, initialVelocity: Float): Float {
         val initialItem = layoutInfo.currentItem ?: return initialVelocity
 
         if (initialItem.index == index && layoutInfo.distanceToIndexSnap(initialItem.index) == 0) {
@@ -487,7 +482,9 @@ public class SnapperFlingBehavior private constructor(
         var velocityLeft = when {
             // Only use the initialVelocity if it is in the correct direction
             targetIndex > initialItem.index && initialVelocity > 0 -> initialVelocity
+
             targetIndex <= initialItem.index && initialVelocity < 0 -> initialVelocity
+
             // Otherwise start at 0 velocity
             else -> 0f
         }
@@ -551,10 +548,7 @@ public class SnapperFlingBehavior private constructor(
         return false
     }
 
-    private fun DecayAnimationSpec<Float>.canDecayBeyondCurrentItem(
-        velocity: Float,
-        currentItem: SnapperLayoutItemInfo,
-    ): Boolean {
+    private fun DecayAnimationSpec<Float>.canDecayBeyondCurrentItem(velocity: Float, currentItem: SnapperLayoutItemInfo): Boolean {
         // If we don't have a velocity, return false
         if (velocity.absoluteValue < 0.5f) return false
 
@@ -582,9 +576,11 @@ public class SnapperFlingBehavior private constructor(
         initialVelocity > 0 && currentItem.index >= targetIndex -> {
             layoutInfo.distanceToIndexSnap(currentItem.index)
         }
+
         initialVelocity < 0 && currentItem.index <= targetIndex - 1 -> {
             layoutInfo.distanceToIndexSnap(currentItem.index + 1)
         }
+
         else -> 0
     }
 

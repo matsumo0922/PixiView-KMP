@@ -22,11 +22,9 @@ class WelcomeWebViewModel(
      * 扱えるよう、例外を投げずに戻り値で伝える。
      */
     @OptIn(ExperimentalTime::class)
-    suspend fun saveCookies(cookies: List<WebViewCookie>): Boolean {
-        return suspendRunCatching {
-            fanboxRepository.setCookies(cookies.toFanboxCookieRecords(Clock.System.now().toEpochMilliseconds()))
-        }.isSuccess
-    }
+    suspend fun saveCookies(cookies: List<WebViewCookie>): Boolean = suspendRunCatching {
+        fanboxRepository.setCookies(cookies.toFanboxCookieRecords(Clock.System.now().toEpochMilliseconds()))
+    }.isSuccess
 
     suspend fun checkSessionId(cookies: List<WebViewCookie>): Boolean {
         if (!saveCookies(cookies)) return false

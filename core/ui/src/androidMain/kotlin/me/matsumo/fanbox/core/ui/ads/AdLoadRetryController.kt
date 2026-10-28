@@ -19,10 +19,7 @@ internal class AdLoadRetryController(
         handler.removeCallbacks(retryRunnable)
     }
 
-    fun scheduleRetry(
-        failureMessage: String,
-        retryAction: () -> Unit,
-    ) {
+    fun scheduleRetry(failureMessage: String, retryAction: () -> Unit) {
         if (retryAttemptCount >= AD_LOAD_RETRY_MAX_ATTEMPTS) {
             Napier.w { "$adFormatName: ad load retry limit reached. $failureMessage" }
             pendingRetryAction = null

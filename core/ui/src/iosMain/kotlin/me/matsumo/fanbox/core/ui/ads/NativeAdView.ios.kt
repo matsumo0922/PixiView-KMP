@@ -17,10 +17,7 @@ import me.matsumo.fanbox.core.ui.view.NativeViews
 
 @OptIn(ExperimentalForeignApi::class)
 @Composable
-actual fun NativeAdView(
-    key: String,
-    modifier: Modifier,
-) {
+actual fun NativeAdView(key: String, modifier: Modifier) {
     val nativeView = LocalNativeViewsProvider.current.provide(NativeViews.Key.NativeAdView)
 
     Card(

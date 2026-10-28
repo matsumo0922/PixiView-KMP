@@ -42,10 +42,7 @@ import com.google.android.gms.ads.nativead.NativeAdView as GmsNativeAdView
 
 @SuppressLint("MissingPermission")
 @Composable
-actual fun NativeAdView(
-    key: String,
-    modifier: Modifier,
-) {
+actual fun NativeAdView(key: String, modifier: Modifier) {
     val isAdsSdkInitialized = LocalAdsSdkInitialized.current
 
     Card(
@@ -128,10 +125,7 @@ private fun NativeAdViewPlaceholder(
     )
 }
 
-private fun createNativeAdView(
-    context: android.content.Context,
-    colorPalette: NativeAdViewColorPalette,
-): GmsNativeAdView {
+private fun createNativeAdView(context: android.content.Context, colorPalette: NativeAdViewColorPalette): GmsNativeAdView {
     val root = LayoutInflater.from(context)
         .inflate(R.layout.layout_native_ads_medium, null, false) as GmsNativeAdView
     val refs = NativeAdViewRefs(
@@ -177,15 +171,11 @@ private data class NativeAdViewRefs(
     val mvContent: MediaView,
 )
 
-private fun GmsNativeAdView.requireRefs(): NativeAdViewRefs {
-    return checkNotNull(tag as? NativeAdViewRefs) {
-        "NativeAdViewRefs is not attached to NativeAdView"
-    }
+private fun GmsNativeAdView.requireRefs(): NativeAdViewRefs = checkNotNull(tag as? NativeAdViewRefs) {
+    "NativeAdViewRefs is not attached to NativeAdView"
 }
 
-private fun NativeAdViewRefs.applyColors(
-    colorPalette: NativeAdViewColorPalette,
-) {
+private fun NativeAdViewRefs.applyColors(colorPalette: NativeAdViewColorPalette) {
     tvAdvertiser.setTextColor(colorPalette.bodyTextColor)
     tvBody.setTextColor(colorPalette.bodyTextColor)
     btnCta.setTextColor(colorPalette.buttonTextColor)
@@ -196,10 +186,7 @@ private fun NativeAdViewRefs.applyColors(
     tvAd.setTextColor(colorPalette.bodyTextColor)
 }
 
-private fun NativeAdViewRefs.setupNativeAd(
-    nativeAd: NativeAd,
-    key: String,
-) {
+private fun NativeAdViewRefs.setupNativeAd(nativeAd: NativeAd, key: String) {
     if (isSameNativeAdBound(nativeAd = nativeAd)) return
 
     registerNativeAdAssetViews()
@@ -249,7 +236,7 @@ private fun NativeAdViewRefs.adjustMediaViewAspectRatio(nativeAd: NativeAd) {
     val mediaAspectRatio = nativeAd.mediaContent?.aspectRatio ?: 0f
     val hasValidAspectRatio = mediaAspectRatio > 0f
 
-    layoutParams.dimensionRatio = if (hasValidAspectRatio) "H,$mediaAspectRatio:1" else DefaultMediaAspectRatio
+    layoutParams.dimensionRatio = if (hasValidAspectRatio) "H,$mediaAspectRatio:1" else DEFAULT_MEDIA_ASPECT_RATIO
     mvContent.layoutParams = layoutParams
 }
 
@@ -257,4 +244,4 @@ private fun NativeAdViewRefs.adjustMediaViewAspectRatio(nativeAd: NativeAd) {
 private val NativeAdPlaceholderHeight = 60.dp
 
 /** メディアアスペクト比を取得できない場合に使用する既定比率（横:縦）。 */
-private const val DefaultMediaAspectRatio = "H,16:9"
+private const val DEFAULT_MEDIA_ASPECT_RATIO = "H,16:9"

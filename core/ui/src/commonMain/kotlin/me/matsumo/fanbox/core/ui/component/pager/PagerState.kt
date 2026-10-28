@@ -16,6 +16,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.Stable
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.saveable.Saver
 import androidx.compose.runtime.saveable.listSaver
@@ -95,7 +96,7 @@ public class PagerState(
             }
         }
 
-    internal var itemSpacing by mutableStateOf(0)
+    internal var itemSpacing by mutableIntStateOf(0)
 
     private val currentPageLayoutInfo: LazyListItemInfo?
         get() = lazyListState.layoutInfo.visibleItemsInfo.lastOrNull {
@@ -169,10 +170,13 @@ public class PagerState(
             ?: when {
                 // If a scroll isn't in progress, return the current page
                 !isScrollInProgress -> currentPage
+
                 // If the offset is 0f (or very close), return the current page
                 currentPageOffset.absoluteValue < 0.001f -> currentPage
+
                 // If we're offset towards the start, guess the previous page
                 currentPageOffset < 0f -> (currentPage - 1).coerceAtLeast(0)
+
                 // If we're offset towards the end, guess the next page
                 else -> (currentPage + 1).coerceAtMost(pageCount - 1)
             }
@@ -316,14 +320,9 @@ public class PagerState(
         animationTargetPage = null
     }
 
-    override suspend fun scroll(
-        scrollPriority: MutatePriority,
-        block: suspend ScrollScope.() -> Unit,
-    ): Unit = lazyListState.scroll(scrollPriority, block)
+    override suspend fun scroll(scrollPriority: MutatePriority, block: suspend ScrollScope.() -> Unit): Unit = lazyListState.scroll(scrollPriority, block)
 
-    override fun dispatchRawDelta(delta: Float): Float {
-        return lazyListState.dispatchRawDelta(delta)
-    }
+    override fun dispatchRawDelta(delta: Float): Float = lazyListState.dispatchRawDelta(delta)
 
     override val isScrollInProgress: Boolean
         get() = lazyListState.isScrollInProgress

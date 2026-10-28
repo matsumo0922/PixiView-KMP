@@ -47,8 +47,11 @@ import org.koin.androidx.viewmodel.ext.android.viewModel
 import org.koin.core.component.KoinComponent
 import org.koin.core.component.inject
 import java.util.concurrent.atomic.AtomicBoolean
+import kotlin.time.Duration.Companion.seconds
 
-class MainActivity : FragmentActivity(), KoinComponent {
+class MainActivity :
+    FragmentActivity(),
+    KoinComponent {
 
     private val viewModel by viewModel<MainViewModel>()
     private val nativeAdsPreLoader by inject<NativeAdsPreLoader>()
@@ -193,7 +196,7 @@ class MainActivity : FragmentActivity(), KoinComponent {
     }
 
     private suspend fun waitForAppLovinInitializationTimeout() {
-        delay(APPLOVIN_INITIALIZATION_TIMEOUT_MILLIS)
+        delay(5.seconds)
 
         val isFallbackInitializationStarted = tryInitializeMobileAdsSdk()
         if (isFallbackInitializationStarted) {
@@ -228,10 +231,7 @@ class MainActivity : FragmentActivity(), KoinComponent {
         }
     }
 
-    private fun logAdapterInitializationStatus(
-        adapterClassName: String,
-        adapterStatus: AdapterStatus,
-    ) {
+    private fun logAdapterInitializationStatus(adapterClassName: String, adapterStatus: AdapterStatus) {
         val initializationState = adapterStatus.initializationState
         val logMessage = "MobileAds adapter initialized: $adapterClassName, " +
             "state=$initializationState, " +
@@ -245,6 +245,3 @@ class MainActivity : FragmentActivity(), KoinComponent {
         }
     }
 }
-
-/** AppLovin SDK 初期化 callback を待つ最大時間。 */
-private const val APPLOVIN_INITIALIZATION_TIMEOUT_MILLIS = 5_000L

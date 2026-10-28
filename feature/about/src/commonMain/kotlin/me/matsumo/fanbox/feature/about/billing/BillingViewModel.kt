@@ -8,6 +8,7 @@ import kotlinx.collections.immutable.toImmutableList
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
+import kotlinx.coroutines.flow.WhileSubscribed
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.flow.stateIn
@@ -23,6 +24,7 @@ import me.matsumo.fanbox.core.resources.Res
 import me.matsumo.fanbox.core.resources.billing_plus_toast_purchased_error
 import me.matsumo.fanbox.core.resources.billing_plus_toast_verify_error
 import me.matsumo.fanbox.core.resources.error_billing
+import kotlin.time.Duration.Companion.seconds
 
 class BillingViewModel(
     private val billingClient: BillingClient,
@@ -54,7 +56,7 @@ class BillingViewModel(
         }
     }.stateIn(
         scope = viewModelScope,
-        started = SharingStarted.WhileSubscribed(5_000),
+        started = SharingStarted.WhileSubscribed(stopTimeout = 5.seconds),
         initialValue = ScreenState.Loading,
     )
 
@@ -87,7 +89,9 @@ class BillingViewModel(
 
     private fun handleOnPurchase() {
         viewModelScope.launch {
-            val result = suspendRunCatching { billingClient.purchase(selectedPlanType.value) }.getOrElse { inactivePlusStatus() }
+            val result = suspendRunCatching {
+                billingClient.purchase(selectedPlanType.value)
+            }.getOrElse { inactivePlusStatus() }
 
             if (result.isActive) {
                 settingRepository.setPlusStatus(result)
@@ -112,15 +116,13 @@ class BillingViewModel(
     }
 }
 
-private fun inactivePlusStatus(): BillingPlusStatus {
-    return BillingPlusStatus(
-        isActive = false,
-        isTrial = false,
-        willRenew = false,
-        unsubscribeDetectedAtMillis = null,
-        planType = BillingPlan.Type.UNKNOWN,
-    )
-}
+private fun inactivePlusStatus(): BillingPlusStatus = BillingPlusStatus(
+    isActive = false,
+    isTrial = false,
+    willRenew = false,
+    unsubscribeDetectedAtMillis = null,
+    planType = BillingPlan.Type.UNKNOWN,
+)
 
 /** Plus 課金画面の UI 状態を表すモデル。 */
 @Stable

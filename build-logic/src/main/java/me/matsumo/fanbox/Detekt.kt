@@ -1,29 +1,30 @@
 package me.matsumo.fanbox
 
-import io.gitlab.arturbosch.detekt.extensions.DetektExtension
-import io.gitlab.arturbosch.detekt.report.ReportMergeTask
+import dev.detekt.gradle.Detekt
+import dev.detekt.gradle.extensions.DetektExtension
+import dev.detekt.gradle.report.ReportMergeTask
 import org.gradle.api.Project
 import org.gradle.api.tasks.TaskProvider
 import org.gradle.kotlin.dsl.getByType
+import org.gradle.kotlin.dsl.named
 import org.gradle.kotlin.dsl.register
-import org.gradle.kotlin.dsl.withType
 
 @Suppress("UNCHECKED_CAST")
 internal fun Project.configureDetekt() {
     extensions.getByType<DetektExtension>().apply {
-        toolVersion = libs.version("detekt")
+        toolVersion.set(libs.version("detekt"))
         // 並列処理
-        parallel = true
+        parallel.set(true)
         // Detektの設定ファイル
         config.setFrom(files("${project.rootDir}/config/detekt/detekt.yml"))
         // baseline 設定ファイル
-        baseline = file("${project.rootDir}/config/detekt/baseline.xml")
+        baseline.set(file("${project.rootDir}/config/detekt/baseline.xml"))
         // デフォルト設定の上に自分の設定ファイルを適用する
-        buildUponDefaultConfig = true
-        // ルール違反があった場合にfailさせない
-        ignoreFailures = false
+        buildUponDefaultConfig.set(true)
+        // ルール違反があった場合に失敗させる
+        ignoreFailures.set(false)
         // ルール違反の自動修正を試みる
-        autoCorrect = false
+        autoCorrect.set(false)
     }
 
     // 各モジュールでの Detekt 実行結果を一つにまとめるタスク（CIでコメントする際に使用）
@@ -36,20 +37,21 @@ internal fun Project.configureDetekt() {
         rootProject.tasks.named("reportMerge") as TaskProvider<ReportMergeTask>
     }
 
-    plugins.withType<io.gitlab.arturbosch.detekt.DetektPlugin> {
-        tasks.withType<io.gitlab.arturbosch.detekt.Detekt> detekt@{
-            finalizedBy(reportMerge)
+    val reportFile = layout.buildDirectory.file("reports/detekt/detekt.xml")
+    tasks.named("detekt", Detekt::class).configure {
+        finalizedBy(reportMerge)
+        reports.checkstyle.outputLocation.set(reportFile)
 
-            source = project.files("./").asFileTree
+        setSource(
+            project.fileTree(projectDir) {
+                include("**/*.kt", "**/*.kts")
+                exclude("**/resources/**", "**/build/**")
+            },
+        )
+    }
 
-            include("**/*.kt")
-            include("**/*.kts")
-            exclude("**/resources/**")
-            exclude("**/build/**")
-
-            reportMerge.configure {
-                input.from(this@detekt.xmlReportFile) // or .sarifReportFile
-            }
-        }
+    reportMerge.configure {
+        // 通常の解析結果だけを集約し、型解決タスクや以前のレポートを混ぜない。
+        input.from(reportFile)
     }
 }

@@ -17,7 +17,7 @@ class FlagDataStore(
         }
     }
 
-    suspend fun getFlag(key: Flag, default: Boolean): Boolean {
-        return preference.data.map { it[booleanPreferencesKey(key.name)] ?: default }.first()
-    }
+    suspend fun getFlag(key: Flag, default: Boolean): Boolean = preference.data.map {
+        it[booleanPreferencesKey(key.name)] ?: default
+    }.first()
 }

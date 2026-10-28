@@ -30,8 +30,8 @@ internal fun PixiViewScreen(
     onRequestInitPixiViewId: () -> Unit,
     onRequestFirstLaunchFlag: () -> Unit,
     onRequestUpdateState: () -> Unit,
-    onBillingRetentionPromptShown: () -> Unit,
-    onPostDetailClosed: suspend () -> Unit,
+    onBillingRetentionPromptShow: () -> Unit,
+    onPostDetailClose: suspend () -> Unit,
     modifier: Modifier = Modifier,
 ) {
     val bottomSheetNavigator = rememberBottomSheetNavigator()
@@ -78,15 +78,15 @@ internal fun PixiViewScreen(
                 modifier = Modifier.fillMaxSize(),
                 bottomSheetNavigator = bottomSheetNavigator,
                 navController = navController,
-                onPostDetailClosed = onPostDetailClosed,
-                onLibraryHomeVisibilityChanged = { isLibraryHomeVisible = it },
+                onPostDetailClose = onPostDetailClose,
+                onLibraryHomeVisibilityChange = { isLibraryHomeVisible = it },
             )
 
             HandleBillingRetentionPrompt(
                 uiState = uiState,
                 navController = navController,
                 isHomeVisible = isLibraryHomeVisible && currentBackStackEntry?.destination?.hasRoute<Destination.Library>() == true,
-                onBillingRetentionPromptShown = onBillingRetentionPromptShown,
+                onBillingRetentionPromptShow = onBillingRetentionPromptShow,
             )
 
             if (showPaywallFlag) {
@@ -105,9 +105,9 @@ private fun HandleBillingRetentionPrompt(
     uiState: MainUiState,
     navController: NavHostController,
     isHomeVisible: Boolean,
-    onBillingRetentionPromptShown: () -> Unit,
+    onBillingRetentionPromptShow: () -> Unit,
 ) {
-    val currentOnBillingRetentionPromptShown by rememberUpdatedState(onBillingRetentionPromptShown)
+    val currentOnBillingRetentionPromptShown by rememberUpdatedState(onBillingRetentionPromptShow)
     var shownPromptDedupeKey by remember { mutableStateOf<String?>(null) }
 
     LaunchedEffect(uiState.setting, uiState.isBillingSyncSucceeded, uiState.isAppLocked, isHomeVisible) {
