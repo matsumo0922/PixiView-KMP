@@ -89,8 +89,6 @@ public object PagerDefaults {
      */
     @OptIn(ExperimentalSnapperApi::class)
     @ExperimentalSnapperApi
-    // PagerScope の公開プロパティとして、ページ内のコンテンツから参照できるようにする。
-    @Suppress("MemberVisibilityCanBePrivate")
     @Deprecated("MaximumFlingDistance has been deprecated in Snapper")
     public val singlePageFlingDistance: (SnapperLayoutInfo) -> Float = { layoutInfo ->
         // We can scroll up to the scrollable size of the lazy layout
@@ -133,7 +131,7 @@ public object PagerDefaults {
     )
     @Composable
     @ExperimentalSnapperApi
-    // 非推奨の Pager/Snapper API の互換経路を維持する。移行: https://github.com/matsumo0922/PixiView-KMP/issues/163
+    // 未使用の Pager/Snapper fork の削除・整理を追跡する: https://github.com/matsumo0922/PixiView-KMP/issues/163
     @Suppress("DEPRECATION")
     public fun flingBehavior(
         state: PagerState,
@@ -538,9 +536,7 @@ public interface PagerScope {
     public val currentPageOffset: Float
 }
 
-private class PagerScopeImpl(
-    private val state: PagerState,
-) : PagerScope {
+private class PagerScopeImpl(private val state: PagerState) : PagerScope {
     override val currentPage: Int get() = state.currentPage
     override val currentPageOffset: Float get() = state.currentPageOffset
 }

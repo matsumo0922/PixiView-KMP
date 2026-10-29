@@ -51,7 +51,4 @@ fun ActionSheet(
 
 /** メニューに表示するラベルと実行する操作。 */
 @Stable
-data class Action(
-    val text: StringResource,
-    val onClick: () -> Unit,
-)
+data class Action(val text: StringResource, val onClick: () -> Unit)

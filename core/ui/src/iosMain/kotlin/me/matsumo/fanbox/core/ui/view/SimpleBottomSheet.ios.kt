@@ -105,10 +105,7 @@ actual fun SimpleBottomSheet(
     }
 }
 
-private class BottomSheetManager(
-    private val onDismiss: () -> Unit,
-    private val content: @Composable () -> Unit,
-) {
+private class BottomSheetManager(private val onDismiss: () -> Unit, private val content: @Composable () -> Unit) {
     private var isPresented = false
     private var isAnimating = false
 

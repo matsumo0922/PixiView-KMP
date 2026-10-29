@@ -124,7 +124,7 @@ public inline fun rememberSnapperFlingBehavior(
  * @param maximumFlingDistance Block which returns the maximum fling distance in pixels.
  * The returned value should be > 0.
  */
-// 非推奨の Pager/Snapper API の互換経路を維持する。移行: https://github.com/matsumo0922/PixiView-KMP/issues/163
+// 未使用の Pager/Snapper fork の削除・整理を追跡する: https://github.com/matsumo0922/PixiView-KMP/issues/163
 @Suppress("DEPRECATION")
 @ExperimentalSnapperApi
 @Deprecated("The maximumFlingDistance parameter has been replaced with snapIndex")
@@ -235,7 +235,7 @@ public abstract class SnapperLayoutItemInfo {
  * [rememberLazyListSnapperLayoutInfo] and [LazyListSnapperLayoutInfo].
  */
 @ExperimentalSnapperApi
-// Snapper の公開 offset 選択肢を保持する。移行: https://github.com/matsumo0922/PixiView-KMP/issues/163
+// 未使用の fork の offset 選択肢。削除・整理: https://github.com/matsumo0922/PixiView-KMP/issues/163
 @Suppress("unused") // public vals which aren't used in the project
 public object SnapOffsets {
     /**
@@ -304,7 +304,7 @@ public class SnapperFlingBehavior private constructor(
         springAnimationSpec = springAnimationSpec,
         snapIndex = snapIndex,
         // We still need to pass in a maximumFlingDistance value
-        // 非推奨の Pager/Snapper API の互換経路を維持する。移行: https://github.com/matsumo0922/PixiView-KMP/issues/163
+        // 未使用の Pager/Snapper fork の削除・整理を追跡する: https://github.com/matsumo0922/PixiView-KMP/issues/163
         maximumFlingDistance = @Suppress("DEPRECATION") SnapperFlingBehaviorDefaults.MaximumFlingDistance,
     )
 
@@ -316,7 +316,7 @@ public class SnapperFlingBehavior private constructor(
      * The returned value should be > 0.
      */
     @Deprecated("The maximumFlingDistance parameter has been replaced with snapIndex")
-    // 非推奨の Pager/Snapper API の互換経路を維持する。移行: https://github.com/matsumo0922/PixiView-KMP/issues/163
+    // 未使用の Pager/Snapper fork の削除・整理を追跡する: https://github.com/matsumo0922/PixiView-KMP/issues/163
     @Suppress("DEPRECATION")
     public constructor(
         layoutInfo: SnapperLayoutInfo,

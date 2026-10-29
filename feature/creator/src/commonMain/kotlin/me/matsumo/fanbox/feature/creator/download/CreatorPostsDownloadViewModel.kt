@@ -144,7 +144,4 @@ data class CreatorPostsDownloadUiState(
 )
 
 @Stable
-data class CreatorPostsDownloadData(
-    val post: Post,
-    var isDownloaded: Boolean,
-)
+data class CreatorPostsDownloadData(val post: Post, var isDownloaded: Boolean)

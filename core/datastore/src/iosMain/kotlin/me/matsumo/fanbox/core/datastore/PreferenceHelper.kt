@@ -11,9 +11,7 @@ import platform.Foundation.NSDocumentDirectory
 import platform.Foundation.NSFileManager
 import platform.Foundation.NSUserDomainMask
 
-class PreferenceHelperImpl(
-    private val ioDispatcher: CoroutineDispatcher,
-) : PreferenceHelper {
+class PreferenceHelperImpl(private val ioDispatcher: CoroutineDispatcher) : PreferenceHelper {
 
     @OptIn(ExperimentalForeignApi::class)
     override fun create(name: String): DataStore<Preferences> {

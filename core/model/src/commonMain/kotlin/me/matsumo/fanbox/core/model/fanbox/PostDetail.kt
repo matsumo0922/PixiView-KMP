@@ -141,10 +141,7 @@ data class PostDetail(
                  * 責務とする。
                  */
                 @Immutable
-                data class Embed(
-                    val serviceProvider: String,
-                    val contentId: String,
-                ) : Block {
+                data class Embed(val serviceProvider: String, val contentId: String) : Block {
                     /** 対応済みサービス提供者の埋め込み URL。未対応の場合は null。 */
                     val url: String?
                         get() = when (serviceProvider) {
@@ -179,17 +176,11 @@ data class PostDetail(
 
         /** 画像本文。 */
         @Immutable
-        data class Image(
-            val text: String,
-            val images: List<ImageItem>,
-        ) : Body
+        data class Image(val text: String, val images: List<ImageItem>) : Body
 
         /** ファイル本文。 */
         @Immutable
-        data class File(
-            val text: String,
-            val files: List<FileItem>,
-        ) : Body
+        data class File(val text: String, val files: List<FileItem>) : Body
 
         /** テキスト本文。 */
         @Immutable
@@ -197,10 +188,7 @@ data class PostDetail(
 
         /** 動画本文。 */
         @Immutable
-        data class Video(
-            val serviceProvider: String,
-            val videoId: String,
-        ) : Body {
+        data class Video(val serviceProvider: String, val videoId: String) : Body {
             /** 対応済みサービス提供者の動画 URL。未対応の場合は null。 */
             val url: String?
                 get() = when (serviceProvider) {

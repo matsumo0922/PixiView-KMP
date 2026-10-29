@@ -26,7 +26,7 @@ import kotlin.time.Clock
 import kotlin.time.ExperimentalTime
 
 @Composable
-// 画面遷移・フォーカス・親への通知は composition 適用後に dispatch し、離脱時にキャンセルする。
+// Paywall への遷移を composition 適用後に dispatch し、画面離脱時はキャンセルする。
 @Suppress("UnnecessaryLaunchedEffect")
 internal fun PixiViewScreen(
     uiState: MainUiState,
@@ -104,7 +104,7 @@ internal fun PixiViewScreen(
 
 @OptIn(ExperimentalTime::class)
 @Composable
-// 画面遷移・フォーカス・親への通知は composition 適用後に dispatch し、離脱時にキャンセルする。
+// retention prompt の表示記録と遷移を composition 適用後に dispatch し、画面離脱時はキャンセルする。
 @Suppress("UnnecessaryLaunchedEffect")
 private fun HandleBillingRetentionPrompt(
     uiState: MainUiState,

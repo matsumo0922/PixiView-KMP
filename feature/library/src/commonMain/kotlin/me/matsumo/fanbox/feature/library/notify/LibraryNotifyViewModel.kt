@@ -20,10 +20,7 @@ import me.matsumo.fanbox.core.repository.SettingRepository
 import me.matsumo.fanbox.feature.library.notify.paging.LibraryNotifyPagingSource
 import kotlin.time.Duration.Companion.seconds
 
-class LibraryNotifyViewModel(
-    fanboxRepository: FanboxRepository,
-    settingRepository: SettingRepository,
-) : ViewModel() {
+class LibraryNotifyViewModel(fanboxRepository: FanboxRepository, settingRepository: SettingRepository) : ViewModel() {
 
     val screenState = settingRepository.setting.map {
         val pager = Pager(
@@ -50,7 +47,4 @@ class LibraryNotifyViewModel(
 }
 
 @Stable
-data class LibraryNotifyUiState(
-    val paging: Flow<PagingData<Bell>>,
-    val setting: Setting,
-)
+data class LibraryNotifyUiState(val paging: Flow<PagingData<Bell>>, val setting: Setting)

@@ -61,7 +61,7 @@ import org.jetbrains.compose.resources.stringResource
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-// 画面遷移・フォーカス・親への通知は composition 適用後に dispatch し、離脱時にキャンセルする。
+// Scaffold の subcomposition 適用後にフォーカスを要求し、検索欄の離脱時はキャンセルする。
 @Suppress("UnnecessaryLaunchedEffect")
 internal fun PostSearchTopBar(
     query: String,

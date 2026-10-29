@@ -39,7 +39,7 @@ import me.matsumo.fanbox.core.resources.post_detail_comment_delete_success
 import org.jetbrains.compose.resources.StringResource
 import kotlin.time.Duration.Companion.milliseconds
 
-// 同じ記事詳細の状態を更新する画面イベントを、単一の ViewModel で処理する。
+// 記事・コメント・翻訳・ブックマークの画面イベントから、同じ記事詳細の ScreenState を更新する。
 @Suppress("TooManyFunctions")
 class PostDetailViewModel(
     private val postId: PostId,

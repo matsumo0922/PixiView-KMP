@@ -25,10 +25,7 @@ import kotlin.coroutines.resume
 import com.revenuecat.purchases.kmp.models.Package as RevenueCatPackage
 
 /** RevenueCat を利用して Plus 課金状態を扱うクライアント。 */
-class BillingClient(
-    val pixiViewConfig: PixiViewConfig,
-    val ioDispatcher: CoroutineDispatcher,
-) {
+class BillingClient(val pixiViewConfig: PixiViewConfig, val ioDispatcher: CoroutineDispatcher) {
     private val planCache = mutableMapOf<BillingPlan.Type, StoreProduct>()
 
     init {

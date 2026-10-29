@@ -26,10 +26,7 @@ import me.matsumo.fanbox.core.resources.billing_plus_toast_verify_error
 import me.matsumo.fanbox.core.resources.error_billing
 import kotlin.time.Duration.Companion.seconds
 
-class BillingViewModel(
-    private val billingClient: BillingClient,
-    private val settingRepository: SettingRepository,
-) : ViewModel() {
+class BillingViewModel(private val billingClient: BillingClient, private val settingRepository: SettingRepository) : ViewModel() {
 
     private val plans = MutableStateFlow(emptyList<BillingPlan>())
     private val selectedPlanType = MutableStateFlow(BillingPlan.Type.MONTHLY)

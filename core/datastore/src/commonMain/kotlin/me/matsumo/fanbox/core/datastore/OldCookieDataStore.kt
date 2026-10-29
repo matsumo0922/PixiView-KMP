@@ -6,9 +6,7 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.firstOrNull
 import kotlinx.coroutines.flow.map
 
-class OldCookieDataStore(
-    preferenceHelper: PreferenceHelper,
-) {
+class OldCookieDataStore(preferenceHelper: PreferenceHelper) {
     private val cookiePreference = preferenceHelper.create(PreferencesName.FANBOX_COOKIE)
 
     val data: Flow<String> = cookiePreference.data.map { it[stringPreferencesKey(KEY_COOKIE)] ?: "" }

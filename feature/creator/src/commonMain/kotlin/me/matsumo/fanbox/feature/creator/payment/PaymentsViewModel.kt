@@ -15,9 +15,7 @@ import me.matsumo.fanbox.core.repository.FanboxRepository
 import kotlin.time.ExperimentalTime
 import kotlin.time.Instant
 
-class PaymentsViewModel(
-    private val fanboxRepository: FanboxRepository,
-) : ViewModel() {
+class PaymentsViewModel(private val fanboxRepository: FanboxRepository) : ViewModel() {
 
     private val _screenState = MutableStateFlow<ScreenState<PaymentsUiState>>(ScreenState.Loading)
 
@@ -55,14 +53,8 @@ class PaymentsViewModel(
 }
 
 @Stable
-data class PaymentsUiState(
-    val payments: List<Payment>,
-)
+data class PaymentsUiState(val payments: List<Payment>)
 
-@Stable
-data class Payment
 @OptIn(ExperimentalTime::class)
-constructor(
-    val paymentDateTime: Instant,
-    val paidRecords: List<PaidRecord>,
-)
+@Stable
+data class Payment(val paymentDateTime: Instant, val paidRecords: List<PaidRecord>)

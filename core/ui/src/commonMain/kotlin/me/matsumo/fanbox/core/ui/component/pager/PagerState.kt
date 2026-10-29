@@ -109,13 +109,13 @@ public class PagerState(
     public val interactionSource: InteractionSource
         get() = lazyListState.interactionSource
 
+    override val isScrollInProgress: Boolean
+        get() = lazyListState.isScrollInProgress
+
     /**
      * The number of pages to display.
      */
     @get:IntRange(from = 0)
-    override val isScrollInProgress: Boolean
-        get() = lazyListState.isScrollInProgress
-
     @Deprecated("pageCount is deprecated, use androidx.compose.foundation.pager.PagerState.canScrollForward or androidx.compose.foundation.pager.PagerState.canScrollBackward")
     public val pageCount: Int by derivedStateOf {
         lazyListState.layoutInfo.totalItemsCount
@@ -186,7 +186,7 @@ public class PagerState(
         "Replaced with animateScrollToPage(page, pageOffset)",
         ReplaceWith("animateScrollToPage(page = page, pageOffset = pageOffset)"),
     )
-    // 非推奨 overload の引数互換を維持する。移行: https://github.com/matsumo0922/PixiView-KMP/issues/163
+    // 未使用の fork の非推奨 overload。削除・整理: https://github.com/matsumo0922/PixiView-KMP/issues/163
     @Suppress("UNUSED_PARAMETER")
     public suspend fun animateScrollToPage(
         @IntRange(from = 0) page: Int,

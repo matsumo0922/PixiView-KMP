@@ -10,10 +10,7 @@ import kotlin.time.Clock
 import kotlin.time.ExperimentalTime
 import com.multiplatform.webview.cookie.Cookie as WebViewCookie
 
-class WelcomeWebViewModel(
-    private val fanboxRepository: FanboxRepository,
-    private val settingRepository: SettingRepository,
-) : ViewModel() {
+class WelcomeWebViewModel(private val fanboxRepository: FanboxRepository, private val settingRepository: SettingRepository) : ViewModel() {
 
     /**
      * Cookie を保存する。保存できた場合だけ true を返す。

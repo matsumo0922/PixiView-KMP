@@ -12,9 +12,7 @@ import me.matsumo.fanbox.core.model.Setting
 import me.matsumo.fanbox.core.repository.SettingRepository
 import kotlin.time.Duration.Companion.seconds
 
-class LibraryViewModel(
-    settingRepository: SettingRepository,
-) : ViewModel() {
+class LibraryViewModel(settingRepository: SettingRepository) : ViewModel() {
 
     val screenState = settingRepository.setting.map {
         ScreenState.Idle(
@@ -30,6 +28,4 @@ class LibraryViewModel(
 }
 
 @Stable
-data class LibraryUiState(
-    val setting: Setting,
-)
+data class LibraryUiState(val setting: Setting)

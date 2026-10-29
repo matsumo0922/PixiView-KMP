@@ -14,10 +14,7 @@ import me.matsumo.fanbox.core.repository.DownloadPostsRepository
 import me.matsumo.fanbox.core.repository.SettingRepository
 import kotlin.time.Duration.Companion.seconds
 
-class SettingDirectoryViewModel(
-    private val settingRepository: SettingRepository,
-    downloadPostsRepository: DownloadPostsRepository,
-) : ViewModel() {
+class SettingDirectoryViewModel(private val settingRepository: SettingRepository, downloadPostsRepository: DownloadPostsRepository) : ViewModel() {
 
     val screenState = settingRepository.setting.map {
         ScreenState.Idle(

@@ -21,10 +21,7 @@ import me.matsumo.fanbox.core.resources.common_back
 import me.matsumo.fanbox.core.resources.creator_fan_card_not_supported
 import me.matsumo.fanbox.core.ui.customNavTypes
 
-class FanCardViewModel(
-    savedStateHandle: SavedStateHandle,
-    private val fanboxRepository: FanboxRepository,
-) : ViewModel() {
+class FanCardViewModel(savedStateHandle: SavedStateHandle, private val fanboxRepository: FanboxRepository) : ViewModel() {
 
     private val creatorId = savedStateHandle.toRoute<Destination.FanCard>(customNavTypes).creatorId
 
@@ -59,6 +56,4 @@ class FanCardViewModel(
 }
 
 @Stable
-data class FanCardUiState(
-    val planDetail: CreatorPlanDetail,
-)
+data class FanCardUiState(val planDetail: CreatorPlanDetail)

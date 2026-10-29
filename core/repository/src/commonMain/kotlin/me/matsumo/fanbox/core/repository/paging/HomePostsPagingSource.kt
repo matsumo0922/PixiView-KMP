@@ -8,10 +8,7 @@ import me.matsumo.fanbox.core.model.fanbox.Post
 import me.matsumo.fanbox.core.repository.FanboxRepository
 import kotlin.coroutines.cancellation.CancellationException
 
-class HomePostsPagingSource(
-    private val fanboxRepository: FanboxRepository,
-    private val isHideRestricted: Boolean,
-) : PagingSource<Cursor, Post>() {
+class HomePostsPagingSource(private val fanboxRepository: FanboxRepository, private val isHideRestricted: Boolean) : PagingSource<Cursor, Post>() {
 
     override val keyReuseSupported: Boolean = true
 

@@ -14,9 +14,7 @@ sealed interface ApplicationLog : LogCategory {
         }
     }
 
-    class Close internal constructor(
-        stayTime: Long,
-    ) : ApplicationLog {
+    class Close internal constructor(stayTime: Long) : ApplicationLog {
         override val properties: JsonObject = buildJsonObject {
             put("event_category", "application")
             put("event_name", "close")

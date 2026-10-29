@@ -15,9 +15,7 @@ import me.matsumo.fanbox.core.model.ThemeConfig
 import me.matsumo.fanbox.core.repository.SettingRepository
 import kotlin.time.Duration.Companion.seconds
 
-class SettingThemeViewModel(
-    private val settingRepository: SettingRepository,
-) : ViewModel() {
+class SettingThemeViewModel(private val settingRepository: SettingRepository) : ViewModel() {
 
     val screenState = settingRepository.setting.map {
         ScreenState.Idle(
@@ -51,6 +49,4 @@ class SettingThemeViewModel(
 }
 
 @Stable
-data class SettingThemeState(
-    val setting: Setting,
-)
+data class SettingThemeState(val setting: Setting)

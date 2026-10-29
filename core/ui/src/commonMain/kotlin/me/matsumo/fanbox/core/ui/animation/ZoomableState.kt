@@ -437,10 +437,7 @@ object ZoomableDefaults {
  * finishes.
  */
 @Immutable
-class OverZoomConfig(
-    val minSnapScale: Float,
-    val maxSnapScale: Float,
-) {
+class OverZoomConfig(val minSnapScale: Float, val maxSnapScale: Float) {
     operator fun contains(scale: Float): Boolean = scale in minSnapScale..maxSnapScale
 
     override fun equals(other: Any?): Boolean {

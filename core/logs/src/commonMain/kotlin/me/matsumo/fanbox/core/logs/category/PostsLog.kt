@@ -25,9 +25,7 @@ sealed interface PostsLog : LogCategory {
         }
     }
 
-    class Like internal constructor(
-        postId: String,
-    ) : PostsLog {
+    class Like internal constructor(postId: String) : PostsLog {
         override val properties: JsonObject = buildJsonObject {
             put("event_category", "posts")
             put("event_name", "like")
@@ -51,10 +49,7 @@ sealed interface PostsLog : LogCategory {
         }
     }
 
-    class LikeComment internal constructor(
-        postId: String,
-        commentId: String,
-    ) : PostsLog {
+    class LikeComment internal constructor(postId: String, commentId: String) : PostsLog {
         override val properties: JsonObject = buildJsonObject {
             put("event_category", "posts")
             put("event_name", "like_comment")
@@ -63,10 +58,7 @@ sealed interface PostsLog : LogCategory {
         }
     }
 
-    class DeleteComment internal constructor(
-        postId: String,
-        commentId: String,
-    ) : PostsLog {
+    class DeleteComment internal constructor(postId: String, commentId: String) : PostsLog {
         override val properties: JsonObject = buildJsonObject {
             put("event_category", "posts")
             put("event_name", "delete_comment")

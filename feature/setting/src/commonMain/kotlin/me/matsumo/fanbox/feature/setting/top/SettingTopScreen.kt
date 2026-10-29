@@ -131,7 +131,7 @@ internal fun SettingTopRoute(
                 requirePlus(it, viewModel::setUseInfinityPostDetail, "isUseInfinityPostDetail")
             },
             onClickGridMode = { requirePlus(it, viewModel::setGridMode, "isUseGridMode") },
-            onClickHideRestricted = { requirePlus(it, viewModel::setHideRestricted, "isHideRestricted") },
+            onClickHideRestrictedContents = { requirePlus(it, viewModel::setHideRestricted, "isHideRestricted") },
             onClickAppLock = { requirePlus(it, viewModel::setAppLock, "isUseAppLock") },
             onClickAutoImagePreview = { requirePlus(it, viewModel::setAutoImagePreview, "isAutoImagePreview") },
             onClickReshowReveal = viewModel::setReshowReveal,
@@ -186,8 +186,7 @@ private fun SettingTopScreen(
     onClickFollowTabDefaultHome: (Boolean) -> Unit,
     onClickHideAdultContents: (Boolean) -> Unit,
     onClickOverrideAdultContents: (Boolean) -> Unit,
-    // Restricted は対象を修飾する形容詞で、イベント名の過去形ではない。
-    @Suppress("ParameterNaming") onClickHideRestricted: (Boolean) -> Unit,
+    onClickHideRestrictedContents: (Boolean) -> Unit,
     onClickGridMode: (Boolean) -> Unit,
     onClickInfinityPostDetail: (Boolean) -> Unit,
     onClickAutoImagePreview: (Boolean) -> Unit,
@@ -265,7 +264,7 @@ private fun SettingTopScreen(
                     onClickFollowTabDefaultHome = onClickFollowTabDefaultHome,
                     onClickHideAdultContents = onClickHideAdultContents,
                     onClickOverrideAdultContents = onClickOverrideAdultContents,
-                    onClickHideRestricted = onClickHideRestricted,
+                    onClickHideRestrictedContents = onClickHideRestrictedContents,
                     onClickGridMode = onClickGridMode,
                     onClickInfinityPostDetail = onClickInfinityPostDetail,
                     onClickAutoImagePreview = onClickAutoImagePreview,

@@ -13,9 +13,7 @@ import me.matsumo.fanbox.core.model.fanbox.UserId
 import me.matsumo.fanbox.core.model.toScreenStateError
 import me.matsumo.fanbox.core.repository.FanboxRepository
 
-class FollowingCreatorsViewModel(
-    private val fanboxRepository: FanboxRepository,
-) : ViewModel() {
+class FollowingCreatorsViewModel(private val fanboxRepository: FanboxRepository) : ViewModel() {
 
     private val _screenState = MutableStateFlow<ScreenState<FollowingCreatorsUiState>>(ScreenState.Loading)
 
@@ -49,6 +47,4 @@ class FollowingCreatorsViewModel(
 }
 
 @Stable
-data class FollowingCreatorsUiState(
-    val followingCreators: List<CreatorDetail>,
-)
+data class FollowingCreatorsUiState(val followingCreators: List<CreatorDetail>)

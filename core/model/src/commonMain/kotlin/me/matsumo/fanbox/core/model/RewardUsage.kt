@@ -1,10 +1,7 @@
 package me.matsumo.fanbox.core.model
 
 /** リワード広告で一時解放する機能の用途。 */
-enum class RewardUsage(
-    val storageKey: String,
-    val dailyLimit: Int,
-) {
+enum class RewardUsage(val storageKey: String, val dailyLimit: Int) {
     /** クリエイター投稿の一括ダウンロード。 */
     BulkDownload(
         storageKey = "bulk_download",

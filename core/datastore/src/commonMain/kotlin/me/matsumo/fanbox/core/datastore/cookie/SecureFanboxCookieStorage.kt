@@ -15,9 +15,7 @@ import me.matsumo.fankt.fanbox.FanboxCookieStorage
  *
  * すべての変更は [Mutex] で直列化する。完了した変更は、以降のすべての読み出しから見える。
  */
-internal class SecureFanboxCookieStorage(
-    private val blobStore: SecureCookieBlobStore,
-) : FanboxCookieStorage {
+internal class SecureFanboxCookieStorage(private val blobStore: SecureCookieBlobStore) : FanboxCookieStorage {
 
     private val mutex = Mutex()
 

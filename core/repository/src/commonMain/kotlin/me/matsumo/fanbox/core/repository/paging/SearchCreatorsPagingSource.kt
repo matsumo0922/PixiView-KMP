@@ -6,10 +6,7 @@ import me.matsumo.fanbox.core.common.util.suspendRunCatching
 import me.matsumo.fanbox.core.model.fanbox.CreatorDetail
 import me.matsumo.fanbox.core.repository.FanboxRepository
 
-class SearchCreatorsPagingSource(
-    private val fanboxRepository: FanboxRepository,
-    private val query: String,
-) : PagingSource<Int, CreatorDetail>() {
+class SearchCreatorsPagingSource(private val fanboxRepository: FanboxRepository, private val query: String) : PagingSource<Int, CreatorDetail>() {
 
     override val keyReuseSupported: Boolean = true
 

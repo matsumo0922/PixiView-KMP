@@ -14,9 +14,7 @@ sealed interface ScreenState<out T> {
         val retryTitle: StringResource? = null,
     ) : ScreenState<Nothing>
 
-    data class Idle<T>(
-        var data: T,
-    ) : ScreenState<T>
+    data class Idle<T>(var data: T) : ScreenState<T>
 }
 
 @Stable
@@ -24,9 +22,7 @@ sealed interface TranslationState<out T> {
     data object Loading : TranslationState<Nothing>
     data object None : TranslationState<Nothing>
 
-    data class Translated<T>(
-        val data: T,
-    ) : TranslationState<T>
+    data class Translated<T>(val data: T) : TranslationState<T>
 }
 
 fun <T> ScreenState<T>.updateWhenIdle(action: (T) -> T): ScreenState<T> = if (this is ScreenState.Idle) {

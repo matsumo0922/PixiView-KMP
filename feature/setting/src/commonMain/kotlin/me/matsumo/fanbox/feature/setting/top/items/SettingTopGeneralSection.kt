@@ -32,8 +32,7 @@ internal fun SettingTopGeneralSection(
     onClickFollowTabDefaultHome: (Boolean) -> Unit,
     onClickHideAdultContents: (Boolean) -> Unit,
     onClickOverrideAdultContents: (Boolean) -> Unit,
-    // Restricted は対象を修飾する形容詞で、イベント名の過去形ではない。
-    @Suppress("ParameterNaming") onClickHideRestricted: (Boolean) -> Unit,
+    onClickHideRestrictedContents: (Boolean) -> Unit,
     onClickGridMode: (Boolean) -> Unit,
     onClickInfinityPostDetail: (Boolean) -> Unit,
     onClickAutoImagePreview: (Boolean) -> Unit,
@@ -82,7 +81,7 @@ internal fun SettingTopGeneralSection(
             title = Res.string.setting_top_general_hide_restricted_contents,
             description = Res.string.setting_top_general_hide_restricted_contents_description,
             value = setting.isHideRestricted,
-            onValueChange = onClickHideRestricted,
+            onValueChange = onClickHideRestrictedContents,
         )
 
         SettingSwitchItem(

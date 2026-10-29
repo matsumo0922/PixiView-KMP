@@ -46,9 +46,7 @@ interface SettingRepository {
     suspend fun recordBillingRetentionPromptShown(shownAtMillis: Long, unsubscribeDetectedAtMillis: Long?)
 }
 
-class SettingRepositoryImpl(
-    private val settingDataStore: SettingDataStore,
-) : SettingRepository {
+class SettingRepositoryImpl(private val settingDataStore: SettingDataStore) : SettingRepository {
 
     private val _updatePlusMode = Channel<Boolean>(Channel.BUFFERED)
 

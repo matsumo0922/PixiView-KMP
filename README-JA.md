@@ -150,10 +150,13 @@ root と `build-logic` の Kotlin ファイルおよび各モジュールの Kot
 複雑度や関数数の閾値は detekt の既定値を使い、関数数の上限は11となる。
 責務を一緒に扱う理由がある宣言にだけ、直前の理由コメント付きで `@Suppress` を付ける。
 初期カーソルの取得が必要な Flow factory、画面ごとのイベント窓口、宣言用 UI DSL、遷移・フォーカスなどの effect の実行タイミングも、この方法で例外を明示する。
-互換性の例外は [Pager/Snapper の移行](https://github.com/matsumo0922/PixiView-KMP/issues/163) と [iOS entry point の移行](https://github.com/matsumo0922/PixiView-KMP/issues/164) を追跡する。
+未使用の fork の整理は [Pager/Snapper の移行](https://github.com/matsumo0922/PixiView-KMP/issues/163) で追跡する。
+Swift 側の変更を伴う [iOS entry point の整理](https://github.com/matsumo0922/PixiView-KMP/issues/164) と、既存レイアウトを維持する [Modifier の二重適用の解消](https://github.com/matsumo0922/PixiView-KMP/issues/165) も個別に追跡する。
 Composable も `CyclomaticComplexMethod` の対象とする。
 `ModifierMissing` は全可視性を対象とし、Preview と自身のレイアウトを持たないラッパーを除外する。
 
+full モードは Android の main / host test / app debug を対象とし、iosMain の型情報が必要なルールは対象に含めない。
+iOS は light と実際のコンパイルで確認する。
 型情報が必要なルールは、通常の `detekt` の統合レポートには含めず、次の full モードのタスクで検査する。
 
 ```bash
@@ -164,6 +167,7 @@ Composable も `CyclomaticComplexMethod` の対象とする。
 これらのタスクは detekt が生成した source set の範囲を維持し、build ディレクトリ配下の生成物を除外する。
 KMP の `expect` / `actual` に関するコンパイラ解析診断が出る場合は、ルールの指摘件数、解析診断、実際の Android/iOS のコンパイル結果を分けて確認する。
 ログイベントを生成するテンプレートは `scripts/daifuku/templates/LogCategory.kt.erb` に置き、生成された宣言と合わせて更新する。
+生成後は `./gradlew :core:logs:detekt --auto-correct` で整形を確認する。
 
 ## Contribute
 

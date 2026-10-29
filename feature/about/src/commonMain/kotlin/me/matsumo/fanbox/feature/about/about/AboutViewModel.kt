@@ -13,10 +13,7 @@ import me.matsumo.fanbox.core.model.Setting
 import me.matsumo.fanbox.core.repository.SettingRepository
 import kotlin.time.Duration.Companion.seconds
 
-class AboutViewModel(
-    pixiViewConfig: PixiViewConfig,
-    settingRepository: SettingRepository,
-) : ViewModel() {
+class AboutViewModel(pixiViewConfig: PixiViewConfig, settingRepository: SettingRepository) : ViewModel() {
 
     val screenState = settingRepository.setting.map {
         ScreenState.Idle(
@@ -33,7 +30,4 @@ class AboutViewModel(
 }
 
 @Stable
-data class AboutUiState(
-    val setting: Setting,
-    val config: PixiViewConfig,
-)
+data class AboutUiState(val setting: Setting, val config: PixiViewConfig)

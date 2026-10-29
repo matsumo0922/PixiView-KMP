@@ -22,7 +22,7 @@ import me.matsumo.fanbox.core.ui.extensition.LocalSnackbarHostState
 import me.matsumo.fanbox.core.ui.view.ErrorView
 import me.matsumo.fanbox.core.ui.view.LoadingView
 
-// ルートと Loading/Error の別コンテナに、呼び出し元が指定した別々の Modifier を適用する。
+// 既定では同じ Modifier を内側にも適用する既存レイアウトを維持する。解消: https://github.com/matsumo0922/PixiView-KMP/issues/165
 @Suppress("ModifierReused")
 @Composable
 fun <T> AsyncLoadContents(

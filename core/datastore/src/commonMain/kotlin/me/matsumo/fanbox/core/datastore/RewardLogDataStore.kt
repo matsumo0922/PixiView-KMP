@@ -8,9 +8,7 @@ import kotlinx.coroutines.flow.map
 import me.matsumo.fanbox.core.model.RewardUsage
 
 /** リワード広告の用途別視聴履歴を保存する DataStore。 */
-class RewardLogDataStore(
-    preferenceHelper: PreferenceHelper,
-) {
+class RewardLogDataStore(preferenceHelper: PreferenceHelper) {
     private val preference = preferenceHelper.create(PreferencesName.REWARD_LOG)
 
     suspend fun rewarded(usage: RewardUsage) {

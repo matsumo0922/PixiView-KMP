@@ -7,9 +7,7 @@ import androidx.compose.material3.SnackbarResult
 import org.jetbrains.compose.resources.StringResource
 import org.jetbrains.compose.resources.getString
 
-class ToastExtensionImpl(
-    private val context: Context,
-) : ToastExtension {
+class ToastExtensionImpl(private val context: Context) : ToastExtension {
 
     private var toast: Toast? = null
 

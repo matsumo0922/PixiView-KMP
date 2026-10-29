@@ -180,9 +180,7 @@ internal object CollapsingToolbarScaffoldScopeInstance : CollapsingToolbarScaffo
     override fun Modifier.align(alignment: Alignment): Modifier = this.then(ScaffoldChildAlignmentModifier(alignment))
 }
 
-private class ScaffoldChildAlignmentModifier(
-    private val alignment: Alignment,
-) : ParentDataModifier {
+private class ScaffoldChildAlignmentModifier(private val alignment: Alignment) : ParentDataModifier {
     override fun Density.modifyParentData(parentData: Any?): Any = (parentData as? ScaffoldParentData) ?: ScaffoldParentData(alignment)
 }
 
@@ -348,9 +346,7 @@ fun CollapsingToolbar(
     )
 }
 
-private class CollapsingToolbarMeasurePolicy(
-    private val collapsingToolbarState: CollapsingToolbarState,
-) : MeasurePolicy {
+private class CollapsingToolbarMeasurePolicy(private val collapsingToolbarState: CollapsingToolbarState) : MeasurePolicy {
     override fun MeasureScope.measure(measurables: List<Measurable>, constraints: Constraints): MeasureResult {
         val placeables = measurables.map {
             it.measure(
@@ -445,10 +441,7 @@ internal object CollapsingToolbarScopeInstance : CollapsingToolbarScope {
     override fun Modifier.pin(): Modifier = this.then(PinModifier())
 }
 
-internal class RoadModifier(
-    private val whenCollapsed: Alignment,
-    private val whenExpanded: Alignment,
-) : ParentDataModifier {
+internal class RoadModifier(private val whenCollapsed: Alignment, private val whenExpanded: Alignment) : ParentDataModifier {
     override fun Density.modifyParentData(parentData: Any?): Any = CollapsingToolbarRoadData(
         this@RoadModifier.whenCollapsed,
         this@RoadModifier.whenExpanded,
@@ -456,9 +449,7 @@ internal class RoadModifier(
     )
 }
 
-internal class ParallaxModifier(
-    private val ratio: Float,
-) : ParentDataModifier {
+internal class ParallaxModifier(private val ratio: Float) : ParentDataModifier {
     override fun Density.modifyParentData(parentData: Any?): Any = CollapsingToolbarParallaxData(ratio, (parentData as? CollapsingToolbarData)?.progressListener)
 }
 
@@ -466,9 +457,7 @@ internal class PinModifier : ParentDataModifier {
     override fun Density.modifyParentData(parentData: Any?): Any = CollapsingToolbarPinData((parentData as? CollapsingToolbarData)?.progressListener)
 }
 
-internal class ProgressUpdateListenerModifier(
-    private val listener: ProgressListener,
-) : ParentDataModifier {
+internal class ProgressUpdateListenerModifier(private val listener: ProgressListener) : ParentDataModifier {
     override fun Density.modifyParentData(parentData: Any?): Any = CollapsingToolbarProgressData(listener)
 }
 
@@ -476,13 +465,9 @@ fun interface ProgressListener {
     fun onProgressUpdate(value: Float)
 }
 
-internal sealed class CollapsingToolbarData(
-    var progressListener: ProgressListener?,
-)
+internal sealed class CollapsingToolbarData(var progressListener: ProgressListener?)
 
-internal class CollapsingToolbarProgressData(
-    progressListener: ProgressListener?,
-) : CollapsingToolbarData(progressListener)
+internal class CollapsingToolbarProgressData(progressListener: ProgressListener?) : CollapsingToolbarData(progressListener)
 
 internal class CollapsingToolbarRoadData(
     var whenCollapsed: Alignment,
@@ -529,9 +514,7 @@ enum class ScrollStrategy {
     ): NestedScrollConnection
 }
 
-private class ScrollDelegate(
-    private val offsetY: MutableState<Int>,
-) {
+private class ScrollDelegate(private val offsetY: MutableState<Int>) {
     private var scrollToBeConsumed: Float = 0f
 
     fun doScroll(delta: Float) {
@@ -650,10 +633,7 @@ internal class EnterAlwaysCollapsedNestedScrollConnection(
     }
 }
 
-internal class ExitUntilCollapsedNestedScrollConnection(
-    private val toolbarState: CollapsingToolbarState,
-    private val flingBehavior: FlingBehavior,
-) : NestedScrollConnection {
+internal class ExitUntilCollapsedNestedScrollConnection(private val toolbarState: CollapsingToolbarState, private val flingBehavior: FlingBehavior) : NestedScrollConnection {
     override fun onPreScroll(available: Offset, source: NestedScrollSource): Offset {
         val dy = available.y
 

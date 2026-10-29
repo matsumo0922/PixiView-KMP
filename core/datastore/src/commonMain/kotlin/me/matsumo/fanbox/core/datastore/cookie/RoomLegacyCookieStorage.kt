@@ -9,9 +9,7 @@ import me.matsumo.fankt.fanbox.persistence.room.RoomFanboxCookieStorage
  *
  * 移行が終わったら閉じる。閉じた後の操作は失敗する。
  */
-internal class RoomLegacyCookieStorage(
-    private val delegate: RoomFanboxCookieStorage,
-) : LegacyCookieStorage {
+internal class RoomLegacyCookieStorage(private val delegate: RoomFanboxCookieStorage) : LegacyCookieStorage {
 
     override val cookies: Flow<List<FanboxCookieRecord>> = delegate.cookies
 

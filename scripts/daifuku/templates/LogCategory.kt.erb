@@ -10,16 +10,14 @@ import kotlinx.serialization.json.put
 sealed interface <%= category.class_name %>Log : LogCategory {
 
     <%- category.available_events.each do |event| -%>
-        <%- if event.columns.empty?  -%>
+        <%- if event.columns.empty? -%>
     class <%= event.class_name %> internal constructor() : <%= category.class_name %>Log {
+        <%- elsif event.columns.size <= 2 -%>
+    class <%= event.class_name %> internal constructor(<%= event.columns.map(&:as_argument).join(', ') %>) : <%= category.class_name %>Log {
         <%- else -%>
     class <%= event.class_name %> internal constructor(
         <%- event.columns.each do |column| -%>
-            <%- if column == event.columns.last-%>
-        <%= column.as_argument %>
-            <%- else -%>
         <%= column.as_argument %>,
-            <%- end -%>
         <%- end -%>
     ) : <%= category.class_name %>Log {
         <%- end -%>
@@ -32,7 +30,7 @@ sealed interface <%= category.class_name %>Log : LogCategory {
                 <%- else -%>
             put("<%= column.original_name %>", <%= column.variable_name %>)
                 <%- end -%>
-        <%- end -%>
+            <%- end -%>
         }
     }
 
@@ -42,20 +40,16 @@ sealed interface <%= category.class_name %>Log : LogCategory {
     <%- event.descriptions.each do |description| -%>
         // <%= description %>
     <%- end -%>
-    <%- if event.columns.empty?  -%>
-        fun <%= event.variable_name %>() = <%= event.class_name %>(<%= event.pattern_matches %>)
+    <%- if event.columns.size <= 2 -%>
+        fun <%= event.variable_name %>(<%= event.columns.map(&:as_argument).join(', ') %>) = <%= event.class_name %>(<%= event.pattern_matches %>)
     <%- else -%>
         fun <%= event.variable_name %>(
         <%- event.columns.each do |column| -%>
-            <%- if column == event.columns.last-%>
-            <%= column.as_argument %>
-            <%- else -%>
             <%= column.as_argument %>,
-            <%- end -%>
         <%- end -%>
         ) = <%= event.class_name %>(<%= event.pattern_matches %>)
     <%- end -%>
-        <%- if event != category.available_events.last-%>
+        <%- if event != category.available_events.last -%>
 
         <%- end -%>
     <%- end -%>

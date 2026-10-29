@@ -30,9 +30,6 @@ data class FanboxDownloadItems(
     sealed interface RequestType {
         data object Image : RequestType
         data object File : RequestType
-        data class WholePost(
-            val post: Post?,
-            val isIgnoreFiles: Boolean,
-        ) : RequestType
+        data class WholePost(val post: Post?, val isIgnoreFiles: Boolean) : RequestType
     }
 }

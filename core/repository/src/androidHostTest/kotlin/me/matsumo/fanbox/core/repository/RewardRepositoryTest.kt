@@ -100,9 +100,7 @@ class RewardRepositoryTest {
         )
     }
 
-    private class MutableClock(
-        var instant: Instant,
-    ) : Clock {
+    private class MutableClock(var instant: Instant) : Clock {
         override fun now(): Instant = instant
     }
 }

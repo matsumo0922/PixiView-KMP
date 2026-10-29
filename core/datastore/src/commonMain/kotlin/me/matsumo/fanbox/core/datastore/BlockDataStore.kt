@@ -10,10 +10,7 @@ import kotlinx.coroutines.flow.firstOrNull
 import kotlinx.coroutines.launch
 import me.matsumo.fankt.fanbox.domain.model.id.FanboxCreatorId
 
-class BlockDataStore(
-    preferenceHelper: PreferenceHelper,
-    ioDispatcher: CoroutineDispatcher,
-) {
+class BlockDataStore(preferenceHelper: PreferenceHelper, ioDispatcher: CoroutineDispatcher) {
     private val cookiePreference = preferenceHelper.create(PreferencesName.FANBOX_BLOCK)
     private val scope = CoroutineScope(ioDispatcher)
 

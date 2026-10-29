@@ -6,9 +6,7 @@ import me.matsumo.fanbox.core.common.util.suspendRunCatching
 import me.matsumo.fanbox.core.model.fanbox.Bell
 import me.matsumo.fanbox.core.repository.FanboxRepository
 
-class LibraryNotifyPagingSource(
-    private val fanboxRepository: FanboxRepository,
-) : PagingSource<Int, Bell>() {
+class LibraryNotifyPagingSource(private val fanboxRepository: FanboxRepository) : PagingSource<Int, Bell>() {
 
     override val keyReuseSupported: Boolean = true
 

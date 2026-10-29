@@ -13,10 +13,7 @@ import kotlinx.serialization.json.Json
 import me.matsumo.fankt.fanbox.domain.model.FanboxPost
 import me.matsumo.fankt.fanbox.domain.model.id.FanboxPostId
 
-class BookmarkDataStore(
-    preferenceHelper: PreferenceHelper,
-    ioDispatcher: CoroutineDispatcher,
-) {
+class BookmarkDataStore(preferenceHelper: PreferenceHelper, ioDispatcher: CoroutineDispatcher) {
     private val cookiePreference = preferenceHelper.create(PreferencesName.FANBOX_BOOKMARK)
     private val scope = CoroutineScope(ioDispatcher)
 
