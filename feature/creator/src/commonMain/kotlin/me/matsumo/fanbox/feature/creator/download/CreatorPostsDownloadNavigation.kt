@@ -7,10 +7,7 @@ import androidx.navigation.compose.composable
 import me.matsumo.fanbox.core.model.Destination
 import me.matsumo.fanbox.core.ui.customNavTypes
 
-fun NavGraphBuilder.creatorPostsDownloadDialog(
-    navigateTo: (Destination) -> Unit,
-    terminate: () -> Unit,
-) {
+fun NavGraphBuilder.creatorPostsDownloadDialog(navigateTo: (Destination) -> Unit, terminate: () -> Unit) {
     composable<Destination.CreatorPostsDownload>(
         typeMap = customNavTypes,
     ) {

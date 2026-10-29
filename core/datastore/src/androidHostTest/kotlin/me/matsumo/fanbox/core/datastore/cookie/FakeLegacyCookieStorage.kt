@@ -42,7 +42,11 @@ internal class FakeLegacyCookieStorage(
         state.value = state.value.filterNot { it.name == cookie.name } + cookie
     }
 
-    override suspend fun delete(domain: String, path: String, name: String) {
+    override suspend fun delete(
+        domain: String,
+        path: String,
+        name: String,
+    ) {
         state.value = state.value.filterNot { it.domain == domain && it.path == path && it.name == name }
     }
 

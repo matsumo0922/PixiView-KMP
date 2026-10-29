@@ -14,10 +14,7 @@ import me.matsumo.fanbox.core.model.toScreenStateError
 import me.matsumo.fanbox.core.repository.DownloadPostsRepository
 import me.matsumo.fanbox.core.repository.FanboxRepository
 
-class PostImageViewModel(
-    private val fanboxRepository: FanboxRepository,
-    private val downloadPostsRepository: DownloadPostsRepository,
-) : ViewModel() {
+class PostImageViewModel(private val fanboxRepository: FanboxRepository, private val downloadPostsRepository: DownloadPostsRepository) : ViewModel() {
 
     private val _screenState = MutableStateFlow<ScreenState<PostImageUiState>>(ScreenState.Loading)
 
@@ -37,12 +34,14 @@ class PostImageViewModel(
         }
     }
 
-    fun downloadImages(postId: PostId, title: String, imageItems: List<PostDetail.ImageItem>) {
+    fun downloadImages(
+        postId: PostId,
+        title: String,
+        imageItems: List<PostDetail.ImageItem>,
+    ) {
         downloadPostsRepository.requestDownloadImages(postId, title, imageItems)
     }
 }
 
 @Stable
-data class PostImageUiState(
-    val postDetail: PostDetail,
-)
+data class PostImageUiState(val postDetail: PostDetail)

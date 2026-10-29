@@ -113,16 +113,12 @@ class CreatorTopViewModel(
         }
     }
 
-    suspend fun follow(creatorUserId: UserId): Result<Unit> {
-        return suspendRunCatching {
-            fanboxRepository.followCreator(creatorUserId)
-        }
+    suspend fun follow(creatorUserId: UserId): Result<Unit> = suspendRunCatching {
+        fanboxRepository.followCreator(creatorUserId)
     }
 
-    suspend fun unfollow(creatorUserId: UserId): Result<Unit> {
-        return suspendRunCatching {
-            fanboxRepository.unfollowCreator(creatorUserId)
-        }
+    suspend fun unfollow(creatorUserId: UserId): Result<Unit> = suspendRunCatching {
+        fanboxRepository.unfollowCreator(creatorUserId)
     }
 
     fun postLike(postId: PostId) {
@@ -198,13 +194,11 @@ class CreatorTopViewModel(
         }
     }
 
-    private suspend fun getRewardAvailability(): CreatorTopRewardAvailability {
-        return CreatorTopRewardAvailability(
-            bulkDownload = rewardRepository.isAbleToReward(RewardUsage.BulkDownload),
-            creatorSearch = rewardRepository.isAbleToReward(RewardUsage.CreatorSearch),
-            creatorTranslation = rewardRepository.isAbleToReward(RewardUsage.CreatorTranslation),
-        )
-    }
+    private suspend fun getRewardAvailability(): CreatorTopRewardAvailability = CreatorTopRewardAvailability(
+        bulkDownload = rewardRepository.isAbleToReward(RewardUsage.BulkDownload),
+        creatorSearch = rewardRepository.isAbleToReward(RewardUsage.CreatorSearch),
+        creatorTranslation = rewardRepository.isAbleToReward(RewardUsage.CreatorTranslation),
+    )
 }
 
 /** Creator Top の用途別リワード広告利用可否。 */
@@ -214,12 +208,10 @@ data class CreatorTopRewardAvailability(
     val creatorSearch: Boolean,
     val creatorTranslation: Boolean,
 ) {
-    fun isAbleToReward(usage: RewardUsage): Boolean {
-        return when (usage) {
-            RewardUsage.BulkDownload -> bulkDownload
-            RewardUsage.CreatorSearch -> creatorSearch
-            RewardUsage.CreatorTranslation -> creatorTranslation
-        }
+    fun isAbleToReward(usage: RewardUsage): Boolean = when (usage) {
+        RewardUsage.BulkDownload -> bulkDownload
+        RewardUsage.CreatorSearch -> creatorSearch
+        RewardUsage.CreatorTranslation -> creatorTranslation
     }
 }
 

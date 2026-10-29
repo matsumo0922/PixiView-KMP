@@ -36,7 +36,6 @@ import platform.UIKit.presentationController
 import platform.UIKit.sheetPresentationController
 import kotlin.concurrent.Volatile
 
-@Suppress("UnstableCollections", "ModifierMissing")
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 actual fun SimpleBottomSheet(
@@ -106,10 +105,7 @@ actual fun SimpleBottomSheet(
     }
 }
 
-private class BottomSheetManager(
-    private val onDismiss: () -> Unit,
-    private val content: @Composable () -> Unit,
-) {
+private class BottomSheetManager(private val onDismiss: () -> Unit, private val content: @Composable () -> Unit) {
     private var isPresented = false
     private var isAnimating = false
 
@@ -191,9 +187,7 @@ private class AdaptiveSheetState(
             }
         }
         if (skipHiddenState) {
-            require(initialValue != SheetValue.Hidden) {
-                "The initial value must not be set to Hidden if skipHiddenState is set to true."
-            }
+            require(initialValue != SheetValue.Hidden) { "The initial value must not be set to Hidden if skipHiddenState is set to true." }
         }
     }
 
@@ -228,10 +222,7 @@ private class AdaptiveSheetState(
         /**
          * The default [saver] implementation for [AdaptiveSheetState].
          */
-        fun saver(
-            skipPartiallyExpanded: Boolean,
-            confirmValueChange: (SheetValue) -> Boolean,
-        ) = Saver<AdaptiveSheetState, SheetValue>(
+        fun saver(skipPartiallyExpanded: Boolean, confirmValueChange: (SheetValue) -> Boolean) = Saver<AdaptiveSheetState, SheetValue>(
             save = { it.currentValue },
             restore = { savedValue ->
                 AdaptiveSheetState(skipPartiallyExpanded, savedValue, confirmValueChange, false)
@@ -245,15 +236,13 @@ private class AdaptiveSheetState(
 private fun rememberAdaptiveSheetState(
     skipPartiallyExpanded: Boolean = false,
     confirmValueChange: (SheetValue) -> Boolean = { true },
-): AdaptiveSheetState {
-    return rememberSaveable(
-        skipPartiallyExpanded,
-        confirmValueChange,
-        saver = AdaptiveSheetState.saver(
-            skipPartiallyExpanded = skipPartiallyExpanded,
-            confirmValueChange = confirmValueChange,
-        ),
-    ) {
-        AdaptiveSheetState(skipPartiallyExpanded, SheetValue.Hidden, confirmValueChange, false)
-    }
+): AdaptiveSheetState = rememberSaveable(
+    skipPartiallyExpanded,
+    confirmValueChange,
+    saver = AdaptiveSheetState.saver(
+        skipPartiallyExpanded = skipPartiallyExpanded,
+        confirmValueChange = confirmValueChange,
+    ),
+) {
+    AdaptiveSheetState(skipPartiallyExpanded, SheetValue.Hidden, confirmValueChange, false)
 }

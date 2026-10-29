@@ -1,5 +1,3 @@
-@file:Suppress("MatchingDeclarationName", "Filename")
-
 package me.matsumo.fanbox.core.datastore
 
 import android.content.Context
@@ -10,10 +8,7 @@ import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.CoroutineScope
 import okio.Path.Companion.toPath
 
-class PreferenceHelperImpl(
-    private val context: Context,
-    private val ioDispatcher: CoroutineDispatcher,
-) : PreferenceHelper {
+class PreferenceHelperImpl(private val context: Context, private val ioDispatcher: CoroutineDispatcher) : PreferenceHelper {
 
     override fun create(name: String): DataStore<Preferences> {
         val file = context.filesDir.resolve("$name.preferences_pb")

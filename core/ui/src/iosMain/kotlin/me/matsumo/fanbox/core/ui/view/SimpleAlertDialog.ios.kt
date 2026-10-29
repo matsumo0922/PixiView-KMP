@@ -3,6 +3,7 @@ package me.matsumo.fanbox.core.ui.view
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.remember
+import androidx.compose.ui.Modifier
 import androidx.compose.ui.window.Dialog
 import kotlinx.cinterop.BetaInteropApi
 import kotlinx.cinterop.ExperimentalForeignApi
@@ -22,6 +23,7 @@ actual fun SimpleAlertDialog(
     onClickPositive: () -> Unit,
     onClickNegative: () -> Unit,
     isCaution: Boolean,
+    modifier: Modifier,
 ) {
     Dialog(
         onDismissRequest = { onClickNegative.invoke() },

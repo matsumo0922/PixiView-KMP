@@ -16,6 +16,7 @@ import androidx.compose.material3.SnackbarResult
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.SideEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -54,11 +55,7 @@ import me.matsumo.fanbox.feature.post.image.items.PostImageMenuDialog
 import org.jetbrains.compose.resources.stringResource
 import org.koin.compose.koinInject
 import org.koin.compose.viewmodel.koinViewModel
-
-/**
- * 操作が無い状態が続いた場合に PixiViewTopBar を自動で非表示にするまでの時間（ミリ秒）
- */
-private const val TOP_BAR_AUTO_HIDE_DELAY_MILLIS = 3000L
+import kotlin.time.Duration.Companion.seconds
 
 @Composable
 internal fun PostImageRoute(
@@ -74,7 +71,7 @@ internal fun PostImageRoute(
     val snackbarHostState = LocalSnackbarHostState.current
     val screenState by viewModel.screenState.collectAsStateWithLifecycle()
 
-    LaunchedEffect(postId) {
+    SideEffect(postId) {
         if (screenState !is ScreenState.Idle) {
             viewModel.fetch(postId)
         }
@@ -125,7 +122,7 @@ private fun PostImageScreen(
 
     LaunchedEffect(isTopBarVisible) {
         if (isTopBarVisible) {
-            delay(TOP_BAR_AUTO_HIDE_DELAY_MILLIS)
+            delay(3.seconds)
             isTopBarVisible = false
         }
     }
@@ -196,11 +193,14 @@ private fun PostImageScreen(
             )
         }
 
-        PostImageMenuDialog(
-            isVisible = isShowMenu,
-            onClickDownload = { onClickDownload.invoke(listOf(postDetail.body.imageItems[pagerState.settledPage])) },
-            onClickAllDownload = { onClickDownload.invoke(postDetail.body.imageItems) },
-            onDismissRequest = { isShowMenu = false },
-        )
+        if (isShowMenu) {
+            PostImageMenuDialog(
+                onClickDownload = {
+                    onClickDownload.invoke(listOf(postDetail.body.imageItems[pagerState.settledPage]))
+                },
+                onClickAllDownload = { onClickDownload.invoke(postDetail.body.imageItems) },
+                onDismissRequest = { isShowMenu = false },
+            )
+        }
     }
 }

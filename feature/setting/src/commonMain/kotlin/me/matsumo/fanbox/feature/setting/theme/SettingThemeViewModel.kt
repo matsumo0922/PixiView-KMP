@@ -4,6 +4,7 @@ import androidx.compose.runtime.Stable
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.flow.SharingStarted
+import kotlinx.coroutines.flow.WhileSubscribed
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
@@ -12,10 +13,9 @@ import me.matsumo.fanbox.core.model.Setting
 import me.matsumo.fanbox.core.model.ThemeColorConfig
 import me.matsumo.fanbox.core.model.ThemeConfig
 import me.matsumo.fanbox.core.repository.SettingRepository
+import kotlin.time.Duration.Companion.seconds
 
-class SettingThemeViewModel(
-    private val settingRepository: SettingRepository,
-) : ViewModel() {
+class SettingThemeViewModel(private val settingRepository: SettingRepository) : ViewModel() {
 
     val screenState = settingRepository.setting.map {
         ScreenState.Idle(
@@ -25,7 +25,7 @@ class SettingThemeViewModel(
         )
     }.stateIn(
         scope = viewModelScope,
-        started = SharingStarted.WhileSubscribed(5_000),
+        started = SharingStarted.WhileSubscribed(stopTimeout = 5.seconds),
         initialValue = ScreenState.Loading,
     )
 
@@ -49,6 +49,4 @@ class SettingThemeViewModel(
 }
 
 @Stable
-data class SettingThemeState(
-    val setting: Setting,
-)
+data class SettingThemeState(val setting: Setting)

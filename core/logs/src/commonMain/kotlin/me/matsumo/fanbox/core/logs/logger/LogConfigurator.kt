@@ -17,7 +17,7 @@ object LogConfigurator : KoinComponent {
     private var filter: LogFilter? = null
     private val sender: LogSender by inject()
 
-    private var _isConfigured = MutableStateFlow(false)
+    private val _isConfigured = MutableStateFlow(false)
     val isConfigured = _isConfigured.asStateFlow()
 
     private val formatter = Json {
@@ -41,10 +41,7 @@ object LogConfigurator : KoinComponent {
         sender.sendLog(log)
     }
 
-    fun configure(
-        pixiViewConfig: PixiViewConfig,
-        setting: Setting,
-    ) {
+    fun configure(pixiViewConfig: PixiViewConfig, setting: Setting) {
         filter = LogFilter(pixiViewConfig, setting, "PixiView")
         sender.init(setting)
 

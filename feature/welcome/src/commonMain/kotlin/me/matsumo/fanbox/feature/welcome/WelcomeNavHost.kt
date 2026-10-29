@@ -97,7 +97,9 @@ fun WelcomeNavHost(
 
                 welcomeWebScreen(
                     navigateToLoginAlert = { navController.navigateToSimpleAlertDialog(it) },
-                    navigateToLoginDebugAlert = { contents, onPositive -> navController.navigateToSimpleAlertDialog(contents, onPositive) },
+                    navigateToLoginDebugAlert = { contents, onPositive ->
+                        navController.navigateToSimpleAlertDialog(contents, onPositive)
+                    },
                     terminate = { navController.popBackStack() },
                 )
 

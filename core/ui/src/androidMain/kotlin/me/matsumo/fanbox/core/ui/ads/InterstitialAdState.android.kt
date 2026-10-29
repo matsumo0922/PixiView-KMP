@@ -36,7 +36,8 @@ class InterstitialAdStateImpl internal constructor(
     }
 
     private fun load(isRetry: Boolean) {
-        if (!enable || loaded || loading) return
+        val shouldSkipLoad = !enable || loaded || loading
+        if (shouldSkipLoad) return
 
         if (!isRetry) {
             retryController.reset()
@@ -81,7 +82,8 @@ class InterstitialAdStateImpl internal constructor(
 
     @OptIn(ExperimentalAtomicApi::class)
     override suspend fun show(): Boolean {
-        if (!enable || !loaded || interstitialAd == null) {
+        val canShowAd = enable && loaded && interstitialAd != null
+        if (!canShowAd) {
             Napier.w("InterstitialAd: not loaded, $enable, $loaded, $interstitialAd")
             load()
             return false
@@ -135,10 +137,7 @@ class InterstitialAdStateImpl internal constructor(
 }
 
 @Composable
-actual fun rememberInterstitialAdState(
-    adUnitId: String,
-    enable: Boolean,
-): InterstitialAdState {
+actual fun rememberInterstitialAdState(adUnitId: String, enable: Boolean): InterstitialAdState {
     val context = LocalActivity.current!!
     val interstitialAdState = remember(adUnitId, enable) {
         InterstitialAdStateImpl(context, adUnitId, enable)

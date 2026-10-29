@@ -42,7 +42,9 @@ fun TransPostDetail.toTranslatedPostDetail(original: PostDetail): PostDetail {
         }
 
         is PostDetail.Body.Image -> originalBody.copy(text = imageBody)
+
         is PostDetail.Body.File -> originalBody.copy(text = fileBody)
+
         else -> originalBody
     }
 

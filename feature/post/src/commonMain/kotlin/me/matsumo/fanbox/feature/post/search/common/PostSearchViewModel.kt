@@ -1,5 +1,6 @@
 package me.matsumo.fanbox.feature.post.search.common
 
+import androidx.compose.runtime.Immutable
 import androidx.compose.runtime.Stable
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -23,10 +24,7 @@ import me.matsumo.fanbox.core.repository.FanboxRepository
 import me.matsumo.fanbox.core.repository.SettingRepository
 import me.matsumo.fanbox.core.ui.extensition.emptyPaging
 
-class PostSearchViewModel(
-    private val settingRepository: SettingRepository,
-    private val fanboxRepository: FanboxRepository,
-) : ViewModel() {
+class PostSearchViewModel(private val settingRepository: SettingRepository, private val fanboxRepository: FanboxRepository) : ViewModel() {
 
     private val _uiState = MutableStateFlow(
         PostSearchUiState(
@@ -57,53 +55,56 @@ class PostSearchViewModel(
     }
 
     fun search(query: PostSearchQuery) {
-        viewModelScope.launch {
-            suspendRunCatching {
+        viewModelScope.launch { performSearch(query) }
+    }
+
+    private suspend fun performSearch(query: PostSearchQuery) {
+        suspendRunCatching {
+            updateSearchQuery(query)
+            updateSearchResults(query)
+        }.onFailure { clearSearchResults() }
+    }
+
+    private suspend fun updateSearchQuery(query: PostSearchQuery) {
+        _uiState.value = uiState.value.copy(
+            query = buildQuery(query),
+            setting = settingRepository.setting.first(),
+        )
+    }
+
+    private suspend fun updateSearchResults(query: PostSearchQuery) {
+        when (query.mode) {
+            PostSearchMode.Creator -> {
                 _uiState.value = uiState.value.copy(
-                    query = buildQuery(query),
-                    setting = settingRepository.setting.first(),
-                )
-
-                when (query.mode) {
-                    PostSearchMode.Creator -> {
-                        _uiState.value = uiState.value.copy(
-                            suggestTags = fanboxRepository.getTagFromQuery(query.creatorQuery.orEmpty()),
-                            creatorPaging = fanboxRepository.getCreatorsFromQueryPager(query.creatorQuery.orEmpty()),
-                        )
-                    }
-
-                    PostSearchMode.Tag -> {
-                        _uiState.value = uiState.value.copy(tagPaging = fanboxRepository.getPostsFromQueryPager(query.tag.orEmpty(), query.creatorId))
-                    }
-
-                    else -> {
-                        _uiState.value = uiState.value.copy(
-                            creatorPaging = emptyPaging(),
-                            tagPaging = emptyPaging(),
-                            postPaging = emptyPaging(),
-                        )
-                    }
-                }
-            }.onFailure {
-                _uiState.value = uiState.value.copy(
-                    creatorPaging = emptyPaging(),
-                    tagPaging = emptyPaging(),
-                    postPaging = emptyPaging(),
+                    suggestTags = fanboxRepository.getTagFromQuery(query.creatorQuery.orEmpty()),
+                    creatorPaging = fanboxRepository.getCreatorsFromQueryPager(query.creatorQuery.orEmpty()),
                 )
             }
+
+            PostSearchMode.Tag -> {
+                _uiState.value = uiState.value.copy(
+                    tagPaging = fanboxRepository.getPostsFromQueryPager(query.tag.orEmpty(), query.creatorId),
+                )
+            }
+
+            else -> clearSearchResults()
         }
     }
 
-    suspend fun follow(creatorUserId: UserId): Result<Unit> {
-        return suspendRunCatching {
-            fanboxRepository.followCreator(creatorUserId)
-        }
+    private fun clearSearchResults() {
+        _uiState.value = uiState.value.copy(
+            creatorPaging = emptyPaging(),
+            tagPaging = emptyPaging(),
+            postPaging = emptyPaging(),
+        )
     }
 
-    suspend fun unfollow(creatorUserId: UserId): Result<Unit> {
-        return suspendRunCatching {
-            fanboxRepository.unfollowCreator(creatorUserId)
-        }
+    suspend fun follow(creatorUserId: UserId): Result<Unit> = suspendRunCatching {
+        fanboxRepository.followCreator(creatorUserId)
+    }
+
+    suspend fun unfollow(creatorUserId: UserId): Result<Unit> = suspendRunCatching {
+        fanboxRepository.unfollowCreator(creatorUserId)
     }
 
     fun postLike(postId: PostId) {
@@ -145,6 +146,8 @@ enum class PostSearchMode {
     Unknown,
 }
 
+/** 投稿検索のモードと検索条件。 */
+@Immutable
 @Serializable
 data class PostSearchQuery(
     val mode: PostSearchMode,

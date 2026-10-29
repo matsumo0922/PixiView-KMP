@@ -1,10 +1,11 @@
 # 共通 detekt 設定テンプレート
 # 前提バージョン: detekt 2.0.0-alpha.6 / detekt-rules-ktlint-wrapper / io.nlopez.compose.rules:detekt:0.6.8
-# 導入手順と閾値の調整方針は同ディレクトリの README.md を参照
+# 導入手順と閾値の調整方針は Agents リポジトリの rules/lint/README.md を参照
+# コメント中の「Kotlin 規約」は Agents リポジトリの rules/kotlin.md を指す。各プロジェクトでは AGENTS.md の管理ブロックとして注入される
 
 complexity:
   active: true
-  # 論理演算子2つ以上（条件3つ以上）の条件式を検出する。Boolean 変数への切り出し方は rules/kotlin.md を参照
+  # 論理演算子2つ以上（条件3つ以上）の条件式を検出する。Boolean 変数への切り出し方は Kotlin 規約を参照
   ComplexCondition:
     active: true
     allowedConditions: 2
@@ -23,6 +24,20 @@ complexity:
     active: true
     # 小さな private Composable へ分割するスタイルと衝突するため private は数えない
     ignorePrivate: true
+    # interface などが要求する override は、そのクラスが独自に増やした責務ではないため数えない
+    ignoreOverridden: true
+    # テストケースの数でテストクラスを分割させない。excludes は既定値を置き換えるため、
+    # 既定の除外に KMP の独自 test source set（clientTest など）を拾う '**/src/*Test/**' を加える
+    excludes:
+      - '**/test/**'
+      - '**/androidTest/**'
+      - '**/commonTest/**'
+      - '**/jvmTest/**'
+      - '**/androidUnitTest/**'
+      - '**/androidInstrumentedTest/**'
+      - '**/jsTest/**'
+      - '**/iosTest/**'
+      - '**/src/*Test/**'
 
 coroutines:
   active: true
@@ -47,7 +62,7 @@ naming:
     active: false
   TopLevelPropertyNaming:
     active: false
-  # 一文字変数を検出する（`i` ではなく `index`）。命名の意味づけは rules/kotlin.md を参照
+  # 一文字変数を検出する（`i` ではなく `index`）。命名の意味づけは Kotlin 規約を参照
   VariableMinLength:
     active: true
     minimumVariableNameLength: 2
@@ -85,11 +100,11 @@ style:
   # 複数行の for / while に中括弧を強制する
   MandatoryBracesLoops:
     active: true
-  # メソッドチェーンは1行に2呼び出しまで。3呼び出し以上は改行する
+  # プロパティ参照もチェーンの数に含め（`points.first().crs` を3と数える）、「1行に関数呼び出し2つまで」の規約とずれるため無効化する。
+  # メソッドチェーンの規約は Kotlin 規約で扱う
   MaxChainedCallsOnSameLine:
-    active: true
-    maxChainedCalls: 2
-  # UnusedPrivateFunction / UnusedPrivateProperty は型情報が必要なため、full モードのタスクでだけ実行される（README.md の「実行タスク」を参照）
+    active: false
+  # UnusedPrivateFunction / UnusedPrivateProperty は型情報が必要なため、full モードのタスクでだけ実行される（rules/lint/README.md の「実行タスク」を参照）
   UnusedPrivateFunction:
     active: true
     # Compose の Preview 関数は呼び出されないため除外
@@ -104,7 +119,7 @@ style:
 
 comments:
   # UndocumentedPublicClass は Activity / Fragment / Dialog / ViewModel をクラス名で除外できないため使わない。
-  # KDoc の規約（対象クラスと日本語での記述）は rules/kotlin.md で扱う
+  # KDoc の規約（対象クラスと日本語での記述）は Kotlin 規約で扱う
   active: false
 
 potential-bugs:
@@ -118,15 +133,43 @@ ktlint:
   autoCorrect: true
   MaximumLineLength:
     active: false
-  # 引数の折り返しは行長ではなく引数の数で判断するため無効化し、FunctionSignature で強制する
+  # 改行は行長ではなく引数の数で判断する。wrapper は .editorconfig の max_line_length を読まないため、
+  # 行長を使うルールごとに maxLineLength: -1 で行長による改行・1行化を止める
+  BinaryExpressionWrapping:
+    maxLineLength: -1
+  ContextReceiverListWrapping:
+    maxLineLength: -1
+  ContextReceiverMapping:
+    maxLineLength: -1
+  FunctionExpressionBody:
+    maxLineLength: -1
+  FunctionLiteral:
+    maxLineLength: -1
+  FunctionReturnTypeSpacing:
+    maxLineLength: -1
+  ParameterListSpacing:
+    maxLineLength: -1
+  ParameterWrapping:
+    maxLineLength: -1
+  PropertyWrapping:
+    maxLineLength: -1
+  Wrapping:
+    maxLineLength: -1
+  # 引数の折り返しは行長ではなく引数の数で判断するため無効化し、FunctionSignature / ClassSignature で強制する
   ArgumentListWrapping:
     active: false
   ParameterListWrapping:
     active: false
-  # 引数3つ以上の関数定義を複数行に強制する。引数2つまでの1行定義の規約は rules/kotlin.md を参照
+  # 引数3つ以上の関数定義を複数行に強制する。引数2つまでの1行定義とデフォルト引数による改行は Kotlin 規約を参照
   FunctionSignature:
     active: true
     forceMultilineWhenParameterCountGreaterOrEqualThan: 3
+    maxLineLength: -1
+  # 引数3つ以上のコンストラクタを複数行に強制する
+  ClassSignature:
+    active: true
+    forceMultilineWhenParameterCountGreaterOrEqualThan: '3'
+    maxLineLength: -1
   NoWildcardImports:
     # style ルールセットの WildcardImport で検出するため、二重報告を避けて無効化
     active: false
@@ -143,9 +186,10 @@ ktlint:
 
 Compose:
   active: true
-  # Composable に modifier 引数を必須にする
+  # Composable に modifier 引数を必須にする。既定では public だけを検査するが、Kotlin 規約は internal / private も対象にするため全可視性を検査する
   ModifierMissing:
     active: true
+    checkModifiersForVisibility: all
   # modifier 引数のデフォルト値 `Modifier` を強制する
   ModifierWithoutDefault:
     active: true

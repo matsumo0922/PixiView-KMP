@@ -165,10 +165,10 @@ class BottomSheetNavigator(val sheetState: ModalBottomSheetState) : Navigator<De
             backStackEntry = retainedEntry,
             sheetState = sheetState,
             saveableStateHolder = saveableStateHolder,
-            onSheetShown = {
+            onSheetShow = {
                 transitionsInProgressEntries.forEach(state::markTransitionComplete)
             },
-            onSheetDismissed = { backStackEntry ->
+            onSheetDismiss = { backStackEntry ->
                 // Sheet dismissal can be started through popBackStack in which case we have a
                 // transition that we'll want to complete
                 if (transitionsInProgressEntries.contains(backStackEntry)) {
@@ -192,12 +192,10 @@ class BottomSheetNavigator(val sheetState: ModalBottomSheetState) : Navigator<De
         attached = true
     }
 
-    override fun createDestination(): Destination {
-        return Destination(
-            navigator = this,
-            content = {},
-        )
-    }
+    override fun createDestination(): Destination = Destination(
+        navigator = this,
+        content = {},
+    )
 
     override fun navigate(
         entries: List<NavBackStackEntry>,
@@ -217,7 +215,8 @@ class BottomSheetNavigator(val sheetState: ModalBottomSheetState) : Navigator<De
         navigator: BottomSheetNavigator,
         internal val content: @Composable ColumnScope.(NavBackStackEntry) -> Unit,
         internal val onDismissed: (NavBackStackEntry) -> Unit = {},
-    ) : NavDestination(navigator), FloatingWindow
+    ) : NavDestination(navigator),
+        FloatingWindow
 
     companion object {
         const val NAME = "bottomSheet"

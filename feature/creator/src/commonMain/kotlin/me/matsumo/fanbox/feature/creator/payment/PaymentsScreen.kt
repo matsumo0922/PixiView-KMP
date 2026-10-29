@@ -138,11 +138,9 @@ private fun PaymentsScreen(
 }
 
 @OptIn(ExperimentalTime::class)
-private fun isMonthDifferent(prev: Payment?, current: Payment): Boolean {
-    return prev?.paymentDateTime?.format("MM") != current.paymentDateTime.format("MM")
-}
+private fun isMonthDifferent(prev: Payment?, current: Payment): Boolean = prev?.paymentDateTime?.format("MM") != current.paymentDateTime.format("MM")
 
 @OptIn(ExperimentalTime::class)
-private fun List<Payment>.getFromYearMonth(current: Payment): ImmutableList<Payment> {
-    return filter { it.paymentDateTime.format("yyyy-MM") == current.paymentDateTime.format("yyyy-MM") }.toImmutableList()
-}
+private fun List<Payment>.getFromYearMonth(current: Payment): ImmutableList<Payment> = filter {
+    it.paymentDateTime.format("yyyy-MM") == current.paymentDateTime.format("yyyy-MM")
+}.toImmutableList()

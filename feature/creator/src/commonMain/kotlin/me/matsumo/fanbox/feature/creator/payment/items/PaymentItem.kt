@@ -6,7 +6,6 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.CircleShape
@@ -67,13 +66,11 @@ internal fun PaymentItem(
                 totalPaidAmount = payment.paidRecords.sumOf { it.paidAmount },
             )
 
-            Spacer(modifier = Modifier.height(8.dp))
-
-            for (item in payment.paidRecords) {
+            for ((index, item) in payment.paidRecords.withIndex()) {
                 PaidItem(
                     modifier = Modifier
                         .padding(
-                            top = 4.dp,
+                            top = if (index == 0) 12.dp else 4.dp,
                             start = 8.dp,
                             end = 16.dp,
                         )

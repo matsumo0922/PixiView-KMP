@@ -1,7 +1,7 @@
 package me.matsumo.fanbox.feature.creator.top.items
 
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.SideEffect
 import me.matsumo.fanbox.core.ui.ads.RewardAdLoader
 import me.matsumo.fanbox.core.ui.theme.LocalAdsSdkInitialized
 import org.koin.compose.koinInject
@@ -11,7 +11,7 @@ actual fun CreatorTopRewardAdPreloader(shouldPreload: Boolean) {
     val isAdsSdkInitialized = LocalAdsSdkInitialized.current
     val rewardAdLoader = koinInject<RewardAdLoader>()
 
-    LaunchedEffect(
+    SideEffect(
         key1 = shouldPreload,
         key2 = isAdsSdkInitialized,
     ) {

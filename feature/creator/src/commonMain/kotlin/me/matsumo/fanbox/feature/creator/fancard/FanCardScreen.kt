@@ -66,7 +66,7 @@ private fun FanCardScreen(
     onTerminate: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
-    var isDisplayName by remember { mutableStateOf(true) }
+    val isDisplayName by remember { mutableStateOf(true) }
 
     Box(modifier) {
         Zoomable(

@@ -14,21 +14,19 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
+import kotlinx.collections.immutable.ImmutableList
 import org.jetbrains.compose.resources.StringResource
 import org.jetbrains.compose.resources.stringResource
 
-@Suppress("UnstableCollections", "ModifierMissing")
 @Composable
 fun ActionSheet(
-    isVisible: Boolean,
-    actions: List<Action>,
+    actions: ImmutableList<Action>,
     onDismissRequest: () -> Unit,
+    modifier: Modifier = Modifier,
 ) {
-    if (!isVisible) return
-
     Dialog(onDismissRequest = onDismissRequest) {
         Column(
-            modifier = Modifier
+            modifier = modifier
                 .clip(RoundedCornerShape(8.dp))
                 .background(MaterialTheme.colorScheme.surface)
                 .padding(vertical = 8.dp),
@@ -51,8 +49,6 @@ fun ActionSheet(
     }
 }
 
+/** メニューに表示するラベルと実行する操作。 */
 @Stable
-data class Action(
-    val text: StringResource,
-    val onClick: () -> Unit,
-)
+data class Action(val text: StringResource, val onClick: () -> Unit)

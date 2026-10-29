@@ -125,6 +125,50 @@ graph LR
   model --> common
 ```
 
+## 静的解析
+
+静的解析は detekt 2.0.0-alpha.6、ktlint wrapper、Compose rules 0.6.8 を使う。
+root と `build-logic` の Kotlin ファイルおよび各モジュールの Kotlin ファイルを、次のコマンドで確認する。
+
+```bash
+./gradlew detekt reportMerge --continue
+./gradlew :androidApp:lintDebug
+```
+
+自動整形には `./gradlew detekt --auto-correct --continue` を使い、続けて自動修正を付けないコマンドを実行する。
+統合した Checkstyle レポートは `build/reports/detekt/merge.xml`、モジュールごとの HTML レポートは各モジュールの `build/reports/detekt/detekt.html` に出力する。
+統合対象は通常の `detekt` の結果で、型解決タスクの結果は混ぜない。
+
+関数定義とコンストラクタは、引数が3つ以上、またはデフォルト引数を持つ場合に引数ごとに改行する。
+`FunctionSignature` / `ClassSignature` は引数3つ以上の定義を検査する。
+デフォルト引数による改行、呼び出し側の名前付き引数と改行、Modifier の先頭配置、Composable の PascalCase と画面名の prefix は手動レビューの対象となる。
+メソッドチェーンはプロパティ参照を数えず、1行2呼び出しまでとする。
+`MaxChainedCallsOnSameLine` はプロパティ参照も数えるため無効化し、チェーンと Modifier のリンクごとの改行は手動で確認する。
+行長は折り返しの基準にしない。
+
+`config/detekt/detekt.yml` は Agents の共通テンプレートと同じ設定を使う。
+複雑度や関数数の閾値は detekt の既定値を使い、関数数の上限は11となる。
+責務を一緒に扱う理由がある宣言にだけ、直前の理由コメント付きで `@Suppress` を付ける。
+初期カーソルの取得が必要な Flow factory、画面ごとのイベント窓口、宣言用 UI DSL、遷移・フォーカスなどの effect の実行タイミングも、この方法で例外を明示する。
+未使用の fork の整理は [Pager/Snapper の移行](https://github.com/matsumo0922/PixiView-KMP/issues/163) で追跡する。
+Swift 側の変更を伴う [iOS entry point の整理](https://github.com/matsumo0922/PixiView-KMP/issues/164) と、既存レイアウトを維持する [Modifier の二重適用の解消](https://github.com/matsumo0922/PixiView-KMP/issues/165) も個別に追跡する。
+Composable も `CyclomaticComplexMethod` の対象とする。
+`ModifierMissing` は全可視性を対象とし、Preview と自身のレイアウトを持たないラッパーを除外する。
+
+full モードは Android の main / host test / app debug を対象とし、iosMain の型情報が必要なルールは対象に含めない。
+iOS は light と実際のコンパイルで確認する。
+型情報が必要なルールは、通常の `detekt` の統合レポートには含めず、次の full モードのタスクで検査する。
+
+```bash
+./gradlew detektMainAndroid detektHostTestAndroid :androidApp:detektDebug :androidApp:detektDebugUnitTest :androidApp:detektDebugAndroidTest --continue
+```
+
+各モジュールの `check` と CI からも対応する full モードのタスクを実行する。
+これらのタスクは detekt が生成した source set の範囲を維持し、build ディレクトリ配下の生成物を除外する。
+KMP の `expect` / `actual` に関するコンパイラ解析診断が出る場合は、ルールの指摘件数、解析診断、実際の Android/iOS のコンパイル結果を分けて確認する。
+ログイベントを生成するテンプレートは `scripts/daifuku/templates/LogCategory.kt.erb` に置き、生成された宣言と合わせて更新する。
+生成後は `./gradlew :core:logs:detekt --auto-correct` で整形を確認する。
+
 ## Contribute
 
 このアプリは Gradle の Convention Plugins を用いてビルドのロジックを共通化しており、`build-logic` というモジュールに全てのロジックが記述されています。このアプローチに関しては、[nowinandroid](https://github.com/matsumo0922/nowinandroid/tree/main/build-logic) をご覧ください。

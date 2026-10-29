@@ -13,6 +13,8 @@ import me.matsumo.fanbox.core.model.SettingPlusStatusUpdate
 import me.matsumo.fanbox.core.model.ThemeColorConfig
 import me.matsumo.fanbox.core.model.ThemeConfig
 
+// 設定項目ごとの型付き操作を同じ Repository の契約にまとめる。
+@Suppress("TooManyFunctions")
 interface SettingRepository {
 
     val setting: StateFlow<Setting>
@@ -44,9 +46,7 @@ interface SettingRepository {
     suspend fun recordBillingRetentionPromptShown(shownAtMillis: Long, unsubscribeDetectedAtMillis: Long?)
 }
 
-class SettingRepositoryImpl(
-    private val settingDataStore: SettingDataStore,
-) : SettingRepository {
+class SettingRepositoryImpl(private val settingDataStore: SettingDataStore) : SettingRepository {
 
     private val _updatePlusMode = Channel<Boolean>(Channel.BUFFERED)
 

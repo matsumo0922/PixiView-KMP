@@ -19,7 +19,7 @@ import androidx.compose.material3.surfaceColorAtElevation
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.Immutable
-import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.SideEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -40,12 +40,10 @@ import me.matsumo.fanbox.core.ui.theme.LocalAdsSdkInitialized
 import org.koin.compose.koinInject
 import com.google.android.gms.ads.nativead.NativeAdView as GmsNativeAdView
 
+// 通信権限は host の AndroidManifest.xml で宣言し、この SDK 呼び出しに適用する。
 @SuppressLint("MissingPermission")
 @Composable
-actual fun NativeAdView(
-    key: String,
-    modifier: Modifier,
-) {
+actual fun NativeAdView(key: String, modifier: Modifier) {
     val isAdsSdkInitialized = LocalAdsSdkInitialized.current
 
     Card(
@@ -70,7 +68,7 @@ private fun NativeAdViewContent(
     val nativeAdInventoryVersion by nativeAdsPreLoader.nativeAdInventoryVersion.collectAsState()
     var nativeAd by remember(key) { mutableStateOf<NativeAd?>(null) }
 
-    LaunchedEffect(
+    SideEffect(
         key1 = key,
         key2 = nativeAdInventoryVersion,
     ) {
@@ -128,10 +126,7 @@ private fun NativeAdViewPlaceholder(
     )
 }
 
-private fun createNativeAdView(
-    context: android.content.Context,
-    colorPalette: NativeAdViewColorPalette,
-): GmsNativeAdView {
+private fun createNativeAdView(context: android.content.Context, colorPalette: NativeAdViewColorPalette): GmsNativeAdView {
     val root = LayoutInflater.from(context)
         .inflate(R.layout.layout_native_ads_medium, null, false) as GmsNativeAdView
     val refs = NativeAdViewRefs(
@@ -177,15 +172,9 @@ private data class NativeAdViewRefs(
     val mvContent: MediaView,
 )
 
-private fun GmsNativeAdView.requireRefs(): NativeAdViewRefs {
-    return checkNotNull(tag as? NativeAdViewRefs) {
-        "NativeAdViewRefs is not attached to NativeAdView"
-    }
-}
+private fun GmsNativeAdView.requireRefs(): NativeAdViewRefs = checkNotNull(tag as? NativeAdViewRefs) { "NativeAdViewRefs is not attached to NativeAdView" }
 
-private fun NativeAdViewRefs.applyColors(
-    colorPalette: NativeAdViewColorPalette,
-) {
+private fun NativeAdViewRefs.applyColors(colorPalette: NativeAdViewColorPalette) {
     tvAdvertiser.setTextColor(colorPalette.bodyTextColor)
     tvBody.setTextColor(colorPalette.bodyTextColor)
     btnCta.setTextColor(colorPalette.buttonTextColor)
@@ -196,10 +185,7 @@ private fun NativeAdViewRefs.applyColors(
     tvAd.setTextColor(colorPalette.bodyTextColor)
 }
 
-private fun NativeAdViewRefs.setupNativeAd(
-    nativeAd: NativeAd,
-    key: String,
-) {
+private fun NativeAdViewRefs.setupNativeAd(nativeAd: NativeAd, key: String) {
     if (isSameNativeAdBound(nativeAd = nativeAd)) return
 
     registerNativeAdAssetViews()
@@ -249,12 +235,9 @@ private fun NativeAdViewRefs.adjustMediaViewAspectRatio(nativeAd: NativeAd) {
     val mediaAspectRatio = nativeAd.mediaContent?.aspectRatio ?: 0f
     val hasValidAspectRatio = mediaAspectRatio > 0f
 
-    layoutParams.dimensionRatio = if (hasValidAspectRatio) "H,$mediaAspectRatio:1" else DefaultMediaAspectRatio
+    layoutParams.dimensionRatio = if (hasValidAspectRatio) "H,$mediaAspectRatio:1" else "H,16:9"
     mvContent.layoutParams = layoutParams
 }
 
 /** SDK 初期化前にネイティブ広告枠として確保する高さ。 */
 private val NativeAdPlaceholderHeight = 60.dp
-
-/** メディアアスペクト比を取得できない場合に使用する既定比率（横:縦）。 */
-private const val DefaultMediaAspectRatio = "H,16:9"

@@ -6,6 +6,8 @@ import org.gradle.api.Plugin
 import org.gradle.api.Project
 import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 
+/** Kotlin Multiplatform の Android target を設定する。 */
+// Gradle が plugin descriptor を通じてこの実装をインスタンス化する。
 @Suppress("unused")
 class KmpAndroidPlugin : Plugin<Project> {
     override fun apply(target: Project) {

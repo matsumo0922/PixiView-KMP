@@ -26,10 +26,7 @@ sealed interface Destination {
     }
 
     @Serializable
-    data class PostImage(
-        val postId: PostId,
-        val index: Int,
-    ) : Destination
+    data class PostImage(val postId: PostId, val index: Int) : Destination
 
     @Serializable
     data class PostSearch(
@@ -39,9 +36,7 @@ sealed interface Destination {
     ) : Destination
 
     @Serializable
-    data class PostByCreatorSearch(
-        val creatorId: CreatorId,
-    ) : Destination
+    data class PostByCreatorSearch(val creatorId: CreatorId) : Destination
 
     @Serializable
     data object BookmarkedPosts : Destination
@@ -53,9 +48,7 @@ sealed interface Destination {
     ) : Destination
 
     @Serializable
-    data class CreatorPostsDownload(
-        val creatorId: CreatorId,
-    ) : Destination
+    data class CreatorPostsDownload(val creatorId: CreatorId) : Destination
 
     @Serializable
     data object SupportingCreators : Destination
@@ -67,9 +60,7 @@ sealed interface Destination {
     data object Payments : Destination
 
     @Serializable
-    data class FanCard(
-        val creatorId: CreatorId,
-    ) : Destination
+    data class FanCard(val creatorId: CreatorId) : Destination
 
     @Serializable
     data object DownloadQueue : Destination
@@ -101,17 +92,13 @@ sealed interface Destination {
     // Dialog
 
     @Serializable
-    data class SimpleAlertDialog(
-        val content: SimpleAlertContents,
-    ) : Destination
+    data class SimpleAlertDialog(val content: SimpleAlertContents) : Destination
 
     @Serializable
     data object SettingDeveloperDialog : Destination
 
     @Serializable
-    data class SettingTranslationDialog(
-        val language: String,
-    ) : Destination
+    data class SettingTranslationDialog(val language: String) : Destination
 
     // Bottom Sheet
 
@@ -127,9 +114,7 @@ sealed interface Destination {
 
     /** 解約予約ユーザー向けリテンション BottomSheet の遷移情報。 */
     @Serializable
-    data class BillingRetentionBottomSheet(
-        val isAnnualOfferShown: Boolean,
-    ) : Destination
+    data class BillingRetentionBottomSheet(val isAnnualOfferShown: Boolean) : Destination
 
     // Empty
 

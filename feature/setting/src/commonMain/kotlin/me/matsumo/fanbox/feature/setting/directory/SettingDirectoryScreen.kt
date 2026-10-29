@@ -61,7 +61,7 @@ internal fun SettingDirectoryRoute(
             onSaveImageDirectory = viewModel::setImageSaveDirectory,
             onSaveFileDirectory = viewModel::setFileSaveDirectory,
             onSavePostDirectory = viewModel::setPostSaveDirectory,
-            onShowSnackbar = { scope.launch { toastExtension.show(snackbarHostState, it) } },
+            onShowSnackbar = { message -> scope.launch { toastExtension.show(snackbarHostState, message) } },
             onTerminate = terminate,
         )
     }

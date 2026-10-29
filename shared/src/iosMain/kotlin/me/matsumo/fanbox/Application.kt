@@ -11,6 +11,7 @@ import org.koin.compose.KoinContext
 import platform.UIKit.UIViewController
 
 @OptIn(ExperimentalMaterial3WindowSizeClassApi::class)
+// Swift 側の呼び出し変更と iOS 起動確認を伴う命名・引数の整理を別対応で追跡する: https://github.com/matsumo0922/PixiView-KMP/issues/164
 @Suppress("FunctionNaming", "UnusedParameter")
 fun MainViewController(
     topSafeArea: Float,

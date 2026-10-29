@@ -8,10 +8,7 @@ import androidx.navigation.toRoute
 import me.matsumo.fanbox.core.model.Destination
 import me.matsumo.fanbox.core.ui.customNavTypes
 
-fun NavGraphBuilder.postImageScreen(
-    navigateTo: (Destination) -> Unit,
-    terminate: () -> Unit,
-) {
+fun NavGraphBuilder.postImageScreen(navigateTo: (Destination) -> Unit, terminate: () -> Unit) {
     composable<Destination.PostImage>(
         typeMap = customNavTypes,
     ) {

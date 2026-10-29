@@ -7,6 +7,7 @@ import me.matsumo.fanbox.version
 import org.gradle.api.Plugin
 import org.gradle.api.Project
 
+/** Android アプリケーションの共通ビルド設定を適用する。 */
 class AndroidApplicationPlugin : Plugin<Project> {
     override fun apply(target: Project) {
         with(target) {

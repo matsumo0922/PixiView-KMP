@@ -10,10 +10,7 @@ import kotlinx.coroutines.flow.firstOrNull
 import kotlinx.coroutines.launch
 import me.matsumo.fankt.fanbox.domain.model.id.FanboxCreatorId
 
-class BlockDataStore(
-    preferenceHelper: PreferenceHelper,
-    ioDispatcher: CoroutineDispatcher,
-) {
+class BlockDataStore(preferenceHelper: PreferenceHelper, ioDispatcher: CoroutineDispatcher) {
     private val cookiePreference = preferenceHelper.create(PreferencesName.FANBOX_BLOCK)
     private val scope = CoroutineScope(ioDispatcher)
 
@@ -51,9 +48,9 @@ class BlockDataStore(
         notify()
     }
 
-    private suspend fun fetchBlockedCreators(): Set<String> {
-        return cookiePreference.data.firstOrNull()?.let { it[stringSetPreferencesKey(BLOCKED_CREATOR)] } ?: setOf()
-    }
+    private suspend fun fetchBlockedCreators(): Set<String> = cookiePreference.data.firstOrNull()?.let {
+        it[stringSetPreferencesKey(BLOCKED_CREATOR)]
+    }.orEmpty()
 
     private suspend fun notify() {
         _data.emit(fetchBlockedCreators().map { FanboxCreatorId(it) }.toSet())

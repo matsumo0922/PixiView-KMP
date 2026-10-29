@@ -6,8 +6,5 @@ import androidx.compose.runtime.Stable
 sealed interface DownloadState {
     data object None : DownloadState
 
-    data class Downloading(
-        val items: FanboxDownloadItems,
-        val progress: Float,
-    ) : DownloadState
+    data class Downloading(val items: FanboxDownloadItems, val progress: Float) : DownloadState
 }

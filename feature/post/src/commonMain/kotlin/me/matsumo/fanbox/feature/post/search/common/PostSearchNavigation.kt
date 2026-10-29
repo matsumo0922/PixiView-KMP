@@ -6,10 +6,7 @@ import androidx.navigation.toRoute
 import me.matsumo.fanbox.core.model.Destination
 import me.matsumo.fanbox.core.ui.customNavTypes
 
-fun NavGraphBuilder.postSearchScreen(
-    navigateTo: (Destination) -> Unit,
-    terminate: () -> Unit,
-) {
+fun NavGraphBuilder.postSearchScreen(navigateTo: (Destination) -> Unit, terminate: () -> Unit) {
     composable<Destination.PostSearch>(
         typeMap = customNavTypes,
     ) { entry ->

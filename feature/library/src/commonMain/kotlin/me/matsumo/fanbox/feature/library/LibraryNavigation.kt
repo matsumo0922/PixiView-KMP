@@ -7,10 +7,7 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.composable
 import me.matsumo.fanbox.core.model.Destination
 
-fun NavGraphBuilder.libraryScreen(
-    navHostController: NavHostController,
-    navigateTo: (Destination) -> Unit,
-) {
+fun NavGraphBuilder.libraryScreen(navHostController: NavHostController, navigateTo: (Destination) -> Unit) {
     composable<Destination.Library> {
         LibraryScreen(
             modifier = Modifier.fillMaxSize(),

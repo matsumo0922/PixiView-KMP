@@ -1,5 +1,3 @@
-@file:Suppress("MatchingDeclarationName", "Filename")
-
 package me.matsumo.fanbox.core.datastore.cookie
 
 import android.content.Context
@@ -18,17 +16,15 @@ internal fun createCookieStorage(
     context: Context,
     ioDispatcher: CoroutineDispatcher,
     oldCookieDataStore: OldCookieDataStore,
-): MigratingFanboxCookieStorage {
-    return createMigratingCookieStorage(
-        kSafe = KSafe(context),
-        legacyStorageFactory = {
-            RoomLegacyCookieStorage(
-                createRoomFanboxCookieStorage(
-                    context = context,
-                    ioDispatcher = ioDispatcher,
-                ),
-            )
-        },
-        oldCookieDataStore = oldCookieDataStore,
-    )
-}
+): MigratingFanboxCookieStorage = createMigratingCookieStorage(
+    kSafe = KSafe(context),
+    legacyStorageFactory = {
+        RoomLegacyCookieStorage(
+            createRoomFanboxCookieStorage(
+                context = context,
+                ioDispatcher = ioDispatcher,
+            ),
+        )
+    },
+    oldCookieDataStore = oldCookieDataStore,
+)

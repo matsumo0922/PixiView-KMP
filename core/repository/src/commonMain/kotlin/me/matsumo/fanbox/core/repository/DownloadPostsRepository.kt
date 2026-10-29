@@ -14,8 +14,16 @@ interface DownloadPostsRepository {
     fun cancelDownload(key: String)
 
     fun requestDownloadPost(post: Post, isIgnoreFiles: Boolean)
-    fun requestDownloadImages(postId: PostId, title: String, images: List<PostDetail.ImageItem>)
-    fun requestDownloadFiles(postId: PostId, title: String, files: List<PostDetail.FileItem>)
+    fun requestDownloadImages(
+        postId: PostId,
+        title: String,
+        images: List<PostDetail.ImageItem>,
+    )
+    fun requestDownloadFiles(
+        postId: PostId,
+        title: String,
+        files: List<PostDetail.FileItem>,
+    )
 
     suspend fun getSaveDirectory(requestType: FanboxDownloadItems.RequestType): String
 }

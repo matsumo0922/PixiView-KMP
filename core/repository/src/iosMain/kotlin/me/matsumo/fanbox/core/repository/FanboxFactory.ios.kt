@@ -21,10 +21,8 @@ internal actual fun createFanbox(
     settingDataStore: SettingDataStore,
     ioDispatcher: CoroutineDispatcher,
     cookieStorage: FanboxCookieStorage,
-): Fanbox {
-    return Fanbox(
-        logLevel = logLevel,
-        ioDispatcher = ioDispatcher,
-        cookieStorage = cookieStorage,
-    )
-}
+): Fanbox = Fanbox(
+    logLevel = logLevel,
+    ioDispatcher = ioDispatcher,
+    cookieStorage = cookieStorage,
+)

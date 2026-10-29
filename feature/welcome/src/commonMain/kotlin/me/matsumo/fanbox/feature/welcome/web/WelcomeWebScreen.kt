@@ -112,7 +112,9 @@ internal fun WelcomeWebScreen(
 
         if (webViewState.lastLoadedUrl == fanboxRedirectUrl) {
             // Cookie の値は認証情報そのものであり、logcat に残すと他経路から読み取られうるため出力しない。
-            Napier.d { "try login. current url: ${webViewState.lastLoadedUrl}, cookies: ${currentCookies.map { it.name }}" }
+            Napier.d {
+                "try login. current url: ${webViewState.lastLoadedUrl}, cookies: ${currentCookies.map { it.name }}"
+            }
             tryLogin()
         }
     }

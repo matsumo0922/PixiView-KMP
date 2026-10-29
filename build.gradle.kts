@@ -1,3 +1,5 @@
+import dev.detekt.gradle.Detekt
+
 plugins {
     // this is necessary to avoid the plugins to be loaded multiple times
     // in each subproject's classloader
@@ -15,4 +17,13 @@ plugins {
     alias(libs.plugins.detekt) apply false
     alias(libs.plugins.ksp) apply false
     alias(libs.plugins.gms) apply false
+    id("pixiview.primitive.detekt")
+}
+
+tasks.named<Detekt>("detekt") {
+    setSource(
+        files("build.gradle.kts", "settings.gradle.kts", "build-logic").asFileTree.matching {
+            exclude("**/build/**", "**/resources/**")
+        },
+    )
 }

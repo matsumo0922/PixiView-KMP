@@ -1,5 +1,3 @@
-@file:Suppress("ClassOrdering")
-
 package me.matsumo.fanbox.core.ui.component.snapper
 
 import androidx.compose.animation.core.AnimationScope
@@ -50,7 +48,9 @@ public object SnapperFlingBehaviorDefaults {
      * The default implementation for the `snapIndex` parameter of
      * [rememberSnapperFlingBehavior] and [SnapperFlingBehavior].
      */
-    public val SnapIndex: (SnapperLayoutInfo, startIndex: Int, targetIndex: Int) -> Int = { _, _, targetIndex -> targetIndex }
+    public val SnapIndex: (SnapperLayoutInfo, startIndex: Int, targetIndex: Int) -> Int = { _, _, targetIndex ->
+        targetIndex
+    }
 }
 
 /**
@@ -124,6 +124,7 @@ public inline fun rememberSnapperFlingBehavior(
  * @param maximumFlingDistance Block which returns the maximum fling distance in pixels.
  * The returned value should be > 0.
  */
+// 未使用の Pager/Snapper fork の削除・整理を追跡する: https://github.com/matsumo0922/PixiView-KMP/issues/163
 @Suppress("DEPRECATION")
 @ExperimentalSnapperApi
 @Deprecated("The maximumFlingDistance parameter has been replaced with snapIndex")
@@ -152,36 +153,36 @@ public fun rememberSnapperFlingBehavior(
  * to determine how to fling.
  */
 @ExperimentalSnapperApi
-public abstract class SnapperLayoutInfo {
+public interface SnapperLayoutInfo {
     /**
      * The start offset of where items can be scrolled to. This value should only include
      * scrollable regions. For example this should not include fixed content padding.
      * For most layouts, this will be 0.
      */
-    public abstract val startScrollOffset: Int
+    public val startScrollOffset: Int
 
     /**
      * The end offset of where items can be scrolled to. This value should only include
      * scrollable regions. For example this should not include fixed content padding.
      * For most layouts, this will the width of the container, minus content padding.
      */
-    public abstract val endScrollOffset: Int
+    public val endScrollOffset: Int
 
     /**
      * A sequence containing the currently visible items in the layout.
      */
-    public abstract val visibleItems: Sequence<SnapperLayoutItemInfo>
+    public val visibleItems: Sequence<SnapperLayoutItemInfo>
 
     /**
      * The current item which covers the desired snap point, or null if there is no item.
      * The item returned may not yet currently be snapped into the final position.
      */
-    public abstract val currentItem: SnapperLayoutItemInfo?
+    public val currentItem: SnapperLayoutItemInfo?
 
     /**
      * The total count of items attached to the layout.
      */
-    public abstract val totalItemsCount: Int
+    public val totalItemsCount: Int
 
     /**
      * Calculate the desired target which should be scrolled to for the given [velocity].
@@ -190,7 +191,7 @@ public abstract class SnapperLayoutInfo {
      * @param decayAnimationSpec The decay fling animation spec.
      * @param maximumFlingDistance The maximum distance in pixels which should be scrolled.
      */
-    public abstract fun determineTargetIndex(
+    public fun determineTargetIndex(
         velocity: Float,
         decayAnimationSpec: DecayAnimationSpec<Float>,
         maximumFlingDistance: Float,
@@ -205,17 +206,17 @@ public abstract class SnapperLayoutInfo {
      *
      * If a precise calculation can not be found, a realistic estimate is acceptable.
      */
-    public abstract fun distanceToIndexSnap(index: Int): Int
+    public fun distanceToIndexSnap(index: Int): Int
 
     /**
      * Returns true if the layout has some scroll range remaining to scroll towards the start.
      */
-    public abstract fun canScrollTowardsStart(): Boolean
+    public fun canScrollTowardsStart(): Boolean
 
     /**
      * Returns true if the layout has some scroll range remaining to scroll towards the end.
      */
-    public abstract fun canScrollTowardsEnd(): Boolean
+    public fun canScrollTowardsEnd(): Boolean
 }
 
 /**
@@ -226,9 +227,7 @@ public abstract class SnapperLayoutItemInfo {
     public abstract val offset: Int
     public abstract val size: Int
 
-    override fun toString(): String {
-        return "SnapperLayoutItemInfo(index=$index, offset=$offset, size=$size)"
-    }
+    override fun toString(): String = "SnapperLayoutItemInfo(index=$index, offset=$offset, size=$size)"
 }
 
 /**
@@ -236,6 +235,7 @@ public abstract class SnapperLayoutItemInfo {
  * [rememberLazyListSnapperLayoutInfo] and [LazyListSnapperLayoutInfo].
  */
 @ExperimentalSnapperApi
+// 未使用の fork の offset 選択肢。削除・整理: https://github.com/matsumo0922/PixiView-KMP/issues/163
 @Suppress("unused") // public vals which aren't used in the project
 public object SnapOffsets {
     /**
@@ -278,6 +278,12 @@ public class SnapperFlingBehavior private constructor(
     private val maximumFlingDistance: (SnapperLayoutInfo) -> Float,
 ) : FlingBehavior {
     /**
+     * The target item index for any on-going animations.
+     */
+    public var animationTarget: Int? by mutableStateOf(null)
+        private set
+
+    /**
      * @param layoutInfo The [SnapperLayoutInfo] to use.
      * @param decayAnimationSpec The decay animation spec to use for decayed flings.
      * @param springAnimationSpec The animation spec to use when snapping.
@@ -298,6 +304,7 @@ public class SnapperFlingBehavior private constructor(
         springAnimationSpec = springAnimationSpec,
         snapIndex = snapIndex,
         // We still need to pass in a maximumFlingDistance value
+        // 未使用の Pager/Snapper fork の削除・整理を追跡する: https://github.com/matsumo0922/PixiView-KMP/issues/163
         maximumFlingDistance = @Suppress("DEPRECATION") SnapperFlingBehaviorDefaults.MaximumFlingDistance,
     )
 
@@ -309,6 +316,7 @@ public class SnapperFlingBehavior private constructor(
      * The returned value should be > 0.
      */
     @Deprecated("The maximumFlingDistance parameter has been replaced with snapIndex")
+    // 未使用の Pager/Snapper fork の削除・整理を追跡する: https://github.com/matsumo0922/PixiView-KMP/issues/163
     @Suppress("DEPRECATION")
     public constructor(
         layoutInfo: SnapperLayoutInfo,
@@ -323,15 +331,7 @@ public class SnapperFlingBehavior private constructor(
         snapIndex = SnapperFlingBehaviorDefaults.SnapIndex,
     )
 
-    /**
-     * The target item index for any on-going animations.
-     */
-    public var animationTarget: Int? by mutableStateOf(null)
-        private set
-
-    override suspend fun ScrollScope.performFling(
-        initialVelocity: Float,
-    ): Float {
+    override suspend fun ScrollScope.performFling(initialVelocity: Float): Float {
         // If we're at the start/end of the scroll range, we don't snap and assume the user
         // wanted to scroll here.
         if (!layoutInfo.canScrollTowardsStart() || !layoutInfo.canScrollTowardsEnd()) {
@@ -339,9 +339,7 @@ public class SnapperFlingBehavior private constructor(
         }
 
         val maxFlingDistance = maximumFlingDistance(layoutInfo)
-        require(maxFlingDistance > 0) {
-            "Distance returned by maximumFlingDistance should be greater than 0"
-        }
+        require(maxFlingDistance > 0) { "Distance returned by maximumFlingDistance should be greater than 0" }
 
         val initialItem = layoutInfo.currentItem ?: return initialVelocity
 
@@ -365,10 +363,7 @@ public class SnapperFlingBehavior private constructor(
         return flingToIndex(index = targetIndex, initialVelocity = initialVelocity)
     }
 
-    private suspend fun ScrollScope.flingToIndex(
-        index: Int,
-        initialVelocity: Float,
-    ): Float {
+    private suspend fun ScrollScope.flingToIndex(index: Int, initialVelocity: Float): Float {
         val initialItem = layoutInfo.currentItem ?: return initialVelocity
 
         if (initialItem.index == index && layoutInfo.distanceToIndexSnap(initialItem.index) == 0) {
@@ -487,7 +482,9 @@ public class SnapperFlingBehavior private constructor(
         var velocityLeft = when {
             // Only use the initialVelocity if it is in the correct direction
             targetIndex > initialItem.index && initialVelocity > 0 -> initialVelocity
+
             targetIndex <= initialItem.index && initialVelocity < 0 -> initialVelocity
+
             // Otherwise start at 0 velocity
             else -> 0f
         }
@@ -551,10 +548,7 @@ public class SnapperFlingBehavior private constructor(
         return false
     }
 
-    private fun DecayAnimationSpec<Float>.canDecayBeyondCurrentItem(
-        velocity: Float,
-        currentItem: SnapperLayoutItemInfo,
-    ): Boolean {
+    private fun DecayAnimationSpec<Float>.canDecayBeyondCurrentItem(velocity: Float, currentItem: SnapperLayoutItemInfo): Boolean {
         // If we don't have a velocity, return false
         if (velocity.absoluteValue < 0.5f) return false
 
@@ -582,9 +576,11 @@ public class SnapperFlingBehavior private constructor(
         initialVelocity > 0 && currentItem.index >= targetIndex -> {
             layoutInfo.distanceToIndexSnap(currentItem.index)
         }
+
         initialVelocity < 0 && currentItem.index <= targetIndex - 1 -> {
             layoutInfo.distanceToIndexSnap(currentItem.index + 1)
         }
+
         else -> 0
     }
 

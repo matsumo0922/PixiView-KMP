@@ -82,6 +82,8 @@ import me.matsumo.fankt.fanbox.FanboxLogLevel
 import org.koin.core.component.KoinComponent
 import kotlin.random.Random
 
+// 同じ認証セッションを使う FANBOX API の窓口として、endpoint ごとの操作を1つの契約にまとめる。
+@Suppress("TooManyFunctions")
 interface FanboxRepository {
     val bookmarkedPostsIds: SharedFlow<List<PostId>>
     val blockedCreators: SharedFlow<Set<CreatorId>>
@@ -143,39 +145,26 @@ interface FanboxRepository {
 
     suspend fun getTagFromQuery(query: String): List<Tag>
 
-    suspend fun getHomePostsPager(
-        loadSize: Int,
-        isHideRestricted: Boolean,
-    ): Flow<PagingData<Post>>
+    fun getHomePostsPager(loadSize: Int, isHideRestricted: Boolean): Flow<PagingData<Post>>
 
-    suspend fun getHomePostsPagerCache(
-        loadSize: Int,
-        isHideRestricted: Boolean,
-    ): Flow<PagingData<Post>>
+    fun getHomePostsPagerCache(loadSize: Int, isHideRestricted: Boolean): Flow<PagingData<Post>>
 
-    suspend fun getSupportedPostsPager(
-        loadSize: Int,
-        isHideRestricted: Boolean,
-    ): Flow<PagingData<Post>>
+    fun getSupportedPostsPager(loadSize: Int, isHideRestricted: Boolean): Flow<PagingData<Post>>
 
-    suspend fun getSupportedPostsPagerCache(
-        loadSize: Int,
-        isHideRestricted: Boolean,
-    ): Flow<PagingData<Post>>
+    fun getSupportedPostsPagerCache(loadSize: Int, isHideRestricted: Boolean): Flow<PagingData<Post>>
 
-    suspend fun getCreatorPostsPager(
-        creatorId: CreatorId,
-        loadSize: Int,
-    ): Flow<PagingData<Post>>
+    // Flow を返す前に、取得開始時点のページカーソルをサーバーから確定する。
+    @Suppress("SuspendFunWithFlowReturnType")
+    suspend fun getCreatorPostsPager(creatorId: CreatorId, loadSize: Int): Flow<PagingData<Post>>
 
-    suspend fun getCreatorPostsPagerCache(): Flow<PagingData<Post>>?
-    suspend fun getPostsFromQueryPager(
+    fun getCreatorPostsPagerCache(): Flow<PagingData<Post>>?
+    fun getPostsFromQueryPager(
         query: String,
         creatorId: CreatorId? = null,
     ): Flow<PagingData<Post>>
 
-    suspend fun getPostsFromQueryPagerCache(): Flow<PagingData<Post>>?
-    suspend fun getCreatorsFromQueryPager(query: String): Flow<PagingData<CreatorDetail>>
+    fun getPostsFromQueryPagerCache(): Flow<PagingData<Post>>?
+    fun getCreatorsFromQueryPager(query: String): Flow<PagingData<CreatorDetail>>
 
     suspend fun getFollowingCreators(): List<CreatorDetail>
     suspend fun getFollowingPixivCreators(): List<CreatorDetail>
@@ -193,7 +182,9 @@ interface FanboxRepository {
     suspend fun getUnpaidRecords(): List<PaidRecord>
 
     suspend fun getNewsLetters(): List<NewsLetter>
-    suspend fun getBells(page: Int = 0): PageNumberInfo<Bell>
+    suspend fun getBells(
+        page: Int = 0,
+    ): PageNumberInfo<Bell>
 
     suspend fun likePost(postId: PostId)
     suspend fun likeComment(commentId: CommentId)
@@ -248,6 +239,8 @@ internal expect fun createFanbox(
     cookieStorage: FanboxCookieStorage,
 ): Fanbox
 
+// 別々のデータ保存先と認証・通信設定を DI で受け取り、セッションを共有する。
+@Suppress("LongParameterList")
 class FanboxRepositoryImpl(
     private val bookmarkDataStore: BookmarkDataStore,
     private val blockDataStore: BlockDataStore,
@@ -255,8 +248,9 @@ class FanboxRepositoryImpl(
     private val oldCookieDataStore: OldCookieDataStore,
     private val ioDispatcher: CoroutineDispatcher,
     private val cookieStorage: MigratingFanboxCookieStorage,
-    private val pixiViewConfig: PixiViewConfig,
-) : FanboxRepository, KoinComponent {
+    pixiViewConfig: PixiViewConfig,
+) : FanboxRepository,
+    KoinComponent {
 
     private val scope = CoroutineScope(SupervisorJob() + ioDispatcher)
 
@@ -377,30 +371,22 @@ class FanboxRepositoryImpl(
      * [logout] とセッション設定系は包まない。ログアウト中の 401 で [logoutTrigger] と二重に通知したり、
      * セッションを設定する処理を認証済み API として扱ったりしないため。
      */
-    private suspend fun <T> withSessionCheck(block: suspend () -> T): T {
-        return try {
-            block()
-        } catch (exception: FanboxException.Unauthorized) {
-            _sessionInvalidatedTrigger.send(Random.nextLong())
-            throw exception
-        }
+    private suspend fun <T> withSessionCheck(block: suspend () -> T): T = try {
+        block()
+    } catch (exception: FanboxException.Unauthorized) {
+        _sessionInvalidatedTrigger.send(Random.nextLong())
+        throw exception
     }
 
     override suspend fun getMetadata(): MetaData = withSessionCheck {
         fanbox.getMetadata().toMetaData()
     }
 
-    override suspend fun getHomePosts(
-        cursor: Cursor?,
-        loadSize: Int,
-    ): PageCursorInfo<Post> = withSessionCheck {
+    override suspend fun getHomePosts(cursor: Cursor?, loadSize: Int): PageCursorInfo<Post> = withSessionCheck {
         fanbox.getHomePosts(cursor?.toFanboxCursor(), ::recordSchemaMismatch).toPageCursorInfo { it.toPost() }
     }
 
-    override suspend fun getSupportedPosts(
-        cursor: Cursor?,
-        loadSize: Int,
-    ): PageCursorInfo<Post> = withSessionCheck {
+    override suspend fun getSupportedPosts(cursor: Cursor?, loadSize: Int): PageCursorInfo<Post> = withSessionCheck {
         fanbox.getSupportedPosts(cursor?.toFanboxCursor(), ::recordSchemaMismatch).toPageCursorInfo { it.toPost() }
     }
 
@@ -430,10 +416,7 @@ class FanboxRepositoryImpl(
         fanbox.getCreatorPostsPagination(creatorId.toFanboxCreatorId()).map { it.toCursor() }
     }
 
-    override suspend fun getCreatorFromQuery(
-        query: String,
-        page: Int,
-    ): PageNumberInfo<CreatorDetail> = withSessionCheck {
+    override suspend fun getCreatorFromQuery(query: String, page: Int): PageNumberInfo<CreatorDetail> = withSessionCheck {
         fanbox.searchCreators(query, page).toPageNumberInfo { it.toCreatorDetail() }
     }
 
@@ -445,15 +428,11 @@ class FanboxRepositoryImpl(
         fanbox.getPostDetail(postId.toFanboxPostId()).toPostDetail()
     }
 
-    override suspend fun getPostDetailCached(postId: PostId): PostDetail =
-        withContext(ioDispatcher) {
-            postCache.getOrPut(postId) { getPostDetail(postId) }
-        }
+    override suspend fun getPostDetailCached(postId: PostId): PostDetail = withContext(ioDispatcher) {
+        postCache.getOrPut(postId) { getPostDetail(postId) }
+    }
 
-    override suspend fun getPostComment(
-        postId: PostId,
-        offset: Int,
-    ): PageOffsetInfo<Comment> = withSessionCheck {
+    override suspend fun getPostComment(postId: PostId, offset: Int): PageOffsetInfo<Comment> = withSessionCheck {
         fanbox.getPostComment(
             postId = postId.toFanboxPostId(),
             offset = offset,
@@ -461,56 +440,35 @@ class FanboxRepositoryImpl(
         ).toPageOffsetInfo { it.toComment() }
     }
 
-    override suspend fun getHomePostsPager(
-        loadSize: Int,
-        isHideRestricted: Boolean,
-    ): Flow<PagingData<Post>> {
-        return Pager(
-            config = PagingConfig(pageSize = loadSize),
-            initialKey = null,
-            pagingSourceFactory = {
-                HomePostsPagingSource(this, isHideRestricted)
-            },
-        )
-            .flow
-            .cachedIn(scope)
-            .also { homePostsPager = it }
-    }
+    override fun getHomePostsPager(loadSize: Int, isHideRestricted: Boolean): Flow<PagingData<Post>> = Pager(
+        config = PagingConfig(pageSize = loadSize),
+        initialKey = null,
+        pagingSourceFactory = {
+            HomePostsPagingSource(this, isHideRestricted)
+        },
+    )
+        .flow
+        .cachedIn(scope)
+        .also { homePostsPager = it }
 
-    override suspend fun getHomePostsPagerCache(
-        loadSize: Int,
-        isHideRestricted: Boolean,
-    ): Flow<PagingData<Post>> {
-        return homePostsPager ?: getHomePostsPager(loadSize, isHideRestricted)
-    }
+    override fun getHomePostsPagerCache(loadSize: Int, isHideRestricted: Boolean): Flow<PagingData<Post>> = homePostsPager ?: getHomePostsPager(loadSize, isHideRestricted)
 
-    override suspend fun getSupportedPostsPager(
-        loadSize: Int,
-        isHideRestricted: Boolean,
-    ): Flow<PagingData<Post>> {
-        return Pager(
-            config = PagingConfig(pageSize = loadSize),
-            initialKey = null,
-            pagingSourceFactory = {
-                SupportedPostsPagingSource(this, isHideRestricted)
-            },
-        )
-            .flow
-            .cachedIn(scope)
-            .also { supportedPostsPager = it }
-    }
+    override fun getSupportedPostsPager(loadSize: Int, isHideRestricted: Boolean): Flow<PagingData<Post>> = Pager(
+        config = PagingConfig(pageSize = loadSize),
+        initialKey = null,
+        pagingSourceFactory = {
+            SupportedPostsPagingSource(this, isHideRestricted)
+        },
+    )
+        .flow
+        .cachedIn(scope)
+        .also { supportedPostsPager = it }
 
-    override suspend fun getSupportedPostsPagerCache(
-        loadSize: Int,
-        isHideRestricted: Boolean,
-    ): Flow<PagingData<Post>> {
-        return supportedPostsPager ?: getSupportedPostsPager(loadSize, isHideRestricted)
-    }
+    override fun getSupportedPostsPagerCache(loadSize: Int, isHideRestricted: Boolean): Flow<PagingData<Post>> = supportedPostsPager ?: getSupportedPostsPager(loadSize, isHideRestricted)
 
-    override suspend fun getCreatorPostsPager(
-        creatorId: CreatorId,
-        loadSize: Int,
-    ): Flow<PagingData<Post>> {
+    // Flow の生成に必要なカーソル一覧を先に取得し、取得失敗を呼び出し側へ返す。
+    @Suppress("SuspendFunWithFlowReturnType")
+    override suspend fun getCreatorPostsPager(creatorId: CreatorId, loadSize: Int): Flow<PagingData<Post>> {
         val cursors = getCreatorPostsPagination(creatorId)
 
         return Pager(
@@ -529,39 +487,28 @@ class FanboxRepositoryImpl(
             .also { creatorPostsPager = it }
     }
 
-    override suspend fun getCreatorPostsPagerCache(): Flow<PagingData<Post>>? {
-        return creatorPostsPager
-    }
+    override fun getCreatorPostsPagerCache(): Flow<PagingData<Post>>? = creatorPostsPager
 
-    override suspend fun getPostsFromQueryPager(
-        query: String,
-        creatorId: CreatorId?,
-    ): Flow<PagingData<Post>> {
-        return Pager(
-            config = PagingConfig(pageSize = 10),
-            initialKey = null,
-            pagingSourceFactory = {
-                SearchPostsPagingSource(this, creatorId, query)
-            },
-        )
-            .flow
-            .cachedIn(scope)
-            .also { searchPostsPager = it }
-    }
+    override fun getPostsFromQueryPager(query: String, creatorId: CreatorId?): Flow<PagingData<Post>> = Pager(
+        config = PagingConfig(pageSize = 10),
+        initialKey = null,
+        pagingSourceFactory = {
+            SearchPostsPagingSource(this, creatorId, query)
+        },
+    )
+        .flow
+        .cachedIn(scope)
+        .also { searchPostsPager = it }
 
-    override suspend fun getPostsFromQueryPagerCache(): Flow<PagingData<Post>>? {
-        return searchPostsPager
-    }
+    override fun getPostsFromQueryPagerCache(): Flow<PagingData<Post>>? = searchPostsPager
 
-    override suspend fun getCreatorsFromQueryPager(query: String): Flow<PagingData<CreatorDetail>> {
-        return Pager(
-            config = PagingConfig(pageSize = 10),
-            initialKey = null,
-            pagingSourceFactory = {
-                SearchCreatorsPagingSource(this, query)
-            },
-        ).flow
-    }
+    override fun getCreatorsFromQueryPager(query: String): Flow<PagingData<CreatorDetail>> = Pager(
+        config = PagingConfig(pageSize = 10),
+        initialKey = null,
+        pagingSourceFactory = {
+            SearchCreatorsPagingSource(this, query)
+        },
+    ).flow
 
     override suspend fun getFollowingCreators(): List<CreatorDetail> = withSessionCheck {
         fanbox.getFollowingCreators(::recordSchemaMismatch).map { it.toCreatorDetail() }
@@ -579,10 +526,9 @@ class FanboxRepositoryImpl(
         fanbox.getCreatorDetail(creatorId.toFanboxCreatorId()).toCreatorDetail()
     }
 
-    override suspend fun getCreatorDetailCached(creatorId: CreatorId): CreatorDetail =
-        withContext(ioDispatcher) {
-            creatorCache.getOrPut(creatorId) { getCreatorDetail(creatorId) }
-        }
+    override suspend fun getCreatorDetailCached(creatorId: CreatorId): CreatorDetail = withContext(ioDispatcher) {
+        creatorCache.getOrPut(creatorId) { getCreatorDetail(creatorId) }
+    }
 
     override suspend fun getCreatorTags(creatorId: CreatorId): List<Tag> = withSessionCheck {
         fanbox.getCreatorTags(creatorId.toFanboxCreatorId()).map { it.toTag() }
@@ -680,9 +626,7 @@ class FanboxRepositoryImpl(
         creatorAllPostsCache[creatorId] = posts
     }
 
-    override suspend fun getCreatorAllPostsCache(creatorId: CreatorId): List<Post>? {
-        return creatorAllPostsCache[creatorId]
-    }
+    override suspend fun getCreatorAllPostsCache(creatorId: CreatorId): List<Post>? = creatorAllPostsCache[creatorId]
 
     override suspend fun download(
         url: String,

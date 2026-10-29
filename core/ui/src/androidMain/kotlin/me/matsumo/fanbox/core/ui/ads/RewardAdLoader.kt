@@ -15,10 +15,7 @@ import kotlinx.coroutines.flow.asStateFlow
 import me.matsumo.fanbox.core.common.PixiViewConfig
 
 /** Android のリワード広告ロード状態を管理するクラス。 */
-class RewardAdLoader(
-    private val context: Context,
-    private val pixiViewConfig: PixiViewConfig,
-) {
+class RewardAdLoader(private val context: Context, private val pixiViewConfig: PixiViewConfig) {
     private val _rewardAd = MutableStateFlow<RewardedAd?>(null)
     private val _isShowing = MutableStateFlow(false)
     private val _showResult = MutableStateFlow<RewardAdShowResult?>(null)
@@ -129,29 +126,27 @@ class RewardAdLoader(
         rewardedAd: RewardedAd,
         showState: RewardAdShowState,
         requestId: Long,
-    ): FullScreenContentCallback {
-        return object : FullScreenContentCallback() {
-            override fun onAdFailedToShowFullScreenContent(error: AdError) {
-                Napier.d { "onAdFailedToShowFullScreenContent: ${error.message}" }
-                completeRewardAdShow(
-                    rewardedAd = rewardedAd,
-                    rewardResult = showState.completeWithoutReward(),
-                    requestId = requestId,
-                )
-            }
+    ): FullScreenContentCallback = object : FullScreenContentCallback() {
+        override fun onAdFailedToShowFullScreenContent(error: AdError) {
+            Napier.d { "onAdFailedToShowFullScreenContent: ${error.message}" }
+            completeRewardAdShow(
+                rewardedAd = rewardedAd,
+                rewardResult = showState.completeWithoutReward(),
+                requestId = requestId,
+            )
+        }
 
-            override fun onAdShowedFullScreenContent() {
-                Napier.d { "onAdShowedFullScreenContent" }
-            }
+        override fun onAdShowedFullScreenContent() {
+            Napier.d { "onAdShowedFullScreenContent" }
+        }
 
-            override fun onAdDismissedFullScreenContent() {
-                Napier.d { "onAdDismissedFullScreenContent" }
-                completeRewardAdShow(
-                    rewardedAd = rewardedAd,
-                    rewardResult = showState.completeByDismissal(),
-                    requestId = requestId,
-                )
-            }
+        override fun onAdDismissedFullScreenContent() {
+            Napier.d { "onAdDismissedFullScreenContent" }
+            completeRewardAdShow(
+                rewardedAd = rewardedAd,
+                rewardResult = showState.completeByDismissal(),
+                requestId = requestId,
+            )
         }
     }
 

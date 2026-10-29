@@ -26,21 +26,19 @@ class NavTypesTest {
 
     private val referrerNavType = object : NavType<String>(isNullableAllowed = false) {
 
-        override fun get(bundle: SavedState, key: String): String? {
-            return bundle.read { getStringOrNull(key) }
-        }
+        override fun get(bundle: SavedState, key: String): String? = bundle.read { getStringOrNull(key) }
 
-        override fun parseValue(value: String): String {
-            return value
-        }
+        override fun parseValue(value: String): String = value
 
-        override fun put(bundle: SavedState, key: String, value: String) {
+        override fun put(
+            bundle: SavedState,
+            key: String,
+            value: String,
+        ) {
             bundle.write { putString(key, value) }
         }
 
-        override fun serializeAsValue(value: String): String {
-            return value
-        }
+        override fun serializeAsValue(value: String): String = value
     }
 
     @Test
@@ -52,6 +50,7 @@ class NavTypesTest {
 
     @Test
     fun billingPlanTypeNavTypeRoundTripsAllValues() {
+        // KType で検索した NavType の型をテスト対象に合わせ、型ごとの往復を検証する。
         @Suppress("UNCHECKED_CAST")
         val navType = assertNotNull(customNavTypes[typeOf<BillingPlan.Type?>()]) as NavType<BillingPlan.Type?>
 
@@ -64,6 +63,7 @@ class NavTypesTest {
 
     @Test
     fun billingPlanTypeNavTypeRoundTripsNull() {
+        // KType で検索した NavType の型をテスト対象に合わせ、型ごとの往復を検証する。
         @Suppress("UNCHECKED_CAST")
         val navType = assertNotNull(customNavTypes[typeOf<BillingPlan.Type?>()]) as NavType<BillingPlan.Type?>
 
@@ -128,6 +128,7 @@ class NavTypesTest {
         assertEquals(CreatorId("creator-1"), creatorIdNavType.parseValue("creator-1"))
     }
 
+    // KType で検索した NavType の型をテスト対象に合わせ、型ごとの往復を検証する。
     @Suppress("UNCHECKED_CAST")
     private fun generateBillingPlusBottomSheetRoute(route: Destination.BillingPlusBottomSheet): String {
         val typeMap = mapOf(

@@ -38,6 +38,7 @@ import platform.Foundation.fileHandleForWritingAtPath
 import platform.Foundation.writeData
 import platform.UIKit.UIImage
 import platform.UIKit.UIImageWriteToSavedPhotosAlbum
+import kotlin.time.Duration.Companion.milliseconds
 import kotlin.uuid.ExperimentalUuidApi
 import kotlin.uuid.Uuid
 
@@ -59,7 +60,7 @@ class DownloadPostsRepositoryImpl(
     init {
         scope.launch {
             while (isActive) {
-                delay(500)
+                delay(500.milliseconds)
 
                 val downloadItems = _reservingPosts.getAndUpdate { it.drop(1) }.firstOrNull()
 
@@ -70,7 +71,9 @@ class DownloadPostsRepositoryImpl(
 
                 val items = when (val type = downloadItems.requestType) {
                     FanboxDownloadItems.RequestType.File -> downloadItems.items
+
                     FanboxDownloadItems.RequestType.Image -> downloadItems.items
+
                     is FanboxDownloadItems.RequestType.WholePost -> {
                         val postDetail = fanboxRepository.getPostDetail(downloadItems.postId)
                         val images = postDetail.body.imageItems.map { it.toDownloadItem() }
@@ -125,7 +128,11 @@ class DownloadPostsRepositoryImpl(
         }
     }
 
-    override fun requestDownloadImages(postId: PostId, title: String, images: List<PostDetail.ImageItem>) {
+    override fun requestDownloadImages(
+        postId: PostId,
+        title: String,
+        images: List<PostDetail.ImageItem>,
+    ) {
         val items = FanboxDownloadItems(
             postId = postId,
             title = title,
@@ -137,7 +144,11 @@ class DownloadPostsRepositoryImpl(
         _reservingPosts.update { it + items }
     }
 
-    override fun requestDownloadFiles(postId: PostId, title: String, files: List<PostDetail.FileItem>) {
+    override fun requestDownloadFiles(
+        postId: PostId,
+        title: String,
+        files: List<PostDetail.FileItem>,
+    ) {
         val items = FanboxDownloadItems(
             postId = postId,
             title = title,
@@ -149,72 +160,68 @@ class DownloadPostsRepositoryImpl(
         _reservingPosts.update { it + items }
     }
 
-    override suspend fun getSaveDirectory(requestType: FanboxDownloadItems.RequestType): String {
-        return "Unknown"
-    }
+    override suspend fun getSaveDirectory(requestType: FanboxDownloadItems.RequestType): String = "Unknown"
 
-    private fun PostDetail.ImageItem.toDownloadItem(): FanboxDownloadItems.Item {
-        return FanboxDownloadItems.Item(
-            postId = postId,
-            itemId = id,
-            name = "image-${postId.value}-${id.value}",
-            extension = extension,
-            originalUrl = originalUrl,
-            thumbnailUrl = thumbnailUrl,
-            type = FanboxDownloadItems.Item.Type.Image,
+    private fun PostDetail.ImageItem.toDownloadItem(): FanboxDownloadItems.Item = FanboxDownloadItems.Item(
+        postId = postId,
+        itemId = id,
+        name = "image-${postId.value}-${id.value}",
+        extension = extension,
+        originalUrl = originalUrl,
+        thumbnailUrl = thumbnailUrl,
+        type = FanboxDownloadItems.Item.Type.Image,
+    )
+
+    private fun PostDetail.FileItem.toDownloadItem(): FanboxDownloadItems.Item = FanboxDownloadItems.Item(
+        postId = postId,
+        itemId = id,
+        name = "file-${postId.value}-${id.value}",
+        extension = extension,
+        originalUrl = url,
+        thumbnailUrl = "",
+        type = FanboxDownloadItems.Item.Type.File,
+    )
+
+    private suspend fun downloadItem(item: FanboxDownloadItems.Item, onDownload: (Float) -> Unit): Pair<FanboxDownloadItems.Item, ByteArray>? = suspendRunCatching {
+        val fileType = userDataStore.setting.first().downloadFileType
+        val url = if (item.extension.lowercase() != "gif" || fileType == DownloadFileType.ORIGINAL) item.originalUrl else item.thumbnailUrl
+        // saveItem がバイト列を受け取る契約のため、チャンクをメモリ上に蓄積する。中断した
+        // 場合はここで組み立てた値ごと捨てられ、保存先には何も残らない。
+        val buffer = mutableListOf<ByteArray>()
+
+        fanboxRepository.download(
+            url = url,
+            onDownload = onDownload,
+            onChunk = { chunk -> buffer += chunk },
         )
-    }
 
-    private fun PostDetail.FileItem.toDownloadItem(): FanboxDownloadItems.Item {
-        return FanboxDownloadItems.Item(
-            postId = postId,
-            itemId = id,
-            name = "file-${postId.value}-${id.value}",
-            extension = extension,
-            originalUrl = url,
-            thumbnailUrl = "",
-            type = FanboxDownloadItems.Item.Type.File,
-        )
-    }
-
-    private suspend fun downloadItem(item: FanboxDownloadItems.Item, onDownload: (Float) -> Unit): Pair<FanboxDownloadItems.Item, ByteArray>? {
-        return suspendRunCatching {
-            val fileType = userDataStore.setting.first().downloadFileType
-            val url = if (item.extension.lowercase() != "gif" || fileType == DownloadFileType.ORIGINAL) item.originalUrl else item.thumbnailUrl
-            // saveItem がバイト列を受け取る契約のため、チャンクをメモリ上に蓄積する。中断した
-            // 場合はここで組み立てた値ごと捨てられ、保存先には何も残らない。
-            val buffer = mutableListOf<ByteArray>()
-
-            fanboxRepository.download(
-                url = url,
-                onDownload = onDownload,
-                onChunk = { chunk -> buffer += chunk },
-            )
-
-            val bytes = ByteArray(buffer.sumOf { it.size }).also { target ->
-                var offset = 0
-                for (chunk in buffer) {
-                    chunk.copyInto(target, offset)
-                    offset += chunk.size
-                }
+        val bytes = ByteArray(buffer.sumOf { it.size }).also { target ->
+            var offset = 0
+            for (chunk in buffer) {
+                chunk.copyInto(target, offset)
+                offset += chunk.size
             }
+        }
 
-            onDownload.invoke(1f)
+        onDownload.invoke(1f)
 
-            item to bytes
-        }.also {
-            PostsLog.download(
-                type = "unknown",
-                postId = item.postId.value,
-                itemId = item.name,
-                extension = item.extension,
-                isSuccess = it.isSuccess,
-            ).send()
-        }.getOrNull()
-    }
+        item to bytes
+    }.also {
+        PostsLog.download(
+            type = "unknown",
+            postId = item.postId.value,
+            itemId = item.name,
+            extension = item.extension,
+            isSuccess = it.isSuccess,
+        ).send()
+    }.getOrNull()
 
     @OptIn(BetaInteropApi::class)
-    private fun saveItem(item: FanboxDownloadItems.Item, requestType: FanboxDownloadItems.RequestType, bytes: ByteArray) {
+    private fun saveItem(
+        item: FanboxDownloadItems.Item,
+        requestType: FanboxDownloadItems.RequestType,
+        bytes: ByteArray,
+    ) {
         runCatching {
             when (item.type) {
                 FanboxDownloadItems.Item.Type.Image -> {

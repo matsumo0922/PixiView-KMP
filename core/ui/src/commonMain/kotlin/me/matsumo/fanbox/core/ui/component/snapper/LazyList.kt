@@ -1,5 +1,3 @@
-@file:Suppress("ClassOrdering")
-
 package me.matsumo.fanbox.core.ui.component.snapper
 
 import androidx.compose.animation.core.AnimationSpec
@@ -63,6 +61,7 @@ public fun rememberSnapperFlingBehavior(
 public fun rememberSnapperFlingBehavior(
     lazyListState: LazyListState,
     snapOffsetForItem: (layoutInfo: SnapperLayoutInfo, item: SnapperLayoutItemInfo) -> Int = SnapOffsets.Center,
+    // 未使用の fork の非推奨 overload。削除・整理: https://github.com/matsumo0922/PixiView-KMP/issues/163
     @Suppress("UNUSED_PARAMETER") endContentPadding: Dp = 0.dp,
     decayAnimationSpec: DecayAnimationSpec<Float> = rememberSplineBasedDecay(),
     springAnimationSpec: AnimationSpec<Float> = SnapperFlingBehaviorDefaults.SpringAnimationSpec,
@@ -76,6 +75,7 @@ public fun rememberSnapperFlingBehavior(
 
 @Composable
 @Deprecated("The maximumFlingDistance parameter has been replaced with snapIndex")
+// 未使用の Pager/Snapper fork の削除・整理を追跡する: https://github.com/matsumo0922/PixiView-KMP/issues/163
 @Suppress("DEPRECATION")
 @ExperimentalSnapperApi
 public fun rememberSnapperFlingBehavior(
@@ -112,10 +112,9 @@ public fun rememberSnapperFlingBehavior(
 public fun rememberLazyListSnapperLayoutInfo(
     lazyListState: LazyListState,
     snapOffsetForItem: (layoutInfo: SnapperLayoutInfo, item: SnapperLayoutItemInfo) -> Int = SnapOffsets.Center,
+    // 未使用の fork の非推奨 overload。削除・整理: https://github.com/matsumo0922/PixiView-KMP/issues/163
     @Suppress("UNUSED_PARAMETER") endContentPadding: Dp = 0.dp,
-): LazyListSnapperLayoutInfo {
-    return rememberLazyListSnapperLayoutInfo(lazyListState, snapOffsetForItem)
-}
+): LazyListSnapperLayoutInfo = rememberLazyListSnapperLayoutInfo(lazyListState, snapOffsetForItem)
 
 /**
  * Create and remember a [SnapperLayoutInfo] which works with [LazyListState].
@@ -145,20 +144,7 @@ public fun rememberLazyListSnapperLayoutInfo(
  * See [SnapOffsets] for provided values.
  */
 @ExperimentalSnapperApi
-public class LazyListSnapperLayoutInfo(
-    private val lazyListState: LazyListState,
-    private val snapOffsetForItem: (layoutInfo: SnapperLayoutInfo, item: SnapperLayoutItemInfo) -> Int,
-) : SnapperLayoutInfo() {
-
-    @Deprecated(
-        "endContentPadding is no longer necessary to be passed in",
-        ReplaceWith("LazyListSnapperLayoutInfo(lazyListState, snapOffsetForItem)"),
-    )
-    public constructor(
-        lazyListState: LazyListState,
-        snapOffsetForItem: (layoutInfo: SnapperLayoutInfo, item: SnapperLayoutItemInfo) -> Int,
-        @Suppress("UNUSED_PARAMETER") endContentPadding: Int = 0,
-    ) : this(lazyListState, snapOffsetForItem)
+public class LazyListSnapperLayoutInfo(private val lazyListState: LazyListState, private val snapOffsetForItem: (layoutInfo: SnapperLayoutInfo, item: SnapperLayoutItemInfo) -> Int) : SnapperLayoutInfo {
 
     /**
      * Lazy lists always use 0 as the start scroll offset (within content padding)
@@ -200,17 +186,13 @@ public class LazyListSnapperLayoutInfo(
             snapOffsetForItem(this, currentItem)
     }
 
-    override fun canScrollTowardsStart(): Boolean {
-        return lazyListState.layoutInfo.visibleItemsInfo.firstOrNull()?.let {
-            it.index > 0 || it.offset < startScrollOffset
-        } ?: false
-    }
+    override fun canScrollTowardsStart(): Boolean = lazyListState.layoutInfo.visibleItemsInfo.firstOrNull()?.let {
+        it.index > 0 || it.offset < startScrollOffset
+    } ?: false
 
-    override fun canScrollTowardsEnd(): Boolean {
-        return lazyListState.layoutInfo.visibleItemsInfo.lastOrNull()?.let {
-            it.index < itemCount - 1 || (it.offset + it.size) > endScrollOffset
-        } ?: false
-    }
+    override fun canScrollTowardsEnd(): Boolean = lazyListState.layoutInfo.visibleItemsInfo.lastOrNull()?.let {
+        it.index < itemCount - 1 || (it.offset + it.size) > endScrollOffset
+    } ?: false
 
     override fun determineTargetIndex(
         velocity: Float,
@@ -298,15 +280,15 @@ public class LazyListSnapperLayoutInfo(
         // the calculated mean contains an item spacing for each visible item
         // (not just spacing between items)
         return when (val distance = end - start) {
-            0 -> -1f // If we don't have a distance, return -1
+            0 -> -1f
+
+            // If we don't have a distance, return -1
             else -> (distance + calculateItemSpacing()) / visibleItemsInfo.size.toFloat()
         }
     }
 }
 
-private class LazyListSnapperLayoutItemInfo(
-    private val lazyListItem: LazyListItemInfo,
-) : SnapperLayoutItemInfo() {
+private class LazyListSnapperLayoutItemInfo(private val lazyListItem: LazyListItemInfo) : SnapperLayoutItemInfo() {
     override val index: Int get() = lazyListItem.index
     override val offset: Int get() = lazyListItem.offset
     override val size: Int get() = lazyListItem.size

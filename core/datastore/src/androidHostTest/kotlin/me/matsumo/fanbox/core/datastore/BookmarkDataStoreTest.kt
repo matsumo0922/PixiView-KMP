@@ -23,6 +23,8 @@ import kotlin.test.assertTrue
  *
  * fixture は fankt v0.0.21 で実際に `Json.encodeToString` を実行して得た出力に基づく。
  */
+// テスト自身が Dispatcher の注入元となり、DataStore の実 I/O と即時実行を使い分ける。
+@Suppress("InjectDispatcher")
 class BookmarkDataStoreTest {
 
     private val dataStoreScope = CoroutineScope(Dispatchers.IO + SupervisorJob())
@@ -114,11 +116,9 @@ class BookmarkDataStoreTest {
         assertEquals("not json", dataStore.data.first()[stringPreferencesKey("broken")])
     }
 
-    private fun createPreferenceHelper(dataStore: DataStore<Preferences>): PreferenceHelper {
-        return object : PreferenceHelper {
-            override fun create(name: String): DataStore<Preferences> = dataStore
-            override fun delete(name: String) = Unit
-        }
+    private fun createPreferenceHelper(dataStore: DataStore<Preferences>): PreferenceHelper = object : PreferenceHelper {
+        override fun create(name: String): DataStore<Preferences> = dataStore
+        override fun delete(name: String) = Unit
     }
 
     private fun createDataStore(): DataStore<Preferences> {

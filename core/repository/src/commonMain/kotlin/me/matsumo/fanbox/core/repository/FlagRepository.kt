@@ -8,15 +8,11 @@ interface FlagRepository {
     suspend fun getFlag(key: Flag, default: Boolean): Boolean
 }
 
-internal class FlagRepositoryImpl(
-    private val flagDataStore: FlagDataStore,
-) : FlagRepository {
+internal class FlagRepositoryImpl(private val flagDataStore: FlagDataStore) : FlagRepository {
 
     override suspend fun setFlag(key: Flag, value: Boolean) {
         flagDataStore.setFlag(key, value)
     }
 
-    override suspend fun getFlag(key: Flag, default: Boolean): Boolean {
-        return flagDataStore.getFlag(key, default)
-    }
+    override suspend fun getFlag(key: Flag, default: Boolean): Boolean = flagDataStore.getFlag(key, default)
 }

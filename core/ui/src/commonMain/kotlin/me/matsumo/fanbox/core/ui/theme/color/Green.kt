@@ -1,5 +1,3 @@
-@file:Suppress("UnusedPrivateMember")
-
 package me.matsumo.fanbox.core.ui.theme.color
 
 import androidx.compose.material3.darkColorScheme
@@ -32,7 +30,7 @@ private val md_theme_light_outline = Color(0xFF74796D)
 private val md_theme_light_inverseOnSurface = Color(0xFFF1F1EA)
 private val md_theme_light_inverseSurface = Color(0xFF2F312D)
 private val md_theme_light_inversePrimary = Color(0xFF9CD67E)
-private val md_theme_light_shadow = Color(0xFF000000)
+
 private val md_theme_light_surfaceTint = Color(0xFF386A1F)
 private val md_theme_light_outlineVariant = Color(0xFFC3C8BB)
 private val md_theme_light_scrim = Color(0xFF000000)
@@ -63,7 +61,7 @@ private val md_theme_dark_outline = Color(0xFF8D9286)
 private val md_theme_dark_inverseOnSurface = Color(0xFF1A1C18)
 private val md_theme_dark_inverseSurface = Color(0xFFE3E3DC)
 private val md_theme_dark_inversePrimary = Color(0xFF386A1F)
-private val md_theme_dark_shadow = Color(0xFF000000)
+
 private val md_theme_dark_surfaceTint = Color(0xFF9CD67E)
 private val md_theme_dark_outlineVariant = Color(0xFF43483E)
 private val md_theme_dark_scrim = Color(0xFF000000)

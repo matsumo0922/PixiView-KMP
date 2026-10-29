@@ -20,10 +20,7 @@ import me.matsumo.fanbox.core.repository.SettingRepository
 import me.matsumo.fanbox.core.resources.Res
 import me.matsumo.fanbox.core.resources.error_no_data_discovery
 
-class LibraryDiscoveryViewModel(
-    private val settingRepository: SettingRepository,
-    private val fanboxRepository: FanboxRepository,
-) : ViewModel() {
+class LibraryDiscoveryViewModel(private val settingRepository: SettingRepository, private val fanboxRepository: FanboxRepository) : ViewModel() {
 
     private val _screenState = MutableStateFlow<ScreenState<LibraryDiscoveryUiState>>(ScreenState.Loading)
     val screenState = _screenState.asStateFlow()
@@ -42,8 +39,12 @@ class LibraryDiscoveryViewModel(
         viewModelScope.launch {
             _screenState.value = ScreenState.Loading
             _screenState.value = suspendRunCatching {
-                val followingCreators = suspendRunCatching { fanboxRepository.getFollowingCreators() }.getOrElse { emptyList() }
-                val recommendedCreators = suspendRunCatching { fanboxRepository.getRecommendedCreators() }.getOrElse { emptyList() }
+                val followingCreators = suspendRunCatching {
+                    fanboxRepository.getFollowingCreators()
+                }.getOrElse { emptyList() }
+                val recommendedCreators = suspendRunCatching {
+                    fanboxRepository.getRecommendedCreators()
+                }.getOrElse { emptyList() }
                 val followingPixivCreators = suspendRunCatching {
                     fanboxRepository.getFollowingPixivCreators()
                 }.getOrElse { emptyList() }
@@ -63,16 +64,12 @@ class LibraryDiscoveryViewModel(
         }
     }
 
-    suspend fun follow(creatorUserId: UserId): Result<Unit> {
-        return suspendRunCatching {
-            fanboxRepository.followCreator(creatorUserId)
-        }
+    suspend fun follow(creatorUserId: UserId): Result<Unit> = suspendRunCatching {
+        fanboxRepository.followCreator(creatorUserId)
     }
 
-    suspend fun unfollow(creatorUserId: UserId): Result<Unit> {
-        return suspendRunCatching {
-            fanboxRepository.unfollowCreator(creatorUserId)
-        }
+    suspend fun unfollow(creatorUserId: UserId): Result<Unit> = suspendRunCatching {
+        fanboxRepository.unfollowCreator(creatorUserId)
     }
 }
 

@@ -15,18 +15,14 @@ import me.matsumo.fankt.fanbox.FanboxCookieStorage
  *
  * すべての変更は [Mutex] で直列化する。完了した変更は、以降のすべての読み出しから見える。
  */
-internal class SecureFanboxCookieStorage(
-    private val blobStore: SecureCookieBlobStore,
-) : FanboxCookieStorage {
+internal class SecureFanboxCookieStorage(private val blobStore: SecureCookieBlobStore) : FanboxCookieStorage {
 
     private val mutex = Mutex()
 
     override val cookies: Flow<List<FanboxCookieRecord>> =
         blobStore.payloads.records().map { records -> records.map(SecureCookieRecord::toFanboxCookieRecord) }
 
-    override suspend fun snapshot(): List<FanboxCookieRecord> {
-        return blobStore.load().records.map(SecureCookieRecord::toFanboxCookieRecord)
-    }
+    override suspend fun snapshot(): List<FanboxCookieRecord> = blobStore.load().records.map(SecureCookieRecord::toFanboxCookieRecord)
 
     override suspend fun upsert(cookie: FanboxCookieRecord) {
         val replacement = cookie.canonicalized()
@@ -36,7 +32,11 @@ internal class SecureFanboxCookieStorage(
         }
     }
 
-    override suspend fun delete(domain: String, path: String, name: String) {
+    override suspend fun delete(
+        domain: String,
+        path: String,
+        name: String,
+    ) {
         val identity = CookieIdentity(domain.canonicalDomain(), path.canonicalPath(), name)
 
         mutate { records -> records.filterNot { it.identity == identity } }
@@ -99,5 +99,4 @@ internal fun FanboxCookieRecord.canonicalized(): FanboxCookieRecord = copy(
 )
 
 /** 同一性が重なるレコードを後勝ちで 1 件に畳む。 */
-internal fun List<SecureCookieRecord>.deduplicated(): List<SecureCookieRecord> =
-    associateBy { it.identity }.values.toList()
+internal fun List<SecureCookieRecord>.deduplicated(): List<SecureCookieRecord> = associateBy { it.identity }.values.toList()

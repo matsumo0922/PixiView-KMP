@@ -89,6 +89,4 @@ internal actual fun SettingDirectoryContent(
     }
 }
 
-private fun String?.ifNullOrBlank(default: String): String {
-    return if (this.isNullOrBlank()) default else this
-}
+private fun String?.ifNullOrBlank(default: String): String = if (this.isNullOrBlank()) default else this

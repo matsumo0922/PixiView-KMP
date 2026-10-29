@@ -10,10 +10,7 @@ import kotlin.time.Clock
 import kotlin.time.ExperimentalTime
 import com.multiplatform.webview.cookie.Cookie as WebViewCookie
 
-class WelcomeWebViewModel(
-    private val fanboxRepository: FanboxRepository,
-    private val settingRepository: SettingRepository,
-) : ViewModel() {
+class WelcomeWebViewModel(private val fanboxRepository: FanboxRepository, private val settingRepository: SettingRepository) : ViewModel() {
 
     /**
      * Cookie を保存する。保存できた場合だけ true を返す。
@@ -22,11 +19,9 @@ class WelcomeWebViewModel(
      * 扱えるよう、例外を投げずに戻り値で伝える。
      */
     @OptIn(ExperimentalTime::class)
-    suspend fun saveCookies(cookies: List<WebViewCookie>): Boolean {
-        return suspendRunCatching {
-            fanboxRepository.setCookies(cookies.toFanboxCookieRecords(Clock.System.now().toEpochMilliseconds()))
-        }.isSuccess
-    }
+    suspend fun saveCookies(cookies: List<WebViewCookie>): Boolean = suspendRunCatching {
+        fanboxRepository.setCookies(cookies.toFanboxCookieRecords(Clock.System.now().toEpochMilliseconds()))
+    }.isSuccess
 
     suspend fun checkSessionId(cookies: List<WebViewCookie>): Boolean {
         if (!saveCookies(cookies)) return false

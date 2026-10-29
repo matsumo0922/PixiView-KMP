@@ -5,21 +5,15 @@ import me.matsumo.fanbox.core.model.fanbox.Comment
 import me.matsumo.fanbox.core.model.fanbox.PageOffsetInfo
 
 @Serializable
-data class TransComments(
-    val comments: List<String>,
+data class TransComments(val comments: List<String>)
+
+private fun flatCooments(comments: List<Comment>): List<Comment> = comments.flatMap {
+    listOf(it) + flatCooments(it.replies)
+}
+
+fun PageOffsetInfo<Comment>.toTrans(): TransComments = TransComments(
+    comments = flatCooments(contents).map { it.body },
 )
-
-private fun flatCooments(comments: List<Comment>): List<Comment> {
-    return comments.flatMap {
-        listOf(it) + flatCooments(it.replies)
-    }
-}
-
-fun PageOffsetInfo<Comment>.toTrans(): TransComments {
-    return TransComments(
-        comments = flatCooments(contents).map { it.body },
-    )
-}
 
 fun TransComments.toTranslatedComments(original: PageOffsetInfo<Comment>): PageOffsetInfo<Comment> {
     var index = 0

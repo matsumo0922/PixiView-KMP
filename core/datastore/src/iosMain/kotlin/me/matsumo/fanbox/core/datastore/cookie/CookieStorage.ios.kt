@@ -1,5 +1,3 @@
-@file:Suppress("MatchingDeclarationName", "Filename")
-
 package me.matsumo.fanbox.core.datastore.cookie
 
 import eu.anifantakis.lib.ksafe.KSafe
@@ -20,10 +18,7 @@ import platform.Foundation.NSUserDomainMask
  * 資格情報は Keychain へ保存し、既存の `fankt.db` からの移行を挟む。
  * 返した実体はアプリの生存期間中 1 つだけ使い、閉じないこと。
  */
-internal fun createCookieStorage(
-    ioDispatcher: CoroutineDispatcher,
-    oldCookieDataStore: OldCookieDataStore,
-): MigratingFanboxCookieStorage {
+internal fun createCookieStorage(ioDispatcher: CoroutineDispatcher, oldCookieDataStore: OldCookieDataStore): MigratingFanboxCookieStorage {
     excludeLegacyDatabaseFromBackup()
 
     return createMigratingCookieStorage(

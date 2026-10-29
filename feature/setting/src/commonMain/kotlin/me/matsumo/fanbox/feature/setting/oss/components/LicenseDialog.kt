@@ -28,10 +28,11 @@ import me.matsumo.fanbox.core.ui.theme.center
 internal fun LicenseDialog(
     library: Library,
     onDismissRequest: () -> Unit,
+    modifier: Modifier = Modifier,
 ) {
     BasicAlertDialog(onDismissRequest) {
         Column(
-            modifier = Modifier
+            modifier = modifier
                 .fillMaxHeight(0.78f)
                 .clip(RoundedCornerShape(16.dp))
                 .background(MaterialTheme.colorScheme.background)

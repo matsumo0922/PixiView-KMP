@@ -9,7 +9,6 @@ import kotlinx.serialization.json.Json
 import kotlinx.serialization.json.JsonElement
 import kotlinx.serialization.json.JsonObject
 import kotlinx.serialization.json.JsonPrimitive
-import kotlinx.serialization.json.buildJsonObject
 import kotlinx.serialization.json.jsonObject
 
 interface PreferenceHelper {
@@ -22,44 +21,36 @@ fun <T> Preferences.deserialize(
     formatter: Json,
     serializer: KSerializer<T>,
     defaultValue: T,
-): T {
-    return try {
-        val parsedPrefMap: Map<String, JsonElement> = buildMap {
-            for ((k, vAny) in this@deserialize.asMap()) {
-                val key = k.name
-                val elem: JsonElement = when (val v = vAny) {
-                    is String -> {
-                        // JSON 文字列（{...} or [...]）は parse、通常文字列は Primitive
-                        if (v.startsWith("{") && v.endsWith("}") || v.startsWith("[") && v.endsWith("]")) {
-                            formatter.parseToJsonElement(v)
-                        } else {
-                            JsonPrimitive(v)
-                        }
-                    }
-
-                    is Int -> JsonPrimitive(v)
-                    is Long -> JsonPrimitive(v)
-                    is Float -> JsonPrimitive(v)
-                    is Double -> JsonPrimitive(v)
-                    is Boolean -> JsonPrimitive(v)
-                    else -> JsonPrimitive(v.toString())
-                }
-                put(key, elem)
-            }
-        }
-
-        val defaultData = formatter.encodeToJsonElement(serializer, defaultValue).jsonObject
-        val preferenceData = JsonObject(parsedPrefMap)
-
-        val data = buildJsonObject {
-            // デフォルトをベースにしつつ、Prefs を上書き
-            for ((k, v) in defaultData) put(k, v)
-            for ((k, v) in preferenceData) put(k, v)
-        }
-
-        formatter.decodeFromJsonElement(serializer, data)
-    } catch (e: Exception) {
-        Napier.e("Failed to deserialize.", e)
-        defaultValue
+): T = try {
+    val parsedPreferences = asMap().entries.associate { (preference, value) ->
+        preference.name to value.toPreferenceJson(formatter)
     }
+    val defaultData = formatter.encodeToJsonElement(serializer, defaultValue).jsonObject
+    val data = JsonObject(defaultData + parsedPreferences)
+
+    formatter.decodeFromJsonElement(serializer, data)
+} catch (exception: Exception) {
+    Napier.e("Failed to deserialize.", exception)
+    defaultValue
+}
+
+private fun Any.toPreferenceJson(formatter: Json): JsonElement = when (this) {
+    is String -> {
+        val isJsonObject = startsWith("{") && endsWith("}")
+        val isJsonArray = startsWith("[") && endsWith("]")
+
+        if (isJsonObject || isJsonArray) formatter.parseToJsonElement(this) else JsonPrimitive(this)
+    }
+
+    is Int -> JsonPrimitive(this)
+
+    is Long -> JsonPrimitive(this)
+
+    is Float -> JsonPrimitive(this)
+
+    is Double -> JsonPrimitive(this)
+
+    is Boolean -> JsonPrimitive(this)
+
+    else -> JsonPrimitive(toString())
 }

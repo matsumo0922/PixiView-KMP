@@ -28,11 +28,9 @@ class RewardRepositoryImpl(
         }
     }
 
-    override suspend fun isAbleToReward(usage: RewardUsage): Boolean {
-        return withContext(ioDispatcher) {
-            resetIfNeeded(currentDate())
-            rewardLogDataStore.getRewardedCount(usage) < usage.dailyLimit
-        }
+    override suspend fun isAbleToReward(usage: RewardUsage): Boolean = withContext(ioDispatcher) {
+        resetIfNeeded(currentDate())
+        rewardLogDataStore.getRewardedCount(usage) < usage.dailyLimit
     }
 
     private suspend fun resetIfNeeded(date: String) {
@@ -44,7 +42,5 @@ class RewardRepositoryImpl(
         }
     }
 
-    private fun currentDate(): String {
-        return clock.now().format("yyyy-MM-dd")
-    }
+    private fun currentDate(): String = clock.now().format("yyyy-MM-dd")
 }

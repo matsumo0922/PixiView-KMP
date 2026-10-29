@@ -9,10 +9,8 @@ internal val CreatorTopRewardUsageSaver = Saver<RewardUsage?, String>(
     restore = { name -> restoreCreatorTopRewardUsage(name) },
 )
 
-internal fun saveCreatorTopRewardUsage(usage: RewardUsage?): String? {
-    return usage?.name
-}
+internal fun saveCreatorTopRewardUsage(usage: RewardUsage?): String? = usage?.name
 
-internal fun restoreCreatorTopRewardUsage(name: String): RewardUsage? {
-    return RewardUsage.entries.firstOrNull { it.name == name }
+internal fun restoreCreatorTopRewardUsage(name: String): RewardUsage? = RewardUsage.entries.firstOrNull {
+    it.name == name
 }

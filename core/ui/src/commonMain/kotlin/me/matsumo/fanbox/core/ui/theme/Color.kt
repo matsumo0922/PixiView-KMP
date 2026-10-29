@@ -2,7 +2,6 @@ package me.matsumo.fanbox.core.ui.theme
 
 import androidx.compose.material3.ColorScheme
 import androidx.compose.material3.surfaceColorAtElevation
-import androidx.compose.runtime.Composable
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.Dp
 
@@ -77,11 +76,8 @@ val Teal40 = Color(0xFF3A656F)
 val Teal80 = Color(0xFFA2CED9)
 val Teal90 = Color(0xFFBEEAF6)
 
-@Composable
-fun ColorScheme.applyTonalElevation(backgroundColor: Color, elevation: Dp): Color {
-    return if (backgroundColor == surface) {
-        surfaceColorAtElevation(elevation)
-    } else {
-        backgroundColor
-    }
+fun ColorScheme.applyTonalElevation(backgroundColor: Color, elevation: Dp): Color = if (backgroundColor == surface) {
+    surfaceColorAtElevation(elevation)
+} else {
+    backgroundColor
 }

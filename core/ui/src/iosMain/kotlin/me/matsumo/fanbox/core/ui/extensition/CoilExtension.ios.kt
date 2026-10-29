@@ -8,6 +8,4 @@ import org.jetbrains.compose.resources.DrawableResource
 import org.jetbrains.compose.resources.imageResource
 
 @Composable
-actual fun DrawableResource.asCoilImage(): Image {
-    return imageResource(this).asSkiaBitmap().asImage()
-}
+actual fun DrawableResource.asCoilImage(): Image = imageResource(this).asSkiaBitmap().asImage()

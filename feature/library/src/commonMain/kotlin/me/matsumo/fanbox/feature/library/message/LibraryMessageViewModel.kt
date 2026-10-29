@@ -12,9 +12,7 @@ import me.matsumo.fanbox.core.model.fanbox.NewsLetter
 import me.matsumo.fanbox.core.model.toScreenStateError
 import me.matsumo.fanbox.core.repository.FanboxRepository
 
-class LibraryMessageViewModel(
-    private val fanboxRepository: FanboxRepository,
-) : ViewModel() {
+class LibraryMessageViewModel(private val fanboxRepository: FanboxRepository) : ViewModel() {
 
     private val _screenState = MutableStateFlow<ScreenState<LibraryMessageUiState>>(ScreenState.Loading)
 
@@ -40,6 +38,4 @@ class LibraryMessageViewModel(
 }
 
 @Stable
-data class LibraryMessageUiState(
-    val messages: List<NewsLetter>,
-)
+data class LibraryMessageUiState(val messages: List<NewsLetter>)

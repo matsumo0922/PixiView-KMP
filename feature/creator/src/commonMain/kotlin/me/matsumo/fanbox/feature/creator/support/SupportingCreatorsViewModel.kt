@@ -12,9 +12,7 @@ import me.matsumo.fanbox.core.model.fanbox.CreatorPlan
 import me.matsumo.fanbox.core.model.toScreenStateError
 import me.matsumo.fanbox.core.repository.FanboxRepository
 
-class SupportingCreatorsViewModel(
-    private val fanboxRepository: FanboxRepository,
-) : ViewModel() {
+class SupportingCreatorsViewModel(private val fanboxRepository: FanboxRepository) : ViewModel() {
 
     private val _screenState = MutableStateFlow<ScreenState<SupportingCreatorsUiState>>(ScreenState.Loading)
 
@@ -40,6 +38,4 @@ class SupportingCreatorsViewModel(
 }
 
 @Stable
-data class SupportingCreatorsUiState(
-    val supportedPlans: List<CreatorPlan>,
-)
+data class SupportingCreatorsUiState(val supportedPlans: List<CreatorPlan>)

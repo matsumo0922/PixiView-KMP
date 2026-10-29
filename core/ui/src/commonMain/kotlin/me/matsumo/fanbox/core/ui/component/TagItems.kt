@@ -52,12 +52,12 @@ private fun TagItem(
     Box(
         modifier = modifier
             .clip(RoundedCornerShape(4.dp))
-            .clickable { onClickTag(tag) }
             .border(
                 width = 0.5.dp,
                 color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.5f),
                 shape = RoundedCornerShape(4.dp),
-            ),
+            )
+            .clickable { onClickTag(tag) },
     ) {
         Text(
             modifier = Modifier.padding(8.dp, 4.dp),

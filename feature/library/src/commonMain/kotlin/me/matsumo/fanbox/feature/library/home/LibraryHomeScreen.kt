@@ -23,6 +23,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.text.font.FontWeight
@@ -71,13 +72,15 @@ internal fun LibraryHomeScreen(
         HomeTabs.Home,
     )
 
-    LaunchedEffect(true) {
+    val currentNavigateTo by rememberUpdatedState(navigateTo)
+
+    LaunchedEffect(Unit) {
         viewModel.updatePlusTrigger.collectLatest {
             if (!it) {
                 val content = SimpleAlertContents.CancelPlus
                 val destination = Destination.SimpleAlertDialog(content)
 
-                navigateTo(destination)
+                currentNavigateTo(destination)
             }
         }
     }
@@ -138,13 +141,15 @@ internal fun LibraryHomeScreen(
                             modifier = Modifier.fillMaxSize(),
                             lazyPagingItems = homePager,
                             emptyMessageRes = Res.string.error_no_data_following,
-                        ) {
+                        ) { _ ->
                             LibraryHomeIdleSection(
                                 modifier = Modifier.fillMaxSize(),
                                 pagingAdapter = homePager,
                                 setting = uiState.setting,
                                 bookmarkedPostsIds = uiState.bookmarkedPostsIds.toImmutableList(),
-                                onClickPost = { navigateTo(Destination.PostDetail(it, Destination.PostDetail.PagingType.Home)) },
+                                onClickPost = {
+                                    navigateTo(Destination.PostDetail(it, Destination.PostDetail.PagingType.Home))
+                                },
                                 onClickPostLike = viewModel::postLike,
                                 onClickPostBookmark = viewModel::postBookmark,
                                 onClickCreator = { navigateTo(Destination.CreatorTop(it, true)) },
@@ -152,18 +157,21 @@ internal fun LibraryHomeScreen(
                             )
                         }
                     }
+
                     HomeTabs.Supported -> {
                         LazyPagingItemsLoadContents(
                             modifier = Modifier.fillMaxSize(),
                             lazyPagingItems = supportedPager,
                             emptyMessageRes = Res.string.error_no_data_supported,
-                        ) {
+                        ) { _ ->
                             LibrarySupportedIdleSection(
                                 modifier = Modifier.fillMaxSize(),
                                 pagingAdapter = supportedPager,
                                 setting = uiState.setting,
                                 bookmarkedPostsIds = uiState.bookmarkedPostsIds.toImmutableList(),
-                                onClickPost = { navigateTo(Destination.PostDetail(it, Destination.PostDetail.PagingType.Supported)) },
+                                onClickPost = {
+                                    navigateTo(Destination.PostDetail(it, Destination.PostDetail.PagingType.Supported))
+                                },
                                 onClickPostLike = viewModel::postLike,
                                 onClickPostBookmark = viewModel::postBookmark,
                                 onClickCreator = { navigateTo(Destination.CreatorTop(it, true)) },

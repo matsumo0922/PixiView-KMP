@@ -9,9 +9,7 @@ import me.matsumo.fanbox.core.model.Destination
 import me.matsumo.fanbox.core.ui.component.sheet.bottomSheet
 
 @OptIn(ExperimentalComposeUiApi::class)
-fun NavGraphBuilder.versionHistoryBottomSheet(
-    terminate: () -> Unit,
-) {
+fun NavGraphBuilder.versionHistoryBottomSheet(terminate: () -> Unit) {
     bottomSheet<Destination.VersionHistoryBottomSheet> {
         BackHandler {
             terminate()

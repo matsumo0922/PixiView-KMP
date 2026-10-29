@@ -72,10 +72,7 @@ data class CreatorDetail(
 
     /** プロフィールリンク。 */
     @Immutable
-    data class ProfileLink(
-        val url: String,
-        val link: Platform,
-    )
+    data class ProfileLink(val url: String, val link: Platform)
 
     /** プロフィールリンクの対応プラットフォーム。 */
     enum class Platform {

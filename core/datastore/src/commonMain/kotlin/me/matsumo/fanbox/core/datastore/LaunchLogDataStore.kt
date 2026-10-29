@@ -9,10 +9,7 @@ import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
 
-class LaunchLogDataStore(
-    private val preferenceHelper: PreferenceHelper,
-    private val ioDispatcher: CoroutineDispatcher,
-) {
+class LaunchLogDataStore(preferenceHelper: PreferenceHelper, ioDispatcher: CoroutineDispatcher) {
     private val preference = preferenceHelper.create(PreferencesName.LAUNCH_LOG)
     private val scope = CoroutineScope(ioDispatcher)
 
@@ -26,9 +23,7 @@ class LaunchLogDataStore(
         }
     }
 
-    suspend fun getLaunchCount(): Int {
-        return data.first()
-    }
+    suspend fun getLaunchCount(): Int = data.first()
 
     companion object {
         const val KEY_LAUNCH_COUNT = "launch_count"

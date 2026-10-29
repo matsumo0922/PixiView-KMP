@@ -7,6 +7,7 @@ import androidx.compose.animation.togetherWith
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.SideEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -25,13 +26,15 @@ import kotlin.time.Clock
 import kotlin.time.ExperimentalTime
 
 @Composable
+// Paywall への遷移を composition 適用後に dispatch し、画面離脱時はキャンセルする。
+@Suppress("UnnecessaryLaunchedEffect")
 internal fun PixiViewScreen(
     uiState: MainUiState,
     onRequestInitPixiViewId: () -> Unit,
     onRequestFirstLaunchFlag: () -> Unit,
     onRequestUpdateState: () -> Unit,
-    onBillingRetentionPromptShown: () -> Unit,
-    onPostDetailClosed: suspend () -> Unit,
+    onBillingRetentionPromptShow: () -> Unit,
+    onPostDetailClose: suspend () -> Unit,
     modifier: Modifier = Modifier,
 ) {
     val bottomSheetNavigator = rememberBottomSheetNavigator()
@@ -45,7 +48,7 @@ internal fun PixiViewScreen(
     }
     var isAllowedPermission by remember(uiState.setting, uiState.isLoggedIn) { mutableStateOf(true) }
 
-    LaunchedEffect(true) {
+    SideEffect(true) {
         if (uiState.setting.pixiViewId.isBlank()) {
             onRequestInitPixiViewId.invoke()
         }
@@ -78,15 +81,15 @@ internal fun PixiViewScreen(
                 modifier = Modifier.fillMaxSize(),
                 bottomSheetNavigator = bottomSheetNavigator,
                 navController = navController,
-                onPostDetailClosed = onPostDetailClosed,
-                onLibraryHomeVisibilityChanged = { isLibraryHomeVisible = it },
+                onPostDetailClose = onPostDetailClose,
+                onLibraryHomeVisibilityChange = { isVisible -> isLibraryHomeVisible = isVisible },
             )
 
             HandleBillingRetentionPrompt(
                 uiState = uiState,
                 navController = navController,
                 isHomeVisible = isLibraryHomeVisible && currentBackStackEntry?.destination?.hasRoute<Destination.Library>() == true,
-                onBillingRetentionPromptShown = onBillingRetentionPromptShown,
+                onBillingRetentionPromptShow = onBillingRetentionPromptShow,
             )
 
             if (showPaywallFlag) {
@@ -101,13 +104,15 @@ internal fun PixiViewScreen(
 
 @OptIn(ExperimentalTime::class)
 @Composable
+// retention prompt の表示記録と遷移を composition 適用後に dispatch し、画面離脱時はキャンセルする。
+@Suppress("UnnecessaryLaunchedEffect")
 private fun HandleBillingRetentionPrompt(
     uiState: MainUiState,
     navController: NavHostController,
     isHomeVisible: Boolean,
-    onBillingRetentionPromptShown: () -> Unit,
+    onBillingRetentionPromptShow: () -> Unit,
 ) {
-    val currentOnBillingRetentionPromptShown by rememberUpdatedState(onBillingRetentionPromptShown)
+    val currentOnBillingRetentionPromptShown by rememberUpdatedState(onBillingRetentionPromptShow)
     var shownPromptDedupeKey by remember { mutableStateOf<String?>(null) }
 
     LaunchedEffect(uiState.setting, uiState.isBillingSyncSucceeded, uiState.isAppLocked, isHomeVisible) {

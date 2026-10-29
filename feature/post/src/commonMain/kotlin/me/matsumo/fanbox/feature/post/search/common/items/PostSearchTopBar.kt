@@ -61,6 +61,8 @@ import org.jetbrains.compose.resources.stringResource
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
+// Scaffold の subcomposition 適用後にフォーカスを要求し、検索欄の離脱時はキャンセルする。
+@Suppress("UnnecessaryLaunchedEffect")
 internal fun PostSearchTopBar(
     query: String,
     initialQuery: String,
@@ -68,7 +70,7 @@ internal fun PostSearchTopBar(
     onClickTerminate: () -> Unit,
     onClickSearch: (PostSearchQuery) -> Unit,
     modifier: Modifier = Modifier,
-    onQueryChanged: (String) -> Unit = {},
+    onQueryChange: (String) -> Unit = {},
 ) {
     val keyboardController = LocalSoftwareKeyboardController.current
     val focusManager = LocalFocusManager.current
@@ -124,7 +126,7 @@ internal fun PostSearchTopBar(
                     value = queryText,
                     onValueChange = {
                         queryText = it
-                        onQueryChanged.invoke(it.text)
+                        onQueryChange.invoke(it.text)
                     },
                     keyboardOptions = KeyboardOptions(imeAction = ImeAction.Search),
                     keyboardActions = KeyboardActions(
@@ -190,12 +192,10 @@ internal fun PostSearchTopBar(
 }
 
 private class QueryTransformation(val tagStyle: SpanStyle) : VisualTransformation {
-    override fun filter(text: AnnotatedString): TransformedText {
-        return TransformedText(
-            text = buildAnnotatedQuery(text.text, tagStyle),
-            offsetMapping = OffsetMapping.Identity,
-        )
-    }
+    override fun filter(text: AnnotatedString): TransformedText = TransformedText(
+        text = buildAnnotatedQuery(text.text, tagStyle),
+        offsetMapping = OffsetMapping.Identity,
+    )
 
     private fun buildAnnotatedQuery(query: String, tagStyle: SpanStyle): AnnotatedString = buildAnnotatedString {
         append(query)

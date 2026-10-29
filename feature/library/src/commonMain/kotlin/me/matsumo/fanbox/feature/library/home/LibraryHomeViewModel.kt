@@ -17,10 +17,7 @@ import me.matsumo.fanbox.core.repository.FanboxRepository
 import me.matsumo.fanbox.core.repository.SettingRepository
 import me.matsumo.fanbox.core.ui.extensition.emptyPaging
 
-class LibraryHomeViewModel(
-    private val settingRepository: SettingRepository,
-    private val fanboxRepository: FanboxRepository,
-) : ViewModel() {
+class LibraryHomeViewModel(private val settingRepository: SettingRepository, private val fanboxRepository: FanboxRepository) : ViewModel() {
 
     private val _uiState = MutableStateFlow(
         LibraryUiState(

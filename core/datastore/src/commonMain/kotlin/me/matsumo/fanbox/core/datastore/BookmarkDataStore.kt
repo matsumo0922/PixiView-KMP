@@ -13,10 +13,7 @@ import kotlinx.serialization.json.Json
 import me.matsumo.fankt.fanbox.domain.model.FanboxPost
 import me.matsumo.fankt.fanbox.domain.model.id.FanboxPostId
 
-class BookmarkDataStore(
-    private val preferenceHelper: PreferenceHelper,
-    private val ioDispatcher: CoroutineDispatcher,
-) {
+class BookmarkDataStore(preferenceHelper: PreferenceHelper, ioDispatcher: CoroutineDispatcher) {
     private val cookiePreference = preferenceHelper.create(PreferencesName.FANBOX_BOOKMARK)
     private val scope = CoroutineScope(ioDispatcher)
 
@@ -73,7 +70,9 @@ class BookmarkDataStore(
 
             when (val normalization = normalizeBookmarkIdJson(json)) {
                 is BookmarkJsonNormalization.AlreadyCurrent -> Unit
+
                 is BookmarkJsonNormalization.Migrated -> migrated[key.name] = normalization.json
+
                 BookmarkJsonNormalization.Failure -> {
                     failureCount++
                     continue

@@ -17,9 +17,12 @@ import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.statusBars
 import androidx.compose.foundation.layout.statusBarsPadding
+import androidx.compose.foundation.lazy.LazyListState
+import androidx.compose.foundation.lazy.grid.LazyGridState
 import androidx.compose.foundation.lazy.grid.rememberLazyGridState
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.pager.HorizontalPager
+import androidx.compose.foundation.pager.PagerState
 import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
@@ -115,6 +118,7 @@ import org.jetbrains.compose.resources.StringResource
 import org.jetbrains.compose.resources.stringResource
 import org.koin.compose.koinInject
 import org.koin.compose.viewmodel.koinViewModel
+import kotlin.time.Duration.Companion.milliseconds
 
 internal enum class CreatorTopRevealKeys {
     Search,
@@ -156,7 +160,13 @@ internal fun CreatorTopRoute(
             onOverlayClick = { scope.launch { revealState.hide() } },
             revealCanvasState = revealCanvasState,
             revealState = revealState,
-            overlayContent = { key -> RevealOverlayContent(key, revealOverlayContainerColor, revealOverlayContentColor) },
+            overlayContent = { key ->
+                RevealOverlayContent(
+                    key = key,
+                    containerColor = revealOverlayContainerColor,
+                    contentColor = revealOverlayContentColor,
+                )
+            },
         ) {
             CreatorTopScreen(
                 modifier = Modifier.fillMaxSize(),
@@ -212,8 +222,8 @@ internal fun CreatorTopRoute(
                     )
                 },
                 onClickTranslateDescription = viewModel::translateDescription,
-                onRevealCompleted = viewModel::finishReveal,
-                onRewarded = viewModel::rewarded,
+                onRevealComplete = viewModel::finishReveal,
+                onReward = viewModel::rewarded,
                 onClickPostLike = viewModel::postLike,
             )
         }
@@ -222,6 +232,8 @@ internal fun CreatorTopRoute(
 
 @OptIn(ExperimentalComposeUiApi::class)
 @Composable
+// FAB の初期の非表示状態から、composition 適用後に表示アニメーションを開始する。
+@Suppress("UnnecessaryLaunchedEffect")
 private fun CreatorTopScreen(
     revealState: RevealState,
     isPosts: Boolean,
@@ -249,8 +261,8 @@ private fun CreatorTopScreen(
     onShowBlockDialog: (SimpleAlertContents) -> Unit,
     onShowUnblockDialog: (SimpleAlertContents) -> Unit,
     onClickTranslateDescription: (String) -> Unit,
-    onRevealCompleted: () -> Unit,
-    onRewarded: (RewardUsage) -> Unit,
+    onRevealComplete: () -> Unit,
+    onReward: (RewardUsage) -> Unit,
     onTerminate: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
@@ -272,10 +284,7 @@ private fun CreatorTopScreen(
     var isShowMenuDialog by remember { mutableStateOf(false) }
     var isVisibleFAB by remember { mutableStateOf(false) }
 
-    val canRewardBulkDownload = !setting.canBulkDownload && rewardAvailability.bulkDownload
-    val canRewardCreatorSearch = !setting.hasPrivilege && rewardAvailability.creatorSearch
-    val canRewardCreatorTranslation = !setting.hasPrivilege && rewardAvailability.creatorTranslation
-    val shouldPreloadRewardAd = canRewardBulkDownload || canRewardCreatorSearch || canRewardCreatorTranslation
+    val shouldPreloadRewardAd = shouldPreloadCreatorRewardAd(setting, rewardAvailability)
 
     val tabs = listOf(
         CreatorTab.POSTS,
@@ -294,20 +303,20 @@ private fun CreatorTopScreen(
 
     LaunchedEffect(isBlocked) {
         if (isBlocked) {
-            delay(1000)
+            delay(1000.milliseconds)
             onShowUnblockDialog.invoke(SimpleAlertContents.CreatorUnblock)
         }
     }
 
     if (shouldShowReveal) {
         LaunchedEffect(shouldShowReveal) {
-            delay(500)
+            delay(500.milliseconds)
             revealState.revealByStep(
                 keys = listOf(
                     CreatorTopRevealKeys.Search,
                     CreatorTopRevealKeys.Fab,
                 ),
-                onCompleted = onRevealCompleted,
+                onCompleted = onRevealComplete,
             )
         }
     }
@@ -354,14 +363,13 @@ private fun CreatorTopScreen(
                             label = stringResource(tab.titleRes),
                             onClick = {
                                 scope.launch {
-                                    if (pagerState.currentPage != index) {
-                                        pagerState.animateScrollToPage(index)
-                                    } else {
-                                        when (tabs[index]) {
-                                            CreatorTab.POSTS -> postsGridState.animateScrollToItem(0)
-                                            CreatorTab.PLANS -> plansListState.animateScrollToItem(0)
-                                        }
-                                    }
+                                    scrollCreatorTab(
+                                        pagerState = pagerState,
+                                        index = index,
+                                        tab = tabs[index],
+                                        postsGridState = postsGridState,
+                                        plansListState = plansListState,
+                                    )
                                 }
                             },
                         )
@@ -410,7 +418,9 @@ private fun CreatorTopScreen(
                                 state = plansListState,
                                 creatorPlans = creatorPlans,
                                 onClickPlan = onClickPlan,
-                                onClickFanbox = { onClickLink.invoke("https://www.fanbox.cc/@${creatorDetail.creatorId.value}") },
+                                onClickFanbox = {
+                                    onClickLink.invoke("https://www.fanbox.cc/@${creatorDetail.creatorId.value}")
+                                },
                             )
                         }
                     }
@@ -480,15 +490,17 @@ private fun CreatorTopScreen(
             title = activeRewardUsage.rewardUnlockTitle(),
             message = activeRewardUsage.rewardUnlockMessage(),
             isAbleToReward = rewardAvailability.isAbleToReward(activeRewardUsage),
-            onRewarded = {
-                onRewarded.invoke(activeRewardUsage)
+            onReward = {
+                onReward.invoke(activeRewardUsage)
                 rewardUsage = null
 
-                when (activeRewardUsage) {
-                    RewardUsage.BulkDownload -> onClickAllDownload.invoke(creatorDetail.creatorId)
-                    RewardUsage.CreatorSearch -> onClickSearch.invoke(creatorDetail.creatorId)
-                    RewardUsage.CreatorTranslation -> onClickTranslateDescription.invoke(creatorDetail.description)
-                }
+                executeCreatorReward(
+                    usage = activeRewardUsage,
+                    creatorDetail = creatorDetail,
+                    onClickAllDownload = onClickAllDownload,
+                    onClickSearch = onClickSearch,
+                    onClickTranslateDescription = onClickTranslateDescription,
+                )
             },
             onClickShowPlus = {
                 onClickBillingPlus.invoke(activeRewardUsage.billingPlusKey())
@@ -504,7 +516,6 @@ private fun CreatorTopScreen(
 
     if (isShowMenuDialog) {
         CreatorTopMenuDialog(
-            isVisible = isShowMenuDialog,
             onClickBlock = { onShowBlockDialog.invoke(SimpleAlertContents.CreatorBlock) },
             onDismissRequest = { isShowMenuDialog = false },
         )
@@ -514,7 +525,7 @@ private fun CreatorTopScreen(
         CreatorTopDescriptionDialog(
             description = creatorDetail.description,
             translationState = descriptionTransState,
-            onTranslateClicked = {
+            onTranslateClick = {
                 if (setting.hasPrivilege) {
                     onClickTranslateDescription.invoke(it)
                 } else {
@@ -552,11 +563,12 @@ private fun RevealOverlayScope.RevealOverlayContent(
     key: Key,
     containerColor: Color,
     contentColor: Color,
+    modifier: Modifier = Modifier,
 ) {
     when (key) {
         CreatorTopRevealKeys.Search -> {
             OverlayText(
-                modifier = Modifier.align(
+                modifier = modifier.align(
                     horizontalAlignment = Alignment.End,
                     verticalArrangement = RevealOverlayArrangement.Bottom,
                 ),
@@ -569,7 +581,7 @@ private fun RevealOverlayScope.RevealOverlayContent(
 
         CreatorTopRevealKeys.Fab -> {
             OverlayText(
-                modifier = Modifier.align(
+                modifier = modifier.align(
                     horizontalArrangement = RevealOverlayArrangement.Start,
                 ),
                 text = stringResource(Res.string.reveal_creator_top_fab, appName),
@@ -587,40 +599,72 @@ private enum class CreatorTab(val titleRes: StringResource) {
 }
 
 @Composable
-private fun RewardUsage.rewardUnlockTitle(): String {
-    return stringResource(
-        when (this) {
-            RewardUsage.BulkDownload -> Res.string.creator_download_require_plus_title
-            RewardUsage.CreatorSearch -> Res.string.creator_reward_unlock_search_title
-            RewardUsage.CreatorTranslation -> Res.string.creator_reward_unlock_translation_title
-        },
-    )
-}
+private fun RewardUsage.rewardUnlockTitle(): String = stringResource(
+    when (this) {
+        RewardUsage.BulkDownload -> Res.string.creator_download_require_plus_title
+        RewardUsage.CreatorSearch -> Res.string.creator_reward_unlock_search_title
+        RewardUsage.CreatorTranslation -> Res.string.creator_reward_unlock_translation_title
+    },
+)
 
 @Composable
-private fun RewardUsage.rewardUnlockMessage(): String {
-    return stringResource(
-        Res.string.creator_reward_unlock_require_plus_message,
-        rewardUnlockFeatureName(),
-        appName,
-    )
-}
+private fun RewardUsage.rewardUnlockMessage(): String = stringResource(
+    Res.string.creator_reward_unlock_require_plus_message,
+    rewardUnlockFeatureName(),
+    appName,
+)
 
 @Composable
-private fun RewardUsage.rewardUnlockFeatureName(): String {
-    return stringResource(
-        when (this) {
-            RewardUsage.BulkDownload -> Res.string.creator_reward_unlock_bulk_download_feature
-            RewardUsage.CreatorSearch -> Res.string.creator_reward_unlock_creator_search_feature
-            RewardUsage.CreatorTranslation -> Res.string.creator_reward_unlock_translation_feature
-        },
-    )
+private fun RewardUsage.rewardUnlockFeatureName(): String = stringResource(
+    when (this) {
+        RewardUsage.BulkDownload -> Res.string.creator_reward_unlock_bulk_download_feature
+        RewardUsage.CreatorSearch -> Res.string.creator_reward_unlock_creator_search_feature
+        RewardUsage.CreatorTranslation -> Res.string.creator_reward_unlock_translation_feature
+    },
+)
+
+private fun RewardUsage.billingPlusKey(): String = when (this) {
+    RewardUsage.BulkDownload -> "all_download"
+    RewardUsage.CreatorSearch -> "search_post_by_creator"
+    RewardUsage.CreatorTranslation -> "translate"
 }
 
-private fun RewardUsage.billingPlusKey(): String {
-    return when (this) {
-        RewardUsage.BulkDownload -> "all_download"
-        RewardUsage.CreatorSearch -> "search_post_by_creator"
-        RewardUsage.CreatorTranslation -> "translate"
+private fun shouldPreloadCreatorRewardAd(setting: Setting, availability: CreatorTopRewardAvailability): Boolean {
+    val canRewardBulkDownload = !setting.canBulkDownload && availability.bulkDownload
+    val canRewardCreatorSearch = !setting.hasPrivilege && availability.creatorSearch
+    val canRewardCreatorTranslation = !setting.hasPrivilege && availability.creatorTranslation
+
+    val hasRewardableUsage = canRewardBulkDownload || canRewardCreatorSearch || canRewardCreatorTranslation
+    return hasRewardableUsage
+}
+
+private suspend fun scrollCreatorTab(
+    pagerState: PagerState,
+    index: Int,
+    tab: CreatorTab,
+    postsGridState: LazyGridState,
+    plansListState: LazyListState,
+) {
+    if (pagerState.currentPage != index) {
+        pagerState.animateScrollToPage(index)
+    } else {
+        when (tab) {
+            CreatorTab.POSTS -> postsGridState.animateScrollToItem(0)
+            CreatorTab.PLANS -> plansListState.animateScrollToItem(0)
+        }
+    }
+}
+
+private fun executeCreatorReward(
+    usage: RewardUsage,
+    creatorDetail: CreatorDetail,
+    onClickAllDownload: (CreatorId) -> Unit,
+    onClickSearch: (CreatorId) -> Unit,
+    onClickTranslateDescription: (String) -> Unit,
+) {
+    when (usage) {
+        RewardUsage.BulkDownload -> onClickAllDownload.invoke(creatorDetail.creatorId)
+        RewardUsage.CreatorSearch -> onClickSearch.invoke(creatorDetail.creatorId)
+        RewardUsage.CreatorTranslation -> onClickTranslateDescription.invoke(creatorDetail.description)
     }
 }

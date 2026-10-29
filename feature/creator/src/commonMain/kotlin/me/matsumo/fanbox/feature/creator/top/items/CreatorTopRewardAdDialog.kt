@@ -1,13 +1,15 @@
 package me.matsumo.fanbox.feature.creator.top.items
 
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.Modifier
 
 @Composable
 expect fun CreatorTopRewardAdDialog(
     title: String,
     message: String,
     isAbleToReward: Boolean,
-    onRewarded: () -> Unit,
+    onReward: () -> Unit,
     onClickShowPlus: () -> Unit,
     onDismissRequest: () -> Unit,
+    modifier: Modifier = Modifier,
 )

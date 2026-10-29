@@ -24,6 +24,8 @@ import kotlin.time.Instant
 
 /** RewardRepository の用途別リワード視聴状態を検証するテスト。 */
 @OptIn(ExperimentalTime::class)
+// テスト自身が Dispatcher の注入元となり、DataStore の実 I/O と即時実行を使い分ける。
+@Suppress("InjectDispatcher")
 class RewardRepositoryTest {
 
     private val dataStoreScope = CoroutineScope(Dispatchers.IO + SupervisorJob())
@@ -77,16 +79,12 @@ class RewardRepositoryTest {
         )
     }
 
-    private fun createPreferenceHelper(): PreferenceHelper {
-        return object : PreferenceHelper {
-            private val stores = mutableMapOf<String, DataStore<Preferences>>()
+    private fun createPreferenceHelper(): PreferenceHelper = object : PreferenceHelper {
+        private val stores = mutableMapOf<String, DataStore<Preferences>>()
 
-            override fun create(name: String): DataStore<Preferences> {
-                return stores.getOrPut(name) { createDataStore(name) }
-            }
+        override fun create(name: String): DataStore<Preferences> = stores.getOrPut(name) { createDataStore(name) }
 
-            override fun delete(name: String) = Unit
-        }
+        override fun delete(name: String) = Unit
     }
 
     private fun createDataStore(name: String): DataStore<Preferences> {
@@ -102,11 +100,7 @@ class RewardRepositoryTest {
         )
     }
 
-    private class MutableClock(
-        var instant: Instant,
-    ) : Clock {
-        override fun now(): Instant {
-            return instant
-        }
+    private class MutableClock(var instant: Instant) : Clock {
+        override fun now(): Instant = instant
     }
 }

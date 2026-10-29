@@ -36,7 +36,9 @@ import me.matsumo.fanbox.core.model.fanbox.Post
 import me.matsumo.fanbox.core.model.fanbox.PostDetail
 import me.matsumo.fanbox.core.model.fanbox.PostId
 import java.io.File
+import java.util.Locale
 import kotlin.coroutines.resume
+import kotlin.time.Duration.Companion.milliseconds
 import kotlin.uuid.ExperimentalUuidApi
 import kotlin.uuid.Uuid
 
@@ -57,7 +59,7 @@ class DownloadPostsRepositoryImpl(
     init {
         scope.launch {
             while (isActive) {
-                delay(500)
+                delay(500.milliseconds)
 
                 val downloadItems = _reservingPosts.getAndUpdate { it.drop(1) }.firstOrNull()
                 if (downloadItems == null) {
@@ -68,10 +70,14 @@ class DownloadPostsRepositoryImpl(
                 suspendRunCatching {
                     val items = when (val type = downloadItems.requestType) {
                         FanboxDownloadItems.RequestType.File -> downloadItems.items
+
                         FanboxDownloadItems.RequestType.Image -> downloadItems.items
+
                         is FanboxDownloadItems.RequestType.WholePost -> {
                             val postDetail = fanboxRepository.getPostDetail(downloadItems.postId)
-                            val images = postDetail.body.imageItems.mapIndexed { index, image -> image.toDownloadItem(index) }
+                            val images = postDetail.body.imageItems.mapIndexed { index, image ->
+                                image.toDownloadItem(index)
+                            }
                             val files = postDetail.body.fileItems.map { it.toDownloadItem() }
 
                             images + if (type.isIgnoreFiles) emptyList() else files
@@ -118,7 +124,11 @@ class DownloadPostsRepositoryImpl(
         }
     }
 
-    override fun requestDownloadImages(postId: PostId, title: String, images: List<PostDetail.ImageItem>) {
+    override fun requestDownloadImages(
+        postId: PostId,
+        title: String,
+        images: List<PostDetail.ImageItem>,
+    ) {
         val items = FanboxDownloadItems(
             postId = postId,
             title = title,
@@ -130,7 +140,11 @@ class DownloadPostsRepositoryImpl(
         _reservingPosts.update { it + items }
     }
 
-    override fun requestDownloadFiles(postId: PostId, title: String, files: List<PostDetail.FileItem>) {
+    override fun requestDownloadFiles(
+        postId: PostId,
+        title: String,
+        files: List<PostDetail.FileItem>,
+    ) {
         val items = FanboxDownloadItems(
             postId = postId,
             title = title,
@@ -142,12 +156,12 @@ class DownloadPostsRepositoryImpl(
         _reservingPosts.update { it + items }
     }
 
-    override suspend fun getSaveDirectory(requestType: FanboxDownloadItems.RequestType): String {
-        return (getParentFile(requestType) ?: getOldParentFile(requestType, true))?.filePath ?: "Unknown"
-    }
+    override suspend fun getSaveDirectory(requestType: FanboxDownloadItems.RequestType): String = (getParentFile(requestType) ?: getOldParentFile(requestType, true))?.filePath ?: "Unknown"
 
-    private fun PostDetail.ImageItem.toDownloadItem(index: Int = -1): FanboxDownloadItems.Item {
-        val namePrefix = if (index >= 0) "image-%03d".format(index) else "image"
+    private fun PostDetail.ImageItem.toDownloadItem(
+        index: Int = -1,
+    ): FanboxDownloadItems.Item {
+        val namePrefix = if (index >= 0) "image-%03d".format(Locale.ROOT, index) else "image"
         return FanboxDownloadItems.Item(
             postId = postId,
             itemId = id,
@@ -159,59 +173,58 @@ class DownloadPostsRepositoryImpl(
         )
     }
 
-    private fun PostDetail.FileItem.toDownloadItem(): FanboxDownloadItems.Item {
-        return FanboxDownloadItems.Item(
-            postId = postId,
-            itemId = id,
-            name = "file-${postId.value}-${id.value}",
-            extension = extension,
-            originalUrl = url,
-            thumbnailUrl = "",
-            type = FanboxDownloadItems.Item.Type.File,
-        )
-    }
+    private fun PostDetail.FileItem.toDownloadItem(): FanboxDownloadItems.Item = FanboxDownloadItems.Item(
+        postId = postId,
+        itemId = id,
+        name = "file-${postId.value}-${id.value}",
+        extension = extension,
+        originalUrl = url,
+        thumbnailUrl = "",
+        type = FanboxDownloadItems.Item.Type.File,
+    )
 
-    private suspend fun downloadItem(item: FanboxDownloadItems.Item, onDownload: (Float) -> Unit): Pair<FanboxDownloadItems.Item, File>? {
-        return suspendRunCatching {
-            val fileType = userDataStore.setting.first().downloadFileType
-            val url = if (item.extension.lowercase() != "gif" || fileType == DownloadFileType.ORIGINAL) item.originalUrl else item.thumbnailUrl
+    private suspend fun downloadItem(item: FanboxDownloadItems.Item, onDownload: (Float) -> Unit): Pair<FanboxDownloadItems.Item, File>? = suspendRunCatching {
+        val fileType = userDataStore.setting.first().downloadFileType
+        val url = if (item.extension.lowercase() != "gif" || fileType == DownloadFileType.ORIGINAL) item.originalUrl else item.thumbnailUrl
 
-            val tmpFile = File(context.cacheDir, "tmp-${item.name}.${item.extension}")
+        val tmpFile = File(context.cacheDir, "tmp-${item.name}.${item.extension}")
 
-            // チャンクを追記していくため、中断した前回のダウンロードが残っていると先頭に
-            // 混入する。書き始める前に必ず消す。
+        // チャンクを追記していくため、中断した前回のダウンロードが残っていると先頭に
+        // 混入する。書き始める前に必ず消す。
+        tmpFile.delete()
+
+        try {
+            fanboxRepository.download(
+                url = url,
+                onDownload = onDownload,
+                onChunk = { chunk -> tmpFile.appendBytes(chunk) },
+            )
+        } catch (e: Throwable) {
+            // 失敗とキャンセルのどちらでも書きかけを残さない。CancellationException も
+            // ここを通るため、削除してからそのまま再送出する。
             tmpFile.delete()
+            throw e
+        }
 
-            try {
-                fanboxRepository.download(
-                    url = url,
-                    onDownload = onDownload,
-                    onChunk = { chunk -> tmpFile.appendBytes(chunk) },
-                )
-            } catch (e: Throwable) {
-                // 失敗とキャンセルのどちらでも書きかけを残さない。CancellationException も
-                // ここを通るため、削除してからそのまま再送出する。
-                tmpFile.delete()
-                throw e
-            }
+        onDownload.invoke(1f)
 
-            onDownload.invoke(1f)
+        item to tmpFile
+    }.onFailure {
+        Napier.e(it) { "Failed to download item: ${item.name}" }
+    }.also {
+        PostsLog.download(
+            type = "unknown",
+            postId = item.postId.value,
+            itemId = item.name,
+            extension = item.extension,
+            isSuccess = it.isSuccess,
+        ).send()
+    }.getOrNull()
 
-            item to tmpFile
-        }.onFailure {
-            Napier.e(it) { "Failed to download item: ${item.name}" }
-        }.also {
-            PostsLog.download(
-                type = "unknown",
-                postId = item.postId.value,
-                itemId = item.name,
-                extension = item.extension,
-                isSuccess = it.isSuccess,
-            ).send()
-        }.getOrNull()
-    }
-
-    private fun getOldParentFile(requestType: FanboxDownloadItems.RequestType, isDryRun: Boolean = false): UniFile? {
+    private fun getOldParentFile(
+        requestType: FanboxDownloadItems.RequestType,
+        isDryRun: Boolean = false,
+    ): UniFile? {
         val environmentDir = when (requestType) {
             is FanboxDownloadItems.RequestType.Image -> Environment.DIRECTORY_PICTURES
             is FanboxDownloadItems.RequestType.File -> Environment.DIRECTORY_DOWNLOADS
@@ -284,7 +297,7 @@ class DownloadPostsRepositoryImpl(
                 }
 
                 tmpFile.delete()
-                delay(500)
+                delay(500.milliseconds)
             }.onFailure {
                 Napier.e(it) { "Failed to download item: ${item.name}" }
             }
@@ -296,7 +309,7 @@ class DownloadPostsRepositoryImpl(
         tmpFile: File,
         parentFile: UniFile,
         mimeType: String?,
-    ) = suspendCancellableCoroutine<Uri> {
+    ) = suspendCancellableCoroutine<Uri> { continuation ->
         val file = parentFile.createFile(name)
 
         context.contentResolver.openOutputStream(file.uri)!!.use {
@@ -306,7 +319,7 @@ class DownloadPostsRepositoryImpl(
         }
 
         MediaScannerConnection.scanFile(context, arrayOf(parentFile.filePath), arrayOf(mimeType)) { _, uri ->
-            it.resume(uri)
+            continuation.resume(uri)
         }
     }
 
@@ -316,7 +329,7 @@ class DownloadPostsRepositoryImpl(
         tmpFile: File,
         mimeType: String?,
         requestType: FanboxDownloadItems.RequestType,
-    ) = suspendCancellableCoroutine {
+    ) = suspendCancellableCoroutine { continuation ->
         val path = getOldParentFile(requestType, true)?.filePath
         val values = ContentValues().apply {
             put(MediaStore.Images.Media.DISPLAY_NAME, fileName)
@@ -340,7 +353,7 @@ class DownloadPostsRepositoryImpl(
             values.put(MediaStore.Images.Media.IS_PENDING, 0)
             resolver.update(itemUri, values, null, null)
 
-            it.resume(itemUri)
+            continuation.resume(itemUri)
         } else {
             error("Failed to save file.")
         }

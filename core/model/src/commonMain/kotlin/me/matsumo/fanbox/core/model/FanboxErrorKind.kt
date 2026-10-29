@@ -42,16 +42,14 @@ enum class FanboxErrorKind {
  *
  * いずれの分類にも当てはまらないステータスと、ステータスを伴わない失敗には null を返す。
  */
-internal fun fanboxErrorKindOf(statusCode: Int?): FanboxErrorKind? {
-    return when (statusCode) {
-        null -> null
-        401 -> FanboxErrorKind.Unauthorized
-        403 -> FanboxErrorKind.Forbidden
-        404 -> FanboxErrorKind.NotFound
-        429 -> FanboxErrorKind.RateLimited
-        in 500..599 -> FanboxErrorKind.ServerError
-        else -> null
-    }
+internal fun fanboxErrorKindOf(statusCode: Int?): FanboxErrorKind? = when (statusCode) {
+    null -> null
+    401 -> FanboxErrorKind.Unauthorized
+    403 -> FanboxErrorKind.Forbidden
+    404 -> FanboxErrorKind.NotFound
+    429 -> FanboxErrorKind.RateLimited
+    in 500..599 -> FanboxErrorKind.ServerError
+    else -> null
 }
 
 /**
@@ -78,12 +76,19 @@ fun Throwable.toScreenStateError(
 ): ScreenState.Error {
     val message: StringResource = when (toFanboxErrorKind()) {
         FanboxErrorKind.Unauthorized -> Res.string.error_session_expired
+
         FanboxErrorKind.Forbidden -> Res.string.error_forbidden
+
         FanboxErrorKind.NotFound -> Res.string.error_no_data
+
         FanboxErrorKind.RateLimited -> Res.string.error_rate_limited
+
         FanboxErrorKind.ServerError -> Res.string.error_server
+
         FanboxErrorKind.Network -> Res.string.error_network_description
+
         FanboxErrorKind.SchemaMismatch -> Res.string.error_schema_mismatch
+
         FanboxErrorKind.Unknown -> return ScreenState.Error(
             message = fallbackMessage,
             retryTitle = fallbackRetryTitle,

@@ -12,9 +12,7 @@ import androidx.navigation.compose.dialog
 import androidx.navigation.toRoute
 import me.matsumo.fanbox.core.model.Destination
 
-fun NavGraphBuilder.settingTranslationDialog(
-    terminate: () -> Unit,
-) {
+fun NavGraphBuilder.settingTranslationDialog(terminate: () -> Unit) {
     dialog<Destination.SettingTranslationDialog> {
         Dialog(
             onDismissRequest = terminate,

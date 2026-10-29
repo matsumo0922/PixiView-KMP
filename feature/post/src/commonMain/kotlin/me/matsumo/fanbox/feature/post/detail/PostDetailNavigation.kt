@@ -1,5 +1,3 @@
-@file:Suppress("MatchingDeclarationName")
-
 package me.matsumo.fanbox.feature.post.detail
 
 import androidx.compose.foundation.layout.fillMaxSize

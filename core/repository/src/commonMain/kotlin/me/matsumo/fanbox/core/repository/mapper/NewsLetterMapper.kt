@@ -5,12 +5,10 @@ import me.matsumo.fankt.fanbox.domain.model.FanboxNewsLetter
 import kotlin.time.ExperimentalTime
 
 @OptIn(ExperimentalTime::class)
-fun FanboxNewsLetter.toNewsLetter(): NewsLetter {
-    return NewsLetter(
-        id = id.toNewsLetterId(),
-        body = body,
-        createdAt = createdAt,
-        creator = creator.toCreator(),
-        isRead = isRead,
-    )
-}
+fun FanboxNewsLetter.toNewsLetter(): NewsLetter = NewsLetter(
+    id = id.toNewsLetterId(),
+    body = body,
+    createdAt = createdAt,
+    creator = creator.toCreator(),
+    isRead = isRead,
+)

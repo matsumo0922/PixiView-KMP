@@ -20,10 +20,7 @@ import me.matsumo.fanbox.core.repository.SettingRepository
 import me.matsumo.fanbox.core.resources.Res
 import me.matsumo.fanbox.core.resources.error_no_data
 
-class BookmarkedPostsViewModel(
-    private val settingRepository: SettingRepository,
-    private val fanboxRepository: FanboxRepository,
-) : ViewModel() {
+class BookmarkedPostsViewModel(private val settingRepository: SettingRepository, private val fanboxRepository: FanboxRepository) : ViewModel() {
 
     private val _screenState = MutableStateFlow<ScreenState<LikedPostsUiState>>(ScreenState.Loading)
 

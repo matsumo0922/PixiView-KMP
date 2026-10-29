@@ -6,10 +6,7 @@ import androidx.navigation.NavGraphBuilder
 import androidx.navigation.compose.composable
 import me.matsumo.fanbox.core.model.Destination
 
-fun NavGraphBuilder.downloadQueueScreen(
-    navigateTo: (Destination) -> Unit,
-    terminate: () -> Unit,
-) {
+fun NavGraphBuilder.downloadQueueScreen(navigateTo: (Destination) -> Unit, terminate: () -> Unit) {
     composable<Destination.DownloadQueue> {
         DownloadQueueScreen(
             modifier = Modifier.fillMaxSize(),

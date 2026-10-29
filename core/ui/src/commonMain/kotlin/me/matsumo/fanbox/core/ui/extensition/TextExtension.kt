@@ -1,7 +1,7 @@
 package me.matsumo.fanbox.core.ui.extensition
 
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.SideEffect
 import androidx.compose.ui.text.AnnotatedString
 import com.mohamedrejeb.richeditor.model.rememberRichTextState
 
@@ -9,7 +9,7 @@ import com.mohamedrejeb.richeditor.model.rememberRichTextState
 fun String.toRichHtmlString(): AnnotatedString {
     val state = rememberRichTextState()
 
-    LaunchedEffect(this) {
+    SideEffect(this) {
         state.setHtml(this@toRichHtmlString)
     }
 

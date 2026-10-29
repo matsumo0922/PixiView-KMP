@@ -74,7 +74,7 @@ internal fun SettingThemeRoute(
             onSelectTheme = viewModel::setThemeConfig,
             onSelectThemeColor = viewModel::setThemeColorConfig,
             onClickDynamicColor = viewModel::setUseDynamicColor,
-            onShowSnackbar = { scope.launch { toastExtension.show(snackbarHostState, it) } },
+            onShowSnackbar = { message -> scope.launch { toastExtension.show(snackbarHostState, message) } },
             onTerminate = terminate,
         )
     }
@@ -144,7 +144,7 @@ private fun SettingThemeDialog(
                     description = Res.string.setting_theme_theme_dynamic_color_description,
                     isEnabled = currentPlatform == Platform.Android,
                     value = if (currentPlatform == Platform.Android) setting.isUseDynamicColor else false,
-                    onValueChanged = {
+                    onValueChange = {
                         if (setting.hasPrivilege) {
                             onClickDynamicColor.invoke(it)
                         } else {

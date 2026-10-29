@@ -120,10 +120,7 @@ class MetaDataMapperTest {
         assertEquals("token", metaData.csrfToken)
     }
 
-    private fun assertOnlyThisFlagIsRaised(
-        raiseOne: (Context.User) -> Context.User,
-        readBack: (MetaData.Context.User) -> Boolean,
-    ) {
+    private fun assertOnlyThisFlagIsRaised(raiseOne: (Context.User) -> Context.User, readBack: (MetaData.Context.User) -> Boolean) {
         val context = requireNotNull(fanboxMetaData.context).copy(user = raiseOne(allFlagsDown))
         val user = requireNotNull(fanboxMetaData.copy(context = context).toMetaData().context).user
 

@@ -15,22 +15,20 @@ class SearchPostsPagingSource(
 
     override val keyReuseSupported: Boolean = true
 
-    override suspend fun load(params: LoadParams<Int>): LoadResult<Int, Post> {
-        return suspendRunCatching {
-            fanboxRepository.getPostFromQuery(tag, creatorId, params.key ?: 0)
-        }.fold(
-            onSuccess = {
-                LoadResult.Page(
-                    data = it.contents,
-                    nextKey = it.nextPage,
-                    prevKey = null,
-                )
-            },
-            onFailure = {
-                LoadResult.Error(it)
-            },
-        )
-    }
+    override suspend fun load(params: LoadParams<Int>): LoadResult<Int, Post> = suspendRunCatching {
+        fanboxRepository.getPostFromQuery(tag, creatorId, params.key ?: 0)
+    }.fold(
+        onSuccess = {
+            LoadResult.Page(
+                data = it.contents,
+                nextKey = it.nextPage,
+                prevKey = null,
+            )
+        },
+        onFailure = {
+            LoadResult.Error(it)
+        },
+    )
 
     override fun getRefreshKey(state: PagingState<Int, Post>): Int? = null
 }

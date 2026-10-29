@@ -6,29 +6,24 @@ import me.matsumo.fanbox.core.common.util.suspendRunCatching
 import me.matsumo.fanbox.core.model.fanbox.CreatorDetail
 import me.matsumo.fanbox.core.repository.FanboxRepository
 
-class SearchCreatorsPagingSource(
-    private val fanboxRepository: FanboxRepository,
-    private val query: String,
-) : PagingSource<Int, CreatorDetail>() {
+class SearchCreatorsPagingSource(private val fanboxRepository: FanboxRepository, private val query: String) : PagingSource<Int, CreatorDetail>() {
 
     override val keyReuseSupported: Boolean = true
 
-    override suspend fun load(params: LoadParams<Int>): LoadResult<Int, CreatorDetail> {
-        return suspendRunCatching {
-            fanboxRepository.getCreatorFromQuery(query, params.key ?: 0)
-        }.fold(
-            onSuccess = {
-                LoadResult.Page(
-                    data = it.contents,
-                    nextKey = it.nextPage,
-                    prevKey = null,
-                )
-            },
-            onFailure = {
-                LoadResult.Error(it)
-            },
-        )
-    }
+    override suspend fun load(params: LoadParams<Int>): LoadResult<Int, CreatorDetail> = suspendRunCatching {
+        fanboxRepository.getCreatorFromQuery(query, params.key ?: 0)
+    }.fold(
+        onSuccess = {
+            LoadResult.Page(
+                data = it.contents,
+                nextKey = it.nextPage,
+                prevKey = null,
+            )
+        },
+        onFailure = {
+            LoadResult.Error(it)
+        },
+    )
 
     override fun getRefreshKey(state: PagingState<Int, CreatorDetail>): Int? = null
 }

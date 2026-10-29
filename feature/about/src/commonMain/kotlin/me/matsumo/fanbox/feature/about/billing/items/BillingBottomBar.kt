@@ -70,15 +70,15 @@ internal fun BillingBottomBar(
             modifier = Modifier.fillMaxWidth(),
             plans = uiState.plans,
             selectedPlanType = uiState.selectedPlanType,
-            onPlanSelected = { planType -> onViewEvent(BillingViewEvent.OnPlanSelected(planType)) },
+            onPlanSelect = { planType -> onViewEvent(BillingViewEvent.OnPlanSelected(planType)) },
         )
 
         if (selectedPlan != null) {
             ButtonSection(
                 modifier = Modifier.fillMaxWidth(),
                 selectedPlan = selectedPlan,
-                onPurchaseClicked = { onViewEvent(BillingViewEvent.OnPurchaseClicked) },
-                onRestoreClicked = { onViewEvent(BillingViewEvent.OnRestoreClicked) },
+                onPurchaseClick = { onViewEvent(BillingViewEvent.OnPurchaseClicked) },
+                onRestoreClick = { onViewEvent(BillingViewEvent.OnRestoreClicked) },
             )
         }
     }
@@ -88,7 +88,7 @@ internal fun BillingBottomBar(
 private fun PlanSelectSection(
     plans: ImmutableList<BillingPlan>,
     selectedPlanType: BillingPlan.Type,
-    onPlanSelected: (BillingPlan.Type) -> Unit,
+    onPlanSelect: (BillingPlan.Type) -> Unit,
     modifier: Modifier = Modifier,
 ) {
     Column(
@@ -101,7 +101,7 @@ private fun PlanSelectSection(
                     .fillMaxWidth(),
                 plan = plan,
                 isSelected = selectedPlanType == plan.type,
-                onPlanSelected = onPlanSelected,
+                onPlanSelect = onPlanSelect,
             )
         }
     }
@@ -111,21 +111,21 @@ private fun PlanSelectSection(
 private fun PlanSelectItem(
     plan: BillingPlan,
     isSelected: Boolean,
-    onPlanSelected: (BillingPlan.Type) -> Unit,
+    onPlanSelect: (BillingPlan.Type) -> Unit,
     modifier: Modifier = Modifier,
 ) {
     Row(
         modifier = modifier
-            .selectable(
-                selected = isSelected,
-                onClick = { onPlanSelected.invoke(plan.type) },
-                role = Role.RadioButton,
-            )
             .clip(RoundedCornerShape(8.dp))
             .border(
                 width = 1.dp,
                 color = if (isSelected) MaterialTheme.colorScheme.primary else Color.Transparent,
                 shape = RoundedCornerShape(8.dp),
+            )
+            .selectable(
+                selected = isSelected,
+                onClick = { onPlanSelect.invoke(plan.type) },
+                role = Role.RadioButton,
             )
             .padding(16.dp),
         verticalAlignment = Alignment.CenterVertically,
@@ -176,8 +176,8 @@ private fun PlanTrialLabel(
 @Composable
 private fun ButtonSection(
     selectedPlan: BillingPlan,
-    onPurchaseClicked: () -> Unit,
-    onRestoreClicked: () -> Unit,
+    onPurchaseClick: () -> Unit,
+    onRestoreClick: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
     val purchaseButtonText = selectedPlan.trialPeriod?.let { trialPeriod ->
@@ -190,7 +190,7 @@ private fun ButtonSection(
     ) {
         Button(
             modifier = Modifier.fillMaxWidth(),
-            onClick = onPurchaseClicked,
+            onClick = onPurchaseClick,
         ) {
             Text(
                 text = purchaseButtonText,
@@ -199,7 +199,7 @@ private fun ButtonSection(
 
         OutlinedButton(
             modifier = Modifier.fillMaxWidth(),
-            onClick = onRestoreClicked,
+            onClick = onRestoreClick,
         ) {
             Text(
                 text = stringResource(Res.string.billing_plus_verify_button),
@@ -209,18 +209,14 @@ private fun ButtonSection(
 }
 
 @Composable
-private fun BillingPlan.getPlanName(): String {
-    return when (type) {
-        BillingPlan.Type.MONTHLY -> stringResource(Res.string.billing_plus_plan_monthly)
-        BillingPlan.Type.ANNUAL -> stringResource(Res.string.billing_plus_plan_yearly)
-        BillingPlan.Type.UNKNOWN -> stringResource(Res.string.error_unknown)
-    }
+private fun BillingPlan.getPlanName(): String = when (type) {
+    BillingPlan.Type.MONTHLY -> stringResource(Res.string.billing_plus_plan_monthly)
+    BillingPlan.Type.ANNUAL -> stringResource(Res.string.billing_plus_plan_yearly)
+    BillingPlan.Type.UNKNOWN -> stringResource(Res.string.error_unknown)
 }
 
 @Composable
-private fun BillingPlan.getPriceText(): String {
-    return "$formattedPrice / ${getUnit()}"
-}
+private fun BillingPlan.getPriceText(): String = "$formattedPrice / ${getUnit()}"
 
 @Composable
 private fun BillingPlan.getUnit(): String {
@@ -242,12 +238,10 @@ private fun BillingTrialPeriod.getDisplayText(): String {
     return stringResource(unit.toStringResource(), value)
 }
 
-private fun BillingTrialPeriod.Unit.toStringResource(): StringResource {
-    return when (this) {
-        BillingTrialPeriod.Unit.DAY -> Res.string.billing_plus_trial_period_day
-        BillingTrialPeriod.Unit.WEEK -> Res.string.billing_plus_trial_period_week
-        BillingTrialPeriod.Unit.MONTH -> Res.string.billing_plus_trial_period_month
-        BillingTrialPeriod.Unit.YEAR -> Res.string.billing_plus_trial_period_year
-        BillingTrialPeriod.Unit.UNKNOWN -> Res.string.error_unknown
-    }
+private fun BillingTrialPeriod.Unit.toStringResource(): StringResource = when (this) {
+    BillingTrialPeriod.Unit.DAY -> Res.string.billing_plus_trial_period_day
+    BillingTrialPeriod.Unit.WEEK -> Res.string.billing_plus_trial_period_week
+    BillingTrialPeriod.Unit.MONTH -> Res.string.billing_plus_trial_period_month
+    BillingTrialPeriod.Unit.YEAR -> Res.string.billing_plus_trial_period_year
+    BillingTrialPeriod.Unit.UNKNOWN -> Res.string.error_unknown
 }

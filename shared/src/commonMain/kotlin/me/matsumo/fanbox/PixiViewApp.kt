@@ -11,7 +11,8 @@ import androidx.compose.material3.windowsizeclass.WindowWidthSizeClass
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.DisposableEffect
-import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.ReadOnlyComposable
+import androidx.compose.runtime.SideEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
@@ -48,6 +49,7 @@ import me.matsumo.fanbox.core.ui.view.LoadingView
 import me.matsumo.fanbox.core.ui.view.NativeView
 import org.koin.compose.koinInject
 import org.koin.compose.viewmodel.koinViewModel
+import kotlin.time.Duration.Companion.milliseconds
 
 @Composable
 fun PixiViewApp(
@@ -77,7 +79,10 @@ fun PixiViewApp(
     BindBiometryAuthenticatorEffect(biometryAuthenticator)
 
     CompositionLocalProvider(LocalNavigationType provides NavigationType(navigationType)) {
-        RevealCanvas(revealCanvasState) {
+        RevealCanvas(
+            modifier = modifier,
+            revealCanvasState = revealCanvasState,
+        ) {
             AsyncLoadContents(
                 modifier = Modifier.fillMaxSize(),
                 screenState = screenState,
@@ -89,7 +94,7 @@ fun PixiViewApp(
                     enable = shouldLoadInterstitialAd,
                 )
 
-                LaunchedEffect(shouldLoadInterstitialAd, interstitialAdState) {
+                SideEffect(shouldLoadInterstitialAd, interstitialAdState) {
                     if (shouldLoadInterstitialAd) {
                         interstitialAdState.load()
                     }
@@ -105,15 +110,15 @@ fun PixiViewApp(
                     nativeViews = nativeViews,
                     revealCanvasState = revealCanvasState,
                 ) {
-                    PixiViewBackground(modifier) {
+                    PixiViewBackground(Modifier) {
                         PixiViewScreen(
                             modifier = Modifier.fillMaxSize(),
                             uiState = uiState,
                             onRequestInitPixiViewId = viewModel::initPixiViewId,
                             onRequestFirstLaunchFlag = viewModel::initFirstLaunchTime,
                             onRequestUpdateState = viewModel::updateState,
-                            onBillingRetentionPromptShown = viewModel::recordBillingRetentionPromptShown,
-                            onPostDetailClosed = {
+                            onBillingRetentionPromptShow = viewModel::recordBillingRetentionPromptShown,
+                            onPostDetailClose = {
                                 handlePostDetailClosedForInterstitialAd(
                                     viewModel = viewModel,
                                     interstitialAdState = interstitialAdState,
@@ -137,7 +142,7 @@ fun PixiViewApp(
                             scope.launch {
                                 if (currentPlatform == Platform.Android) {
                                     // Wait for the bind fragment manager.
-                                    delay(1000)
+                                    delay(1000.milliseconds)
                                 }
 
                                 if (viewModel.tryToAuthenticate(biometryAuthenticator)) {
@@ -174,22 +179,15 @@ fun PixiViewApp(
     }
 }
 
-private fun Setting.shouldLoadInterstitialAd(): Boolean {
-    return !hasPrivilege && shouldShowInterstitialAd
-}
+private fun Setting.shouldLoadInterstitialAd(): Boolean = !hasPrivilege && shouldShowInterstitialAd
 
-private suspend fun handlePostDetailClosedForInterstitialAd(
-    viewModel: PixiViewViewModel,
-    interstitialAdState: InterstitialAdState,
-) {
+private suspend fun handlePostDetailClosedForInterstitialAd(viewModel: PixiViewViewModel, interstitialAdState: InterstitialAdState) {
     viewModel.onPostDetailClosedForInterstitialAd {
         showInterstitialAdAndReload(interstitialAdState)
     }
 }
 
-private suspend fun showInterstitialAdAndReload(
-    interstitialAdState: InterstitialAdState,
-): Boolean {
+private suspend fun showInterstitialAdAndReload(interstitialAdState: InterstitialAdState): Boolean {
     val wasShown = interstitialAdState.show()
     if (wasShown) {
         interstitialAdState.load()
@@ -198,6 +196,7 @@ private suspend fun showInterstitialAdAndReload(
     return wasShown
 }
 
+@ReadOnlyComposable
 @Composable
 private fun shouldUseDarkTheme(screenState: ScreenState<MainUiState>): Boolean {
     val default = isSystemInDarkTheme()

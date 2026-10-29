@@ -77,7 +77,11 @@ internal fun SettingTopRoute(
         screenState = screenState,
         terminate = { terminate.invoke() },
     ) { uiState ->
-        fun requirePlus(setting: Boolean, settingMethod: (Boolean) -> Unit, referrer: String) {
+        fun requirePlus(
+            setting: Boolean,
+            settingMethod: (Boolean) -> Unit,
+            referrer: String,
+        ) {
             if (setting) {
                 if (uiState.setting.hasPrivilege) {
                     settingMethod.invoke(true)
@@ -123,9 +127,11 @@ internal fun SettingTopRoute(
             onClickFollowTabDefaultHome = viewModel::setFollowTabDefaultHome,
             onClickHideAdultContents = viewModel::setHideAdultContents,
             onClickOverrideAdultContents = viewModel::setOverrideAdultContents,
-            onClickInfinityPostDetail = { requirePlus(it, viewModel::setUseInfinityPostDetail, "isUseInfinityPostDetail") },
+            onClickInfinityPostDetail = {
+                requirePlus(it, viewModel::setUseInfinityPostDetail, "isUseInfinityPostDetail")
+            },
             onClickGridMode = { requirePlus(it, viewModel::setGridMode, "isUseGridMode") },
-            onClickHideRestricted = { requirePlus(it, viewModel::setHideRestricted, "isHideRestricted") },
+            onClickHideRestrictedContents = { requirePlus(it, viewModel::setHideRestricted, "isHideRestricted") },
             onClickAppLock = { requirePlus(it, viewModel::setAppLock, "isUseAppLock") },
             onClickAutoImagePreview = { requirePlus(it, viewModel::setAutoImagePreview, "isAutoImagePreview") },
             onClickReshowReveal = viewModel::setReshowReveal,
@@ -135,11 +141,15 @@ internal fun SettingTopRoute(
                         viewModel.logout().fold(
                             onSuccess = {
                                 WelcomeLog.loggedOut().send()
-                                scope.launch { toastExtension.show(snackbarHostState, Res.string.setting_top_others_logout_dialog_success) }
+                                scope.launch {
+                                    toastExtension.show(snackbarHostState, Res.string.setting_top_others_logout_dialog_success)
+                                }
                                 terminate.invoke()
                             },
                             onFailure = {
-                                scope.launch { toastExtension.show(snackbarHostState, Res.string.setting_top_others_logout_dialog_failed) }
+                                scope.launch {
+                                    toastExtension.show(snackbarHostState, Res.string.setting_top_others_logout_dialog_failed)
+                                }
                             },
                         )
                     }
@@ -176,7 +186,7 @@ private fun SettingTopScreen(
     onClickFollowTabDefaultHome: (Boolean) -> Unit,
     onClickHideAdultContents: (Boolean) -> Unit,
     onClickOverrideAdultContents: (Boolean) -> Unit,
-    onClickHideRestricted: (Boolean) -> Unit,
+    onClickHideRestrictedContents: (Boolean) -> Unit,
     onClickGridMode: (Boolean) -> Unit,
     onClickInfinityPostDetail: (Boolean) -> Unit,
     onClickAutoImagePreview: (Boolean) -> Unit,
@@ -254,7 +264,7 @@ private fun SettingTopScreen(
                     onClickFollowTabDefaultHome = onClickFollowTabDefaultHome,
                     onClickHideAdultContents = onClickHideAdultContents,
                     onClickOverrideAdultContents = onClickOverrideAdultContents,
-                    onClickHideRestricted = onClickHideRestricted,
+                    onClickHideRestrictedContents = onClickHideRestrictedContents,
                     onClickGridMode = onClickGridMode,
                     onClickInfinityPostDetail = onClickInfinityPostDetail,
                     onClickAutoImagePreview = onClickAutoImagePreview,

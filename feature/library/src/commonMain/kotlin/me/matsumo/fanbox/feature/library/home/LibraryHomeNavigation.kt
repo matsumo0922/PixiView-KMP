@@ -9,18 +9,17 @@ import androidx.navigation.compose.composable
 import me.matsumo.fanbox.core.model.Destination
 import me.matsumo.fanbox.core.ui.extensition.navigateWithLog
 
-const val LibraryHomeRoute = "libraryHome"
+const val LIBRARY_HOME_ROUTE = "libraryHome"
 
-fun NavController.navigateToLibraryHome(navOptions: NavOptions? = null) {
-    this.navigateWithLog(LibraryHomeRoute, navOptions)
+fun NavController.navigateToLibraryHome(
+    navOptions: NavOptions? = null,
+) {
+    this.navigateWithLog(LIBRARY_HOME_ROUTE, navOptions)
 }
 
-fun NavGraphBuilder.libraryHomeScreen(
-    openDrawer: () -> Unit,
-    navigateTo: (Destination) -> Unit,
-) {
+fun NavGraphBuilder.libraryHomeScreen(openDrawer: () -> Unit, navigateTo: (Destination) -> Unit) {
     composable(
-        route = LibraryHomeRoute,
+        route = LIBRARY_HOME_ROUTE,
     ) {
         LibraryHomeScreen(
             modifier = Modifier.fillMaxSize(),

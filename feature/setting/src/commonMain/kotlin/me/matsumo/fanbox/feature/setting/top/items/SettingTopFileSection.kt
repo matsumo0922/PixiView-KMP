@@ -40,7 +40,7 @@ internal fun SettingTopFileSection(
             title = Res.string.setting_top_file_type,
             description = Res.string.setting_top_file_type_description,
             value = setting.downloadFileType == DownloadFileType.ORIGINAL,
-            onValueChanged = {
+            onValueChange = {
                 onClickDownloadFileType.invoke(if (it) DownloadFileType.ORIGINAL else DownloadFileType.THUMBNAIL)
             },
         )

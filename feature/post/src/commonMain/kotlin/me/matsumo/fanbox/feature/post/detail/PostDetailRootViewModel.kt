@@ -107,9 +107,7 @@ class PostDetailRootViewModel(
         }
     }
 
-    private fun Flow<PagingData<Post>>.toIdFlow(): Flow<PagingData<PostId>> {
-        return map { list -> list.map { it.id } }
-    }
+    private fun Flow<PagingData<Post>>.toIdFlow(): Flow<PagingData<PostId>> = map { list -> list.map { it.id } }
 }
 
 @Stable

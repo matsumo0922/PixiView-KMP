@@ -41,7 +41,7 @@ jobs:
       - name: Run detekt and merge reports
         id: detekt
         continue-on-error: true
-        run: ./gradlew detekt reportMerge --continue
+        run: ./gradlew detekt reportMerge detektMainAndroid detektHostTestAndroid :androidApp:detektDebug :androidApp:detektDebugUnitTest :androidApp:detektDebugAndroidTest --continue
 
       - name: Run report with ReviewDog
         if: steps.detekt.outcome == 'failure'
@@ -58,7 +58,9 @@ jobs:
           recreate: true
           message: |
             ## :warning: Failed the PR lint check!
-            Please run `./gradlew detekt --auto-correct` locally and push the changes.
+            Light の整形は `./gradlew detekt --auto-correct` で確認してください。
+            Full は `./gradlew detektMainAndroid detektHostTestAndroid :androidApp:detektDebug :androidApp:detektDebugUnitTest :androidApp:detektDebugAndroidTest --continue` で確認してください。
+            インライン指摘は light の結果です。full の指摘と解析診断は Actions のログと各モジュールのレポートで確認してください。
 
       - if: steps.detekt.outcome == 'failure'
         run: exit 1

@@ -12,9 +12,7 @@ import io.github.aakira.napier.Napier
 import me.matsumo.fanbox.core.logs.category.NavigationLog
 import me.matsumo.fanbox.core.logs.logger.send
 
-class NavigatorExtensionImpl(
-    private val context: Context,
-) : NavigatorExtension {
+class NavigatorExtensionImpl(private val context: Context) : NavigatorExtension {
 
     override fun navigateToWebPage(url: String, referrer: String) {
         runCatching {

@@ -62,6 +62,7 @@ internal fun LibraryNotifyBellItem(
                 onClickBell = onClickBell,
             )
         }
+
         is Bell.Like -> {
             LikeItem(
                 modifier = modifier,
@@ -69,6 +70,7 @@ internal fun LibraryNotifyBellItem(
                 onClickBell = onClickBell,
             )
         }
+
         is Bell.PostPublished -> {
             PostPublishedItem(
                 modifier = modifier,

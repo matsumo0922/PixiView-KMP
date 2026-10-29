@@ -39,7 +39,7 @@ class PostByCreatorSearchViewModel(
 
     private val creatorId = savedStateHandle.toRoute<Destination.PostByCreatorSearch>(customNavTypes).creatorId
 
-    private val _allPosts = MutableSharedFlow<List<Post>>(replay = 1)
+    private val allPosts = MutableSharedFlow<List<Post>>(replay = 1)
     private val _query = MutableStateFlow("")
     private val _screenState = MutableStateFlow<ScreenState<PostByCreatorSearchUiState>>(ScreenState.Loading)
 
@@ -81,7 +81,7 @@ class PostByCreatorSearchViewModel(
 
     private suspend fun fetchPosts() {
         fanboxRepository.getCreatorAllPostsCache(creatorId)?.let { cachedPosts ->
-            _allPosts.emit(cachedPosts)
+            allPosts.emit(cachedPosts)
             _screenState.updateWhenIdle { it.copy(progress = 1f, isPrepared = true) }
             return
         }
@@ -104,7 +104,7 @@ class PostByCreatorSearchViewModel(
 
         fanboxRepository.setCreatorAllPostsCache(creatorId, data)
 
-        _allPosts.emit(data)
+        allPosts.emit(data)
         _screenState.updateWhenIdle {
             it.copy(
                 progress = 1f,
@@ -113,30 +113,24 @@ class PostByCreatorSearchViewModel(
         }
     }
 
-    private suspend fun searchPosts(query: String): List<Post> {
-        return _allPosts.first().filter { post ->
-            val title = post.title.contains(query)
-            val excerpt = post.excerpt.contains(query)
-            val id = post.id.value.contains(query)
+    private suspend fun searchPosts(query: String): List<Post> = allPosts.first().filter { post ->
+        val title = post.title.contains(query)
+        val excerpt = post.excerpt.contains(query)
+        val id = post.id.value.contains(query)
 
-            title || excerpt || id
-        }
+        title || excerpt || id
     }
 
     fun updateQuery(query: String) {
         _query.value = query
     }
 
-    suspend fun follow(creatorUserId: UserId): Result<Unit> {
-        return suspendRunCatching {
-            fanboxRepository.unfollowCreator(creatorUserId)
-        }
+    suspend fun follow(creatorUserId: UserId): Result<Unit> = suspendRunCatching {
+        fanboxRepository.unfollowCreator(creatorUserId)
     }
 
-    suspend fun unfollow(creatorUserId: UserId): Result<Unit> {
-        return suspendRunCatching {
-            fanboxRepository.unfollowCreator(creatorUserId)
-        }
+    suspend fun unfollow(creatorUserId: UserId): Result<Unit> = suspendRunCatching {
+        fanboxRepository.unfollowCreator(creatorUserId)
     }
 
     fun postLike(postId: PostId) {

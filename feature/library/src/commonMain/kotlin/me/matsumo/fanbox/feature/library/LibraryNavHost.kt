@@ -7,13 +7,13 @@ import androidx.navigation.compose.NavHost
 import me.matsumo.fanbox.core.model.Destination
 import me.matsumo.fanbox.core.model.Setting
 import me.matsumo.fanbox.core.ui.animation.NavigateAnimation
-import me.matsumo.fanbox.feature.library.discovery.LibraryDiscoveryRoute
+import me.matsumo.fanbox.feature.library.discovery.LIBRARY_DISCOVERY_ROUTE
 import me.matsumo.fanbox.feature.library.discovery.libraryDiscoveryScreen
-import me.matsumo.fanbox.feature.library.home.LibraryHomeRoute
+import me.matsumo.fanbox.feature.library.home.LIBRARY_HOME_ROUTE
 import me.matsumo.fanbox.feature.library.home.libraryHomeScreen
-import me.matsumo.fanbox.feature.library.message.LibraryMessageRoute
+import me.matsumo.fanbox.feature.library.message.LIBRARY_MESSAGE_ROUTE
 import me.matsumo.fanbox.feature.library.message.libraryMessageScreen
-import me.matsumo.fanbox.feature.library.notify.LibraryNotifyRoute
+import me.matsumo.fanbox.feature.library.notify.LIBRARY_NOTIFY_ROUTE
 import me.matsumo.fanbox.feature.library.notify.libraryNotifyScreen
 
 @Composable
@@ -25,9 +25,9 @@ fun LibraryNavHost(
     modifier: Modifier = Modifier,
 ) {
     val startDestination = if (setting.isTestUser) {
-        LibraryDiscoveryRoute
+        LIBRARY_DISCOVERY_ROUTE
     } else {
-        LibraryHomeRoute
+        LIBRARY_HOME_ROUTE
     }
 
     NavHost(
@@ -60,8 +60,8 @@ fun LibraryNavHost(
 }
 
 internal val LibraryRoutes = listOf(
-    LibraryHomeRoute,
-    LibraryDiscoveryRoute,
-    LibraryNotifyRoute,
-    LibraryMessageRoute,
+    LIBRARY_HOME_ROUTE,
+    LIBRARY_DISCOVERY_ROUTE,
+    LIBRARY_NOTIFY_ROUTE,
+    LIBRARY_MESSAGE_ROUTE,
 )

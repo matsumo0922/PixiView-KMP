@@ -19,6 +19,7 @@ import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.SideEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.saveable.rememberSaveable
@@ -41,15 +42,17 @@ import me.matsumo.fanbox.core.ui.theme.bold
 import org.jetbrains.compose.resources.stringResource
 import org.koin.compose.koinInject
 
-@Suppress("UnstableCollections", "ModifierMissing")
 @Composable
+// 報酬 callback は composition 適用後に dispatch し、ダイアログ離脱時は通知をキャンセルする。
+@Suppress("UnnecessaryLaunchedEffect")
 actual fun CreatorTopRewardAdDialog(
     title: String,
     message: String,
     isAbleToReward: Boolean,
-    onRewarded: () -> Unit,
+    onReward: () -> Unit,
     onClickShowPlus: () -> Unit,
     onDismissRequest: () -> Unit,
+    modifier: Modifier,
 ) {
     val activity = LocalActivity.current
     val isAdsSdkInitialized = LocalAdsSdkInitialized.current
@@ -68,16 +71,12 @@ actual fun CreatorTopRewardAdDialog(
     val shouldShowRewardAdProgress = rewardAd == null || isRewardAdShowing
     val isRewardAdProgressVisible = shouldShowRewardAdProgress || hasActiveRewardAdRequest
 
-    LaunchedEffect(isAdsSdkInitialized) {
+    SideEffect(isAdsSdkInitialized) {
         rewardAdLoader.loadRewardAdIfNeeded(isAdsSdkInitialized)
     }
 
-    LaunchedEffect(Unit) {
-        val restoredRequestId = activeRewardAdRequestId ?: return@LaunchedEffect
-        val isRestoredAdShowing = rewardAdLoader.isShowing.value
-        val hasRestoredResult = rewardAdLoader.showResult.value?.requestId == restoredRequestId
-
-        if (!isRestoredAdShowing && !hasRestoredResult) {
+    SideEffect(Unit) {
+        if (rewardAdLoader.shouldClearRestoredRequest(activeRewardAdRequestId)) {
             activeRewardAdRequestId = null
         }
     }
@@ -94,7 +93,7 @@ actual fun CreatorTopRewardAdDialog(
                 activeRewardAdRequestId = null
 
                 if (isRewardEarned) {
-                    onRewarded.invoke()
+                    onReward.invoke()
                 }
             },
         )
@@ -102,7 +101,7 @@ actual fun CreatorTopRewardAdDialog(
 
     Dialog(onDismissRequest = onDismissRequest) {
         Column(
-            modifier = Modifier
+            modifier = modifier
                 .clip(RoundedCornerShape(8.dp))
                 .background(MaterialTheme.colorScheme.surface)
                 .verticalScroll(rememberScrollState())
@@ -175,4 +174,11 @@ actual fun CreatorTopRewardAdDialog(
             }
         }
     }
+}
+
+private fun RewardAdLoader.shouldClearRestoredRequest(requestId: Long?): Boolean {
+    if (requestId == null) return false
+
+    val hasRestoredResult = showResult.value?.requestId == requestId
+    return !isShowing.value && !hasRestoredResult
 }

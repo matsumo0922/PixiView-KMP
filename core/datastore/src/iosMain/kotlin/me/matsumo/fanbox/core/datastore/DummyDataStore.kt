@@ -5,9 +5,7 @@ import me.matsumo.fanbox.core.common.util.suspendRunCatching
 import me.matsumo.fanbox.core.resources.Res
 import org.jetbrains.compose.resources.ExperimentalResourceApi
 
-class DummyDataStoreImpl(
-    private val userDataStore: SettingDataStore,
-) : DummyDataStore {
+class DummyDataStoreImpl(private val userDataStore: SettingDataStore) : DummyDataStore {
 
     private val userData = userDataStore.setting
 

@@ -14,6 +14,7 @@ import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.ColorScheme
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -70,14 +71,7 @@ internal fun SettingThemeColorSection(
                 items = ThemeColorConfig.entries.toTypedArray(),
                 key = { it.name },
             ) {
-                val color = when (it) {
-                    ThemeColorConfig.Red -> if (isDarkMode) DarkDefaultColorScheme else LightDefaultColorScheme
-                    ThemeColorConfig.Blue -> if (isDarkMode) DarkBlueColorScheme else LightBlueColorScheme
-                    ThemeColorConfig.Brown -> if (isDarkMode) DarkBrownColorScheme else LightBrownColorScheme
-                    ThemeColorConfig.Green -> if (isDarkMode) DarkGreenColorScheme else LightGreenColorScheme
-                    ThemeColorConfig.Purple -> if (isDarkMode) DarkPurpleColorScheme else LightPurpleColorScheme
-                    ThemeColorConfig.Pink -> if (isDarkMode) DarkPinkColorScheme else LightPinckColorScheme
-                }
+                val color = it.colorScheme(isDarkMode)
 
                 SettingThemeColorItem(
                     onClick = { onSelectThemeColor.invoke(it) },
@@ -141,4 +135,13 @@ private fun SettingThemeColorItem(
             )
         }
     }
+}
+
+private fun ThemeColorConfig.colorScheme(isDarkMode: Boolean): ColorScheme = when (this) {
+    ThemeColorConfig.Red -> if (isDarkMode) DarkDefaultColorScheme else LightDefaultColorScheme
+    ThemeColorConfig.Blue -> if (isDarkMode) DarkBlueColorScheme else LightBlueColorScheme
+    ThemeColorConfig.Brown -> if (isDarkMode) DarkBrownColorScheme else LightBrownColorScheme
+    ThemeColorConfig.Green -> if (isDarkMode) DarkGreenColorScheme else LightGreenColorScheme
+    ThemeColorConfig.Purple -> if (isDarkMode) DarkPurpleColorScheme else LightPurpleColorScheme
+    ThemeColorConfig.Pink -> if (isDarkMode) DarkPinkColorScheme else LightPinckColorScheme
 }

@@ -5,9 +5,7 @@ import android.os.Looper
 import io.github.aakira.napier.Napier
 
 /** 広告ロード失敗時の指数バックオフ再試行を管理するクラス。 */
-internal class AdLoadRetryController(
-    private val adFormatName: String,
-) {
+internal class AdLoadRetryController(private val adFormatName: String) {
     private val handler = Handler(Looper.getMainLooper())
     private val retryRunnable = Runnable { executePendingRetry() }
     private var retryAttemptCount = 0
@@ -19,10 +17,7 @@ internal class AdLoadRetryController(
         handler.removeCallbacks(retryRunnable)
     }
 
-    fun scheduleRetry(
-        failureMessage: String,
-        retryAction: () -> Unit,
-    ) {
+    fun scheduleRetry(failureMessage: String, retryAction: () -> Unit) {
         if (retryAttemptCount >= AD_LOAD_RETRY_MAX_ATTEMPTS) {
             Napier.w { "$adFormatName: ad load retry limit reached. $failureMessage" }
             pendingRetryAction = null

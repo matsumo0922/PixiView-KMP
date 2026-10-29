@@ -41,6 +41,7 @@ data class PostDetail(
                 }
 
                 is Image -> images
+
                 is File -> files.mapNotNull {
                     it.asImageItem()
                 }
@@ -57,7 +58,9 @@ data class PostDetail(
                     }
 
                 is Image -> emptyList()
+
                 is File -> files
+
                 is Text, is Video, is Html, is Unknown -> emptyList()
             }
 
@@ -138,22 +141,24 @@ data class PostDetail(
                  * 責務とする。
                  */
                 @Immutable
-                data class Embed(
-                    val serviceProvider: String,
-                    val contentId: String,
-                ) : Block {
+                data class Embed(val serviceProvider: String, val contentId: String) : Block {
                     /** 対応済みサービス提供者の埋め込み URL。未対応の場合は null。 */
                     val url: String?
                         get() = when (serviceProvider) {
                             "twitter" -> "https://twitter.com/_/status/$contentId"
+
                             "youtube" -> "https://www.youtube.com/watch?v=$contentId"
+
                             "vimeo" -> "https://vimeo.com/$contentId"
+
                             "soundcloud" -> "https://soundcloud.com/$contentId"
+
                             "google_forms" -> {
                                 "https://docs.google.com/forms/d/e/$contentId/viewform?usp=sf_link"
                             }
 
                             "fanbox" -> "https://www.pixiv.net/fanbox/$contentId"
+
                             else -> null
                         }
                 }
@@ -171,17 +176,11 @@ data class PostDetail(
 
         /** 画像本文。 */
         @Immutable
-        data class Image(
-            val text: String,
-            val images: List<ImageItem>,
-        ) : Body
+        data class Image(val text: String, val images: List<ImageItem>) : Body
 
         /** ファイル本文。 */
         @Immutable
-        data class File(
-            val text: String,
-            val files: List<FileItem>,
-        ) : Body
+        data class File(val text: String, val files: List<FileItem>) : Body
 
         /** テキスト本文。 */
         @Immutable
@@ -189,10 +188,7 @@ data class PostDetail(
 
         /** 動画本文。 */
         @Immutable
-        data class Video(
-            val serviceProvider: String,
-            val videoId: String,
-        ) : Body {
+        data class Video(val serviceProvider: String, val videoId: String) : Body {
             /** 対応済みサービス提供者の動画 URL。未対応の場合は null。 */
             val url: String?
                 get() = when (serviceProvider) {
@@ -258,33 +254,29 @@ data class PostDetail(
         val url: String,
     ) {
         /** 画像として扱える拡張子であれば [ImageItem] へ読み替える。 */
-        fun asImageItem(): ImageItem? {
-            return if (!extension.lowercase().contains(Regex("""(jpg|jpeg|png|gif)"""))) {
-                null
-            } else {
-                ImageItem(
-                    id = id,
-                    postId = postId,
-                    extension = extension,
-                    originalUrl = url,
-                    thumbnailUrl = url,
-                    aspectRatio = 1f,
-                )
-            }
+        fun asImageItem(): ImageItem? = if (!extension.lowercase().contains(Regex("""(jpg|jpeg|png|gif)"""))) {
+            null
+        } else {
+            ImageItem(
+                id = id,
+                postId = postId,
+                extension = extension,
+                originalUrl = url,
+                thumbnailUrl = url,
+                aspectRatio = 1f,
+            )
         }
 
         /** 動画として扱える拡張子であれば [VideoItem] へ読み替える。 */
-        fun asVideoItem(): VideoItem? {
-            return if (!extension.lowercase().contains(Regex("""(mp4|webm)"""))) {
-                null
-            } else {
-                VideoItem(
-                    id = id,
-                    postId = postId,
-                    extension = extension,
-                    url = url,
-                )
-            }
+        fun asVideoItem(): VideoItem? = if (!extension.lowercase().contains(Regex("""(mp4|webm)"""))) {
+            null
+        } else {
+            VideoItem(
+                id = id,
+                postId = postId,
+                extension = extension,
+                url = url,
+            )
         }
     }
 }

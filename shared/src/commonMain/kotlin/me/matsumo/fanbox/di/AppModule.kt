@@ -12,6 +12,8 @@ import org.koin.core.module.dsl.viewModelOf
 import org.koin.dsl.module
 
 @OptIn(ExperimentalCoroutinesApi::class)
+// Dispatcher の生成・設定は、この DI 定義で一元的に行う。
+@Suppress("InjectDispatcher")
 val appModule = module {
     single<CoroutineDispatcher> {
         Dispatchers.IO.limitedParallelism(24)

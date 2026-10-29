@@ -11,9 +11,7 @@ import androidx.navigation.NavGraphBuilder
 import androidx.navigation.compose.dialog
 import me.matsumo.fanbox.core.model.Destination
 
-fun NavGraphBuilder.settingDeveloperDialog(
-    terminate: () -> Unit,
-) {
+fun NavGraphBuilder.settingDeveloperDialog(terminate: () -> Unit) {
     dialog<Destination.SettingDeveloperDialog> {
         Dialog(
             onDismissRequest = terminate,

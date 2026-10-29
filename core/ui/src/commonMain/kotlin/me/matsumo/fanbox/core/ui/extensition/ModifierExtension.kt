@@ -39,8 +39,9 @@ import androidx.compose.foundation.lazy.grid.LazyGridState
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.ReadOnlyComposable
 import androidx.compose.runtime.Stable
-import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.mutableLongStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.composed
@@ -73,6 +74,7 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.collectLatest
 import kotlin.math.min
+import kotlin.time.Duration.Companion.milliseconds
 
 @Stable
 fun Modifier.padding(
@@ -91,6 +93,7 @@ fun Modifier.padding(
     ),
 )
 
+@ReadOnlyComposable
 @Composable
 operator fun PaddingValues.plus(value: PaddingValues): PaddingValues {
     val layoutDirection = LocalLayoutDirection.current
@@ -103,16 +106,19 @@ operator fun PaddingValues.plus(value: PaddingValues): PaddingValues {
     )
 }
 
+@Composable
 fun Modifier.drawHorizontalScrollbar(
     state: ScrollState,
     reverseScrolling: Boolean = false,
 ): Modifier = drawScrollbar(state, Orientation.Horizontal, reverseScrolling)
 
+@Composable
 fun Modifier.drawVerticalScrollbar(
     state: ScrollState,
     reverseScrolling: Boolean = false,
 ): Modifier = drawScrollbar(state, Orientation.Vertical, reverseScrolling)
 
+@Composable
 private fun Modifier.drawScrollbar(
     state: ScrollState,
     orientation: Orientation,
@@ -138,16 +144,19 @@ private fun Modifier.drawScrollbar(
     }
 }
 
+@Composable
 fun Modifier.drawHorizontalScrollbar(
     state: LazyListState,
     reverseScrolling: Boolean = false,
 ): Modifier = drawScrollbar(state, Orientation.Horizontal, reverseScrolling)
 
+@Composable
 fun Modifier.drawVerticalScrollbar(
     state: LazyListState,
     reverseScrolling: Boolean = false,
 ): Modifier = drawScrollbar(state, Orientation.Vertical, reverseScrolling)
 
+@Composable
 private fun Modifier.drawScrollbar(
     state: LazyListState,
     orientation: Orientation,
@@ -184,6 +193,7 @@ private fun Modifier.drawScrollbar(
     }
 }
 
+@Composable
 fun Modifier.drawVerticalScrollbar(
     state: LazyGridState,
     spanCount: Int,
@@ -226,6 +236,8 @@ fun Modifier.drawVerticalScrollbar(
     }
 }
 
+// 同じ描画処理へ、向き・表示位置・色・透明度・算出済みの幾何情報を渡す。
+@Suppress("LongParameterList")
 private fun DrawScope.drawScrollbar(
     orientation: Orientation,
     reverseDirection: Boolean,
@@ -261,6 +273,7 @@ private fun DrawScope.drawScrollbar(
     )
 }
 
+@Composable
 private fun Modifier.drawScrollbar(
     orientation: Orientation,
     reverseScrolling: Boolean,
@@ -270,7 +283,7 @@ private fun Modifier.drawScrollbar(
         color: Color,
         alpha: () -> Float,
     ) -> Unit,
-): Modifier = composed {
+): Modifier {
     val scrolled = remember {
         MutableSharedFlow<Unit>(
             extraBufferCapacity = 1,
@@ -295,7 +308,7 @@ private fun Modifier.drawScrollbar(
     LaunchedEffect(scrolled, alpha) {
         scrolled.collectLatest {
             alpha.snapTo(1f)
-            delay(300)
+            delay(300.milliseconds)
             alpha.animateTo(0f, animationSpec = FadeOutAnimationSpec)
         }
     }
@@ -310,7 +323,7 @@ private fun Modifier.drawScrollbar(
 
     val color = BarColor
 
-    Modifier
+    return this
         .nestedScroll(nestedScrollConnection)
         .drawWithContent {
             drawContent()
@@ -319,23 +332,22 @@ private fun Modifier.drawScrollbar(
 }
 
 private val BarColor: Color
+    @ReadOnlyComposable
     @Composable get() = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.5f)
 
 private val Thickness = 4.dp
 private val FadeOutAnimationSpec = tween<Float>(durationMillis = 250)
 
 @OptIn(ExperimentalFoundationApi::class)
-fun Modifier.marquee(): Modifier {
-    return this
-        .graphicsLayer { compositingStrategy = CompositingStrategy.Offscreen }
-        .drawWithContent {
-            drawContent()
-            drawFadedEdge(leftEdge = true)
-            drawFadedEdge(leftEdge = false)
-        }
-        .basicMarquee(Int.MAX_VALUE)
-        .padding(horizontal = 8.dp)
-}
+fun Modifier.marquee(): Modifier = this
+    .graphicsLayer { compositingStrategy = CompositingStrategy.Offscreen }
+    .drawWithContent {
+        drawContent()
+        drawFadedEdge(leftEdge = true)
+        drawFadedEdge(leftEdge = false)
+    }
+    .basicMarquee(Int.MAX_VALUE)
+    .padding(horizontal = 8.dp)
 
 fun ContentDrawScope.drawFadedEdge(leftEdge: Boolean) {
     val edgeWidthPx = 8.dp.toPx()
@@ -365,16 +377,16 @@ private val recomposeModifier =
         // The total number of compositions that have occurred. We're not using a State<> here be
         // able to read/write the value without invalidating (which would cause infinite
         // recomposition).
-        val totalCompositions = remember { arrayOf(0L) }
+        val totalCompositions = remember { longArrayOf(0L) }
         totalCompositions[0]++
 
         // The value of totalCompositions at the last timeout.
-        val totalCompositionsAtLastTimeout = remember { mutableStateOf(0L) }
+        val totalCompositionsAtLastTimeout = remember { mutableLongStateOf(0L) }
 
         // Start the timeout, and reset everytime there's a recomposition. (Using totalCompositions
         // as the key is really just to cause the timer to restart every composition).
         LaunchedEffect(totalCompositions[0]) {
-            delay(3000)
+            delay(3000.milliseconds)
             totalCompositionsAtLastTimeout.value = totalCompositions[0]
         }
 
@@ -398,8 +410,10 @@ private val recomposeModifier =
                         // We need at least one composition to draw, so draw the smallest border
                         // color in blue.
                         1L -> Color.Blue to 1f
+
                         // 2 compositions is _probably_ okay.
                         2L -> Color.Green to 2.dp.toPx()
+
                         // 3 or more compositions before timeout may indicate an issue. lerp the
                         // color from yellow to red, and continually increase the border size.
                         else -> {

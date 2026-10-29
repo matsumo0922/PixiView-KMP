@@ -7,7 +7,7 @@ import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.SideEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.nestedscroll.nestedScroll
@@ -44,7 +44,7 @@ internal fun PostSearchRoute(
     val creatorPaging = uiState.creatorPaging.collectAsLazyPagingItems()
     val tagPaging = uiState.tagPaging.collectAsLazyPagingItems()
 
-    LaunchedEffect(true) {
+    SideEffect(true) {
         if (query.isNotBlank() && uiState.query.isBlank()) {
             viewModel.search(parseQuery(query))
         }
@@ -176,13 +176,11 @@ internal fun buildQuery(
     return queryList.joinToString(" ")
 }
 
-internal fun buildQuery(query: PostSearchQuery): String {
-    return buildQuery(
-        creatorId = query.creatorId ?: CreatorId(""),
-        creatorQuery = query.creatorQuery,
-        tag = query.tag,
-    )
-}
+internal fun buildQuery(query: PostSearchQuery): String = buildQuery(
+    creatorId = query.creatorId ?: CreatorId(""),
+    creatorQuery = query.creatorQuery,
+    tag = query.tag,
+)
 
 internal fun parseQuery(query: String): PostSearchQuery {
     val queryList = query.split(" ").filter { it.isNotBlank() }

@@ -122,9 +122,7 @@ class BillingPlanTypeResolverTest {
     }
 
     /** テスト用の RevenueCat StoreProduct 実装。 */
-    private class FakeStoreProduct(
-        override val id: String,
-    ) : StoreProduct {
+    private class FakeStoreProduct(override val id: String) : StoreProduct {
         override val type: ProductType = ProductType.SUBS
         override val category: ProductCategory = ProductCategory.SUBSCRIPTION
         override val price: Price = Price("JPY 0", 0L, "JPY")
@@ -140,9 +138,7 @@ class BillingPlanTypeResolverTest {
     }
 
     /** テスト用の RevenueCat PurchasingData 実装。 */
-    private class FakePurchasingData(
-        override val productId: String,
-    ) : PurchasingData {
+    private class FakePurchasingData(override val productId: String) : PurchasingData {
         override val productType: ProductType = ProductType.SUBS
     }
 }

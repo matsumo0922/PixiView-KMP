@@ -11,18 +11,10 @@ import kotlin.time.ExperimentalTime
 import kotlin.time.Instant
 
 @OptIn(ExperimentalTime::class)
-actual fun Instant.format(pattern: String): String {
-    return toLocalDateTime(TimeZone.currentSystemDefault()).toJavaLocalDateTime().format(DateTimeFormatter.ofPattern(pattern))
-}
+actual fun Instant.format(pattern: String): String = toLocalDateTime(TimeZone.currentSystemDefault()).toJavaLocalDateTime().format(DateTimeFormatter.ofPattern(pattern))
 
-actual fun LocalDate.format(pattern: String): String {
-    return toJavaLocalDate().format(DateTimeFormatter.ofPattern(pattern))
-}
+actual fun LocalDate.format(pattern: String): String = toJavaLocalDate().format(DateTimeFormatter.ofPattern(pattern))
 
-actual fun String.format(vararg args: Any?): String {
-    return java.lang.String.format(this, *args)
-}
+actual fun String.format(vararg args: Any?): String = java.lang.String.format(this, *args)
 
-actual fun getAvailableLanguageTags(): List<String> {
-    return Locale.getAvailableLocales().map { it.toLanguageTag() }
-}
+actual fun getAvailableLanguageTags(): List<String> = Locale.getAvailableLocales().map { it.toLanguageTag() }

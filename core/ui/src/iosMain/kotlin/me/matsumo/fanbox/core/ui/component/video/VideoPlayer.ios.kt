@@ -38,6 +38,7 @@ import platform.AVFoundation.pause
 import platform.AVFoundation.play
 import platform.AVKit.AVPlayerViewController
 import platform.Foundation.NSURL
+import kotlin.time.Duration.Companion.milliseconds
 
 @Composable
 actual fun VideoPlayer(url: String, modifier: Modifier) {
@@ -58,7 +59,7 @@ actual fun VideoPlayer(url: String, modifier: Modifier) {
 
     LaunchedEffect(isDisplayController) {
         if (isDisplayController) {
-            delay(2000)
+            delay(2000.milliseconds)
             isDisplayController = false
         }
     }
@@ -89,7 +90,7 @@ actual fun VideoPlayer(url: String, modifier: Modifier) {
             ControllerView(
                 modifier = Modifier.fillMaxSize(),
                 isPlaying = isPlaying,
-                onPlayPauseClicked = {
+                onPlayPauseClick = {
                     isPlaying = it
 
                     if (it) {
@@ -106,13 +107,13 @@ actual fun VideoPlayer(url: String, modifier: Modifier) {
 @Composable
 private fun ControllerView(
     isPlaying: Boolean,
-    onPlayPauseClicked: (Boolean) -> Unit,
+    onPlayPauseClick: (Boolean) -> Unit,
     modifier: Modifier = Modifier,
 ) {
     Box(modifier.background(Color.Black.copy(alpha = 0.4f))) {
         IconButton(
             modifier = Modifier.align(Alignment.Center),
-            onClick = { onPlayPauseClicked(!isPlaying) },
+            onClick = { onPlayPauseClick(!isPlaying) },
         ) {
             if (isPlaying) {
                 Icon(

@@ -23,10 +23,7 @@ data class BillingPlan(
 
 /** Plus の無料トライアル期間を表すモデル。 */
 @Immutable
-data class BillingTrialPeriod(
-    val value: Int,
-    val unit: Unit,
-) {
+data class BillingTrialPeriod(val value: Int, val unit: Unit) {
     /** Plus の無料トライアル期間の単位を表す列挙型。 */
     enum class Unit {
         DAY,

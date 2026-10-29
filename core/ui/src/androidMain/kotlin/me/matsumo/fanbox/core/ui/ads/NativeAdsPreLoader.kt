@@ -19,10 +19,7 @@ import kotlinx.coroutines.flow.update
 import me.matsumo.fanbox.core.common.PixiViewConfig
 
 /** Android ネイティブ広告のプリロード在庫と表示キーへの割り当てを管理するクラス。 */
-class NativeAdsPreLoader(
-    context: Context,
-    pixiViewConfig: PixiViewConfig,
-) {
+class NativeAdsPreLoader(context: Context, pixiViewConfig: PixiViewConfig) {
     private val preloadedNativeAds: MutableList<PreloadedNativeAd> = mutableListOf()
     private val keyMap: MutableMap<String, PreloadedNativeAd> = mutableMapOf()
     private val inactiveKeys: MutableSet<String> = LinkedHashSet()
@@ -74,6 +71,7 @@ class NativeAdsPreLoader(
         preloadAd(isRetry = false)
     }
 
+    // 通信権限は host の AndroidManifest.xml で宣言し、この SDK 呼び出しに適用する。
     @SuppressLint("MissingPermission")
     private fun preloadAd(isRetry: Boolean) {
         if (!isRetry) {
@@ -83,6 +81,7 @@ class NativeAdsPreLoader(
         loadMissingNativeAdsIfIdle()
     }
 
+    // 通信権限は host の AndroidManifest.xml で宣言し、この SDK 呼び出しに適用する。
     @SuppressLint("MissingPermission")
     private fun loadMissingNativeAdsIfIdle() {
         if (adLoader.isLoading) return
@@ -212,10 +211,7 @@ class NativeAdsPreLoader(
 }
 
 /** プリロード済みネイティブ広告と、その読み込み時刻（elapsedRealtime 基準）を保持する。 */
-private data class PreloadedNativeAd(
-    val nativeAd: NativeAd,
-    val loadedAtElapsedRealtime: Long,
-)
+private data class PreloadedNativeAd(val nativeAd: NativeAd, val loadedAtElapsedRealtime: Long)
 
 /** プリロードして保持するネイティブ広告の最大数。 */
 private const val NUMBER_OF_PRELOAD_ADS = 4

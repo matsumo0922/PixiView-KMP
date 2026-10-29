@@ -59,10 +59,7 @@ class CreatorPostsDownloadViewModel(
         }
     }
 
-    suspend fun fetchPosts(
-        paginate: List<Cursor>,
-        updateCallback: (Float) -> Unit,
-    ) {
+    suspend fun fetchPosts(paginate: List<Cursor>, updateCallback: (Float) -> Unit) {
         val max = paginate.sumOf { it.limit ?: 10 }
         val posts = mutableListOf<Post>()
 
@@ -106,7 +103,9 @@ class CreatorPostsDownloadViewModel(
         _screenState.updateWhenIdle {
             it.copy(
                 targetPosts = it.posts.filter { post ->
-                    keywords.none { keyword -> (post.post.title + post.post.excerpt).contains(keyword, ignoreCase = true) }
+                    keywords.none { keyword ->
+                        (post.post.title + post.post.excerpt).contains(keyword, ignoreCase = true)
+                    }
                 },
                 ignoreKeyword = ignoreKeyword,
             )
@@ -145,7 +144,4 @@ data class CreatorPostsDownloadUiState(
 )
 
 @Stable
-data class CreatorPostsDownloadData(
-    val post: Post,
-    var isDownloaded: Boolean,
-)
+data class CreatorPostsDownloadData(val post: Post, var isDownloaded: Boolean)

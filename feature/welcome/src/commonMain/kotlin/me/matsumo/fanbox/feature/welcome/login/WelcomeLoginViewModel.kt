@@ -14,10 +14,7 @@ import me.matsumo.fanbox.core.repository.FanboxRepository
 import me.matsumo.fanbox.core.repository.SettingRepository
 import kotlin.random.Random
 
-class WelcomeLoginViewModel(
-    private val settingRepository: SettingRepository,
-    private val fanboxRepository: FanboxRepository,
-) : ViewModel() {
+class WelcomeLoginViewModel(private val settingRepository: SettingRepository, private val fanboxRepository: FanboxRepository) : ViewModel() {
 
     private val _screenState = MutableStateFlow<ScreenState<Boolean>>(ScreenState.Loading)
     private val _triggerLoginError = Channel<Int>(Channel.BUFFERED)

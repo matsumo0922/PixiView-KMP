@@ -11,18 +11,17 @@ import androidx.navigation.compose.composable
 import me.matsumo.fanbox.core.model.Destination
 import me.matsumo.fanbox.core.ui.extensition.navigateWithLog
 
-const val LibraryNotifyRoute = "libraryNotify"
+const val LIBRARY_NOTIFY_ROUTE = "libraryNotify"
 
-fun NavController.navigateToLibraryNotify(navOptions: NavOptions? = null) {
-    this.navigateWithLog(LibraryNotifyRoute, navOptions)
+fun NavController.navigateToLibraryNotify(
+    navOptions: NavOptions? = null,
+) {
+    this.navigateWithLog(LIBRARY_NOTIFY_ROUTE, navOptions)
 }
 
-fun NavGraphBuilder.libraryNotifyScreen(
-    openDrawer: () -> Unit,
-    navigateTo: (Destination) -> Unit,
-) {
+fun NavGraphBuilder.libraryNotifyScreen(openDrawer: () -> Unit, navigateTo: (Destination) -> Unit) {
     composable(
-        route = LibraryNotifyRoute,
+        route = LIBRARY_NOTIFY_ROUTE,
     ) {
         LibraryNotifyRoute(
             modifier = Modifier

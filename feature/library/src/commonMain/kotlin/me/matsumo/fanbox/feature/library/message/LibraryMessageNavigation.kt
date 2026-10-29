@@ -9,18 +9,17 @@ import androidx.navigation.compose.composable
 import me.matsumo.fanbox.core.model.Destination
 import me.matsumo.fanbox.core.ui.extensition.navigateWithLog
 
-const val LibraryMessageRoute = "libraryMessage"
+const val LIBRARY_MESSAGE_ROUTE = "libraryMessage"
 
-fun NavController.navigateToLibraryMessage(navOptions: NavOptions? = null) {
-    this.navigateWithLog(LibraryMessageRoute, navOptions)
+fun NavController.navigateToLibraryMessage(
+    navOptions: NavOptions? = null,
+) {
+    this.navigateWithLog(LIBRARY_MESSAGE_ROUTE, navOptions)
 }
 
-fun NavGraphBuilder.libraryMessageScreen(
-    openDrawer: () -> Unit,
-    navigateTo: (Destination) -> Unit,
-) {
+fun NavGraphBuilder.libraryMessageScreen(openDrawer: () -> Unit, navigateTo: (Destination) -> Unit) {
     composable(
-        route = LibraryMessageRoute,
+        route = LIBRARY_MESSAGE_ROUTE,
     ) {
         LibraryMessageRoute(
             modifier = Modifier.fillMaxSize(),

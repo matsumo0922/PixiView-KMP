@@ -56,15 +56,15 @@ private inline fun <reified T> provideNavType(
         return decode(bundle.read { getStringOrNull(key) } ?: return null)
     }
 
-    override fun parseValue(value: String): T {
-        return decode(value)
-    }
+    override fun parseValue(value: String): T = decode(value)
 
-    override fun put(bundle: SavedState, key: String, value: T) {
+    override fun put(
+        bundle: SavedState,
+        key: String,
+        value: T,
+    ) {
         bundle.write { putString(key, encode(value)) }
     }
 
-    override fun serializeAsValue(value: T): String {
-        return encode(value)
-    }
+    override fun serializeAsValue(value: T): String = encode(value)
 }

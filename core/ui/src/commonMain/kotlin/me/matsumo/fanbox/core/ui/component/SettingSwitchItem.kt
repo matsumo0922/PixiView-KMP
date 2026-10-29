@@ -23,7 +23,7 @@ fun SettingSwitchItem(
     title: StringResource,
     description: StringResource?,
     value: Boolean,
-    onValueChanged: (Boolean) -> Unit,
+    onValueChange: (Boolean) -> Unit,
     modifier: Modifier = Modifier,
     isEnabled: Boolean = true,
 ) {
@@ -47,7 +47,7 @@ fun SettingSwitchItem(
         modifier = modifier
             .clickable(
                 enabled = isEnabled,
-                onClick = { onValueChanged.invoke(!value) },
+                onClick = { onValueChange.invoke(!value) },
             )
             .padding(horizontal = 24.dp, vertical = 12.dp),
         verticalAlignment = Alignment.CenterVertically,
@@ -80,7 +80,7 @@ fun SettingSwitchItem(
         Switch(
             enabled = isEnabled,
             checked = value,
-            onCheckedChange = { onValueChanged.invoke(it) },
+            onCheckedChange = { onValueChange.invoke(it) },
         )
     }
 }

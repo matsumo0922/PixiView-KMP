@@ -11,10 +11,7 @@ data class MetaData(
 ) {
     /** ページ読み込み時点のコンテキスト情報。 */
     @Immutable
-    data class Context(
-        val privacyPolicy: PrivacyPolicy,
-        val user: User,
-    ) {
+    data class Context(val privacyPolicy: PrivacyPolicy, val user: User) {
         /** プライバシーポリシーの掲示情報。 */
         @Immutable
         data class PrivacyPolicy(

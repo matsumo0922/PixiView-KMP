@@ -4,6 +4,7 @@ import kotlinx.coroutines.delay
 import org.junit.Test
 import kotlin.test.assertFalse
 import kotlin.test.assertTrue
+import kotlin.time.Duration.Companion.seconds
 
 /** developer mode によって参照する配信先が切り替わることを検証するテスト。 */
 class GuestChannelSelectionTest {
@@ -42,13 +43,9 @@ class GuestChannelSelectionTest {
     fun readingLongerThanTheLimitIsTreatedAsDisabled() {
         assertFalse(
             loadDeveloperMode {
-                delay(READ_LIMIT_EXCEEDING_DURATION_MS)
+                delay(2.seconds)
                 true
             },
         )
-    }
-
-    private companion object {
-        const val READ_LIMIT_EXCEEDING_DURATION_MS = 2000L
     }
 }

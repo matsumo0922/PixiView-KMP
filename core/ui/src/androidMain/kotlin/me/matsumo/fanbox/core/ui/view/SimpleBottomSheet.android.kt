@@ -21,7 +21,7 @@ actual fun SimpleBottomSheet(
     val sheetState = rememberModalBottomSheetState(skipPartiallyExpanded)
 
     ModalBottomSheet(
-        modifier = Modifier.fillMaxWidth(),
+        modifier = modifier.fillMaxWidth(),
         sheetState = sheetState,
         shape = RectangleShape,
         dragHandle = null,

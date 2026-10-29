@@ -46,6 +46,6 @@ enum class LibraryDestination(
     ),
 }
 
-internal fun NavDestination?.isLibraryDestinationInHierarchy(destination: LibraryDestination): Boolean {
-    return this?.hierarchy?.any { it.route?.contains(destination.name, true) ?: false } == true
-}
+internal fun NavDestination?.isLibraryDestinationInHierarchy(destination: LibraryDestination): Boolean = this?.hierarchy?.any {
+    it.route?.contains(destination.name, true) ?: false
+} == true
