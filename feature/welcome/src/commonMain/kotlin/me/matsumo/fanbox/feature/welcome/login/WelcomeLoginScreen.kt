@@ -17,6 +17,7 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.SideEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -51,6 +52,8 @@ import org.koin.compose.koinInject
 import org.koin.compose.viewmodel.koinViewModel
 
 @Composable
+// 画面遷移・フォーカス・親への通知は composition 適用後に dispatch し、離脱時にキャンセルする。
+@Suppress("UnnecessaryLaunchedEffect")
 internal fun WelcomeLoginScreen(
     navigateToHome: () -> Unit,
     navigateToLoginScreen: () -> Unit,
@@ -64,7 +67,7 @@ internal fun WelcomeLoginScreen(
     val screenState by viewModel.screenState.collectAsStateWithLifecycle()
     val isLoginError by viewModel.triggerLoginError.collectAsStateWithLifecycle(-1)
 
-    LaunchedEffect(true) {
+    SideEffect(true) {
         viewModel.fetchLoggedIn()
     }
 

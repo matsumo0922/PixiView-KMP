@@ -36,6 +36,7 @@ import me.matsumo.fanbox.core.model.fanbox.Post
 import me.matsumo.fanbox.core.model.fanbox.PostDetail
 import me.matsumo.fanbox.core.model.fanbox.PostId
 import java.io.File
+import java.util.Locale
 import kotlin.coroutines.resume
 import kotlin.time.Duration.Companion.milliseconds
 import kotlin.uuid.ExperimentalUuidApi
@@ -160,7 +161,7 @@ class DownloadPostsRepositoryImpl(
     private fun PostDetail.ImageItem.toDownloadItem(
         index: Int = -1,
     ): FanboxDownloadItems.Item {
-        val namePrefix = if (index >= 0) "image-%03d".format(index) else "image"
+        val namePrefix = if (index >= 0) "image-%03d".format(Locale.ROOT, index) else "image"
         return FanboxDownloadItems.Item(
             postId = postId,
             itemId = id,
@@ -308,7 +309,7 @@ class DownloadPostsRepositoryImpl(
         tmpFile: File,
         parentFile: UniFile,
         mimeType: String?,
-    ) = suspendCancellableCoroutine<Uri> {
+    ) = suspendCancellableCoroutine<Uri> { continuation ->
         val file = parentFile.createFile(name)
 
         context.contentResolver.openOutputStream(file.uri)!!.use {
@@ -318,7 +319,7 @@ class DownloadPostsRepositoryImpl(
         }
 
         MediaScannerConnection.scanFile(context, arrayOf(parentFile.filePath), arrayOf(mimeType)) { _, uri ->
-            it.resume(uri)
+            continuation.resume(uri)
         }
     }
 
@@ -328,7 +329,7 @@ class DownloadPostsRepositoryImpl(
         tmpFile: File,
         mimeType: String?,
         requestType: FanboxDownloadItems.RequestType,
-    ) = suspendCancellableCoroutine {
+    ) = suspendCancellableCoroutine { continuation ->
         val path = getOldParentFile(requestType, true)?.filePath
         val values = ContentValues().apply {
             put(MediaStore.Images.Media.DISPLAY_NAME, fileName)
@@ -352,7 +353,7 @@ class DownloadPostsRepositoryImpl(
             values.put(MediaStore.Images.Media.IS_PENDING, 0)
             resolver.update(itemUri, values, null, null)
 
-            it.resume(itemUri)
+            continuation.resume(itemUri)
         } else {
             error("Failed to save file.")
         }

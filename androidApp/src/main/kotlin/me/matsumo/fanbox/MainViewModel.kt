@@ -6,7 +6,7 @@ import kotlinx.coroutines.flow.asStateFlow
 import me.matsumo.fanbox.core.repository.SettingRepository
 
 class MainViewModel(
-    private val settingRepository: SettingRepository,
+    settingRepository: SettingRepository,
 ) : ViewModel() {
 
     val setting = settingRepository.setting

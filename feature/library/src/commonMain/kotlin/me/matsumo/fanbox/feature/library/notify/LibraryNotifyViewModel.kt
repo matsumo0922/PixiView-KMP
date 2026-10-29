@@ -21,8 +21,8 @@ import me.matsumo.fanbox.feature.library.notify.paging.LibraryNotifyPagingSource
 import kotlin.time.Duration.Companion.seconds
 
 class LibraryNotifyViewModel(
-    private val fanboxRepository: FanboxRepository,
-    private val settingRepository: SettingRepository,
+    fanboxRepository: FanboxRepository,
+    settingRepository: SettingRepository,
 ) : ViewModel() {
 
     val screenState = settingRepository.setting.map {

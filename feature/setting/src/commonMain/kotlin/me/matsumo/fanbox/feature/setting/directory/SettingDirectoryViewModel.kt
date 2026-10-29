@@ -16,7 +16,7 @@ import kotlin.time.Duration.Companion.seconds
 
 class SettingDirectoryViewModel(
     private val settingRepository: SettingRepository,
-    private val downloadPostsRepository: DownloadPostsRepository,
+    downloadPostsRepository: DownloadPostsRepository,
 ) : ViewModel() {
 
     val screenState = settingRepository.setting.map {

@@ -7,7 +7,7 @@ import kotlinx.coroutines.flow.map
 import me.matsumo.fanbox.core.model.Flag
 
 class FlagDataStore(
-    private val preferenceHelper: PreferenceHelper,
+    preferenceHelper: PreferenceHelper,
 ) {
     private val preference = preferenceHelper.create(PreferencesName.FLAG)
 

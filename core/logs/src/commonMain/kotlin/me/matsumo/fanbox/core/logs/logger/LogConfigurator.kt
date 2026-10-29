@@ -17,7 +17,7 @@ object LogConfigurator : KoinComponent {
     private var filter: LogFilter? = null
     private val sender: LogSender by inject()
 
-    private var _isConfigured = MutableStateFlow(false)
+    private val _isConfigured = MutableStateFlow(false)
     val isConfigured = _isConfigured.asStateFlow()
 
     private val formatter = Json {

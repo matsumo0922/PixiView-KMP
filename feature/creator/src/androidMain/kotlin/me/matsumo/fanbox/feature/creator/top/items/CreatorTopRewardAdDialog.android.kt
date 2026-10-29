@@ -19,6 +19,7 @@ import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.SideEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.saveable.rememberSaveable
@@ -42,6 +43,8 @@ import org.jetbrains.compose.resources.stringResource
 import org.koin.compose.koinInject
 
 @Composable
+// 画面遷移・フォーカス・親への通知は composition 適用後に dispatch し、離脱時にキャンセルする。
+@Suppress("UnnecessaryLaunchedEffect")
 actual fun CreatorTopRewardAdDialog(
     title: String,
     message: String,
@@ -68,11 +71,11 @@ actual fun CreatorTopRewardAdDialog(
     val shouldShowRewardAdProgress = rewardAd == null || isRewardAdShowing
     val isRewardAdProgressVisible = shouldShowRewardAdProgress || hasActiveRewardAdRequest
 
-    LaunchedEffect(isAdsSdkInitialized) {
+    SideEffect(isAdsSdkInitialized) {
         rewardAdLoader.loadRewardAdIfNeeded(isAdsSdkInitialized)
     }
 
-    LaunchedEffect(Unit) {
+    SideEffect(Unit) {
         if (rewardAdLoader.shouldClearRestoredRequest(activeRewardAdRequestId)) {
             activeRewardAdRequestId = null
         }

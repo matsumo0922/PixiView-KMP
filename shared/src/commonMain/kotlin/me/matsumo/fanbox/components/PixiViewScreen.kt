@@ -7,6 +7,7 @@ import androidx.compose.animation.togetherWith
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.SideEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -25,6 +26,8 @@ import kotlin.time.Clock
 import kotlin.time.ExperimentalTime
 
 @Composable
+// 画面遷移・フォーカス・親への通知は composition 適用後に dispatch し、離脱時にキャンセルする。
+@Suppress("UnnecessaryLaunchedEffect")
 internal fun PixiViewScreen(
     uiState: MainUiState,
     onRequestInitPixiViewId: () -> Unit,
@@ -45,7 +48,7 @@ internal fun PixiViewScreen(
     }
     var isAllowedPermission by remember(uiState.setting, uiState.isLoggedIn) { mutableStateOf(true) }
 
-    LaunchedEffect(true) {
+    SideEffect(true) {
         if (uiState.setting.pixiViewId.isBlank()) {
             onRequestInitPixiViewId.invoke()
         }
@@ -79,7 +82,7 @@ internal fun PixiViewScreen(
                 bottomSheetNavigator = bottomSheetNavigator,
                 navController = navController,
                 onPostDetailClose = onPostDetailClose,
-                onLibraryHomeVisibilityChange = { isLibraryHomeVisible = it },
+                onLibraryHomeVisibilityChange = { isVisible -> isLibraryHomeVisible = isVisible },
             )
 
             HandleBillingRetentionPrompt(
@@ -101,6 +104,8 @@ internal fun PixiViewScreen(
 
 @OptIn(ExperimentalTime::class)
 @Composable
+// 画面遷移・フォーカス・親への通知は composition 適用後に dispatch し、離脱時にキャンセルする。
+@Suppress("UnnecessaryLaunchedEffect")
 private fun HandleBillingRetentionPrompt(
     uiState: MainUiState,
     navController: NavHostController,

@@ -74,7 +74,7 @@ internal fun SettingThemeRoute(
             onSelectTheme = viewModel::setThemeConfig,
             onSelectThemeColor = viewModel::setThemeColorConfig,
             onClickDynamicColor = viewModel::setUseDynamicColor,
-            onShowSnackbar = { scope.launch { toastExtension.show(snackbarHostState, it) } },
+            onShowSnackbar = { message -> scope.launch { toastExtension.show(snackbarHostState, message) } },
             onTerminate = terminate,
         )
     }

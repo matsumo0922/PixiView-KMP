@@ -48,7 +48,7 @@ import kotlin.uuid.Uuid
 class PixiViewViewModel(
     private val settingRepository: SettingRepository,
     private val fanboxRepository: FanboxRepository,
-    private val downloadPostsRepository: DownloadPostsRepository,
+    downloadPostsRepository: DownloadPostsRepository,
     private val launchLogDataStore: LaunchLogDataStore,
     private val billingClient: BillingClient,
     private val pixiViewConfig: PixiViewConfig,

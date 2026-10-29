@@ -88,11 +88,9 @@ class MigratingFanboxCookieStorage internal constructor(
         domain: String,
         path: String,
         name: String,
-    ) =
-        mutate { it.delete(domain, path, name) }
+    ) = mutate { it.delete(domain, path, name) }
 
-    override suspend fun deleteExpired(nowEpochMilliseconds: Long) =
-        mutate { it.deleteExpired(nowEpochMilliseconds) }
+    override suspend fun deleteExpired(nowEpochMilliseconds: Long) = mutate { it.deleteExpired(nowEpochMilliseconds) }
 
     override suspend fun replaceAll(cookies: List<FanboxCookieRecord>) = mutate { it.replaceAll(cookies) }
 

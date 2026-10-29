@@ -1,5 +1,3 @@
-@file:Suppress("ModifierReused")
-
 package me.matsumo.fanbox.core.ui
 
 import androidx.compose.animation.AnimatedContent
@@ -24,6 +22,8 @@ import me.matsumo.fanbox.core.ui.extensition.LocalSnackbarHostState
 import me.matsumo.fanbox.core.ui.view.ErrorView
 import me.matsumo.fanbox.core.ui.view.LoadingView
 
+// ルートと Loading/Error の別コンテナに、呼び出し元が指定した別々の Modifier を適用する。
+@Suppress("ModifierReused")
 @Composable
 fun <T> AsyncLoadContents(
     screenState: ScreenState<T>,
@@ -44,7 +44,7 @@ fun <T> AsyncLoadContents(
             )
         },
         contentWindowInsets = WindowInsets(0, 0, 0, 0),
-    ) {
+    ) { _ ->
         AnimatedContent(
             modifier = Modifier
                 .clip(cornerShape)

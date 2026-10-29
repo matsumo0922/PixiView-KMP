@@ -7,6 +7,7 @@ import org.gradle.api.Project
 import org.gradle.kotlin.dsl.getByType
 import org.gradle.kotlin.dsl.named
 import org.gradle.kotlin.dsl.register
+import org.gradle.kotlin.dsl.withType
 
 internal fun Project.configureDetekt() {
     val extension = extensions.getByType<DetektExtension>()
@@ -23,6 +24,19 @@ internal fun Project.configureDetekt() {
     extension.ignoreFailures.set(false)
     // ルール違反の自動修正を試みる
     extension.autoCorrect.set(false)
+
+    val generatedDirectory = layout.buildDirectory
+    tasks.withType<Detekt>().configureEach {
+        // source set の構成は維持し、Compose resources・KSP などの生成物だけを検査対象から外す。
+        exclude { it.file.toPath().startsWith(generatedDirectory.get().asFile.toPath()) }
+    }
+
+    val fullDetektTasks = tasks.withType<Detekt>().matching {
+        it.name in setOf("detektMainAndroid", "detektHostTestAndroid", "detektDebug", "detektDebugUnitTest", "detektDebugAndroidTest")
+    }
+    tasks.matching { it.name == "check" }.configureEach {
+        dependsOn(fullDetektTasks)
+    }
 
     // 各モジュールでの Detekt 実行結果を一つにまとめるタスク（CIでコメントする際に使用）
     // FYI: https://detekt.dev/docs/introduction/reporting/#kotlin-dsl

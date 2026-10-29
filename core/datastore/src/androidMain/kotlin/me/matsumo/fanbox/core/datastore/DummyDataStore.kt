@@ -8,7 +8,7 @@ import org.jetbrains.compose.resources.ExperimentalResourceApi
 
 class DummyDataStoreImpl(
     private val context: Context,
-    private val userDataStore: SettingDataStore,
+    userDataStore: SettingDataStore,
 ) : DummyDataStore {
 
     private val userData = userDataStore.setting

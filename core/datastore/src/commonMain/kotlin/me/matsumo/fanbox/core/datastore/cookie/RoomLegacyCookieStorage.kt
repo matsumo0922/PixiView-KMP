@@ -23,11 +23,9 @@ internal class RoomLegacyCookieStorage(
         domain: String,
         path: String,
         name: String,
-    ) =
-        delegate.delete(domain, path, name)
+    ) = delegate.delete(domain, path, name)
 
-    override suspend fun deleteExpired(nowEpochMilliseconds: Long) =
-        delegate.deleteExpired(nowEpochMilliseconds)
+    override suspend fun deleteExpired(nowEpochMilliseconds: Long) = delegate.deleteExpired(nowEpochMilliseconds)
 
     override suspend fun replaceAll(cookies: List<FanboxCookieRecord>) = delegate.replaceAll(cookies)
 

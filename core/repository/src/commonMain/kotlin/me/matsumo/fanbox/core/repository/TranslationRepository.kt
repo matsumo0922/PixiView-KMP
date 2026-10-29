@@ -24,7 +24,7 @@ import kotlin.time.Duration.Companion.seconds
 
 class TranslationRepository(
     private val formatter: Json,
-    private val pixiViewConfig: PixiViewConfig,
+    pixiViewConfig: PixiViewConfig,
     private val ioDispatcher: CoroutineDispatcher = Dispatchers.IO,
 ) {
     private val client = OpenAI(

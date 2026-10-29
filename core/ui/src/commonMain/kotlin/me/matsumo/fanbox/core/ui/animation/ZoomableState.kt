@@ -83,6 +83,8 @@ fun rememberZoomableState(
  * @see rememberZoomableState
  */
 @Stable
+// 拡大率・移動量・境界を同じ状態で更新し、gesture と animate/snap の整合を保つ。
+@Suppress("TooManyFunctions")
 class ZoomableState(
     private val decayAnimationSpec: DecayAnimationSpec<Float>,
     initialScale: Float = ZoomableDefaults.MIN_SCALE,
@@ -132,8 +134,8 @@ class ZoomableState(
 
     private val velocityTracker = VelocityTracker()
     private var _scale by mutableFloatStateOf(initialScale)
-    private var translationXAnimation = Animatable(initialTranslationX, PX_VISIBILITY_THRESHOLD)
-    private var translationYAnimation = Animatable(initialTranslationY, PX_VISIBILITY_THRESHOLD)
+    private val translationXAnimation = Animatable(initialTranslationX, PX_VISIBILITY_THRESHOLD)
+    private val translationYAnimation = Animatable(initialTranslationY, PX_VISIBILITY_THRESHOLD)
     private var sizeState by mutableStateOf(IntSize.Zero)
     private var childSizeState by mutableStateOf(Size.Zero)
 
@@ -228,8 +230,7 @@ class ZoomableState(
         translationYAnimation.updateBounds(-maxY, maxY)
     }
 
-    internal fun calculateTargetTranslation(centroid: Offset): Offset =
-        (size.toSize().center + Offset(translationX, translationY) - centroid) / scale
+    internal fun calculateTargetTranslation(centroid: Offset): Offset = (size.toSize().center + Offset(translationX, translationY) - centroid) / scale
 
     /**
      * Animate [scale] to [targetScale].
@@ -364,32 +365,30 @@ class ZoomableState(
         }
     }
 
-    override fun toString(): String =
-        "ZoomableState(translateX=${translationX.roundToTenths()}, " +
-            "translateY=${translationY.roundToTenths()}, scale=${scale.roundToTenths()})"
+    override fun toString(): String = "ZoomableState(translateX=${translationX.roundToTenths()}, " +
+        "translateY=${translationY.roundToTenths()}, scale=${scale.roundToTenths()})"
 
     companion object {
         /**
          * The default [Saver] implementation for [ZoomableState].
          */
-        fun saver(decayAnimationSpec: DecayAnimationSpec<Float>): Saver<ZoomableState, *> =
-            listSaver(
-                save = {
-                    listOf(
-                        it.translationX,
-                        it.translationY,
-                        it.scale,
-                    )
-                },
-                restore = {
-                    ZoomableState(
-                        decayAnimationSpec = decayAnimationSpec,
-                        initialTranslationX = it[0],
-                        initialTranslationY = it[1],
-                        initialScale = it[2],
-                    )
-                },
-            )
+        fun saver(decayAnimationSpec: DecayAnimationSpec<Float>): Saver<ZoomableState, *> = listSaver(
+            save = {
+                listOf(
+                    it.translationX,
+                    it.translationY,
+                    it.scale,
+                )
+            },
+            restore = {
+                ZoomableState(
+                    decayAnimationSpec = decayAnimationSpec,
+                    initialTranslationX = it[0],
+                    initialTranslationY = it[1],
+                    initialScale = it[2],
+                )
+            },
+        )
     }
 }
 
@@ -457,8 +456,7 @@ class OverZoomConfig(
         return result
     }
 
-    override fun toString(): String =
-        "OverZoomConfig(${minSnapScale.roundToTenths()}..${maxSnapScale.roundToTenths()})"
+    override fun toString(): String = "OverZoomConfig(${minSnapScale.roundToTenths()}..${maxSnapScale.roundToTenths()})"
 }
 
 internal val OverZoomConfig.range: ClosedFloatingPointRange<Float>

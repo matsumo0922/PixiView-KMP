@@ -46,7 +46,7 @@ internal fun CreatorTopPlansScreen(
         }
     } else {
         ErrorView(
-            modifier = Modifier.fillMaxWidth(),
+            modifier = modifier.fillMaxWidth(),
             title = Res.string.creator_plans_for_ios_error,
             message = Res.string.creator_plans_for_ios_error_description,
             retryTitle = Res.string.creator_plans_for_ios_error_button,

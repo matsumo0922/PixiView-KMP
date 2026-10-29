@@ -9,6 +9,7 @@ import android.content.Intent
 import android.os.IBinder
 import androidx.core.app.NotificationCompat
 import io.github.aakira.napier.Napier
+import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
@@ -26,7 +27,9 @@ import org.jetbrains.compose.resources.getString
 import org.koin.android.ext.android.inject
 import kotlin.time.Duration.Companion.milliseconds
 
-class DownloadPostService : Service() {
+class DownloadPostService(
+    ioDispatcher: CoroutineDispatcher = Dispatchers.IO,
+) : Service() {
 
     private val downloadPostsRepository by inject<DownloadPostsRepository>()
     private val downloadState = downloadPostsRepository.downloadState
@@ -35,7 +38,7 @@ class DownloadPostService : Service() {
     private val manager by lazy { baseContext.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager }
     private val notifyConfig = NotificationConfigs.download
 
-    private val scope = CoroutineScope(Dispatchers.IO + SupervisorJob())
+    private val scope = CoroutineScope(ioDispatcher + SupervisorJob())
     private var isForeground = false
 
     override fun onBind(intent: Intent?): IBinder? = null

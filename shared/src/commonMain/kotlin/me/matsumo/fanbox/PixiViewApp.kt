@@ -11,7 +11,8 @@ import androidx.compose.material3.windowsizeclass.WindowWidthSizeClass
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.DisposableEffect
-import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.ReadOnlyComposable
+import androidx.compose.runtime.SideEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
@@ -93,7 +94,7 @@ fun PixiViewApp(
                     enable = shouldLoadInterstitialAd,
                 )
 
-                LaunchedEffect(shouldLoadInterstitialAd, interstitialAdState) {
+                SideEffect(shouldLoadInterstitialAd, interstitialAdState) {
                     if (shouldLoadInterstitialAd) {
                         interstitialAdState.load()
                     }
@@ -195,6 +196,7 @@ private suspend fun showInterstitialAdAndReload(interstitialAdState: Interstitia
     return wasShown
 }
 
+@ReadOnlyComposable
 @Composable
 private fun shouldUseDarkTheme(screenState: ScreenState<MainUiState>): Boolean {
     val default = isSystemInDarkTheme()

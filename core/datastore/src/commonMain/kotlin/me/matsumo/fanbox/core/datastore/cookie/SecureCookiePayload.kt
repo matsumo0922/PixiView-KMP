@@ -21,9 +21,8 @@ internal data class SecureCookiePayload(
     val isEmpty: Boolean
         get() = records.isEmpty() && !isMigrationCompleted && !isLogoutInProgress
 
-    override fun toString(): String =
-        "SecureCookiePayload(records=${records.size} 件, isMigrationCompleted=$isMigrationCompleted, " +
-            "isLogoutInProgress=$isLogoutInProgress)"
+    override fun toString(): String = "SecureCookiePayload(records=${records.size} 件, isMigrationCompleted=$isMigrationCompleted, " +
+        "isLogoutInProgress=$isLogoutInProgress)"
 }
 
 /**
@@ -44,10 +43,9 @@ internal data class SecureCookieRecord(
     @SerialName("secure") val secure: Boolean = false,
     @SerialName("hostOnly") val hostOnly: Boolean = false,
 ) {
-    override fun toString(): String =
-        "SecureCookieRecord(domain=$domain, path=$path, name=$name, " +
-            "expiresAtEpochMilliseconds=$expiresAtEpochMilliseconds, secure=$secure, " +
-            "hostOnly=$hostOnly, value=<redacted>)"
+    override fun toString(): String = "SecureCookieRecord(domain=$domain, path=$path, name=$name, " +
+        "expiresAtEpochMilliseconds=$expiresAtEpochMilliseconds, secure=$secure, " +
+        "hostOnly=$hostOnly, value=<redacted>)"
 }
 
 internal fun FanboxCookieRecord.toSecureCookieRecord(): SecureCookieRecord = SecureCookieRecord(

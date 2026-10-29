@@ -1,5 +1,3 @@
-@file:Suppress("MatchingDeclarationName")
-
 package me.matsumo.fanbox.core.ui.theme
 
 import androidx.compose.runtime.Immutable

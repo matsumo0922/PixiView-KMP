@@ -15,6 +15,8 @@ import me.matsumo.fanbox.core.ui.component.AdultContentThumbnail
 import me.matsumo.fanbox.core.ui.extensition.LocalFanboxMetadata
 import sh.calvin.autolinktext.rememberAutoLinkText
 
+// LazyListScope の項目宣言へ、記事の表示データと画面イベントをそのまま渡す。
+@Suppress("LongParameterList")
 internal fun LazyListScope.postDetailImageHeader(
     content: PostDetail.Body.Image,
     isAdultContents: Boolean,

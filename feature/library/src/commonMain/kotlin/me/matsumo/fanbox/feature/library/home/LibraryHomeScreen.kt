@@ -141,7 +141,7 @@ internal fun LibraryHomeScreen(
                             modifier = Modifier.fillMaxSize(),
                             lazyPagingItems = homePager,
                             emptyMessageRes = Res.string.error_no_data_following,
-                        ) {
+                        ) { _ ->
                             LibraryHomeIdleSection(
                                 modifier = Modifier.fillMaxSize(),
                                 pagingAdapter = homePager,
@@ -163,7 +163,7 @@ internal fun LibraryHomeScreen(
                             modifier = Modifier.fillMaxSize(),
                             lazyPagingItems = supportedPager,
                             emptyMessageRes = Res.string.error_no_data_supported,
-                        ) {
+                        ) { _ ->
                             LibrarySupportedIdleSection(
                                 modifier = Modifier.fillMaxSize(),
                                 pagingAdapter = supportedPager,

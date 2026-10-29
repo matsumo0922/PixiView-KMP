@@ -42,38 +42,36 @@ fun <T : Any> LazyPagingItemsLoadContents(
                 messageRes = emptyMessageRes,
             )
         } else {
-            lazyPagingItems.apply {
-                AnimatedContent(
-                    targetState = loadState.refresh,
-                    transitionSpec = { fadeIn().togetherWith(fadeOut()) },
-                    contentKey = { it::class },
-                    label = "LazyPagingItemsLoadContents",
-                ) {
-                    when (it) {
-                        is LoadState.Loading -> {
-                            LoadingView()
+            AnimatedContent(
+                targetState = lazyPagingItems.loadState.refresh,
+                transitionSpec = { fadeIn().togetherWith(fadeOut()) },
+                contentKey = { it::class },
+                label = "LazyPagingItemsLoadContents",
+            ) {
+                when (it) {
+                    is LoadState.Loading -> {
+                        LoadingView()
+                    }
+
+                    is LoadState.Error -> {
+                        ErrorView(
+                            errorState = ScreenState.Error(Res.string.error_no_data),
+                            retryAction = { lazyPagingItems.refresh() },
+                            terminate = null,
+                        )
+                    }
+
+                    is LoadState.NotLoading -> {
+                        val isRefreshing by remember(lazyPagingItems.loadState) {
+                            derivedStateOf { lazyPagingItems.loadState.refresh is LoadState.Loading }
                         }
 
-                        is LoadState.Error -> {
-                            ErrorView(
-                                errorState = ScreenState.Error(Res.string.error_no_data),
-                                retryAction = { lazyPagingItems.refresh() },
-                                terminate = null,
-                            )
-                        }
-
-                        is LoadState.NotLoading -> {
-                            val isRefreshing by remember(lazyPagingItems.loadState) {
-                                derivedStateOf { lazyPagingItems.loadState.refresh is LoadState.Loading }
-                            }
-
-                            PullToRefreshWrapper(
-                                onRefresh = { lazyPagingItems.refresh() },
-                                isRefreshing = isRefreshing,
-                                enabled = isSwipeEnabled,
-                            ) {
-                                content.invoke(lazyPagingItems.loadState)
-                            }
+                        PullToRefreshWrapper(
+                            onRefresh = { lazyPagingItems.refresh() },
+                            isRefreshing = isRefreshing,
+                            enabled = isSwipeEnabled,
+                        ) {
+                            content.invoke(lazyPagingItems.loadState)
                         }
                     }
                 }

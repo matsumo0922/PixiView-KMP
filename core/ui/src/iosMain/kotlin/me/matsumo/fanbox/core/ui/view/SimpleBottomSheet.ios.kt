@@ -36,7 +36,6 @@ import platform.UIKit.presentationController
 import platform.UIKit.sheetPresentationController
 import kotlin.concurrent.Volatile
 
-@Suppress("UnstableCollections", "ModifierMissing")
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 actual fun SimpleBottomSheet(
@@ -191,9 +190,7 @@ private class AdaptiveSheetState(
             }
         }
         if (skipHiddenState) {
-            require(initialValue != SheetValue.Hidden) {
-                "The initial value must not be set to Hidden if skipHiddenState is set to true."
-            }
+            require(initialValue != SheetValue.Hidden) { "The initial value must not be set to Hidden if skipHiddenState is set to true." }
         }
     }
 

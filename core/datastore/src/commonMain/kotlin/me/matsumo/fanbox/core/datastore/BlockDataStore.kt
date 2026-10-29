@@ -53,7 +53,7 @@ class BlockDataStore(
 
     private suspend fun fetchBlockedCreators(): Set<String> = cookiePreference.data.firstOrNull()?.let {
         it[stringSetPreferencesKey(BLOCKED_CREATOR)]
-    } ?: setOf()
+    }.orEmpty()
 
     private suspend fun notify() {
         _data.emit(fetchBlockedCreators().map { FanboxCreatorId(it) }.toSet())

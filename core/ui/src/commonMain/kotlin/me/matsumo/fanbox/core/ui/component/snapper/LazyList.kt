@@ -1,5 +1,3 @@
-@file:Suppress("ClassOrdering")
-
 package me.matsumo.fanbox.core.ui.component.snapper
 
 import androidx.compose.animation.core.AnimationSpec
@@ -63,7 +61,8 @@ public fun rememberSnapperFlingBehavior(
 public fun rememberSnapperFlingBehavior(
     lazyListState: LazyListState,
     snapOffsetForItem: (layoutInfo: SnapperLayoutInfo, item: SnapperLayoutItemInfo) -> Int = SnapOffsets.Center,
-    @Suppress("UNUSED_PARAMETER") endContentPadding: Dp = 0.dp,
+    // 非推奨 overload の引数互換を維持する。移行: https://github.com/matsumo0922/PixiView-KMP/issues/163
+    @Suppress("UNUSED_PARAMETER", "UnusedPrivateProperty") endContentPadding: Dp = 0.dp,
     decayAnimationSpec: DecayAnimationSpec<Float> = rememberSplineBasedDecay(),
     springAnimationSpec: AnimationSpec<Float> = SnapperFlingBehaviorDefaults.SpringAnimationSpec,
     snapIndex: (SnapperLayoutInfo, startIndex: Int, targetIndex: Int) -> Int = SnapperFlingBehaviorDefaults.SnapIndex,
@@ -76,6 +75,7 @@ public fun rememberSnapperFlingBehavior(
 
 @Composable
 @Deprecated("The maximumFlingDistance parameter has been replaced with snapIndex")
+// 非推奨の Pager/Snapper API の互換経路を維持する。移行: https://github.com/matsumo0922/PixiView-KMP/issues/163
 @Suppress("DEPRECATION")
 @ExperimentalSnapperApi
 public fun rememberSnapperFlingBehavior(
@@ -112,7 +112,8 @@ public fun rememberSnapperFlingBehavior(
 public fun rememberLazyListSnapperLayoutInfo(
     lazyListState: LazyListState,
     snapOffsetForItem: (layoutInfo: SnapperLayoutInfo, item: SnapperLayoutItemInfo) -> Int = SnapOffsets.Center,
-    @Suppress("UNUSED_PARAMETER") endContentPadding: Dp = 0.dp,
+    // 非推奨 overload の引数互換を維持する。移行: https://github.com/matsumo0922/PixiView-KMP/issues/163
+    @Suppress("UNUSED_PARAMETER", "UnusedPrivateProperty") endContentPadding: Dp = 0.dp,
 ): LazyListSnapperLayoutInfo = rememberLazyListSnapperLayoutInfo(lazyListState, snapOffsetForItem)
 
 /**
@@ -146,17 +147,7 @@ public fun rememberLazyListSnapperLayoutInfo(
 public class LazyListSnapperLayoutInfo(
     private val lazyListState: LazyListState,
     private val snapOffsetForItem: (layoutInfo: SnapperLayoutInfo, item: SnapperLayoutItemInfo) -> Int,
-) : SnapperLayoutInfo() {
-
-    @Deprecated(
-        "endContentPadding is no longer necessary to be passed in",
-        ReplaceWith("LazyListSnapperLayoutInfo(lazyListState, snapOffsetForItem)"),
-    )
-    public constructor(
-        lazyListState: LazyListState,
-        snapOffsetForItem: (layoutInfo: SnapperLayoutInfo, item: SnapperLayoutItemInfo) -> Int,
-        @Suppress("UNUSED_PARAMETER") endContentPadding: Int = 0,
-    ) : this(lazyListState, snapOffsetForItem)
+) : SnapperLayoutInfo {
 
     /**
      * Lazy lists always use 0 as the start scroll offset (within content padding)
@@ -182,6 +173,17 @@ public class LazyListSnapperLayoutInfo(
     override val visibleItems: Sequence<SnapperLayoutItemInfo>
         get() = lazyListState.layoutInfo.visibleItemsInfo.asSequence()
             .map(::LazyListSnapperLayoutItemInfo)
+
+    @Deprecated(
+        "endContentPadding is no longer necessary to be passed in",
+        ReplaceWith("LazyListSnapperLayoutInfo(lazyListState, snapOffsetForItem)"),
+    )
+    public constructor(
+        lazyListState: LazyListState,
+        snapOffsetForItem: (layoutInfo: SnapperLayoutInfo, item: SnapperLayoutItemInfo) -> Int,
+        // 非推奨 overload の引数互換を維持する。移行: https://github.com/matsumo0922/PixiView-KMP/issues/163
+        @Suppress("UNUSED_PARAMETER", "UnusedPrivateProperty") endContentPadding: Int = 0,
+    ) : this(lazyListState, snapOffsetForItem)
 
     override fun distanceToIndexSnap(index: Int): Int {
         val itemInfo = visibleItems.firstOrNull { it.index == index }

@@ -1,5 +1,3 @@
-@file:Suppress("MatchingDeclarationName")
-
 package me.matsumo.fanbox.core.ui.component
 
 import androidx.compose.foundation.layout.ColumnScope
@@ -12,6 +10,7 @@ import androidx.compose.material3.NavigationRail
 import androidx.compose.material3.NavigationRailItem
 import androidx.compose.material3.NavigationRailItemDefaults
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.ReadOnlyComposable
 import androidx.compose.ui.Modifier
 
 @Composable
@@ -91,15 +90,19 @@ fun ColumnScope.PixiViewNavigationRailItem(
 }
 
 object PixiViewNavigationDefaults {
+    @ReadOnlyComposable
     @Composable
     fun navigationContainerColor() = MaterialTheme.colorScheme.surface
 
+    @ReadOnlyComposable
     @Composable
     fun navigationContentColor() = MaterialTheme.colorScheme.onSurfaceVariant
 
+    @ReadOnlyComposable
     @Composable
     fun navigationSelectedItemColor() = MaterialTheme.colorScheme.onPrimaryContainer
 
+    @ReadOnlyComposable
     @Composable
     fun navigationIndicatorColor() = MaterialTheme.colorScheme.primaryContainer
 }

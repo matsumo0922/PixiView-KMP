@@ -39,6 +39,7 @@ import androidx.compose.foundation.lazy.grid.LazyGridState
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.ReadOnlyComposable
 import androidx.compose.runtime.Stable
 import androidx.compose.runtime.mutableLongStateOf
 import androidx.compose.runtime.remember
@@ -92,6 +93,7 @@ fun Modifier.padding(
     ),
 )
 
+@ReadOnlyComposable
 @Composable
 operator fun PaddingValues.plus(value: PaddingValues): PaddingValues {
     val layoutDirection = LocalLayoutDirection.current
@@ -234,6 +236,8 @@ fun Modifier.drawVerticalScrollbar(
     }
 }
 
+// 同じ描画処理へ、向き・表示位置・色・透明度・算出済みの幾何情報を渡す。
+@Suppress("LongParameterList")
 private fun DrawScope.drawScrollbar(
     orientation: Orientation,
     reverseDirection: Boolean,
@@ -328,6 +332,7 @@ private fun Modifier.drawScrollbar(
 }
 
 private val BarColor: Color
+    @ReadOnlyComposable
     @Composable get() = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.5f)
 
 private val Thickness = 4.dp
@@ -372,7 +377,7 @@ private val recomposeModifier =
         // The total number of compositions that have occurred. We're not using a State<> here be
         // able to read/write the value without invalidating (which would cause infinite
         // recomposition).
-        val totalCompositions = remember { arrayOf(0L) }
+        val totalCompositions = remember { longArrayOf(0L) }
         totalCompositions[0]++
 
         // The value of totalCompositions at the last timeout.

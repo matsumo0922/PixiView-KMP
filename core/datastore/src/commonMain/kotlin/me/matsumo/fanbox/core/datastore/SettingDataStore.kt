@@ -26,7 +26,7 @@ import kotlin.time.Duration.Companion.seconds
 // 同じ設定データへ読み書きする型付き setter を1つの DataStore にまとめる。
 @Suppress("TooManyFunctions")
 class SettingDataStore(
-    private val preferenceHelper: PreferenceHelper,
+    preferenceHelper: PreferenceHelper,
     private val formatter: Json,
     private val ioDispatcher: CoroutineDispatcher,
 ) {

@@ -186,7 +186,8 @@ private fun SettingTopScreen(
     onClickFollowTabDefaultHome: (Boolean) -> Unit,
     onClickHideAdultContents: (Boolean) -> Unit,
     onClickOverrideAdultContents: (Boolean) -> Unit,
-    onClickHideRestricted: (Boolean) -> Unit,
+    // Restricted は対象を修飾する形容詞で、イベント名の過去形ではない。
+    @Suppress("ParameterNaming") onClickHideRestricted: (Boolean) -> Unit,
     onClickGridMode: (Boolean) -> Unit,
     onClickInfinityPostDetail: (Boolean) -> Unit,
     onClickAutoImagePreview: (Boolean) -> Unit,

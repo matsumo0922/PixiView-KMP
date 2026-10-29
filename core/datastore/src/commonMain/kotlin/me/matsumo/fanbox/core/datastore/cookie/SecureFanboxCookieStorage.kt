@@ -101,5 +101,4 @@ internal fun FanboxCookieRecord.canonicalized(): FanboxCookieRecord = copy(
 )
 
 /** 同一性が重なるレコードを後勝ちで 1 件に畳む。 */
-internal fun List<SecureCookieRecord>.deduplicated(): List<SecureCookieRecord> =
-    associateBy { it.identity }.values.toList()
+internal fun List<SecureCookieRecord>.deduplicated(): List<SecureCookieRecord> = associateBy { it.identity }.values.toList()

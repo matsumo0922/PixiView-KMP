@@ -20,6 +20,8 @@ import kotlin.test.assertEquals
 import kotlin.test.assertNull
 
 /** RewardLogDataStore の用途別リワード視聴履歴を検証するテスト。 */
+// テスト自身が Dispatcher の注入元となり、DataStore の実 I/O と即時実行を使い分ける。
+@Suppress("InjectDispatcher")
 class RewardLogDataStoreTest {
 
     private val dataStoreScope = CoroutineScope(Dispatchers.IO + SupervisorJob())

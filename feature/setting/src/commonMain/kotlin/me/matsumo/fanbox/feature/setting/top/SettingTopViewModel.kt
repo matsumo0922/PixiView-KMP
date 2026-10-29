@@ -29,11 +29,13 @@ import me.matsumo.fanbox.core.ui.extensition.getFanboxMetadataDummy
 import org.jetbrains.compose.resources.getString
 import kotlin.time.Duration.Companion.seconds
 
+// 設定項目の setter を画面 callback と1対1で対応させ、画面の coroutine scope で更新する。
+@Suppress("TooManyFunctions")
 class SettingTopViewModel(
     private val settingRepository: SettingRepository,
     private val fanboxRepository: FanboxRepository,
     private val flagRepository: FlagRepository,
-    private val pixiViewConfig: PixiViewConfig,
+    pixiViewConfig: PixiViewConfig,
 ) : ViewModel() {
 
     val screenState = combine(settingRepository.setting, fanboxRepository.sessionId, ::Pair).map { (userData, sessionId) ->

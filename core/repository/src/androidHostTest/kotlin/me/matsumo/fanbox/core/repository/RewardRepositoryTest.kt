@@ -24,6 +24,8 @@ import kotlin.time.Instant
 
 /** RewardRepository の用途別リワード視聴状態を検証するテスト。 */
 @OptIn(ExperimentalTime::class)
+// テスト自身が Dispatcher の注入元となり、DataStore の実 I/O と即時実行を使い分ける。
+@Suppress("InjectDispatcher")
 class RewardRepositoryTest {
 
     private val dataStoreScope = CoroutineScope(Dispatchers.IO + SupervisorJob())

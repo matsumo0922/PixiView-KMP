@@ -12,6 +12,8 @@ import me.matsumo.fanbox.core.model.fanbox.PostDetail
 import me.matsumo.fanbox.core.model.fanbox.PostDetail.Body
 import me.matsumo.fanbox.core.model.fanbox.PostId
 
+// LazyListScope の項目宣言へ、記事の表示データと画面イベントをそのまま渡す。
+@Suppress("LongParameterList")
 internal fun LazyListScope.postDetailItems(
     post: PostDetail,
     setting: Setting,

@@ -28,7 +28,6 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.saveable.rememberSaveable
@@ -70,6 +69,8 @@ import kotlin.time.Clock
 import kotlin.time.ExperimentalTime
 import kotlin.time.Instant
 
+// LazyListScope の項目宣言へ、記事の表示データと画面イベントをそのまま渡す。
+@Suppress("LongParameterList")
 internal fun LazyListScope.postDetailCommentItems(
     isShowCommentEditor: Boolean,
     postDetail: PostDetail,
@@ -319,12 +320,8 @@ private fun CommentEditor(
     onClickCommentReply: (String, CommentId, CommentId) -> Unit,
     modifier: Modifier = Modifier,
 ) {
-    var isError by rememberSaveable { mutableStateOf(false) }
     var value by rememberSaveable { mutableStateOf("") }
-
-    LaunchedEffect(value) {
-        isError = value.length > 1000
-    }
+    val isError = value.length > 1000
 
     Row(
         modifier = modifier,

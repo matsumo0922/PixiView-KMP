@@ -9,7 +9,7 @@ expect class NativeView
 data class NativeViews(
     private val provider: Map<String, () -> NativeView?> = emptyMap(),
 ) {
-    fun provide(key: Key): () -> NativeView = provider[key.id]!! as () -> NativeView
+    fun provide(key: Key): () -> NativeView = provider.getValue(key.id) as () -> NativeView
 
     enum class Key(val id: String) {
         NativeAdView("NativeAdView"),

@@ -83,5 +83,4 @@ internal class KSafeCookieBlobStore(
 }
 
 /** [SecureCookieBlobStore] の payload から Cookie レコードだけを取り出す。 */
-internal fun Flow<SecureCookiePayload>.records(): Flow<List<SecureCookieRecord>> =
-    map { it.records }.distinctUntilChanged()
+internal fun Flow<SecureCookiePayload>.records(): Flow<List<SecureCookieRecord>> = map { it.records }.distinctUntilChanged()

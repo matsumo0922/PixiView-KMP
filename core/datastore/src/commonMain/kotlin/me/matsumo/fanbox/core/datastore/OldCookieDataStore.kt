@@ -7,7 +7,7 @@ import kotlinx.coroutines.flow.firstOrNull
 import kotlinx.coroutines.flow.map
 
 class OldCookieDataStore(
-    private val preferenceHelper: PreferenceHelper,
+    preferenceHelper: PreferenceHelper,
 ) {
     private val cookiePreference = preferenceHelper.create(PreferencesName.FANBOX_COOKIE)
 

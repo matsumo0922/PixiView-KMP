@@ -27,6 +27,7 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.surfaceColorAtElevation
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.SideEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateMapOf
 import androidx.compose.runtime.mutableStateOf
@@ -372,12 +373,12 @@ private fun PostDetailView(
             onTerminate = terminate,
         )
 
-        LaunchedEffect(uiState.messageToast) {
+        SideEffect(uiState.messageToast) {
             uiState.messageToast?.let { scope.launch { snackExtension.show(snackbarHostState, it) } }
             viewModel.consumeToast()
         }
 
-        LaunchedEffect(uiState.postDetail) {
+        SideEffect(uiState.postDetail) {
             onPostDetailFetch.invoke(uiState.postDetail)
         }
     }
@@ -428,7 +429,7 @@ private fun PostDetailScreen(
     var isShowCommentEditor by remember { mutableStateOf(false) }
     var latestComment by remember { mutableStateOf("") }
 
-    LaunchedEffect(comments) {
+    SideEffect(comments) {
         if (isShowCommentEditor) {
             val commentItems = comments.contents.flatMap { comment -> listOf(comment) + comment.replies }
             isShowCommentEditor = !commentItems.any { comment ->

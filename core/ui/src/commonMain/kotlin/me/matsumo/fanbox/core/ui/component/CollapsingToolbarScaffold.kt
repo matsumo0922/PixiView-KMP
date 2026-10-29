@@ -55,17 +55,15 @@ class CollapsingToolbarScaffoldState(
 }
 
 private class CollapsingToolbarScaffoldStateSaver : Saver<CollapsingToolbarScaffoldState, List<Any>> {
-    override fun restore(value: List<Any>): CollapsingToolbarScaffoldState =
-        CollapsingToolbarScaffoldState(
-            CollapsingToolbarState(value[0] as Int),
-            value[1] as Int,
-        )
+    override fun restore(value: List<Any>): CollapsingToolbarScaffoldState = CollapsingToolbarScaffoldState(
+        CollapsingToolbarState(value[0] as Int),
+        value[1] as Int,
+    )
 
-    override fun SaverScope.save(value: CollapsingToolbarScaffoldState): List<Any> =
-        listOf(
-            value.toolbarState.height,
-            value.offsetY,
-        )
+    override fun SaverScope.save(value: CollapsingToolbarScaffoldState): List<Any> = listOf(
+        value.toolbarState.height,
+        value.offsetY,
+    )
 }
 
 @Composable
@@ -119,9 +117,7 @@ fun CollapsingToolbarScaffold(
                 },
             ),
     ) { measurables, constraints ->
-        check(measurables.size >= 2) {
-            "the number of children should be at least 2: toolbar, (at least one) body"
-        }
+        check(measurables.size >= 2) { "the number of children should be at least 2: toolbar, (at least one) body" }
 
         val toolbarConstraints = constraints.copy(
             minWidth = 0,
@@ -181,8 +177,7 @@ fun CollapsingToolbarScaffold(
 }
 
 internal object CollapsingToolbarScaffoldScopeInstance : CollapsingToolbarScaffoldScope {
-    override fun Modifier.align(alignment: Alignment): Modifier =
-        this.then(ScaffoldChildAlignmentModifier(alignment))
+    override fun Modifier.align(alignment: Alignment): Modifier = this.then(ScaffoldChildAlignmentModifier(alignment))
 }
 
 private class ScaffoldChildAlignmentModifier(
@@ -510,24 +505,21 @@ enum class ScrollStrategy {
             offsetY: MutableState<Int>,
             toolbarState: CollapsingToolbarState,
             flingBehavior: FlingBehavior,
-        ): NestedScrollConnection =
-            EnterAlwaysNestedScrollConnection(offsetY, toolbarState, flingBehavior)
+        ): NestedScrollConnection = EnterAlwaysNestedScrollConnection(offsetY, toolbarState, flingBehavior)
     },
     EnterAlwaysCollapsed {
         override fun create(
             offsetY: MutableState<Int>,
             toolbarState: CollapsingToolbarState,
             flingBehavior: FlingBehavior,
-        ): NestedScrollConnection =
-            EnterAlwaysCollapsedNestedScrollConnection(offsetY, toolbarState, flingBehavior)
+        ): NestedScrollConnection = EnterAlwaysCollapsedNestedScrollConnection(offsetY, toolbarState, flingBehavior)
     },
     ExitUntilCollapsed {
         override fun create(
             offsetY: MutableState<Int>,
             toolbarState: CollapsingToolbarState,
             flingBehavior: FlingBehavior,
-        ): NestedScrollConnection =
-            ExitUntilCollapsedNestedScrollConnection(toolbarState, flingBehavior)
+        ): NestedScrollConnection = ExitUntilCollapsedNestedScrollConnection(toolbarState, flingBehavior)
     }, ;
 
     internal abstract fun create(

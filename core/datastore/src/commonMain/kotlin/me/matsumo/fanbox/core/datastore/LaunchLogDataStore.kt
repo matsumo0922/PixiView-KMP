@@ -10,8 +10,8 @@ import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
 
 class LaunchLogDataStore(
-    private val preferenceHelper: PreferenceHelper,
-    private val ioDispatcher: CoroutineDispatcher,
+    preferenceHelper: PreferenceHelper,
+    ioDispatcher: CoroutineDispatcher,
 ) {
     private val preference = preferenceHelper.create(PreferencesName.LAUNCH_LOG)
     private val scope = CoroutineScope(ioDispatcher)

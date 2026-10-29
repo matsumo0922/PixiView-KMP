@@ -139,22 +139,31 @@ root と `build-logic` の Kotlin ファイルおよび各モジュールの Kot
 統合した Checkstyle レポートは `build/reports/detekt/merge.xml`、モジュールごとの HTML レポートは各モジュールの `build/reports/detekt/detekt.html` に出力する。
 統合対象は通常の `detekt` の結果で、型解決タスクの結果は混ぜない。
 
-関数定義の改行は、引数が3つ以上、またはデフォルト引数を持つ場合に引数ごとに改行する。
-`FunctionSignature` はデフォルト引数の有無を判別しないため無効にし、この規約は手動で確認する。
-呼び出し側の名前付き引数、引数ごとの改行、Modifier の先頭配置も手動レビューの対象となる。
-Composable の PascalCase と画面名の prefix も手動で確認する。
+関数定義とコンストラクタは、引数が3つ以上、またはデフォルト引数を持つ場合に引数ごとに改行する。
+`FunctionSignature` / `ClassSignature` は引数3つ以上の定義を検査する。
+デフォルト引数による改行、呼び出し側の名前付き引数と改行、Modifier の先頭配置、Composable の PascalCase と画面名の prefix は手動レビューの対象となる。
+メソッドチェーンはプロパティ参照を数えず、1行2呼び出しまでとする。
+`MaxChainedCallsOnSameLine` はプロパティ参照も数えるため無効化し、チェーンと Modifier のリンクごとの改行は手動で確認する。
 行長は折り返しの基準にしない。
 
-関数数の上限は interface と class ともに15で、override とテストケースを数えない。
-`FanboxRepository`、`SettingRepository`、`SettingDataStore` は既存の集約 API と型付き setter を維持するため、理由付きで個別に除外する。
-Composable も `CyclomaticComplexMethod` の対象とし、UI から処理の判定を切り出す。
-複合条件の分割は `ComplexCondition` で確認する。
-`ModifierMissing` は public、internal、private を対象とし、Preview を除外する。
+`config/detekt/detekt.yml` は Agents の共通テンプレートと同じ設定を使う。
+複雑度や関数数の閾値は detekt の既定値を使い、関数数の上限は11となる。
+責務を一緒に扱う理由がある宣言にだけ、直前の理由コメント付きで `@Suppress` を付ける。
+初期カーソルの取得が必要な Flow factory、画面ごとのイベント窓口、宣言用 UI DSL、遷移・フォーカスなどの effect の実行タイミングも、この方法で例外を明示する。
+互換性の例外は [Pager/Snapper の移行](https://github.com/matsumo0922/PixiView-KMP/issues/163) と [iOS entry point の移行](https://github.com/matsumo0922/PixiView-KMP/issues/164) を追跡する。
+Composable も `CyclomaticComplexMethod` の対象とする。
+`ModifierMissing` は全可視性を対象とし、Preview と自身のレイアウトを持たないラッパーを除外する。
 
-通常の `detekt` の集計には、型情報が必要なルールを含めない。
-型情報が必要なルールは `:core:model:detektMainAndroid` などのタスクで確認する。
-これらのタスクは detekt が生成した source set の範囲を使う。
-KMP の `expect` / `actual` に関する解析エラーが出る場合は、型解決付きルールの結果を個別に検証し、実際のコンパイル結果と区別する。
+型情報が必要なルールは、通常の `detekt` の統合レポートには含めず、次の full モードのタスクで検査する。
+
+```bash
+./gradlew detektMainAndroid detektHostTestAndroid :androidApp:detektDebug :androidApp:detektDebugUnitTest :androidApp:detektDebugAndroidTest --continue
+```
+
+各モジュールの `check` と CI からも対応する full モードのタスクを実行する。
+これらのタスクは detekt が生成した source set の範囲を維持し、build ディレクトリ配下の生成物を除外する。
+KMP の `expect` / `actual` に関するコンパイラ解析診断が出る場合は、ルールの指摘件数、解析診断、実際の Android/iOS のコンパイル結果を分けて確認する。
+ログイベントを生成するテンプレートは `scripts/daifuku/templates/LogCategory.kt.erb` に置き、生成された宣言と合わせて更新する。
 
 ## Contribute
 

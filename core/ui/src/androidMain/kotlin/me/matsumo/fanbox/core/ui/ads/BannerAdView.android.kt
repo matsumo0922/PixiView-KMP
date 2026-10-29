@@ -45,6 +45,7 @@ import me.matsumo.fanbox.core.ui.theme.LocalPixiViewConfig
 import me.matsumo.fanbox.core.ui.theme.bold
 import org.jetbrains.compose.resources.stringResource
 
+// 通信権限は host の AndroidManifest.xml で宣言し、この SDK 呼び出しに適用する。
 @SuppressLint("MissingPermission")
 @Composable
 actual fun BannerAdView(modifier: Modifier) {
@@ -132,6 +133,7 @@ actual fun BannerAdView(modifier: Modifier) {
     }
 }
 
+// 通信権限は host の AndroidManifest.xml で宣言し、この SDK 呼び出しに適用する。
 @SuppressLint("MissingPermission")
 @Composable
 fun rememberAdViewWithLifecycle(
@@ -181,7 +183,10 @@ fun rememberAdViewWithLifecycle(
     return adView
 }
 
+// 通信権限は host の AndroidManifest.xml で宣言し、この SDK 呼び出しに適用する。
 @SuppressLint("MissingPermission")
+// 広告 View の生成に必要な SDK 引数とリトライ通知を、生成処理の境界で受け取る。
+@Suppress("LongParameterList")
 private fun createBannerAdView(
     context: Context,
     adUnitId: String,
@@ -231,6 +236,7 @@ private class BannerAdRetryListener(
 
     override fun onAdOpened() = delegate.onAdOpened()
 
+    // 通信権限は host の AndroidManifest.xml で宣言し、この SDK 呼び出しに適用する。
     @SuppressLint("MissingPermission")
     private fun reloadAd() {
         adView.loadAd(adRequest)

@@ -1,5 +1,3 @@
-@file:Suppress("MatchingDeclarationName")
-
 package me.matsumo.fanbox.core.ui.extensition
 
 import androidx.compose.foundation.layout.Box

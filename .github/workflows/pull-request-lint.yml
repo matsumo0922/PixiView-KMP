@@ -41,7 +41,7 @@ jobs:
       - name: Run detekt and merge reports
         id: detekt
         continue-on-error: true
-        run: ./gradlew detekt reportMerge --continue
+        run: ./gradlew detekt reportMerge detektMainAndroid detektHostTestAndroid :androidApp:detektDebug :androidApp:detektDebugUnitTest :androidApp:detektDebugAndroidTest --continue
 
       - name: Run report with ReviewDog
         if: steps.detekt.outcome == 'failure'

@@ -3,6 +3,7 @@ package me.matsumo.fanbox
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.SideEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
@@ -74,7 +75,7 @@ internal fun PixiViewNavHost(
     val currentOnPostDetailClosed by rememberUpdatedState(onPostDetailClose)
     val currentOnLibraryHomeVisibilityChanged by rememberUpdatedState(onLibraryHomeVisibilityChange)
 
-    LaunchedEffect(bottomNavigationBackStackEntry?.destination?.route) {
+    SideEffect(bottomNavigationBackStackEntry?.destination?.route) {
         currentOnLibraryHomeVisibilityChanged(bottomNavigationBackStackEntry?.destination?.route == LIBRARY_HOME_ROUTE)
     }
 

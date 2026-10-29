@@ -50,6 +50,7 @@ class NavTypesTest {
 
     @Test
     fun billingPlanTypeNavTypeRoundTripsAllValues() {
+        // KType で検索した NavType の型をテスト対象に合わせ、型ごとの往復を検証する。
         @Suppress("UNCHECKED_CAST")
         val navType = assertNotNull(customNavTypes[typeOf<BillingPlan.Type?>()]) as NavType<BillingPlan.Type?>
 
@@ -62,6 +63,7 @@ class NavTypesTest {
 
     @Test
     fun billingPlanTypeNavTypeRoundTripsNull() {
+        // KType で検索した NavType の型をテスト対象に合わせ、型ごとの往復を検証する。
         @Suppress("UNCHECKED_CAST")
         val navType = assertNotNull(customNavTypes[typeOf<BillingPlan.Type?>()]) as NavType<BillingPlan.Type?>
 
@@ -126,6 +128,7 @@ class NavTypesTest {
         assertEquals(CreatorId("creator-1"), creatorIdNavType.parseValue("creator-1"))
     }
 
+    // KType で検索した NavType の型をテスト対象に合わせ、型ごとの往復を検証する。
     @Suppress("UNCHECKED_CAST")
     private fun generateBillingPlusBottomSheetRoute(route: Destination.BillingPlusBottomSheet): String {
         val typeMap = mapOf(

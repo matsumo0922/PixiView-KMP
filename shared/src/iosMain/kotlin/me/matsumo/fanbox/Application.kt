@@ -11,6 +11,7 @@ import org.koin.compose.KoinContext
 import platform.UIKit.UIViewController
 
 @OptIn(ExperimentalMaterial3WindowSizeClassApi::class)
+// Swift から呼ぶ entry point と引数の互換性を維持する。移行: https://github.com/matsumo0922/PixiView-KMP/issues/164
 @Suppress("FunctionNaming", "UnusedParameter")
 fun MainViewController(
     topSafeArea: Float,

@@ -23,7 +23,7 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.material3.pulltorefresh.PullToRefreshBox
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.SideEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.rememberCoroutineScope
@@ -79,7 +79,7 @@ internal fun LibraryDiscoveryRoute(
     val snackbarHostState = LocalSnackbarHostState.current
     val requirePlus = stringResource(Res.string.billing_plus_toast_require_plus, appName)
 
-    LaunchedEffect(true) {
+    SideEffect(true) {
         if (screenState !is ScreenState.Idle) {
             viewModel.fetch()
         }
@@ -212,12 +212,12 @@ private fun LibraryDiscoveryScreen(
                     items(
                         items = followingPixivCreators.take(6),
                         key = { item -> "pixiv-${item.creatorId.value}" },
-                    ) {
-                        var isFollowed by rememberSaveable { mutableStateOf(it.isFollowed) }
+                    ) { creatorDetail ->
+                        var isFollowed by rememberSaveable { mutableStateOf(creatorDetail.isFollowed) }
 
                         CreatorItem(
                             modifier = Modifier.fillMaxWidth(),
-                            creatorDetail = it,
+                            creatorDetail = creatorDetail,
                             isFollowed = isFollowed,
                             onClickCreator = onClickCreator,
                             onClickFollow = {
@@ -250,12 +250,12 @@ private fun LibraryDiscoveryScreen(
                     items(
                         items = recommendedCreators,
                         key = { item -> "recommended-${item.creatorId.value}" },
-                    ) {
-                        var isFollowed by rememberSaveable { mutableStateOf(it.isFollowed) }
+                    ) { creatorDetail ->
+                        var isFollowed by rememberSaveable { mutableStateOf(creatorDetail.isFollowed) }
 
                         CreatorItem(
                             modifier = Modifier.fillMaxWidth(),
-                            creatorDetail = it,
+                            creatorDetail = creatorDetail,
                             isFollowed = isFollowed,
                             onClickCreator = onClickCreator,
                             onClickFollow = {

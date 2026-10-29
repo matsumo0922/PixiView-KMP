@@ -1,5 +1,3 @@
-@file:Suppress("MatchingDeclarationName")
-
 package me.matsumo.fanbox.core.ui.view
 
 import androidx.compose.runtime.Composable

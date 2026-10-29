@@ -1,6 +1,5 @@
 package me.matsumo.fanbox.core.ui.view
 
-import androidx.compose.foundation.layout.Box
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.remember
@@ -29,32 +28,30 @@ actual fun SimpleAlertDialog(
     Dialog(
         onDismissRequest = { onClickNegative.invoke() },
     ) {
-        Box(modifier) {
-            val alertDialogManager = remember {
-                AlertDialogManager(
-                    title = title,
-                    description = description,
-                    positiveText = positiveText,
-                    negativeText = negativeText,
-                    onClickPositive = onClickPositive,
-                    onClickNegative = onClickNegative,
-                    isCaution = isCaution,
-                )
-            }
+        val alertDialogManager = remember {
+            AlertDialogManager(
+                title = title,
+                description = description,
+                positiveText = positiveText,
+                negativeText = negativeText,
+                onClickPositive = onClickPositive,
+                onClickNegative = onClickNegative,
+                isCaution = isCaution,
+            )
+        }
 
-            LaunchedEffect(title, description, positiveText, negativeText, onClickPositive, onClickNegative, isCaution) {
-                alertDialogManager.title = title
-                alertDialogManager.description = description
-                alertDialogManager.positiveText = positiveText
-                alertDialogManager.negativeText = negativeText
-                alertDialogManager.onClickPositive = onClickPositive
-                alertDialogManager.onClickNegative = onClickNegative
-                alertDialogManager.isCaution = isCaution
-            }
+        LaunchedEffect(title, description, positiveText, negativeText, onClickPositive, onClickNegative, isCaution) {
+            alertDialogManager.title = title
+            alertDialogManager.description = description
+            alertDialogManager.positiveText = positiveText
+            alertDialogManager.negativeText = negativeText
+            alertDialogManager.onClickPositive = onClickPositive
+            alertDialogManager.onClickNegative = onClickNegative
+            alertDialogManager.isCaution = isCaution
+        }
 
-            LaunchedEffect(true) {
-                alertDialogManager.show()
-            }
+        LaunchedEffect(true) {
+            alertDialogManager.show()
         }
     }
 }

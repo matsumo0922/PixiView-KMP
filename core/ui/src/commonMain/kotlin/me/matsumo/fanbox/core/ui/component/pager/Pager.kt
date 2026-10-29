@@ -31,6 +31,7 @@ import androidx.compose.foundation.lazy.LazyItemScope
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.SideEffect
 import androidx.compose.runtime.Stable
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.snapshotFlow
@@ -88,6 +89,7 @@ public object PagerDefaults {
      */
     @OptIn(ExperimentalSnapperApi::class)
     @ExperimentalSnapperApi
+    // PagerScope の公開プロパティとして、ページ内のコンテンツから参照できるようにする。
     @Suppress("MemberVisibilityCanBePrivate")
     @Deprecated("MaximumFlingDistance has been deprecated in Snapper")
     public val singlePageFlingDistance: (SnapperLayoutInfo) -> Float = { layoutInfo ->
@@ -131,6 +133,7 @@ public object PagerDefaults {
     )
     @Composable
     @ExperimentalSnapperApi
+    // 非推奨の Pager/Snapper API の互換経路を維持する。移行: https://github.com/matsumo0922/PixiView-KMP/issues/163
     @Suppress("DEPRECATION")
     public fun flingBehavior(
         state: PagerState,
@@ -387,7 +390,7 @@ internal fun Pager(
         (flingBehavior as? SnapperFlingBehavior)?.animationTarget
     }
 
-    LaunchedEffect(count) {
+    SideEffect(count) {
         state.currentPage = minOf(count - 1, state.currentPage).coerceAtLeast(0)
     }
 
@@ -407,7 +410,7 @@ internal fun Pager(
             .collect { state.updateCurrentPageBasedOnLazyListState() }
     }
     val density = LocalDensity.current
-    LaunchedEffect(density, state, itemSpacing) {
+    SideEffect(density, state, itemSpacing) {
         with(density) { state.itemSpacing = itemSpacing.roundToPx() }
     }
 
@@ -427,6 +430,8 @@ internal fun Pager(
         val pageSize = if (isVertical) Modifier.fillParentMaxHeight() else Modifier.fillParentMaxWidth()
         Box(
             modifier = Modifier
+                // 入れ子の fling を Pager の移動へ伝播させない。
+                // https://github.com/google/accompanist/issues/347
                 .nestedScroll(consumeFlingNestedScrollConnection)
                 .then(pageSize)
                 .wrapContentSize(),

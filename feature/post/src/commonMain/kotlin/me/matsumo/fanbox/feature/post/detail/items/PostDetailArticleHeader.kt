@@ -28,6 +28,8 @@ import me.matsumo.fanbox.core.ui.extensition.LocalFanboxMetadata
 import org.jetbrains.compose.resources.stringResource
 import sh.calvin.autolinktext.rememberAutoLinkText
 
+// LazyListScope の項目宣言へ、記事の表示データと画面イベントをそのまま渡す。
+@Suppress("LongParameterList")
 internal fun LazyListScope.postDetailArticleHeader(
     content: Body.Article,
     setting: Setting,

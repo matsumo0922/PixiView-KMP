@@ -232,6 +232,8 @@ internal fun CreatorTopRoute(
 
 @OptIn(ExperimentalComposeUiApi::class)
 @Composable
+// FAB の初期の非表示状態から、composition 適用後に表示アニメーションを開始する。
+@Suppress("UnnecessaryLaunchedEffect")
 private fun CreatorTopScreen(
     revealState: RevealState,
     isPosts: Boolean,

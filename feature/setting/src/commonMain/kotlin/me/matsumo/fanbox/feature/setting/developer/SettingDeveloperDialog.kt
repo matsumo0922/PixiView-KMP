@@ -14,7 +14,6 @@ import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -44,10 +43,6 @@ internal fun SettingDeveloperDialog(
     var password by remember { mutableStateOf("") }
     var isPasswordError by remember { mutableStateOf(false) }
 
-    LaunchedEffect(password) {
-        isPasswordError = false
-    }
-
     Column(
         modifier = modifier
             .background(MaterialTheme.colorScheme.surface)
@@ -71,7 +66,10 @@ internal fun SettingDeveloperDialog(
         OutlinedTextField(
             modifier = Modifier.fillMaxWidth(),
             value = password,
-            onValueChange = { password = it },
+            onValueChange = { enteredPassword ->
+                if (enteredPassword != password) isPasswordError = false
+                password = enteredPassword
+            },
             label = { Text("PIN") },
             keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.NumberPassword),
             singleLine = true,

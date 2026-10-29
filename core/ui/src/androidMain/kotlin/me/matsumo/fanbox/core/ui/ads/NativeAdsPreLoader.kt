@@ -74,6 +74,7 @@ class NativeAdsPreLoader(
         preloadAd(isRetry = false)
     }
 
+    // 通信権限は host の AndroidManifest.xml で宣言し、この SDK 呼び出しに適用する。
     @SuppressLint("MissingPermission")
     private fun preloadAd(isRetry: Boolean) {
         if (!isRetry) {
@@ -83,6 +84,7 @@ class NativeAdsPreLoader(
         loadMissingNativeAdsIfIdle()
     }
 
+    // 通信権限は host の AndroidManifest.xml で宣言し、この SDK 呼び出しに適用する。
     @SuppressLint("MissingPermission")
     private fun loadMissingNativeAdsIfIdle() {
         if (adLoader.isLoading) return

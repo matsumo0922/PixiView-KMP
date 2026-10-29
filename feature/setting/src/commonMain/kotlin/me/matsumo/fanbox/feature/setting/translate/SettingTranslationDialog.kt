@@ -13,7 +13,6 @@ import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -42,10 +41,6 @@ internal fun SettingTranslationDialog(
     var tag by remember { mutableStateOf(defaultLanguage) }
     var error by remember { mutableStateOf(false) }
 
-    LaunchedEffect(tag) {
-        error = false
-    }
-
     Column(
         modifier = modifier
             .background(MaterialTheme.colorScheme.surface)
@@ -69,7 +64,10 @@ internal fun SettingTranslationDialog(
         OutlinedTextField(
             modifier = Modifier.fillMaxWidth(),
             value = tag,
-            onValueChange = { tag = it },
+            onValueChange = { languageTag ->
+                if (languageTag != tag) error = false
+                tag = languageTag
+            },
             label = { Text("Language tag") },
             singleLine = true,
             isError = error,

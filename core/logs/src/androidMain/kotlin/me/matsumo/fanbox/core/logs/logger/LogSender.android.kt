@@ -15,6 +15,7 @@ import kotlinx.serialization.json.jsonPrimitive
 import kotlinx.serialization.json.longOrNull
 import me.matsumo.fanbox.core.model.Setting
 
+// 通信権限は host の AndroidManifest.xml で宣言し、この SDK 呼び出しに適用する。
 @SuppressLint("MissingPermission")
 class LogSenderImpl(context: Context) : LogSender {
 

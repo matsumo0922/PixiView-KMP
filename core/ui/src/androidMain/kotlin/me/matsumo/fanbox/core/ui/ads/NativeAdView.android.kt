@@ -19,7 +19,7 @@ import androidx.compose.material3.surfaceColorAtElevation
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.Immutable
-import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.SideEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -40,6 +40,7 @@ import me.matsumo.fanbox.core.ui.theme.LocalAdsSdkInitialized
 import org.koin.compose.koinInject
 import com.google.android.gms.ads.nativead.NativeAdView as GmsNativeAdView
 
+// 通信権限は host の AndroidManifest.xml で宣言し、この SDK 呼び出しに適用する。
 @SuppressLint("MissingPermission")
 @Composable
 actual fun NativeAdView(key: String, modifier: Modifier) {
@@ -67,7 +68,7 @@ private fun NativeAdViewContent(
     val nativeAdInventoryVersion by nativeAdsPreLoader.nativeAdInventoryVersion.collectAsState()
     var nativeAd by remember(key) { mutableStateOf<NativeAd?>(null) }
 
-    LaunchedEffect(
+    SideEffect(
         key1 = key,
         key2 = nativeAdInventoryVersion,
     ) {
@@ -171,9 +172,7 @@ private data class NativeAdViewRefs(
     val mvContent: MediaView,
 )
 
-private fun GmsNativeAdView.requireRefs(): NativeAdViewRefs = checkNotNull(tag as? NativeAdViewRefs) {
-    "NativeAdViewRefs is not attached to NativeAdView"
-}
+private fun GmsNativeAdView.requireRefs(): NativeAdViewRefs = checkNotNull(tag as? NativeAdViewRefs) { "NativeAdViewRefs is not attached to NativeAdView" }
 
 private fun NativeAdViewRefs.applyColors(colorPalette: NativeAdViewColorPalette) {
     tvAdvertiser.setTextColor(colorPalette.bodyTextColor)

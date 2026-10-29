@@ -9,7 +9,7 @@ import me.matsumo.fanbox.core.model.RewardUsage
 
 /** リワード広告の用途別視聴履歴を保存する DataStore。 */
 class RewardLogDataStore(
-    private val preferenceHelper: PreferenceHelper,
+    preferenceHelper: PreferenceHelper,
 ) {
     private val preference = preferenceHelper.create(PreferencesName.REWARD_LOG)
 

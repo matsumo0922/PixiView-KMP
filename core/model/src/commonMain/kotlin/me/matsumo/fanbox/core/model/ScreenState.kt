@@ -6,27 +6,27 @@ import kotlinx.coroutines.flow.update
 import org.jetbrains.compose.resources.StringResource
 
 @Stable
-sealed class ScreenState<out T> {
-    data object Loading : ScreenState<Nothing>()
+sealed interface ScreenState<out T> {
+    data object Loading : ScreenState<Nothing>
 
     data class Error(
         val message: StringResource,
         val retryTitle: StringResource? = null,
-    ) : ScreenState<Nothing>()
+    ) : ScreenState<Nothing>
 
     data class Idle<T>(
         var data: T,
-    ) : ScreenState<T>()
+    ) : ScreenState<T>
 }
 
 @Stable
-sealed class TranslationState<out T> {
-    data object Loading : TranslationState<Nothing>()
-    data object None : TranslationState<Nothing>()
+sealed interface TranslationState<out T> {
+    data object Loading : TranslationState<Nothing>
+    data object None : TranslationState<Nothing>
 
     data class Translated<T>(
         val data: T,
-    ) : TranslationState<T>()
+    ) : TranslationState<T>
 }
 
 fun <T> ScreenState<T>.updateWhenIdle(action: (T) -> T): ScreenState<T> = if (this is ScreenState.Idle) {

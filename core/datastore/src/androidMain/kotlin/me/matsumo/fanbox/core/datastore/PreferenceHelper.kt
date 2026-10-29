@@ -1,5 +1,3 @@
-@file:Suppress("MatchingDeclarationName", "Filename")
-
 package me.matsumo.fanbox.core.datastore
 
 import android.content.Context

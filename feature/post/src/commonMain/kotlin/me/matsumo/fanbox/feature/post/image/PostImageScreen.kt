@@ -16,6 +16,7 @@ import androidx.compose.material3.SnackbarResult
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.SideEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -70,7 +71,7 @@ internal fun PostImageRoute(
     val snackbarHostState = LocalSnackbarHostState.current
     val screenState by viewModel.screenState.collectAsStateWithLifecycle()
 
-    LaunchedEffect(postId) {
+    SideEffect(postId) {
         if (screenState !is ScreenState.Idle) {
             viewModel.fetch(postId)
         }
