@@ -75,7 +75,6 @@ import me.matsumo.fanbox.core.repository.paging.SearchPostsPagingSource
 import me.matsumo.fanbox.core.repository.paging.SupportedPostsPagingSource
 import me.matsumo.fankt.fanbox.FanboxCookieRecord
 import me.matsumo.fankt.fanbox.FanboxException
-import me.matsumo.fankt.fanbox.FanboxGuestCache
 import me.matsumo.fankt.fanbox.FanboxListItemSchemaMismatch
 import me.matsumo.fankt.fanbox.FanboxLogLevel
 import org.koin.core.component.KoinComponent
@@ -233,7 +232,7 @@ class FanboxRepositoryImpl(
     private val oldCookieDataStore: OldCookieDataStore,
     private val ioDispatcher: CoroutineDispatcher,
     private val cookieStorage: MigratingFanboxCookieStorage,
-    guestCache: FanboxGuestCache,
+    guestCacheFactory: GuestCacheFactory,
     pixiViewConfig: PixiViewConfig,
 ) : FanboxRepository,
     KoinComponent {
@@ -247,7 +246,7 @@ class FanboxRepositoryImpl(
         settingDataStore = userDataStore,
         ioDispatcher = ioDispatcher,
         cookieStorage = cookieStorage,
-        guestCache = guestCache,
+        guestCacheFactory = guestCacheFactory,
         guestEventListener = GuestEventReporter(scope)::report,
     )
 

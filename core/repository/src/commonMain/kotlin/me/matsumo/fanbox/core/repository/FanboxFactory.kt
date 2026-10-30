@@ -13,26 +13,33 @@ import me.matsumo.fankt.fanbox.FanboxLogLevel
 import kotlin.time.Duration.Companion.milliseconds
 
 /**
- * FANBOX の request の組み立てと response の解析を配信する manifest の所在。
+ * guest の配信先。developer mode の有無で選ぶ。
  *
- * ここへ置かれるのは手動で昇格した配信物だけである。fankt の `main` へ入った変更は dev チャンネルへ
- * 配信され、昇格を実行するまでこのパスの内容は変わらない。
+ * [manifestUrl] のパスに含まれる版は host と guest のあいだの API の版であり、この版のあいだは互換な bundle だけが
+ * 配信される。版が上がった配信物は別のパスへ置かれるため、更新前のアプリが解釈できない bundle を受け取ることはない。
  *
- * パスに含まれる版は host と guest のあいだの API の版であり、この版のあいだは互換な bundle だけが
- * 配信される。版が上がった配信物は別のパスへ置かれるため、更新前のアプリが解釈できない bundle を
- * 受け取ることはない。
+ * [cacheDirectoryName] はチャンネルごとに分ける。共有すると、片方の配信先に届かないときに、もう片方からロードした
+ * bundle がキャッシュから動いてしまう。
  */
-private const val GUEST_MANIFEST_URL =
-    "https://matsumo0922.github.io/fankt/zipline/v1/manifest.zipline.json"
+internal enum class GuestChannel(val manifestUrl: String, val cacheDirectoryName: String) {
+    /**
+     * 手動で昇格した配信物。fankt の `main` へ入った変更は dev チャンネルへ配信され、昇格を実行するまで
+     * このパスの内容は変わらない。
+     */
+    Production(
+        manifestUrl = "https://matsumo0922.github.io/fankt/zipline/v1/manifest.zipline.json",
+        cacheDirectoryName = "production",
+    ),
 
-/**
- * 昇格前の配信物が置かれる manifest の所在。
- *
- * fankt の `main` へ入った変更がそのまま配信されるため、検証を経ていない bundle が置かれている。
- * 昇格の前に実機で確かめるためにあり、developer mode を有効にした端末だけが参照する。
- */
-private const val GUEST_DEV_MANIFEST_URL =
-    "https://matsumo0922.github.io/fankt/zipline/v1-dev/manifest.zipline.json"
+    /**
+     * 昇格前の配信物。fankt の `main` へ入った変更がそのまま配信されるため、検証を経ていない bundle が置かれている。
+     * 昇格の前に実機で確かめるためにあり、developer mode を有効にした端末だけが参照する。
+     */
+    Dev(
+        manifestUrl = "https://matsumo0922.github.io/fankt/zipline/v1-dev/manifest.zipline.json",
+        cacheDirectoryName = "dev",
+    ),
+}
 
 /**
  * 参照する配信先を選ぶ。
@@ -40,7 +47,13 @@ private const val GUEST_DEV_MANIFEST_URL =
  * ビルドの種別では分岐しない。`isDebuggable` を持つビルドは debug だけではなく、種別が増えるたびに
  * どちらを読むかを判断し直すことになる。
  */
-internal fun guestManifestUrl(isDeveloperMode: Boolean): String = if (isDeveloperMode) GUEST_DEV_MANIFEST_URL else GUEST_MANIFEST_URL
+internal fun guestChannel(isDeveloperMode: Boolean): GuestChannel = if (isDeveloperMode) GuestChannel.Dev else GuestChannel.Production
+
+/** 配信先ごとの guest bundle のキャッシュを作る。保存先は platform ごとに決まる。 */
+fun interface GuestCacheFactory {
+    /** [directoryName] のディレクトリにキャッシュを置く [FanboxGuestCache] を作る。 */
+    fun create(directoryName: String): FanboxGuestCache
+}
 
 /**
  * 保存済みの設定を読む上限。
@@ -100,15 +113,16 @@ internal fun createFanbox(
     settingDataStore: SettingDataStore,
     ioDispatcher: CoroutineDispatcher,
     cookieStorage: FanboxCookieStorage,
-    guestCache: FanboxGuestCache,
+    guestCacheFactory: GuestCacheFactory,
     guestEventListener: (FanboxGuestEvent) -> Unit,
 ): Fanbox {
     val isDeveloperMode = loadDeveloperMode { settingDataStore.loadStoredSetting().isDeveloperMode }
+    val channel = guestChannel(isDeveloperMode)
 
     return Fanbox(
-        guestManifestUrl = guestManifestUrl(isDeveloperMode),
+        guestManifestUrl = channel.manifestUrl,
         guestTrustedKeys = GUEST_TRUSTED_KEYS.mapValues { (_, key) -> key.hexToByteArray() },
-        guestCache = guestCache,
+        guestCache = guestCacheFactory.create(channel.cacheDirectoryName),
         guestEventListener = guestEventListener,
         logLevel = logLevel,
         ioDispatcher = ioDispatcher,

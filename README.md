@@ -158,7 +158,8 @@ What the app fetches is not whatever was published most recently. A bundle reach
 target the app reads only when someone promotes it there deliberately; work that has not been
 promoted stays on a separate target the app does not read. Turning on developer mode switches the app
 to that separate target, which is how a bundle gets checked before it is promoted. The change applies
-the next time the app starts. A faulty bundle is fixed by publishing a corrected one or by rolling
+the next time the app starts. Each target has its own cache, so a bundle cached from one never runs
+in place of the other. A faulty bundle is fixed by publishing a corrected one or by rolling
 the delivery target back to the previous one.
 
 The Android app reports when a bundle loads, with the version it loaded, to Firebase Analytics, and

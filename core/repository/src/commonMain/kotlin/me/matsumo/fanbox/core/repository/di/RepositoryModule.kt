@@ -45,7 +45,7 @@ val repositoryModule = module {
             oldCookieDataStore = get(),
             ioDispatcher = get(),
             cookieStorage = get(),
-            guestCache = get(),
+            guestCacheFactory = get(),
             pixiViewConfig = get(),
         )
     }

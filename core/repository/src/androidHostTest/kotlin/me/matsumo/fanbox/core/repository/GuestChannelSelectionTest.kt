@@ -3,6 +3,7 @@ package me.matsumo.fanbox.core.repository
 import kotlinx.coroutines.delay
 import org.junit.Test
 import kotlin.test.assertFalse
+import kotlin.test.assertNotEquals
 import kotlin.test.assertTrue
 import kotlin.time.Duration.Companion.seconds
 
@@ -15,12 +16,21 @@ class GuestChannelSelectionTest {
      */
     @Test
     fun developerModeSelectsTheDevChannel() {
-        assertTrue(guestManifestUrl(isDeveloperMode = true).contains("/zipline/v1-dev/"))
+        assertTrue(guestChannel(isDeveloperMode = true).manifestUrl.contains("/zipline/v1-dev/"))
     }
 
     @Test
     fun withoutDeveloperModeSelectsThePromotedChannel() {
-        assertTrue(guestManifestUrl(isDeveloperMode = false).contains("/zipline/v1/"))
+        assertTrue(guestChannel(isDeveloperMode = false).manifestUrl.contains("/zipline/v1/"))
+    }
+
+    /**
+     * キャッシュを共有すると、片方の配信先に届かないときに、もう片方からロードした bundle が動く。developer mode を
+     * 切った端末で未検証の bundle が動くことになるため、チャンネルごとに分かれていることを固定する。
+     */
+    @Test
+    fun eachChannelHasItsOwnCache() {
+        assertNotEquals(GuestChannel.Production.cacheDirectoryName, GuestChannel.Dev.cacheDirectoryName)
     }
 
     @Test
