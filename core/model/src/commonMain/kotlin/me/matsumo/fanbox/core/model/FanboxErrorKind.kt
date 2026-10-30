@@ -2,6 +2,7 @@ package me.matsumo.fanbox.core.model
 
 import me.matsumo.fanbox.core.resources.Res
 import me.matsumo.fanbox.core.resources.error_forbidden
+import me.matsumo.fanbox.core.resources.error_guest_failure
 import me.matsumo.fanbox.core.resources.error_network
 import me.matsumo.fanbox.core.resources.error_network_description
 import me.matsumo.fanbox.core.resources.error_no_data
@@ -24,6 +25,7 @@ import org.jetbrains.compose.resources.StringResource
  * - [ServerError]: [FanboxException.ServerError]（HTTP 5xx）
  * - [Network]: [FanboxException.Network]（応答を受け取る前の通信失敗）
  * - [SchemaMismatch]: [FanboxException.SchemaMismatch]（応答の形式が期待と異なる）
+ * - [GuestFailure]: [FanboxException.GuestFailure]（配信された解析処理をロードできない、または解析処理が失敗した）
  * - [Unknown]: 上記以外。[FanboxException.UnexpectedHttpError] と FANBOX 由来でない失敗を含む
  */
 enum class FanboxErrorKind {
@@ -34,6 +36,7 @@ enum class FanboxErrorKind {
     ServerError,
     Network,
     SchemaMismatch,
+    GuestFailure,
     Unknown,
 }
 
@@ -59,6 +62,7 @@ internal fun fanboxErrorKindOf(statusCode: Int?): FanboxErrorKind? = when (statu
  */
 fun Throwable.toFanboxErrorKind(): FanboxErrorKind = when (this) {
     is FanboxException.SchemaMismatch -> FanboxErrorKind.SchemaMismatch
+    is FanboxException.GuestFailure -> FanboxErrorKind.GuestFailure
     is FanboxException.Network -> FanboxErrorKind.Network
     is FanboxException -> fanboxErrorKindOf(statusCode) ?: FanboxErrorKind.Unknown
     else -> FanboxErrorKind.Unknown
@@ -88,6 +92,8 @@ fun Throwable.toScreenStateError(
         FanboxErrorKind.Network -> Res.string.error_network_description
 
         FanboxErrorKind.SchemaMismatch -> Res.string.error_schema_mismatch
+
+        FanboxErrorKind.GuestFailure -> Res.string.error_guest_failure
 
         FanboxErrorKind.Unknown -> return ScreenState.Error(
             message = fallbackMessage,
