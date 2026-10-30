@@ -191,7 +191,6 @@ firebase-analytics = { module = "com.google.firebase:firebase-analytics" }
 firebase-crushlytics = { module = "com.google.firebase:firebase-crashlytics" }
 firebase-messaging = { module = "com.google.firebase:firebase-messaging" }
 firebase-appindexing = { module = "com.google.firebase:firebase-appindexing" }
-firebase-config = { module = "com.google.firebase:firebase-config" }
 
 # Koin
 koin-bom = { module = "io.insert-koin:koin-bom", version.ref = "koin" }
@@ -290,7 +289,6 @@ firebase = [
     "firebase-analytics",
     "firebase-crushlytics",
     "firebase-messaging",
-    "firebase-config",
 ]
 
 media3 = [
