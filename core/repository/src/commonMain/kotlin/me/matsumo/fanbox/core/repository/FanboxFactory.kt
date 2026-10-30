@@ -8,6 +8,7 @@ import me.matsumo.fanbox.core.datastore.SettingDataStore
 import me.matsumo.fankt.fanbox.Fanbox
 import me.matsumo.fankt.fanbox.FanboxCookieStorage
 import me.matsumo.fankt.fanbox.FanboxGuestCache
+import me.matsumo.fankt.fanbox.FanboxGuestEvent
 import me.matsumo.fankt.fanbox.FanboxLogLevel
 import kotlin.time.Duration.Companion.milliseconds
 
@@ -100,6 +101,7 @@ internal fun createFanbox(
     ioDispatcher: CoroutineDispatcher,
     cookieStorage: FanboxCookieStorage,
     guestCache: FanboxGuestCache,
+    guestEventListener: (FanboxGuestEvent) -> Unit,
 ): Fanbox {
     val isDeveloperMode = loadDeveloperMode { settingDataStore.loadStoredSetting().isDeveloperMode }
 
@@ -107,6 +109,7 @@ internal fun createFanbox(
         guestManifestUrl = guestManifestUrl(isDeveloperMode),
         guestTrustedKeys = GUEST_TRUSTED_KEYS.mapValues { (_, key) -> key.hexToByteArray() },
         guestCache = guestCache,
+        guestEventListener = guestEventListener,
         logLevel = logLevel,
         ioDispatcher = ioDispatcher,
         cookieStorage = cookieStorage,

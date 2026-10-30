@@ -6,3 +6,7 @@ import com.google.firebase.crashlytics.crashlytics
 actual fun recordException(exception: Throwable) {
     Firebase.crashlytics.recordException(exception)
 }
+
+actual fun setCrashReportKey(key: String, value: String) {
+    Firebase.crashlytics.setCustomKey(key, value)
+}

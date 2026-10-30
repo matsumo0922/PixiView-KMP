@@ -248,6 +248,7 @@ class FanboxRepositoryImpl(
         ioDispatcher = ioDispatcher,
         cookieStorage = cookieStorage,
         guestCache = guestCache,
+        guestEventListener = GuestEventReporter(scope)::report,
     )
 
     private val creatorCache = mutableMapOf<CreatorId, CreatorDetail>()
