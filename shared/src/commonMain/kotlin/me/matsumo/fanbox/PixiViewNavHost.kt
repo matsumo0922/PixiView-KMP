@@ -8,7 +8,9 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.rememberUpdatedState
+import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.backhandler.BackHandler
 import androidx.navigation.NavBackStackEntry
 import androidx.navigation.NavController
 import androidx.navigation.NavDestination.Companion.hasRoute
@@ -89,6 +91,65 @@ internal fun PixiViewNavHost(
         )
     }
 
+    PixiViewNavHostFrame(
+        modifier = modifier,
+        bottomSheetNavigator = bottomSheetNavigator,
+        navController = navController,
+        startDestination = startDestination,
+    ) {
+        applyNavGraph(
+            scope = scope,
+            mainNavController = navController,
+            bottomNavigationNavController = bottomNavigationNavController,
+        )
+    }
+}
+
+/**
+ * ログイン前の画面から開く設定画面。
+ *
+ * ログイン前は [PixiViewNavHost] を表示しないため、設定画面とそこから開く画面だけを持つ NavHost を別に用意する。
+ * 設定画面は back stack の根にあり、閉じる操作で pop すると画面が空になるため、閉じる操作は [onClose] へ渡す。
+ */
+@OptIn(ExperimentalComposeUiApi::class)
+@Composable
+internal fun PixiViewSettingNavHost(
+    onClose: () -> Unit,
+    modifier: Modifier = Modifier,
+) {
+    val bottomSheetNavigator = rememberBottomSheetNavigator()
+    val navController = rememberNavController(bottomSheetNavigator)
+    val currentBackStackEntry by navController.currentBackStackEntryAsState()
+    val scope = rememberCoroutineScope()
+
+    // 根では NavHost が戻る操作を受け取らないため、ここで閉じる
+    BackHandler(currentBackStackEntry?.destination?.hasRoute<Destination.SettingTop>() == true) {
+        onClose()
+    }
+
+    PixiViewNavHostFrame(
+        modifier = modifier,
+        bottomSheetNavigator = bottomSheetNavigator,
+        navController = navController,
+        startDestination = Destination.SettingTop,
+    ) {
+        applySettingsDestinations(
+            scope = scope,
+            mainNavController = navController,
+            subNavController = navController,
+            terminateSettingTop = onClose,
+        )
+    }
+}
+
+@Composable
+private fun PixiViewNavHostFrame(
+    bottomSheetNavigator: BottomSheetNavigator,
+    navController: NavHostController,
+    startDestination: Destination,
+    modifier: Modifier = Modifier,
+    builder: NavGraphBuilder.() -> Unit,
+) {
     CompositionLocalProvider(LocalNavController provides navController) {
         ModalBottomSheetLayout(bottomSheetNavigator) {
             NavHost(
@@ -100,13 +161,8 @@ internal fun PixiViewNavHost(
                 popEnterTransition = { NavigateAnimation.Horizontal.popEnter },
                 popExitTransition = { NavigateAnimation.Horizontal.popExit },
                 typeMap = customNavTypes,
-            ) {
-                applyNavGraph(
-                    scope = scope,
-                    mainNavController = navController,
-                    bottomNavigationNavController = bottomNavigationNavController,
-                )
-            }
+                builder = builder,
+            )
         }
     }
 }
@@ -212,6 +268,7 @@ private fun NavGraphBuilder.applyNavGraph(
         scope = scope,
         mainNavController = mainNavController,
         subNavController = subNavController,
+        terminateSettingTop = { mainNavController.popBackStack() },
     )
 }
 private fun NavGraphBuilder.applyPostDestinations(
@@ -299,6 +356,7 @@ private fun NavGraphBuilder.applySettingsDestinations(
     scope: CoroutineScope,
     mainNavController: NavHostController,
     subNavController: NavHostController,
+    terminateSettingTop: () -> Unit,
 ) {
     aboutScreen(
         navigateTo = { mainNavController.navigate(it) },
@@ -312,7 +370,7 @@ private fun NavGraphBuilder.applySettingsDestinations(
                 mainNavController.navigateToSimpleAlertDialog(contents, onResult)
             }
         },
-        terminate = { mainNavController.popBackStack() },
+        terminate = terminateSettingTop,
     )
 
     settingThemeScreen(

@@ -35,6 +35,7 @@ import kotlin.time.ExperimentalTime
 @Composable
 fun WelcomeNavHost(
     onComplete: () -> Unit,
+    navigateToSetting: () -> Unit,
     isAgreedTeams: Boolean,
     isLoggedIn: Boolean,
     modifier: Modifier = Modifier,
@@ -78,6 +79,7 @@ fun WelcomeNavHost(
                         WelcomeLog.firstOpen().send()
                         navController.navigate(Destination.WelcomeLogin)
                     },
+                    navigateToSetting = navigateToSetting,
                 )
 
                 welcomeLoginScreen(
@@ -93,6 +95,7 @@ fun WelcomeNavHost(
 
                         onComplete.invoke()
                     },
+                    navigateToSetting = navigateToSetting,
                 )
 
                 welcomeWebScreen(

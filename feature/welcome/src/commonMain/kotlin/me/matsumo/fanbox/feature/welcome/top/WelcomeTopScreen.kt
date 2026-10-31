@@ -9,9 +9,11 @@ import androidx.compose.foundation.layout.IntrinsicSize
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.aspectRatio
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -50,6 +52,7 @@ import me.matsumo.fanbox.core.ui.extensition.PixiViewNavigationType
 import me.matsumo.fanbox.core.ui.theme.bold
 import me.matsumo.fanbox.core.ui.theme.center
 import me.matsumo.fanbox.feature.welcome.WelcomeIndicatorItem
+import me.matsumo.fanbox.feature.welcome.WelcomeSettingButton
 import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.resources.stringResource
 import org.koin.compose.koinInject
@@ -58,57 +61,70 @@ import org.koin.compose.viewmodel.koinViewModel
 @Composable
 internal fun WelcomeTopScreen(
     navigateToWelcomeLogin: () -> Unit,
+    navigateToSetting: () -> Unit,
     modifier: Modifier = Modifier,
     viewModel: WelcomeTopViewModel = koinViewModel(),
     navigatorExtension: NavigatorExtension = koinInject(),
 ) {
     val navigationType = LocalNavigationType.current.type
 
-    if (navigationType != PixiViewNavigationType.PermanentNavigationDrawer) {
-        Column(
-            modifier = modifier
-                .background(MaterialTheme.colorScheme.surface)
-                .padding(24.dp),
-            horizontalAlignment = Alignment.CenterHorizontally,
-        ) {
-            FirstSection(
-                modifier = Modifier.padding(top = 24.dp),
-            )
-
-            SecondSection(
-                modifier = Modifier.weight(1f),
-                navigateToWelcomeLogin = navigateToWelcomeLogin,
-                setAgreedPrivacyPolicy = viewModel::setAgreedPrivacyPolicy,
-                setAgreedTermsOfService = viewModel::setAgreedTermsOfService,
-                navigateToWebPage = { navigatorExtension.navigateToWebPage(it, "") },
-            )
-        }
-    } else {
-        Row(
-            modifier = modifier
-                .background(MaterialTheme.colorScheme.surface)
-                .padding(24.dp),
-            verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.spacedBy(24.dp),
-        ) {
-            FirstSection(
-                modifier = Modifier.weight(1f),
-            )
-
+    Box(modifier) {
+        if (navigationType != PixiViewNavigationType.PermanentNavigationDrawer) {
             Column(
-                modifier = Modifier.weight(1f),
+                modifier = Modifier
+                    .fillMaxSize()
+                    .background(MaterialTheme.colorScheme.surface)
+                    .padding(24.dp),
+                horizontalAlignment = Alignment.CenterHorizontally,
             ) {
-                Box(Modifier.weight(2f))
+                FirstSection(
+                    modifier = Modifier.padding(top = 24.dp),
+                )
 
                 SecondSection(
-                    modifier = Modifier.weight(3f),
+                    modifier = Modifier.weight(1f),
                     navigateToWelcomeLogin = navigateToWelcomeLogin,
                     setAgreedPrivacyPolicy = viewModel::setAgreedPrivacyPolicy,
                     setAgreedTermsOfService = viewModel::setAgreedTermsOfService,
                     navigateToWebPage = { navigatorExtension.navigateToWebPage(it, "") },
                 )
             }
+        } else {
+            Row(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .background(MaterialTheme.colorScheme.surface)
+                    .padding(24.dp),
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.spacedBy(24.dp),
+            ) {
+                FirstSection(
+                    modifier = Modifier.weight(1f),
+                )
+
+                Column(
+                    modifier = Modifier.weight(1f),
+                ) {
+                    Box(Modifier.weight(2f))
+
+                    SecondSection(
+                        modifier = Modifier.weight(3f),
+                        navigateToWelcomeLogin = navigateToWelcomeLogin,
+                        setAgreedPrivacyPolicy = viewModel::setAgreedPrivacyPolicy,
+                        setAgreedTermsOfService = viewModel::setAgreedTermsOfService,
+                        navigateToWebPage = { navigatorExtension.navigateToWebPage(it, "") },
+                    )
+                }
+            }
         }
+
+        WelcomeSettingButton(
+            modifier = Modifier
+                .align(Alignment.TopStart)
+                .statusBarsPadding()
+                .size(64.dp),
+            onClick = navigateToSetting,
+        )
     }
 }
 

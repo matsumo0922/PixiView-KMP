@@ -12,6 +12,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberUpdatedState
+import androidx.compose.runtime.saveable.rememberSaveableStateHolder
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.navigation.NavDestination.Companion.hasRoute
@@ -19,6 +20,7 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import me.matsumo.fanbox.MainUiState
+import me.matsumo.fanbox.PixiViewSettingNavHost
 import me.matsumo.fanbox.core.model.Destination
 import me.matsumo.fanbox.core.ui.component.sheet.rememberBottomSheetNavigator
 import me.matsumo.fanbox.feature.welcome.WelcomeNavHost
@@ -65,7 +67,8 @@ internal fun PixiViewScreen(
         label = "isShowWelcomeScreen",
     ) {
         if (it) {
-            WelcomeNavHost(
+            WelcomeContent(
+                modifier = Modifier.fillMaxSize(),
                 isAgreedTeams = isAgreedTeams,
                 isLoggedIn = uiState.isLoggedIn,
                 onComplete = {
@@ -98,6 +101,39 @@ internal fun PixiViewScreen(
                     showPaywallFlag = false
                 }
             }
+        }
+    }
+}
+
+/**
+ * ログイン前の画面と、そこから開く設定画面を切り替える。
+ *
+ * 設定画面を開いているあいだ welcome の画面は composition から外れるため、閉じたときに元の画面へ戻れるよう状態を保存しておく。
+ */
+@Composable
+private fun WelcomeContent(
+    isAgreedTeams: Boolean,
+    isLoggedIn: Boolean,
+    onComplete: () -> Unit,
+    modifier: Modifier = Modifier,
+) {
+    val saveableStateHolder = rememberSaveableStateHolder()
+    var isSettingVisible by remember { mutableStateOf(false) }
+
+    if (isSettingVisible) {
+        PixiViewSettingNavHost(
+            modifier = modifier,
+            onClose = { isSettingVisible = false },
+        )
+    } else {
+        saveableStateHolder.SaveableStateProvider("welcome") {
+            WelcomeNavHost(
+                modifier = modifier,
+                isAgreedTeams = isAgreedTeams,
+                isLoggedIn = isLoggedIn,
+                onComplete = onComplete,
+                navigateToSetting = { isSettingVisible = true },
+            )
         }
     }
 }

@@ -10,6 +10,8 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material3.Button
 import androidx.compose.material3.MaterialTheme
@@ -46,6 +48,7 @@ import me.matsumo.fanbox.core.ui.extensition.ToastExtension
 import me.matsumo.fanbox.core.ui.theme.bold
 import me.matsumo.fanbox.core.ui.theme.center
 import me.matsumo.fanbox.feature.welcome.WelcomeIndicatorItem
+import me.matsumo.fanbox.feature.welcome.WelcomeSettingButton
 import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.resources.stringResource
 import org.koin.compose.koinInject
@@ -57,6 +60,7 @@ import org.koin.compose.viewmodel.koinViewModel
 internal fun WelcomeLoginScreen(
     navigateToHome: () -> Unit,
     navigateToLoginScreen: () -> Unit,
+    navigateToSetting: () -> Unit,
     modifier: Modifier = Modifier,
     viewModel: WelcomeLoginViewModel = koinViewModel(),
     navigatorExtension: NavigatorExtension = koinInject(),
@@ -77,60 +81,31 @@ internal fun WelcomeLoginScreen(
         }
     }
 
-    AsyncLoadContents(
-        modifier = modifier,
-        screenState = screenState,
-        retryAction = { viewModel.fetchLoggedIn() },
-    ) { isLoggedIn ->
-        if (isLoggedIn) {
-            LaunchedEffect(isLoggedIn) {
-                WelcomeLog.loggedIn()
-                navigateToHome.invoke()
+    Box(modifier) {
+        AsyncLoadContents(
+            modifier = Modifier.fillMaxSize(),
+            screenState = screenState,
+            retryAction = { viewModel.fetchLoggedIn() },
+        ) { isLoggedIn ->
+            if (isLoggedIn) {
+                LaunchedEffect(isLoggedIn) {
+                    WelcomeLog.loggedIn()
+                    navigateToHome.invoke()
+                }
             }
-        }
 
-        if (navigationType != PixiViewNavigationType.PermanentNavigationDrawer) {
-            Column(
-                modifier = Modifier
-                    .fillMaxSize()
-                    .background(MaterialTheme.colorScheme.surface)
-                    .padding(24.dp),
-                horizontalAlignment = Alignment.CenterHorizontally,
-            ) {
-                FirstSection()
-
-                SecondSection(
-                    modifier = Modifier.weight(1f),
-                    isLoggedIn = isLoggedIn,
-                    navigateToLoginScreen = {
-                        viewModel.logout()
-                        navigateToLoginScreen.invoke()
-                    },
-                    navigateToHome = navigateToHome,
-                    navigateToHelp = { navigatorExtension.navigateToWebPage(it, "") },
-                    onSetSessionId = viewModel::setSessionId,
-                )
-            }
-        } else {
-            Row(
-                modifier = Modifier
-                    .fillMaxSize()
-                    .background(MaterialTheme.colorScheme.surface)
-                    .padding(24.dp),
-                verticalAlignment = Alignment.CenterVertically,
-                horizontalArrangement = Arrangement.spacedBy(24.dp),
-            ) {
-                FirstSection(
-                    modifier = Modifier.weight(1f),
-                )
-
+            if (navigationType != PixiViewNavigationType.PermanentNavigationDrawer) {
                 Column(
-                    modifier = Modifier.weight(1f),
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .background(MaterialTheme.colorScheme.surface)
+                        .padding(24.dp),
+                    horizontalAlignment = Alignment.CenterHorizontally,
                 ) {
-                    Box(Modifier.weight(2f))
+                    FirstSection()
 
                     SecondSection(
-                        modifier = Modifier.weight(3f),
+                        modifier = Modifier.weight(1f),
                         isLoggedIn = isLoggedIn,
                         navigateToLoginScreen = {
                             viewModel.logout()
@@ -141,8 +116,47 @@ internal fun WelcomeLoginScreen(
                         onSetSessionId = viewModel::setSessionId,
                     )
                 }
+            } else {
+                Row(
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .background(MaterialTheme.colorScheme.surface)
+                        .padding(24.dp),
+                    verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.spacedBy(24.dp),
+                ) {
+                    FirstSection(
+                        modifier = Modifier.weight(1f),
+                    )
+
+                    Column(
+                        modifier = Modifier.weight(1f),
+                    ) {
+                        Box(Modifier.weight(2f))
+
+                        SecondSection(
+                            modifier = Modifier.weight(3f),
+                            isLoggedIn = isLoggedIn,
+                            navigateToLoginScreen = {
+                                viewModel.logout()
+                                navigateToLoginScreen.invoke()
+                            },
+                            navigateToHome = navigateToHome,
+                            navigateToHelp = { navigatorExtension.navigateToWebPage(it, "") },
+                            onSetSessionId = viewModel::setSessionId,
+                        )
+                    }
+                }
             }
         }
+
+        WelcomeSettingButton(
+            modifier = Modifier
+                .align(Alignment.TopStart)
+                .statusBarsPadding()
+                .size(64.dp),
+            onClick = navigateToSetting,
+        )
     }
 }
 
