@@ -55,6 +55,7 @@
     <string name="error_rate_limited">Too many requests. Please wait a while and try again.</string>
     <string name="error_server">FANBOX is not responding. Please try again later.</string>
     <string name="error_schema_mismatch">Could not read the FANBOX response. Please update the app.</string>
+    <string name="error_guest_failure">Could not prepare to read FANBOX. Please restart the app.</string>
     <string name="error_paging">Unable to continue pagination</string>
     <string name="error_developing_feature">Feature under development</string>
     <string name="error_billing">Failed to retrieve purchase information</string>

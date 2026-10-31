@@ -139,33 +139,32 @@ exception type the network layer throws, the cookie and session storage `fankt` 
 client entry point itself. Those are not part of the conversion described above.
 
 ## Remote parsing updates
-When FANBOX changes the shape of its responses, the app stops being able to read them, and a fix
-would otherwise reach you only through a store update. To close that gap, the Android app fetches a
-signed bundle that builds and interprets the post detail request, and runs that instead of the
-parsing built into the release.
-
-This applies to Android only. iOS parses responses with the code shipped in the release, so a fix
-reaches iOS through a store update.
+When FANBOX changes its API, the app stops being able to talk to it, and a fix would otherwise reach
+you only through a store update. To close that gap, the app fetches a signed bundle that builds every
+FANBOX request and interprets every response, and runs it instead of code shipped in the release.
+This applies to both Android and iOS.
 
 This is used only to keep up with changes to the FANBOX API. It does not add features, and it does
-not change what the app does with your data.
+not change what the app does with your data. The bundle never sees your cookies: the app sends every
+request itself, after checking that it goes to FANBOX.
 
-The bundle is verified against a public key compiled into the app. One that fails verification is
-not executed. When the delivery target cannot be reached, the app parses responses with its own
-built-in path, exactly as it did before this mechanism existed.
+The bundle is verified against public keys compiled into the app. One that fails verification is
+not executed. A verified bundle is cached on the device, so later launches download only what
+changed, and a launch that cannot reach the delivery target runs the cached one. The app has no
+other way to talk to FANBOX: on a first launch that cannot reach the delivery target, FANBOX screens
+show an error until the app is restarted with a connection.
 
 What the app fetches is not whatever was published most recently. A bundle reaches the delivery
 target the app reads only when someone promotes it there deliberately; work that has not been
 promoted stays on a separate target the app does not read. Turning on developer mode switches the app
 to that separate target, which is how a bundle gets checked before it is promoted. The change applies
-the next time the app starts.
+the next time the app starts. Each target has its own cache, so a bundle cached from one never runs
+in place of the other. A faulty bundle is fixed by publishing a corrected one or by rolling
+the delivery target back to the previous one.
 
-Execution can also be stopped remotely, independently of what is published at the delivery target.
-The app reads a flag from Firebase Remote Config when it starts, and skips the delivered bundle
-entirely while that flag is set. Until that flag has been read at least once — on a first launch, or
-on a device that cannot reach Remote Config — the app runs the delivered bundle, so losing access to
-the flag never costs you the fix it carries. Stopping is therefore not immediate: the flag reaches a
-device on its next fetch, and applies the next time the app starts.
+The Android app reports when a bundle loads, with the version it loaded, to Firebase Analytics, and
+reports a bundle that fails to load or to handle a response to Firebase Crashlytics. These reports
+carry neither response contents nor credentials.
 
 ## Static analysis
 

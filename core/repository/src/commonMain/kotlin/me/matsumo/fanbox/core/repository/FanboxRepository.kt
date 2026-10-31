@@ -73,9 +73,7 @@ import me.matsumo.fanbox.core.repository.paging.HomePostsPagingSource
 import me.matsumo.fanbox.core.repository.paging.SearchCreatorsPagingSource
 import me.matsumo.fanbox.core.repository.paging.SearchPostsPagingSource
 import me.matsumo.fanbox.core.repository.paging.SupportedPostsPagingSource
-import me.matsumo.fankt.fanbox.Fanbox
 import me.matsumo.fankt.fanbox.FanboxCookieRecord
-import me.matsumo.fankt.fanbox.FanboxCookieStorage
 import me.matsumo.fankt.fanbox.FanboxException
 import me.matsumo.fankt.fanbox.FanboxListItemSchemaMismatch
 import me.matsumo.fankt.fanbox.FanboxLogLevel
@@ -225,20 +223,6 @@ interface FanboxRepository {
     )
 }
 
-/**
- * [Fanbox] を生成する。
- *
- * 配信済みの guest を使うかどうかはプラットフォームによって異なり、fankt は guest 用と直接経路用で
- * 別のコンストラクタを持つ。引数の有無ではなく呼び分けが要るため、生成そのものをプラットフォーム側へ
- * 委ねる。配信先と鍵を Android の source set に置くことで、iOS のバイナリへも含まれない。
- */
-internal expect fun createFanbox(
-    logLevel: FanboxLogLevel,
-    settingDataStore: SettingDataStore,
-    ioDispatcher: CoroutineDispatcher,
-    cookieStorage: FanboxCookieStorage,
-): Fanbox
-
 // 別々のデータ保存先と認証・通信設定を DI で受け取り、セッションを共有する。
 @Suppress("LongParameterList")
 class FanboxRepositoryImpl(
@@ -248,6 +232,7 @@ class FanboxRepositoryImpl(
     private val oldCookieDataStore: OldCookieDataStore,
     private val ioDispatcher: CoroutineDispatcher,
     private val cookieStorage: MigratingFanboxCookieStorage,
+    guestCacheFactory: GuestCacheFactory,
     pixiViewConfig: PixiViewConfig,
 ) : FanboxRepository,
     KoinComponent {
@@ -261,6 +246,8 @@ class FanboxRepositoryImpl(
         settingDataStore = userDataStore,
         ioDispatcher = ioDispatcher,
         cookieStorage = cookieStorage,
+        guestCacheFactory = guestCacheFactory,
+        guestEventListener = GuestEventReporter(scope)::report,
     )
 
     private val creatorCache = mutableMapOf<CreatorId, CreatorDetail>()
