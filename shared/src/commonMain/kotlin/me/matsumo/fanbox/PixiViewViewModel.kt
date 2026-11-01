@@ -185,17 +185,7 @@ class PixiViewViewModel(
      * 起動直後は確かめた結果をそのまま使う。ログイン中に確かめられなかっただけなら、ログイン中のままにする。
      */
     fun updateState() {
-        viewModelScope.launch {
-            val checkedState = checkLoginState()
-            val currentState = loginStateFlow.replayCache.firstOrNull()
-            val nextState = currentState?.updatedBy(checkedState) ?: checkedState
-
-            Napier.d { "update home state. loginState: ${nextState::class.simpleName}" }
-
-            if (nextState is LoginState.LoggedIn) metadataFlow.value = nextState.metaData
-
-            loginStateFlow.emit(nextState)
-        }
+        viewModelScope.launch { applyLoginState(checkLoginState()) }
     }
 
     /** 保存したセッションを捨ててログイン画面へ戻る。ログアウトの完了は [FanboxRepository.logoutTrigger] で届く。 */
@@ -206,6 +196,17 @@ class PixiViewViewModel(
                 loginStateFlow.emit(LoginState.LoggedOut)
             }
         }
+    }
+
+    private suspend fun applyLoginState(checkedState: LoginState) {
+        val currentState = loginStateFlow.replayCache.firstOrNull()
+        val nextState = currentState?.updatedBy(checkedState) ?: checkedState
+
+        Napier.d { "update home state. loginState: ${nextState::class.simpleName}" }
+
+        if (nextState is LoginState.LoggedIn) metadataFlow.value = nextState.metaData
+
+        loginStateFlow.emit(nextState)
     }
 
     private suspend fun checkLoginState(): LoginState {

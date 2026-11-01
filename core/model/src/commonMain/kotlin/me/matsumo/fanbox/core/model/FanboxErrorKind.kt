@@ -74,12 +74,9 @@ internal fun fanboxErrorKindOf(statusCode: Int?): FanboxErrorKind? = when (statu
 internal fun forbiddenKindOf(rawBody: String?): FanboxErrorKind {
     val body = rawBody.orEmpty()
 
-    // 確認画面に必ず含まれる title と script の識別子。
-    val isChallenge = body.containsAny(
-        "<title>Just a moment...</title>",
-        "challenge-platform",
-        "cf_chl_opt",
-    )
+    // 確認画面に必ず含まれる title と script の設定。`/cdn-cgi/challenge-platform/` は通常の応答にも
+    // 埋め込まれるため識別に使わない。
+    val isChallenge = body.containsAny("<title>Just a moment...</title>", "cf_chl_opt")
 
     // 国や地域による拒否（エラー 1009）。HTML の画面と、API のホストが返す 1 行の両方。
     val isRegionBlocked = body.containsAny("error code: 1009", "banned the country or region")

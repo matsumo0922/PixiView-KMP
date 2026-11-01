@@ -29,6 +29,7 @@ import me.matsumo.fanbox.core.datastore.BookmarkDataStore
 import me.matsumo.fanbox.core.datastore.OldCookieDataStore
 import me.matsumo.fanbox.core.datastore.SettingDataStore
 import me.matsumo.fanbox.core.datastore.cookie.MigratingFanboxCookieStorage
+import me.matsumo.fanbox.core.model.FanboxErrorKind
 import me.matsumo.fanbox.core.model.GuestSource
 import me.matsumo.fanbox.core.model.LoginState
 import me.matsumo.fanbox.core.model.fanbox.Bell
@@ -378,9 +379,14 @@ class FanboxRepositoryImpl(
         return LoginState.LoggedIn(metaData)
     }
 
-    /** 確かめられなかった理由をクラッシュレポート基盤へ記録する。本文と認証情報は含めない。 */
+    /**
+     * 確かめられなかった理由をクラッシュレポート基盤へ記録する。本文と認証情報は含めない。
+     *
+     * 通信できなかっただけの場合は記録しない。利用者の回線の状態であり、起動のたびに記録されて他の理由が埋もれるため。
+     */
     private fun reportUnverifiedLogin(loginState: LoginState, failure: Throwable) {
         if (loginState !is LoginState.Unverified) return
+        if (loginState.errorKind == FanboxErrorKind.Network) return
 
         val endpoint = (failure as? FanboxException)?.endpoint
         recordException(IllegalStateException("Login check failed. kind=${loginState.errorKind}, endpoint=$endpoint"))
