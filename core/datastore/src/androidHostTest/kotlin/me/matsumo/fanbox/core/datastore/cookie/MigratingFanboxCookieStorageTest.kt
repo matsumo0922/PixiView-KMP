@@ -165,6 +165,42 @@ class MigratingFanboxCookieStorageTest {
     }
 
     @Test
+    fun unreadablePayloadIsReportedAsUnreadable() = runBlocking {
+        val blobStore = FakeSecureCookieBlobStore(SecureCookiePayload(isMigrationCompleted = true)).apply { isUnreadable = true }
+
+        assertTrue(storage(blobStore).isStoredSessionUnreadable())
+    }
+
+    // 移行を終えただけでセッションが無い状態や、一時的に読めない状態は、壊れているとは扱わない。
+    @Test
+    fun readablePayloadsAndTemporaryFailuresAreNotReportedAsUnreadable() = runBlocking {
+        val migrated = FakeSecureCookieBlobStore(SecureCookiePayload(isMigrationCompleted = true))
+        val nothingStored = FakeSecureCookieBlobStore()
+        val locked = FakeSecureCookieBlobStore(SecureCookiePayload(isMigrationCompleted = true)).apply {
+            loadFailure = IllegalStateException("device locked")
+        }
+
+        assertFalse(storage(migrated).isStoredSessionUnreadable())
+        assertFalse(storage(nothingStored).isStoredSessionUnreadable())
+        assertFalse(storage(locked).isStoredSessionUnreadable())
+    }
+
+    // 壊れた状態のままでは新しいセッションを保存できないため、ログアウトで初期化してから保存できること。
+    @Test
+    fun logoutLetsANewSessionBeStoredOverAnUnreadablePayload() = runBlocking {
+        val blobStore = FakeSecureCookieBlobStore(SecureCookiePayload(isMigrationCompleted = true)).apply { isUnreadable = true }
+        val storage = storage(blobStore)
+
+        assertFails { storage.upsert(sessionCookie) }
+
+        storage.logout()
+        storage.upsert(sessionCookie)
+
+        assertFalse(storage.isStoredSessionUnreadable())
+        assertEquals(listOf(sessionCookie), storage.snapshot())
+    }
+
+    @Test
     fun emptyLegacyStoreStillMarksMigrationCompleted() = runBlocking {
         val blobStore = FakeSecureCookieBlobStore()
 

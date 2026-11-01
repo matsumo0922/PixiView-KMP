@@ -38,7 +38,6 @@ import me.matsumo.fanbox.core.resources.welcome_login_other_title
 import me.matsumo.fanbox.core.resources.welcome_login_ready_message
 import me.matsumo.fanbox.core.resources.welcome_login_ready_title
 import me.matsumo.fanbox.core.resources.welcome_login_title
-import me.matsumo.fanbox.core.resources.welcome_login_toast_failed
 import me.matsumo.fanbox.core.ui.AsyncLoadContents
 import me.matsumo.fanbox.core.ui.extensition.LocalNavigationType
 import me.matsumo.fanbox.core.ui.extensition.LocalSnackbarHostState
@@ -69,16 +68,13 @@ internal fun WelcomeLoginScreen(
     val snackbarHostState = LocalSnackbarHostState.current
     val navigationType = LocalNavigationType.current.type
     val screenState by viewModel.screenState.collectAsStateWithLifecycle()
-    val isLoginError by viewModel.triggerLoginError.collectAsStateWithLifecycle(-1)
 
     SideEffect(true) {
         viewModel.fetchLoggedIn()
     }
 
-    if (isLoginError != -1) {
-        LaunchedEffect(isLoginError) {
-            toastExtension.show(snackbarHostState, Res.string.welcome_login_toast_failed)
-        }
+    LaunchedEffect(viewModel) {
+        viewModel.triggerLoginError.collect { message -> toastExtension.show(snackbarHostState, message) }
     }
 
     Box(modifier) {

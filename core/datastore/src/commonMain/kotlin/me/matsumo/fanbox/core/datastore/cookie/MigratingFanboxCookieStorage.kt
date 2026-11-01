@@ -119,6 +119,24 @@ class MigratingFanboxCookieStorage internal constructor(
     }
 
     /**
+     * 保存したセッションが壊れていて読めないかを返す。
+     *
+     * 保存先に値があるのに復号できない場合に true を返す。この状態ではログアウト中の印が立っているかを
+     * 判断できないため、新しいセッションを保存できない。抜け出すには [logout] で保存先を初期化する。
+     *
+     * 読み出しそのものが失敗した場合（端末のロック中など）は、一時的なものとして false を返す。
+     */
+    suspend fun isStoredSessionUnreadable(): Boolean = routingMutex.withLock {
+        val payload = runCatching { blobStore.load() }.getOrElse { failure ->
+            Napier.w(failure) { "Failed to read the secure Cookie payload while checking whether it is readable." }
+
+            return@withLock false
+        }
+
+        payload.isEmpty && blobStore.hasStoredPayload()
+    }
+
+    /**
      * Room 導入より前の保存先に残っているセッションを取り込む。取り込めた場合は true を返す。
      *
      * 読み出しから取り込み元の削除までを、ログアウトと同じ [routingMutex] の下で行う。

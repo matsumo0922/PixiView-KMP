@@ -4,6 +4,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.launch
 import me.matsumo.fanbox.core.common.util.suspendRunCatching
+import me.matsumo.fanbox.core.model.LoginState
 import me.matsumo.fanbox.core.repository.FanboxRepository
 import me.matsumo.fanbox.core.repository.SettingRepository
 import kotlin.time.Clock
@@ -23,15 +24,20 @@ class WelcomeWebViewModel(private val fanboxRepository: FanboxRepository, privat
         fanboxRepository.setCookies(cookies.toFanboxCookieRecords(Clock.System.now().toEpochMilliseconds()))
     }.isSuccess
 
-    suspend fun checkSessionId(cookies: List<WebViewCookie>): Boolean {
-        if (!saveCookies(cookies)) return false
+    /**
+     * Cookie を保存し、そのセッションでログインできているかを確かめる。
+     *
+     * ログインできていない場合は保存した Cookie を消す。消さないと、確かめられなかったセッションが
+     * 次回起動時に使われる。
+     */
+    suspend fun checkSessionId(cookies: List<WebViewCookie>): LoginState {
+        if (!saveCookies(cookies)) return LoginState.LoggedOut
 
-        return suspendRunCatching {
-            fanboxRepository.updateCsrfToken()
-            fanboxRepository.getNewsLetters()
-        }.onFailure {
-            saveCookies(emptyList())
-        }.isSuccess
+        val loginState = fanboxRepository.checkLoginState()
+
+        if (loginState !is LoginState.LoggedIn) saveCookies(emptyList())
+
+        return loginState
     }
 
     fun debugLogin() {

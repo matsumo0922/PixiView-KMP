@@ -16,18 +16,21 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.flow.shareIn
 import kotlinx.coroutines.withContext
 import me.matsumo.fanbox.core.common.PixiViewConfig
 import me.matsumo.fanbox.core.common.util.recordException
+import me.matsumo.fanbox.core.common.util.suspendRunCatching
 import me.matsumo.fanbox.core.datastore.BlockDataStore
 import me.matsumo.fanbox.core.datastore.BookmarkDataStore
 import me.matsumo.fanbox.core.datastore.OldCookieDataStore
 import me.matsumo.fanbox.core.datastore.SettingDataStore
 import me.matsumo.fanbox.core.datastore.cookie.MigratingFanboxCookieStorage
 import me.matsumo.fanbox.core.model.GuestSource
+import me.matsumo.fanbox.core.model.LoginState
 import me.matsumo.fanbox.core.model.fanbox.Bell
 import me.matsumo.fanbox.core.model.fanbox.Comment
 import me.matsumo.fanbox.core.model.fanbox.CommentId
@@ -47,6 +50,7 @@ import me.matsumo.fanbox.core.model.fanbox.PostDetail
 import me.matsumo.fanbox.core.model.fanbox.PostId
 import me.matsumo.fanbox.core.model.fanbox.Tag
 import me.matsumo.fanbox.core.model.fanbox.UserId
+import me.matsumo.fanbox.core.model.toLoginState
 import me.matsumo.fanbox.core.repository.mapper.toBell
 import me.matsumo.fanbox.core.repository.mapper.toComment
 import me.matsumo.fanbox.core.repository.mapper.toCreatorDetail
@@ -109,6 +113,14 @@ interface FanboxRepository {
     suspend fun setCookies(cookies: List<FanboxCookieRecord>)
     suspend fun updateCsrfToken()
     suspend fun getMetadata(): MetaData
+
+    /**
+     * 保存したセッションで FANBOX にログインしているかを確かめ、CSRF token を取り直す。
+     *
+     * FANBOX がセッションを無効と答えた場合だけ [LoginState.LoggedOut] を返す。メンテナンスや通信の失敗など、
+     * 確かめられなかった場合は [LoginState.Unverified] を返し、保存したセッションは残す。
+     */
+    suspend fun checkLoginState(): LoginState
 
     suspend fun getHomePosts(
         cursor: Cursor?,
@@ -316,6 +328,7 @@ class FanboxRepositoryImpl(
     }
 
     override suspend fun setSessionId(sessionId: String) {
+        resetUnreadableSession()
         fanbox.setFanboxSessionId(sessionId)
     }
 
@@ -337,11 +350,50 @@ class FanboxRepositoryImpl(
     }
 
     override suspend fun setCookies(cookies: List<FanboxCookieRecord>) {
+        resetUnreadableSession()
         fanbox.setCookies(cookies, reset = true)
     }
 
     override suspend fun updateCsrfToken() {
         fanbox.updateCsrfToken()
+    }
+
+    override suspend fun checkLoginState(): LoginState {
+        if (cookieStorage.isStoredSessionUnreadable()) return LoginState.SessionUnreadable
+        if (sessionId.first().isNullOrBlank()) return LoginState.LoggedOut
+
+        return suspendRunCatching { fetchLoginState() }.getOrElse { failure ->
+            failure.toLoginState().also { reportUnverifiedLogin(it, failure) }
+        }
+    }
+
+    // homepage の metadata は、ログインしていなくても userId が null のまま返る。ログインの判定はこの userId で行う。
+    private suspend fun fetchLoginState(): LoginState {
+        val metaData = getMetadata()
+
+        if (metaData.context?.user?.userId == null) return LoginState.LoggedOut
+
+        updateCsrfToken()
+
+        return LoginState.LoggedIn(metaData)
+    }
+
+    /** 確かめられなかった理由をクラッシュレポート基盤へ記録する。本文と認証情報は含めない。 */
+    private fun reportUnverifiedLogin(loginState: LoginState, failure: Throwable) {
+        if (loginState !is LoginState.Unverified) return
+
+        val endpoint = (failure as? FanboxException)?.endpoint
+        recordException(IllegalStateException("Login check failed. kind=${loginState.errorKind}, endpoint=$endpoint"))
+    }
+
+    /**
+     * 保存したセッションが壊れていたら、保存先を初期化する。
+     *
+     * 壊れた状態のままでは新しいセッションを保存できない。利用者がログインし直すときは、
+     * 読めない古いセッションを捨ててよいため、保存の前に初期化する。
+     */
+    private suspend fun resetUnreadableSession() {
+        if (cookieStorage.isStoredSessionUnreadable()) cookieStorage.logout()
     }
 
     /**

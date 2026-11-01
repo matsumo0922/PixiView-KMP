@@ -56,6 +56,12 @@
     <string name="error_adult_content_description">显示</string>
     <string name="error_ios_gif_support">iOS上的GIF预览目前正在开发中</string>
     <string name="error_service_status">服务可用性</string>
+    <string name="error_challenged">FANBOX 的安全验证阻止了连接。请稍后重试，或尝试其他网络。</string>
+    <string name="error_region_blocked">当前所在的国家或地区无法使用 FANBOX。</string>
+    <string name="error_blocked">FANBOX 拒绝了来自此网络的连接。请尝试其他网络。</string>
+    <string name="login_session_unreadable_title">无法读取登录信息</string>
+    <string name="login_session_unreadable_message">已保存的登录信息无法读取。请重新登录。</string>
+    <string name="login_relogin">重新登录</string>
     <string name="error_ad_load_failed">广告加载失败</string>
     <string name="error_ad_load_failed_description">我们展示广告来维护我们服务的质量</string>
     <string name="error_no_available_this_device">此设备无法使用该功能</string>

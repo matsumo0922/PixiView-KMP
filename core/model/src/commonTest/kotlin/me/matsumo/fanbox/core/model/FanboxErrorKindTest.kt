@@ -27,6 +27,36 @@ class FanboxErrorKindTest {
     }
 
     @Test
+    fun forbiddenKindOfDetectsCloudflareChallenge() {
+        val body = "<!DOCTYPE html><html lang=\"en-US\"><head><title>Just a moment...</title>"
+
+        assertEquals(FanboxErrorKind.Challenged, forbiddenKindOf(body))
+    }
+
+    @Test
+    fun forbiddenKindOfDetectsBlocksByCountryOrRegion() {
+        val page = "<p>The owner of this website (www.fanbox.cc) has banned the country or region your IP address is in.</p>"
+
+        assertEquals(FanboxErrorKind.RegionBlocked, forbiddenKindOf("error code: 1009"))
+        assertEquals(FanboxErrorKind.RegionBlocked, forbiddenKindOf(page))
+    }
+
+    @Test
+    fun forbiddenKindOfDetectsOtherCloudflareBlocks() {
+        val page = "<title>Attention Required! | Cloudflare</title><h1>Sorry, you have been blocked</h1>"
+
+        assertEquals(FanboxErrorKind.Blocked, forbiddenKindOf("error code: 1020"))
+        assertEquals(FanboxErrorKind.Blocked, forbiddenKindOf(page))
+    }
+
+    // FANBOX 自身が返す 403（支援していない投稿など）は、これまでどおり権限の不足として扱う。
+    @Test
+    fun forbiddenKindOfKeepsFanboxRejections() {
+        assertEquals(FanboxErrorKind.Forbidden, forbiddenKindOf("{\"error\":\"general_error\"}"))
+        assertEquals(FanboxErrorKind.Forbidden, forbiddenKindOf(null))
+    }
+
+    @Test
     fun toFanboxErrorKindReturnsUnknownForNonFanboxException() {
         assertEquals(FanboxErrorKind.Unknown, IllegalStateException().toFanboxErrorKind())
     }

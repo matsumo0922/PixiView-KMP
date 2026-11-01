@@ -41,13 +41,14 @@ import kotlinx.collections.immutable.toImmutableList
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
+import me.matsumo.fanbox.core.model.LoginState
 import me.matsumo.fanbox.core.model.SimpleAlertContents
 import me.matsumo.fanbox.core.resources.Res
 import me.matsumo.fanbox.core.resources.welcome_login_title
-import me.matsumo.fanbox.core.resources.welcome_login_toast_failed
 import me.matsumo.fanbox.core.resources.welcome_login_web_help
 import me.matsumo.fanbox.core.ui.component.PixiViewTopBar
 import me.matsumo.fanbox.core.ui.extensition.ToastExtension
+import me.matsumo.fanbox.feature.welcome.loginFailureMessage
 import org.jetbrains.compose.resources.getString
 import org.jetbrains.compose.resources.stringResource
 import org.koin.compose.koinInject
@@ -75,12 +76,14 @@ internal fun WelcomeWebScreen(
     var isDisplayHelpDialog by remember { mutableStateOf(false) }
 
     suspend fun tryLogin() {
-        if (viewModel.checkSessionId(currentCookies) && viewModel.saveCookies(currentCookies)) {
+        val loginState = viewModel.checkSessionId(currentCookies)
+
+        if (loginState is LoginState.LoggedIn && viewModel.saveCookies(currentCookies)) {
             terminate.invoke()
         } else {
             snackExtension.show(
                 snackbarHostState = snackbarHostState,
-                message = getString(Res.string.welcome_login_toast_failed),
+                message = getString(loginState.loginFailureMessage()),
                 isSnackbar = true,
             )
         }
