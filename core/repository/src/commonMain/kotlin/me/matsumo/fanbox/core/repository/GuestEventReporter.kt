@@ -1,13 +1,18 @@
 package me.matsumo.fanbox.core.repository
 
 import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import me.matsumo.fanbox.core.common.util.recordException
 import me.matsumo.fanbox.core.common.util.setCrashReportKey
 import me.matsumo.fanbox.core.logs.category.GuestLog
 import me.matsumo.fanbox.core.logs.logger.LogConfigurator
 import me.matsumo.fanbox.core.logs.logger.send
+import me.matsumo.fanbox.core.model.GuestSource
 import me.matsumo.fankt.fanbox.FanboxGuestEvent
 
 /**
@@ -15,12 +20,19 @@ import me.matsumo.fankt.fanbox.FanboxGuestEvent
  *
  * ロードの成功は回数を見るため Analytics のイベントにし、失敗は原因を見るため Crashlytics の non-fatal にする。
  * ロードした bundle の版はクラッシュレポートと突き合わせられるよう custom key にも設定する。
+ * どの guest で処理しているかは [source] で画面に渡す。
  *
  * fankt はこの処理を背景の thread から呼び、ここで投げた例外は記録して捨てる。
  */
 internal class GuestEventReporter(private val scope: CoroutineScope) {
 
+    private val _source = MutableStateFlow<GuestSource>(GuestSource.Loading)
+
+    val source: StateFlow<GuestSource> = _source.asStateFlow()
+
     fun report(event: FanboxGuestEvent) {
+        _source.update { it.updatedBy(event) }
+
         when (event) {
             is FanboxGuestEvent.Loaded -> reportLoaded(event.version ?: "local")
 
@@ -43,6 +55,13 @@ internal class GuestEventReporter(private val scope: CoroutineScope) {
             GuestLog.loaded(version).send()
         }
     }
+}
+
+/** [event] を受けた後の guest の出所。ロードの結果を表さない event では変わらない。 */
+internal fun GuestSource.updatedBy(event: FanboxGuestEvent): GuestSource = when (event) {
+    is FanboxGuestEvent.Loaded -> GuestSource.Delivered(event.version)
+    is FanboxGuestEvent.LoadFailed -> GuestSource.Native
+    is FanboxGuestEvent.SchemaMismatch, is FanboxGuestEvent.CallFailed -> this
 }
 
 /** Crashlytics に non-fatal として記録する guest の失敗。本文と認証情報は含まない。 */

@@ -7,12 +7,14 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalClipboardManager
 import androidx.compose.ui.text.AnnotatedString
 import me.matsumo.fanbox.core.common.PixiViewConfig
+import me.matsumo.fanbox.core.model.GuestSource
 import me.matsumo.fanbox.core.model.Setting
 import me.matsumo.fanbox.core.model.fanbox.MetaData
 import me.matsumo.fanbox.core.resources.Res
 import me.matsumo.fanbox.core.resources.setting_top_information
 import me.matsumo.fanbox.core.resources.setting_top_information_csrf_token
 import me.matsumo.fanbox.core.resources.setting_top_information_fanbox_session_id
+import me.matsumo.fanbox.core.resources.setting_top_information_guest
 import me.matsumo.fanbox.core.resources.setting_top_information_id
 import me.matsumo.fanbox.core.resources.setting_top_information_version
 import me.matsumo.fanbox.core.ui.component.SettingTextItem
@@ -23,6 +25,7 @@ internal fun SettingTopInformationSection(
     setting: Setting,
     fanboxMetaData: MetaData,
     fanboxSessionId: String,
+    guestSource: GuestSource,
     config: PixiViewConfig,
     modifier: Modifier = Modifier,
 ) {
@@ -48,6 +51,13 @@ internal fun SettingTopInformationSection(
 
         SettingTextItem(
             modifier = Modifier.fillMaxWidth(),
+            title = stringResource(Res.string.setting_top_information_guest),
+            description = guestSource.label(),
+            onClick = { /* do nothing */ },
+        )
+
+        SettingTextItem(
+            modifier = Modifier.fillMaxWidth(),
             title = stringResource(Res.string.setting_top_information_id),
             description = setting.pixiViewId,
             onLongClick = { clipboard.setText(AnnotatedString(setting.pixiViewId)) },
@@ -67,4 +77,11 @@ internal fun SettingTopInformationSection(
             onLongClick = { clipboard.setText(AnnotatedString(fanboxMetaData.csrfToken)) },
         )
     }
+}
+
+// commit は先頭 7 桁で見分けられる。ローカルでビルドした bundle は commit を持たない。
+private fun GuestSource.label(): String = when (this) {
+    GuestSource.Loading -> "Loading"
+    is GuestSource.Delivered -> version?.take(7) ?: "local"
+    GuestSource.Native -> "Native"
 }

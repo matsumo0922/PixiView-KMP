@@ -8,13 +8,13 @@ import dev.icerock.moko.resources.desc.desc
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.WhileSubscribed
 import kotlinx.coroutines.flow.combine
-import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 import me.matsumo.fanbox.core.common.PixiViewConfig
 import me.matsumo.fanbox.core.common.util.suspendRunCatching
 import me.matsumo.fanbox.core.model.DownloadFileType
 import me.matsumo.fanbox.core.model.Flag
+import me.matsumo.fanbox.core.model.GuestSource
 import me.matsumo.fanbox.core.model.ScreenState
 import me.matsumo.fanbox.core.model.Setting
 import me.matsumo.fanbox.core.model.fanbox.MetaData
@@ -38,12 +38,17 @@ class SettingTopViewModel(
     pixiViewConfig: PixiViewConfig,
 ) : ViewModel() {
 
-    val screenState = combine(settingRepository.setting, fanboxRepository.sessionId, ::Pair).map { (userData, sessionId) ->
+    val screenState = combine(
+        settingRepository.setting,
+        fanboxRepository.sessionId,
+        fanboxRepository.guestSource,
+    ) { userData, sessionId, guestSource ->
         ScreenState.Idle(
             SettingTopUiState(
                 setting = userData,
                 metaData = suspendRunCatching { fanboxRepository.getMetadata() }.getOrElse { getFanboxMetadataDummy() },
                 fanboxSessionId = sessionId ?: "Unknown",
+                guestSource = guestSource,
                 config = pixiViewConfig,
             ),
         )
@@ -143,5 +148,6 @@ data class SettingTopUiState(
     val setting: Setting,
     val metaData: MetaData,
     val fanboxSessionId: String,
+    val guestSource: GuestSource,
     val config: PixiViewConfig,
 )

@@ -228,6 +228,7 @@
     <string name="setting_top_information">정보</string>
     <string name="setting_top_information_id">CAIOS ID</string>
     <string name="setting_top_information_version">앱 버전</string>
+    <string name="setting_top_information_guest">Guest</string>
     <string name="setting_top_information_csrf_token">CSRF 토큰</string>
     <string name="setting_top_information_fanbox_session_id">FANBOX 세션 ID</string>
     <string name="setting_top_information_team_of_service">이용 약관</string>

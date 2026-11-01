@@ -229,6 +229,7 @@
     <string name="setting_top_information">Информация</string>
     <string name="setting_top_information_id">CAIOS ID</string>
     <string name="setting_top_information_version">Версия приложения</string>
+    <string name="setting_top_information_guest">Guest</string>
     <string name="setting_top_information_csrf_token">CSRF-токен</string>
     <string name="setting_top_information_fanbox_session_id">Идентификатор сессии FANBOX</string>
     <string name="setting_top_information_team_of_service">Условия использования</string>
