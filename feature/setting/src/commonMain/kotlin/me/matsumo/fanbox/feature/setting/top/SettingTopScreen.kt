@@ -29,6 +29,7 @@ import me.matsumo.fanbox.core.logs.category.WelcomeLog
 import me.matsumo.fanbox.core.logs.logger.send
 import me.matsumo.fanbox.core.model.Destination
 import me.matsumo.fanbox.core.model.DownloadFileType
+import me.matsumo.fanbox.core.model.GuestSource
 import me.matsumo.fanbox.core.model.Setting
 import me.matsumo.fanbox.core.model.SimpleAlertContents
 import me.matsumo.fanbox.core.model.fanbox.MetaData
@@ -99,6 +100,7 @@ internal fun SettingTopRoute(
             setting = uiState.setting,
             metaData = uiState.metaData,
             fanboxSessionId = uiState.fanboxSessionId,
+            guestSource = uiState.guestSource,
             config = uiState.config,
             onClickThemeSetting = { navigateTo(Destination.SettingTheme) },
             onClickTranslationLanguage = {
@@ -175,6 +177,7 @@ private fun SettingTopScreen(
     setting: Setting,
     metaData: MetaData,
     fanboxSessionId: String,
+    guestSource: GuestSource,
     config: PixiViewConfig,
     onClickThemeSetting: () -> Unit,
     onClickTranslationLanguage: (String) -> Unit,
@@ -278,6 +281,7 @@ private fun SettingTopScreen(
                     setting = setting,
                     fanboxMetaData = metaData,
                     fanboxSessionId = fanboxSessionId,
+                    guestSource = guestSource,
                 )
             }
 

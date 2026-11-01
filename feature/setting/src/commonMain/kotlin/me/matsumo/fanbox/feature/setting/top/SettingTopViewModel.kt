@@ -15,6 +15,7 @@ import me.matsumo.fanbox.core.common.PixiViewConfig
 import me.matsumo.fanbox.core.common.util.suspendRunCatching
 import me.matsumo.fanbox.core.model.DownloadFileType
 import me.matsumo.fanbox.core.model.Flag
+import me.matsumo.fanbox.core.model.GuestSource
 import me.matsumo.fanbox.core.model.ScreenState
 import me.matsumo.fanbox.core.model.Setting
 import me.matsumo.fanbox.core.model.fanbox.MetaData
@@ -38,15 +39,17 @@ class SettingTopViewModel(
     pixiViewConfig: PixiViewConfig,
 ) : ViewModel() {
 
+    // guest の出所が変わっても metadata は取り直さず、表示だけを更新する。
     val screenState = combine(settingRepository.setting, fanboxRepository.sessionId, ::Pair).map { (userData, sessionId) ->
-        ScreenState.Idle(
-            SettingTopUiState(
-                setting = userData,
-                metaData = suspendRunCatching { fanboxRepository.getMetadata() }.getOrElse { getFanboxMetadataDummy() },
-                fanboxSessionId = sessionId ?: "Unknown",
-                config = pixiViewConfig,
-            ),
+        SettingTopUiState(
+            setting = userData,
+            metaData = suspendRunCatching { fanboxRepository.getMetadata() }.getOrElse { getFanboxMetadataDummy() },
+            fanboxSessionId = sessionId ?: "Unknown",
+            guestSource = fanboxRepository.guestSource.value,
+            config = pixiViewConfig,
         )
+    }.combine(fanboxRepository.guestSource) { uiState, guestSource ->
+        ScreenState.Idle(uiState.copy(guestSource = guestSource))
     }.stateIn(
         scope = viewModelScope,
         started = SharingStarted.WhileSubscribed(stopTimeout = 5.seconds),
@@ -143,5 +146,6 @@ data class SettingTopUiState(
     val setting: Setting,
     val metaData: MetaData,
     val fanboxSessionId: String,
+    val guestSource: GuestSource,
     val config: PixiViewConfig,
 )

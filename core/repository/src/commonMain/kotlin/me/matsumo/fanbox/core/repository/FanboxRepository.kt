@@ -15,6 +15,7 @@ import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.flow.SharingStarted
+import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.flow.shareIn
@@ -26,6 +27,7 @@ import me.matsumo.fanbox.core.datastore.BookmarkDataStore
 import me.matsumo.fanbox.core.datastore.OldCookieDataStore
 import me.matsumo.fanbox.core.datastore.SettingDataStore
 import me.matsumo.fanbox.core.datastore.cookie.MigratingFanboxCookieStorage
+import me.matsumo.fanbox.core.model.GuestSource
 import me.matsumo.fanbox.core.model.fanbox.Bell
 import me.matsumo.fanbox.core.model.fanbox.Comment
 import me.matsumo.fanbox.core.model.fanbox.CommentId
@@ -89,6 +91,9 @@ interface FanboxRepository {
     val csrfToken: Flow<String?>
     val logoutTrigger: Flow<Long>
     val sessionInvalidatedTrigger: Flow<Long>
+
+    /** FANBOX の request と response を処理している guest の出所。 */
+    val guestSource: StateFlow<GuestSource>
 
     suspend fun logout()
     suspend fun setSessionId(sessionId: String)
@@ -238,6 +243,7 @@ class FanboxRepositoryImpl(
     KoinComponent {
 
     private val scope = CoroutineScope(SupervisorJob() + ioDispatcher)
+    private val guestEventReporter = GuestEventReporter(scope)
 
     // fankt は NONE 以外の logLevel でスキーマ不一致ごとに応答本文の断片を出力する。断片には
     // FANBOX と利用者のデータが残るため、リリースビルドでは NONE にして出力経路ごと閉じる。
@@ -247,7 +253,7 @@ class FanboxRepositoryImpl(
         ioDispatcher = ioDispatcher,
         cookieStorage = cookieStorage,
         guestCacheFactory = guestCacheFactory,
-        guestEventListener = GuestEventReporter(scope)::report,
+        guestEventListener = guestEventReporter::report,
     )
 
     private val creatorCache = mutableMapOf<CreatorId, CreatorDetail>()
@@ -267,6 +273,7 @@ class FanboxRepositoryImpl(
     override val csrfToken: Flow<String?> = fanbox.csrfToken
     override val logoutTrigger: Flow<Long> = _logoutTrigger.receiveAsFlow()
     override val sessionInvalidatedTrigger: Flow<Long> = _sessionInvalidatedTrigger.receiveAsFlow()
+    override val guestSource: StateFlow<GuestSource> = guestEventReporter.source
 
     override val bookmarkedPostsIds: SharedFlow<List<PostId>> = bookmarkDataStore.data
         .map { ids -> ids.map { it.toPostId() } }

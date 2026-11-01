@@ -91,7 +91,7 @@ internal fun loadDeveloperMode(load: suspend () -> Boolean): Boolean = runCatchi
  * 復旧鍵である。どちらかの鍵で署名された manifest を受け付ける。
  *
  * 秘匿を要さないが、リリースへ焼き込まれるためアプリの更新なしには変更できない。配信中の manifest と
- * 対応しない鍵を置くと guest をロードできず、FANBOX の API がすべて失敗する。入れ替える際は、配信中の
+ * 対応しない鍵を置くと guest をロードできず、配信した修正が届かなくなる。入れ替える際は、配信中の
  * manifest の署名を実際に検証すること。
  */
 internal val GUEST_TRUSTED_KEYS: Map<String, String> = mapOf(
@@ -104,8 +104,7 @@ internal val GUEST_TRUSTED_KEYS: Map<String, String> = mapOf(
  *
  * FANBOX の request の組み立てと response の解析は、配信された guest で実行される。FANBOX の仕様変更への
  * 追従は、アプリの更新を経ずに配信で届く。配信先へ到達できないときは、署名を検証済みのキャッシュから
- * ロードする。キャッシュも無いときは、この [Fanbox] の API がすべて `FanboxException.GuestFailure` で
- * 失敗する。
+ * ロードする。キャッシュも無いときは、fankt に組み込まれたリリース時点の guest で処理する。
  */
 @Suppress("LongParameterList")
 internal fun createFanbox(
