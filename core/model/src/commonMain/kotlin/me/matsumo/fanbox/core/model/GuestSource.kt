@@ -13,6 +13,7 @@ sealed interface GuestSource {
      * 配信された bundle（検証済みのキャッシュを含む）。[version] は bundle のビルド元の commit で、
      * ローカルでビルドした bundle では `null`。
      */
+    @Immutable
     data class Delivered(val version: String?) : GuestSource
 
     /** bundle をロードできず、fankt に組み込まれたリリース時点の guest で処理している。 */

@@ -8,6 +8,7 @@ import dev.icerock.moko.resources.desc.desc
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.WhileSubscribed
 import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 import me.matsumo.fanbox.core.common.PixiViewConfig
@@ -38,20 +39,17 @@ class SettingTopViewModel(
     pixiViewConfig: PixiViewConfig,
 ) : ViewModel() {
 
-    val screenState = combine(
-        settingRepository.setting,
-        fanboxRepository.sessionId,
-        fanboxRepository.guestSource,
-    ) { userData, sessionId, guestSource ->
-        ScreenState.Idle(
-            SettingTopUiState(
-                setting = userData,
-                metaData = suspendRunCatching { fanboxRepository.getMetadata() }.getOrElse { getFanboxMetadataDummy() },
-                fanboxSessionId = sessionId ?: "Unknown",
-                guestSource = guestSource,
-                config = pixiViewConfig,
-            ),
+    // guest の出所が変わっても metadata は取り直さず、表示だけを更新する。
+    val screenState = combine(settingRepository.setting, fanboxRepository.sessionId, ::Pair).map { (userData, sessionId) ->
+        SettingTopUiState(
+            setting = userData,
+            metaData = suspendRunCatching { fanboxRepository.getMetadata() }.getOrElse { getFanboxMetadataDummy() },
+            fanboxSessionId = sessionId ?: "Unknown",
+            guestSource = fanboxRepository.guestSource.value,
+            config = pixiViewConfig,
         )
+    }.combine(fanboxRepository.guestSource) { uiState, guestSource ->
+        ScreenState.Idle(uiState.copy(guestSource = guestSource))
     }.stateIn(
         scope = viewModelScope,
         started = SharingStarted.WhileSubscribed(stopTimeout = 5.seconds),
