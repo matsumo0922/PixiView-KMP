@@ -150,9 +150,10 @@ request itself, after checking that it goes to FANBOX.
 
 The bundle is verified against public keys compiled into the app. One that fails verification is
 not executed. A verified bundle is cached on the device, so later launches download only what
-changed, and a launch that cannot reach the delivery target runs the cached one. The app has no
-other way to talk to FANBOX: on a first launch that cannot reach the delivery target, FANBOX screens
-show an error until the app is restarted with a connection.
+changed, and a launch that cannot reach the delivery target runs the cached one. When there is no
+bundle to run, as on a first launch that cannot reach the delivery target, the app uses the same
+code as it was when the release was built. Fixes published since then apply the next time the app
+starts and loads a bundle.
 
 What the app fetches is not whatever was published most recently. A bundle reaches the delivery
 target the app reads only when someone promotes it there deliberately; work that has not been

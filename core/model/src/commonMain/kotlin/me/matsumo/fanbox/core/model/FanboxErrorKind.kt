@@ -25,7 +25,7 @@ import org.jetbrains.compose.resources.StringResource
  * - [ServerError]: [FanboxException.ServerError]（HTTP 5xx）
  * - [Network]: [FanboxException.Network]（応答を受け取る前の通信失敗）
  * - [SchemaMismatch]: [FanboxException.SchemaMismatch]（応答の形式が期待と異なる）
- * - [GuestFailure]: [FanboxException.GuestFailure]（配信された解析処理をロードできない、または解析処理が失敗した）
+ * - [GuestFailure]: [FanboxException.GuestFailure]（解析処理が request の組み立てか response の解析に失敗した）
  * - [Unknown]: 上記以外。[FanboxException.UnexpectedHttpError] と FANBOX 由来でない失敗を含む
  */
 enum class FanboxErrorKind {
