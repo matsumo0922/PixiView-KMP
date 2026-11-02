@@ -56,6 +56,12 @@
     <string name="error_adult_content_description">Показать</string>
     <string name="error_ios_gif_support">Предпросмотр GIF на iOS в разработке</string>
     <string name="error_service_status">Состояние работы сервиса</string>
+    <string name="error_challenged">Проверка безопасности FANBOX остановила соединение. Подождите немного и повторите попытку или попробуйте другую сеть.</string>
+    <string name="error_region_blocked">FANBOX недоступен в вашей стране или регионе.</string>
+    <string name="error_blocked">FANBOX отклонил подключения из этой сети. Попробуйте другую сеть.</string>
+    <string name="login_session_unreadable_title">Не удалось прочитать данные для входа</string>
+    <string name="login_session_unreadable_message">Сохранённые данные для входа больше не читаются. Войдите снова.</string>
+    <string name="login_relogin">Войти снова</string>
     <string name="error_ad_load_failed">Не удалось загрузить рекламу.</string>
     <string name="error_ad_load_failed_description">Мы показываем рекламу для поддержания качества сервиса.</string>
     <string name="error_no_available_this_device">Эта функция недоступна на данном устройстве</string>

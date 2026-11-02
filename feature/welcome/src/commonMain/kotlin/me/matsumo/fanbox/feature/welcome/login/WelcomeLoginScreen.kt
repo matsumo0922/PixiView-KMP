@@ -29,6 +29,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import me.matsumo.fanbox.core.logs.category.WelcomeLog
+import me.matsumo.fanbox.core.logs.logger.send
 import me.matsumo.fanbox.core.resources.Res
 import me.matsumo.fanbox.core.resources.vec_welcome_plus
 import me.matsumo.fanbox.core.resources.welcome_login_button_login
@@ -38,7 +39,6 @@ import me.matsumo.fanbox.core.resources.welcome_login_other_title
 import me.matsumo.fanbox.core.resources.welcome_login_ready_message
 import me.matsumo.fanbox.core.resources.welcome_login_ready_title
 import me.matsumo.fanbox.core.resources.welcome_login_title
-import me.matsumo.fanbox.core.resources.welcome_login_toast_failed
 import me.matsumo.fanbox.core.ui.AsyncLoadContents
 import me.matsumo.fanbox.core.ui.extensition.LocalNavigationType
 import me.matsumo.fanbox.core.ui.extensition.LocalSnackbarHostState
@@ -69,16 +69,19 @@ internal fun WelcomeLoginScreen(
     val snackbarHostState = LocalSnackbarHostState.current
     val navigationType = LocalNavigationType.current.type
     val screenState by viewModel.screenState.collectAsStateWithLifecycle()
-    val isLoginError by viewModel.triggerLoginError.collectAsStateWithLifecycle(-1)
+
+    // ログインし直す前に古いセッションを捨てる。ブックマークなどの手元の設定は残す。
+    val navigateToWebLogin = {
+        viewModel.clearSession()
+        navigateToLoginScreen.invoke()
+    }
 
     SideEffect(true) {
         viewModel.fetchLoggedIn()
     }
 
-    if (isLoginError != -1) {
-        LaunchedEffect(isLoginError) {
-            toastExtension.show(snackbarHostState, Res.string.welcome_login_toast_failed)
-        }
+    LaunchedEffect(viewModel) {
+        viewModel.triggerLoginError.collect { message -> toastExtension.show(snackbarHostState, message) }
     }
 
     Box(modifier) {
@@ -89,7 +92,7 @@ internal fun WelcomeLoginScreen(
         ) { isLoggedIn ->
             if (isLoggedIn) {
                 LaunchedEffect(isLoggedIn) {
-                    WelcomeLog.loggedIn()
+                    WelcomeLog.loggedIn().send()
                     navigateToHome.invoke()
                 }
             }
@@ -107,10 +110,7 @@ internal fun WelcomeLoginScreen(
                     SecondSection(
                         modifier = Modifier.weight(1f),
                         isLoggedIn = isLoggedIn,
-                        navigateToLoginScreen = {
-                            viewModel.logout()
-                            navigateToLoginScreen.invoke()
-                        },
+                        navigateToLoginScreen = navigateToWebLogin,
                         navigateToHome = navigateToHome,
                         navigateToHelp = { navigatorExtension.navigateToWebPage(it, "") },
                         onSetSessionId = viewModel::setSessionId,
@@ -137,10 +137,7 @@ internal fun WelcomeLoginScreen(
                         SecondSection(
                             modifier = Modifier.weight(3f),
                             isLoggedIn = isLoggedIn,
-                            navigateToLoginScreen = {
-                                viewModel.logout()
-                                navigateToLoginScreen.invoke()
-                            },
+                            navigateToLoginScreen = navigateToWebLogin,
                             navigateToHome = navigateToHome,
                             navigateToHelp = { navigatorExtension.navigateToWebPage(it, "") },
                             onSetSessionId = viewModel::setSessionId,

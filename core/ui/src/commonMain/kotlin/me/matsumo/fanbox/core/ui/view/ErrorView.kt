@@ -45,6 +45,8 @@ fun ErrorView(
     serviceStatus: Boolean = true,
     retryTitle: StringResource? = null,
     retryAction: (() -> Unit)? = null,
+    secondaryActionTitle: StringResource? = null,
+    secondaryAction: (() -> Unit)? = null,
     terminate: (() -> Unit)? = null,
 ) {
     val navigatorExtension = koinInject<NavigatorExtension>()
@@ -100,6 +102,15 @@ fun ErrorView(
                         text = stringResource(retryTitle ?: Res.string.common_reload),
                         style = MaterialTheme.typography.labelMedium,
                         color = MaterialTheme.colorScheme.onPrimary,
+                    )
+                }
+            }
+
+            if (secondaryActionTitle != null && secondaryAction != null) {
+                TextButton(secondaryAction) {
+                    Text(
+                        text = stringResource(secondaryActionTitle),
+                        style = MaterialTheme.typography.labelMedium,
                     )
                 }
             }

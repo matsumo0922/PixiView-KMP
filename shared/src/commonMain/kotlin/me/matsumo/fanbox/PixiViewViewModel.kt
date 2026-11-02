@@ -25,9 +25,11 @@ import me.matsumo.fanbox.core.logs.category.BillingLog
 import me.matsumo.fanbox.core.logs.logger.LogConfigurator
 import me.matsumo.fanbox.core.logs.logger.send
 import me.matsumo.fanbox.core.model.DownloadState
+import me.matsumo.fanbox.core.model.LoginState
 import me.matsumo.fanbox.core.model.ScreenState
 import me.matsumo.fanbox.core.model.Setting
 import me.matsumo.fanbox.core.model.fanbox.MetaData
+import me.matsumo.fanbox.core.model.updatedBy
 import me.matsumo.fanbox.core.repository.DownloadPostsRepository
 import me.matsumo.fanbox.core.repository.FanboxRepository
 import me.matsumo.fanbox.core.repository.SettingRepository
@@ -54,7 +56,7 @@ class PixiViewViewModel(
     private val pixiViewConfig: PixiViewConfig,
 ) : ViewModel() {
 
-    private val isLoggedInFlow: MutableSharedFlow<Boolean> = MutableSharedFlow(replay = 1)
+    private val loginStateFlow: MutableSharedFlow<LoginState> = MutableSharedFlow(replay = 1)
     private val isAppLockedFlow: MutableStateFlow<Boolean> = MutableStateFlow(true)
     private val metadataFlow: MutableStateFlow<MetaData> = MutableStateFlow(getFanboxMetadataDummy())
     private val isBillingSyncSucceededFlow: MutableStateFlow<Boolean> = MutableStateFlow(false)
@@ -69,7 +71,7 @@ class PixiViewViewModel(
             fanboxRepository.sessionId,
             downloadPostsRepository.downloadState,
             metadataFlow,
-            isLoggedInFlow,
+            loginStateFlow,
             isAppLockedFlow,
             isBillingSyncSucceededFlow,
         ),
@@ -78,7 +80,7 @@ class PixiViewViewModel(
         val sessionId = flows[1] as String?
         val downloadState = flows[2] as DownloadState
         val fanboxMetadata = flows[3] as MetaData
-        val isLoggedIn = flows[4] as Boolean
+        val loginState = flows[4] as LoginState
         val isAppLocked = flows[5] as Boolean
         val isBillingSyncSucceeded = flows[6] as Boolean
 
@@ -88,7 +90,7 @@ class PixiViewViewModel(
                 sessionId = sessionId.orEmpty(),
                 fanboxMetadata = fanboxMetadata,
                 downloadState = downloadState,
-                isLoggedIn = isLoggedIn,
+                loginState = loginState,
                 isAppLocked = if (setting.isUseAppLock) isAppLocked else false,
                 isBillingSyncSucceeded = isBillingSyncSucceeded,
             ),
@@ -104,13 +106,13 @@ class PixiViewViewModel(
 
         viewModelScope.launch {
             fanboxRepository.logoutTrigger.collectLatest {
-                isLoggedInFlow.emit(false)
+                loginStateFlow.emit(LoginState.LoggedOut)
             }
         }
 
         viewModelScope.launch {
             fanboxRepository.sessionInvalidatedTrigger.collectLatest {
-                isLoggedInFlow.emit(false)
+                loginStateFlow.emit(LoginState.LoggedOut)
             }
         }
 
@@ -177,24 +179,43 @@ class PixiViewViewModel(
         }
     }
 
+    /**
+     * ログインしているかを確かめ直す。
+     *
+     * 起動直後は確かめた結果をそのまま使う。ログイン中に確かめられなかっただけなら、ログイン中のままにする。
+     */
     fun updateState() {
+        viewModelScope.launch { applyLoginState(checkLoginState()) }
+    }
+
+    /** 保存したセッションを捨ててログイン画面へ戻る。ブックマークとブロックの設定は残す。 */
+    fun relogin() {
         viewModelScope.launch {
-            suspendRunCatching {
-                if (!settingRepository.setting.first().isTestUser) {
-                    importOldSessionId()
-
-                    metadataFlow.value = suspendRunCatching {
-                        fanboxRepository.getMetadata()
-                    }.getOrElse { getFanboxMetadataDummy() }
-
-                    fanboxRepository.updateCsrfToken()
-                    fanboxRepository.getNewsLetters()
-                }
-            }.isSuccess.also {
-                Napier.d { "update home state. isLoggedIn: $it" }
-                isLoggedInFlow.emit(it)
+            suspendRunCatching { fanboxRepository.clearSession() }.onFailure { failure ->
+                Napier.w(failure) { "Failed to clear the session before logging in again." }
             }
+
+            loginStateFlow.emit(LoginState.LoggedOut)
         }
+    }
+
+    private suspend fun applyLoginState(checkedState: LoginState) {
+        val currentState = loginStateFlow.replayCache.firstOrNull()
+        val nextState = currentState?.updatedBy(checkedState) ?: checkedState
+
+        Napier.d { "update home state. loginState: ${nextState::class.simpleName}" }
+
+        if (nextState is LoginState.LoggedIn) metadataFlow.value = nextState.metaData
+
+        loginStateFlow.emit(nextState)
+    }
+
+    private suspend fun checkLoginState(): LoginState {
+        if (settingRepository.setting.first().isTestUser) return LoginState.LoggedIn(getFanboxMetadataDummy())
+
+        importOldSessionId()
+
+        return fanboxRepository.checkLoginState()
     }
 
     /**
@@ -279,7 +300,7 @@ data class MainUiState(
     val sessionId: String,
     val fanboxMetadata: MetaData,
     val downloadState: DownloadState,
-    val isLoggedIn: Boolean,
+    val loginState: LoginState,
     val isAppLocked: Boolean,
     val isBillingSyncSucceeded: Boolean,
 )

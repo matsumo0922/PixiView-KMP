@@ -22,7 +22,16 @@ import androidx.navigation.compose.rememberNavController
 import me.matsumo.fanbox.MainUiState
 import me.matsumo.fanbox.PixiViewSettingNavHost
 import me.matsumo.fanbox.core.model.Destination
+import me.matsumo.fanbox.core.model.LoginState
+import me.matsumo.fanbox.core.model.messageOrNull
+import me.matsumo.fanbox.core.resources.Res
+import me.matsumo.fanbox.core.resources.error_executed
+import me.matsumo.fanbox.core.resources.error_network
+import me.matsumo.fanbox.core.resources.login_relogin
+import me.matsumo.fanbox.core.resources.login_session_unreadable_message
+import me.matsumo.fanbox.core.resources.login_session_unreadable_title
 import me.matsumo.fanbox.core.ui.component.sheet.rememberBottomSheetNavigator
+import me.matsumo.fanbox.core.ui.view.ErrorView
 import me.matsumo.fanbox.feature.welcome.WelcomeNavHost
 import kotlin.time.Clock
 import kotlin.time.ExperimentalTime
@@ -35,6 +44,7 @@ internal fun PixiViewScreen(
     onRequestInitPixiViewId: () -> Unit,
     onRequestFirstLaunchFlag: () -> Unit,
     onRequestUpdateState: () -> Unit,
+    onRequestRelogin: () -> Unit,
     onBillingRetentionPromptShow: () -> Unit,
     onPostDetailClose: suspend () -> Unit,
     modifier: Modifier = Modifier,
@@ -48,7 +58,8 @@ internal fun PixiViewScreen(
     var isAgreedTeams by remember {
         mutableStateOf(uiState.setting.isAgreedPrivacyPolicy && uiState.setting.isAgreedTermsOfService)
     }
-    var isAllowedPermission by remember(uiState.setting, uiState.isLoggedIn) { mutableStateOf(true) }
+    val isLoggedIn = uiState.loginState is LoginState.LoggedIn
+    var isAllowedPermission by remember(uiState.setting, isLoggedIn) { mutableStateOf(true) }
 
     SideEffect(true) {
         if (uiState.setting.pixiViewId.isBlank()) {
@@ -60,48 +71,122 @@ internal fun PixiViewScreen(
         }
     }
 
+    val contentType = pixiViewContentTypeOf(
+        loginState = uiState.loginState,
+        isAgreedTeams = isAgreedTeams,
+        isAllowedPermission = isAllowedPermission,
+    )
+
     AnimatedContent(
         modifier = modifier,
-        targetState = !isAgreedTeams || !uiState.isLoggedIn || !isAllowedPermission,
+        targetState = contentType,
         transitionSpec = { fadeIn().togetherWith(fadeOut()) },
-        label = "isShowWelcomeScreen",
-    ) {
-        if (it) {
-            WelcomeContent(
-                modifier = Modifier.fillMaxSize(),
-                isAgreedTeams = isAgreedTeams,
-                isLoggedIn = uiState.isLoggedIn,
-                onComplete = {
-                    isAgreedTeams = true
-                    isAllowedPermission = true
-                    showPaywallFlag = true
+        label = "pixiViewContentType",
+    ) { type ->
+        when (type) {
+            PixiViewContentType.Welcome -> {
+                WelcomeContent(
+                    modifier = Modifier.fillMaxSize(),
+                    isAgreedTeams = isAgreedTeams,
+                    isLoggedIn = isLoggedIn,
+                    onComplete = {
+                        isAgreedTeams = true
+                        isAllowedPermission = true
+                        showPaywallFlag = true
 
-                    onRequestUpdateState.invoke()
-                },
-            )
-        } else {
-            PixiViewContent(
-                modifier = Modifier.fillMaxSize(),
-                bottomSheetNavigator = bottomSheetNavigator,
-                navController = navController,
-                onPostDetailClose = onPostDetailClose,
-                onLibraryHomeVisibilityChange = { isVisible -> isLibraryHomeVisible = isVisible },
-            )
+                        onRequestUpdateState.invoke()
+                    },
+                )
+            }
 
-            HandleBillingRetentionPrompt(
-                uiState = uiState,
-                navController = navController,
-                isHomeVisible = isLibraryHomeVisible && currentBackStackEntry?.destination?.hasRoute<Destination.Library>() == true,
-                onBillingRetentionPromptShow = onBillingRetentionPromptShow,
-            )
+            PixiViewContentType.StartupError -> {
+                StartupErrorContent(
+                    modifier = Modifier.fillMaxSize(),
+                    loginState = uiState.loginState,
+                    onRetry = onRequestUpdateState,
+                    onRelogin = onRequestRelogin,
+                )
+            }
 
-            if (showPaywallFlag) {
-                LaunchedEffect(true) {
-                    navController.navigate(Destination.BillingPlusBottomSheet(null))
-                    showPaywallFlag = false
+            PixiViewContentType.Main -> {
+                PixiViewContent(
+                    modifier = Modifier.fillMaxSize(),
+                    bottomSheetNavigator = bottomSheetNavigator,
+                    navController = navController,
+                    onPostDetailClose = onPostDetailClose,
+                    onLibraryHomeVisibilityChange = { isVisible -> isLibraryHomeVisible = isVisible },
+                )
+
+                HandleBillingRetentionPrompt(
+                    uiState = uiState,
+                    navController = navController,
+                    isHomeVisible = isLibraryHomeVisible && currentBackStackEntry?.destination?.hasRoute<Destination.Library>() == true,
+                    onBillingRetentionPromptShow = onBillingRetentionPromptShow,
+                )
+
+                if (showPaywallFlag) {
+                    LaunchedEffect(true) {
+                        navController.navigate(Destination.BillingPlusBottomSheet(null))
+                        showPaywallFlag = false
+                    }
                 }
             }
         }
+    }
+}
+
+/** [PixiViewScreen] が全体に表示する内容の種類。 */
+private enum class PixiViewContentType {
+    Welcome,
+    StartupError,
+    Main,
+}
+
+// 同意前は welcome を優先する。ログインを確かめられなかったときは、ログイン画面ではなく理由を示す画面を出す。
+private fun pixiViewContentTypeOf(
+    loginState: LoginState,
+    isAgreedTeams: Boolean,
+    isAllowedPermission: Boolean,
+): PixiViewContentType = when {
+    !isAgreedTeams -> PixiViewContentType.Welcome
+    loginState is LoginState.Unverified -> PixiViewContentType.StartupError
+    loginState is LoginState.SessionUnreadable -> PixiViewContentType.StartupError
+    loginState !is LoginState.LoggedIn -> PixiViewContentType.Welcome
+    !isAllowedPermission -> PixiViewContentType.Welcome
+    else -> PixiViewContentType.Main
+}
+
+/**
+ * 起動時にログインを確かめられなかった理由を示す。
+ *
+ * 確かめられなかっただけなら、再試行とログインのし直しを選べる。保存したセッションが読めない場合は、
+ * ログインし直すしかないため、その操作だけを出す。
+ */
+@Composable
+private fun StartupErrorContent(
+    loginState: LoginState,
+    onRetry: () -> Unit,
+    onRelogin: () -> Unit,
+    modifier: Modifier = Modifier,
+) {
+    if (loginState is LoginState.Unverified) {
+        ErrorView(
+            modifier = modifier,
+            title = Res.string.error_executed,
+            message = loginState.errorKind.messageOrNull() ?: Res.string.error_network,
+            retryAction = onRetry,
+            secondaryActionTitle = Res.string.login_relogin,
+            secondaryAction = onRelogin,
+        )
+    } else {
+        ErrorView(
+            modifier = modifier,
+            title = Res.string.login_session_unreadable_title,
+            message = Res.string.login_session_unreadable_message,
+            serviceStatus = false,
+            retryTitle = Res.string.login_relogin,
+            retryAction = onRelogin,
+        )
     }
 }
 
