@@ -59,7 +59,7 @@ internal class GuestEventReporter(private val scope: CoroutineScope) {
 
 /** [event] を受けた後の guest の出所。ロードの結果を表さない event では変わらない。 */
 internal fun GuestSource.updatedBy(event: FanboxGuestEvent): GuestSource = when (event) {
-    is FanboxGuestEvent.Loaded -> GuestSource.Delivered(event.version)
+    is FanboxGuestEvent.Loaded -> GuestSource.Delivered(version = event.version, isFromCache = event.isFromCache)
     is FanboxGuestEvent.LoadFailed -> GuestSource.Native
     is FanboxGuestEvent.SchemaMismatch, is FanboxGuestEvent.CallFailed -> this
 }

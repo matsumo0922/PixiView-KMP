@@ -51,13 +51,6 @@ internal fun SettingTopInformationSection(
 
         SettingTextItem(
             modifier = Modifier.fillMaxWidth(),
-            title = stringResource(Res.string.setting_top_information_guest),
-            description = guestSource.label(),
-            onClick = { /* do nothing */ },
-        )
-
-        SettingTextItem(
-            modifier = Modifier.fillMaxWidth(),
             title = stringResource(Res.string.setting_top_information_id),
             description = setting.pixiViewId,
             onLongClick = { clipboard.setText(AnnotatedString(setting.pixiViewId)) },
@@ -76,12 +69,19 @@ internal fun SettingTopInformationSection(
             description = fanboxMetaData.csrfToken,
             onLongClick = { clipboard.setText(AnnotatedString(fanboxMetaData.csrfToken)) },
         )
+
+        SettingTextItem(
+            modifier = Modifier.fillMaxWidth(),
+            title = stringResource(Res.string.setting_top_information_guest),
+            description = guestSource.label(),
+            onClick = { /* do nothing */ },
+        )
     }
 }
 
-// commit は先頭 7 桁で見分けられる。ローカルでビルドした bundle は commit を持たない。
+// ローカルでビルドした bundle は commit を持たない。
 private fun GuestSource.label(): String = when (this) {
     GuestSource.Loading -> "Loading"
-    is GuestSource.Delivered -> version?.take(7) ?: "local"
+    is GuestSource.Delivered -> (version ?: "local") + if (isFromCache) " (cache)" else ""
     GuestSource.Native -> "Native"
 }

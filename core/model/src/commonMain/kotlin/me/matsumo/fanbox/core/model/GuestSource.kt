@@ -10,11 +10,14 @@ sealed interface GuestSource {
     data object Loading : GuestSource
 
     /**
-     * 配信された bundle（検証済みのキャッシュを含む）。[version] は bundle のビルド元の commit で、
-     * ローカルでビルドした bundle では `null`。
+     * 配信された bundle。[version] は bundle のビルド元の commit で、ローカルでビルドした bundle では `null`。
+     * [isFromCache] は、配信先からロードできず、検証済みのキャッシュからロードしたときに `true`。
      */
     @Immutable
-    data class Delivered(val version: String?) : GuestSource
+    data class Delivered(
+        val version: String?,
+        val isFromCache: Boolean,
+    ) : GuestSource
 
     /** bundle をロードできず、fankt に組み込まれたリリース時点の guest で処理している。 */
     data object Native : GuestSource
