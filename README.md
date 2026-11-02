@@ -166,8 +166,8 @@ the delivery target back to the previous one.
 The Android app reports when a bundle loads, with the version it loaded, to Firebase Analytics, and
 reports a bundle that fails to load or to handle a response to Firebase Crashlytics. These reports
 carry neither response contents nor credentials. The Information section of the settings screen
-shows which bundle is handling FANBOX: the first seven characters of the commit it was built from,
-or `Native` when the app is using the code it was released with.
+shows which bundle is handling FANBOX: the commit it was built from, followed by `(cache)` when it was
+loaded from the cache, or `Native` when the app is using the code it was released with.
 
 ## Static analysis
 

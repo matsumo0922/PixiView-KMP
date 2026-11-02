@@ -10,9 +10,24 @@ class GuestSourceTest {
 
     @Test
     fun loadedBundleBecomesDeliveredWithItsCommit() {
-        val source = GuestSource.Loading.updatedBy(FanboxGuestEvent.Loaded("0123456789abcdef"))
+        val event = FanboxGuestEvent.Loaded(version = "0123456789abcdef", isFromCache = false)
+        val source = GuestSource.Loading.updatedBy(event)
 
-        assertEquals(GuestSource.Delivered("0123456789abcdef"), source)
+        assertEquals(
+            expected = GuestSource.Delivered(version = "0123456789abcdef", isFromCache = false),
+            actual = source,
+        )
+    }
+
+    @Test
+    fun bundleLoadedFromTheCacheIsMarkedAsCached() {
+        val event = FanboxGuestEvent.Loaded(version = "0123456789abcdef", isFromCache = true)
+        val source = GuestSource.Loading.updatedBy(event)
+
+        assertEquals(
+            expected = GuestSource.Delivered(version = "0123456789abcdef", isFromCache = true),
+            actual = source,
+        )
     }
 
     @Test
