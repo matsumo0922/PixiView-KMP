@@ -1,7 +1,7 @@
 [versions]
 # Application
-versionName = "2.3.5"
-versionCode = "75"
+versionName = "2.3.6"
+versionCode = "76"
 
 # SDK
 minSdk = "26"
@@ -9,79 +9,79 @@ targetSdk = "36"
 compileSdk = "37"
 
 # Gradle
-gradle = "9.2.1"
+gradle = "9.5.0"
 
 # Kotlin
-kotlin = "2.4.0"
+kotlin = "2.4.21"
 
 # KotlinX
 kotlinxCoroutines = "1.11.0"
 kotlinxDatetime = "0.8.0-0.6.x-compat"
-kotlinxSerializationJson = "1.11.0"
-kotlinxImmutable = "0.4.0"
+kotlinxSerializationJson = "1.12.0"
+kotlinxImmutable = "0.5.2"
 
 # KMP
-kmpCompose = "1.12.0-alpha01"
+kmpCompose = "1.12.2"
 kmpComplete = "1.1.0"
-kmpLifecycle = "2.11.0-beta01"
-kmpNavigation = "2.9.2"
-kmpBackHandler = "1.11.1"
+kmpLifecycle = "2.11.0"
+kmpNavigation = "2.10.0"
+kmpBackHandler = "1.12.2"
 kmpPaging = "3.3.0-alpha02-0.5.1"
-kmpPurchase = "2.1.0+16.2.0"
+kmpPurchase = "4.0.0"
 mokoPermissions = "0.20.1"
 mokoBiometry = "0.4.0"
-calf = "0.12.0"
-adaptive = "1.3.0-beta01"
+calf = "0.14.0"
+adaptive = "1.3.0"
 
 # AndroidX
-androidxCore = "1.18.0"
+androidxCore = "1.19.1"
 androidxCoreSplash = "1.2.0"
-androidxAppCompat = "1.7.1"
+androidxAppCompat = "1.8.0"
 androidxActivity = "1.13.0"
-androidxFragment = "1.8.9"
-androidxDataStore = "1.1.7"
-androidxAnnotation = "1.10.0"
-androidxConstraintLayout = "2.2.1"
-androidxMedia3 = "1.10.1"
-androidxCompose = "2026.05.01"
+androidxFragment = "1.9.1"
+androidxDataStore = "1.3.0"
+androidxAnnotation = "1.11.0"
+androidxConstraintLayout = "2.2.2"
+androidxMedia3 = "1.11.1"
+androidxCompose = "2026.09.00"
 
 # Google
 playReview = "2.0.2"
 playUpdate = "2.1.0"
-playServiceAds = "25.3.0"
-playServiceOss = "17.5.1"
+playServiceAds = "25.5.0"
+playServiceOss = "17.5.3"
 material = "1.14.0"
-ksp = "2.3.9"
-gms = "4.4.4"
+ksp = "2.3.13"
+gms = "4.5.0"
 
 # koin
-koin = "4.2.1"
+koin = "4.2.2"
 
 # matsumo
 fankt = "0.2.2"
 
 # security
-ksafe = "3.0.0"
+ksafe = "3.3.0"
 
 # OpenAI
-openai = "4.1.0"
+openai = "4.2.0"
 
 # Others
-ktor = "3.5.0"
-coil3 = "3.4.0"
+ktor = "3.6.1"
+coil3 = "3.6.3"
 ksoup = "0.2.6"
-composeWebView = "2.0.2"
-composeRichEditor = "1.0.0-rc13"
+composeWebView = "2.0.3"
+composeRichEditor = "1.2.1"
 autolink = "2.0.2"
 windowSize = "0.5.0"
-reveal = "4.2.0"
+reveal = "5.2.3"
 detekt = "2.0.0-alpha.6"
 composeRules = "0.6.8"
-libraries = "14.2.1"
-buildKonfig = "0.21.2"
+libraries = "15.3.0"
+buildKonfig = "0.23.0"
 
 # Debugs
-firebase = "34.14.1"
+firebase = "35.1.0"
 napier = "2.7.1"
 
 [plugins]
@@ -93,7 +93,7 @@ kotlin-serialization = { id = "org.jetbrains.kotlin.plugin.serialization", versi
 ksp = { id = "com.google.devtools.ksp", version.ref = "ksp" }
 gms = { id = "com.google.gms.google-services", version.ref = "gms" }
 detekt = { id = "dev.detekt", version.ref = "detekt" }
-firebase-crashlytics = { id = "com.google.firebase.crashlytics", version = "3.0.7" }
+firebase-crashlytics = { id = "com.google.firebase.crashlytics", version = "3.0.8" }
 libraries = { id = "com.mikepenz.aboutlibraries.plugin", version.ref = "libraries" }
 build-konfig = { id = "com.codingfeline.buildkonfig", version.ref = "buildKonfig" }
 kmp = { id = "org.jetbrains.kotlin.multiplatform", version.ref = "kotlin" }
@@ -105,7 +105,7 @@ kmpComplete = { id = "com.louiscad.complete-kotlin", version.ref = "kmpComplete"
 android-gradlePlugin = { group = "com.android.tools.build", name = "gradle", version.ref = "gradle" }
 kotlin-gradlePlugin = { group = "org.jetbrains.kotlin", name = "kotlin-gradle-plugin", version.ref = "kotlin" }
 gms-services = { group = "com.google.gms", name = "google-services", version.ref = "gms" }
-gms-oss = { group = "com.google.android.gms", name = "oss-licenses-plugin", version = "0.12.0" }
+gms-oss = { group = "com.google.android.gms", name = "oss-licenses-plugin", version = "0.13.0" }
 build-konfig-gradlePlugin = { group = "com.codingfeline.buildkonfig", name = "buildkonfig-gradle-plugin", version.ref = "buildKonfig" }
 secret-gradlePlugin = { group = "com.google.android.libraries.mapsplatform.secrets-gradle-plugin", name = "secrets-gradle-plugin", version = "2.0.1" }
 detekt-gradlePlugin = { group = "dev.detekt", name = "detekt-gradle-plugin", version.ref = "detekt" }
@@ -179,11 +179,11 @@ play-service-ads = { module = "com.google.android.gms:play-services-ads", versio
 google-material = { module = "com.google.android.material:material", version.ref = "material" }
 
 # Ads
-ads-unity-core = { module = "com.unity3d.ads:unity-ads", version = "4.18.1" }
-ads-unity = { module = "com.google.ads.mediation:unity", version = "4.18.0.0" }
-ads-applovin = { module = "com.google.ads.mediation:applovin", version = "13.6.2.0" }
-ads-inmobi = { module = "com.google.ads.mediation:inmobi", version = "11.3.0.0" }
-ads-liftoff = { module = "com.google.ads.mediation:vungle", version = "7.7.4.0" }
+ads-unity-core = { module = "com.unity3d.ads:unity-ads", version = "4.21.0" }
+ads-unity = { module = "com.google.ads.mediation:unity", version = "4.21.0.0" }
+ads-applovin = { module = "com.google.ads.mediation:applovin", version = "13.6.4.2" }
+ads-inmobi = { module = "com.google.ads.mediation:inmobi", version = "11.5.1.0" }
+ads-liftoff = { module = "com.google.ads.mediation:vungle", version = "7.7.9.0" }
 
 # Firebase
 firebase-bom = { module = "com.google.firebase:firebase-bom", version.ref = "firebase" }
