@@ -27,15 +27,17 @@ class WelcomeWebViewModel(private val fanboxRepository: FanboxRepository, privat
     /**
      * Cookie を保存し、そのセッションでログインできているかを確かめる。
      *
-     * ログインできていない場合は保存した Cookie を消す。消さないと、確かめられなかったセッションが
-     * 次回起動時に使われる。
+     * FANBOX がセッションを無効と答えた場合は、保存した Cookie を消す。消さないと、無効なセッションが
+     * 次回起動時に使われる。確かめられなかっただけの場合は残す。通信の失敗やメンテナンスのたびに、
+     * 有効かもしれないセッションを捨てないため。
      */
     suspend fun checkSessionId(cookies: List<WebViewCookie>): LoginState {
         if (!saveCookies(cookies)) return LoginState.LoggedOut
 
         val loginState = fanboxRepository.checkLoginState()
+        val isSessionRejected = loginState == LoginState.LoggedOut || loginState == LoginState.SessionUnreadable
 
-        if (loginState !is LoginState.LoggedIn) saveCookies(emptyList())
+        if (isSessionRejected) saveCookies(emptyList())
 
         return loginState
     }
