@@ -119,6 +119,7 @@ class BillingPlanTypeResolverTest {
         override val storeProduct: StoreProduct = FakeStoreProduct(productId)
         override val presentedOfferingContext: PresentedOfferingContext =
             PresentedOfferingContext("default", null, null)
+        override val webCheckoutUrl: String? = null
     }
 
     /** テスト用の RevenueCat StoreProduct 実装。 */
@@ -135,6 +136,9 @@ class BillingPlanTypeResolverTest {
         override val introductoryDiscount: StoreProductDiscount? = null
         override val purchasingData: PurchasingData = FakePurchasingData(id)
         override val presentedOfferingContext: PresentedOfferingContext? = null
+        override val pricePerWeek: Price? = null
+        override val pricePerMonth: Price? = null
+        override val pricePerYear: Price? = null
     }
 
     /** テスト用の RevenueCat PurchasingData 実装。 */

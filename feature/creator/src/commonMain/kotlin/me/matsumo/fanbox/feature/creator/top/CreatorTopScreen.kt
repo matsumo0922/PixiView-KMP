@@ -100,7 +100,6 @@ import me.matsumo.fanbox.core.ui.appName
 import me.matsumo.fanbox.core.ui.component.CollapsingToolbarScaffold
 import me.matsumo.fanbox.core.ui.component.ScrollStrategy
 import me.matsumo.fanbox.core.ui.component.rememberCollapsingToolbarScaffoldState
-import me.matsumo.fanbox.core.ui.extensition.LocalRevealCanvasState
 import me.matsumo.fanbox.core.ui.extensition.LocalSnackbarHostState
 import me.matsumo.fanbox.core.ui.extensition.NavigatorExtension
 import me.matsumo.fanbox.core.ui.extensition.OverlayText
@@ -139,7 +138,6 @@ internal fun CreatorTopRoute(
     val screenState by viewModel.screenState.collectAsStateWithLifecycle()
     val scope = rememberCoroutineScope()
 
-    val revealCanvasState = LocalRevealCanvasState.current
     val revealState = rememberRevealState()
     val revealOverlayContainerColor = MaterialTheme.colorScheme.tertiaryContainer
     val revealOverlayContentColor = MaterialTheme.colorScheme.onTertiaryContainer
@@ -158,7 +156,6 @@ internal fun CreatorTopRoute(
         Reveal(
             modifier = Modifier.fillMaxSize(),
             onOverlayClick = { scope.launch { revealState.hide() } },
-            revealCanvasState = revealCanvasState,
             revealState = revealState,
             overlayContent = { key ->
                 RevealOverlayContent(

@@ -29,7 +29,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.unit.dp
 import com.mikepenz.aboutlibraries.entity.Library
-import com.mikepenz.aboutlibraries.ui.compose.rememberLibraries
+import com.mikepenz.aboutlibraries.ui.compose.produceLibraries
 import me.matsumo.fanbox.core.resources.Res
 import me.matsumo.fanbox.core.resources.setting_top_others_open_source_license
 import me.matsumo.fanbox.feature.setting.SettingTheme
@@ -46,7 +46,7 @@ internal fun SettingLicenseScreen(
 ) {
     val state = rememberTopAppBarState()
     val behavior = TopAppBarDefaults.exitUntilCollapsedScrollBehavior(state)
-    val libs by rememberLibraries {
+    val libs by produceLibraries {
         Res.readBytes("files/aboutlibraries.json").decodeToString()
     }
 

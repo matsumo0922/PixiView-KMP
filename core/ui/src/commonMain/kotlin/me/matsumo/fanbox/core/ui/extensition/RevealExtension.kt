@@ -4,19 +4,15 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.staticCompositionLocalOf
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import com.svenjacobs.reveal.Key
-import com.svenjacobs.reveal.RevealCanvasState
 import com.svenjacobs.reveal.RevealState
 import com.svenjacobs.reveal.shapes.balloon.Arrow
 import com.svenjacobs.reveal.shapes.balloon.Balloon
 import me.matsumo.fanbox.core.common.util.waitFor
-
-val LocalRevealCanvasState = staticCompositionLocalOf { RevealCanvasState() }
 
 suspend fun RevealState.revealByStep(
     keys: List<Key>,

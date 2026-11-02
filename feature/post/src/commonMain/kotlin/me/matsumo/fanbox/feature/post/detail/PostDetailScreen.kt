@@ -93,7 +93,6 @@ import me.matsumo.fanbox.core.ui.ads.BannerAdView
 import me.matsumo.fanbox.core.ui.ads.NativeAdView
 import me.matsumo.fanbox.core.ui.appName
 import me.matsumo.fanbox.core.ui.extensition.FadePlaceHolder
-import me.matsumo.fanbox.core.ui.extensition.LocalRevealCanvasState
 import me.matsumo.fanbox.core.ui.extensition.NavigatorExtension
 import me.matsumo.fanbox.core.ui.extensition.OverlayText
 import me.matsumo.fanbox.core.ui.extensition.Platform
@@ -146,7 +145,6 @@ internal fun PostDetailRoute(
     val snackbarHostState = remember { SnackbarHostState() }
     val scope = rememberCoroutineScope()
 
-    val revealCanvasState = LocalRevealCanvasState.current
     val revealState = rememberRevealState()
     val revealOverlayContainerColor = MaterialTheme.colorScheme.tertiaryContainer
     val revealOverlayContentColor = MaterialTheme.colorScheme.onTertiaryContainer
@@ -154,7 +152,6 @@ internal fun PostDetailRoute(
     Reveal(
         modifier = modifier,
         onOverlayClick = { scope.launch { revealState.hide() } },
-        revealCanvasState = revealCanvasState,
         revealState = revealState,
         overlayContent = { key -> RevealOverlayContent(key, revealOverlayContainerColor, revealOverlayContentColor) },
     ) {

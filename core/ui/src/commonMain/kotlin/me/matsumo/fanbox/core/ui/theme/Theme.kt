@@ -10,8 +10,6 @@ import androidx.compose.runtime.ReadOnlyComposable
 import androidx.compose.runtime.staticCompositionLocalOf
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
-import com.svenjacobs.reveal.RevealCanvasState
-import com.svenjacobs.reveal.rememberRevealCanvasState
 import kotlinx.collections.immutable.ImmutableMap
 import kotlinx.collections.immutable.persistentMapOf
 import me.matsumo.fanbox.core.common.PixiViewConfig
@@ -21,7 +19,6 @@ import me.matsumo.fanbox.core.model.fanbox.MetaData
 import me.matsumo.fanbox.core.ui.extensition.FanboxSessionId
 import me.matsumo.fanbox.core.ui.extensition.LocalFanboxMetadata
 import me.matsumo.fanbox.core.ui.extensition.LocalFanboxSessionId
-import me.matsumo.fanbox.core.ui.extensition.LocalRevealCanvasState
 import me.matsumo.fanbox.core.ui.extensition.getFanboxMetadataDummy
 import me.matsumo.fanbox.core.ui.theme.color.DarkBlueColorScheme
 import me.matsumo.fanbox.core.ui.theme.color.DarkBrownColorScheme
@@ -104,7 +101,6 @@ fun PixiViewTheme(
     themeConfig: ThemeConfig = ThemeConfig.System,
     themeColorConfig: ThemeColorConfig = ThemeColorConfig.Blue,
     nativeViews: ImmutableMap<String, () -> NativeView?> = persistentMapOf(),
-    revealCanvasState: RevealCanvasState = rememberRevealCanvasState(),
     content: @Composable () -> Unit,
 ) {
     val shouldUseDarkTheme = shouldUseDarkTheme(themeConfig)
@@ -126,7 +122,6 @@ fun PixiViewTheme(
         LocalBackgroundTheme provides backgroundTheme,
         LocalTintTheme provides tintTheme,
         LocalNativeViewsProvider provides NativeViews(nativeViews),
-        LocalRevealCanvasState provides revealCanvasState,
     ) {
         MaterialTheme(
             colorScheme = colorScheme,
