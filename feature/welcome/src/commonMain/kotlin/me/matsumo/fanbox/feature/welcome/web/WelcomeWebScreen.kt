@@ -21,6 +21,7 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateListOf
@@ -41,6 +42,8 @@ import kotlinx.collections.immutable.toImmutableList
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
+import me.matsumo.fanbox.core.logs.category.WelcomeLog
+import me.matsumo.fanbox.core.logs.logger.send
 import me.matsumo.fanbox.core.model.LoginState
 import me.matsumo.fanbox.core.model.SimpleAlertContents
 import me.matsumo.fanbox.core.resources.Res
@@ -48,6 +51,7 @@ import me.matsumo.fanbox.core.resources.welcome_login_title
 import me.matsumo.fanbox.core.resources.welcome_login_web_help
 import me.matsumo.fanbox.core.ui.component.PixiViewTopBar
 import me.matsumo.fanbox.core.ui.extensition.ToastExtension
+import me.matsumo.fanbox.feature.welcome.LoginCheckTrigger
 import me.matsumo.fanbox.feature.welcome.loginFailureMessage
 import org.jetbrains.compose.resources.getString
 import org.jetbrains.compose.resources.stringResource
@@ -74,11 +78,14 @@ internal fun WelcomeWebScreen(
     val snackbarHostState = remember { SnackbarHostState() }
     val currentCookies = remember { mutableStateListOf<Cookie>() }
     var isDisplayHelpDialog by remember { mutableStateOf(false) }
+    var checkedSessionId by remember { mutableStateOf<String?>(null) }
+    var isLoggedIn by remember { mutableStateOf(false) }
 
-    suspend fun tryLogin() {
-        val loginState = viewModel.checkSessionId(currentCookies)
+    suspend fun tryLogin(trigger: LoginCheckTrigger) {
+        val loginState = viewModel.checkSessionId(currentCookies, trigger)
 
         if (loginState is LoginState.LoggedIn && viewModel.saveCookies(currentCookies)) {
+            isLoggedIn = true
             terminate.invoke()
         } else {
             snackExtension.show(
@@ -104,7 +111,18 @@ internal fun WelcomeWebScreen(
         withContext(Dispatchers.Main) { WebViewCookieManager().removeAllCookies() }
     }
 
-    LaunchedEffect(webViewState.lastLoadedUrl) {
+    // どの画面で利用者が諦めたかを数える。認証画面で止まったのか、ログイン後の FANBOX まで戻れなかったのかを分けるため。
+    DisposableEffect(Unit) {
+        onDispose {
+            WelcomeLog.webLoginClosed(
+                lastHost = webViewState.lastLoadedUrl?.urlHost().orEmpty(),
+                isLoggedIn = isLoggedIn,
+            ).send()
+        }
+    }
+
+    // ページを読み込むたびに Cookie を取り直し、ログインが終わっていれば確かめに行く。
+    suspend fun onPageLoaded(url: String?) {
         // FANBOX オリジンの Cookie だけを保持する。ログインは oauth.secure.pixiv.net を経由するが、
         // そのオリジンの Cookie は FANBOX のリクエストに不要であり、保存すると以降のすべての
         // リクエストに送信され続ける。
@@ -113,13 +131,27 @@ internal fun WelcomeWebScreen(
         currentCookies.clear()
         currentCookies.addAll(fanboxCookies)
 
-        if (webViewState.lastLoadedUrl == fanboxRedirectUrl) {
-            // Cookie の値は認証情報そのものであり、logcat に残すと他経路から読み取られうるため出力しない。
-            Napier.d {
-                "try login. current url: ${webViewState.lastLoadedUrl}, cookies: ${currentCookies.map { it.name }}"
-            }
-            tryLogin()
-        }
+        val sessionId = currentCookies.find { it.name == "FANBOXSESSID" }?.value
+        val shouldCheck = shouldCheckWebLogin(
+            url = url,
+            redirectUrl = fanboxRedirectUrl,
+            sessionId = sessionId,
+            checkedSessionId = checkedSessionId,
+        )
+
+        if (!shouldCheck) return
+
+        val trigger = if (url == fanboxRedirectUrl) LoginCheckTrigger.Redirect else LoginCheckTrigger.FanboxPage
+
+        // Cookie の値は認証情報そのものであり、logcat に残すと他経路から読み取られうるため出力しない。
+        Napier.d { "try login. current url: $url, cookies: ${currentCookies.map { it.name }}" }
+
+        checkedSessionId = sessionId
+        tryLogin(trigger)
+    }
+
+    LaunchedEffect(webViewState.lastLoadedUrl) {
+        onPageLoaded(webViewState.lastLoadedUrl)
     }
 
     Scaffold(
@@ -198,7 +230,7 @@ internal fun WelcomeWebScreen(
             onClickLogin = {
                 scope.launch {
                     isDisplayHelpDialog = false
-                    tryLogin()
+                    tryLogin(LoginCheckTrigger.Help)
                 }
             },
         )

@@ -188,13 +188,14 @@ class PixiViewViewModel(
         viewModelScope.launch { applyLoginState(checkLoginState()) }
     }
 
-    /** 保存したセッションを捨ててログイン画面へ戻る。ログアウトの完了は [FanboxRepository.logoutTrigger] で届く。 */
+    /** 保存したセッションを捨ててログイン画面へ戻る。ブックマークとブロックの設定は残す。 */
     fun relogin() {
         viewModelScope.launch {
-            suspendRunCatching { fanboxRepository.logout() }.onFailure { failure ->
-                Napier.w(failure) { "Failed to log out before logging in again." }
-                loginStateFlow.emit(LoginState.LoggedOut)
+            suspendRunCatching { fanboxRepository.clearSession() }.onFailure { failure ->
+                Napier.w(failure) { "Failed to clear the session before logging in again." }
             }
+
+            loginStateFlow.emit(LoginState.LoggedOut)
         }
     }
 

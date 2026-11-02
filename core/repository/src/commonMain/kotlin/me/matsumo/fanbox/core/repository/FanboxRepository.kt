@@ -101,6 +101,7 @@ interface FanboxRepository {
     val guestSource: StateFlow<GuestSource>
 
     suspend fun logout()
+    suspend fun clearSession()
     suspend fun setSessionId(sessionId: String)
 
     /**
@@ -310,22 +311,38 @@ class FanboxRepositoryImpl(
      *
      * 呼び出し元が取り消されても最後まで行う。途中で止まると資格情報が消し残り、
      * どこかの保存先から復活するため。
+     *
+     * 資格情報に加えて、ブックマークとブロックの設定も消す。
      */
     override suspend fun logout() = withContext(ioDispatcher + NonCancellable) {
+        clearSession()
+
+        bookmarkDataStore.clear()
+        blockDataStore.clear()
+        userDataStore.setFollowTabDefaultHome(false)
+
+        _logoutTrigger.send(Random.nextLong())
+    }
+
+    /**
+     * 資格情報だけを消す。ブックマークとブロックの設定は残す。
+     *
+     * ログインし直す前に古いセッションを捨てるために使う。ログインし直す利用者の多くは、起動時の確認に
+     * 失敗しただけで、同じアカウントでログインし直す。そのたびに手元の設定を消さないため。
+     *
+     * [logout] と同じく、WebView の Cookie 削除に失敗しても保存先の削除は行い、呼び出し元が取り消されても
+     * 最後まで行う。
+     */
+    override suspend fun clearSession() = withContext(ioDispatcher + NonCancellable) {
         runCatching {
             withContext(Dispatchers.Main) { WebViewCookieManager().removeAllCookies() }
         }.onFailure { failure ->
-            Napier.w(failure) { "Failed to remove the WebView Cookies during logout." }
+            Napier.w(failure) { "Failed to remove the WebView Cookies while clearing the session." }
         }
 
         cookieStorage.logout()
 
-        bookmarkDataStore.clear()
-        blockDataStore.clear()
         userDataStore.setTestUser(false)
-        userDataStore.setFollowTabDefaultHome(false)
-
-        _logoutTrigger.send(Random.nextLong())
     }
 
     override suspend fun setSessionId(sessionId: String) {

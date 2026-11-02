@@ -42,6 +42,31 @@ sealed interface WelcomeLog : LogCategory {
         }
     }
 
+    class LoginChecked internal constructor(
+        method: String,
+        trigger: String,
+        result: String,
+        errorKind: String,
+    ) : WelcomeLog {
+        override val properties: JsonObject = buildJsonObject {
+            put("event_category", "welcome")
+            put("event_name", "login_checked")
+            put("method", method)
+            put("trigger", trigger)
+            put("result", result)
+            put("error_kind", errorKind)
+        }
+    }
+
+    class WebLoginClosed internal constructor(lastHost: String, isLoggedIn: Boolean) : WelcomeLog {
+        override val properties: JsonObject = buildJsonObject {
+            put("event_category", "welcome")
+            put("event_name", "web_login_closed")
+            put("last_host", lastHost)
+            put("is_logged_in", isLoggedIn)
+        }
+    }
+
     companion object {
         // アプリを初めて開いたときのログ
         fun firstOpen() = FirstOpen()
@@ -58,5 +83,16 @@ sealed interface WelcomeLog : LogCategory {
             endAt: String,
             neededTime: Long,
         ) = CompletedOnboarding(startAt, endAt, neededTime)
+
+        // ログイン画面で、ログインできたかを確かめたときのログ
+        fun loginChecked(
+            method: String,
+            trigger: String,
+            result: String,
+            errorKind: String,
+        ) = LoginChecked(method, trigger, result, errorKind)
+
+        // WebView のログイン画面を閉じたときのログ
+        fun webLoginClosed(lastHost: String, isLoggedIn: Boolean) = WebLoginClosed(lastHost, isLoggedIn)
     }
 }

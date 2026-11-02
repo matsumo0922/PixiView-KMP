@@ -29,6 +29,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import me.matsumo.fanbox.core.logs.category.WelcomeLog
+import me.matsumo.fanbox.core.logs.logger.send
 import me.matsumo.fanbox.core.resources.Res
 import me.matsumo.fanbox.core.resources.vec_welcome_plus
 import me.matsumo.fanbox.core.resources.welcome_login_button_login
@@ -69,6 +70,12 @@ internal fun WelcomeLoginScreen(
     val navigationType = LocalNavigationType.current.type
     val screenState by viewModel.screenState.collectAsStateWithLifecycle()
 
+    // ログインし直す前に古いセッションを捨てる。ブックマークなどの手元の設定は残す。
+    val navigateToWebLogin = {
+        viewModel.clearSession()
+        navigateToLoginScreen.invoke()
+    }
+
     SideEffect(true) {
         viewModel.fetchLoggedIn()
     }
@@ -85,7 +92,7 @@ internal fun WelcomeLoginScreen(
         ) { isLoggedIn ->
             if (isLoggedIn) {
                 LaunchedEffect(isLoggedIn) {
-                    WelcomeLog.loggedIn()
+                    WelcomeLog.loggedIn().send()
                     navigateToHome.invoke()
                 }
             }
@@ -103,10 +110,7 @@ internal fun WelcomeLoginScreen(
                     SecondSection(
                         modifier = Modifier.weight(1f),
                         isLoggedIn = isLoggedIn,
-                        navigateToLoginScreen = {
-                            viewModel.logout()
-                            navigateToLoginScreen.invoke()
-                        },
+                        navigateToLoginScreen = navigateToWebLogin,
                         navigateToHome = navigateToHome,
                         navigateToHelp = { navigatorExtension.navigateToWebPage(it, "") },
                         onSetSessionId = viewModel::setSessionId,
@@ -133,10 +137,7 @@ internal fun WelcomeLoginScreen(
                         SecondSection(
                             modifier = Modifier.weight(3f),
                             isLoggedIn = isLoggedIn,
-                            navigateToLoginScreen = {
-                                viewModel.logout()
-                                navigateToLoginScreen.invoke()
-                            },
+                            navigateToLoginScreen = navigateToWebLogin,
                             navigateToHome = navigateToHome,
                             navigateToHelp = { navigatorExtension.navigateToWebPage(it, "") },
                             onSetSessionId = viewModel::setSessionId,

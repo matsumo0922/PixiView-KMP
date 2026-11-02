@@ -15,7 +15,9 @@ import me.matsumo.fanbox.core.repository.FanboxRepository
 import me.matsumo.fanbox.core.repository.SettingRepository
 import me.matsumo.fanbox.core.resources.Res
 import me.matsumo.fanbox.core.resources.welcome_login_toast_failed
+import me.matsumo.fanbox.feature.welcome.LoginCheckTrigger
 import me.matsumo.fanbox.feature.welcome.loginFailureMessage
+import me.matsumo.fanbox.feature.welcome.sendLoginChecked
 import org.jetbrains.compose.resources.StringResource
 
 class WelcomeLoginViewModel(private val settingRepository: SettingRepository, private val fanboxRepository: FanboxRepository) : ViewModel() {
@@ -27,7 +29,7 @@ class WelcomeLoginViewModel(private val settingRepository: SettingRepository, pr
     val triggerLoginError = _triggerLoginError.receiveAsFlow()
 
     fun fetchLoggedIn() {
-        viewModelScope.launch { checkLoggedIn() }
+        viewModelScope.launch { checkLoggedIn(null) }
     }
 
     /**
@@ -39,7 +41,7 @@ class WelcomeLoginViewModel(private val settingRepository: SettingRepository, pr
     fun setSessionId(sessionId: String) {
         viewModelScope.launch {
             val isSaved = suspendRunCatching { fanboxRepository.setSessionId(sessionId) }.isSuccess
-            val failureMessage = if (isSaved) checkLoggedIn() else Res.string.welcome_login_toast_failed
+            val failureMessage = if (isSaved) checkLoggedIn(LoginCheckTrigger.Input) else Res.string.welcome_login_toast_failed
 
             if (failureMessage != null) {
                 _screenState.value = ScreenState.Idle(false)
@@ -48,10 +50,11 @@ class WelcomeLoginViewModel(private val settingRepository: SettingRepository, pr
         }
     }
 
-    fun logout() {
+    /** 保存したセッションを捨てる。ブックマークとブロックの設定は残す。 */
+    fun clearSession() {
         viewModelScope.launch {
             suspendRunCatching {
-                fanboxRepository.logout()
+                fanboxRepository.clearSession()
             }
         }
     }
@@ -59,9 +62,10 @@ class WelcomeLoginViewModel(private val settingRepository: SettingRepository, pr
     /**
      * ログインしているかを確かめて画面へ反映する。ログインしていない場合は、利用者へ見せる理由を返す。
      *
-     * テスト用のユーザーは確かめずにログイン中とみなす。
+     * テスト用のユーザーは確かめずにログイン中とみなす。[trigger] がある場合は、確かめた結果を記録する。
+     * 画面を開いたときの確認は利用者のログイン操作ではないため、記録しない。
      */
-    private suspend fun checkLoggedIn(): StringResource? {
+    private suspend fun checkLoggedIn(trigger: LoginCheckTrigger?): StringResource? {
         _screenState.value = ScreenState.Loading
 
         if (settingRepository.setting.first().isTestUser) {
@@ -71,6 +75,8 @@ class WelcomeLoginViewModel(private val settingRepository: SettingRepository, pr
 
         val loginState = fanboxRepository.checkLoginState()
         val isLoggedIn = loginState is LoginState.LoggedIn
+
+        trigger?.let { loginState.sendLoginChecked(it) }
 
         if (isLoggedIn) setDefaultHomeTab()
 
