@@ -59,6 +59,7 @@ import me.matsumo.fanbox.core.ui.extensition.PixiViewNavigationType
 import me.matsumo.fanbox.core.ui.extensition.ToastExtension
 import me.matsumo.fanbox.core.ui.extensition.drawVerticalScrollbar
 import me.matsumo.fanbox.core.ui.theme.bold
+import me.matsumo.fanbox.feature.library.component.LibraryDestination
 import me.matsumo.fanbox.feature.library.discovery.components.LibraryDiscoverySearchPostCreatorItem
 import org.jetbrains.compose.resources.stringResource
 import org.koin.compose.koinInject
@@ -103,7 +104,7 @@ internal fun LibraryDiscoveryRoute(
             onClickCreator = { navigateTo(Destination.CreatorTop(it, true)) },
             onClickFollow = viewModel::follow,
             onClickUnfollow = viewModel::unfollow,
-            onClickSupporting = { navigatorExtension.navigateToWebPage(it, LIBRARY_DISCOVERY_ROUTE) },
+            onClickSupporting = { navigatorExtension.navigateToWebPage(it, LibraryDestination.Discovery.route) },
             onClickBillingPlus = {
                 scope.launch { toastExtension.show(snackbarHostState, requirePlus) }
                 navigateTo(Destination.BillingPlusBottomSheet(it))

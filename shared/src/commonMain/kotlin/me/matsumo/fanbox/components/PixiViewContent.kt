@@ -4,14 +4,12 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import androidx.navigation.NavHostController
 import me.matsumo.fanbox.PixiViewNavHost
-import me.matsumo.fanbox.core.ui.component.sheet.BottomSheetNavigator
+import me.matsumo.fanbox.core.ui.navigation.PixiViewNavigator
 
 @Composable
 internal fun PixiViewContent(
-    bottomSheetNavigator: BottomSheetNavigator,
-    navController: NavHostController,
+    navigator: PixiViewNavigator,
     onPostDetailClose: suspend () -> Unit,
     onLibraryHomeVisibilityChange: (Boolean) -> Unit,
     modifier: Modifier = Modifier,
@@ -19,8 +17,7 @@ internal fun PixiViewContent(
     Box(modifier) {
         PixiViewNavHost(
             modifier = Modifier.fillMaxSize(),
-            bottomSheetNavigator = bottomSheetNavigator,
-            navController = navController,
+            navigator = navigator,
             onPostDetailClose = onPostDetailClose,
             onLibraryHomeVisibilityChange = onLibraryHomeVisibilityChange,
         )

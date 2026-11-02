@@ -50,7 +50,6 @@ import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.dp
-import androidx.navigation.NavDestination
 import coil3.compose.LocalPlatformContext
 import coil3.compose.SubcomposeAsyncImage
 import coil3.request.ImageRequest
@@ -83,7 +82,7 @@ import org.jetbrains.compose.resources.stringResource
 fun DrawerContent(
     state: DrawerState?,
     setting: Setting?,
-    currentDestination: NavDestination?,
+    currentDestination: LibraryDestination,
     onClickLibrary: (LibraryDestination) -> Unit,
     navigateTo: (Destination) -> Unit,
     modifier: Modifier = Modifier,
@@ -105,7 +104,7 @@ fun DrawerContent(
             NavigationDrawerItem(
                 modifier = Modifier.padding(top = 8.dp),
                 state = state,
-                isSelected = currentDestination.isLibraryDestinationInHierarchy(LibraryDestination.Home),
+                isSelected = currentDestination == LibraryDestination.Home,
                 label = stringResource(Res.string.library_navigation_home),
                 icon = Icons.Outlined.Home,
                 selectedIcon = Icons.Default.Home,
@@ -115,7 +114,7 @@ fun DrawerContent(
 
         NavigationDrawerItem(
             state = state,
-            isSelected = currentDestination.isLibraryDestinationInHierarchy(LibraryDestination.Discovery),
+            isSelected = currentDestination == LibraryDestination.Discovery,
             label = stringResource(Res.string.library_navigation_discovery),
             icon = Icons.Outlined.Search,
             selectedIcon = Icons.Default.Search,
@@ -125,7 +124,7 @@ fun DrawerContent(
         if (setting?.isTestUser == false) {
             NavigationDrawerItem(
                 state = state,
-                isSelected = currentDestination.isLibraryDestinationInHierarchy(LibraryDestination.Notify),
+                isSelected = currentDestination == LibraryDestination.Notify,
                 label = stringResource(Res.string.library_navigation_notify),
                 icon = Icons.Outlined.Notifications,
                 selectedIcon = Icons.Default.Notifications,
@@ -136,7 +135,7 @@ fun DrawerContent(
         if (setting?.isTestUser == false) {
             NavigationDrawerItem(
                 state = state,
-                isSelected = currentDestination.isLibraryDestinationInHierarchy(LibraryDestination.Message),
+                isSelected = currentDestination == LibraryDestination.Message,
                 label = stringResource(Res.string.library_navigation_message),
                 icon = Icons.Outlined.Mail,
                 selectedIcon = Icons.Default.Mail,

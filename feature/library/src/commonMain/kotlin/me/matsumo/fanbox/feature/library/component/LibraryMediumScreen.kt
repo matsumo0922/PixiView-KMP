@@ -15,15 +15,13 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.backhandler.BackHandler
-import androidx.navigation.NavHostController
-import androidx.navigation.compose.currentBackStackEntryAsState
 import kotlinx.collections.immutable.toImmutableList
 import kotlinx.coroutines.launch
 import me.matsumo.fanbox.core.model.Destination
 import me.matsumo.fanbox.core.ui.extensition.LocalSnackbarHostState
 import me.matsumo.fanbox.feature.library.LibraryNavHost
+import me.matsumo.fanbox.feature.library.LibraryTabState
 import me.matsumo.fanbox.feature.library.LibraryUiState
-import me.matsumo.fanbox.feature.library.navigateToLibraryDestination
 
 @OptIn(ExperimentalComposeUiApi::class)
 @Composable
@@ -31,7 +29,7 @@ internal fun LibraryMediumScreen(
     uiState: LibraryUiState,
     drawerState: DrawerState,
     snackbarHostState: SnackbarHostState,
-    navController: NavHostController,
+    tabState: LibraryTabState,
     navigateTo: (Destination) -> Unit,
     modifier: Modifier = Modifier,
 ) {
@@ -44,8 +42,8 @@ internal fun LibraryMediumScreen(
             LibraryDrawer(
                 state = drawerState,
                 setting = uiState.setting,
-                currentDestination = navController.currentBackStackEntryAsState().value?.destination,
-                onClickLibrary = navController::navigateToLibraryDestination,
+                currentDestination = tabState.currentTab,
+                onClickLibrary = tabState::select,
                 navigateTo = navigateTo,
             )
         },
@@ -55,8 +53,8 @@ internal fun LibraryMediumScreen(
                 LibraryNavigationRail(
                     modifier = Modifier.fillMaxHeight(),
                     destinations = LibraryDestination.entries.toImmutableList(),
-                    currentDestination = navController.currentBackStackEntryAsState().value?.destination,
-                    navigateToDestination = navController::navigateToLibraryDestination,
+                    currentDestination = tabState.currentTab,
+                    navigateToDestination = tabState::select,
                 )
             }
 
@@ -72,8 +70,7 @@ internal fun LibraryMediumScreen(
                 CompositionLocalProvider(LocalSnackbarHostState provides snackbarHostState) {
                     LibraryNavHost(
                         modifier = Modifier.fillMaxSize(),
-                        navController = navController,
-                        setting = uiState.setting,
+                        tabState = tabState,
                         openDrawer = {
                             scope.launch {
                                 drawerState.open()

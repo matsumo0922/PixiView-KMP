@@ -1,10 +1,8 @@
 package me.matsumo.fanbox.feature.post.search.creator
 
 import androidx.compose.runtime.Stable
-import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import androidx.navigation.toRoute
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.IO
@@ -28,16 +26,15 @@ import me.matsumo.fanbox.core.model.toScreenStateError
 import me.matsumo.fanbox.core.model.updateWhenIdle
 import me.matsumo.fanbox.core.repository.FanboxRepository
 import me.matsumo.fanbox.core.repository.SettingRepository
-import me.matsumo.fanbox.core.ui.customNavTypes
 
 class PostByCreatorSearchViewModel(
-    savedStateHandle: SavedStateHandle,
+    destination: Destination.PostByCreatorSearch,
     private val settingRepository: SettingRepository,
     private val fanboxRepository: FanboxRepository,
     private val ioDispatcher: CoroutineDispatcher = Dispatchers.IO,
 ) : ViewModel() {
 
-    private val creatorId = savedStateHandle.toRoute<Destination.PostByCreatorSearch>(customNavTypes).creatorId
+    private val creatorId = destination.creatorId
 
     private val allPosts = MutableSharedFlow<List<Post>>(replay = 1)
     private val _query = MutableStateFlow("")

@@ -1,10 +1,8 @@
 package me.matsumo.fanbox.feature.post.detail
 
 import androidx.compose.runtime.Stable
-import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import androidx.navigation.toRoute
 import androidx.paging.PagingData
 import app.cash.paging.map
 import kotlinx.coroutines.flow.Flow
@@ -23,20 +21,18 @@ import me.matsumo.fanbox.core.model.fanbox.PostId
 import me.matsumo.fanbox.core.repository.FanboxRepository
 import me.matsumo.fanbox.core.repository.FlagRepository
 import me.matsumo.fanbox.core.repository.SettingRepository
-import me.matsumo.fanbox.core.ui.customNavTypes
 import me.matsumo.fanbox.core.ui.extensition.createStaticPaging
 import me.matsumo.fanbox.core.ui.extensition.emptyPaging
 
 class PostDetailRootViewModel(
-    savedStateHandle: SavedStateHandle,
+    destination: Destination.PostDetail,
     private val settingRepository: SettingRepository,
     private val fanboxRepository: FanboxRepository,
     private val flagRepository: FlagRepository,
 ) : ViewModel() {
 
-    private val navArgs = savedStateHandle.toRoute<Destination.PostDetail>(customNavTypes)
-    private val postId = navArgs.postId
-    private val type = navArgs.pagingType
+    private val postId = destination.postId
+    private val type = destination.pagingType
 
     private val _uiState = MutableStateFlow(
         PostDetailRootUiState(

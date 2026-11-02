@@ -15,10 +15,6 @@ import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.runtime.saveable.rememberSaveableStateHolder
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
-import androidx.navigation.NavDestination.Companion.hasRoute
-import androidx.navigation.NavHostController
-import androidx.navigation.compose.currentBackStackEntryAsState
-import androidx.navigation.compose.rememberNavController
 import me.matsumo.fanbox.MainUiState
 import me.matsumo.fanbox.PixiViewSettingNavHost
 import me.matsumo.fanbox.core.model.Destination
@@ -30,7 +26,8 @@ import me.matsumo.fanbox.core.resources.error_network
 import me.matsumo.fanbox.core.resources.login_relogin
 import me.matsumo.fanbox.core.resources.login_session_unreadable_message
 import me.matsumo.fanbox.core.resources.login_session_unreadable_title
-import me.matsumo.fanbox.core.ui.component.sheet.rememberBottomSheetNavigator
+import me.matsumo.fanbox.core.ui.navigation.PixiViewNavigator
+import me.matsumo.fanbox.core.ui.navigation.rememberPixiViewNavigator
 import me.matsumo.fanbox.core.ui.view.ErrorView
 import me.matsumo.fanbox.feature.welcome.WelcomeNavHost
 import kotlin.time.Clock
@@ -49,9 +46,7 @@ internal fun PixiViewScreen(
     onPostDetailClose: suspend () -> Unit,
     modifier: Modifier = Modifier,
 ) {
-    val bottomSheetNavigator = rememberBottomSheetNavigator()
-    val navController = rememberNavController(bottomSheetNavigator)
-    val currentBackStackEntry by navController.currentBackStackEntryAsState()
+    val navigator = rememberPixiViewNavigator(Destination.Library)
 
     var showPaywallFlag by remember { mutableStateOf(false) }
     var isLibraryHomeVisible by remember { mutableStateOf(false) }
@@ -111,22 +106,21 @@ internal fun PixiViewScreen(
             PixiViewContentType.Main -> {
                 PixiViewContent(
                     modifier = Modifier.fillMaxSize(),
-                    bottomSheetNavigator = bottomSheetNavigator,
-                    navController = navController,
+                    navigator = navigator,
                     onPostDetailClose = onPostDetailClose,
                     onLibraryHomeVisibilityChange = { isVisible -> isLibraryHomeVisible = isVisible },
                 )
 
                 HandleBillingRetentionPrompt(
                     uiState = uiState,
-                    navController = navController,
-                    isHomeVisible = isLibraryHomeVisible && currentBackStackEntry?.destination?.hasRoute<Destination.Library>() == true,
+                    navigator = navigator,
+                    isHomeVisible = isLibraryHomeVisible && navigator.currentDestination == Destination.Library,
                     onBillingRetentionPromptShow = onBillingRetentionPromptShow,
                 )
 
                 if (showPaywallFlag) {
                     LaunchedEffect(true) {
-                        navController.navigate(Destination.BillingPlusBottomSheet(null))
+                        navigator.navigate(Destination.BillingPlusBottomSheet(null))
                         showPaywallFlag = false
                     }
                 }
@@ -229,7 +223,7 @@ private fun WelcomeContent(
 @Suppress("UnnecessaryLaunchedEffect")
 private fun HandleBillingRetentionPrompt(
     uiState: MainUiState,
-    navController: NavHostController,
+    navigator: PixiViewNavigator,
     isHomeVisible: Boolean,
     onBillingRetentionPromptShow: () -> Unit,
 ) {
@@ -246,7 +240,7 @@ private fun HandleBillingRetentionPrompt(
 
         shownPromptDedupeKey = promptDedupeKey
         currentOnBillingRetentionPromptShown()
-        navController.navigate(
+        navigator.navigate(
             Destination.BillingRetentionBottomSheet(
                 isAnnualOfferShown = uiState.setting.shouldShowBillingRetentionAnnualOffer,
             ),

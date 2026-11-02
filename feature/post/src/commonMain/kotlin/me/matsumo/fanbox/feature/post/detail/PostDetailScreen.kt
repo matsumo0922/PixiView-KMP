@@ -130,13 +130,14 @@ internal enum class PostDetailRevealKeys {
 @OptIn(ExperimentalUuidApi::class, ExperimentalComposeUiApi::class, ExperimentalTime::class)
 @Composable
 internal fun PostDetailRoute(
-    postId: PostId,
+    destination: Destination.PostDetail,
     navigateTo: (Destination) -> Unit,
     navigateToCommentDeleteDialog: (SimpleAlertContents, () -> Unit) -> Unit,
     terminate: () -> Unit,
     modifier: Modifier = Modifier,
-    viewModel: PostDetailRootViewModel = koinViewModel(),
+    viewModel: PostDetailRootViewModel = koinViewModel { parametersOf(destination) },
 ) {
+    val postId = destination.postId
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
     val paging = uiState.paging?.collectAsLazyPagingItems()
 

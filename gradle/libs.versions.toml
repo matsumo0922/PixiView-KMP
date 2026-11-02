@@ -24,7 +24,7 @@ kotlinxImmutable = "0.5.2"
 kmpCompose = "1.12.2"
 kmpComplete = "1.1.0"
 kmpLifecycle = "2.11.0"
-kmpNavigation = "2.10.0"
+kmpNavigation3 = "1.2.0"
 kmpBackHandler = "1.12.2"
 kmpPaging = "3.3.0-alpha02-0.5.1"
 kmpPurchase = "4.0.0"
@@ -150,7 +150,9 @@ androidx-compose-ui-tooling-preview = { module = "androidx.compose.ui:ui-tooling
 # KMP
 kmp-lifecycle-runtime-compose = { module = "org.jetbrains.androidx.lifecycle:lifecycle-runtime-compose", version.ref = "kmpLifecycle" }
 kmp-lifecycle-viewmodel-compose = { module = "org.jetbrains.androidx.lifecycle:lifecycle-viewmodel-compose", version.ref = "kmpLifecycle" }
-kmp-navigation-compose = { module = "org.jetbrains.androidx.navigation:navigation-compose", version.ref = "kmpNavigation" }
+kmp-lifecycle-viewmodel-navigation3 = { module = "org.jetbrains.androidx.lifecycle:lifecycle-viewmodel-navigation3", version.ref = "kmpLifecycle" }
+kmp-navigation3-runtime = { module = "androidx.navigation3:navigation3-runtime", version.ref = "kmpNavigation3" }
+kmp-navigation3-ui = { module = "org.jetbrains.androidx.navigation3:navigation3-ui", version.ref = "kmpNavigation3" }
 kmp-backhandler = { module = "org.jetbrains.compose.ui:ui-backhandler", version.ref = "kmpBackHandler" }
 kmp-paging-common = { module = "app.cash.paging:paging-common", version.ref = "kmpPaging" }
 kmp-paging-compose = { module = "app.cash.paging:paging-compose-common", version.ref = "kmpPaging" }
@@ -268,7 +270,9 @@ ui-android-api = [
 ui-common-api = [
     "kmp-lifecycle-runtime-compose",
     "kmp-lifecycle-viewmodel-compose",
-    "kmp-navigation-compose",
+    "kmp-lifecycle-viewmodel-navigation3",
+    "kmp-navigation3-runtime",
+    "kmp-navigation3-ui",
     "kmp-backhandler",
     "kmp-paging-common",
     "kmp-paging-compose",

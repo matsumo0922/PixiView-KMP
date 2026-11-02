@@ -1,15 +1,15 @@
 package me.matsumo.fanbox.feature.library
 
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.material3.DrawerState
 import androidx.compose.material3.DrawerValue
+import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.rememberDrawerState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.SideEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import androidx.navigation.NavGraph.Companion.findStartDestination
-import androidx.navigation.NavHostController
-import androidx.navigation.navOptions
 import me.matsumo.fanbox.core.model.Destination
 import me.matsumo.fanbox.core.ui.AsyncLoadContents
 import me.matsumo.fanbox.core.ui.extensition.LocalNavigationType
@@ -19,16 +19,12 @@ import me.matsumo.fanbox.feature.library.component.LibraryCompactScreen
 import me.matsumo.fanbox.feature.library.component.LibraryDestination
 import me.matsumo.fanbox.feature.library.component.LibraryExpandedScreen
 import me.matsumo.fanbox.feature.library.component.LibraryMediumScreen
-import me.matsumo.fanbox.feature.library.discovery.navigateToLibraryDiscovery
-import me.matsumo.fanbox.feature.library.home.navigateToLibraryHome
-import me.matsumo.fanbox.feature.library.message.navigateToLibraryMessage
-import me.matsumo.fanbox.feature.library.notify.navigateToLibraryNotify
 import org.koin.compose.viewmodel.koinViewModel
 
 @Composable
 fun LibraryScreen(
-    navHostController: NavHostController,
     navigateTo: (Destination) -> Unit,
+    onHomeVisibilityChange: (Boolean) -> Unit,
     modifier: Modifier = Modifier,
     viewModel: LibraryViewModel = koinViewModel(),
 ) {
@@ -42,56 +38,67 @@ fun LibraryScreen(
         modifier = modifier,
         screenState = screenState,
     ) {
-        when (navigationType) {
-            PixiViewNavigationType.BottomNavigation -> {
-                LibraryCompactScreen(
-                    modifier = Modifier.fillMaxSize(),
-                    uiState = it,
-                    drawerState = drawerState,
-                    snackbarHostState = snackbarHostState,
-                    navController = navHostController,
-                    navigateTo = navigateTo,
-                )
-            }
-
-            PixiViewNavigationType.NavigationRail -> {
-                LibraryMediumScreen(
-                    modifier = Modifier.fillMaxSize(),
-                    uiState = it,
-                    drawerState = drawerState,
-                    snackbarHostState = snackbarHostState,
-                    navController = navHostController,
-                    navigateTo = navigateTo,
-                )
-            }
-
-            PixiViewNavigationType.PermanentNavigationDrawer -> {
-                LibraryExpandedScreen(
-                    modifier = Modifier.fillMaxSize(),
-                    uiState = it,
-                    drawerState = drawerState,
-                    snackbarHostState = snackbarHostState,
-                    navController = navHostController,
-                    navigateTo = navigateTo,
-                )
-            }
-        }
+        LibraryContent(
+            modifier = Modifier.fillMaxSize(),
+            uiState = it,
+            navigationType = navigationType,
+            drawerState = drawerState,
+            snackbarHostState = snackbarHostState,
+            navigateTo = navigateTo,
+            onHomeVisibilityChange = onHomeVisibilityChange,
+        )
     }
 }
 
-fun NavHostController.navigateToLibraryDestination(destination: LibraryDestination) {
-    val navOption = navOptions {
-        popUpTo(graph.findStartDestination().route.orEmpty()) {
-            saveState = true
-        }
-        launchSingleTop = true
-        restoreState = true
+@Composable
+private fun LibraryContent(
+    uiState: LibraryUiState,
+    navigationType: PixiViewNavigationType,
+    drawerState: DrawerState,
+    snackbarHostState: SnackbarHostState,
+    navigateTo: (Destination) -> Unit,
+    onHomeVisibilityChange: (Boolean) -> Unit,
+    modifier: Modifier = Modifier,
+) {
+    val startTab = if (uiState.setting.isTestUser) LibraryDestination.Discovery else LibraryDestination.Home
+    val tabState = rememberLibraryTabState(startTab)
+
+    SideEffect {
+        onHomeVisibilityChange(tabState.currentTab == LibraryDestination.Home)
     }
 
-    when (destination) {
-        LibraryDestination.Home -> navigateToLibraryHome(navOption)
-        LibraryDestination.Discovery -> navigateToLibraryDiscovery(navOption)
-        LibraryDestination.Notify -> navigateToLibraryNotify(navOption)
-        LibraryDestination.Message -> navigateToLibraryMessage(navOption)
+    when (navigationType) {
+        PixiViewNavigationType.BottomNavigation -> {
+            LibraryCompactScreen(
+                modifier = modifier,
+                uiState = uiState,
+                drawerState = drawerState,
+                snackbarHostState = snackbarHostState,
+                tabState = tabState,
+                navigateTo = navigateTo,
+            )
+        }
+
+        PixiViewNavigationType.NavigationRail -> {
+            LibraryMediumScreen(
+                modifier = modifier,
+                uiState = uiState,
+                drawerState = drawerState,
+                snackbarHostState = snackbarHostState,
+                tabState = tabState,
+                navigateTo = navigateTo,
+            )
+        }
+
+        PixiViewNavigationType.PermanentNavigationDrawer -> {
+            LibraryExpandedScreen(
+                modifier = modifier,
+                uiState = uiState,
+                drawerState = drawerState,
+                snackbarHostState = snackbarHostState,
+                tabState = tabState,
+                navigateTo = navigateTo,
+            )
+        }
     }
 }

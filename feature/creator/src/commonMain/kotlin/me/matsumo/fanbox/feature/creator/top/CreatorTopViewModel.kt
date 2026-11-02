@@ -3,10 +3,8 @@ package me.matsumo.fanbox.feature.creator.top
 import androidx.compose.runtime.Immutable
 import androidx.compose.runtime.Stable
 import androidx.compose.ui.text.intl.Locale
-import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import androidx.navigation.toRoute
 import androidx.paging.PagingData
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -36,11 +34,10 @@ import me.matsumo.fanbox.core.repository.SettingRepository
 import me.matsumo.fanbox.core.repository.TranslationRepository
 import me.matsumo.fanbox.core.resources.Res
 import me.matsumo.fanbox.core.resources.error_network
-import me.matsumo.fanbox.core.ui.customNavTypes
 import org.jetbrains.compose.resources.getString
 
 class CreatorTopViewModel(
-    savedStateHandle: SavedStateHandle,
+    destination: Destination.CreatorTop,
     private val settingRepository: SettingRepository,
     private val fanboxRepository: FanboxRepository,
     private val translationRepository: TranslationRepository,
@@ -48,7 +45,7 @@ class CreatorTopViewModel(
     private val flagRepository: FlagRepository,
 ) : ViewModel() {
 
-    private val creatorId = savedStateHandle.toRoute<Destination.CreatorTop>(customNavTypes).creatorId
+    private val creatorId = destination.creatorId
     private var postsPagingCache: Flow<PagingData<Post>>? = null
 
     private val _screenState = MutableStateFlow<ScreenState<CreatorTopUiState>>(ScreenState.Loading)

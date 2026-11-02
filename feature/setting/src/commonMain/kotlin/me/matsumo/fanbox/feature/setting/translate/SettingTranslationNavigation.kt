@@ -7,13 +7,14 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
-import androidx.navigation.NavGraphBuilder
-import androidx.navigation.compose.dialog
-import androidx.navigation.toRoute
+import androidx.navigation3.runtime.EntryProviderScope
+import androidx.navigation3.scene.DialogSceneStrategy
 import me.matsumo.fanbox.core.model.Destination
 
-fun NavGraphBuilder.settingTranslationDialog(terminate: () -> Unit) {
-    dialog<Destination.SettingTranslationDialog> {
+fun EntryProviderScope<Destination>.settingTranslationDialogEntry(terminate: () -> Unit) {
+    entry<Destination.SettingTranslationDialog>(
+        metadata = DialogSceneStrategy.dialog(),
+    ) { destination ->
         Dialog(
             onDismissRequest = terminate,
         ) {
@@ -22,7 +23,7 @@ fun NavGraphBuilder.settingTranslationDialog(terminate: () -> Unit) {
                     .fillMaxWidth()
                     .wrapContentHeight()
                     .clip(RoundedCornerShape(16.dp)),
-                defaultLanguage = it.toRoute<Destination.SettingTranslationDialog>().language,
+                defaultLanguage = destination.language,
                 terminate = terminate,
             )
         }

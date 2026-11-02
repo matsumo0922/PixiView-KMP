@@ -45,7 +45,6 @@ import me.matsumo.fanbox.core.resources.billing_retention_primary_button
 import me.matsumo.fanbox.core.resources.billing_retention_title
 import me.matsumo.fanbox.core.resources.common_close
 import me.matsumo.fanbox.core.ui.extensition.NavigatorExtension
-import me.matsumo.fanbox.core.ui.theme.LocalNavController
 import org.jetbrains.compose.resources.StringResource
 import org.jetbrains.compose.resources.stringResource
 import org.koin.compose.koinInject
@@ -54,12 +53,11 @@ import org.koin.compose.koinInject
 @Composable
 internal fun BillingRetentionRoute(
     isAnnualOfferShown: Boolean,
+    replaceTo: (Destination) -> Unit,
     terminate: () -> Unit,
     modifier: Modifier = Modifier,
     navigatorExtension: NavigatorExtension = koinInject(),
 ) {
-    val navController = LocalNavController.current
-
     BackHandler {
         dismissBillingRetentionPrompt(
             reason = BILLING_RETENTION_DISMISS_BACK_BUTTON,
@@ -72,16 +70,12 @@ internal fun BillingRetentionRoute(
         isAnnualOfferShown = isAnnualOfferShown,
         onAnnualPlanClick = {
             BillingLog.retentionPromptAnnualClicked().send()
-            navController.navigate(
+            replaceTo(
                 Destination.BillingPlusBottomSheet(
                     referrer = BILLING_RETENTION_REFERRER,
                     initialPlanType = BillingPlan.Type.ANNUAL,
                 ),
-            ) {
-                popUpTo<Destination.BillingRetentionBottomSheet> {
-                    inclusive = true
-                }
-            }
+            )
         },
         onManageSubscriptionClick = {
             val subscriptionManagementUrl = currentPlatform.subscriptionManagementUrl()

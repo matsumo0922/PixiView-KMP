@@ -1,10 +1,8 @@
 package me.matsumo.fanbox.feature.creator.fancard
 
 import androidx.compose.runtime.Stable
-import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import androidx.navigation.toRoute
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -19,11 +17,10 @@ import me.matsumo.fanbox.core.repository.FanboxRepository
 import me.matsumo.fanbox.core.resources.Res
 import me.matsumo.fanbox.core.resources.common_back
 import me.matsumo.fanbox.core.resources.creator_fan_card_not_supported
-import me.matsumo.fanbox.core.ui.customNavTypes
 
-class FanCardViewModel(savedStateHandle: SavedStateHandle, private val fanboxRepository: FanboxRepository) : ViewModel() {
+class FanCardViewModel(destination: Destination.FanCard, private val fanboxRepository: FanboxRepository) : ViewModel() {
 
-    private val creatorId = savedStateHandle.toRoute<Destination.FanCard>(customNavTypes).creatorId
+    private val creatorId = destination.creatorId
 
     private val _screenState = MutableStateFlow<ScreenState<FanCardUiState>>(ScreenState.Loading)
     private val _downloadedEvent = Channel<Boolean>()

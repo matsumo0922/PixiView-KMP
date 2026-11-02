@@ -117,6 +117,7 @@ import org.jetbrains.compose.resources.StringResource
 import org.jetbrains.compose.resources.stringResource
 import org.koin.compose.koinInject
 import org.koin.compose.viewmodel.koinViewModel
+import org.koin.core.parameter.parametersOf
 import kotlin.time.Duration.Companion.milliseconds
 
 internal enum class CreatorTopRevealKeys {
@@ -126,12 +127,12 @@ internal enum class CreatorTopRevealKeys {
 
 @Composable
 internal fun CreatorTopRoute(
-    isPosts: Boolean,
+    destination: Destination.CreatorTop,
     navigateTo: (Destination) -> Unit,
     navigateToAlertDialog: (SimpleAlertContents, () -> Unit, () -> Unit) -> Unit,
     terminate: () -> Unit,
     modifier: Modifier = Modifier,
-    viewModel: CreatorTopViewModel = koinViewModel(),
+    viewModel: CreatorTopViewModel = koinViewModel { parametersOf(destination) },
     navigatorExtension: NavigatorExtension = koinInject(),
     toastExtension: ToastExtension = koinInject(),
 ) {
@@ -169,7 +170,7 @@ internal fun CreatorTopRoute(
                 modifier = Modifier.fillMaxSize(),
                 revealState = revealState,
                 shouldShowReveal = uiState.shouldShowReveal,
-                isPosts = isPosts,
+                isPosts = destination.isPosts,
                 isBlocked = uiState.isBlocked,
                 rewardAvailability = uiState.rewardAvailability,
                 setting = uiState.setting,

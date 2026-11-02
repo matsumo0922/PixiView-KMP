@@ -57,14 +57,16 @@ import me.matsumo.fanbox.feature.post.search.common.items.PostSearchTopBar
 import org.jetbrains.compose.resources.stringResource
 import org.koin.compose.koinInject
 import org.koin.compose.viewmodel.koinViewModel
+import org.koin.core.parameter.parametersOf
 
 @Composable
 internal fun PostByCreatorSearchRoute(
+    destination: Destination.PostByCreatorSearch,
     navigateTo: (Destination) -> Unit,
     terminate: () -> Unit,
     modifier: Modifier = Modifier,
     navigatorExtension: NavigatorExtension = koinInject(),
-    viewModel: PostByCreatorSearchViewModel = koinViewModel(),
+    viewModel: PostByCreatorSearchViewModel = koinViewModel { parametersOf(destination) },
 ) {
     val screenState by viewModel.screenState.collectAsStateWithLifecycle()
     val query by viewModel.query.collectAsStateWithLifecycle()

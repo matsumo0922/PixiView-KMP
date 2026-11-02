@@ -1,115 +1,93 @@
 package me.matsumo.fanbox
 
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.SideEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.rememberUpdatedState
+import androidx.compose.runtime.snapshotFlow
 import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.backhandler.BackHandler
-import androidx.navigation.NavBackStackEntry
-import androidx.navigation.NavController
-import androidx.navigation.NavDestination.Companion.hasRoute
-import androidx.navigation.NavGraphBuilder
-import androidx.navigation.NavHostController
-import androidx.navigation.compose.ComposeNavigator
-import androidx.navigation.compose.NavHost
-import androidx.navigation.compose.currentBackStackEntryAsState
-import androidx.navigation.compose.rememberNavController
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.coroutineScope
+import androidx.navigation3.runtime.EntryProviderScope
+import androidx.navigation3.runtime.NavEntryDecorator
+import kotlinx.collections.immutable.persistentListOf
 import kotlinx.coroutines.launch
 import me.matsumo.fanbox.core.model.Destination
-import me.matsumo.fanbox.core.ui.animation.NavigateAnimation
-import me.matsumo.fanbox.core.ui.component.emptyDetailScreen
-import me.matsumo.fanbox.core.ui.component.sheet.BottomSheetNavigator
-import me.matsumo.fanbox.core.ui.component.sheet.ModalBottomSheetLayout
-import me.matsumo.fanbox.core.ui.component.sheet.rememberBottomSheetNavigator
-import me.matsumo.fanbox.core.ui.customNavTypes
-import me.matsumo.fanbox.core.ui.extensition.popBackStackWithResult
-import me.matsumo.fanbox.core.ui.theme.LocalNavController
+import me.matsumo.fanbox.core.ui.component.emptyDetailEntry
+import me.matsumo.fanbox.core.ui.navigation.DestinationKey
+import me.matsumo.fanbox.core.ui.navigation.PixiViewNavDisplay
+import me.matsumo.fanbox.core.ui.navigation.PixiViewNavigator
+import me.matsumo.fanbox.core.ui.navigation.destinationEntryProvider
+import me.matsumo.fanbox.core.ui.navigation.rememberPixiViewNavigator
 import me.matsumo.fanbox.core.ui.view.navigateToSimpleAlertDialog
-import me.matsumo.fanbox.core.ui.view.simpleAlertDialogDialog
-import me.matsumo.fanbox.feature.about.about.aboutScreen
-import me.matsumo.fanbox.feature.about.billing.billingPlusBottomSheet
-import me.matsumo.fanbox.feature.about.billing.billingRetentionBottomSheet
-import me.matsumo.fanbox.feature.about.versions.versionHistoryBottomSheet
-import me.matsumo.fanbox.feature.creator.download.creatorPostsDownloadDialog
-import me.matsumo.fanbox.feature.creator.fancard.fanCardScreen
-import me.matsumo.fanbox.feature.creator.follow.followingCreatorsScreen
-import me.matsumo.fanbox.feature.creator.payment.paymentsScreen
-import me.matsumo.fanbox.feature.creator.support.supportingCreatorsScreen
-import me.matsumo.fanbox.feature.creator.top.creatorTopScreen
-import me.matsumo.fanbox.feature.library.home.LIBRARY_HOME_ROUTE
-import me.matsumo.fanbox.feature.library.libraryScreen
-import me.matsumo.fanbox.feature.post.bookmark.bookmarkedPostsScreen
-import me.matsumo.fanbox.feature.post.detail.postDetailScreen
-import me.matsumo.fanbox.feature.post.image.postImageScreen
-import me.matsumo.fanbox.feature.post.queue.downloadQueueScreen
-import me.matsumo.fanbox.feature.post.search.common.postSearchScreen
-import me.matsumo.fanbox.feature.post.search.creator.postByCreatorSearchScreen
-import me.matsumo.fanbox.feature.setting.developer.settingDeveloperDialog
-import me.matsumo.fanbox.feature.setting.directory.settingDirectoryScreen
-import me.matsumo.fanbox.feature.setting.oss.settingLicenseScreen
-import me.matsumo.fanbox.feature.setting.theme.settingThemeScreen
-import me.matsumo.fanbox.feature.setting.top.settingTopScreen
-import me.matsumo.fanbox.feature.setting.translate.settingTranslationDialog
+import me.matsumo.fanbox.core.ui.view.simpleAlertDialogEntry
+import me.matsumo.fanbox.feature.about.about.aboutEntry
+import me.matsumo.fanbox.feature.about.billing.billingPlusBottomSheetEntry
+import me.matsumo.fanbox.feature.about.billing.billingRetentionBottomSheetEntry
+import me.matsumo.fanbox.feature.about.versions.versionHistoryBottomSheetEntry
+import me.matsumo.fanbox.feature.creator.download.creatorPostsDownloadEntry
+import me.matsumo.fanbox.feature.creator.fancard.fanCardEntry
+import me.matsumo.fanbox.feature.creator.follow.followingCreatorsEntry
+import me.matsumo.fanbox.feature.creator.payment.paymentsEntry
+import me.matsumo.fanbox.feature.creator.support.supportingCreatorsEntry
+import me.matsumo.fanbox.feature.creator.top.creatorTopEntry
+import me.matsumo.fanbox.feature.library.libraryEntry
+import me.matsumo.fanbox.feature.post.bookmark.bookmarkedPostsEntry
+import me.matsumo.fanbox.feature.post.detail.postDetailEntry
+import me.matsumo.fanbox.feature.post.image.postImageEntry
+import me.matsumo.fanbox.feature.post.queue.downloadQueueEntry
+import me.matsumo.fanbox.feature.post.search.common.postSearchEntry
+import me.matsumo.fanbox.feature.post.search.creator.postByCreatorSearchEntry
+import me.matsumo.fanbox.feature.setting.developer.settingDeveloperDialogEntry
+import me.matsumo.fanbox.feature.setting.directory.settingDirectoryEntry
+import me.matsumo.fanbox.feature.setting.oss.settingLicenseEntry
+import me.matsumo.fanbox.feature.setting.theme.settingThemeEntry
+import me.matsumo.fanbox.feature.setting.top.settingTopEntry
+import me.matsumo.fanbox.feature.setting.translate.settingTranslationDialogEntry
 
 @Composable
 internal fun PixiViewNavHost(
+    navigator: PixiViewNavigator,
     modifier: Modifier = Modifier,
-    bottomSheetNavigator: BottomSheetNavigator = rememberBottomSheetNavigator(),
-    navController: NavHostController = rememberNavController(bottomSheetNavigator),
-    startDestination: Destination = Destination.Library,
     onPostDetailClose: suspend () -> Unit = {},
     onLibraryHomeVisibilityChange: (Boolean) -> Unit = {},
 ) {
-    val bottomNavigationNavController = rememberNavController()
-    val bottomNavigationBackStackEntry by bottomNavigationNavController.currentBackStackEntryAsState()
     val scope = rememberCoroutineScope()
-    val composeNavigator: ComposeNavigator = remember(navController) {
-        navController.navigatorProvider.getNavigator(COMPOSE_NAVIGATOR_NAME)
-    }
-    val currentOnPostDetailClosed by rememberUpdatedState(onPostDetailClose)
-    val currentOnLibraryHomeVisibilityChanged by rememberUpdatedState(onLibraryHomeVisibilityChange)
+    val currentOnPostDetailClose by rememberUpdatedState(onPostDetailClose)
+    val postDetailCloseDecorator = rememberPostDetailCloseDecorator(
+        navigator = navigator,
+        onClose = { scope.launch { currentOnPostDetailClose() } },
+    )
 
-    SideEffect(bottomNavigationBackStackEntry?.destination?.route) {
-        currentOnLibraryHomeVisibilityChanged(bottomNavigationBackStackEntry?.destination?.route == LIBRARY_HOME_ROUTE)
-    }
+    HandleDeepLink(onDeepLink = navigator::navigate)
 
-    HandleDeepLink(navController)
-
-    LaunchedEffect(navController, composeNavigator) {
-        observePostDetailClosedEntries(
-            navController = navController,
-            composeNavigator = composeNavigator,
-            onPostDetailClose = { currentOnPostDetailClosed() },
-        )
-    }
-
-    PixiViewNavHostFrame(
+    PixiViewNavDisplay(
         modifier = modifier,
-        bottomSheetNavigator = bottomSheetNavigator,
-        navController = navController,
-        startDestination = startDestination,
-    ) {
-        applyNavGraph(
-            scope = scope,
-            mainNavController = navController,
-            bottomNavigationNavController = bottomNavigationNavController,
-        )
-    }
+        navigator = navigator,
+        entryDecorators = persistentListOf(postDetailCloseDecorator),
+        entryProvider = destinationEntryProvider {
+            libraryEntry(
+                navigateTo = navigator::navigate,
+                onHomeVisibilityChange = onLibraryHomeVisibilityChange,
+            )
+
+            applyPostDestinations(navigator)
+            applyCreatorDestinations(navigator)
+            applySettingsDestinations(
+                navigator = navigator,
+                terminateSettingTop = navigator::back,
+            )
+        },
+    )
 }
 
 /**
  * ログイン前の画面から開く設定画面。
  *
- * ログイン前は [PixiViewNavHost] を表示しないため、設定画面とそこから開く画面だけを持つ NavHost を別に用意する。
- * 設定画面は back stack の根にあり、閉じる操作で pop すると画面が空になるため、閉じる操作は [onClose] へ渡す。
+ * ログイン前は [PixiViewNavHost] を表示しないため、設定画面とそこから開く画面だけを持つバックスタックを別に用意する。
+ * 設定画面はバックスタックの根にあり pop できないため、閉じる操作は [onClose] へ渡す。
  */
 @OptIn(ExperimentalComposeUiApi::class)
 @Composable
@@ -117,307 +95,192 @@ internal fun PixiViewSettingNavHost(
     onClose: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
-    val bottomSheetNavigator = rememberBottomSheetNavigator()
-    val navController = rememberNavController(bottomSheetNavigator)
-    val currentBackStackEntry by navController.currentBackStackEntryAsState()
-    val scope = rememberCoroutineScope()
+    val navigator = rememberPixiViewNavigator(Destination.SettingTop)
 
-    // 根では NavHost が戻る操作を受け取らないため、ここで閉じる
-    BackHandler(currentBackStackEntry?.destination?.hasRoute<Destination.SettingTop>() == true) {
+    // 根では NavDisplay が戻る操作を受け取らないため、ここで閉じる
+    BackHandler(navigator.backStack.size == 1) {
         onClose()
     }
 
-    PixiViewNavHostFrame(
+    PixiViewNavDisplay(
         modifier = modifier,
-        bottomSheetNavigator = bottomSheetNavigator,
-        navController = navController,
-        startDestination = Destination.SettingTop,
-    ) {
-        applySettingsDestinations(
-            scope = scope,
-            mainNavController = navController,
-            subNavController = navController,
-            terminateSettingTop = onClose,
+        navigator = navigator,
+        entryProvider = destinationEntryProvider {
+            applySettingsDestinations(
+                navigator = navigator,
+                terminateSettingTop = onClose,
+            )
+        },
+    )
+}
+
+/**
+ * 投稿詳細の画面が閉じきったときに [onClose] を呼ぶ decorator を作る。
+ *
+ * 画面がバックスタックから取り除かれ、退場アニメーションを終えて composition から外れたときに呼ぶ。
+ * decorator が受け取るのは contentKey だけなので、投稿詳細の contentKey をバックスタックから集めておく。
+ */
+@Composable
+private fun rememberPostDetailCloseDecorator(
+    navigator: PixiViewNavigator,
+    onClose: () -> Unit,
+): NavEntryDecorator<DestinationKey> {
+    val currentOnClose by rememberUpdatedState(onClose)
+    val postDetailContentKeys = remember(navigator) { mutableSetOf<Any>() }
+
+    LaunchedEffect(navigator) {
+        snapshotFlow { navigator.backStack.toList() }.collect { keys ->
+            val postDetailKeys = keys
+                .filter { it.destination is Destination.PostDetail }
+                .map { it.id }
+
+            postDetailContentKeys.addAll(postDetailKeys)
+        }
+    }
+
+    return remember(navigator) {
+        NavEntryDecorator(
+            onPop = { contentKey ->
+                if (postDetailContentKeys.remove(contentKey)) currentOnClose()
+            },
+            decorate = { entry -> entry.Content() },
         )
     }
 }
 
-@Composable
-private fun PixiViewNavHostFrame(
-    bottomSheetNavigator: BottomSheetNavigator,
-    navController: NavHostController,
-    startDestination: Destination,
-    modifier: Modifier = Modifier,
-    builder: NavGraphBuilder.() -> Unit,
-) {
-    CompositionLocalProvider(LocalNavController provides navController) {
-        ModalBottomSheetLayout(bottomSheetNavigator) {
-            NavHost(
-                modifier = modifier,
-                navController = navController,
-                startDestination = startDestination,
-                enterTransition = { NavigateAnimation.Horizontal.enter },
-                exitTransition = { NavigateAnimation.Horizontal.exit },
-                popEnterTransition = { NavigateAnimation.Horizontal.popEnter },
-                popExitTransition = { NavigateAnimation.Horizontal.popExit },
-                typeMap = customNavTypes,
-                builder = builder,
-            )
-        }
-    }
-}
-
-private suspend fun observePostDetailClosedEntries(
-    navController: NavHostController,
-    composeNavigator: ComposeNavigator,
-    onPostDetailClose: suspend () -> Unit,
-) = coroutineScope {
-    val pendingClosedEntryIds = mutableSetOf<String>()
-    var previousBackStack = composeNavigator.backStack.value
-
-    launch {
-        composeNavigator.backStack.collect { currentBackStack ->
-            pendingClosedEntryIds.addAll(previousBackStack.findClosedPostDetailEntryIds(currentBackStack))
-            previousBackStack = currentBackStack
-            dispatchCompletedPostDetailClosedEntries(
-                pendingClosedEntryIds = pendingClosedEntryIds,
-                visibleEntries = navController.visibleEntries.value,
-                onPostDetailClose = onPostDetailClose,
-            )
-        }
-    }
-
-    launch {
-        navController.visibleEntries.collect { visibleEntries ->
-            dispatchCompletedPostDetailClosedEntries(
-                pendingClosedEntryIds = pendingClosedEntryIds,
-                visibleEntries = visibleEntries,
-                onPostDetailClose = onPostDetailClose,
-            )
-        }
-    }
-}
-
-private suspend fun dispatchCompletedPostDetailClosedEntries(
-    pendingClosedEntryIds: MutableSet<String>,
-    visibleEntries: List<NavBackStackEntry>,
-    onPostDetailClose: suspend () -> Unit,
-) {
-    val visibleEntryIds = visibleEntries.map { visibleEntry -> visibleEntry.id }.toSet()
-    val completedEntryIds = pendingClosedEntryIds.filter { pendingEntryId ->
-        !visibleEntryIds.contains(pendingEntryId)
-    }
-
-    for (completedEntryId in completedEntryIds) {
-        pendingClosedEntryIds.remove(completedEntryId)
-        onPostDetailClose()
-    }
-}
-
-private fun List<NavBackStackEntry>.findClosedPostDetailEntryIds(currentBackStack: List<NavBackStackEntry>): List<String> {
-    val currentEntryIds = currentBackStack.map { currentEntry -> currentEntry.id }.toSet()
-
-    return mapNotNull { previousEntry ->
-        val wasRemoved = !currentEntryIds.contains(previousEntry.id)
-        val isPostDetail = previousEntry.destination.hasRoute<Destination.PostDetail>()
-
-        if (wasRemoved && isPostDetail) previousEntry.id else null
-    }
-}
-
-/** Compose の画面遷移を管理する Navigator の登録名。 */
-private const val COMPOSE_NAVIGATOR_NAME = "composable"
-
-/**
- * mainNavController
- *   - Library*
- *   - CreatorTop
- *   - PostSearch
- *   - BookmarkedPosts
- *   - FollowingCreators
- *   - SupportingCreators
- *   - Setting*
- *   - Dialogs*
- */
-private fun NavGraphBuilder.applyNavGraph(
-    scope: CoroutineScope,
-    bottomNavigationNavController: NavHostController,
-    mainNavController: NavHostController,
-    subNavController: NavHostController = mainNavController,
-) {
-    // composable
-
-    libraryScreen(
-        navHostController = bottomNavigationNavController,
-        navigateTo = { mainNavController.navigate(it) },
-    )
-
-    applyPostDestinations(
-        scope = scope,
-        mainNavController = mainNavController,
-        subNavController = subNavController,
-    )
-
-    applyCreatorDestinations(
-        scope = scope,
-        mainNavController = mainNavController,
-        subNavController = subNavController,
-    )
-
-    applySettingsDestinations(
-        scope = scope,
-        mainNavController = mainNavController,
-        subNavController = subNavController,
-        terminateSettingTop = { mainNavController.popBackStack() },
-    )
-}
-private fun NavGraphBuilder.applyPostDestinations(
-    scope: CoroutineScope,
-    mainNavController: NavHostController,
-    subNavController: NavHostController,
-) {
-    postDetailScreen(
-        navigateTo = { mainNavController.navigate(it) },
+private fun EntryProviderScope<Destination>.applyPostDestinations(navigator: PixiViewNavigator) {
+    postDetailEntry(
+        navigateTo = navigator::navigate,
         navigateToCommentDeleteDialog = { contents, onResult ->
-            scope.launch {
-                mainNavController.navigateToSimpleAlertDialog(contents, onResult)
-            }
+            navigator.navigateToSimpleAlertDialog(contents, onResult)
         },
-        terminate = { subNavController.popBackStack() },
+        terminate = navigator::back,
     )
 
-    postImageScreen(
-        navigateTo = { mainNavController.navigate(it) },
-        terminate = { subNavController.popBackStack() },
+    postImageEntry(
+        navigateTo = navigator::navigate,
+        terminate = navigator::back,
     )
 
-    postSearchScreen(
-        navigateTo = { mainNavController.navigate(it) },
-        terminate = { mainNavController.popBackStack() },
+    postSearchEntry(
+        navigateTo = navigator::navigate,
+        terminate = navigator::back,
     )
 
-    postByCreatorSearchScreen(
-        navigateTo = { mainNavController.navigate(it) },
-        terminate = { mainNavController.popBackStack() },
+    postByCreatorSearchEntry(
+        navigateTo = navigator::navigate,
+        terminate = navigator::back,
     )
 
-    bookmarkedPostsScreen(
-        navigateTo = { mainNavController.navigate(it) },
-        terminate = { mainNavController.popBackStack() },
+    bookmarkedPostsEntry(
+        navigateTo = navigator::navigate,
+        terminate = navigator::back,
     )
 }
 
-private fun NavGraphBuilder.applyCreatorDestinations(
-    scope: CoroutineScope,
-    mainNavController: NavHostController,
-    subNavController: NavHostController,
-) {
-    creatorTopScreen(
-        navigateTo = { mainNavController.navigate(it) },
+private fun EntryProviderScope<Destination>.applyCreatorDestinations(navigator: PixiViewNavigator) {
+    creatorTopEntry(
+        navigateTo = navigator::navigate,
         navigateToAlertDialog = { contents, onPositive, onNegative ->
-            scope.launch {
-                mainNavController.navigateToSimpleAlertDialog(contents, onPositive, onNegative)
-            }
+            navigator.navigateToSimpleAlertDialog(contents, onPositive, onNegative)
         },
-        terminate = { mainNavController.popBackStack() },
+        terminate = navigator::back,
     )
 
-    creatorPostsDownloadDialog(
-        navigateTo = { mainNavController.navigate(it) },
-        terminate = { mainNavController.popBackStack() },
+    creatorPostsDownloadEntry(
+        navigateTo = navigator::navigate,
+        terminate = navigator::back,
     )
 
-    supportingCreatorsScreen(
-        navigateTo = { mainNavController.navigate(it) },
-        terminate = { mainNavController.popBackStack() },
+    supportingCreatorsEntry(
+        navigateTo = navigator::navigate,
+        terminate = navigator::back,
     )
 
-    followingCreatorsScreen(
-        navigateTo = { mainNavController.navigate(it) },
-        terminate = { mainNavController.popBackStack() },
+    followingCreatorsEntry(
+        navigateTo = navigator::navigate,
+        terminate = navigator::back,
     )
 
-    paymentsScreen(
-        navigateTo = { mainNavController.navigate(it) },
-        terminate = { subNavController.popBackStack() },
+    paymentsEntry(
+        navigateTo = navigator::navigate,
+        terminate = navigator::back,
     )
 
-    fanCardScreen(
-        terminate = { subNavController.popBackStack() },
+    fanCardEntry(
+        terminate = navigator::back,
     )
 
-    downloadQueueScreen(
-        navigateTo = { mainNavController.navigate(it) },
-        terminate = { subNavController.popBackStack() },
+    downloadQueueEntry(
+        navigateTo = navigator::navigate,
+        terminate = navigator::back,
     )
 }
 
-private fun NavGraphBuilder.applySettingsDestinations(
-    scope: CoroutineScope,
-    mainNavController: NavHostController,
-    subNavController: NavHostController,
+private fun EntryProviderScope<Destination>.applySettingsDestinations(
+    navigator: PixiViewNavigator,
     terminateSettingTop: () -> Unit,
 ) {
-    aboutScreen(
-        navigateTo = { mainNavController.navigate(it) },
-        terminate = { subNavController.popBackStack() },
+    aboutEntry(
+        navigateTo = navigator::navigate,
+        terminate = navigator::back,
     )
 
-    settingTopScreen(
-        navigateTo = { mainNavController.navigate(it) },
+    settingTopEntry(
+        navigateTo = navigator::navigate,
         navigateToLogoutDialog = { contents, onResult ->
-            scope.launch {
-                mainNavController.navigateToSimpleAlertDialog(contents, onResult)
-            }
+            navigator.navigateToSimpleAlertDialog(contents, onResult)
         },
         terminate = terminateSettingTop,
     )
 
-    settingThemeScreen(
-        navigateTo = { mainNavController.navigate(it) },
-        terminate = { mainNavController.popBackStack() },
+    settingThemeEntry(
+        navigateTo = navigator::navigate,
+        terminate = navigator::back,
     )
 
-    settingLicenseScreen(
-        terminate = { mainNavController.popBackStack() },
+    settingLicenseEntry(
+        terminate = navigator::back,
     )
 
-    settingDirectoryScreen(
-        terminate = { mainNavController.popBackStack() },
+    settingDirectoryEntry(
+        terminate = navigator::back,
     )
 
     // dialog
 
-    simpleAlertDialogDialog(
-        onResult = { mainNavController.popBackStackWithResult(it) },
+    simpleAlertDialogEntry(
+        onResult = { navigator.backWithResult(it) },
     )
 
-    settingDeveloperDialog(
-        terminate = { mainNavController.popBackStack() },
+    settingDeveloperDialogEntry(
+        terminate = navigator::back,
     )
 
-    settingTranslationDialog(
-        terminate = { mainNavController.popBackStack() },
+    settingTranslationDialogEntry(
+        terminate = navigator::back,
     )
 
     // bottom sheet
 
-    versionHistoryBottomSheet(
-        terminate = { mainNavController.popBackStack() },
+    versionHistoryBottomSheetEntry(
+        terminate = navigator::back,
     )
 
-    billingPlusBottomSheet(
-        terminate = { mainNavController.popBackStack() },
+    billingPlusBottomSheetEntry(
+        terminate = navigator::back,
     )
 
-    billingRetentionBottomSheet(
-        terminate = { mainNavController.popBackStack() },
+    billingRetentionBottomSheetEntry(
+        replaceTo = { destination ->
+            navigator.back()
+            navigator.navigate(destination)
+        },
+        terminate = navigator::back,
     )
 
-    // empty for start destination
-
-    emptyDetailScreen()
+    emptyDetailEntry()
 }
 
 @Composable
-expect fun HandleDeepLink(navController: NavController)
+expect fun HandleDeepLink(onDeepLink: (Destination) -> Unit)
