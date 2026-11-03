@@ -262,7 +262,7 @@
     "versionName": "2.3.6",
     "versionCode": 76,
     "date": "2026/11/02",
-    "logJp": "・ログインできない、ログイン状態が切れる問題の修正\n・ログインし直してもブックマークが消えないように修正\n・ライブラリの更新",
-    "logEn": "・Fixed issues where you could not log in or were logged out unexpectedly.\n・Bookmarks are now kept when you log in again.\n・Updated libraries."
+    "logJp": "・ログインできない、ログイン状態が切れる問題の修正\n・ログインし直してもブックマークが消えないように修正\n・画面遷移のアニメーションの改善\n・ライブラリの更新",
+    "logEn": "・Fixed issues where you could not log in or were logged out unexpectedly.\n・Bookmarks are now kept when you log in again.\n・Improved screen transition animations.\n・Updated libraries."
   }
 ]
