@@ -9,14 +9,20 @@ import androidx.navigation3.runtime.serialization.NavBackStackSerializer
 import me.matsumo.fanbox.core.model.Destination
 
 /**
+ * [PixiViewNavigator.navigateForResult] で積んだ [DestinationKey.id] と、結果を受け取るコールバックの対応。
+ *
+ * 構成変更で Activity と Navigator が作り直されても、復元したバックスタックの id から結果を返せるよう、プロセス単位で持つ。
+ */
+private val pendingResultCallbacks = mutableMapOf<String, (Any?) -> Unit>()
+
+/**
  * 画面遷移のバックスタックを操作する。
  *
  * 遷移先から結果を受け取る場合は [navigateForResult] で遷移し、遷移先は [backWithResult] で結果を返して戻る。
+ * 結果を返さずに戻った場合、その遷移先のコールバックは破棄する。
  */
 @Stable
 class PixiViewNavigator(val backStack: NavBackStack<DestinationKey>) {
-
-    private var resultCallback: ((Any?) -> Unit)? = null
 
     /** バックスタックの一番上にある遷移先。 */
     val currentDestination: Destination
@@ -28,26 +34,30 @@ class PixiViewNavigator(val backStack: NavBackStack<DestinationKey>) {
 
     /** 1つ前の画面へ戻る。NavDisplay は空のバックスタックを表示できないため、根の画面は取り除かない。 */
     fun back() {
-        if (backStack.size > 1) backStack.removeAt(backStack.lastIndex)
+        if (backStack.size <= 1) return
+
+        val removedKey = backStack.removeAt(backStack.lastIndex)
+
+        pendingResultCallbacks.remove(removedKey.id)
     }
 
     fun <T> navigateForResult(destination: Destination, onResult: (T) -> Unit) {
-        resultCallback = { result ->
+        val key = DestinationKey.of(destination)
+
+        pendingResultCallbacks[key.id] = { result ->
             @Suppress("UNCHECKED_CAST")
             onResult(result as T)
         }
 
-        navigate(destination)
+        backStack.add(key)
     }
 
-    /** [navigateForResult] の呼び出し元へ [result] を返してから戻る。 */
+    /** 1つ前の画面へ戻り、[navigateForResult] の呼び出し元へ [result] を返す。 */
     fun <T> backWithResult(result: T) {
-        val callback = resultCallback
-
-        resultCallback = null
-        callback?.invoke(result)
+        val callback = pendingResultCallbacks.remove(backStack.last().id)
 
         back()
+        callback?.invoke(result)
     }
 }
 

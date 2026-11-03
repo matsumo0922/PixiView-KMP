@@ -59,6 +59,22 @@ class PixiViewNavigatorTest {
     }
 
     @Test
+    fun resultIsDeliveredAfterNavigatorIsRecreated() {
+        val navigator = navigatorOf(Destination.Library)
+        var receivedResult: Boolean? = null
+
+        navigator.navigateForResult<Boolean>(Destination.SimpleAlertDialog(SimpleAlertContents.CommentDelete)) { receivedResult = it }
+
+        // 構成変更では Navigator が作り直され、バックスタックは同じ id のまま復元される
+        val restoredBackStack = NavBackStack(*navigator.backStack.toTypedArray())
+        val recreatedNavigator = PixiViewNavigator(restoredBackStack)
+
+        recreatedNavigator.backWithResult(true)
+
+        assertEquals(true, receivedResult)
+    }
+
+    @Test
     fun backWithoutPendingResultOnlyGoesBack() {
         val navigator = navigatorOf(Destination.Library, Destination.About)
 

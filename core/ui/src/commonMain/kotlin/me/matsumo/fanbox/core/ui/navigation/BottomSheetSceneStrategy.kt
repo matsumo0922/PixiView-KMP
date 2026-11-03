@@ -9,6 +9,9 @@ import androidx.compose.material.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.SideEffect
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.setValue
 import androidx.compose.runtime.snapshotFlow
 import androidx.compose.ui.Modifier
 import androidx.navigation3.runtime.NavEntry
@@ -19,6 +22,9 @@ import androidx.navigation3.scene.OverlayScene
 import androidx.navigation3.scene.Scene
 import androidx.navigation3.scene.SceneStrategy
 import androidx.navigation3.scene.SceneStrategyScope
+import io.github.aakira.napier.Napier
+import kotlinx.coroutines.currentCoroutineContext
+import kotlinx.coroutines.ensureActive
 import kotlinx.coroutines.flow.first
 import kotlin.coroutines.cancellation.CancellationException
 
@@ -67,6 +73,7 @@ private object BottomSheetKey : NavMetadataKey<BottomSheetMetadata>
  * [entry] を BottomSheet で表示する [OverlayScene]。
  *
  * 表示したときに sheet を開き、pop されたときは [onRemove] で sheet を閉じきってから composition を離れる。
+ * 閉じている間はジェスチャーを受け付けない。
  * sheet がそれ以外の理由で閉じた場合はユーザーが閉じたとみなし、[onUserDismiss] を呼ぶ。
  */
 @OptIn(ExperimentalMaterialApi::class)
@@ -81,7 +88,7 @@ private class BottomSheetScene<T : Any>(
     override val entries: List<NavEntry<T>> = listOf(entry)
 
     private var sheetState: ModalBottomSheetState? = null
-    private var isRemoving = false
+    private var isRemoving by mutableStateOf(false)
 
     override val content: @Composable () -> Unit = {
         val state = rememberModalBottomSheetState(
@@ -100,6 +107,7 @@ private class BottomSheetScene<T : Any>(
         ModalBottomSheetLayout(
             modifier = Modifier.fillMaxSize(),
             sheetState = state,
+            sheetGesturesEnabled = !isRemoving,
             sheetContent = { entry.Content() },
             content = {},
         )
@@ -107,7 +115,14 @@ private class BottomSheetScene<T : Any>(
 
     override suspend fun onRemove() {
         isRemoving = true
-        sheetState?.hide()
+
+        try {
+            sheetState?.hide()
+        } catch (exception: CancellationException) {
+            // hide が別の操作に中断されても overlay を取り除けるよう、ここで止めずに戻る。onRemove 自体の中断は伝える
+            currentCoroutineContext().ensureActive()
+            Napier.w(exception) { "Bottom sheet hide was interrupted while removing" }
+        }
     }
 
     private suspend fun showAndAwaitHidden(state: ModalBottomSheetState) {
