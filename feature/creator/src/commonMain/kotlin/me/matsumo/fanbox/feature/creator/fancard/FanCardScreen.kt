@@ -16,6 +16,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import kotlinx.coroutines.flow.collectLatest
+import me.matsumo.fanbox.core.model.Destination
 import me.matsumo.fanbox.core.model.fanbox.CreatorPlanDetail
 import me.matsumo.fanbox.core.resources.Res
 import me.matsumo.fanbox.core.resources.common_downloaded
@@ -28,12 +29,14 @@ import me.matsumo.fanbox.core.ui.extensition.ToastExtension
 import me.matsumo.fanbox.feature.creator.fancard.items.FanCardItem
 import org.koin.compose.koinInject
 import org.koin.compose.viewmodel.koinViewModel
+import org.koin.core.parameter.parametersOf
 
 @Composable
 internal fun FanCardRoute(
+    destination: Destination.FanCard,
     terminate: () -> Unit,
     modifier: Modifier = Modifier,
-    viewModel: FanCardViewModel = koinViewModel(),
+    viewModel: FanCardViewModel = koinViewModel { parametersOf(destination) },
     toastExtension: ToastExtension = koinInject(),
 ) {
     val screenState by viewModel.screenState.collectAsStateWithLifecycle()

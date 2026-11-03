@@ -2,38 +2,32 @@ package me.matsumo.fanbox.core.ui.view
 
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import androidx.navigation.NavController
-import androidx.navigation.NavGraphBuilder
-import androidx.navigation.compose.dialog
-import androidx.navigation.toRoute
+import androidx.navigation3.runtime.EntryProviderScope
+import androidx.navigation3.scene.DialogSceneStrategy
 import me.matsumo.fanbox.core.model.Destination
 import me.matsumo.fanbox.core.model.SimpleAlertContents
-import me.matsumo.fanbox.core.ui.customNavTypes
-import me.matsumo.fanbox.core.ui.extensition.navigateForResult
+import me.matsumo.fanbox.core.ui.navigation.PixiViewNavigator
 import org.jetbrains.compose.resources.stringResource
 
-fun NavController.navigateToSimpleAlertDialog(
+fun PixiViewNavigator.navigateToSimpleAlertDialog(
     content: SimpleAlertContents,
     onClickPositive: (() -> Unit)? = null,
     onClickNegative: (() -> Unit)? = null,
 ) {
-    navigateForResult<Boolean>(
-        route = Destination.SimpleAlertDialog(content),
-        navResultCallback = { result ->
-            if (result) {
-                onClickPositive?.invoke()
-            } else {
-                onClickNegative?.invoke()
-            }
-        },
-    )
+    navigateForResult<Boolean>(Destination.SimpleAlertDialog(content)) { result ->
+        if (result) {
+            onClickPositive?.invoke()
+        } else {
+            onClickNegative?.invoke()
+        }
+    }
 }
 
-fun NavGraphBuilder.simpleAlertDialogDialog(onResult: (Boolean) -> Unit) {
-    dialog<Destination.SimpleAlertDialog>(
-        typeMap = customNavTypes,
-    ) { entry ->
-        val content = entry.toRoute<Destination.SimpleAlertDialog>().content
+fun EntryProviderScope<Destination>.simpleAlertDialogEntry(onResult: (Boolean) -> Unit) {
+    entry<Destination.SimpleAlertDialog>(
+        metadata = DialogSceneStrategy.dialog(),
+    ) { destination ->
+        val content = destination.content
 
         SimpleAlertDialog(
             title = stringResource(content.titleRes),

@@ -22,7 +22,6 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import kotlinx.coroutines.flow.Flow
 import me.matsumo.fanbox.core.model.BillingPlan
 import me.matsumo.fanbox.core.ui.AsyncLoadContents
-import me.matsumo.fanbox.core.ui.theme.LocalNavController
 import me.matsumo.fanbox.feature.about.billing.items.BillingBottomBar
 import me.matsumo.fanbox.feature.about.billing.items.BillingPurchaseSuccessDialog
 import me.matsumo.fanbox.feature.about.billing.items.BillingTopSection
@@ -32,6 +31,7 @@ import org.koin.compose.viewmodel.koinViewModel
 
 @Composable
 internal fun BillingPlusRoute(
+    terminate: () -> Unit,
     modifier: Modifier = Modifier,
     initialPlanType: BillingPlan.Type? = null,
     viewModel: BillingViewModel = koinViewModel(),
@@ -51,6 +51,7 @@ internal fun BillingPlusRoute(
             uiState = it,
             onViewEvent = viewModel::onViewEvent,
             messageEventFlow = viewModel.messageEvent,
+            terminate = terminate,
         )
     }
 }
@@ -60,10 +61,9 @@ private fun BillingScreen(
     uiState: BillingUiState,
     onViewEvent: (BillingViewEvent) -> Unit,
     messageEventFlow: Flow<BillingMessageEvent>,
+    terminate: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
-    val navController = LocalNavController.current
-
     val snackbarHostState = remember { SnackbarHostState() }
     var showPurchaseSuccessDialog by remember { mutableStateOf(false) }
 
@@ -104,7 +104,7 @@ private fun BillingScreen(
         BillingPurchaseSuccessDialog(
             onDismissRequest = {
                 showPurchaseSuccessDialog = false
-                navController.popBackStack()
+                terminate()
             },
         )
     }

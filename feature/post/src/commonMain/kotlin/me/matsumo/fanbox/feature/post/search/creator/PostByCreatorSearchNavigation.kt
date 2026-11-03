@@ -2,17 +2,14 @@ package me.matsumo.fanbox.feature.post.search.creator
 
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.ui.Modifier
-import androidx.navigation.NavGraphBuilder
-import androidx.navigation.compose.composable
+import androidx.navigation3.runtime.EntryProviderScope
 import me.matsumo.fanbox.core.model.Destination
-import me.matsumo.fanbox.core.ui.customNavTypes
 
-fun NavGraphBuilder.postByCreatorSearchScreen(navigateTo: (Destination) -> Unit, terminate: () -> Unit) {
-    composable<Destination.PostByCreatorSearch>(
-        typeMap = customNavTypes,
-    ) {
+fun EntryProviderScope<Destination>.postByCreatorSearchEntry(navigateTo: (Destination) -> Unit, terminate: () -> Unit) {
+    entry<Destination.PostByCreatorSearch> { destination ->
         PostByCreatorSearchRoute(
             modifier = Modifier.fillMaxSize(),
+            destination = destination,
             navigateTo = navigateTo,
             terminate = terminate,
         )

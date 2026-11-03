@@ -7,7 +7,6 @@ import androidx.compose.material3.ModalDrawerSheet
 import androidx.compose.material3.PermanentDrawerSheet
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import androidx.navigation.NavDestination
 import me.matsumo.fanbox.core.model.Destination
 import me.matsumo.fanbox.core.model.Setting
 
@@ -15,7 +14,7 @@ import me.matsumo.fanbox.core.model.Setting
 fun LibraryDrawer(
     state: DrawerState,
     setting: Setting?,
-    currentDestination: NavDestination?,
+    currentDestination: LibraryDestination,
     onClickLibrary: (LibraryDestination) -> Unit,
     navigateTo: (Destination) -> Unit,
     modifier: Modifier = Modifier,
@@ -39,7 +38,7 @@ fun LibraryDrawer(
 fun LibraryPermanentDrawer(
     state: DrawerState,
     setting: Setting?,
-    currentDestination: NavDestination?,
+    currentDestination: LibraryDestination,
     onClickLibrary: (LibraryDestination) -> Unit,
     navigateTo: (Destination) -> Unit,
     modifier: Modifier = Modifier,

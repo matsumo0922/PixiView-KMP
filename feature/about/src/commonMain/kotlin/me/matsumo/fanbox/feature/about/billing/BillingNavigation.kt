@@ -4,44 +4,48 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.backhandler.BackHandler
-import androidx.navigation.NavGraphBuilder
-import androidx.navigation.toRoute
+import androidx.navigation3.runtime.EntryProviderScope
 import me.matsumo.fanbox.core.logs.category.BillingLog
 import me.matsumo.fanbox.core.logs.logger.send
 import me.matsumo.fanbox.core.model.Destination
-import me.matsumo.fanbox.core.ui.component.sheet.bottomSheet
-import me.matsumo.fanbox.core.ui.customNavTypes
+import me.matsumo.fanbox.core.ui.navigation.BottomSheetSceneStrategy
 
 @OptIn(ExperimentalComposeUiApi::class)
-fun NavGraphBuilder.billingPlusBottomSheet(terminate: () -> Unit) {
-    bottomSheet<Destination.BillingPlusBottomSheet>(
-        typeMap = customNavTypes,
-    ) { entry ->
-        val args = entry.toRoute<Destination.BillingPlusBottomSheet>()
-
+fun EntryProviderScope<Destination>.billingPlusBottomSheetEntry(terminate: () -> Unit) {
+    entry<Destination.BillingPlusBottomSheet>(
+        metadata = BottomSheetSceneStrategy.bottomSheet(),
+    ) { destination ->
         BackHandler {
             terminate()
         }
 
         BillingPlusRoute(
             modifier = Modifier.fillMaxSize(),
-            initialPlanType = args.initialPlanType,
+            initialPlanType = destination.initialPlanType,
+            terminate = terminate,
         )
     }
 }
 
+/**
+ * @param replaceTo この BottomSheet を閉じ、代わりに引数の画面を開く。
+ */
 @OptIn(ExperimentalComposeUiApi::class)
-fun NavGraphBuilder.billingRetentionBottomSheet(terminate: () -> Unit) {
-    bottomSheet<Destination.BillingRetentionBottomSheet>(
-        onDismissed = {
-            BillingLog.retentionPromptDismissed(BILLING_RETENTION_DISMISS_SHEET).send()
-        },
-    ) { entry ->
-        val args = entry.toRoute<Destination.BillingRetentionBottomSheet>()
-
+fun EntryProviderScope<Destination>.billingRetentionBottomSheetEntry(
+    replaceTo: (Destination) -> Unit,
+    terminate: () -> Unit,
+) {
+    entry<Destination.BillingRetentionBottomSheet>(
+        metadata = BottomSheetSceneStrategy.bottomSheet(
+            onUserDismiss = {
+                BillingLog.retentionPromptDismissed(BILLING_RETENTION_DISMISS_SHEET).send()
+            },
+        ),
+    ) { destination ->
         BillingRetentionRoute(
             modifier = Modifier.fillMaxSize(),
-            isAnnualOfferShown = args.isAnnualOfferShown,
+            isAnnualOfferShown = destination.isAnnualOfferShown,
+            replaceTo = replaceTo,
             terminate = terminate,
         )
     }

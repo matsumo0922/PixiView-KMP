@@ -1,10 +1,8 @@
 package me.matsumo.fanbox.feature.creator.download
 
 import androidx.compose.runtime.Stable
-import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import androidx.navigation.toRoute
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
@@ -18,15 +16,14 @@ import me.matsumo.fanbox.core.model.toScreenStateError
 import me.matsumo.fanbox.core.model.updateWhenIdle
 import me.matsumo.fanbox.core.repository.DownloadPostsRepository
 import me.matsumo.fanbox.core.repository.FanboxRepository
-import me.matsumo.fanbox.core.ui.customNavTypes
 
 class CreatorPostsDownloadViewModel(
-    savedStateHandle: SavedStateHandle,
+    destination: Destination.CreatorPostsDownload,
     private val fanboxRepository: FanboxRepository,
     private val downloadPostsRepository: DownloadPostsRepository,
 ) : ViewModel() {
 
-    private val creatorId = savedStateHandle.toRoute<Destination.CreatorPostsDownload>(customNavTypes).creatorId
+    private val creatorId = destination.creatorId
 
     private val _screenState = MutableStateFlow<ScreenState<CreatorPostsDownloadUiState>>(ScreenState.Loading)
     val screenState = _screenState.asStateFlow()

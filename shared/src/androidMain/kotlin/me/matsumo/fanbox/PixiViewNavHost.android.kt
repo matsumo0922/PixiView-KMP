@@ -28,10 +28,13 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.SideEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.rememberUpdatedState
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -40,8 +43,8 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
 import androidx.core.util.Consumer
 import androidx.fragment.app.FragmentActivity
-import androidx.navigation.NavController
 import kotlinx.coroutines.launch
+import me.matsumo.fanbox.core.model.Destination
 import me.matsumo.fanbox.core.model.Flag
 import me.matsumo.fanbox.core.repository.FlagRepository
 import me.matsumo.fanbox.core.resources.Res
@@ -52,17 +55,28 @@ import me.matsumo.fanbox.core.resources.domain_validation_request_never_ask
 import me.matsumo.fanbox.core.resources.domain_validation_request_title
 import me.matsumo.fanbox.core.resources.error_no_available_this_device
 import me.matsumo.fanbox.core.ui.extensition.padding
+import me.matsumo.fanbox.core.ui.navigation.deepLinkDestinationOf
 import me.matsumo.fanbox.core.ui.theme.bold
 import org.jetbrains.compose.resources.stringResource
 import org.koin.compose.koinInject
 
 @Composable
-actual fun HandleDeepLink(navController: NavController) {
+actual fun HandleDeepLink(onDeepLink: (Destination) -> Unit) {
     val activity = LocalActivity.current as FragmentActivity
+    val currentOnDeepLink by rememberUpdatedState(onDeepLink)
+    var isLaunchIntentHandled by rememberSaveable { mutableStateOf(false) }
 
-    DisposableEffect(Unit) {
-        val listener = Consumer<Intent> {
-            navController.handleDeepLink(it)
+    // 起動した intent は、構成変更やプロセスの再生成で作り直されても1回だけ扱う
+    SideEffect {
+        if (isLaunchIntentHandled) return@SideEffect
+
+        isLaunchIntentHandled = true
+        activity.intent.deepLinkDestination()?.let(currentOnDeepLink)
+    }
+
+    DisposableEffect(activity) {
+        val listener = Consumer<Intent> { intent ->
+            intent.deepLinkDestination()?.let(currentOnDeepLink)
         }
 
         activity.addOnNewIntentListener(listener)
@@ -75,6 +89,8 @@ actual fun HandleDeepLink(navController: NavController) {
         RequestDomainVerification(activity)
     }
 }
+
+private fun Intent?.deepLinkDestination(): Destination? = this?.dataString?.let(::deepLinkDestinationOf)
 
 @RequiresApi(Build.VERSION_CODES.S)
 @Composable

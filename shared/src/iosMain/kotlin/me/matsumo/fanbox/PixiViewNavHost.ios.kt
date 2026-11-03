@@ -1,9 +1,9 @@
 package me.matsumo.fanbox
 
 import androidx.compose.runtime.Composable
-import androidx.navigation.NavController
+import me.matsumo.fanbox.core.model.Destination
 
 @Composable
-actual fun HandleDeepLink(navController: NavController) {
+actual fun HandleDeepLink(onDeepLink: (Destination) -> Unit) {
     // do nothing
 }

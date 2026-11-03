@@ -2,29 +2,19 @@ package me.matsumo.fanbox.feature.post.detail
 
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.ui.Modifier
-import androidx.navigation.NavGraphBuilder
-import androidx.navigation.compose.composable
-import androidx.navigation.navDeepLink
-import androidx.navigation.toRoute
+import androidx.navigation3.runtime.EntryProviderScope
 import me.matsumo.fanbox.core.model.Destination
 import me.matsumo.fanbox.core.model.SimpleAlertContents
-import me.matsumo.fanbox.core.ui.customNavTypes
 
-fun NavGraphBuilder.postDetailScreen(
+fun EntryProviderScope<Destination>.postDetailEntry(
     navigateTo: (Destination) -> Unit,
     navigateToCommentDeleteDialog: (SimpleAlertContents, () -> Unit) -> Unit,
     terminate: () -> Unit,
 ) {
-    composable<Destination.PostDetail>(
-        deepLinks = listOf(
-            navDeepLink { uriPattern = "https://www.fanbox.cc/@{creatorId}/posts/{postId}" },
-            navDeepLink { uriPattern = "https://{creatorId}.fanbox.cc/posts/{postId}" },
-        ),
-        typeMap = customNavTypes,
-    ) {
+    entry<Destination.PostDetail> { destination ->
         PostDetailRoute(
             modifier = Modifier.fillMaxSize(),
-            postId = it.toRoute<Destination.PostDetail>().postId,
+            destination = destination,
             navigateTo = navigateTo,
             navigateToCommentDeleteDialog = navigateToCommentDeleteDialog,
             terminate = terminate,
