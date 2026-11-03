@@ -38,7 +38,7 @@ class PixiViewNavigator(val backStack: NavBackStack<DestinationKey>) {
 
         val removedKey = backStack.removeAt(backStack.lastIndex)
 
-        pendingResultCallbacks.remove(removedKey.id)
+        pendingResultCallbacks -= removedKey.id
     }
 
     fun <T> navigateForResult(destination: Destination, onResult: (T) -> Unit) {

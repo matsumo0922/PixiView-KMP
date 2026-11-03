@@ -28,6 +28,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.SideEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -66,8 +67,8 @@ actual fun HandleDeepLink(onDeepLink: (Destination) -> Unit) {
     var isLaunchIntentHandled by rememberSaveable { mutableStateOf(false) }
 
     // 起動した intent は、構成変更やプロセスの再生成で作り直されても1回だけ扱う
-    LaunchedEffect(Unit) {
-        if (isLaunchIntentHandled) return@LaunchedEffect
+    SideEffect {
+        if (isLaunchIntentHandled) return@SideEffect
 
         isLaunchIntentHandled = true
         activity.intent.deepLinkDestination()?.let(currentOnDeepLink)
