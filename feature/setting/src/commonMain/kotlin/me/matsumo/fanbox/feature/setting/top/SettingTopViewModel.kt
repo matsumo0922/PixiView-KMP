@@ -60,6 +60,10 @@ class SettingTopViewModel(
         fanboxRepository.logout()
     }
 
+    suspend fun reloadGuest(): Result<Unit> = suspendRunCatching {
+        fanboxRepository.reloadGuest()
+    }
+
     fun setAppLock(isAppLock: Boolean) {
         viewModelScope.launch {
             settingRepository.setUseAppLock(isAppLock)

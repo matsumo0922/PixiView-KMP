@@ -10,6 +10,7 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
+import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.WhileSubscribed
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.combine
@@ -25,6 +26,7 @@ import me.matsumo.fanbox.core.logs.category.BillingLog
 import me.matsumo.fanbox.core.logs.logger.LogConfigurator
 import me.matsumo.fanbox.core.logs.logger.send
 import me.matsumo.fanbox.core.model.DownloadState
+import me.matsumo.fanbox.core.model.GuestSource
 import me.matsumo.fanbox.core.model.LoginState
 import me.matsumo.fanbox.core.model.ScreenState
 import me.matsumo.fanbox.core.model.Setting
@@ -100,6 +102,9 @@ class PixiViewViewModel(
         started = SharingStarted.WhileSubscribed(stopTimeout = 5.seconds),
         initialValue = ScreenState.Loading,
     )
+
+    /** 起動中の読み込み画面で、guest のロードを待っていることを示すために使う。 */
+    val guestSource: StateFlow<GuestSource> = fanboxRepository.guestSource
 
     init {
         launchLogDataStore.launch()

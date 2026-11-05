@@ -9,17 +9,24 @@ import io.github.aakira.napier.Napier
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.NonCancellable
 import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.distinctUntilChanged
+import kotlinx.coroutines.flow.filter
 import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.flow.flatMapLatest
+import kotlinx.coroutines.flow.getAndUpdate
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.flow.shareIn
+import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import me.matsumo.fanbox.core.common.PixiViewConfig
 import me.matsumo.fanbox.core.common.util.recordException
@@ -80,10 +87,12 @@ import me.matsumo.fanbox.core.repository.paging.HomePostsPagingSource
 import me.matsumo.fanbox.core.repository.paging.SearchCreatorsPagingSource
 import me.matsumo.fanbox.core.repository.paging.SearchPostsPagingSource
 import me.matsumo.fanbox.core.repository.paging.SupportedPostsPagingSource
+import me.matsumo.fankt.fanbox.Fanbox
 import me.matsumo.fankt.fanbox.FanboxCookieRecord
 import me.matsumo.fankt.fanbox.FanboxException
 import me.matsumo.fankt.fanbox.FanboxListItemSchemaMismatch
 import me.matsumo.fankt.fanbox.FanboxLogLevel
+import me.matsumo.fankt.fanbox.InMemoryFanboxTokenStore
 import org.koin.core.component.KoinComponent
 import kotlin.random.Random
 
@@ -99,6 +108,13 @@ interface FanboxRepository {
 
     /** FANBOX の request と response を処理している guest の出所。 */
     val guestSource: StateFlow<GuestSource>
+
+    /**
+     * 配信中の guest を、CDN のキャッシュを通さずに読み込み直す。
+     *
+     * 配信先はその時点の developer mode で選び直す。読み込み直す前の guest で実行中の request は失敗しうる。
+     */
+    suspend fun reloadGuest()
 
     suspend fun logout()
     suspend fun clearSession()
@@ -243,6 +259,7 @@ interface FanboxRepository {
 }
 
 // 別々のデータ保存先と認証・通信設定を DI で受け取り、セッションを共有する。
+@OptIn(ExperimentalCoroutinesApi::class)
 @Suppress("LongParameterList")
 class FanboxRepositoryImpl(
     private val bookmarkDataStore: BookmarkDataStore,
@@ -251,24 +268,21 @@ class FanboxRepositoryImpl(
     private val oldCookieDataStore: OldCookieDataStore,
     private val ioDispatcher: CoroutineDispatcher,
     private val cookieStorage: MigratingFanboxCookieStorage,
-    guestCacheFactory: GuestCacheFactory,
-    pixiViewConfig: PixiViewConfig,
+    private val guestCacheFactory: GuestCacheFactory,
+    private val pixiViewConfig: PixiViewConfig,
 ) : FanboxRepository,
     KoinComponent {
 
     private val scope = CoroutineScope(SupervisorJob() + ioDispatcher)
     private val guestEventReporter = GuestEventReporter(scope)
 
-    // fankt は NONE 以外の logLevel でスキーマ不一致ごとに応答本文の断片を出力する。断片には
-    // FANBOX と利用者のデータが残るため、リリースビルドでは NONE にして出力経路ごと閉じる。
-    private val fanbox = createFanbox(
-        logLevel = if (pixiViewConfig.isDebug) FanboxLogLevel.INFO else FanboxLogLevel.NONE,
-        settingDataStore = userDataStore,
-        ioDispatcher = ioDispatcher,
-        cookieStorage = cookieStorage,
-        guestCacheFactory = guestCacheFactory,
-        guestEventListener = guestEventReporter::report,
-    )
+    // guest を読み込み直すときに Fanbox を作り直しても CSRF token が失われないよう、生成した Fanbox のあいだで共有する。
+    private val tokenStore = InMemoryFanboxTokenStore()
+
+    // guest は Fanbox の生成時にロードされるため、読み込み直すときは Fanbox ごと差し替える。
+    private val fanboxState = MutableStateFlow(newFanbox(loadGuestChannel(userDataStore)))
+    private val fanbox: Fanbox
+        get() = fanboxState.value.fanbox
 
     private val creatorCache = mutableMapOf<CreatorId, CreatorDetail>()
     private val postCache = mutableMapOf<PostId, PostDetail>()
@@ -282,9 +296,10 @@ class FanboxRepositoryImpl(
     private val _logoutTrigger = Channel<Long>(Channel.CONFLATED)
     private val _sessionInvalidatedTrigger = Channel<Long>(Channel.CONFLATED)
 
-    override val sessionId: Flow<String?> =
-        fanbox.cookies.map { list -> list.find { it.name == FANBOX_SESSION_ID_NAME }?.value }
-    override val csrfToken: Flow<String?> = fanbox.csrfToken
+    override val sessionId: Flow<String?> = fanboxState
+        .flatMapLatest { it.fanbox.cookies }
+        .map { list -> list.find { it.name == FANBOX_SESSION_ID_NAME }?.value }
+    override val csrfToken: Flow<String?> = fanboxState.flatMapLatest { it.fanbox.csrfToken }
     override val logoutTrigger: Flow<Long> = _logoutTrigger.receiveAsFlow()
     override val sessionInvalidatedTrigger: Flow<Long> = _sessionInvalidatedTrigger.receiveAsFlow()
     override val guestSource: StateFlow<GuestSource> = guestEventReporter.source
@@ -296,6 +311,44 @@ class FanboxRepositoryImpl(
     override val blockedCreators: SharedFlow<Set<CreatorId>> = blockDataStore.data
         .map { ids -> ids.map { it.toCreatorId() }.toSet() }
         .shareIn(scope, SharingStarted.Eagerly, replay = 1)
+
+    init {
+        // 配信先は Fanbox の生成時に決まるため、developer mode を切り替えたら選び直した配信先から読み込み直す
+        scope.launch {
+            userDataStore.storedSetting
+                .map { guestChannel(it.isDeveloperMode) }
+                .distinctUntilChanged()
+                .filter { it != fanboxState.value.channel }
+                .collect { replaceFanbox(it) }
+        }
+    }
+
+    override suspend fun reloadGuest() = replaceFanbox(loadGuestChannel(userDataStore))
+
+    private suspend fun replaceFanbox(channel: GuestChannel) = withContext(ioDispatcher) {
+        guestEventReporter.markLoading()
+
+        val reloaded = newFanbox(channel = channel, bypassesCdnCache = true)
+        val previous = fanboxState.getAndUpdate { reloaded }
+
+        previous.fanbox.close()
+    }
+
+    // fankt は NONE 以外の logLevel でスキーマ不一致ごとに応答本文の断片を出力する。断片には
+    // FANBOX と利用者のデータが残るため、リリースビルドでは NONE にして出力経路ごと閉じる。
+    private fun newFanbox(channel: GuestChannel, bypassesCdnCache: Boolean = false) = ChanneledFanbox(
+        channel = channel,
+        fanbox = createFanbox(
+            channel = channel,
+            logLevel = if (pixiViewConfig.isDebug) FanboxLogLevel.INFO else FanboxLogLevel.NONE,
+            ioDispatcher = ioDispatcher,
+            cookieStorage = cookieStorage,
+            tokenStore = tokenStore,
+            guestCacheFactory = guestCacheFactory,
+            guestEventListener = guestEventReporter::report,
+            bypassesCdnCache = bypassesCdnCache,
+        ),
+    )
 
     /**
      * ログアウトする。
@@ -712,3 +765,6 @@ class FanboxRepositoryImpl(
 
 /** FANBOX のセッション Cookie の名前。 */
 private const val FANBOX_SESSION_ID_NAME = "FANBOXSESSID"
+
+/** [fanbox] と、その生成に使った guest の配信先。 */
+private class ChanneledFanbox(val channel: GuestChannel, val fanbox: Fanbox)

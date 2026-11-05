@@ -8,14 +8,14 @@ import me.matsumo.fanbox.core.model.SimpleAlertContents
 
 fun EntryProviderScope<Destination>.settingTopEntry(
     navigateTo: (Destination) -> Unit,
-    navigateToLogoutDialog: (SimpleAlertContents, () -> Unit) -> Unit,
+    navigateToSimpleAlertDialog: (SimpleAlertContents, () -> Unit) -> Unit,
     terminate: () -> Unit,
 ) {
     entry<Destination.SettingTop> {
         SettingTopRoute(
             modifier = Modifier.fillMaxSize(),
             navigateTo = navigateTo,
-            navigateToLogoutDialog = navigateToLogoutDialog,
+            navigateToSimpleAlertDialog = navigateToSimpleAlertDialog,
             terminate = terminate,
         )
     }

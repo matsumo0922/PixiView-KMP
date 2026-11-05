@@ -260,6 +260,11 @@
     <string name="setting_top_information_id">CAIOS ID</string>
     <string name="setting_top_information_version">アプリバージョン</string>
     <string name="setting_top_information_guest">Guest</string>
+    <string name="setting_top_information_guest_reload_title">guest の再読み込み</string>
+    <string name="setting_top_information_guest_reload_message">配信中の最新の guest を読み込み直します。</string>
+    <string name="setting_top_information_guest_reload">再読み込み</string>
+    <string name="setting_top_information_guest_reload_failed">guest を再読み込みできませんでした</string>
+    <string name="guest_updating">guest を更新しています...</string>
     <string name="setting_top_information_csrf_token">CSRFトークン</string>
     <string name="setting_top_information_fanbox_session_id">FANBOXSESSID</string>
     <string name="setting_top_information_team_of_service">利用規約</string>

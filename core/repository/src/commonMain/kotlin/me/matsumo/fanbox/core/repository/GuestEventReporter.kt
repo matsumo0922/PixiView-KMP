@@ -30,6 +30,11 @@ internal class GuestEventReporter(private val scope: CoroutineScope) {
 
     val source: StateFlow<GuestSource> = _source.asStateFlow()
 
+    /** guest を読み込み直す前に呼び、ロードが終わるまで出所を [GuestSource.Loading] にする。 */
+    fun markLoading() {
+        _source.value = GuestSource.Loading
+    }
+
     fun report(event: FanboxGuestEvent) {
         _source.update { it.updatedBy(event) }
 

@@ -3,6 +3,9 @@ package me.matsumo.fanbox.feature.setting.top.items
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalClipboardManager
 import androidx.compose.ui.text.AnnotatedString
@@ -19,6 +22,9 @@ import me.matsumo.fanbox.core.resources.setting_top_information_id
 import me.matsumo.fanbox.core.resources.setting_top_information_version
 import me.matsumo.fanbox.core.ui.component.SettingTextItem
 import org.jetbrains.compose.resources.stringResource
+import kotlin.time.Duration.Companion.milliseconds
+import kotlin.time.TimeMark
+import kotlin.time.TimeSource
 
 @Composable
 internal fun SettingTopInformationSection(
@@ -27,9 +33,11 @@ internal fun SettingTopInformationSection(
     fanboxSessionId: String,
     guestSource: GuestSource,
     config: PixiViewConfig,
+    onTripleClickGuest: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
     val clipboard = LocalClipboardManager.current
+    val onClickGuest = rememberTripleClickHandler(onTripleClickGuest)
 
     Column(modifier) {
         SettingTopTitleItem(
@@ -74,10 +82,41 @@ internal fun SettingTopInformationSection(
             modifier = Modifier.fillMaxWidth(),
             title = stringResource(Res.string.setting_top_information_guest),
             description = guestSource.label(),
-            onClick = { /* do nothing */ },
+            onClick = onClickGuest,
+            onLongClick = { guestSource.version()?.let { clipboard.setText(AnnotatedString(it)) } },
         )
     }
 }
+
+// 隠し操作のため、間隔を空けずに 3 回続けて押したときだけ反応する。
+@Composable
+private fun rememberTripleClickHandler(onTripleClick: () -> Unit): () -> Unit {
+    val currentOnTripleClick by rememberUpdatedState(onTripleClick)
+    val counter = remember { TripleClickCounter() }
+
+    return { if (counter.click()) currentOnTripleClick() }
+}
+
+/** 続けて押された回数を数え、3 回目で true を返す。押す間隔が空くと数え直す。 */
+private class TripleClickCounter {
+    private var count = 0
+    private var lastClick: TimeMark? = null
+
+    fun click(): Boolean {
+        val isConsecutive = lastClick?.let { it.elapsedNow() < 500.milliseconds } ?: false
+
+        count = if (isConsecutive) count + 1 else 1
+        lastClick = TimeSource.Monotonic.markNow()
+
+        if (count < 3) return false
+
+        count = 0
+
+        return true
+    }
+}
+
+private fun GuestSource.version(): String? = (this as? GuestSource.Delivered)?.version
 
 // ローカルでビルドした bundle は commit を持たない。
 private fun GuestSource.label(): String = when (this) {

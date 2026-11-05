@@ -236,6 +236,11 @@
     <string name="setting_top_information_id">CAIOS ID</string>
     <string name="setting_top_information_version">Версия приложения</string>
     <string name="setting_top_information_guest">Guest</string>
+    <string name="setting_top_information_guest_reload_title">Перезагрузка guest</string>
+    <string name="setting_top_information_guest_reload_message">Заново загружает последнюю опубликованную версию guest.</string>
+    <string name="setting_top_information_guest_reload">Перезагрузить</string>
+    <string name="setting_top_information_guest_reload_failed">Не удалось перезагрузить guest</string>
+    <string name="guest_updating">Обновление guest...</string>
     <string name="setting_top_information_csrf_token">CSRF-токен</string>
     <string name="setting_top_information_fanbox_session_id">Идентификатор сессии FANBOX</string>
     <string name="setting_top_information_team_of_service">Условия использования</string>

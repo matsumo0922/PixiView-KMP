@@ -16,7 +16,9 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.window.DialogProperties
 import com.mohamedrejeb.calf.ui.progress.AdaptiveCircularProgressIndicator
@@ -27,14 +29,27 @@ import org.jetbrains.compose.resources.stringResource
 @Composable
 fun LoadingView(
     modifier: Modifier = Modifier,
+    message: String? = null,
+    messageColor: Color = MaterialTheme.colorScheme.onSurfaceVariant,
 ) {
     Box(modifier) {
-        AdaptiveCircularProgressIndicator(
-            modifier = Modifier
-                .padding(24.dp)
-                .align(Alignment.Center),
-            color = MaterialTheme.colorScheme.primary,
-        )
+        Column(
+            modifier = Modifier.align(Alignment.Center),
+            horizontalAlignment = Alignment.CenterHorizontally,
+        ) {
+            AdaptiveCircularProgressIndicator(
+                modifier = Modifier.padding(24.dp),
+                color = MaterialTheme.colorScheme.primary,
+            )
+
+            if (message != null) {
+                Text(
+                    text = message,
+                    color = messageColor,
+                    fontSize = 14.sp,
+                )
+            }
+        }
     }
 }
 
