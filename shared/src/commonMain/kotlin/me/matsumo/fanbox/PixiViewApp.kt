@@ -27,9 +27,12 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import me.matsumo.fanbox.components.PixiViewScreen
 import me.matsumo.fanbox.core.common.PixiViewConfig
+import me.matsumo.fanbox.core.model.GuestSource
 import me.matsumo.fanbox.core.model.ScreenState
 import me.matsumo.fanbox.core.model.Setting
 import me.matsumo.fanbox.core.model.ThemeConfig
+import me.matsumo.fanbox.core.resources.Res
+import me.matsumo.fanbox.core.resources.guest_updating
 import me.matsumo.fanbox.core.ui.AsyncLoadContents
 import me.matsumo.fanbox.core.ui.ads.InterstitialAdState
 import me.matsumo.fanbox.core.ui.ads.rememberInterstitialAdState
@@ -45,6 +48,7 @@ import me.matsumo.fanbox.core.ui.theme.LightDefaultColorScheme
 import me.matsumo.fanbox.core.ui.theme.PixiViewTheme
 import me.matsumo.fanbox.core.ui.view.LoadingView
 import me.matsumo.fanbox.core.ui.view.NativeView
+import org.jetbrains.compose.resources.stringResource
 import org.koin.compose.koinInject
 import org.koin.compose.viewmodel.koinViewModel
 import kotlin.time.Duration.Companion.milliseconds
@@ -61,6 +65,7 @@ fun PixiViewApp(
 ) {
     val scope = rememberCoroutineScope()
     val screenState by viewModel.screenState.collectAsStateWithLifecycle()
+    val guestSource by viewModel.guestSource.collectAsStateWithLifecycle()
     val lifecycleOwner = LocalLifecycleOwner.current
     val shouldUseDarkTheme = shouldUseDarkTheme(screenState)
 
@@ -80,6 +85,8 @@ fun PixiViewApp(
             modifier = modifier.fillMaxSize(),
             screenState = screenState,
             containerColor = if (shouldUseDarkTheme) DarkDefaultColorScheme.surface else LightDefaultColorScheme.surface,
+            loadingMessage = if (guestSource == GuestSource.Loading) stringResource(Res.string.guest_updating) else null,
+            loadingMessageColor = if (shouldUseDarkTheme) DarkDefaultColorScheme.onSurfaceVariant else LightDefaultColorScheme.onSurfaceVariant,
         ) { uiState ->
             val shouldLoadInterstitialAd = uiState.setting.shouldLoadInterstitialAd()
             val interstitialAdState = rememberInterstitialAdState(

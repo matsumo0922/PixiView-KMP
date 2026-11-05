@@ -12,6 +12,7 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.LargeTopAppBar
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.material3.rememberTopAppBarState
@@ -36,6 +37,7 @@ import me.matsumo.fanbox.core.model.fanbox.MetaData
 import me.matsumo.fanbox.core.resources.Res
 import me.matsumo.fanbox.core.resources.billing_plus_toast_require_plus
 import me.matsumo.fanbox.core.resources.setting_title
+import me.matsumo.fanbox.core.resources.setting_top_information_guest_reload_failed
 import me.matsumo.fanbox.core.resources.setting_top_others_logout_dialog_failed
 import me.matsumo.fanbox.core.resources.setting_top_others_logout_dialog_success
 import me.matsumo.fanbox.core.ui.AsyncLoadContents
@@ -57,7 +59,7 @@ import org.koin.compose.viewmodel.koinViewModel
 @Composable
 internal fun SettingTopRoute(
     navigateTo: (Destination) -> Unit,
-    navigateToLogoutDialog: (SimpleAlertContents, () -> Unit) -> Unit,
+    navigateToSimpleAlertDialog: (SimpleAlertContents, () -> Unit) -> Unit,
     terminate: () -> Unit,
     modifier: Modifier = Modifier,
     viewModel: SettingTopViewModel = koinViewModel(),
@@ -138,7 +140,7 @@ internal fun SettingTopRoute(
             onClickAutoImagePreview = { requirePlus(it, viewModel::setAutoImagePreview, "isAutoImagePreview") },
             onClickReshowReveal = viewModel::setReshowReveal,
             onClickLogout = {
-                navigateToLogoutDialog(SimpleAlertContents.Logout) {
+                navigateToSimpleAlertDialog(SimpleAlertContents.Logout) {
                     scope.launch {
                         viewModel.logout().fold(
                             onSuccess = {
@@ -157,6 +159,11 @@ internal fun SettingTopRoute(
                     }
                 }
             },
+            onTripleClickGuest = {
+                navigateToSimpleAlertDialog(SimpleAlertContents.GuestReload) {
+                    scope.launch { reloadGuest(viewModel, toastExtension, snackbarHostState) }
+                }
+            },
             onClickDeveloperMode = { isEnable ->
                 if (isEnable) {
                     navigateTo(Destination.SettingDeveloperDialog)
@@ -169,6 +176,16 @@ internal fun SettingTopRoute(
     }
 
     BindBiometryAuthenticatorEffect(biometryAuthenticator)
+}
+
+private suspend fun reloadGuest(
+    viewModel: SettingTopViewModel,
+    toastExtension: ToastExtension,
+    snackbarHostState: SnackbarHostState,
+) {
+    viewModel.reloadGuest().onFailure {
+        toastExtension.show(snackbarHostState, Res.string.setting_top_information_guest_reload_failed)
+    }
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -198,6 +215,7 @@ private fun SettingTopScreen(
     onClickReshowReveal: () -> Unit,
     onClickLogout: () -> Unit,
     onClickOpenSourceLicense: () -> Unit,
+    onTripleClickGuest: () -> Unit,
     onClickDeveloperMode: (Boolean) -> Unit,
     onTerminate: () -> Unit,
     modifier: Modifier = Modifier,
@@ -282,6 +300,7 @@ private fun SettingTopScreen(
                     fanboxMetaData = metaData,
                     fanboxSessionId = fanboxSessionId,
                     guestSource = guestSource,
+                    onTripleClickGuest = onTripleClickGuest,
                 )
             }
 

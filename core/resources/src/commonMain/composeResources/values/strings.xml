@@ -265,6 +265,11 @@
     <string name="setting_top_information_id">CAIOS ID</string>
     <string name="setting_top_information_version">App version</string>
     <string name="setting_top_information_guest">Guest</string>
+    <string name="setting_top_information_guest_reload_title">Reload guest</string>
+    <string name="setting_top_information_guest_reload_message">Loads the latest delivered guest again.</string>
+    <string name="setting_top_information_guest_reload">Reload</string>
+    <string name="setting_top_information_guest_reload_failed">Could not reload the guest</string>
+    <string name="guest_updating">Updating guest...</string>
     <string name="setting_top_information_csrf_token">CSRF token</string>
     <string name="setting_top_information_fanbox_session_id">FANBOXSESSID</string>
     <string name="setting_top_information_team_of_service">Terms of Service</string>

@@ -10,6 +10,8 @@ import me.matsumo.fankt.fanbox.FanboxCookieStorage
 import me.matsumo.fankt.fanbox.FanboxGuestCache
 import me.matsumo.fankt.fanbox.FanboxGuestEvent
 import me.matsumo.fankt.fanbox.FanboxLogLevel
+import me.matsumo.fankt.fanbox.FanboxTokenStore
+import kotlin.time.Clock
 import kotlin.time.Duration.Companion.milliseconds
 
 /**
@@ -99,32 +101,45 @@ internal val GUEST_TRUSTED_KEYS: Map<String, String> = mapOf(
     "fanboxGuestRecovery" to "5279962d35d36dcbbeea47a25612aa5708ebfe0967cbcc18314ef919d55dcb5e",
 )
 
+/** 保存済みの developer mode から、参照する配信先を選ぶ。 */
+internal fun loadGuestChannel(settingDataStore: SettingDataStore): GuestChannel = guestChannel(loadDeveloperMode { settingDataStore.loadStoredSetting().isDeveloperMode })
+
 /**
- * 配信先と公開鍵を渡して [Fanbox] を生成する。
+ * [channel] の配信先と公開鍵を渡して [Fanbox] を生成する。
  *
  * FANBOX の request の組み立てと response の解析は、配信された guest で実行される。FANBOX の仕様変更への
  * 追従は、アプリの更新を経ずに配信で届く。配信先へ到達できないときは、署名を検証済みのキャッシュから
  * ロードする。キャッシュも無いときは、fankt に組み込まれたリリース時点の guest で処理する。
+ *
+ * [bypassesCdnCache] を有効にすると、manifest の URL に時刻のクエリを付けて CDN のキャッシュを通さずに取得する。
+ * 配信先の GitHub Pages は manifest を最大 10 分キャッシュするため、配信の直後に読み直しても古い版が返ることがある。
+ * module の URL は manifest からの相対参照として解決され、クエリを引き継がないため影響しない。
  */
 @Suppress("LongParameterList")
 internal fun createFanbox(
+    channel: GuestChannel,
     logLevel: FanboxLogLevel,
-    settingDataStore: SettingDataStore,
     ioDispatcher: CoroutineDispatcher,
     cookieStorage: FanboxCookieStorage,
+    tokenStore: FanboxTokenStore,
     guestCacheFactory: GuestCacheFactory,
     guestEventListener: (FanboxGuestEvent) -> Unit,
+    bypassesCdnCache: Boolean = false,
 ): Fanbox {
-    val isDeveloperMode = loadDeveloperMode { settingDataStore.loadStoredSetting().isDeveloperMode }
-    val channel = guestChannel(isDeveloperMode)
+    val manifestUrl = if (bypassesCdnCache) {
+        "${channel.manifestUrl}?t=${Clock.System.now().toEpochMilliseconds()}"
+    } else {
+        channel.manifestUrl
+    }
 
     return Fanbox(
-        guestManifestUrl = channel.manifestUrl,
+        guestManifestUrl = manifestUrl,
         guestTrustedKeys = GUEST_TRUSTED_KEYS.mapValues { (_, key) -> key.hexToByteArray() },
         guestCache = guestCacheFactory.create(channel.cacheDirectoryName),
         guestEventListener = guestEventListener,
         logLevel = logLevel,
         ioDispatcher = ioDispatcher,
         cookieStorage = cookieStorage,
+        tokenStore = tokenStore,
     )
 }

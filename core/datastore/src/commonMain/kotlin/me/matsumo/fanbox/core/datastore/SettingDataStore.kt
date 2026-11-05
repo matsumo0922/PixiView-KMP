@@ -6,6 +6,7 @@ import androidx.datastore.preferences.core.longPreferencesKey
 import androidx.datastore.preferences.core.stringPreferencesKey
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.WhileSubscribed
 import kotlinx.coroutines.flow.first
@@ -32,9 +33,12 @@ class SettingDataStore(
 ) {
     private val settingPreference = preferenceHelper.create(PreferencesName.APP_SETTINGS)
 
-    val setting = settingPreference.data.map {
+    /** 保存済みの [Setting] を、保存されるたびに流す。[setting] と違い、読み込み前の [Setting.default] を流さない。 */
+    val storedSetting: Flow<Setting> = settingPreference.data.map {
         it.deserialize(formatter, Setting.serializer(), Setting.default())
-    }.stateIn(
+    }
+
+    val setting = storedSetting.stateIn(
         scope = CoroutineScope(ioDispatcher),
         started = SharingStarted.WhileSubscribed(stopTimeout = 1.seconds),
         initialValue = Setting.default(),
@@ -47,7 +51,7 @@ class SettingDataStore(
      * [Setting.default] が返る。生成直後に同期的な判断へ使う値はこちらから読む。
      */
     suspend fun loadStoredSetting(): Setting = withContext(ioDispatcher) {
-        settingPreference.data.first().deserialize(formatter, Setting.serializer(), Setting.default())
+        storedSetting.first()
     }
 
     suspend fun setPixiViewId(id: String) = withContext(ioDispatcher) {

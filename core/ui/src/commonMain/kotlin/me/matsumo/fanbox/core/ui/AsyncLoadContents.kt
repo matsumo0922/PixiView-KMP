@@ -33,6 +33,8 @@ fun <T> AsyncLoadContents(
     cornerShape: RoundedCornerShape = RoundedCornerShape(0.dp),
     retryAction: (() -> Unit)? = null,
     terminate: (() -> Unit)? = null,
+    loadingMessage: String? = null,
+    loadingMessageColor: Color = MaterialTheme.colorScheme.onSurfaceVariant,
     content: @Composable (T) -> Unit,
 ) {
     Scaffold(
@@ -64,6 +66,8 @@ fun <T> AsyncLoadContents(
                         modifier = otherModifier
                             .fillMaxWidth()
                             .background(Color.Black.copy(alpha = 0.2f)),
+                        message = loadingMessage,
+                        messageColor = loadingMessageColor,
                     )
                 }
 

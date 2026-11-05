@@ -228,7 +228,7 @@ private fun EntryProviderScope<Destination>.applySettingsDestinations(
 
     settingTopEntry(
         navigateTo = navigator::navigate,
-        navigateToLogoutDialog = { contents, onResult ->
+        navigateToSimpleAlertDialog = { contents, onResult ->
             navigator.navigateToSimpleAlertDialog(contents, onResult)
         },
         terminate = terminateSettingTop,

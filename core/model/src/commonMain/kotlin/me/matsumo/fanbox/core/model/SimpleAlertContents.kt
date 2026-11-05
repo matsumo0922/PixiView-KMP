@@ -20,6 +20,9 @@ import me.matsumo.fanbox.core.resources.creator_unblock_dialog_message
 import me.matsumo.fanbox.core.resources.creator_unblock_dialog_title
 import me.matsumo.fanbox.core.resources.post_detail_comment_delete_message
 import me.matsumo.fanbox.core.resources.post_detail_comment_delete_title
+import me.matsumo.fanbox.core.resources.setting_top_information_guest_reload
+import me.matsumo.fanbox.core.resources.setting_top_information_guest_reload_message
+import me.matsumo.fanbox.core.resources.setting_top_information_guest_reload_title
 import me.matsumo.fanbox.core.resources.setting_top_others_logout
 import me.matsumo.fanbox.core.resources.setting_top_others_logout_dialog_description
 import me.matsumo.fanbox.core.resources.welcome_login_debug_dialog_message
@@ -86,6 +89,12 @@ enum class SimpleAlertContents(
         titleRes = Res.string.creator_unblock_dialog_title,
         descriptionRes = Res.string.creator_unblock_dialog_message,
         positiveTextRes = Res.string.common_unblock,
+        negativeTextRes = Res.string.common_cancel,
+    ),
+    GuestReload(
+        titleRes = Res.string.setting_top_information_guest_reload_title,
+        descriptionRes = Res.string.setting_top_information_guest_reload_message,
+        positiveTextRes = Res.string.setting_top_information_guest_reload,
         negativeTextRes = Res.string.common_cancel,
     ),
 }

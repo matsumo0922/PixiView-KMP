@@ -233,6 +233,11 @@
     <string name="setting_top_information_id">CAIOS ID</string>
     <string name="setting_top_information_version">应用版本</string>
     <string name="setting_top_information_guest">Guest</string>
+    <string name="setting_top_information_guest_reload_title">重新加载 guest</string>
+    <string name="setting_top_information_guest_reload_message">重新加载当前发布的最新 guest。</string>
+    <string name="setting_top_information_guest_reload">重新加载</string>
+    <string name="setting_top_information_guest_reload_failed">无法重新加载 guest</string>
+    <string name="guest_updating">正在更新 guest...</string>
     <string name="setting_top_information_csrf_token">CSRF token</string>
     <string name="setting_top_information_fanbox_session_id">FANBOXSESSID</string>
     <string name="setting_top_information_team_of_service">服务条款</string>
