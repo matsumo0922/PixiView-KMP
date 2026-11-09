@@ -123,7 +123,7 @@ class PostByCreatorSearchViewModel(
     }
 
     suspend fun follow(creatorUserId: UserId): Result<Unit> = suspendRunCatching {
-        fanboxRepository.unfollowCreator(creatorUserId)
+        fanboxRepository.followCreator(creatorUserId)
     }
 
     suspend fun unfollow(creatorUserId: UserId): Result<Unit> = suspendRunCatching {
