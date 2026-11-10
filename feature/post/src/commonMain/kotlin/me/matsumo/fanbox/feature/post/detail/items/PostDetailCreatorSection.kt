@@ -13,10 +13,6 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -43,6 +39,7 @@ import org.jetbrains.compose.resources.stringResource
 internal fun PostDetailCreatorSection(
     postDetail: PostDetail,
     creatorDetail: CreatorDetail,
+    isFollowed: Boolean,
     onClickCreator: (CreatorId) -> Unit,
     onClickFollow: (UserId) -> Unit,
     onClickUnfollow: (UserId) -> Unit,
@@ -73,6 +70,7 @@ internal fun PostDetailCreatorSection(
             ),
             postDetail = postDetail,
             creatorDetail = creatorDetail,
+            isFollowed = isFollowed,
             onClickFollow = onClickFollow,
             onClickUnfollow = onClickUnfollow,
             onClickSupporting = onClickSupporting,
@@ -84,13 +82,12 @@ internal fun PostDetailCreatorSection(
 private fun CreatorItem(
     postDetail: PostDetail,
     creatorDetail: CreatorDetail,
+    isFollowed: Boolean,
     onClickFollow: (UserId) -> Unit,
     onClickUnfollow: (UserId) -> Unit,
     onClickSupporting: (String) -> Unit,
     modifier: Modifier = Modifier,
 ) {
-    var isFollowed by remember(creatorDetail.isFollowed) { mutableStateOf(creatorDetail.isFollowed) }
-
     Row(
         modifier = modifier,
         verticalAlignment = Alignment.CenterVertically,
@@ -130,12 +127,9 @@ private fun CreatorItem(
                 }
             }
 
-            creatorDetail.isFollowed -> {
+            isFollowed -> {
                 OutlinedButton(
-                    onClick = {
-                        isFollowed = false
-                        creatorDetail.user?.userId?.let(onClickUnfollow)
-                    },
+                    onClick = { creatorDetail.user?.userId?.let(onClickUnfollow) },
                 ) {
                     Text(stringResource(Res.string.common_unfollow))
                 }
@@ -143,10 +137,7 @@ private fun CreatorItem(
 
             else -> {
                 Button(
-                    onClick = {
-                        isFollowed = true
-                        creatorDetail.user?.userId?.let(onClickFollow)
-                    },
+                    onClick = { creatorDetail.user?.userId?.let(onClickFollow) },
                 ) {
                     Text(stringResource(Res.string.common_follow))
                 }

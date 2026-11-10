@@ -19,17 +19,13 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.rememberCoroutineScope
-import androidx.compose.runtime.saveable.rememberSaveable
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import kotlinx.collections.immutable.ImmutableList
+import kotlinx.collections.immutable.ImmutableMap
 import kotlinx.collections.immutable.toImmutableList
-import kotlinx.coroutines.launch
 import me.matsumo.fanbox.core.model.Destination
 import me.matsumo.fanbox.core.model.fanbox.CreatorDetail
 import me.matsumo.fanbox.core.model.fanbox.CreatorId
@@ -59,6 +55,7 @@ internal fun FollowingCreatorsRoute(
     navigatorExtension: NavigatorExtension = koinInject(),
 ) {
     val screenState by viewModel.screenState.collectAsStateWithLifecycle()
+    val followStates by viewModel.followStates.collectAsStateWithLifecycle()
 
     AsyncLoadContents(
         modifier = modifier,
@@ -69,6 +66,7 @@ internal fun FollowingCreatorsRoute(
         FollowingCreatorsScreen(
             modifier = Modifier.fillMaxSize(),
             followingCreators = uiState.followingCreators.toImmutableList(),
+            followStates = followStates,
             onClickCreator = { navigateTo(Destination.CreatorTop(it, true)) },
             onClickFollow = viewModel::follow,
             onClickUnfollow = viewModel::unfollow,
@@ -82,15 +80,15 @@ internal fun FollowingCreatorsRoute(
 @Composable
 private fun FollowingCreatorsScreen(
     followingCreators: ImmutableList<CreatorDetail>,
+    followStates: ImmutableMap<UserId, Boolean>,
     onClickCreator: (CreatorId) -> Unit,
-    onClickFollow: suspend (UserId) -> Result<Unit>,
-    onClickUnfollow: suspend (UserId) -> Result<Unit>,
+    onClickFollow: (UserId) -> Unit,
+    onClickUnfollow: (UserId) -> Unit,
     onClickSupporting: (String) -> Unit,
     terminate: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
     val state = rememberLazyGridState()
-    val scope = rememberCoroutineScope()
     val scrollBehavior = TopAppBarDefaults.pinnedScrollBehavior()
 
     val columns = when (LocalNavigationType.current.type) {
@@ -127,27 +125,13 @@ private fun FollowingCreatorsScreen(
                 horizontalArrangement = Arrangement.spacedBy(16.dp),
             ) {
                 items(followingCreators.toList()) { followingCreator ->
-                    var isFollowed by rememberSaveable(followingCreator.isFollowed) {
-                        mutableStateOf(followingCreator.isFollowed)
-                    }
-
                     CreatorItem(
                         modifier = Modifier.fillMaxWidth(),
                         creatorDetail = followingCreator,
-                        isFollowed = isFollowed,
+                        isFollowed = followingCreator.isFollowedIn(followStates),
                         onClickCreator = onClickCreator,
-                        onClickFollow = {
-                            scope.launch {
-                                isFollowed = true
-                                isFollowed = onClickFollow.invoke(it).isSuccess
-                            }
-                        },
-                        onClickUnfollow = {
-                            scope.launch {
-                                isFollowed = false
-                                isFollowed = !onClickUnfollow.invoke(it).isSuccess
-                            }
-                        },
+                        onClickFollow = onClickFollow,
+                        onClickUnfollow = onClickUnfollow,
                         onClickSupporting = onClickSupporting,
                     )
                 }

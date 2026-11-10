@@ -52,6 +52,9 @@ class PostDetailViewModel(
     private val _screenState = MutableStateFlow<ScreenState<PostDetailUiState>>(ScreenState.Loading)
     val screenState = _screenState.asStateFlow()
 
+    /** userId ごとの最後に分かったフォロー状態。 */
+    val followStates = fanboxRepository.followStates
+
     init {
         fetch()
 
@@ -253,31 +256,13 @@ class PostDetailViewModel(
 
     fun follow(creatorUserId: UserId) {
         viewModelScope.launch {
-            (screenState.value as? ScreenState.Idle)?.also { data ->
-                val creatorDetail = suspendRunCatching {
-                    fanboxRepository.followCreator(creatorUserId)
-                }.fold(
-                    onSuccess = { data.data.creatorDetail.copy(isFollowed = true) },
-                    onFailure = { data.data.creatorDetail.copy(isFollowed = false) },
-                )
-
-                _screenState.value = ScreenState.Idle(data.data.copy(creatorDetail = creatorDetail))
-            }
+            suspendRunCatching { fanboxRepository.followCreator(creatorUserId) }
         }
     }
 
     fun unfollow(creatorUserId: UserId) {
         viewModelScope.launch {
-            (screenState.value as? ScreenState.Idle)?.also { data ->
-                val creatorDetail = suspendRunCatching {
-                    fanboxRepository.unfollowCreator(creatorUserId)
-                }.fold(
-                    onSuccess = { data.data.creatorDetail.copy(isFollowed = false) },
-                    onFailure = { data.data.creatorDetail.copy(isFollowed = true) },
-                )
-
-                _screenState.value = ScreenState.Idle(data.data.copy(creatorDetail = creatorDetail))
-            }
+            suspendRunCatching { fanboxRepository.unfollowCreator(creatorUserId) }
         }
     }
 

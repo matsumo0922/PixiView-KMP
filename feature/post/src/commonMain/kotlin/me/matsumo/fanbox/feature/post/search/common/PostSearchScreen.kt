@@ -15,6 +15,7 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import app.cash.paging.compose.LazyPagingItems
 import app.cash.paging.compose.collectAsLazyPagingItems
 import kotlinx.collections.immutable.ImmutableList
+import kotlinx.collections.immutable.ImmutableMap
 import kotlinx.collections.immutable.toImmutableList
 import me.matsumo.fanbox.core.model.Destination
 import me.matsumo.fanbox.core.model.Setting
@@ -41,6 +42,7 @@ internal fun PostSearchRoute(
     navigatorExtension: NavigatorExtension = koinInject(),
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
+    val followStates by viewModel.followStates.collectAsStateWithLifecycle()
     val creatorPaging = uiState.creatorPaging.collectAsLazyPagingItems()
     val tagPaging = uiState.tagPaging.collectAsLazyPagingItems()
 
@@ -58,6 +60,7 @@ internal fun PostSearchRoute(
         bookmarkedPosts = uiState.bookmarkedPosts.toImmutableList(),
         suggestTags = uiState.suggestTags.toImmutableList(),
         creatorPaging = creatorPaging,
+        followStates = followStates,
         tagPaging = tagPaging,
         onTerminate = terminate,
         onClickPost = { navigateTo(Destination.PostDetail(it, Destination.PostDetail.PagingType.Search)) },
@@ -87,6 +90,7 @@ private fun PostSearchScreen(
     bookmarkedPosts: ImmutableList<PostId>,
     suggestTags: ImmutableList<Tag>,
     creatorPaging: LazyPagingItems<CreatorDetail>,
+    followStates: ImmutableMap<UserId, Boolean>,
     tagPaging: LazyPagingItems<Post>,
     onSearch: (PostSearchQuery) -> Unit,
     onTerminate: () -> Unit,
@@ -95,8 +99,8 @@ private fun PostSearchScreen(
     onClickPostBookmark: (Post, Boolean) -> Unit,
     onClickCreatorPosts: (CreatorId) -> Unit,
     onClickCreatorPlans: (CreatorId) -> Unit,
-    onClickFollow: suspend (UserId) -> Result<Unit>,
-    onClickUnfollow: suspend (UserId) -> Result<Unit>,
+    onClickFollow: (UserId) -> Unit,
+    onClickUnfollow: (UserId) -> Unit,
     onClickSupporting: (String) -> Unit,
     modifier: Modifier = Modifier,
 ) {
@@ -122,6 +126,7 @@ private fun PostSearchScreen(
                         .padding(padding)
                         .fillMaxSize(),
                     pagingAdapter = creatorPaging,
+                    followStates = followStates,
                     suggestTags = suggestTags,
                     onClickCreator = onClickCreatorPosts,
                     onClickFollow = onClickFollow,

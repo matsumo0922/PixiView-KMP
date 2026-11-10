@@ -6,6 +6,11 @@ import androidx.paging.PagingData
 import androidx.paging.cachedIn
 import com.multiplatform.webview.cookie.WebViewCookieManager
 import io.github.aakira.napier.Napier
+import kotlinx.collections.immutable.ImmutableMap
+import kotlinx.collections.immutable.PersistentMap
+import kotlinx.collections.immutable.minus
+import kotlinx.collections.immutable.persistentMapOf
+import kotlinx.collections.immutable.plus
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -18,6 +23,7 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.filter
 import kotlinx.coroutines.flow.first
@@ -26,6 +32,7 @@ import kotlinx.coroutines.flow.getAndUpdate
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.flow.shareIn
+import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import me.matsumo.fanbox.core.common.PixiViewConfig
@@ -108,6 +115,14 @@ interface FanboxRepository {
 
     /** FANBOX の request と response を処理している guest の出所。 */
     val guestSource: StateFlow<GuestSource>
+
+    /**
+     * クリエイターの userId ごとに、最後に分かったフォロー状態。
+     *
+     * FANBOX からクリエイターを取得したときと、フォロー・アンフォローしたときに更新する。
+     * 画面ごとに持つ [CreatorDetail.isFollowed] は取得した時点の値のため、表示にはこちらを優先する。
+     */
+    val followStates: StateFlow<ImmutableMap<UserId, Boolean>>
 
     /**
      * 配信中の guest を、CDN のキャッシュを通さずに読み込み直す。
@@ -285,6 +300,7 @@ class FanboxRepositoryImpl(
         get() = fanboxState.value.fanbox
 
     private val creatorCache = mutableMapOf<CreatorId, CreatorDetail>()
+    private val _followStates = MutableStateFlow<PersistentMap<UserId, Boolean>>(persistentMapOf())
     private val postCache = mutableMapOf<PostId, PostDetail>()
     private val creatorAllPostsCache = mutableMapOf<CreatorId, List<Post>>()
     private var homePostsPager: Flow<PagingData<Post>>? = null
@@ -303,6 +319,7 @@ class FanboxRepositoryImpl(
     override val logoutTrigger: Flow<Long> = _logoutTrigger.receiveAsFlow()
     override val sessionInvalidatedTrigger: Flow<Long> = _sessionInvalidatedTrigger.receiveAsFlow()
     override val guestSource: StateFlow<GuestSource> = guestEventReporter.source
+    override val followStates: StateFlow<ImmutableMap<UserId, Boolean>> = _followStates.asStateFlow()
 
     override val bookmarkedPostsIds: SharedFlow<List<PostId>> = bookmarkDataStore.data
         .map { ids -> ids.map { it.toPostId() } }
@@ -373,6 +390,7 @@ class FanboxRepositoryImpl(
         bookmarkDataStore.clear()
         blockDataStore.clear()
         userDataStore.setFollowTabDefaultHome(false)
+        _followStates.value = persistentMapOf()
 
         _logoutTrigger.send(Random.nextLong())
     }
@@ -539,7 +557,9 @@ class FanboxRepositoryImpl(
     }
 
     override suspend fun getCreatorFromQuery(query: String, page: Int): PageNumberInfo<CreatorDetail> = withSessionCheck {
-        fanbox.searchCreators(query, page).toPageNumberInfo { it.toCreatorDetail() }
+        fanbox.searchCreators(query, page)
+            .toPageNumberInfo { it.toCreatorDetail() }
+            .also { recordFollowStates(it.contents) }
     }
 
     override suspend fun getTagFromQuery(query: String): List<Tag> = withSessionCheck {
@@ -633,19 +653,27 @@ class FanboxRepositoryImpl(
     ).flow
 
     override suspend fun getFollowingCreators(): List<CreatorDetail> = withSessionCheck {
-        fanbox.getFollowingCreators(::recordSchemaMismatch).map { it.toCreatorDetail() }
+        fanbox.getFollowingCreators(::recordSchemaMismatch)
+            .map { it.toCreatorDetail() }
+            .also(::recordFollowStates)
     }
 
     override suspend fun getFollowingPixivCreators(): List<CreatorDetail> = withSessionCheck {
-        fanbox.getFollowingPixivCreators(::recordSchemaMismatch).map { it.toCreatorDetail() }
+        fanbox.getFollowingPixivCreators(::recordSchemaMismatch)
+            .map { it.toCreatorDetail() }
+            .also(::recordFollowStates)
     }
 
     override suspend fun getRecommendedCreators(): List<CreatorDetail> = withSessionCheck {
-        fanbox.getRecommendedCreators(::recordSchemaMismatch).map { it.toCreatorDetail() }
+        fanbox.getRecommendedCreators(::recordSchemaMismatch)
+            .map { it.toCreatorDetail() }
+            .also(::recordFollowStates)
     }
 
     override suspend fun getCreatorDetail(creatorId: CreatorId): CreatorDetail = withSessionCheck {
-        fanbox.getCreatorDetail(creatorId.toFanboxCreatorId()).toCreatorDetail()
+        fanbox.getCreatorDetail(creatorId.toFanboxCreatorId())
+            .toCreatorDetail()
+            .also { recordFollowStates(listOf(it)) }
     }
 
     override suspend fun getCreatorDetailCached(creatorId: CreatorId): CreatorDetail = withContext(ioDispatcher) {
@@ -716,12 +744,36 @@ class FanboxRepositoryImpl(
         fanbox.deleteComment(commentId.toFanboxCommentId())
     }
 
-    override suspend fun followCreator(creatorUserId: UserId) = withSessionCheck {
+    override suspend fun followCreator(creatorUserId: UserId) = changeFollowState(creatorUserId, isFollowed = true) {
         fanbox.followCreator(creatorUserId.toFanboxUserId())
     }
 
-    override suspend fun unfollowCreator(creatorUserId: UserId) = withSessionCheck {
+    override suspend fun unfollowCreator(creatorUserId: UserId) = changeFollowState(creatorUserId, isFollowed = false) {
         fanbox.unfollowCreator(creatorUserId.toFanboxUserId())
+    }
+
+    private fun recordFollowStates(creators: List<CreatorDetail>) {
+        val states = creators.mapNotNull { creator -> creator.user?.userId?.let { it to creator.isFollowed } }
+
+        _followStates.update { it + states }
+    }
+
+    // 押した直後に全画面の表示を変えるため、先に目的の状態にし、失敗したら押す前の状態に戻す
+    private suspend fun changeFollowState(
+        creatorUserId: UserId,
+        isFollowed: Boolean,
+        request: suspend () -> Unit,
+    ) {
+        val previous = _followStates.value[creatorUserId]
+
+        _followStates.update { it + (creatorUserId to isFollowed) }
+
+        try {
+            withSessionCheck(request)
+        } catch (exception: Throwable) {
+            _followStates.update { states -> previous?.let { states + (creatorUserId to it) } ?: (states - creatorUserId) }
+            throw exception
+        }
     }
 
     override suspend fun blockCreator(creatorId: CreatorId) {

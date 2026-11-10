@@ -21,6 +21,9 @@ data class CreatorDetail(
     /** クリエイターサポート画面の URL。 */
     val supportingBrowserUrl get() = "https://www.fanbox.cc/creators/supporting/@${user?.creatorId?.value}"
 
+    /** [followStates] に最後に分かったフォロー状態があればそれを、無ければ取得した時点の [isFollowed] を返す。 */
+    fun isFollowedIn(followStates: Map<UserId, Boolean>): Boolean = user?.userId?.let(followStates::get) ?: isFollowed
+
     /** `creator.get` のアイテム種別から分類したプロフィールアイテム。 */
     @Immutable
     sealed interface ProfileItem {

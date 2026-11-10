@@ -51,6 +51,9 @@ class CreatorTopViewModel(
     private val _screenState = MutableStateFlow<ScreenState<CreatorTopUiState>>(ScreenState.Loading)
     val screenState = _screenState.asStateFlow()
 
+    /** userId ごとの最後に分かったフォロー状態。 */
+    val followStates = fanboxRepository.followStates
+
     init {
         fetch()
 
@@ -110,12 +113,16 @@ class CreatorTopViewModel(
         }
     }
 
-    suspend fun follow(creatorUserId: UserId): Result<Unit> = suspendRunCatching {
-        fanboxRepository.followCreator(creatorUserId)
+    fun follow(creatorUserId: UserId) {
+        viewModelScope.launch {
+            suspendRunCatching { fanboxRepository.followCreator(creatorUserId) }
+        }
     }
 
-    suspend fun unfollow(creatorUserId: UserId): Result<Unit> = suspendRunCatching {
-        fanboxRepository.unfollowCreator(creatorUserId)
+    fun unfollow(creatorUserId: UserId) {
+        viewModelScope.launch {
+            suspendRunCatching { fanboxRepository.unfollowCreator(creatorUserId) }
+        }
     }
 
     fun postLike(postId: PostId) {
