@@ -65,10 +65,31 @@ internal fun LazyListScope.postDetailItems(
             )
         }
 
-        is Body.Text, is Body.Video, is Body.Html, is Body.Unknown -> item {
+        is Body.Video -> postDetailVideoHeader(content)
+
+        is Body.Text, is Body.Html, is Body.Unknown -> item {
             PostDetailOtherContent(
                 modifier = Modifier.fillMaxWidth(),
                 content = content,
+            )
+        }
+    }
+}
+
+// 動画の URL を出し、動画に添えた本文があればその下に出す
+private fun LazyListScope.postDetailVideoHeader(content: Body.Video) {
+    item {
+        PostDetailOtherContent(
+            modifier = Modifier.fillMaxWidth(),
+            content = content,
+        )
+    }
+
+    if (content.text.isNotBlank()) {
+        item {
+            ArticleUrlItem(
+                modifier = Modifier.fillMaxWidth(),
+                url = content.text,
             )
         }
     }

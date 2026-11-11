@@ -222,11 +222,16 @@ class PostDetailMapperTest {
         assertEquals("plain text", text.text)
 
         val videoBody = fanboxPostDetail.copy(
-            body = FanktBody.Video(serviceProvider = "youtube", videoId = "video-id"),
+            body = FanktBody.Video(
+                serviceProvider = "youtube",
+                videoId = "video-id",
+                text = "video text",
+            ),
         ).toPostDetail().body
         val video = assertIs<Body.Video>(videoBody)
         assertEquals("youtube", video.serviceProvider)
         assertEquals("video-id", video.videoId)
+        assertEquals("video text", video.text)
 
         val htmlBody = fanboxPostDetail.copy(
             body = FanktBody.Html(html = "<p>html</p>"),
