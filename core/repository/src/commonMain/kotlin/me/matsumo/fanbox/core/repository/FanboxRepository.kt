@@ -34,6 +34,8 @@ import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.flow.shareIn
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.sync.Mutex
+import kotlinx.coroutines.sync.withLock
 import kotlinx.coroutines.withContext
 import me.matsumo.fanbox.core.common.PixiViewConfig
 import me.matsumo.fanbox.core.common.util.recordException
@@ -119,7 +121,7 @@ interface FanboxRepository {
     /**
      * クリエイターの userId ごとに、最後に分かったフォロー状態。
      *
-     * FANBOX からクリエイターを取得したときと、フォロー・アンフォローしたときに更新する。
+     * FANBOX からクリエイターを取得したときと、フォロー・アンフォローしたときに更新し、[clearSession] で空にする。
      * 画面ごとに持つ [CreatorDetail.isFollowed] は取得した時点の値のため、表示にはこちらを優先する。
      */
     val followStates: StateFlow<ImmutableMap<UserId, Boolean>>
@@ -301,6 +303,7 @@ class FanboxRepositoryImpl(
 
     private val creatorCache = mutableMapOf<CreatorId, CreatorDetail>()
     private val _followStates = MutableStateFlow<PersistentMap<UserId, Boolean>>(persistentMapOf())
+    private val followChangeMutex = Mutex()
     private val postCache = mutableMapOf<PostId, PostDetail>()
     private val creatorAllPostsCache = mutableMapOf<CreatorId, List<Post>>()
     private var homePostsPager: Flow<PagingData<Post>>? = null
@@ -390,13 +393,12 @@ class FanboxRepositoryImpl(
         bookmarkDataStore.clear()
         blockDataStore.clear()
         userDataStore.setFollowTabDefaultHome(false)
-        _followStates.value = persistentMapOf()
 
         _logoutTrigger.send(Random.nextLong())
     }
 
     /**
-     * 資格情報だけを消す。ブックマークとブロックの設定は残す。
+     * 資格情報と、アカウントごとに変わるフォロー状態を消す。ブックマークとブロックの設定は残す。
      *
      * ログインし直す前に古いセッションを捨てるために使う。ログインし直す利用者の多くは、起動時の確認に
      * 失敗しただけで、同じアカウントでログインし直す。そのたびに手元の設定を消さないため。
@@ -414,6 +416,7 @@ class FanboxRepositoryImpl(
         cookieStorage.logout()
 
         userDataStore.setTestUser(false)
+        _followStates.value = persistentMapOf()
     }
 
     override suspend fun setSessionId(sessionId: String) {
@@ -758,15 +761,20 @@ class FanboxRepositoryImpl(
         _followStates.update { it + states }
     }
 
-    // 押した直後に全画面の表示を変えるため、先に目的の状態にし、失敗したら押す前の状態に戻す
+    private fun recordFollowState(creatorUserId: UserId, isFollowed: Boolean) {
+        _followStates.update { it + (creatorUserId to isFollowed) }
+    }
+
+    // 押した直後に全画面の表示を変えるため、先に目的の状態にし、失敗したら押す前の状態に戻す。
+    // 続けて押したときに、確定していない状態を「押す前の状態」として戻さないよう、変更は1つずつ行う
     private suspend fun changeFollowState(
         creatorUserId: UserId,
         isFollowed: Boolean,
         request: suspend () -> Unit,
-    ) {
+    ) = followChangeMutex.withLock {
         val previous = _followStates.value[creatorUserId]
 
-        _followStates.update { it + (creatorUserId to isFollowed) }
+        recordFollowState(creatorUserId, isFollowed)
 
         try {
             withSessionCheck(request)
@@ -774,6 +782,9 @@ class FanboxRepositoryImpl(
             _followStates.update { states -> previous?.let { states + (creatorUserId to it) } ?: (states - creatorUserId) }
             throw exception
         }
+
+        // 通信中に届いた取得結果が、変更前の状態で上書きしていることがあるため、成功した状態を書き直す
+        recordFollowState(creatorUserId, isFollowed)
     }
 
     override suspend fun blockCreator(creatorId: CreatorId) {
