@@ -62,6 +62,7 @@ private fun FanktBody.toBody(): Body = when (this) {
     is FanktBody.Video -> Body.Video(
         serviceProvider = serviceProvider,
         videoId = videoId,
+        text = text.orEmpty(),
     )
 
     is FanktBody.Html -> Body.Html(html = html)

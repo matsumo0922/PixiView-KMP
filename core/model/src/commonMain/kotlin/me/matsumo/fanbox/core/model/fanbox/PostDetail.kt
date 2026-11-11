@@ -186,9 +186,13 @@ data class PostDetail(
         @Immutable
         data class Text(val text: String) : Body
 
-        /** 動画本文。 */
+        /** 動画と、動画に添えた本文 [text] を持つ投稿本文。本文が無い場合、[text] は空文字列になる。 */
         @Immutable
-        data class Video(val serviceProvider: String, val videoId: String) : Body {
+        data class Video(
+            val serviceProvider: String,
+            val videoId: String,
+            val text: String,
+        ) : Body {
             /** 対応済みサービス提供者の動画 URL。未対応の場合は null。 */
             val url: String?
                 get() = when (serviceProvider) {
