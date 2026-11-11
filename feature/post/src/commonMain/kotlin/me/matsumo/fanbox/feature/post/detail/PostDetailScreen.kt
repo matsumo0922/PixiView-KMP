@@ -263,6 +263,7 @@ private fun PostDetailView(
     snackExtension: ToastExtension = koinInject(),
 ) {
     val screenState by viewModel.screenState.collectAsStateWithLifecycle()
+    val followStates by viewModel.followStates.collectAsStateWithLifecycle()
     val scope = rememberCoroutineScope()
 
     AsyncLoadContents(
@@ -278,6 +279,7 @@ private fun PostDetailView(
             postDetail = uiState.postDetail,
             comments = uiState.comments,
             creatorDetail = uiState.creatorDetail,
+            isFollowed = uiState.creatorDetail.isFollowedIn(followStates),
             setting = uiState.setting,
             metaData = uiState.metaData,
             bookmarkedPostIds = uiState.bookmarkedPostIds.toImmutableList(),
@@ -388,6 +390,7 @@ private fun PostDetailScreen(
     postDetail: PostDetail,
     comments: PageOffsetInfo<Comment>,
     creatorDetail: CreatorDetail,
+    isFollowed: Boolean,
     bookmarkedPostIds: ImmutableList<PostId>,
     setting: Setting,
     metaData: MetaData,
@@ -527,6 +530,7 @@ private fun PostDetailScreen(
                         .fillMaxWidth(),
                     postDetail = postDetail,
                     creatorDetail = creatorDetail,
+                    isFollowed = isFollowed,
                     onClickCreator = { onClickCreatorPosts.invoke(it) },
                     onClickFollow = onClickFollow,
                     onClickUnfollow = onClickUnfollow,

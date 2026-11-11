@@ -137,6 +137,7 @@ internal fun CreatorTopRoute(
     toastExtension: ToastExtension = koinInject(),
 ) {
     val screenState by viewModel.screenState.collectAsStateWithLifecycle()
+    val followStates by viewModel.followStates.collectAsStateWithLifecycle()
     val scope = rememberCoroutineScope()
 
     val revealState = rememberRevealState()
@@ -176,6 +177,7 @@ internal fun CreatorTopRoute(
                 setting = uiState.setting,
                 bookmarkedPostsIds = uiState.bookmarkedPostsIds.toImmutableList(),
                 creatorDetail = uiState.creatorDetail,
+                isFollowed = uiState.creatorDetail.isFollowedIn(followStates),
                 creatorPlans = uiState.creatorPlans.toImmutableList(),
                 creatorTags = uiState.creatorTags.toImmutableList(),
                 creatorPostsPaging = creatorPostsPaging,
@@ -239,6 +241,7 @@ private fun CreatorTopScreen(
     rewardAvailability: CreatorTopRewardAvailability,
     shouldShowReveal: Boolean,
     creatorDetail: CreatorDetail,
+    isFollowed: Boolean,
     setting: Setting,
     bookmarkedPostsIds: ImmutableList<PostId>,
     creatorPlans: ImmutableList<CreatorPlan>,
@@ -254,8 +257,8 @@ private fun CreatorTopScreen(
     onClickPlan: (CreatorPlan) -> Unit,
     onClickTag: (Tag) -> Unit,
     onClickLink: (String) -> Unit,
-    onClickFollow: suspend (UserId) -> Result<Unit>,
-    onClickUnfollow: suspend (UserId) -> Result<Unit>,
+    onClickFollow: (UserId) -> Unit,
+    onClickUnfollow: (UserId) -> Unit,
     onShowBlockDialog: (SimpleAlertContents) -> Unit,
     onShowUnblockDialog: (SimpleAlertContents) -> Unit,
     onClickTranslateDescription: (String) -> Unit,
@@ -341,6 +344,7 @@ private fun CreatorTopScreen(
                             alpha = state.toolbarState.progress * 10
                         },
                     creatorDetail = creatorDetail,
+                    isFollowed = isFollowed,
                     onClickLink = onClickLink,
                     onClickFollow = onClickFollow,
                     onClickUnfollow = onClickUnfollow,

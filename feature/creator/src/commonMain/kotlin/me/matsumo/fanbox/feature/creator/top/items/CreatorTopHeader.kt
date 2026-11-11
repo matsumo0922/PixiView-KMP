@@ -23,7 +23,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -41,7 +40,6 @@ import coil3.compose.SubcomposeAsyncImage
 import coil3.request.ImageRequest
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.toImmutableList
-import kotlinx.coroutines.launch
 import me.matsumo.fanbox.core.model.fanbox.CreatorDetail
 import me.matsumo.fanbox.core.model.fanbox.UserId
 import me.matsumo.fanbox.core.resources.Res
@@ -74,16 +72,15 @@ import org.jetbrains.compose.resources.stringResource
 @Composable
 internal fun CreatorTopHeader(
     creatorDetail: CreatorDetail,
+    isFollowed: Boolean,
     onClickLink: (String) -> Unit,
     onClickDescription: (String) -> Unit,
-    onClickFollow: suspend (UserId) -> Result<Unit>,
-    onClickUnfollow: suspend (UserId) -> Result<Unit>,
+    onClickFollow: (UserId) -> Unit,
+    onClickUnfollow: (UserId) -> Unit,
     onClickSupporting: (String) -> Unit,
     modifier: Modifier = Modifier,
 ) {
-    val scope = rememberCoroutineScope()
     val tagItems = createTags(creatorDetail)
-    var isFollowed by remember(creatorDetail.isFollowed) { mutableStateOf(creatorDetail.isFollowed) }
 
     Column(modifier) {
         HeaderTop(
@@ -92,18 +89,8 @@ internal fun CreatorTopHeader(
             isSupported = creatorDetail.isSupported,
             isFollowed = isFollowed,
             onClickSupport = { onClickSupporting.invoke(creatorDetail.supportingBrowserUrl) },
-            onClickFollow = {
-                scope.launch {
-                    isFollowed = true
-                    isFollowed = creatorDetail.user?.userId?.let { onClickFollow.invoke(it) }?.isSuccess ?: false
-                }
-            },
-            onClickUnfollow = {
-                scope.launch {
-                    isFollowed = false
-                    isFollowed = creatorDetail.user?.userId?.let { onClickUnfollow.invoke(it) }?.isSuccess ?: true
-                }
-            },
+            onClickFollow = { creatorDetail.user?.userId?.let(onClickFollow) },
+            onClickUnfollow = { creatorDetail.user?.userId?.let(onClickUnfollow) },
             onClickLink = { onClickLink.invoke(it) },
         )
 

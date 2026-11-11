@@ -22,10 +22,6 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.rememberCoroutineScope
-import androidx.compose.runtime.saveable.rememberSaveable
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.nestedscroll.nestedScroll
@@ -33,7 +29,6 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.toImmutableList
-import kotlinx.coroutines.launch
 import me.matsumo.fanbox.core.common.util.format
 import me.matsumo.fanbox.core.model.Destination
 import me.matsumo.fanbox.core.model.Setting
@@ -70,6 +65,7 @@ internal fun PostByCreatorSearchRoute(
 ) {
     val screenState by viewModel.screenState.collectAsStateWithLifecycle()
     val query by viewModel.query.collectAsStateWithLifecycle()
+    val followStates by viewModel.followStates.collectAsStateWithLifecycle()
 
     AsyncLoadContents(
         modifier = modifier,
@@ -81,6 +77,7 @@ internal fun PostByCreatorSearchRoute(
             query = query,
             setting = uiState.setting,
             creatorDetail = uiState.creatorDetail,
+            isFollowed = uiState.creatorDetail.isFollowedIn(followStates),
             searchedPosts = uiState.searchedPosts.toImmutableList(),
             bookmarkedPostIds = uiState.bookmarkedPostsIds.toImmutableList(),
             progress = uiState.progress,
@@ -105,6 +102,7 @@ private fun PostByCreatorSearchScreen(
     query: String,
     setting: Setting,
     creatorDetail: CreatorDetail,
+    isFollowed: Boolean,
     searchedPosts: ImmutableList<Post>,
     bookmarkedPostIds: ImmutableList<PostId>,
     progress: Float,
@@ -113,15 +111,14 @@ private fun PostByCreatorSearchScreen(
     onPostClick: (PostId) -> Unit,
     onCreatorPostsClick: (CreatorId) -> Unit,
     onCreatorPlansClick: (CreatorId) -> Unit,
-    onFollowClick: suspend (UserId) -> Result<Unit>,
-    onUnfollowClick: suspend (UserId) -> Result<Unit>,
+    onFollowClick: (UserId) -> Unit,
+    onUnfollowClick: (UserId) -> Unit,
     onSupportingClick: (String) -> Unit,
     onLikeClick: (PostId) -> Unit,
     onBookmarkClick: (Post, Boolean) -> Unit,
     onBackClick: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
-    val scope = rememberCoroutineScope()
     val scrollBehavior = TopAppBarDefaults.pinnedScrollBehavior()
 
     Scaffold(
@@ -144,26 +141,12 @@ private fun PostByCreatorSearchScreen(
             contentPadding = padding + PaddingValues(16.dp),
         ) {
             item("creator") {
-                var isFollowed by rememberSaveable(creatorDetail.isFollowed) {
-                    mutableStateOf(creatorDetail.isFollowed)
-                }
-
                 CreatorItem(
                     modifier = Modifier.fillMaxWidth(),
                     creatorDetail = creatorDetail,
                     onClickCreator = onCreatorPostsClick,
-                    onClickFollow = {
-                        scope.launch {
-                            isFollowed = true
-                            isFollowed = onFollowClick(it).isSuccess
-                        }
-                    },
-                    onClickUnfollow = {
-                        scope.launch {
-                            isFollowed = false
-                            isFollowed = !onUnfollowClick(it).isSuccess
-                        }
-                    },
+                    onClickFollow = onFollowClick,
+                    onClickUnfollow = onUnfollowClick,
                     onClickSupporting = onSupportingClick,
                     isFollowed = isFollowed,
                     isShowCoverImage = false,

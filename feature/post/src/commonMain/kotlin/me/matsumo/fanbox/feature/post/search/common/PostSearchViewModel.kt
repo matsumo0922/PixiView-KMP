@@ -26,6 +26,9 @@ import me.matsumo.fanbox.core.ui.extensition.emptyPaging
 
 class PostSearchViewModel(private val settingRepository: SettingRepository, private val fanboxRepository: FanboxRepository) : ViewModel() {
 
+    /** userId ごとの最後に分かったフォロー状態。 */
+    val followStates = fanboxRepository.followStates
+
     private val _uiState = MutableStateFlow(
         PostSearchUiState(
             query = "",
@@ -99,12 +102,16 @@ class PostSearchViewModel(private val settingRepository: SettingRepository, priv
         )
     }
 
-    suspend fun follow(creatorUserId: UserId): Result<Unit> = suspendRunCatching {
-        fanboxRepository.followCreator(creatorUserId)
+    fun follow(creatorUserId: UserId) {
+        viewModelScope.launch {
+            suspendRunCatching { fanboxRepository.followCreator(creatorUserId) }
+        }
     }
 
-    suspend fun unfollow(creatorUserId: UserId): Result<Unit> = suspendRunCatching {
-        fanboxRepository.unfollowCreator(creatorUserId)
+    fun unfollow(creatorUserId: UserId) {
+        viewModelScope.launch {
+            suspendRunCatching { fanboxRepository.unfollowCreator(creatorUserId) }
+        }
     }
 
     fun postLike(postId: PostId) {

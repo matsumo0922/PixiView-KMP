@@ -14,11 +14,6 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.rememberCoroutineScope
-import androidx.compose.runtime.saveable.rememberSaveable
-import androidx.compose.runtime.setValue
 import androidx.compose.runtime.snapshotFlow
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
@@ -28,7 +23,7 @@ import app.cash.paging.compose.LazyPagingItems
 import app.cash.paging.compose.itemContentType
 import app.cash.paging.compose.itemKey
 import kotlinx.collections.immutable.ImmutableList
-import kotlinx.coroutines.launch
+import kotlinx.collections.immutable.ImmutableMap
 import me.matsumo.fanbox.core.model.fanbox.CreatorDetail
 import me.matsumo.fanbox.core.model.fanbox.CreatorId
 import me.matsumo.fanbox.core.model.fanbox.Tag
@@ -49,16 +44,16 @@ import org.jetbrains.compose.resources.stringResource
 @Composable
 internal fun PostSearchCreatorScreen(
     pagingAdapter: LazyPagingItems<CreatorDetail>,
+    followStates: ImmutableMap<UserId, Boolean>,
     suggestTags: ImmutableList<Tag>,
     onClickCreator: (CreatorId) -> Unit,
     onClickTag: (String) -> Unit,
-    onClickFollow: suspend (UserId) -> Result<Unit>,
-    onClickUnfollow: suspend (UserId) -> Result<Unit>,
+    onClickFollow: (UserId) -> Unit,
+    onClickUnfollow: (UserId) -> Unit,
     onClickSupporting: (String) -> Unit,
     modifier: Modifier = Modifier,
 ) {
     val keyboardController = LocalSoftwareKeyboardController.current
-    val scope = rememberCoroutineScope()
     val state = rememberLazyGridState()
 
     val columns = when (LocalNavigationType.current.type) {
@@ -119,25 +114,13 @@ internal fun PostSearchCreatorScreen(
                 contentType = pagingAdapter.itemContentType(),
             ) { index ->
                 pagingAdapter[index]?.let { creatorDetail ->
-                    var isFollowed by rememberSaveable { mutableStateOf(creatorDetail.isFollowed) }
-
                     CreatorItem(
                         modifier = Modifier.fillMaxWidth(),
                         creatorDetail = creatorDetail,
-                        isFollowed = isFollowed,
+                        isFollowed = creatorDetail.isFollowedIn(followStates),
                         onClickCreator = onClickCreator,
-                        onClickFollow = {
-                            scope.launch {
-                                isFollowed = true
-                                isFollowed = onClickFollow.invoke(it).isSuccess
-                            }
-                        },
-                        onClickUnfollow = {
-                            scope.launch {
-                                isFollowed = false
-                                isFollowed = !onClickUnfollow.invoke(it).isSuccess
-                            }
-                        },
+                        onClickFollow = onClickFollow,
+                        onClickUnfollow = onClickUnfollow,
                         onClickSupporting = onClickSupporting,
                     )
                 }
