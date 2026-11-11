@@ -58,7 +58,7 @@ gms = "4.5.0"
 koin = "4.2.2"
 
 # matsumo
-fankt = "0.2.3"
+fankt = "0.2.4"
 
 # security
 ksafe = "3.3.0"
