@@ -4,7 +4,7 @@ import androidx.compose.runtime.Composable
 
 interface InterstitialAdState {
     fun load()
-    suspend fun show(): Boolean
+    suspend fun show(): InterstitialAdShowResult
 }
 
 @Composable

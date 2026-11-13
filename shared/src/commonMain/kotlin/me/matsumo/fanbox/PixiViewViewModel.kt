@@ -22,6 +22,7 @@ import me.matsumo.fanbox.core.billing.BillingClient
 import me.matsumo.fanbox.core.common.PixiViewConfig
 import me.matsumo.fanbox.core.common.util.suspendRunCatching
 import me.matsumo.fanbox.core.datastore.LaunchLogDataStore
+import me.matsumo.fanbox.core.logs.category.AdsLog
 import me.matsumo.fanbox.core.logs.category.BillingLog
 import me.matsumo.fanbox.core.logs.logger.LogConfigurator
 import me.matsumo.fanbox.core.logs.logger.send
@@ -39,6 +40,8 @@ import me.matsumo.fanbox.core.resources.Res
 import me.matsumo.fanbox.core.resources.error_no_data
 import me.matsumo.fanbox.core.resources.home_app_lock_message
 import me.matsumo.fanbox.core.resources.home_app_lock_title
+import me.matsumo.fanbox.core.ui.ads.InterstitialAdShowResult
+import me.matsumo.fanbox.core.ui.ads.shouldShowPostDetailInterstitialAd
 import me.matsumo.fanbox.core.ui.extensition.getFanboxMetadataDummy
 import org.jetbrains.compose.resources.getString
 import kotlin.time.Clock
@@ -66,6 +69,9 @@ class PixiViewViewModel(
     // インタースティシャル広告の頻度判定用。永続化せずプロセス内のみ保持する
     private var interstitialPostCloseCount = 0
     private var lastInterstitialShownEpochSeconds = 0L
+
+    // 前回の試行で表示できなかったか。true のあいだは、クローズ回数によらず次のクローズで再試行する
+    private var isInterstitialShowRetryPending = false
 
     val screenState = combine(
         listOf(
@@ -244,21 +250,30 @@ class PixiViewViewModel(
     }
 
     @OptIn(ExperimentalTime::class)
-    suspend fun onPostDetailClosedForInterstitialAd(showInterstitialAd: suspend () -> Boolean) {
+    suspend fun onPostDetailClosedForInterstitialAd(showInterstitialAd: suspend () -> InterstitialAdShowResult) {
         val setting = settingRepository.setting.first()
         if (!setting.canHandlePostDetailInterstitialAd()) return
 
         val currentEpochSeconds = Clock.System.now().epochSeconds
+        val isRetry = isInterstitialShowRetryPending
         interstitialPostCloseCount += 1
 
         val canShowInterstitialAd = shouldShowPostDetailInterstitialAd(
             postCloseCount = interstitialPostCloseCount,
             currentEpochSeconds = currentEpochSeconds,
             lastShownEpochSeconds = lastInterstitialShownEpochSeconds,
+            isRetryPending = isRetry,
         )
         if (!canShowInterstitialAd) return
 
-        if (showInterstitialAd()) {
+        val showResult = showInterstitialAd()
+        val wasShown = showResult == InterstitialAdShowResult.Shown
+
+        AdsLog.interstitialShowAttempted(showResult.logValue, isRetry).send()
+
+        isInterstitialShowRetryPending = !wasShown
+
+        if (wasShown) {
             interstitialPostCloseCount = 0
             lastInterstitialShownEpochSeconds = currentEpochSeconds
         }
@@ -278,25 +293,6 @@ class PixiViewViewModel(
 }
 
 private fun Setting.canHandlePostDetailInterstitialAd(): Boolean = !hasPrivilege && shouldShowInterstitialAd
-
-private fun shouldShowPostDetailInterstitialAd(
-    postCloseCount: Int,
-    currentEpochSeconds: Long,
-    lastShownEpochSeconds: Long,
-): Boolean {
-    val reachesTriggerCount = postCloseCount >= INTERSTITIAL_POST_CLOSE_TRIGGER_COUNT
-    val matchesTriggerInterval = postCloseCount % INTERSTITIAL_POST_CLOSE_TRIGGER_COUNT == 0
-    val elapsedSeconds = currentEpochSeconds - lastShownEpochSeconds
-    val satisfiesCooldown = elapsedSeconds >= INTERSTITIAL_AD_COOLDOWN_SECONDS
-
-    return reachesTriggerCount && matchesTriggerInterval && satisfiesCooldown
-}
-
-/** インタースティシャル広告を表示する投稿詳細クローズ回数。 */
-private const val INTERSTITIAL_POST_CLOSE_TRIGGER_COUNT = 2
-
-/** インタースティシャル広告表示後に再表示を抑制する秒数。 */
-private const val INTERSTITIAL_AD_COOLDOWN_SECONDS = 180L
 
 /** アプリ全体の表示状態をまとめた UI モデル。 */
 @Stable

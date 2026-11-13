@@ -88,7 +88,8 @@ fun PixiViewApp(
             loadingMessage = if (guestSource == GuestSource.Loading) stringResource(Res.string.guest_updating) else null,
             loadingMessageColor = if (shouldUseDarkTheme) DarkDefaultColorScheme.onSurfaceVariant else LightDefaultColorScheme.onSurfaceVariant,
         ) { uiState ->
-            val shouldLoadInterstitialAd = uiState.setting.shouldLoadInterstitialAd()
+            // Mobile Ads SDK の初期化前にロードすると、メディエーションの各アダプタが参加できないため、初期化を待つ
+            val shouldLoadInterstitialAd = uiState.setting.shouldLoadInterstitialAd() && isAdsSdkInitialized
             val interstitialAdState = rememberInterstitialAdState(
                 adUnitId = pixiViewConfig.interstitialAdUnitId,
                 enable = shouldLoadInterstitialAd,
@@ -181,18 +182,11 @@ fun PixiViewApp(
 private fun Setting.shouldLoadInterstitialAd(): Boolean = !hasPrivilege && shouldShowInterstitialAd
 
 private suspend fun handlePostDetailClosedForInterstitialAd(viewModel: PixiViewViewModel, interstitialAdState: InterstitialAdState) {
-    viewModel.onPostDetailClosedForInterstitialAd {
-        showInterstitialAdAndReload(interstitialAdState)
-    }
-}
+    // iOS はインタースティシャル広告が未実装のため、表示を試みず、計測もしない
+    if (currentPlatform != Platform.Android) return
 
-private suspend fun showInterstitialAdAndReload(interstitialAdState: InterstitialAdState): Boolean {
-    val wasShown = interstitialAdState.show()
-    if (wasShown) {
-        interstitialAdState.load()
-    }
-
-    return wasShown
+    // 表示後の再ロードは InterstitialAdState が広告を閉じたときに行う
+    viewModel.onPostDetailClosedForInterstitialAd(interstitialAdState::show)
 }
 
 @ReadOnlyComposable
