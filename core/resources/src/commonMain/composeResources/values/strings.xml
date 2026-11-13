@@ -332,6 +332,7 @@
     <string name="billing_plus_purchase_button">Buy for %1$s</string>
     <string name="billing_plus_purchase_trial_button">Start %1$s free trial</string>
     <string name="billing_plus_trial_label">Free trial: %1$s</string>
+    <string name="billing_plus_annual_discount_label">Save %1$d% compared to monthly</string>
     <string name="billing_plus_trial_period_day">%1$d days</string>
     <string name="billing_plus_trial_period_week">%1$d weeks</string>
     <string name="billing_plus_trial_period_month">%1$d months</string>
