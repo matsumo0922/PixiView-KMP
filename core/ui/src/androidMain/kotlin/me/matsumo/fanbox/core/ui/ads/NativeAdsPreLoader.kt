@@ -191,10 +191,11 @@ class NativeAdsPreLoader(context: Context, pixiViewConfig: PixiViewConfig) {
         }
     }
 
+    // メディエーション対象の広告枠では loadAds() による複数件の要求が動かないため、loadAd() で 1 件ずつ要求する
     private fun loadMissingNativeAds() {
-        val numberOfAds = NUMBER_OF_PRELOAD_ADS - preloadedNativeAds.count()
-        if (numberOfAds > 0) {
-            adLoader.loadAds(AdRequest.Builder().build(), numberOfAds)
+        val hasMissingAds = preloadedNativeAds.count() < NUMBER_OF_PRELOAD_ADS
+        if (hasMissingAds) {
+            adLoader.loadAd(AdRequest.Builder().build())
         }
     }
 
@@ -207,6 +208,9 @@ class NativeAdsPreLoader(context: Context, pixiViewConfig: PixiViewConfig) {
             ),
         )
         _nativeAdInventoryVersion.update { currentVersion -> currentVersion + 1 }
+
+        // 1 件の読み込みが完了したので、在庫の不足分があれば次の 1 件を要求する
+        loadMissingNativeAdsIfIdle()
     }
 }
 

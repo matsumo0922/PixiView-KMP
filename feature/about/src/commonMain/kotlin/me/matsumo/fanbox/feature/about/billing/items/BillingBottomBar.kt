@@ -26,7 +26,9 @@ import androidx.compose.ui.unit.dp
 import kotlinx.collections.immutable.ImmutableList
 import me.matsumo.fanbox.core.model.BillingPlan
 import me.matsumo.fanbox.core.model.BillingTrialPeriod
+import me.matsumo.fanbox.core.model.calculateAnnualDiscountPercent
 import me.matsumo.fanbox.core.resources.Res
+import me.matsumo.fanbox.core.resources.billing_plus_annual_discount_label
 import me.matsumo.fanbox.core.resources.billing_plus_plan_monthly
 import me.matsumo.fanbox.core.resources.billing_plus_plan_yearly
 import me.matsumo.fanbox.core.resources.billing_plus_purchase_button
@@ -91,6 +93,8 @@ private fun PlanSelectSection(
     onPlanSelect: (BillingPlan.Type) -> Unit,
     modifier: Modifier = Modifier,
 ) {
+    val annualDiscountPercent = remember(plans) { calculateAnnualDiscountPercent(plans) }
+
     Column(
         modifier = modifier,
         verticalArrangement = Arrangement.spacedBy(8.dp),
@@ -100,6 +104,7 @@ private fun PlanSelectSection(
                 modifier = Modifier
                     .fillMaxWidth(),
                 plan = plan,
+                discountPercent = annualDiscountPercent.takeIf { plan.type == BillingPlan.Type.ANNUAL },
                 isSelected = selectedPlanType == plan.type,
                 onPlanSelect = onPlanSelect,
             )
@@ -110,6 +115,7 @@ private fun PlanSelectSection(
 @Composable
 private fun PlanSelectItem(
     plan: BillingPlan,
+    discountPercent: Int?,
     isSelected: Boolean,
     onPlanSelect: (BillingPlan.Type) -> Unit,
     modifier: Modifier = Modifier,
@@ -146,9 +152,16 @@ private fun PlanSelectItem(
             )
 
             plan.trialPeriod?.let { trialPeriod ->
-                PlanTrialLabel(
+                PlanLabel(
                     modifier = Modifier.fillMaxWidth(),
-                    trialPeriod = trialPeriod,
+                    text = stringResource(Res.string.billing_plus_trial_label, trialPeriod.getDisplayText()),
+                )
+            }
+
+            discountPercent?.let { percent ->
+                PlanLabel(
+                    modifier = Modifier.fillMaxWidth(),
+                    text = stringResource(Res.string.billing_plus_annual_discount_label, percent),
                 )
             }
         }
@@ -161,13 +174,13 @@ private fun PlanSelectItem(
 }
 
 @Composable
-private fun PlanTrialLabel(
-    trialPeriod: BillingTrialPeriod,
+private fun PlanLabel(
+    text: String,
     modifier: Modifier = Modifier,
 ) {
     Text(
         modifier = modifier,
-        text = stringResource(Res.string.billing_plus_trial_label, trialPeriod.getDisplayText()),
+        text = text,
         style = MaterialTheme.typography.bodySmall,
         color = MaterialTheme.colorScheme.primary,
     )

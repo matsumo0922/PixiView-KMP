@@ -177,6 +177,14 @@ KMP の `expect` / `actual` に関するコンパイラ解析診断が出る場�
 
 このアプリは AdMob を用いて収益化しています。GitHub から手動でビルドする際は AdMob App ID を `local.properties` に記述する必要があります。デフォルトではダミーの ID が入っているため、起動時にクラッシュします。もしくは AdMob の当該コードを削除してからアプリをビルドしてください。その他、 `local.properties` には様々な ID が記述されています。詳細は `androidApp/build.gradle.kts`、`shared/build.gradle.kts`、`core/common/src/commonMain/kotlin/me/matsumo/fanbox/core/common/PixiViewConfig.kt` をご覧ください。
 
+リリースビルド（`bundleRelease` / `assembleRelease`）は、次の Android 用の AdMob ID のいずれかが未設定またはテスト用 ID のままだと失敗します。`local.properties` に設定すべきキーはエラーメッセージに表示されます。debug ビルドでは、未設定のキーにテスト用 ID が使われます。
+
+- `ADMOB_ANDROID_APP_ID`
+- `ADMOB_ANDROID_BANNER_AD_UNIT_ID`
+- `ADMOB_ANDROID_NATIVE_AD_UNIT_ID`
+- `ADMOB_ANDROID_REWARD_AD_UNIT_ID`
+- `ADMOB_ANDROID_INTERSTITIAL_AD_UNIT_ID`
+
 ## License
 
 ```text
