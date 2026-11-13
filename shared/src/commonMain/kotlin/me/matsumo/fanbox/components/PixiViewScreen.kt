@@ -17,6 +17,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import me.matsumo.fanbox.MainUiState
 import me.matsumo.fanbox.PixiViewSettingNavHost
+import me.matsumo.fanbox.core.model.BillingReferrer
 import me.matsumo.fanbox.core.model.Destination
 import me.matsumo.fanbox.core.model.LoginState
 import me.matsumo.fanbox.core.model.messageOrNull
@@ -120,7 +121,7 @@ internal fun PixiViewScreen(
 
                 if (showPaywallFlag) {
                     LaunchedEffect(true) {
-                        navigator.navigate(Destination.BillingPlusBottomSheet(null))
+                        navigator.navigate(Destination.BillingPlusBottomSheet(BillingReferrer.ONBOARDING))
                         showPaywallFlag = false
                     }
                 }

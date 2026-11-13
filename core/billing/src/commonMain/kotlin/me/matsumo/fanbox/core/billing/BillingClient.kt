@@ -18,6 +18,7 @@ import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.suspendCancellableCoroutine
 import kotlinx.coroutines.withContext
 import me.matsumo.fanbox.core.common.PixiViewConfig
+import me.matsumo.fanbox.core.common.util.suspendRunCatching
 import me.matsumo.fanbox.core.model.BillingPlan
 import me.matsumo.fanbox.core.model.BillingPlusStatus
 import me.matsumo.fanbox.core.model.BillingTrialPeriod
@@ -40,12 +41,19 @@ class BillingClient(val pixiViewConfig: PixiViewConfig, val ioDispatcher: Corout
         return@withContext customerInfo.toBillingPlusStatus(availablePackages)
     }
 
-    suspend fun purchase(type: BillingPlan.Type): BillingPlusStatus = withContext(ioDispatcher) {
-        val product = planCache[type] ?: return@withContext inactivePlusStatus()
-        val result = Purchases.sharedInstance.awaitPurchase(product)
-        val availablePackages = getAvailablePackages()
+    suspend fun purchase(type: BillingPlan.Type): BillingPurchaseResult = withContext(ioDispatcher) {
+        val product = planCache[type] ?: return@withContext BillingPurchaseResult.Failure("product_not_found")
+        val purchase = suspendRunCatching { Purchases.sharedInstance.awaitPurchase(product) }.getOrElse { throwable ->
+            Napier.w(throwable) { "Failed to purchase $type." }
+            return@withContext throwable.toBillingPurchaseResult()
+        }
+        val status = purchase.customerInfo.toBillingPlusStatus(getAvailablePackages())
 
-        return@withContext result.customerInfo.toBillingPlusStatus(availablePackages)
+        return@withContext if (status.isActive) {
+            BillingPurchaseResult.Success(status)
+        } else {
+            BillingPurchaseResult.Failure("entitlement_inactive")
+        }
     }
 
     suspend fun restore(): BillingPlusStatus = withContext(ioDispatcher) {

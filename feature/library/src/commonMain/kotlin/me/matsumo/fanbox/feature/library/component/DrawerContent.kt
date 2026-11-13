@@ -54,6 +54,7 @@ import coil3.compose.LocalPlatformContext
 import coil3.compose.SubcomposeAsyncImage
 import coil3.request.ImageRequest
 import kotlinx.coroutines.launch
+import me.matsumo.fanbox.core.model.BillingReferrer
 import me.matsumo.fanbox.core.model.Destination
 import me.matsumo.fanbox.core.model.Setting
 import me.matsumo.fanbox.core.resources.Res
@@ -222,7 +223,7 @@ fun DrawerContent(
             state = state,
             isPlusMode = setting?.isPlusMode == true,
             isDeveloperMode = setting?.isDeveloperMode == true,
-            onClick = { navigateTo(Destination.BillingPlusBottomSheet("drawer")) },
+            onClick = { navigateTo(Destination.BillingPlusBottomSheet(BillingReferrer.DRAWER)) },
         )
     }
 }

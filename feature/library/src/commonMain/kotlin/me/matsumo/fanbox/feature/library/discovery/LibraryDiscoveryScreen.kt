@@ -34,6 +34,7 @@ import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.ImmutableMap
 import kotlinx.collections.immutable.toImmutableList
 import kotlinx.coroutines.launch
+import me.matsumo.fanbox.core.model.BillingReferrer
 import me.matsumo.fanbox.core.model.Destination
 import me.matsumo.fanbox.core.model.ScreenState
 import me.matsumo.fanbox.core.model.Setting
@@ -129,7 +130,7 @@ private fun LibraryDiscoveryScreen(
     onClickFollow: (UserId) -> Unit,
     onClickUnfollow: (UserId) -> Unit,
     onClickSupporting: (String) -> Unit,
-    onClickBillingPlus: (String?) -> Unit,
+    onClickBillingPlus: (BillingReferrer) -> Unit,
     modifier: Modifier = Modifier,
 ) {
     val navigationType = LocalNavigationType.current.type
@@ -193,7 +194,7 @@ private fun LibraryDiscoveryScreen(
                                 if (setting.hasPrivilege) {
                                     onClickPostByCreatorSearch.invoke(it)
                                 } else {
-                                    onClickBillingPlus.invoke("search_post_by_creator")
+                                    onClickBillingPlus.invoke(BillingReferrer.DISCOVERY_CREATOR_SEARCH)
                                 }
                             },
                         )

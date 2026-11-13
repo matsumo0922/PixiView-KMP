@@ -69,6 +69,7 @@ import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.toImmutableList
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
+import me.matsumo.fanbox.core.model.BillingReferrer
 import me.matsumo.fanbox.core.model.Destination
 import me.matsumo.fanbox.core.model.RewardUsage
 import me.matsumo.fanbox.core.model.Setting
@@ -250,7 +251,7 @@ private fun CreatorTopScreen(
     descriptionTransState: TranslationState<String>,
     onClickSearch: (CreatorId) -> Unit,
     onClickAllDownload: (CreatorId) -> Unit,
-    onClickBillingPlus: (String?) -> Unit,
+    onClickBillingPlus: (BillingReferrer) -> Unit,
     onClickPost: (PostId) -> Unit,
     onClickPostLike: (PostId) -> Unit,
     onClickPostBookmark: (Post, Boolean) -> Unit,
@@ -625,10 +626,10 @@ private fun RewardUsage.rewardUnlockFeatureName(): String = stringResource(
     },
 )
 
-private fun RewardUsage.billingPlusKey(): String = when (this) {
-    RewardUsage.BulkDownload -> "all_download"
-    RewardUsage.CreatorSearch -> "search_post_by_creator"
-    RewardUsage.CreatorTranslation -> "translate"
+private fun RewardUsage.billingPlusKey(): BillingReferrer = when (this) {
+    RewardUsage.BulkDownload -> BillingReferrer.CREATOR_BULK_DOWNLOAD
+    RewardUsage.CreatorSearch -> BillingReferrer.CREATOR_SEARCH
+    RewardUsage.CreatorTranslation -> BillingReferrer.CREATOR_TRANSLATE
 }
 
 private fun shouldPreloadCreatorRewardAd(setting: Setting, availability: CreatorTopRewardAvailability): Boolean {

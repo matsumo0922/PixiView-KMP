@@ -11,7 +11,6 @@ import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.SideEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -20,7 +19,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import kotlinx.coroutines.flow.Flow
-import me.matsumo.fanbox.core.model.BillingPlan
+import me.matsumo.fanbox.core.model.Destination
 import me.matsumo.fanbox.core.ui.AsyncLoadContents
 import me.matsumo.fanbox.feature.about.billing.items.BillingBottomBar
 import me.matsumo.fanbox.feature.about.billing.items.BillingPurchaseSuccessDialog
@@ -28,19 +27,16 @@ import me.matsumo.fanbox.feature.about.billing.items.BillingTopSection
 import me.matsumo.fanbox.feature.about.billing.items.billingDescriptionSection
 import org.jetbrains.compose.resources.getString
 import org.koin.compose.viewmodel.koinViewModel
+import org.koin.core.parameter.parametersOf
 
 @Composable
 internal fun BillingPlusRoute(
+    destination: Destination.BillingPlusBottomSheet,
     terminate: () -> Unit,
     modifier: Modifier = Modifier,
-    initialPlanType: BillingPlan.Type? = null,
-    viewModel: BillingViewModel = koinViewModel(),
+    viewModel: BillingViewModel = koinViewModel { parametersOf(destination) },
 ) {
     val screenState by viewModel.screenState.collectAsStateWithLifecycle()
-
-    SideEffect(initialPlanType) {
-        initialPlanType?.let(viewModel::selectInitialPlan)
-    }
 
     AsyncLoadContents(
         modifier = modifier,

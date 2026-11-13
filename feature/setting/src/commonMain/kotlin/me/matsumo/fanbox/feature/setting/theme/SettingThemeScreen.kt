@@ -27,6 +27,7 @@ import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import kotlinx.coroutines.launch
+import me.matsumo.fanbox.core.model.BillingReferrer
 import me.matsumo.fanbox.core.model.Destination
 import me.matsumo.fanbox.core.model.Setting
 import me.matsumo.fanbox.core.model.ThemeColorConfig
@@ -70,7 +71,7 @@ internal fun SettingThemeRoute(
         SettingThemeDialog(
             modifier = Modifier.background(MaterialTheme.colorScheme.surface),
             setting = it.setting,
-            onClickBillingPlus = { navigateTo(Destination.BillingPlusBottomSheet("")) },
+            onClickBillingPlus = { navigateTo(Destination.BillingPlusBottomSheet(BillingReferrer.DYNAMIC_COLOR)) },
             onSelectTheme = viewModel::setThemeConfig,
             onSelectThemeColor = viewModel::setThemeColorConfig,
             onClickDynamicColor = viewModel::setUseDynamicColor,

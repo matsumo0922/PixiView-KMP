@@ -108,7 +108,7 @@ sealed interface Destination {
     /** Plus 課金画面の BottomSheet 遷移情報。 */
     @Serializable
     data class BillingPlusBottomSheet(
-        val referrer: String?,
+        val referrer: BillingReferrer,
         val initialPlanType: BillingPlan.Type? = null,
     ) : Destination
 
