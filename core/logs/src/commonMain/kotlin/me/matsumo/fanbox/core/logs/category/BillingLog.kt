@@ -11,6 +11,7 @@ sealed interface BillingLog : LogCategory {
         referrer: String,
         initialPlan: String,
         isPlanLoaded: Boolean,
+        isTrialOffered: Boolean,
         daysSinceFirstLaunch: Int,
     ) : BillingLog {
         override val properties: JsonObject = buildJsonObject {
@@ -19,6 +20,7 @@ sealed interface BillingLog : LogCategory {
             put("referrer", referrer)
             put("initial_plan", initialPlan)
             put("is_plan_loaded", isPlanLoaded)
+            put("is_trial_offered", isTrialOffered)
             put("days_since_first_launch", daysSinceFirstLaunch)
         }
     }
@@ -135,8 +137,9 @@ sealed interface BillingLog : LogCategory {
             referrer: String,
             initialPlan: String,
             isPlanLoaded: Boolean,
+            isTrialOffered: Boolean,
             daysSinceFirstLaunch: Int,
-        ) = PaywallShown(referrer, initialPlan, isPlanLoaded, daysSinceFirstLaunch)
+        ) = PaywallShown(referrer, initialPlan, isPlanLoaded, isTrialOffered, daysSinceFirstLaunch)
 
         // 課金画面でプランを選び直したときのログ。選択中と同じプランを選んだときは送らない
         fun paywallPlanSelected(referrer: String, plan: String) = PaywallPlanSelected(referrer, plan)

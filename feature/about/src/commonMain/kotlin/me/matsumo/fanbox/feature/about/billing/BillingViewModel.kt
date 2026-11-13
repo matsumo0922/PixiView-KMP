@@ -102,6 +102,7 @@ class BillingViewModel(
             referrer = referrer,
             initialPlan = selectedPlanType.value.toLogValue(),
             isPlanLoaded = plans.value.isNotEmpty(),
+            isTrialOffered = plans.value.any { plan -> plan.trialPeriod != null },
             daysSinceFirstLaunch = setting.daysSinceFirstLaunch(Clock.System.now().epochSeconds),
         ).send()
         hasSentPaywallShownLog = true

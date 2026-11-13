@@ -10,6 +10,8 @@ Plus 課金画面を開き、プランの取得が終わったときのログ。
   - 初期選択のプラン（monthly、annual）
 - is_plan_loaded: !boolean
   - プランを取得できたか。false のときは購入できないエラー画面を表示している
+- is_trial_offered: !boolean
+  - 取得したプランのどれかに無料トライアルが付いていたか。プランを取得できなかったときは false
 - days_since_first_launch: !integer
   - 初回起動から課金画面を開くまでの経過日数（切り捨て）。初回起動の日時が未記録なら -1
 
