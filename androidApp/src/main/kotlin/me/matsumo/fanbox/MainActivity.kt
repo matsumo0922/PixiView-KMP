@@ -14,8 +14,10 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import androidx.fragment.app.FragmentActivity
+import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.repeatOnLifecycle
 import com.applovin.sdk.AppLovinMediationProvider
 import com.applovin.sdk.AppLovinPrivacySettings
 import com.applovin.sdk.AppLovinSdk
@@ -25,6 +27,9 @@ import com.google.ads.mediation.inmobi.InMobiConsent
 import com.google.android.gms.ads.MobileAds
 import com.google.android.gms.ads.initialization.AdapterStatus
 import com.google.android.gms.ads.initialization.InitializationStatus
+import com.google.android.play.core.ktx.launchReview
+import com.google.android.play.core.ktx.requestReview
+import com.google.android.play.core.review.ReviewManagerFactory
 import com.inmobi.sdk.InMobiSdk
 import com.unity3d.ads.metadata.MetaData
 import com.vungle.ads.VunglePrivacySettings
@@ -35,7 +40,9 @@ import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
 import kotlinx.serialization.json.buildJsonObject
 import kotlinx.serialization.json.put
+import me.matsumo.fanbox.core.common.util.suspendRunCatching
 import me.matsumo.fanbox.core.logs.category.ApplicationLog
+import me.matsumo.fanbox.core.logs.category.ReviewsLog
 import me.matsumo.fanbox.core.logs.logger.LogConfigurator
 import me.matsumo.fanbox.core.logs.logger.send
 import me.matsumo.fanbox.core.model.ThemeConfig
@@ -92,6 +99,7 @@ class MainActivity :
 
         initAdsSdk()
         startService(Intent(this, DownloadPostService::class.java))
+        collectReviewRequest()
     }
 
     override fun onResume() {
@@ -117,6 +125,31 @@ class MainActivity :
             ApplicationLog.close((System.currentTimeMillis() - stayTime) / 1000).send()
             stayTime = 0L
         }
+    }
+
+    private fun collectReviewRequest() {
+        lifecycleScope.launch {
+            repeatOnLifecycle(Lifecycle.State.STARTED) {
+                viewModel.reviewRequest.collect { requestReview() }
+            }
+        }
+    }
+
+    // 表示の頻度は Play 側の割り当てに任せ、アプリ側では回数を制限しない
+    private suspend fun requestReview() {
+        val reviewManager = ReviewManagerFactory.create(this)
+        val reviewInfoResult = suspendRunCatching { reviewManager.requestReview() }
+
+        ReviewsLog.requestReview(reviewInfoResult.isSuccess).send()
+
+        val reviewInfo = reviewInfoResult.getOrElse { throwable ->
+            Napier.w(throwable) { "Failed to request in-app review." }
+            return
+        }
+
+        suspendRunCatching { reviewManager.launchReview(this, reviewInfo) }
+            .onSuccess { ReviewsLog.reviewed().send() }
+            .onFailure { throwable -> Napier.w(throwable) { "Failed to launch in-app review." } }
     }
 
     private fun refreshNativeAdInventory() {
