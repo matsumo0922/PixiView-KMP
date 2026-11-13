@@ -293,7 +293,7 @@ private fun shouldShowPostDetailInterstitialAd(
 }
 
 /** インタースティシャル広告を表示する投稿詳細クローズ回数。 */
-private const val INTERSTITIAL_POST_CLOSE_TRIGGER_COUNT = 3
+private const val INTERSTITIAL_POST_CLOSE_TRIGGER_COUNT = 2
 
 /** インタースティシャル広告表示後に再表示を抑制する秒数。 */
 private const val INTERSTITIAL_AD_COOLDOWN_SECONDS = 180L
