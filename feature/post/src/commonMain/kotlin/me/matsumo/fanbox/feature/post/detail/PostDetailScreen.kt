@@ -64,6 +64,7 @@ import kotlinx.coroutines.launch
 import me.matsumo.fanbox.core.common.util.format
 import me.matsumo.fanbox.core.logs.category.PostsLog
 import me.matsumo.fanbox.core.logs.logger.send
+import me.matsumo.fanbox.core.model.BillingReferrer
 import me.matsumo.fanbox.core.model.Destination
 import me.matsumo.fanbox.core.model.ScreenState
 import me.matsumo.fanbox.core.model.Setting
@@ -416,7 +417,7 @@ private fun PostDetailScreen(
     onClickFollow: (UserId) -> Unit,
     onClickUnfollow: (UserId) -> Unit,
     onClickOpenBrowser: (String) -> Unit,
-    onClickBillingPlus: (String?) -> Unit,
+    onClickBillingPlus: (BillingReferrer) -> Unit,
     onRevealComplete: () -> Unit,
     onTerminate: () -> Unit,
     modifier: Modifier = Modifier,
@@ -556,7 +557,7 @@ private fun PostDetailScreen(
                     if (setting.hasPrivilege) {
                         onClickCommentsTranslate.invoke(it)
                     } else {
-                        onClickBillingPlus.invoke("translate")
+                        onClickBillingPlus.invoke(BillingReferrer.COMMENT_TRANSLATE)
                     }
                 },
             )
@@ -576,7 +577,7 @@ private fun PostDetailScreen(
                 if (setting.hasPrivilege) {
                     onClickBodyTranslate.invoke(postDetail)
                 } else {
-                    onClickBillingPlus.invoke("translate")
+                    onClickBillingPlus.invoke(BillingReferrer.POST_TRANSLATE)
                 }
             },
             onClickMenu = { isShowMenu = true },

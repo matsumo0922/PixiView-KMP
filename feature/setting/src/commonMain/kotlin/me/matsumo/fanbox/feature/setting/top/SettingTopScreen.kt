@@ -28,6 +28,7 @@ import kotlinx.coroutines.launch
 import me.matsumo.fanbox.core.common.PixiViewConfig
 import me.matsumo.fanbox.core.logs.category.WelcomeLog
 import me.matsumo.fanbox.core.logs.logger.send
+import me.matsumo.fanbox.core.model.BillingReferrer
 import me.matsumo.fanbox.core.model.Destination
 import me.matsumo.fanbox.core.model.DownloadFileType
 import me.matsumo.fanbox.core.model.GuestSource
@@ -83,7 +84,7 @@ internal fun SettingTopRoute(
         fun requirePlus(
             setting: Boolean,
             settingMethod: (Boolean) -> Unit,
-            referrer: String,
+            referrer: BillingReferrer,
         ) {
             if (setting) {
                 if (uiState.setting.hasPrivilege) {
@@ -110,7 +111,7 @@ internal fun SettingTopRoute(
                     navigateTo(Destination.SettingTranslationDialog(it))
                 } else {
                     scope.launch { toastExtension.show(snackbarHostState, requirePlus) }
-                    navigateTo(Destination.BillingPlusBottomSheet("translate"))
+                    navigateTo(Destination.BillingPlusBottomSheet(BillingReferrer.SETTING_TRANSLATION_LANGUAGE))
                 }
             },
             onClickDirectory = { navigateTo(Destination.SettingDirectory) },
@@ -132,12 +133,12 @@ internal fun SettingTopRoute(
             onClickHideAdultContents = viewModel::setHideAdultContents,
             onClickOverrideAdultContents = viewModel::setOverrideAdultContents,
             onClickInfinityPostDetail = {
-                requirePlus(it, viewModel::setUseInfinityPostDetail, "isUseInfinityPostDetail")
+                requirePlus(it, viewModel::setUseInfinityPostDetail, BillingReferrer.SETTING_INFINITY_POST_DETAIL)
             },
-            onClickGridMode = { requirePlus(it, viewModel::setGridMode, "isUseGridMode") },
-            onClickHideRestrictedContents = { requirePlus(it, viewModel::setHideRestricted, "isHideRestricted") },
-            onClickAppLock = { requirePlus(it, viewModel::setAppLock, "isUseAppLock") },
-            onClickAutoImagePreview = { requirePlus(it, viewModel::setAutoImagePreview, "isAutoImagePreview") },
+            onClickGridMode = { requirePlus(it, viewModel::setGridMode, BillingReferrer.SETTING_GRID_MODE) },
+            onClickHideRestrictedContents = { requirePlus(it, viewModel::setHideRestricted, BillingReferrer.SETTING_HIDE_RESTRICTED) },
+            onClickAppLock = { requirePlus(it, viewModel::setAppLock, BillingReferrer.SETTING_APP_LOCK) },
+            onClickAutoImagePreview = { requirePlus(it, viewModel::setAutoImagePreview, BillingReferrer.SETTING_AUTO_IMAGE_PREVIEW) },
             onClickReshowReveal = viewModel::setReshowReveal,
             onClickLogout = {
                 navigateToSimpleAlertDialog(SimpleAlertContents.Logout) {

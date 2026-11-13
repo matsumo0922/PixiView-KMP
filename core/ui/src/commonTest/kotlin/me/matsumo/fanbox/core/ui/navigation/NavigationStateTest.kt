@@ -4,6 +4,7 @@ import androidx.navigation3.runtime.NavBackStack
 import androidx.navigation3.runtime.serialization.NavBackStackSerializer
 import kotlinx.serialization.json.Json
 import me.matsumo.fanbox.core.model.BillingPlan
+import me.matsumo.fanbox.core.model.BillingReferrer
 import me.matsumo.fanbox.core.model.Destination
 import me.matsumo.fanbox.core.model.SimpleAlertContents
 import me.matsumo.fanbox.core.model.fanbox.CreatorId
@@ -23,7 +24,7 @@ class NavigationStateTest {
             DestinationKey.of(Destination.CreatorTop(CreatorId("creator"), isPosts = false)),
             DestinationKey.of(Destination.PostSearch(CreatorId("creator"), creatorQuery = null, tag = "tag")),
             DestinationKey.of(Destination.SimpleAlertDialog(SimpleAlertContents.CommentDelete)),
-            DestinationKey.of(Destination.BillingPlusBottomSheet("drawer", BillingPlan.Type.ANNUAL)),
+            DestinationKey.of(Destination.BillingPlusBottomSheet(BillingReferrer.DRAWER, BillingPlan.Type.ANNUAL)),
             DestinationKey.of(Destination.BillingRetentionBottomSheet(isAnnualOfferShown = true)),
         )
         val serializer = NavBackStackSerializer(DestinationKey.serializer())

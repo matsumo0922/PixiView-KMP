@@ -21,7 +21,7 @@ fun EntryProviderScope<Destination>.billingPlusBottomSheetEntry(terminate: () ->
 
         BillingPlusRoute(
             modifier = Modifier.fillMaxSize(),
-            initialPlanType = destination.initialPlanType,
+            destination = destination,
             terminate = terminate,
         )
     }

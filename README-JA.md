@@ -168,6 +168,8 @@ iOS は light と実際のコンパイルで確認する。
 KMP の `expect` / `actual` に関するコンパイラ解析診断が出る場合は、ルールの指摘件数、解析診断、実際の Android/iOS のコンパイル結果を分けて確認する。
 ログイベントを生成するテンプレートは `scripts/daifuku/templates/LogCategory.kt.erb` に置き、生成された宣言と合わせて更新する。
 生成後は `./gradlew :core:logs:detekt --auto-correct` で整形を確認する。
+ログイベントとパラメータの一覧は、カテゴリごとに `scripts/daifuku/log_definitions/` の Markdown に書く。送らなくなった定義は、生成の対象外の `scripts/daifuku/log_definitions/obsoleted/` に移す。
+各イベントは `<カテゴリ>_<イベント>` の名前で Firebase Analytics に送る（例: `billing_paywall_shown`）。
 
 ## Contribute
 

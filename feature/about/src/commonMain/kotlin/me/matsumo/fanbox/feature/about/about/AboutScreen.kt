@@ -19,6 +19,7 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import kotlinx.coroutines.launch
 import me.matsumo.fanbox.core.common.PixiViewConfig
+import me.matsumo.fanbox.core.model.BillingReferrer
 import me.matsumo.fanbox.core.model.Destination
 import me.matsumo.fanbox.core.model.Setting
 import me.matsumo.fanbox.core.resources.Res
@@ -91,7 +92,7 @@ internal fun AboutRoute(
                 navigatorExtension.navigateToWebPage("https://twitter.com/matsumo0922", "")
             },
             onClickVersionHistory = { navigateTo(Destination.VersionHistoryBottomSheet) },
-            onClickDonate = { navigateTo(Destination.BillingPlusBottomSheet("")) },
+            onClickDonate = { navigateTo(Destination.BillingPlusBottomSheet(BillingReferrer.ABOUT_DONATE)) },
             onTerminate = terminate,
         )
     }

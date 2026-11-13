@@ -64,6 +64,15 @@ data class Setting(
     val billingRetentionPromptDedupeKey
         get() = "${plusUnsubscribeDetectedAtMillis ?: "unknown"}:$plusRetentionPromptLastShownAtMillis"
 
+    /** 初回起動から指定時刻までの経過日数（切り捨て）。初回起動の日時が未記録なら -1 を返す。 */
+    fun daysSinceFirstLaunch(currentEpochSeconds: Long): Int {
+        if (firstLaunchTime < 0L) return -1
+
+        val elapsedSeconds = (currentEpochSeconds - firstLaunchTime).coerceAtLeast(0L)
+
+        return (elapsedSeconds / 1.days.inWholeSeconds).toInt()
+    }
+
     /** 指定時刻でリテンション UI を表示できるかどうか。 */
     fun canShowBillingRetentionPrompt(currentTimeMillis: Long): Boolean {
         if (!isSubscriptionSetToCancel) return false

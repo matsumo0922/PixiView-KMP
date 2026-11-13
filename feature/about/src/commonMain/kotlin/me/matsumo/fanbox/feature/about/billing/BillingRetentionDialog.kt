@@ -31,6 +31,7 @@ import androidx.compose.ui.unit.dp
 import me.matsumo.fanbox.core.logs.category.BillingLog
 import me.matsumo.fanbox.core.logs.logger.send
 import me.matsumo.fanbox.core.model.BillingPlan
+import me.matsumo.fanbox.core.model.BillingReferrer
 import me.matsumo.fanbox.core.model.Destination
 import me.matsumo.fanbox.core.model.Platform
 import me.matsumo.fanbox.core.model.currentPlatform
@@ -72,7 +73,7 @@ internal fun BillingRetentionRoute(
             BillingLog.retentionPromptAnnualClicked().send()
             replaceTo(
                 Destination.BillingPlusBottomSheet(
-                    referrer = BILLING_RETENTION_REFERRER,
+                    referrer = BillingReferrer.BILLING_RETENTION,
                     initialPlanType = BillingPlan.Type.ANNUAL,
                 ),
             )
@@ -84,7 +85,7 @@ internal fun BillingRetentionRoute(
             terminate()
             navigatorExtension.navigateToWebPage(
                 url = subscriptionManagementUrl,
-                referrer = BILLING_RETENTION_REFERRER,
+                referrer = "billing_retention",
             )
         },
         onDismissClick = {
@@ -270,9 +271,6 @@ private fun dismissBillingRetentionPrompt(reason: String, terminate: () -> Unit)
     BillingLog.retentionPromptDismissed(reason).send()
     terminate()
 }
-
-/** リテンション BottomSheet から Plus 購入画面を開いたときの referrer。 */
-private const val BILLING_RETENTION_REFERRER = "billing_retention"
 
 /** 明示的に閉じるボタンを押したときの dismiss reason。 */
 private const val BILLING_RETENTION_DISMISS_CLOSE_BUTTON = "close_button"
