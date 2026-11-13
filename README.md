@@ -221,6 +221,14 @@ If you find a bug, want to improve a feature, or want to develop a new feature, 
 
 This app is monetized using AdMob. When building manually from GitHub, you need to write the AdMob App ID in `local.properties`. By default it contains a dummy ID, which causes it to crash on startup. Alternatively, please delete the AdMob code and build the app. In addition, various IDs are described in `local.properties`. See `androidApp/build.gradle.kts`, `shared/build.gradle.kts`, or `core/common/src/commonMain/kotlin/me/matsumo/fanbox/core/common/PixiViewConfig.kt` for details.
 
+Release builds (`bundleRelease` / `assembleRelease`) fail if any of the following Android AdMob IDs is unset or still a test ID. The error message lists the keys to set in `local.properties`. Debug builds use test IDs for unset keys.
+
+- `ADMOB_ANDROID_APP_ID`
+- `ADMOB_ANDROID_BANNER_AD_UNIT_ID`
+- `ADMOB_ANDROID_NATIVE_AD_UNIT_ID`
+- `ADMOB_ANDROID_REWARD_AD_UNIT_ID`
+- `ADMOB_ANDROID_INTERSTITIAL_AD_UNIT_ID`
+
 ## License
 
 ```text

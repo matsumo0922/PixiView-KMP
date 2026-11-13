@@ -18,6 +18,34 @@ val localProperties = Properties().apply {
 // When building from GitHub, either exclude AdMob code or register with AdMob for an ID.
 val admobTestAppId = "ca-app-pub-0000000000000000~0000000000"
 
+// リリースビルドで検査する Android 用の広告 ID。アプリが値を読む経路と同じ順で解決する
+// アプリ ID はこのファイルのマニフェストに、広告ユニット ID は shared の BuildKonfig に埋め込まれる
+val releaseAdMobIds = mapOf(
+    "ADMOB_ANDROID_APP_ID" to localProperties.getProperty("ADMOB_ANDROID_APP_ID"),
+    "ADMOB_ANDROID_BANNER_AD_UNIT_ID" to readLocalPropertyOrEnv("ADMOB_ANDROID_BANNER_AD_UNIT_ID"),
+    "ADMOB_ANDROID_NATIVE_AD_UNIT_ID" to readLocalPropertyOrEnv("ADMOB_ANDROID_NATIVE_AD_UNIT_ID"),
+    "ADMOB_ANDROID_REWARD_AD_UNIT_ID" to readLocalPropertyOrEnv("ADMOB_ANDROID_REWARD_AD_UNIT_ID"),
+    "ADMOB_ANDROID_INTERSTITIAL_AD_UNIT_ID" to readLocalPropertyOrEnv("ADMOB_ANDROID_INTERSTITIAL_AD_UNIT_ID"),
+)
+
+val verifyReleaseAdMobIds by tasks.registering {
+    val testIdKeys = releaseAdMobIds.filterValues(::isAdMobTestId).keys.toList()
+    inputs.property("testIdKeys", testIdKeys)
+
+    doLast {
+        check(testIdKeys.isEmpty()) { "Release builds must not use AdMob test IDs. Set these keys in local.properties: ${testIdKeys.joinToString()}" }
+    }
+}
+
+fun readLocalPropertyOrEnv(key: String): String? = localProperties.getProperty(key) ?: System.getenv(key)
+
+// Google のテスト用広告ユニット ID は publisher ID が共通しているため、前方一致で判定する
+fun isAdMobTestId(id: String?): Boolean = when {
+    id.isNullOrBlank() -> true
+    id == admobTestAppId -> true
+    else -> id.startsWith("ca-app-pub-3940256099942544")
+}
+
 android {
     namespace = "me.matsumo.fanbox"
 
@@ -86,6 +114,7 @@ android {
 
             if (it.buildType == "release") {
                 it.packaging.resources.excludes.add("META-INF/**")
+                it.lifecycleTasks.registerPreBuild(verifyReleaseAdMobIds)
             }
         }
     }
