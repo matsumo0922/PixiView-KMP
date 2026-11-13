@@ -325,6 +325,7 @@
     <string name="billing_plus_purchase_button">%1$sで支援</string>
     <string name="billing_plus_purchase_trial_button">%1$s無料で試す</string>
     <string name="billing_plus_trial_label">無料トライアル: %1$s</string>
+    <string name="billing_plus_annual_discount_label">月払いより %1$d% お得</string>
     <string name="billing_plus_trial_period_day">%1$d日間</string>
     <string name="billing_plus_trial_period_week">%1$d週間</string>
     <string name="billing_plus_trial_period_month">%1$dか月間</string>

@@ -298,6 +298,7 @@
     <string name="billing_plus_purchase_button">以 %1$s 的价格购买</string>
     <string name="billing_plus_purchase_trial_button">开始 %1$s 免费试用</string>
     <string name="billing_plus_trial_label">免费试用：%1$s</string>
+    <string name="billing_plus_annual_discount_label">比按月付费优惠 %1$d%</string>
     <string name="billing_plus_trial_period_day">%1$d天</string>
     <string name="billing_plus_trial_period_week">%1$d周</string>
     <string name="billing_plus_trial_period_month">%1$d个月</string>
