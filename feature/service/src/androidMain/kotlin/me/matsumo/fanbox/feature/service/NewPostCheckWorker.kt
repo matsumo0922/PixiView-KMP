@@ -112,10 +112,12 @@ class NewPostCheckWorker(
     }
 
     private suspend fun notifyNewPosts(detection: NewPostDetection.Found, setting: Setting) {
-        newPostCheckDataStore.setLastSeenPublishedAt(detection.latestPublishedAt)
-
         val content = resolveNewPostNotificationContent(detection.newPosts, setting.isHideAdultContentsInNotification)
 
-        notifier.notify(content)
+        // サムネイルの取得中に中断されると、記録だけが進んで通知を失う。取得を含めて組み立ててから記録する。
+        val notification = notifier.build(content)
+
+        newPostCheckDataStore.setLastSeenPublishedAt(detection.latestPublishedAt)
+        notifier.show(notification, content.postCount)
     }
 }

@@ -101,6 +101,15 @@ private enum class StartupPermissionPrompt {
 }
 
 /**
+ * 起動時の権限の案内を、このプロセスで判定したか。
+ *
+ * ログアウトしてログインし直すと、案内を出す画面が作り直される。画面の状態に持つと判定をやり直すため、プロセスに持つ。
+ */
+private object StartupPermissionPromptHistory {
+    var isChecked = false
+}
+
+/**
  * 通知の権限と、FANBOX のリンクを開く設定の案内のうち、条件を満たすものを 1 つだけ表示する。
  *
  * 両方の条件を満たすときは、新着投稿の通知に必要な通知の権限を優先する。
@@ -111,13 +120,12 @@ private fun RequestStartupPermission(
     flagRepository: FlagRepository = koinInject(),
 ) {
     val notificationPermission = rememberNotificationPermissionState(referrer = "dialog")
-    var isPromptChecked by rememberSaveable { mutableStateOf(false) }
     var prompt by rememberSaveable { mutableStateOf<StartupPermissionPrompt?>(null) }
 
     LaunchedEffect(Unit) {
-        if (isPromptChecked) return@LaunchedEffect
+        if (StartupPermissionPromptHistory.isChecked) return@LaunchedEffect
 
-        isPromptChecked = true
+        StartupPermissionPromptHistory.isChecked = true
         prompt = selectStartupPermissionPrompt(
             activity = activity,
             flagRepository = flagRepository,

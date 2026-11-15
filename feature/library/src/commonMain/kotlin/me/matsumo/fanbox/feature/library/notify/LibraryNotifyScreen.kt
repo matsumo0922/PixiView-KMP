@@ -16,6 +16,9 @@ import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
@@ -79,10 +82,8 @@ private fun LibraryNotifyScreen(
     val state = rememberLazyListState()
     val scrollBehavior = TopAppBarDefaults.pinnedScrollBehavior()
     val notificationPermission = rememberNotificationPermissionState(referrer = "notify_tab")
-
-    LaunchedEffect(notificationPermission.isGranted) {
-        if (!notificationPermission.isGranted) notificationPermission.reportPromptShown()
-    }
+    // 案内を一覧の外へスクロールして戻しても、通知タブを開いている間は 1 回だけ数える。
+    var isPermissionPromptReported by remember { mutableStateOf(false) }
 
     Scaffold(
         modifier = modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
@@ -113,6 +114,14 @@ private fun LibraryNotifyScreen(
                 // 新着投稿の通知の設定によらず、権限がない間は表示する。
                 if (!notificationPermission.isGranted) {
                     item(key = "notification-permission") {
+                        // 一覧を表示できず案内が出ないときは数えないよう、案内の項目が表示されたときに送る。
+                        LaunchedEffect(Unit) {
+                            if (isPermissionPromptReported) return@LaunchedEffect
+
+                            isPermissionPromptReported = true
+                            notificationPermission.reportPromptShown()
+                        }
+
                         LibraryNotifyPermissionItem(
                             modifier = Modifier.fillMaxWidth(),
                             onClickRequest = notificationPermission::request,

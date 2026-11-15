@@ -1,6 +1,7 @@
 package me.matsumo.fanbox.feature.service
 
 import android.annotation.SuppressLint
+import android.app.Notification
 import android.app.NotificationChannel
 import android.app.NotificationManager
 import android.app.PendingIntent
@@ -38,16 +39,21 @@ internal class NewPostNotifier(private val context: Context) {
     private val manager = NotificationManagerCompat.from(context)
     private val notifyConfig = NotificationConfigs.newPost
 
-    /** 通知を表示できる状態なら表示する。権限がないとき、通知チャンネルが無効のときは何もしない。 */
-    // 権限: 直前に areNotificationsEnabled で、Android 13 以上の通知の権限を含めて確かめている
-    @SuppressLint("MissingPermission")
-    suspend fun notify(content: NewPostNotificationContent) {
+    /** 表示する通知を組み立てる。サムネイルの取得と、通知チャンネルの作成を含む。 */
+    suspend fun build(content: NewPostNotificationContent): Notification {
         createChannel()
 
+        return buildNotification(content)
+    }
+
+    /** [build] で組み立てた通知を、表示できる状態なら表示する。権限がないとき、通知チャンネルが無効のときは何もしない。 */
+    // 権限: 直前に areNotificationsEnabled で、Android 13 以上の通知の権限を含めて確かめている
+    @SuppressLint("MissingPermission")
+    fun show(notification: Notification, postCount: Int) {
         if (!canNotify()) return
 
-        manager.notify(notifyConfig.notifyId, buildNotification(content))
-        NotificationsLog.newPostNotificationShown(content.postCount).send()
+        manager.notify(notifyConfig.notifyId, notification)
+        NotificationsLog.newPostNotificationShown(postCount).send()
     }
 
     /** 通知を表示できるか。通知の権限があり、新着投稿の通知チャンネルが無効にされていなければ true を返す。チャンネルがまだなければ、有効として扱う。 */
