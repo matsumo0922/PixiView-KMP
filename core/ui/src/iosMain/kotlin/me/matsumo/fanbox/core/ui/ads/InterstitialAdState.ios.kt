@@ -8,7 +8,7 @@ class InterstitialAdStateImpl : InterstitialAdState {
         // Implement iOS-specific ad loading logic
     }
 
-    override suspend fun show(): Boolean = true
+    override suspend fun show(): InterstitialAdShowResult = InterstitialAdShowResult.Disabled
 }
 
 @Composable

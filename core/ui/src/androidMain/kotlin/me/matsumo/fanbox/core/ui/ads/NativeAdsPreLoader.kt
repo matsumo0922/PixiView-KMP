@@ -167,10 +167,10 @@ class NativeAdsPreLoader(context: Context, pixiViewConfig: PixiViewConfig) {
         Napier.d("discardExpiredPreloadedAds: ${expiredAds.size}")
     }
 
-    private fun isExpired(preloadedNativeAd: PreloadedNativeAd): Boolean {
-        val elapsedSinceLoaded = SystemClock.elapsedRealtime() - preloadedNativeAd.loadedAtElapsedRealtime
-        return elapsedSinceLoaded >= NATIVE_AD_EXPIRATION_MILLIS
-    }
+    private fun isExpired(preloadedNativeAd: PreloadedNativeAd): Boolean = isAdExpired(
+        loadedAtElapsedRealtime = preloadedNativeAd.loadedAtElapsedRealtime,
+        currentElapsedRealtime = SystemClock.elapsedRealtime(),
+    )
 
     fun releaseAd(key: String) {
         Napier.d("releaseAd: $key")
@@ -222,6 +222,3 @@ private const val NUMBER_OF_PRELOAD_ADS = 4
 
 /** 画面から外れた後も再表示に備えて破棄せず保持するネイティブ広告の最大数。 */
 private const val MAX_RETAINED_INACTIVE_ADS = 4
-
-/** プリロード済みネイティブ広告を有効とみなす最大保持時間。AdMob の広告失効（約1時間）より短く設定する。 */
-private const val NATIVE_AD_EXPIRATION_MILLIS = 50L * 60L * 1000L
