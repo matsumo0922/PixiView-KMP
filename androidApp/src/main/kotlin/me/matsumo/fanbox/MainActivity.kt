@@ -42,6 +42,7 @@ import kotlinx.serialization.json.buildJsonObject
 import kotlinx.serialization.json.put
 import me.matsumo.fanbox.core.common.util.suspendRunCatching
 import me.matsumo.fanbox.core.logs.category.ApplicationLog
+import me.matsumo.fanbox.core.logs.category.NotificationsLog
 import me.matsumo.fanbox.core.logs.category.ReviewsLog
 import me.matsumo.fanbox.core.logs.logger.LogConfigurator
 import me.matsumo.fanbox.core.logs.logger.send
@@ -49,6 +50,7 @@ import me.matsumo.fanbox.core.model.ThemeConfig
 import me.matsumo.fanbox.core.ui.ads.NativeAdsPreLoader
 import me.matsumo.fanbox.core.ui.theme.shouldUseDarkTheme
 import me.matsumo.fanbox.feature.service.DownloadPostService
+import me.matsumo.fanbox.feature.service.consumeNewPostNotificationTap
 import org.json.JSONObject
 import org.koin.androidx.viewmodel.ext.android.viewModel
 import org.koin.core.component.KoinComponent
@@ -100,6 +102,23 @@ class MainActivity :
         initAdsSdk()
         startService(Intent(this, DownloadPostService::class.java))
         collectReviewRequest()
+
+        // プロセスの再生成で作り直されたときは、起動した intent を同じタップとして数え直さない
+        if (savedInstanceState == null) reportNewPostNotificationTap(intent)
+    }
+
+    override fun onNewIntent(intent: Intent) {
+        super.onNewIntent(intent)
+        reportNewPostNotificationTap(intent)
+    }
+
+    private fun reportNewPostNotificationTap(intent: Intent) {
+        val postCount = intent.consumeNewPostNotificationTap() ?: return
+
+        lifecycleScope.launch {
+            LogConfigurator.isConfigured.first { it }
+            NotificationsLog.newPostNotificationTapped(postCount).send()
+        }
     }
 
     override fun onResume() {

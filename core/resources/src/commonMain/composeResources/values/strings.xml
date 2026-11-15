@@ -102,6 +102,18 @@
     <!-- Notify -->
     <string name="notify_download_channel_name">Download</string>
     <string name="notify_download_channel_description">Notify download progress</string>
+    <string name="notify_new_post_channel_name">New posts</string>
+    <string name="notify_new_post_channel_description">Notify new posts from creators you support or follow</string>
+    <string name="notify_new_post_hidden_message">%1$s has a new post!</string>
+    <string name="notify_new_post_multiple_title">%1$d new posts</string>
+    <string name="setting_top_notification">Notifications</string>
+    <string name="setting_top_notification_new_post">New post notifications</string>
+    <string name="setting_top_notification_new_post_description">Notify new posts from creators you support or follow</string>
+    <string name="setting_top_notification_hide_adult_contents">Hide adult content in notifications</string>
+    <string name="setting_top_notification_hide_adult_contents_description">Hide the title and thumbnail of adult posts in notifications</string>
+    <string name="notification_permission_request_title">Allow notifications</string>
+    <string name="notification_permission_request_message">Allow notifications to be notified of new posts from creators you support or follow.</string>
+    <string name="notification_permission_request_button">Allow</string>
     <string name="notify_download_title">Downloading…</string>
     <string name="notify_download_message">Download of illustrations is in progress (%1$d remaining)</string>
 

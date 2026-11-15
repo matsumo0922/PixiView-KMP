@@ -21,5 +21,9 @@ kotlin {
             implementation(project(":core:logs"))
             implementation(project(":core:resources"))
         }
+
+        androidMain.dependencies {
+            implementation(libs.androidx.work.runtime)
+        }
     }
 }

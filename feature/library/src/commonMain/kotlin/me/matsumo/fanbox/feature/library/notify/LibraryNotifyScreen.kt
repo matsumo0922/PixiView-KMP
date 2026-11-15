@@ -14,6 +14,7 @@ import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.nestedscroll.nestedScroll
@@ -35,8 +36,10 @@ import me.matsumo.fanbox.core.ui.component.PixiViewTopBar
 import me.matsumo.fanbox.core.ui.extensition.LocalNavigationType
 import me.matsumo.fanbox.core.ui.extensition.PixiViewNavigationType
 import me.matsumo.fanbox.core.ui.extensition.drawVerticalScrollbar
+import me.matsumo.fanbox.core.ui.permission.rememberNotificationPermissionState
 import me.matsumo.fanbox.core.ui.view.PagingErrorSection
 import me.matsumo.fanbox.feature.library.notify.items.LibraryNotifyBellItem
+import me.matsumo.fanbox.feature.library.notify.items.LibraryNotifyPermissionItem
 import org.jetbrains.compose.resources.stringResource
 import org.koin.compose.viewmodel.koinViewModel
 
@@ -75,6 +78,11 @@ private fun LibraryNotifyScreen(
     val navigationType = LocalNavigationType.current.type
     val state = rememberLazyListState()
     val scrollBehavior = TopAppBarDefaults.pinnedScrollBehavior()
+    val notificationPermission = rememberNotificationPermissionState(referrer = "notify_tab")
+
+    LaunchedEffect(notificationPermission.isGranted) {
+        if (!notificationPermission.isGranted) notificationPermission.reportPromptShown()
+    }
 
     Scaffold(
         modifier = modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
@@ -102,6 +110,18 @@ private fun LibraryNotifyScreen(
                 modifier = Modifier.drawVerticalScrollbar(state),
                 state = state,
             ) {
+                // 新着投稿の通知の設定によらず、権限がない間は表示する。
+                if (!notificationPermission.isGranted) {
+                    item(key = "notification-permission") {
+                        LibraryNotifyPermissionItem(
+                            modifier = Modifier.fillMaxWidth(),
+                            onClickRequest = notificationPermission::request,
+                        )
+
+                        HorizontalDivider()
+                    }
+                }
+
                 items(
                     count = pagingAdapter.itemCount,
                     // fankt 0.1.0 で ID が value class になり、文字列補間が型名を含む形に変わった。

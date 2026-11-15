@@ -21,6 +21,7 @@ import me.matsumo.fanbox.core.model.Setting
 import me.matsumo.fanbox.core.model.SettingPlusStatusUpdate
 import me.matsumo.fanbox.core.model.ThemeColorConfig
 import me.matsumo.fanbox.core.model.ThemeConfig
+import kotlin.reflect.KProperty1
 import kotlin.time.Duration.Companion.seconds
 
 /** アプリ設定を読み出し、項目ごとの型付き setter で更新する。 */
@@ -317,6 +318,26 @@ class SettingDataStore(
 
         settingPreference.edit {
             it[booleanPreferencesKey(Setting::isAutoImagePreview.name)] = isAutoImagePreview
+        }
+    }
+
+    suspend fun setNewPostNotificationEnabled(isEnabled: Boolean) = setBooleanSetting(Setting::isNewPostNotificationEnabled, isEnabled)
+
+    suspend fun setHideAdultContentsInNotification(isHide: Boolean) = setBooleanSetting(Setting::isHideAdultContentsInNotification, isHide)
+
+    private suspend fun setBooleanSetting(property: KProperty1<Setting, Boolean>, value: Boolean) = withContext(ioDispatcher) {
+        val oldValue = property.get(setting.first())
+
+        if (oldValue == value) return@withContext
+
+        SettingsLog.update(
+            propertyName = property.name,
+            oldValue = oldValue.toString(),
+            newValue = value.toString(),
+        ).send()
+
+        settingPreference.edit {
+            it[booleanPreferencesKey(property.name)] = value
         }
     }
 

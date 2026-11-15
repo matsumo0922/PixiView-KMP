@@ -11,6 +11,11 @@ object NotificationConfigs {
         notifyId = 2,
         channelId = "firebase",
     )
+    val newPost = NotificationConfig(
+        serviceId = 3,
+        notifyId = 3,
+        channelId = "newPost",
+    )
 }
 
 data class NotificationConfig(

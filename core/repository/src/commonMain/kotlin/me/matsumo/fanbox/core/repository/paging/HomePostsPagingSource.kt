@@ -3,6 +3,7 @@ package me.matsumo.fanbox.core.repository.paging
 import androidx.paging.PagingSource
 import androidx.paging.PagingState
 import kotlinx.coroutines.flow.first
+import me.matsumo.fanbox.core.model.fanbox.CreatorId
 import me.matsumo.fanbox.core.model.fanbox.Cursor
 import me.matsumo.fanbox.core.model.fanbox.Post
 import me.matsumo.fanbox.core.repository.FanboxRepository
@@ -29,9 +30,11 @@ class HomePostsPagingSource(private val fanboxRepository: FanboxRepository, priv
             }
 
             val page = fanboxRepository.getHomePosts(cursor, params.loadSize)
-            val contents = page.contents
-                .filterNot { isHideRestricted && it.isRestricted }
-                .filterNot { it.user?.creatorId in blockedCreators }
+            val contents = filterHomePosts(
+                posts = page.contents,
+                isHideRestricted = isHideRestricted,
+                blockedCreators = blockedCreators,
+            )
 
             loadResult = when {
                 contents.isNotEmpty() -> LoadResult.Page(
@@ -67,3 +70,12 @@ class HomePostsPagingSource(private val fanboxRepository: FanboxRepository, priv
 
     override fun getRefreshKey(state: PagingState<Cursor, Post>): Cursor? = null
 }
+
+/** ホームの投稿一覧に表示する投稿だけを残す。閲覧できない投稿を隠す設定のときはその投稿と、ブロックしたクリエイターの投稿を除く。 */
+fun filterHomePosts(
+    posts: List<Post>,
+    isHideRestricted: Boolean,
+    blockedCreators: Set<CreatorId>,
+): List<Post> = posts
+    .filterNot { isHideRestricted && it.isRestricted }
+    .filterNot { it.user?.creatorId in blockedCreators }

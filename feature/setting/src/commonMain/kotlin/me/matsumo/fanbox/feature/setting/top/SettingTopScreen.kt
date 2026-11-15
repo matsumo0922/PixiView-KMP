@@ -45,12 +45,15 @@ import me.matsumo.fanbox.core.ui.AsyncLoadContents
 import me.matsumo.fanbox.core.ui.appName
 import me.matsumo.fanbox.core.ui.extensition.LocalSnackbarHostState
 import me.matsumo.fanbox.core.ui.extensition.NavigatorExtension
+import me.matsumo.fanbox.core.ui.extensition.Platform
 import me.matsumo.fanbox.core.ui.extensition.ToastExtension
+import me.matsumo.fanbox.core.ui.extensition.currentPlatform
 import me.matsumo.fanbox.feature.setting.SettingTheme
 import me.matsumo.fanbox.feature.setting.top.items.SettingTopAccountSection
 import me.matsumo.fanbox.feature.setting.top.items.SettingTopFileSection
 import me.matsumo.fanbox.feature.setting.top.items.SettingTopGeneralSection
 import me.matsumo.fanbox.feature.setting.top.items.SettingTopInformationSection
+import me.matsumo.fanbox.feature.setting.top.items.SettingTopNotificationSection
 import me.matsumo.fanbox.feature.setting.top.items.SettingTopOthersSection
 import me.matsumo.fanbox.feature.setting.top.items.SettingTopThemeSection
 import org.jetbrains.compose.resources.stringResource
@@ -132,6 +135,8 @@ internal fun SettingTopRoute(
             onClickFollowTabDefaultHome = viewModel::setFollowTabDefaultHome,
             onClickHideAdultContents = viewModel::setHideAdultContents,
             onClickOverrideAdultContents = viewModel::setOverrideAdultContents,
+            onClickNewPostNotification = viewModel::setNewPostNotificationEnabled,
+            onClickHideAdultContentsInNotification = viewModel::setHideAdultContentsInNotification,
             onClickInfinityPostDetail = {
                 requirePlus(it, viewModel::setUseInfinityPostDetail, BillingReferrer.SETTING_INFINITY_POST_DETAIL)
             },
@@ -211,6 +216,8 @@ private fun SettingTopScreen(
     onClickGridMode: (Boolean) -> Unit,
     onClickInfinityPostDetail: (Boolean) -> Unit,
     onClickAutoImagePreview: (Boolean) -> Unit,
+    onClickNewPostNotification: (Boolean) -> Unit,
+    onClickHideAdultContentsInNotification: (Boolean) -> Unit,
     onClickTeamsOfService: () -> Unit,
     onClickPrivacyPolicy: () -> Unit,
     onClickReshowReveal: () -> Unit,
@@ -291,6 +298,18 @@ private fun SettingTopScreen(
                     onClickInfinityPostDetail = onClickInfinityPostDetail,
                     onClickAutoImagePreview = onClickAutoImagePreview,
                 )
+            }
+
+            // 新着投稿の通知は Android のみの機能のため、iOS では表示しない。
+            if (currentPlatform == Platform.Android) {
+                item {
+                    SettingTopNotificationSection(
+                        modifier = Modifier.fillMaxWidth(),
+                        setting = setting,
+                        onClickNewPostNotification = onClickNewPostNotification,
+                        onClickHideAdultContentsInNotification = onClickHideAdultContentsInNotification,
+                    )
+                }
             }
 
             item {

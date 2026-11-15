@@ -82,6 +82,18 @@ class SettingTopViewModel(
         }
     }
 
+    fun setNewPostNotificationEnabled(isEnabled: Boolean) {
+        viewModelScope.launch {
+            settingRepository.setNewPostNotificationEnabled(isEnabled)
+        }
+    }
+
+    fun setHideAdultContentsInNotification(isHide: Boolean) {
+        viewModelScope.launch {
+            settingRepository.setHideAdultContentsInNotification(isHide)
+        }
+    }
+
     fun setHideAdultContents(isHideAdultContents: Boolean) {
         viewModelScope.launch {
             settingRepository.setHideAdultContents(isHideAdultContents)
