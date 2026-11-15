@@ -83,6 +83,7 @@ private fun LibraryNotifyScreen(
     val scrollBehavior = TopAppBarDefaults.pinnedScrollBehavior()
     val notificationPermission = rememberNotificationPermissionState(referrer = "notify_tab")
     // 案内を一覧の外へスクロールして戻しても、通知タブを開いている間は 1 回だけ数える。
+    // タブの状態はタブを切り替えても残るため、保存する状態には持たない。そのため、Activity が作り直されると数え直す。
     var isPermissionPromptReported by remember { mutableStateOf(false) }
 
     Scaffold(

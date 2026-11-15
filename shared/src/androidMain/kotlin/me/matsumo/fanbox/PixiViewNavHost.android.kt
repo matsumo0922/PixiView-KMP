@@ -125,12 +125,13 @@ private fun RequestStartupPermission(
     LaunchedEffect(Unit) {
         if (StartupPermissionPromptHistory.isChecked) return@LaunchedEffect
 
-        StartupPermissionPromptHistory.isChecked = true
+        // 選んでいる途中で Activity が作り直されると、この処理は取り消される。案内を失わないよう、選んだ結果を反映してから判定済みにする。
         prompt = selectStartupPermissionPrompt(
             activity = activity,
             flagRepository = flagRepository,
             isNotificationGranted = notificationPermission.isGranted,
         )
+        StartupPermissionPromptHistory.isChecked = true
 
         if (prompt == StartupPermissionPrompt.NOTIFICATION) notificationPermission.reportPromptShown()
     }

@@ -47,7 +47,7 @@ sealed interface NotificationsLog : LogCategory {
         // 新着投稿の通知をタップしてアプリを開いたときのログ
         fun newPostNotificationTapped(postCount: Int) = NewPostNotificationTapped(postCount)
 
-        // 通知の権限の案内を表示したときのログ。ダイアログは表示するたびに、通知タブの案内は通知タブを開くたびに 1 回送る
+        // 通知の権限の案内を表示したときのログ。ダイアログは表示するたびに、通知タブの案内は通知タブを開くたびに 1 回送る。通知タブの案内は、画面の回転などで Activity が作り直されたときにも送り直す
         fun permissionPromptShown(referrer: String) = PermissionPromptShown(referrer)
 
         // 通知の権限の案内から、許可を求めた結果が分かったときのログ。Android 13 以上は権限のダイアログの結果、端末の設定画面を開いたときは画面に戻った時点の状態を送る
