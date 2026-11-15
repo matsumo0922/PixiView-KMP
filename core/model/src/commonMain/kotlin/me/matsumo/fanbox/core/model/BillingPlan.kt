@@ -40,6 +40,39 @@ fun calculateAnnualDiscountPercent(plans: List<BillingPlan>): Int? {
     return discountPercent.toInt().takeIf { percent -> percent >= 1 }
 }
 
+/**
+ * 課金画面に並べるプランを返す。
+ *
+ * 年額を契約中のユーザーには、月額への変更を提供しないため年額だけを返す。それ以外は [plans] をそのまま返す。
+ */
+fun filterOfferedPlans(plans: List<BillingPlan>, subscribedPlanType: BillingPlan.Type?): List<BillingPlan> {
+    if (subscribedPlanType != BillingPlan.Type.ANNUAL) return plans
+
+    return plans.filter { plan -> plan.type == BillingPlan.Type.ANNUAL }
+}
+
+/**
+ * 課金画面を開いたときに選択しておくプランを返す。
+ *
+ * 契約中のプランがなければ [requestedPlanType] をそのまま返す。契約中のプランがあれば、購入できる（契約中ではない）プランを優先し、
+ * [requestedPlanType] が購入できなければ最初の購入できるプランを返す。購入できるプランがなければ契約中のプランを返す。
+ */
+fun resolveInitialSelectedPlanType(
+    requestedPlanType: BillingPlan.Type,
+    offeredPlans: List<BillingPlan>,
+    subscribedPlanType: BillingPlan.Type?,
+): BillingPlan.Type {
+    if (subscribedPlanType == null) return requestedPlanType
+
+    val purchasablePlanTypes = offeredPlans
+        .map { plan -> plan.type }
+        .filter { planType -> planType != subscribedPlanType }
+
+    if (requestedPlanType in purchasablePlanTypes) return requestedPlanType
+
+    return purchasablePlanTypes.firstOrNull() ?: subscribedPlanType
+}
+
 /** Plus の無料トライアル期間を表すモデル。 */
 @Immutable
 data class BillingTrialPeriod(val value: Int, val unit: Unit) {

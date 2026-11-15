@@ -33,6 +33,7 @@ import me.matsumo.fanbox.core.resources.billing_plus_plan_monthly
 import me.matsumo.fanbox.core.resources.billing_plus_plan_yearly
 import me.matsumo.fanbox.core.resources.billing_plus_purchase_button
 import me.matsumo.fanbox.core.resources.billing_plus_purchase_trial_button
+import me.matsumo.fanbox.core.resources.billing_plus_subscribed_label
 import me.matsumo.fanbox.core.resources.billing_plus_trial_label
 import me.matsumo.fanbox.core.resources.billing_plus_trial_period_day
 import me.matsumo.fanbox.core.resources.billing_plus_trial_period_month
@@ -72,6 +73,7 @@ internal fun BillingBottomBar(
             modifier = Modifier.fillMaxWidth(),
             plans = uiState.plans,
             selectedPlanType = uiState.selectedPlanType,
+            subscribedPlanType = uiState.subscribedPlanType,
             onPlanSelect = { planType -> onViewEvent(BillingViewEvent.OnPlanSelected(planType)) },
         )
 
@@ -79,6 +81,7 @@ internal fun BillingBottomBar(
             ButtonSection(
                 modifier = Modifier.fillMaxWidth(),
                 selectedPlan = selectedPlan,
+                isSubscribedPlan = selectedPlan.type == uiState.subscribedPlanType,
                 onPurchaseClick = { onViewEvent(BillingViewEvent.OnPurchaseClicked) },
                 onRestoreClick = { onViewEvent(BillingViewEvent.OnRestoreClicked) },
             )
@@ -90,6 +93,7 @@ internal fun BillingBottomBar(
 private fun PlanSelectSection(
     plans: ImmutableList<BillingPlan>,
     selectedPlanType: BillingPlan.Type,
+    subscribedPlanType: BillingPlan.Type?,
     onPlanSelect: (BillingPlan.Type) -> Unit,
     modifier: Modifier = Modifier,
 ) {
@@ -106,6 +110,7 @@ private fun PlanSelectSection(
                 plan = plan,
                 discountPercent = annualDiscountPercent.takeIf { plan.type == BillingPlan.Type.ANNUAL },
                 isSelected = selectedPlanType == plan.type,
+                isSubscribed = subscribedPlanType == plan.type,
                 onPlanSelect = onPlanSelect,
             )
         }
@@ -117,6 +122,7 @@ private fun PlanSelectItem(
     plan: BillingPlan,
     discountPercent: Int?,
     isSelected: Boolean,
+    isSubscribed: Boolean,
     onPlanSelect: (BillingPlan.Type) -> Unit,
     modifier: Modifier = Modifier,
 ) {
@@ -130,6 +136,7 @@ private fun PlanSelectItem(
             )
             .selectable(
                 selected = isSelected,
+                enabled = !isSubscribed,
                 onClick = { onPlanSelect.invoke(plan.type) },
                 role = Role.RadioButton,
             )
@@ -140,6 +147,7 @@ private fun PlanSelectItem(
         RadioButton(
             selected = isSelected,
             onClick = null,
+            enabled = !isSubscribed,
         )
 
         Column(
@@ -150,6 +158,13 @@ private fun PlanSelectItem(
                 text = plan.getPlanName(),
                 style = MaterialTheme.typography.titleMedium,
             )
+
+            if (isSubscribed) {
+                PlanLabel(
+                    modifier = Modifier.fillMaxWidth(),
+                    text = stringResource(Res.string.billing_plus_subscribed_label),
+                )
+            }
 
             plan.trialPeriod?.let { trialPeriod ->
                 PlanLabel(
@@ -189,13 +204,17 @@ private fun PlanLabel(
 @Composable
 private fun ButtonSection(
     selectedPlan: BillingPlan,
+    isSubscribedPlan: Boolean,
     onPurchaseClick: () -> Unit,
     onRestoreClick: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
-    val purchaseButtonText = selectedPlan.trialPeriod?.let { trialPeriod ->
-        stringResource(Res.string.billing_plus_purchase_trial_button, trialPeriod.getDisplayText())
-    } ?: stringResource(Res.string.billing_plus_purchase_button, selectedPlan.formattedPrice, selectedPlan.getUnit())
+    val trialPeriod = selectedPlan.trialPeriod
+    val purchaseButtonText = when {
+        isSubscribedPlan -> stringResource(Res.string.billing_plus_subscribed_label)
+        trialPeriod != null -> stringResource(Res.string.billing_plus_purchase_trial_button, trialPeriod.getDisplayText())
+        else -> stringResource(Res.string.billing_plus_purchase_button, selectedPlan.formattedPrice, selectedPlan.getUnit())
+    }
 
     Column(
         modifier = modifier,
@@ -204,6 +223,7 @@ private fun ButtonSection(
         Button(
             modifier = Modifier.fillMaxWidth(),
             onClick = onPurchaseClick,
+            enabled = !isSubscribedPlan,
         ) {
             Text(
                 text = purchaseButtonText,
