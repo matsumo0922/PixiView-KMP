@@ -33,7 +33,7 @@ class InterstitialAdStateImpl internal constructor(
     private var loaded = false
     private var loading = false
     private var hasLoadFailed = false
-    private var isShowing = false
+    private var showingAd: InterstitialAd? = null
     private var loadedAtElapsedRealtime = 0L
     private var loadRequestId = 0
 
@@ -118,6 +118,10 @@ class InterstitialAdStateImpl internal constructor(
         val handled = AtomicBoolean(false)
 
         cont.invokeOnCancellation { if (handled.compareAndSet(false, true)) cleanupIfCurrent(loadedAd) }
+
+        // 登録時点で中断済みなら handler が広告を破棄済みのため、表示しない
+        if (!cont.isActive) return@suspendCancellableCoroutine
+
         showWithCallback(loadedAd) { result -> if (handled.compareAndSet(false, true)) cont.resume(result) }
     }
 
@@ -140,7 +144,7 @@ class InterstitialAdStateImpl internal constructor(
             }
         }
 
-        isShowing = true
+        showingAd = loadedAd
         loadedAd.show(activity)
     }
 
@@ -153,7 +157,8 @@ class InterstitialAdStateImpl internal constructor(
 
     /** ロード済みの広告が失効していれば破棄し、再ロードする。表示中の広告は、表示の結果を待つため破棄しない。 */
     internal fun discardExpiredAd() {
-        val hasIdleAd = loaded && !isShowing
+        // 表示中かは広告の同一性で判定する。中断などで表示した広告の callback が届かなくても、次にロードした広告は破棄の対象になる
+        val hasIdleAd = loaded && showingAd !== interstitialAd
         if (!hasIdleAd || !isLoadedAdExpired()) return
 
         Napier.d("InterstitialAd: discard expired ad")
@@ -169,7 +174,7 @@ class InterstitialAdStateImpl internal constructor(
         interstitialAd?.fullScreenContentCallback = null
         interstitialAd = null
         loaded = false
-        isShowing = false
+        showingAd = null
 
         load()
     }
@@ -181,7 +186,7 @@ class InterstitialAdStateImpl internal constructor(
         loaded = false
         loading = false
         hasLoadFailed = false
-        isShowing = false
+        showingAd = null
         loadRequestId += 1
     }
 }
