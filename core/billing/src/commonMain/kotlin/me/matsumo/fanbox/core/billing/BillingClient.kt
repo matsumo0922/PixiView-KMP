@@ -3,14 +3,17 @@ package me.matsumo.fanbox.core.billing
 import com.revenuecat.purchases.kmp.LogLevel
 import com.revenuecat.purchases.kmp.Purchases
 import com.revenuecat.purchases.kmp.configure
+import com.revenuecat.purchases.kmp.ktx.SuccessfulPurchase
 import com.revenuecat.purchases.kmp.ktx.awaitCustomerInfo
 import com.revenuecat.purchases.kmp.ktx.awaitOfferings
 import com.revenuecat.purchases.kmp.ktx.awaitPurchase
 import com.revenuecat.purchases.kmp.models.CustomerInfo
+import com.revenuecat.purchases.kmp.models.GoogleReplacementMode
 import com.revenuecat.purchases.kmp.models.PackageType
 import com.revenuecat.purchases.kmp.models.Period
 import com.revenuecat.purchases.kmp.models.PeriodType
 import com.revenuecat.purchases.kmp.models.PeriodUnit
+import com.revenuecat.purchases.kmp.models.Store
 import com.revenuecat.purchases.kmp.models.StoreProduct
 import com.revenuecat.purchases.kmp.models.freePhase
 import io.github.aakira.napier.Napier
@@ -43,7 +46,8 @@ class BillingClient(val pixiViewConfig: PixiViewConfig, val ioDispatcher: Corout
 
     suspend fun purchase(type: BillingPlan.Type): BillingPurchaseResult = withContext(ioDispatcher) {
         val product = planCache[type] ?: return@withContext BillingPurchaseResult.Failure("product_not_found")
-        val purchase = suspendRunCatching { Purchases.sharedInstance.awaitPurchase(product) }.getOrElse { throwable ->
+        val oldProductId = getPlanChangeOldProductId(type)
+        val purchase = suspendRunCatching { awaitPurchase(product, oldProductId) }.getOrElse { throwable ->
             Napier.w(throwable) { "Failed to purchase $type." }
             return@withContext throwable.toBillingPurchaseResult()
         }
@@ -54,6 +58,35 @@ class BillingClient(val pixiViewConfig: PixiViewConfig, val ioDispatcher: Corout
         } else {
             BillingPurchaseResult.Failure("entitlement_inactive")
         }
+    }
+
+    private suspend fun awaitPurchase(product: StoreProduct, oldProductId: String?): SuccessfulPurchase {
+        if (oldProductId == null) return Purchases.sharedInstance.awaitPurchase(product)
+
+        // 同じ定期購入の中で自動更新のプランへ変更するときに有効なモードは、CHARGE_FULL_PRICE と WITHOUT_PRORATION だけ。
+        // 変更の時点で新しいプランの料金を請求し、変更元の残りの金額分は新しいプランの期間に加算させる
+        return Purchases.sharedInstance.awaitPurchase(
+            storeProduct = product,
+            oldProductId = oldProductId,
+            replacementMode = GoogleReplacementMode.CHARGE_FULL_PRICE,
+        )
+    }
+
+    private suspend fun getPlanChangeOldProductId(targetPlanType: BillingPlan.Type): String? {
+        val customerInfo = suspendRunCatching { Purchases.sharedInstance.awaitCustomerInfo() }.getOrElse { throwable ->
+            Napier.w(throwable) { "Failed to fetch customer info for plan change." }
+            return null
+        }
+        val entitlement = customerInfo.entitlements[PLUS_ENTITLEMENT_ID]
+        val currentPlanType = customerInfo.toBillingPlusStatus(getAvailablePackages()).planType
+
+        return resolvePlanChangeOldProductId(
+            isEntitlementActive = entitlement?.isActive == true,
+            entitlementStore = entitlement?.store,
+            entitlementProductIdentifier = entitlement?.productIdentifier,
+            currentPlanType = currentPlanType,
+            targetPlanType = targetPlanType,
+        )
     }
 
     suspend fun restore(): BillingPlusStatus = withContext(ioDispatcher) {
@@ -169,6 +202,29 @@ class BillingClient(val pixiViewConfig: PixiViewConfig, val ioDispatcher: Corout
         /** Android プラットフォーム名。 */
         private const val ANDROID_PLATFORM = "Android"
     }
+}
+
+/**
+ * Plus の契約中に別のプランを購入するときに、置き換える変更元の商品 ID を返す。
+ *
+ * Play ストアで購入した Plus が有効で、購入するプランが現在のプランと異なる場合だけ返す。
+ * Play ストアの契約がない場合（RevenueCat から付与した権限など）、未契約の場合、どちらかのプランが分からない場合は null を返し、通常の購入にする。
+ * Play ストアの [entitlementProductIdentifier] は、基本プランを含まない定期購入の ID である。
+ */
+internal fun resolvePlanChangeOldProductId(
+    isEntitlementActive: Boolean,
+    entitlementStore: Store?,
+    entitlementProductIdentifier: String?,
+    currentPlanType: BillingPlan.Type,
+    targetPlanType: BillingPlan.Type,
+): String? {
+    val hasActivePlayStoreSubscription = isEntitlementActive && entitlementStore == Store.PLAY_STORE
+    val arePlanTypesKnown = currentPlanType != BillingPlan.Type.UNKNOWN && targetPlanType != BillingPlan.Type.UNKNOWN
+    val isDifferentPlan = arePlanTypesKnown && currentPlanType != targetPlanType
+
+    if (!hasActivePlayStoreSubscription || !isDifferentPlan) return null
+
+    return entitlementProductIdentifier?.takeIf { productIdentifier -> productIdentifier.isNotBlank() }
 }
 
 internal fun resolveBillingPlanType(

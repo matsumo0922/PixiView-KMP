@@ -24,6 +24,8 @@ import me.matsumo.fanbox.core.model.BillingPlusStatus
 import me.matsumo.fanbox.core.model.Destination
 import me.matsumo.fanbox.core.model.ScreenState
 import me.matsumo.fanbox.core.model.Setting
+import me.matsumo.fanbox.core.model.filterOfferedPlans
+import me.matsumo.fanbox.core.model.resolveInitialSelectedPlanType
 import me.matsumo.fanbox.core.repository.SettingRepository
 import me.matsumo.fanbox.core.resources.Res
 import me.matsumo.fanbox.core.resources.billing_plus_toast_purchased_error
@@ -54,12 +56,16 @@ class BillingViewModel(
         plans,
         selectedPlanType,
     ) { setting, plans, selectedPlanType ->
-        if (plans.isNotEmpty()) {
+        val subscribedPlanType = setting.subscribedPlanType
+        val offeredPlans = filterOfferedPlans(plans, subscribedPlanType)
+
+        if (offeredPlans.isNotEmpty()) {
             ScreenState.Idle(
                 BillingUiState(
                     setting = setting,
-                    plans = plans.toImmutableList(),
+                    plans = offeredPlans.toImmutableList(),
                     selectedPlanType = selectedPlanType,
+                    subscribedPlanType = subscribedPlanType,
                 ),
             )
         } else {
@@ -74,6 +80,7 @@ class BillingViewModel(
     init {
         viewModelScope.launch {
             plans.value = suspendRunCatching { billingClient.getPlans() }.getOrNull().orEmpty()
+            selectInitialPlan()
             sendPaywallShownLog()
         }
     }
@@ -94,6 +101,16 @@ class BillingViewModel(
         }
     }
 
+    private suspend fun selectInitialPlan() {
+        val subscribedPlanType = settingRepository.setting.first().subscribedPlanType
+
+        selectedPlanType.value = resolveInitialSelectedPlanType(
+            requestedPlanType = selectedPlanType.value,
+            offeredPlans = filterOfferedPlans(plans.value, subscribedPlanType),
+            subscribedPlanType = subscribedPlanType,
+        )
+    }
+
     @OptIn(ExperimentalTime::class)
     private suspend fun sendPaywallShownLog() {
         val setting = settingRepository.setting.first()
@@ -110,6 +127,7 @@ class BillingViewModel(
 
     private fun handleOnPlanSelected(type: BillingPlan.Type) {
         if (selectedPlanType.value == type) return
+        if (isSubscribedPlan(type)) return
 
         selectedPlanType.value = type
         BillingLog.paywallPlanSelected(referrer, type.toLogValue()).send()
@@ -120,6 +138,10 @@ class BillingViewModel(
         if (isPurchasing) return
 
         val planType = selectedPlanType.value
+
+        // 契約中のプランは画面で購入できないが、状態の更新が遅れた場合に備えてここでも防ぐ
+        if (isSubscribedPlan(planType)) return
+
         val hasTrial = plans.value.find { plan -> plan.type == planType }?.trialPeriod != null
 
         isPurchasing = true
@@ -136,6 +158,12 @@ class BillingViewModel(
                 hasTrial = hasTrial,
             )
         }
+    }
+
+    private fun isSubscribedPlan(type: BillingPlan.Type): Boolean {
+        val uiState = (screenState.value as? ScreenState.Idle)?.data
+
+        return uiState?.subscribedPlanType == type
     }
 
     private suspend fun handlePurchaseResult(
@@ -215,4 +243,5 @@ data class BillingUiState(
     val setting: Setting,
     val plans: ImmutableList<BillingPlan>,
     val selectedPlanType: BillingPlan.Type,
+    val subscribedPlanType: BillingPlan.Type?,
 )

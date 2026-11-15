@@ -44,6 +44,9 @@ data class Setting(
     /** Plus として扱う機能を利用できるかどうか。 */
     val hasPrivilege get() = isPlusMode || isDeveloperMode
 
+    /** 課金画面で契約中として扱うプラン。Plus が有効で、契約プランが分かる場合だけ返す。 */
+    val subscribedPlanType get() = plusPlanType.takeIf { planType -> isPlusMode && planType != BillingPlan.Type.UNKNOWN }
+
     /** クリエイター全投稿の一括ダウンロードを利用できるかどうか。 */
     val canBulkDownload get() = isDeveloperMode || (isPlusMode && !isPlusTrial)
 
