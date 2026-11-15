@@ -157,9 +157,6 @@ interface FanboxRepository {
      */
     suspend fun checkLoginState(): LoginState
 
-    /** 読める状態のセッションが保存されているかを、通信せずに確かめる。FANBOX がそのセッションを受け付けるかは確かめない。 */
-    suspend fun hasStoredSession(): Boolean
-
     /** ロードした guest の manifest の metadata を返す。組み込みの guest で動いているときは空の Map を返す。 */
     suspend fun getGuestMetadata(): Map<String, String>
 
@@ -461,12 +458,6 @@ class FanboxRepositoryImpl(
 
     override suspend fun updateCsrfToken() {
         fanbox.updateCsrfToken()
-    }
-
-    override suspend fun hasStoredSession(): Boolean {
-        if (cookieStorage.isStoredSessionUnreadable()) return false
-
-        return !sessionId.first().isNullOrBlank()
     }
 
     override suspend fun getGuestMetadata(): Map<String, String> = fanbox.getGuestMetadata()
@@ -855,6 +846,17 @@ class FanboxRepositoryImpl(
 
 /** FANBOX のセッション Cookie の名前。 */
 private const val FANBOX_SESSION_ID_NAME = "FANBOXSESSID"
+
+/**
+ * 読める状態のセッションが保存されているかを、Cookie の保存先から直接確かめる。
+ *
+ * [FanboxRepository] を生成しないため、guest のロードを含めて通信しない。FANBOX がそのセッションを受け付けるかは確かめない。
+ */
+suspend fun MigratingFanboxCookieStorage.hasStoredSession(): Boolean {
+    if (isStoredSessionUnreadable()) return false
+
+    return snapshot().any { cookie -> cookie.name == FANBOX_SESSION_ID_NAME && cookie.value.isNotBlank() }
+}
 
 /** [fanbox] と、その生成に使った guest の配信先。 */
 private class ChanneledFanbox(val channel: GuestChannel, val fanbox: Fanbox)

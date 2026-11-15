@@ -50,7 +50,8 @@ internal class NewPostNotifier(private val context: Context) {
         NotificationsLog.newPostNotificationShown(content.postCount).send()
     }
 
-    private fun canNotify(): Boolean {
+    /** 通知を表示できるか。通知の権限があり、新着投稿の通知チャンネルが無効にされていなければ true を返す。チャンネルがまだなければ、有効として扱う。 */
+    fun canNotify(): Boolean {
         val channel = manager.getNotificationChannel(notifyConfig.channelId)
         val isChannelBlocked = channel?.importance == NotificationManager.IMPORTANCE_NONE
 

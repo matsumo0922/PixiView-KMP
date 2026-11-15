@@ -18,6 +18,40 @@ data class NewPostCheckConfig(
     }
 }
 
+/** 新着投稿の定期確認で、FANBOX へ取得する前に決める進め方。 */
+enum class NewPostCheckPrecondition {
+    /** 通信せずに終える。 */
+    SKIP,
+
+    /** 確認の記録を消して、通信せずに終える。通知を表示できるようになった後の最初の確認を、記録だけ行う初回にするため。 */
+    CLEAR_RECORD_AND_SKIP,
+
+    /** 遠隔の設定の確認と、投稿一覧の取得に進む。 */
+    PROCEED,
+}
+
+/**
+ * 新着投稿の定期確認を、通信の前に進めるかを決める。
+ *
+ * 新着投稿の通知が OFF、またはテストユーザーなら終える。通知を表示できないなら記録を消して終える。
+ * 保存済みのセッションがなければ終える。どれにも当たらなければ進める。
+ */
+fun resolveNewPostCheckPrecondition(
+    isNotificationEnabled: Boolean,
+    isTestUser: Boolean,
+    canNotify: Boolean,
+    hasStoredSession: Boolean,
+): NewPostCheckPrecondition {
+    val isCheckAllowed = isNotificationEnabled && !isTestUser
+
+    return when {
+        !isCheckAllowed -> NewPostCheckPrecondition.SKIP
+        !canNotify -> NewPostCheckPrecondition.CLEAR_RECORD_AND_SKIP
+        !hasStoredSession -> NewPostCheckPrecondition.SKIP
+        else -> NewPostCheckPrecondition.PROCEED
+    }
+}
+
 /**
  * guest の manifest の metadata から、新着投稿の定期確認の設定を決める。
  *

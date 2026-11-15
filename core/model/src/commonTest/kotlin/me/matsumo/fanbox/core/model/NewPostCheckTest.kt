@@ -19,6 +19,61 @@ class NewPostCheckTest {
     private val lastSeen = Instant.parse("2026-11-01T12:00:00Z")
 
     @Test
+    fun preconditionProceedsOnlyWhenEveryConditionHolds() {
+        val result = resolveNewPostCheckPrecondition(
+            isNotificationEnabled = true,
+            isTestUser = false,
+            canNotify = true,
+            hasStoredSession = true,
+        )
+
+        assertEquals(NewPostCheckPrecondition.PROCEED, result)
+    }
+
+    @Test
+    fun preconditionSkipsWhenTheSettingIsOffOrForTestUsers() {
+        val disabled = resolveNewPostCheckPrecondition(
+            isNotificationEnabled = false,
+            isTestUser = false,
+            canNotify = false,
+            hasStoredSession = true,
+        )
+        val testUser = resolveNewPostCheckPrecondition(
+            isNotificationEnabled = true,
+            isTestUser = true,
+            canNotify = false,
+            hasStoredSession = true,
+        )
+
+        assertEquals(NewPostCheckPrecondition.SKIP, disabled)
+        assertEquals(NewPostCheckPrecondition.SKIP, testUser)
+    }
+
+    @Test
+    fun preconditionClearsTheRecordWhenNotificationsCannotBeShown() {
+        val result = resolveNewPostCheckPrecondition(
+            isNotificationEnabled = true,
+            isTestUser = false,
+            canNotify = false,
+            hasStoredSession = false,
+        )
+
+        assertEquals(NewPostCheckPrecondition.CLEAR_RECORD_AND_SKIP, result)
+    }
+
+    @Test
+    fun preconditionSkipsWithoutAStoredSession() {
+        val result = resolveNewPostCheckPrecondition(
+            isNotificationEnabled = true,
+            isTestUser = false,
+            canNotify = true,
+            hasStoredSession = false,
+        )
+
+        assertEquals(NewPostCheckPrecondition.SKIP, result)
+    }
+
+    @Test
     fun remoteConfigReadsValidValues() {
         val result = resolveNewPostCheckConfig(
             mapOf(
