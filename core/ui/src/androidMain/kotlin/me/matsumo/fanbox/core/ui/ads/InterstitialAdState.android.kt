@@ -7,7 +7,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.Stable
 import androidx.compose.runtime.remember
-import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.Lifecycle.Event
 import androidx.lifecycle.compose.LifecycleEventEffect
 import com.google.android.gms.ads.AdError
 import com.google.android.gms.ads.AdRequest
@@ -33,6 +33,7 @@ class InterstitialAdStateImpl internal constructor(
     private var loaded = false
     private var loading = false
     private var hasLoadFailed = false
+    private var isShowing = false
     private var loadedAtElapsedRealtime = 0L
     private var loadRequestId = 0
 
@@ -116,7 +117,7 @@ class InterstitialAdStateImpl internal constructor(
     private suspend fun showLoadedAd(loadedAd: InterstitialAd): InterstitialAdShowResult = suspendCancellableCoroutine { cont ->
         val handled = AtomicBoolean(false)
 
-        cont.invokeOnCancellation { if (handled.compareAndSet(false, true)) cleanup() }
+        cont.invokeOnCancellation { if (handled.compareAndSet(false, true)) cleanupIfCurrent(loadedAd) }
         showWithCallback(loadedAd) { result -> if (handled.compareAndSet(false, true)) cont.resume(result) }
     }
 
@@ -129,22 +130,31 @@ class InterstitialAdStateImpl internal constructor(
 
             override fun onAdFailedToShowFullScreenContent(adError: AdError) {
                 Napier.w { "InterstitialAd: failed to show. $adError" }
-                cleanup()
+                cleanupIfCurrent(loadedAd)
                 onResult(InterstitialAdShowResult.ShowFailed)
             }
 
             override fun onAdDismissedFullScreenContent() {
-                cleanup()
+                cleanupIfCurrent(loadedAd)
                 onResult(InterstitialAdShowResult.Shown)
             }
         }
 
+        isShowing = true
         loadedAd.show(activity)
     }
 
-    /** ロード済みの広告が失効していれば破棄し、再ロードする。 */
+    // 中断や dispose の後に届いた callback が、次にロードした広告を破棄しないように、表示した広告を保持している場合だけ破棄する
+    private fun cleanupIfCurrent(shownAd: InterstitialAd) {
+        if (interstitialAd !== shownAd) return
+
+        cleanup()
+    }
+
+    /** ロード済みの広告が失効していれば破棄し、再ロードする。表示中の広告は、表示の結果を待つため破棄しない。 */
     internal fun discardExpiredAd() {
-        if (!loaded || !isLoadedAdExpired()) return
+        val hasIdleAd = loaded && !isShowing
+        if (!hasIdleAd || !isLoadedAdExpired()) return
 
         Napier.d("InterstitialAd: discard expired ad")
         cleanup()
@@ -159,6 +169,7 @@ class InterstitialAdStateImpl internal constructor(
         interstitialAd?.fullScreenContentCallback = null
         interstitialAd = null
         loaded = false
+        isShowing = false
 
         load()
     }
@@ -170,6 +181,7 @@ class InterstitialAdStateImpl internal constructor(
         loaded = false
         loading = false
         hasLoadFailed = false
+        isShowing = false
         loadRequestId += 1
     }
 }
@@ -182,7 +194,9 @@ actual fun rememberInterstitialAdState(adUnitId: String, enable: Boolean): Inter
     }
 
     // 状態は Compose の中で作るため Activity からは参照できない。ここで前面への復帰を監視して、失効した広告を入れ替える
-    LifecycleEventEffect(Lifecycle.Event.ON_RESUME) {
+    LifecycleEventEffect(
+        event = Event.ON_RESUME,
+    ) {
         interstitialAdState.discardExpiredAd()
     }
 
