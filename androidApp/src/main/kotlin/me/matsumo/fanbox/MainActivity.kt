@@ -123,7 +123,7 @@ class MainActivity :
     }
 
     private fun reportNotificationTap(intent: Intent) {
-        val log = intent.consumeNewPostNotificationTap()?.let(NotificationsLog::newPostNotificationTapped)
+        val log = intent.consumeNewPostNotificationTap()?.let(NotificationsLog::newPostTapped)
             ?: intent.consumeNewMessageNotificationTap()?.let(NotificationsLog::newMessageTapped)
             ?: return
 

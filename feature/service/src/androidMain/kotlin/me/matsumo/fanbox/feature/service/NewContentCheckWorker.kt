@@ -194,7 +194,7 @@ class NewContentCheckWorker(
         if (shownPostIds.isEmpty()) return
 
         postNotifier.showSummary(shownPostIds)
-        NotificationsLog.newPostNotificationShown(shownPostIds.size).send()
+        NotificationsLog.newPostShown(shownPostIds.size).send()
     }
 
     private suspend fun showNewPost(

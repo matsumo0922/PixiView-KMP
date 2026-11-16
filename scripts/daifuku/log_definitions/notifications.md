@@ -1,13 +1,13 @@
 # Notifications
 新着投稿・新着メッセージの通知と、通知の権限の案内に関するログ
 
-## new_post_notification_shown
+## new_post_shown
 新着投稿の定期確認で、新着投稿の通知を表示したときのログ。通知は投稿ごとに表示し、1 回の確認につき 1 回送る。通知の権限がなく 1 件も表示しなかったときは送らない
 
 - post_count: !integer
   - 1 回の確認で表示した、投稿ごとの通知の件数
 
-## new_post_notification_tapped
+## new_post_tapped
 新着投稿の通知をタップしてアプリを開いたときのログ
 
 - post_count: !integer
