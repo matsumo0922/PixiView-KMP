@@ -92,7 +92,7 @@
     <string name="notify_download_channel_description">Оповещение о ходе загрузки</string>
     <string name="notify_new_post_channel_name">Новые публикации</string>
     <string name="notify_new_post_channel_description">Уведомлять о новых публикациях авторов, которых вы поддерживаете или на которых подписаны</string>
-    <string name="notify_new_post_hidden_message">У %1$s новая публикация!</string>
+    <string name="notify_new_post_title">Новая публикация от %1$s</string>
     <string name="notify_new_post_multiple_title">Новых публикаций: %1$d</string>
     <string name="setting_top_notification">Уведомления</string>
     <string name="setting_top_notification_new_post">Уведомления о новых публикациях</string>

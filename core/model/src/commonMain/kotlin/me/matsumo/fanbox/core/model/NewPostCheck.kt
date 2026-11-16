@@ -109,70 +109,60 @@ fun detectNewPosts(posts: List<Post>, lastSeenPublishedAt: Instant?): NewPostDet
     return NewPostDetection.Found(newPosts, latestPublishedAt)
 }
 
-/** 新着投稿の通知に表示する内容。 */
+/** 新着投稿 1 件の通知に表示する内容。新着投稿は 1 件ずつ通知し、複数の通知は OS のグループでまとめる。 */
+@OptIn(ExperimentalTime::class)
 sealed interface NewPostNotificationContent {
 
-    /** 通知にまとめた新着投稿の件数。 */
-    val postCount: Int
+    /** 通知する投稿。 */
+    val postId: PostId
 
-    /** 1 件の新着投稿。タイトルとサムネイルを表示する。 */
-    data class Single(
-        val postId: PostId,
-        val creatorId: CreatorId?,
-        val creatorName: String,
+    /** 投稿したクリエイターの ID。ないときは、通知のタップで投稿詳細ではなくアプリを開く。 */
+    val creatorId: CreatorId?
+
+    /** 通知のタイトルに表示する、投稿したクリエイターの名前。 */
+    val creatorName: String
+
+    /** 投稿の公開日時。通知の時刻として表示し、通知の並び順にも使う。 */
+    val publishedAt: Instant
+
+    /** タイトルとサムネイルを表示する新着投稿。 */
+    data class Visible(
+        override val postId: PostId,
+        override val creatorId: CreatorId?,
+        override val creatorName: String,
+        override val publishedAt: Instant,
         val title: String,
         val thumbnailUrl: String?,
-    ) : NewPostNotificationContent {
-        override val postCount: Int = 1
-    }
+    ) : NewPostNotificationContent
 
-    /** タイトルとサムネイルを隠す、成人向けの 1 件の新着投稿。 */
-    data class SingleHidden(
-        val postId: PostId,
-        val creatorId: CreatorId?,
-        val creatorName: String,
-    ) : NewPostNotificationContent {
-        override val postCount: Int = 1
-    }
-
-    /** 1 つの通知にまとめた複数件の新着投稿。[creatorNames] は重複を除いた、新しい投稿の順のクリエイター名。 */
-    data class Multiple(
-        override val postCount: Int,
-        val creatorNames: List<String>,
+    /** タイトルとサムネイルを隠す、成人向けの新着投稿。 */
+    data class Hidden(
+        override val postId: PostId,
+        override val creatorId: CreatorId?,
+        override val creatorName: String,
+        override val publishedAt: Instant,
     ) : NewPostNotificationContent
 }
 
-/**
- * 新しい順の [newPosts] から、通知に表示する内容を決める。
- *
- * 複数件はクリエイター名だけを表示するため、成人向けかどうかによらない。
- * 1 件で、[isHideAdultContents] が true かつ成人向けの投稿のときは、タイトルとサムネイルを隠す。
- */
-fun resolveNewPostNotificationContent(newPosts: List<Post>, isHideAdultContents: Boolean): NewPostNotificationContent {
-    require(newPosts.isNotEmpty()) { "newPosts must not be empty" }
-
-    if (newPosts.size > 1) {
-        return NewPostNotificationContent.Multiple(
-            postCount = newPosts.size,
-            creatorNames = newPosts.mapNotNull { it.user?.name }.distinct(),
-        )
-    }
-
-    val post = newPosts.single()
+/** 新着投稿 [post] の通知に表示する内容を決める。[isHideAdultContents] が true かつ成人向けの投稿のときは、タイトルとサムネイルを隠す。 */
+@OptIn(ExperimentalTime::class)
+fun resolveNewPostNotificationContent(post: Post, isHideAdultContents: Boolean): NewPostNotificationContent {
     val creatorName = post.user?.name.orEmpty()
 
     if (isHideAdultContents && post.hasAdultContent) {
-        return NewPostNotificationContent.SingleHidden(
+        return NewPostNotificationContent.Hidden(
             postId = post.id,
             creatorId = post.user?.creatorId,
             creatorName = creatorName,
+            publishedAt = post.publishedDatetime,
         )
     }
 
-    return NewPostNotificationContent.Single(
+    return NewPostNotificationContent.Visible(
         postId = post.id,
         creatorId = post.user?.creatorId,
         creatorName = creatorName,
+        publishedAt = post.publishedDatetime,
         title = post.title,
         thumbnailUrl = post.cover?.url,
     )

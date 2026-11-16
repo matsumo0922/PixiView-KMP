@@ -10,12 +10,15 @@ import me.matsumo.fanbox.core.common.util.suspendRunCatching
 import me.matsumo.fanbox.core.datastore.NewPostCheckDataStore
 import me.matsumo.fanbox.core.datastore.SettingDataStore
 import me.matsumo.fanbox.core.datastore.cookie.MigratingFanboxCookieStorage
+import me.matsumo.fanbox.core.logs.category.NotificationsLog
 import me.matsumo.fanbox.core.logs.logger.LogConfigurator
+import me.matsumo.fanbox.core.logs.logger.send
 import me.matsumo.fanbox.core.model.NewPostCheckPrecondition
 import me.matsumo.fanbox.core.model.NewPostDetection
 import me.matsumo.fanbox.core.model.Setting
 import me.matsumo.fanbox.core.model.detectNewPosts
 import me.matsumo.fanbox.core.model.fanbox.Post
+import me.matsumo.fanbox.core.model.fanbox.PostId
 import me.matsumo.fanbox.core.model.resolveNewPostCheckConfig
 import me.matsumo.fanbox.core.model.resolveNewPostCheckPrecondition
 import me.matsumo.fanbox.core.model.resolveNewPostNotificationContent
@@ -28,7 +31,7 @@ import org.koin.core.component.inject
 /**
  * 支援中・フォロー中のクリエイターの新着投稿を確かめ、通知する定期実行の処理。
  *
- * FANBOX への通信は、ホームの投稿一覧の先頭 1 ページの取得と、新着が 1 件のときのサムネイルの取得だけである。
+ * FANBOX への通信は、ホームの投稿一覧の先頭 1 ページの取得と、新着投稿ごとのサムネイルの取得だけである。
  * 通知を表示できないとき、保存済みのセッションがないときは、guest のロードを含めて通信しない。
  * 失敗しても再試行せず、次の定期実行を待つ。画面を一度も開いていないプロセスでも動く。
  */
@@ -112,12 +115,28 @@ class NewPostCheckWorker(
     }
 
     private suspend fun notifyNewPosts(detection: NewPostDetection.Found, setting: Setting) {
-        val content = resolveNewPostNotificationContent(detection.newPosts, setting.isHideAdultContentsInNotification)
+        // 新しい順に表示し、音と振動は最初の 1 件だけにする。1 回の確認で、新着の件数だけ鳴らないようにするため。
+        val shownPostIds = detection.newPosts.mapIndexedNotNull { index, post ->
+            showNewPost(post, setting, isSilent = index > 0)
+        }
 
-        // サムネイルの取得中に中断されると、記録だけが進んで通知を失う。取得を含めて組み立ててから記録する。
-        val notification = notifier.build(content)
-
+        // 表示し終えてから記録する。途中で中断されたときは次の確認で全件を表示し直すが、同じ投稿の通知は置き換えるため重ならない。
         newPostCheckDataStore.setLastSeenPublishedAt(detection.latestPublishedAt)
-        notifier.show(notification, content.postCount)
+
+        if (shownPostIds.isEmpty()) return
+
+        notifier.showSummary(shownPostIds)
+        NotificationsLog.newPostNotificationShown(shownPostIds.size).send()
+    }
+
+    private suspend fun showNewPost(
+        post: Post,
+        setting: Setting,
+        isSilent: Boolean,
+    ): PostId? {
+        val content = resolveNewPostNotificationContent(post, setting.isHideAdultContentsInNotification)
+        val notification = notifier.build(content, isSilent)
+
+        return post.id.takeIf { notifier.show(post.id, notification) }
     }
 }

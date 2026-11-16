@@ -92,7 +92,7 @@
     <string name="notify_download_channel_description">通知下載進度</string>
     <string name="notify_new_post_channel_name">新投稿</string>
     <string name="notify_new_post_channel_description">通知您支持或追蹤的創作者的新投稿</string>
-    <string name="notify_new_post_hidden_message">%1$s 有新投稿！</string>
+    <string name="notify_new_post_title">%1$s 的新投稿</string>
     <string name="notify_new_post_multiple_title">有 %1$d 則新投稿</string>
     <string name="setting_top_notification">通知</string>
     <string name="setting_top_notification_new_post">新投稿通知</string>

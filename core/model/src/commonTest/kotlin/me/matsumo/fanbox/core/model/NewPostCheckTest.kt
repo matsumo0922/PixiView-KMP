@@ -155,16 +155,17 @@ class NewPostCheckTest {
     }
 
     @Test
-    fun singlePostShowsTitleAndThumbnail() {
+    fun postShowsTitleAndThumbnail() {
         val newPost = post("1", lastSeen, hasAdultContent = true)
 
-        val result = resolveNewPostNotificationContent(listOf(newPost), isHideAdultContents = false)
+        val result = resolveNewPostNotificationContent(newPost, isHideAdultContents = false)
 
         assertEquals(
-            NewPostNotificationContent.Single(
+            NewPostNotificationContent.Visible(
                 postId = PostId("1"),
                 creatorId = CreatorId("creator-1"),
                 creatorName = "Creator 1",
+                publishedAt = lastSeen,
                 title = "Title 1",
                 thumbnailUrl = "https://example.com/1.png",
             ),
@@ -173,47 +174,34 @@ class NewPostCheckTest {
     }
 
     @Test
-    fun singleAdultPostHidesTitleAndThumbnailWhenHidingIsOn() {
+    fun adultPostHidesTitleAndThumbnailWhenHidingIsOn() {
         val newPost = post("1", lastSeen, hasAdultContent = true)
 
-        val result = resolveNewPostNotificationContent(listOf(newPost), isHideAdultContents = true)
+        val result = resolveNewPostNotificationContent(newPost, isHideAdultContents = true)
 
         assertEquals(
-            NewPostNotificationContent.SingleHidden(
+            NewPostNotificationContent.Hidden(
                 postId = PostId("1"),
                 creatorId = CreatorId("creator-1"),
                 creatorName = "Creator 1",
+                publishedAt = lastSeen,
             ),
             result,
         )
     }
 
     @Test
-    fun singleAllAgesPostKeepsTitleWhenHidingIsOn() {
+    fun allAgesPostKeepsTitleWhenHidingIsOn() {
         val newPost = post("1", lastSeen, hasAdultContent = false)
 
-        val result = resolveNewPostNotificationContent(listOf(newPost), isHideAdultContents = true)
+        val result = resolveNewPostNotificationContent(newPost, isHideAdultContents = true)
 
-        assertEquals("Title 1", (result as NewPostNotificationContent.Single).title)
-    }
-
-    @Test
-    fun multiplePostsAreCombinedWithDistinctCreatorNames() {
-        val newPosts = listOf(
-            post("3", lastSeen, creatorIndex = 2),
-            post("2", lastSeen, creatorIndex = 1, hasAdultContent = true),
-            post("1", lastSeen, creatorIndex = 2),
-        )
-
-        val result = resolveNewPostNotificationContent(newPosts, isHideAdultContents = true)
-
-        assertEquals(NewPostNotificationContent.Multiple(postCount = 3, creatorNames = listOf("Creator 2", "Creator 1")), result)
+        assertEquals("Title 1", (result as NewPostNotificationContent.Visible).title)
     }
 
     private fun post(
         id: String,
         publishedAt: Instant,
-        creatorIndex: Int = id.toInt(),
         hasAdultContent: Boolean = false,
     ) = Post(
         id = PostId(id),
@@ -221,8 +209,8 @@ class NewPostCheckTest {
         cover = Cover(url = "https://example.com/$id.png", type = "cover"),
         user = User(
             userId = null,
-            creatorId = CreatorId("creator-$creatorIndex"),
-            name = "Creator $creatorIndex",
+            creatorId = CreatorId("creator-$id"),
+            name = "Creator $id",
             iconUrl = null,
         ),
         excerpt = "",

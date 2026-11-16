@@ -104,7 +104,7 @@
     <string name="notify_download_channel_description">Notify download progress</string>
     <string name="notify_new_post_channel_name">New posts</string>
     <string name="notify_new_post_channel_description">Notify new posts from creators you support or follow</string>
-    <string name="notify_new_post_hidden_message">%1$s has a new post!</string>
+    <string name="notify_new_post_title">New post from %1$s</string>
     <string name="notify_new_post_multiple_title">%1$d new posts</string>
     <string name="setting_top_notification">Notifications</string>
     <string name="setting_top_notification_new_post">New post notifications</string>

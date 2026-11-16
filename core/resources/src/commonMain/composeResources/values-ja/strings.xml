@@ -98,7 +98,7 @@
     <string name="notify_download_channel_description">ダウンロードの進捗状況を通知します</string>
     <string name="notify_new_post_channel_name">新着投稿</string>
     <string name="notify_new_post_channel_description">支援中・フォロー中のクリエイターの新着投稿を通知します</string>
-    <string name="notify_new_post_hidden_message">%1$sの新着投稿があります！</string>
+    <string name="notify_new_post_title">%1$s の新着投稿</string>
     <string name="notify_new_post_multiple_title">%1$d 件の新着投稿があります</string>
     <string name="setting_top_notification">通知</string>
     <string name="setting_top_notification_new_post">新着投稿の通知</string>
