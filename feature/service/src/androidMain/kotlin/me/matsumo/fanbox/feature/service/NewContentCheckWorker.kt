@@ -15,6 +15,7 @@ import me.matsumo.fanbox.core.logs.logger.LogConfigurator
 import me.matsumo.fanbox.core.logs.logger.send
 import me.matsumo.fanbox.core.model.NewContentCheckPrecondition
 import me.matsumo.fanbox.core.model.NewContentDetection
+import me.matsumo.fanbox.core.model.NewContentType
 import me.matsumo.fanbox.core.model.Setting
 import me.matsumo.fanbox.core.model.detectNewMessages
 import me.matsumo.fanbox.core.model.detectNewPosts
@@ -69,95 +70,96 @@ class NewContentCheckWorker(
     }
 
     private suspend fun checkNewContents() {
+        // 確認の途中で記録が消されたら、この確認の結果を記録しないよう、始める前の記録の世代を控える。
+        val generations = NewContentType.entries.associateWith { newContentCheckDataStore.getRecordGeneration(it) }
+
         // 購読のない SettingRepository.setting は既定値を返すため、保存済みの値を直接読む。
         val setting = settingDataStore.loadStoredSetting()
 
         // 画面を開いていないプロセスでは、ログの設定がまだない。Cookie の移行処理もログを送るため、最初に設定する。
         LogConfigurator.configure(pixiViewConfig, setting)
 
-        val readyChecks = resolveReadyChecks(setting)
-        if (readyChecks.isEmpty()) return
+        val readyTypes = resolveReadyTypes(setting)
+        if (readyTypes.isEmpty()) return
 
         val config = resolveNewContentCheckConfig(fanboxRepository.getGuestMetadata())
-        val enabledChecks = readyChecks.filter { check ->
-            when (check) {
-                ContentCheck.POST -> config.isPostCheckEnabled
-                ContentCheck.MESSAGE -> config.isMessageCheckEnabled
+        val enabledTypes = readyTypes.filter { type ->
+            when (type) {
+                NewContentType.POST -> config.isPostCheckEnabled
+                NewContentType.MESSAGE -> config.isMessageCheckEnabled
             }
         }
-        if (enabledChecks.isEmpty()) return
+        if (enabledTypes.isEmpty()) return
 
         scheduler.updateInterval(config.intervalHours)
 
         // 片方の失敗が、もう片方の確認を止めないよう、確認ごとに失敗を受け止める。
-        for (check in enabledChecks) {
-            suspendRunCatching { runCheck(check, setting) }.onFailure { failure ->
-                Napier.w(failure) { "Failed to check new contents. check=$check" }
+        for (type in enabledTypes) {
+            suspendRunCatching { runCheck(type, setting, generations.getValue(type)) }.onFailure { failure ->
+                Napier.w(failure) { "Failed to check new contents. type=$type" }
             }
         }
     }
 
     /** 通信の前の判定で、遠隔の設定の確認に進める確認を返す。通知を表示できない確認は、記録を消す。 */
-    private suspend fun resolveReadyChecks(setting: Setting): List<ContentCheck> {
+    private suspend fun resolveReadyTypes(setting: Setting): List<NewContentType> {
         // FanboxRepository は生成時に guest をロードして通信するため、ここでは Cookie の保存先を直接読む。
         val hasStoredSession = cookieStorage.hasStoredSession()
 
-        return ContentCheck.entries.filter { check ->
+        return NewContentType.entries.filter { type ->
             val precondition = resolveNewContentCheckPrecondition(
-                isNotificationEnabled = check.isNotificationEnabled(setting),
+                isNotificationEnabled = type.isNotificationEnabled(setting),
                 isTestUser = setting.isTestUser,
-                canNotify = check.canNotify(),
+                canNotify = type.canNotify(),
                 hasStoredSession = hasStoredSession,
             )
 
-            if (precondition == NewContentCheckPrecondition.CLEAR_RECORD_AND_SKIP) clearRecord(check)
+            if (precondition == NewContentCheckPrecondition.CLEAR_RECORD_AND_SKIP) newContentCheckDataStore.clearLastSeenCreatedAt(type)
 
             precondition == NewContentCheckPrecondition.PROCEED
         }
     }
 
-    private fun ContentCheck.isNotificationEnabled(setting: Setting): Boolean = when (this) {
-        ContentCheck.POST -> setting.isNewPostNotificationEnabled
-        ContentCheck.MESSAGE -> setting.isNewMessageNotificationEnabled
+    private fun NewContentType.isNotificationEnabled(setting: Setting): Boolean = when (this) {
+        NewContentType.POST -> setting.isNewPostNotificationEnabled
+        NewContentType.MESSAGE -> setting.isNewMessageNotificationEnabled
     }
 
-    private fun ContentCheck.canNotify(): Boolean = when (this) {
-        ContentCheck.POST -> postNotifier.canNotify()
-        ContentCheck.MESSAGE -> messageNotifier.canNotify()
-    }
-
-    private suspend fun clearRecord(check: ContentCheck) = when (check) {
-        ContentCheck.POST -> newContentCheckDataStore.clearLastSeenPublishedAt()
-        ContentCheck.MESSAGE -> newContentCheckDataStore.clearLastSeenMessageCreatedAt()
+    private fun NewContentType.canNotify(): Boolean = when (this) {
+        NewContentType.POST -> postNotifier.canNotify()
+        NewContentType.MESSAGE -> messageNotifier.canNotify()
     }
 
     /**
-     * [check] の確認の記録を [latestCreatedAt] にする。
+     * [type] の確認の記録を [latestCreatedAt] にする。
      *
-     * 確認の途中で設定が OFF にされると、Scheduler が消した記録をこの確認が書き戻し、次に ON にしたときの確認が初回にならない。
-     * これを避けるため、保存の直前に保存済みの設定を読み直し、OFF になっていれば保存しない。
+     * 確認の途中で設定が OFF にされると、Scheduler が記録を消す。消された記録をこの確認が書き戻すと、次に ON にしたときの確認が初回にならない。
+     * これを避けるため、確認を始める前の記録の世代 [generation] から変わっていれば保存しない。
      */
-    private suspend fun saveRecord(check: ContentCheck, latestCreatedAt: Instant) {
-        if (!check.isNotificationEnabled(settingDataStore.loadStoredSetting())) return
-
-        when (check) {
-            ContentCheck.POST -> newContentCheckDataStore.setLastSeenPublishedAt(latestCreatedAt)
-            ContentCheck.MESSAGE -> newContentCheckDataStore.setLastSeenMessageCreatedAt(latestCreatedAt)
-        }
+    private suspend fun saveRecord(
+        type: NewContentType,
+        latestCreatedAt: Instant,
+        generation: Int,
+    ) {
+        newContentCheckDataStore.setLastSeenCreatedAtIfGeneration(type, latestCreatedAt, generation)
     }
 
-    private suspend fun runCheck(check: ContentCheck, setting: Setting) = when (check) {
-        ContentCheck.POST -> checkNewPosts(setting)
-        ContentCheck.MESSAGE -> checkNewMessages()
+    private suspend fun runCheck(
+        type: NewContentType,
+        setting: Setting,
+        generation: Int,
+    ) = when (type) {
+        NewContentType.POST -> checkNewPosts(setting, generation)
+        NewContentType.MESSAGE -> checkNewMessages(generation)
     }
 
-    private suspend fun checkNewPosts(setting: Setting) {
+    private suspend fun checkNewPosts(setting: Setting, generation: Int) {
         val posts = fetchHomePosts(setting) ?: return
-        val detection = detectNewPosts(posts, newContentCheckDataStore.getLastSeenPublishedAt())
+        val detection = detectNewPosts(posts, newContentCheckDataStore.getLastSeenCreatedAt(NewContentType.POST))
 
         when (detection) {
-            is NewContentDetection.FirstCheck -> saveRecord(ContentCheck.POST, detection.latestCreatedAt)
-            is NewContentDetection.Found -> notifyNewPosts(detection, setting)
+            is NewContentDetection.FirstCheck -> saveRecord(NewContentType.POST, detection.latestCreatedAt, generation)
+            is NewContentDetection.Found -> notifyNewPosts(detection, setting, generation)
             NewContentDetection.NotFound -> Unit
         }
     }
@@ -176,14 +178,18 @@ class NewContentCheckWorker(
         )
     }
 
-    private suspend fun notifyNewPosts(detection: NewContentDetection.Found<Post>, setting: Setting) {
+    private suspend fun notifyNewPosts(
+        detection: NewContentDetection.Found<Post>,
+        setting: Setting,
+        generation: Int,
+    ) {
         // 新しい順に表示し、音と振動は最初の 1 件だけにする。1 回の確認で、新着の件数だけ鳴らないようにするため。
         val shownPostIds = detection.newContents.mapIndexedNotNull { index, post ->
             showNewPost(post, setting, isSilent = index > 0)
         }
 
         // 表示し終えてから記録する。途中で中断されたときは次の確認で全件を表示し直すが、同じ投稿の通知は置き換えるため重ならない。
-        saveRecord(ContentCheck.POST, detection.latestCreatedAt)
+        saveRecord(NewContentType.POST, detection.latestCreatedAt, generation)
 
         if (shownPostIds.isEmpty()) return
 
@@ -202,7 +208,10 @@ class NewContentCheckWorker(
         return post.id.takeIf { postNotifier.show(post.id, notification) }
     }
 
-    private suspend fun checkNewMessages() {
+    private suspend fun checkNewMessages(generation: Int) {
+        // 初回にメッセージがないときの記録に使う。取得の途中で届いたメッセージを、初回の記録より前にしないよう、取得の前に控える。
+        val checkedAt = Clock.System.now()
+
         // セッション切れの 401 を含め、取得に失敗したときは通知せずに終える。画面へは認証切れを伝えない。
         val messages = suspendRunCatching { fanboxRepository.getNewsLettersInBackground() }.getOrElse { failure ->
             Napier.w(failure) { "Failed to fetch messages for the new message check." }
@@ -210,26 +219,26 @@ class NewContentCheckWorker(
         }
         val detection = detectNewMessages(
             messages = messages,
-            lastSeenCreatedAt = newContentCheckDataStore.getLastSeenMessageCreatedAt(),
+            lastSeenCreatedAt = newContentCheckDataStore.getLastSeenCreatedAt(NewContentType.MESSAGE),
             blockedCreatorIds = fanboxRepository.blockedCreators.first(),
-            checkedAt = Clock.System.now(),
+            checkedAt = checkedAt,
         )
 
         when (detection) {
-            is NewContentDetection.FirstCheck -> saveRecord(ContentCheck.MESSAGE, detection.latestCreatedAt)
-            is NewContentDetection.Found -> notifyNewMessages(detection)
+            is NewContentDetection.FirstCheck -> saveRecord(NewContentType.MESSAGE, detection.latestCreatedAt, generation)
+            is NewContentDetection.Found -> notifyNewMessages(detection, generation)
             NewContentDetection.NotFound -> Unit
         }
     }
 
-    private suspend fun notifyNewMessages(detection: NewContentDetection.Found<NewsLetter>) {
+    private suspend fun notifyNewMessages(detection: NewContentDetection.Found<NewsLetter>, generation: Int) {
         // 新しい順に表示し、音と振動は最初の 1 件だけにする。1 回の確認で、新着の件数だけ鳴らないようにするため。
         val shownMessageIds = detection.newContents.mapIndexedNotNull { index, message ->
             showNewMessage(message, isSilent = index > 0)
         }
 
         // 表示し終えてから記録する。途中で中断されたときは次の確認で全件を表示し直すが、同じメッセージの通知は置き換えるため重ならない。
-        saveRecord(ContentCheck.MESSAGE, detection.latestCreatedAt)
+        saveRecord(NewContentType.MESSAGE, detection.latestCreatedAt, generation)
 
         if (shownMessageIds.isEmpty()) return
 
@@ -241,11 +250,5 @@ class NewContentCheckWorker(
         val notification = messageNotifier.build(message, isSilent)
 
         return message.id.takeIf { messageNotifier.show(message.id, notification) }
-    }
-
-    /** 定期実行の中で、独立に判定・取得・通知する確認の種類。 */
-    private enum class ContentCheck {
-        POST,
-        MESSAGE,
     }
 }

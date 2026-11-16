@@ -8,6 +8,7 @@ import androidx.work.PeriodicWorkRequestBuilder
 import androidx.work.WorkManager
 import me.matsumo.fanbox.core.datastore.NewContentCheckDataStore
 import me.matsumo.fanbox.core.model.NewContentCheckConfig
+import me.matsumo.fanbox.core.model.NewContentType
 import kotlin.time.Duration.Companion.hours
 import kotlin.time.toJavaDuration
 
@@ -30,8 +31,8 @@ class NewContentCheckScheduler(
      * 行わない確認は記録を消し、再び行うようにしたときの最初の確認を、通知せずに記録だけ行う初回にする。
      */
     suspend fun update(isPostCheckEnabled: Boolean, isMessageCheckEnabled: Boolean) {
-        if (!isPostCheckEnabled) newContentCheckDataStore.clearLastSeenPublishedAt()
-        if (!isMessageCheckEnabled) newContentCheckDataStore.clearLastSeenMessageCreatedAt()
+        if (!isPostCheckEnabled) newContentCheckDataStore.clearLastSeenCreatedAt(NewContentType.POST)
+        if (!isMessageCheckEnabled) newContentCheckDataStore.clearLastSeenCreatedAt(NewContentType.MESSAGE)
 
         if (isPostCheckEnabled || isMessageCheckEnabled) start() else workManager.cancelUniqueWork(WORK_NAME)
     }

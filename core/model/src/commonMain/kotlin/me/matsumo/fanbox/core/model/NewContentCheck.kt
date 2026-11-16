@@ -28,6 +28,15 @@ data class NewContentCheckConfig(
     }
 }
 
+/** 新着の定期確認で、独立に判定・取得・通知・記録する確認の種類。 */
+enum class NewContentType {
+    /** 支援中・フォロー中のクリエイターの新着投稿。 */
+    POST,
+
+    /** クリエイターからの新着メッセージ。 */
+    MESSAGE,
+}
+
 /** 新着の定期確認で、新着投稿・新着メッセージのそれぞれについて、FANBOX へ取得する前に決める進め方。 */
 enum class NewContentCheckPrecondition {
     /** 通信せずに終える。 */
