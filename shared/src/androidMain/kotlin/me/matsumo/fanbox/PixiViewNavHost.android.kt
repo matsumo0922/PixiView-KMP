@@ -62,7 +62,8 @@ import me.matsumo.fanbox.core.ui.navigation.deepLinkDestinationOf
 import me.matsumo.fanbox.core.ui.permission.NotificationPermissionState
 import me.matsumo.fanbox.core.ui.permission.rememberNotificationPermissionState
 import me.matsumo.fanbox.core.ui.theme.bold
-import me.matsumo.fanbox.feature.service.LibraryMessageOpenRequests
+import me.matsumo.fanbox.feature.service.NotificationOpenRequest
+import me.matsumo.fanbox.feature.service.NotificationOpenRequests
 import org.jetbrains.compose.resources.StringResource
 import org.jetbrains.compose.resources.stringResource
 import org.koin.compose.koinInject
@@ -96,9 +97,14 @@ actual fun HandleDeepLink(
         }
     }
 
-    // 新着メッセージの通知のタップは、画面ができる前に届くことがあるため、Activity が預けた要求を受け取る。
+    // 新着の通知のタップは、画面ができる前に届くことがあるため、Activity が預けた要求を受け取る。
     LaunchedEffect(Unit) {
-        LibraryMessageOpenRequests.requests.collect { currentOnOpenLibraryMessage() }
+        NotificationOpenRequests.requests.collect { request ->
+            when (request) {
+                is NotificationOpenRequest.PostDetail -> deepLinkDestinationOf(request.url)?.let(currentOnDeepLink)
+                NotificationOpenRequest.LibraryMessage -> currentOnOpenLibraryMessage()
+            }
+        }
     }
 
     RequestStartupPermission(activity)

@@ -5,9 +5,6 @@ import android.app.PendingIntent
 import android.content.Context
 import android.content.Intent
 import androidx.core.app.NotificationCompat
-import kotlinx.coroutines.channels.Channel
-import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.receiveAsFlow
 import me.matsumo.fanbox.core.model.NotificationConfigs
 import me.matsumo.fanbox.core.model.fanbox.NewsLetter
 import me.matsumo.fanbox.core.model.fanbox.NewsLetterId
@@ -85,23 +82,3 @@ const val EXTRA_OPEN_LIBRARY_MESSAGE = "me.matsumo.fanbox.extra.OPEN_LIBRARY_MES
 
 /** 新着メッセージの通知から開いた intent なら、タップした通知の新着メッセージの件数を返し、同じ intent で二度数えないよう取り除く。 */
 fun Intent.consumeNewMessageNotificationTap(): Int? = consumeIntExtra(EXTRA_NEW_MESSAGE_COUNT)
-
-/** ライブラリの「メッセージ」タブを開く intent か。 */
-fun Intent.isOpenLibraryMessageRequest(): Boolean = getBooleanExtra(EXTRA_OPEN_LIBRARY_MESSAGE, false)
-
-/**
- * 新着メッセージの通知のタップで届いた、ライブラリの「メッセージ」タブを開く要求。
- *
- * プロセスが終了した後のタップでは、Activity が作り直された直後、画面を組み立てる前に intent が届く。
- * 画面が受け取れるようになるまで要求を失わないよう、プロセスで保持する。
- */
-object LibraryMessageOpenRequests {
-    private val channel = Channel<Unit>(Channel.CONFLATED)
-
-    /** 受け取られていない要求。要求は 1 回だけ受け取れる。 */
-    val requests: Flow<Unit> = channel.receiveAsFlow()
-
-    fun send() {
-        channel.trySend(Unit)
-    }
-}
