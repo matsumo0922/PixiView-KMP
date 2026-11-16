@@ -88,6 +88,12 @@ class SettingTopViewModel(
         }
     }
 
+    fun setNewMessageNotificationEnabled(isEnabled: Boolean) {
+        viewModelScope.launch {
+            settingRepository.setNewMessageNotificationEnabled(isEnabled)
+        }
+    }
+
     fun setHideAdultContentsInNotification(isHide: Boolean) {
         viewModelScope.launch {
             settingRepository.setHideAdultContentsInNotification(isHide)

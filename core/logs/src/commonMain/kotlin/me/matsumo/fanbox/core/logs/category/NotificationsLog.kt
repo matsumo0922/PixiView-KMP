@@ -23,6 +23,22 @@ sealed interface NotificationsLog : LogCategory {
         }
     }
 
+    class NewMessageShown internal constructor(messageCount: Int) : NotificationsLog {
+        override val properties: JsonObject = buildJsonObject {
+            put("event_category", "notifications")
+            put("event_name", "new_message_shown")
+            put("message_count", messageCount)
+        }
+    }
+
+    class NewMessageTapped internal constructor(messageCount: Int) : NotificationsLog {
+        override val properties: JsonObject = buildJsonObject {
+            put("event_category", "notifications")
+            put("event_name", "new_message_tapped")
+            put("message_count", messageCount)
+        }
+    }
+
     class PermissionPromptShown internal constructor(referrer: String) : NotificationsLog {
         override val properties: JsonObject = buildJsonObject {
             put("event_category", "notifications")
@@ -46,6 +62,12 @@ sealed interface NotificationsLog : LogCategory {
 
         // 新着投稿の通知をタップしてアプリを開いたときのログ
         fun newPostNotificationTapped(postCount: Int) = NewPostNotificationTapped(postCount)
+
+        // 新着メッセージの定期確認で、新着メッセージの通知を表示したときのログ。通知はメッセージごとに表示し、1 回の確認につき 1 回送る。通知の権限がなく 1 件も表示しなかったときは送らない
+        fun newMessageShown(messageCount: Int) = NewMessageShown(messageCount)
+
+        // 新着メッセージの通知をタップしてアプリを開いたときのログ
+        fun newMessageTapped(messageCount: Int) = NewMessageTapped(messageCount)
 
         // 通知の権限の案内を表示したときのログ。ダイアログは表示するたびに、通知タブの案内は通知タブを開くたびに 1 回送る。通知タブの案内は、画面の回転などで Activity が作り直されたときにも送り直す
         fun permissionPromptShown(referrer: String) = PermissionPromptShown(referrer)

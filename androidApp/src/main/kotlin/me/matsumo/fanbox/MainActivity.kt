@@ -50,7 +50,10 @@ import me.matsumo.fanbox.core.model.ThemeConfig
 import me.matsumo.fanbox.core.ui.ads.NativeAdsPreLoader
 import me.matsumo.fanbox.core.ui.theme.shouldUseDarkTheme
 import me.matsumo.fanbox.feature.service.DownloadPostService
+import me.matsumo.fanbox.feature.service.LibraryMessageOpenRequests
+import me.matsumo.fanbox.feature.service.consumeNewMessageNotificationTap
 import me.matsumo.fanbox.feature.service.consumeNewPostNotificationTap
+import me.matsumo.fanbox.feature.service.isOpenLibraryMessageRequest
 import org.json.JSONObject
 import org.koin.androidx.viewmodel.ext.android.viewModel
 import org.koin.core.component.KoinComponent
@@ -104,20 +107,29 @@ class MainActivity :
         collectReviewRequest()
 
         // プロセスの再生成で作り直されたときは、起動した intent を同じタップとして数え直さない
-        if (savedInstanceState == null) reportNewPostNotificationTap(intent)
+        if (savedInstanceState == null) handleNotificationTap(intent)
     }
 
     override fun onNewIntent(intent: Intent) {
         super.onNewIntent(intent)
-        reportNewPostNotificationTap(intent)
+        handleNotificationTap(intent)
     }
 
-    private fun reportNewPostNotificationTap(intent: Intent) {
-        val postCount = intent.consumeNewPostNotificationTap() ?: return
+    private fun handleNotificationTap(intent: Intent) {
+        // 画面ができる前に届いても失わないよう、「メッセージ」タブを開く要求はプロセスに預ける。
+        if (intent.isOpenLibraryMessageRequest()) LibraryMessageOpenRequests.send()
+
+        reportNotificationTap(intent)
+    }
+
+    private fun reportNotificationTap(intent: Intent) {
+        val log = intent.consumeNewPostNotificationTap()?.let(NotificationsLog::newPostNotificationTapped)
+            ?: intent.consumeNewMessageNotificationTap()?.let(NotificationsLog::newMessageTapped)
+            ?: return
 
         lifecycleScope.launch {
             LogConfigurator.isConfigured.first { it }
-            NotificationsLog.newPostNotificationTapped(postCount).send()
+            log.send()
         }
     }
 

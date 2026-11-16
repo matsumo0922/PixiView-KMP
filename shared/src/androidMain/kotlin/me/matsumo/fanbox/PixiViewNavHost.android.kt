@@ -62,14 +62,19 @@ import me.matsumo.fanbox.core.ui.navigation.deepLinkDestinationOf
 import me.matsumo.fanbox.core.ui.permission.NotificationPermissionState
 import me.matsumo.fanbox.core.ui.permission.rememberNotificationPermissionState
 import me.matsumo.fanbox.core.ui.theme.bold
+import me.matsumo.fanbox.feature.service.LibraryMessageOpenRequests
 import org.jetbrains.compose.resources.StringResource
 import org.jetbrains.compose.resources.stringResource
 import org.koin.compose.koinInject
 
 @Composable
-actual fun HandleDeepLink(onDeepLink: (Destination) -> Unit) {
+actual fun HandleDeepLink(
+    onDeepLink: (Destination) -> Unit,
+    onOpenLibraryMessage: () -> Unit,
+) {
     val activity = LocalActivity.current as FragmentActivity
     val currentOnDeepLink by rememberUpdatedState(onDeepLink)
+    val currentOnOpenLibraryMessage by rememberUpdatedState(onOpenLibraryMessage)
     var isLaunchIntentHandled by rememberSaveable { mutableStateOf(false) }
 
     // 起動した intent は、構成変更やプロセスの再生成で作り直されても1回だけ扱う
@@ -89,6 +94,11 @@ actual fun HandleDeepLink(onDeepLink: (Destination) -> Unit) {
         onDispose {
             activity.removeOnNewIntentListener(listener)
         }
+    }
+
+    // 新着メッセージの通知のタップは、画面ができる前に届くことがあるため、Activity が預けた要求を受け取る。
+    LaunchedEffect(Unit) {
+        LibraryMessageOpenRequests.requests.collect { currentOnOpenLibraryMessage() }
     }
 
     RequestStartupPermission(activity)

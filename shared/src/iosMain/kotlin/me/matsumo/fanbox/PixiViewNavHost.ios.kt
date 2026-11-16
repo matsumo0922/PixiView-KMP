@@ -4,6 +4,9 @@ import androidx.compose.runtime.Composable
 import me.matsumo.fanbox.core.model.Destination
 
 @Composable
-actual fun HandleDeepLink(onDeepLink: (Destination) -> Unit) {
+actual fun HandleDeepLink(
+    onDeepLink: (Destination) -> Unit,
+    onOpenLibraryMessage: () -> Unit,
+) {
     // do nothing
 }

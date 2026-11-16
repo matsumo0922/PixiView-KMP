@@ -9,6 +9,8 @@ import me.matsumo.fanbox.core.resources.Res
 import me.matsumo.fanbox.core.resources.setting_top_notification
 import me.matsumo.fanbox.core.resources.setting_top_notification_hide_adult_contents
 import me.matsumo.fanbox.core.resources.setting_top_notification_hide_adult_contents_description
+import me.matsumo.fanbox.core.resources.setting_top_notification_new_message
+import me.matsumo.fanbox.core.resources.setting_top_notification_new_message_description
 import me.matsumo.fanbox.core.resources.setting_top_notification_new_post
 import me.matsumo.fanbox.core.resources.setting_top_notification_new_post_description
 import me.matsumo.fanbox.core.ui.component.SettingSwitchItem
@@ -17,6 +19,7 @@ import me.matsumo.fanbox.core.ui.component.SettingSwitchItem
 internal fun SettingTopNotificationSection(
     setting: Setting,
     onClickNewPostNotification: (Boolean) -> Unit,
+    onClickNewMessageNotification: (Boolean) -> Unit,
     onClickHideAdultContentsInNotification: (Boolean) -> Unit,
     modifier: Modifier = Modifier,
 ) {
@@ -32,6 +35,14 @@ internal fun SettingTopNotificationSection(
             description = Res.string.setting_top_notification_new_post_description,
             value = setting.isNewPostNotificationEnabled,
             onValueChange = onClickNewPostNotification,
+        )
+
+        SettingSwitchItem(
+            modifier = Modifier.fillMaxWidth(),
+            title = Res.string.setting_top_notification_new_message,
+            description = Res.string.setting_top_notification_new_message_description,
+            value = setting.isNewMessageNotificationEnabled,
+            onValueChange = onClickNewMessageNotification,
         )
 
         SettingSwitchItem(

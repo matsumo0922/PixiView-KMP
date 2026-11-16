@@ -41,6 +41,11 @@ class PixiViewNavigator(val backStack: NavBackStack<DestinationKey>) {
         pendingResultCallbacks -= removedKey.id
     }
 
+    /** 根の画面まで戻る。取り除いた遷移先の、結果を受け取るコールバックは破棄する。 */
+    fun backToRoot() {
+        while (backStack.size > 1) back()
+    }
+
     fun <T> navigateForResult(destination: Destination, onResult: (T) -> Unit) {
         val key = DestinationKey.of(destination)
 

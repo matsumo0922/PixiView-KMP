@@ -93,9 +93,15 @@
     <string name="notify_new_post_channel_description">후원 중·팔로우 중인 크리에이터의 새 게시물을 알려 드립니다</string>
     <string name="notify_new_post_title">%1$s의 새 게시물</string>
     <string name="notify_new_post_multiple_title">새 게시물 %1$d개가 있습니다</string>
+    <string name="notify_new_message_channel_name">새 메시지</string>
+    <string name="notify_new_message_channel_description">후원 중·팔로우 중인 크리에이터의 새 메시지를 알려 드립니다</string>
+    <string name="notify_new_message_title">%1$s의 새 메시지</string>
+    <string name="notify_new_message_multiple_title">새 메시지 %1$d개가 있습니다</string>
     <string name="setting_top_notification">알림</string>
     <string name="setting_top_notification_new_post">새 게시물 알림</string>
     <string name="setting_top_notification_new_post_description">후원 중·팔로우 중인 크리에이터의 새 게시물을 알려 드립니다</string>
+    <string name="setting_top_notification_new_message">새 메시지 알림</string>
+    <string name="setting_top_notification_new_message_description">후원 중·팔로우 중인 크리에이터의 새 메시지를 알려 드립니다</string>
     <string name="setting_top_notification_hide_adult_contents">성인 콘텐츠 알림 숨기기</string>
     <string name="setting_top_notification_hide_adult_contents_description">알림에 성인 게시물의 제목과 썸네일을 표시하지 않습니다</string>
     <string name="notification_permission_request_title">알림을 허용해 주세요</string>

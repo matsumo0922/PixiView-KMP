@@ -323,6 +323,8 @@ class SettingDataStore(
 
     suspend fun setNewPostNotificationEnabled(isEnabled: Boolean) = setBooleanSetting(Setting::isNewPostNotificationEnabled, isEnabled)
 
+    suspend fun setNewMessageNotificationEnabled(isEnabled: Boolean) = setBooleanSetting(Setting::isNewMessageNotificationEnabled, isEnabled)
+
     suspend fun setHideAdultContentsInNotification(isHide: Boolean) = setBooleanSetting(Setting::isHideAdultContentsInNotification, isHide)
 
     private suspend fun setBooleanSetting(property: KProperty1<Setting, Boolean>, value: Boolean) = withContext(ioDispatcher) {

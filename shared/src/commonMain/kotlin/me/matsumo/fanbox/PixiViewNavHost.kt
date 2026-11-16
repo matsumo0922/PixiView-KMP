@@ -13,6 +13,8 @@ import androidx.compose.ui.backhandler.BackHandler
 import androidx.navigation3.runtime.EntryProviderScope
 import androidx.navigation3.runtime.NavEntryDecorator
 import kotlinx.collections.immutable.persistentListOf
+import kotlinx.coroutines.channels.Channel
+import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.launch
 import me.matsumo.fanbox.core.model.Destination
 import me.matsumo.fanbox.core.ui.component.emptyDetailEntry
@@ -61,7 +63,17 @@ internal fun PixiViewNavHost(
         onClose = { scope.launch { currentOnPostDetailClose() } },
     )
 
-    HandleDeepLink(onDeepLink = navigator::navigate)
+    // 通知から「メッセージ」タブを開く要求。ライブラリの画面が表示される前に届いても失わないよう、受け取られるまで保持する。
+    val openLibraryMessageRequests = remember { Channel<Unit>(Channel.CONFLATED) }
+    val openLibraryMessageRequestFlow = remember(openLibraryMessageRequests) { openLibraryMessageRequests.receiveAsFlow() }
+
+    HandleDeepLink(
+        onDeepLink = navigator::navigate,
+        onOpenLibraryMessage = {
+            navigator.backToRoot()
+            openLibraryMessageRequests.trySend(Unit)
+        },
+    )
 
     PixiViewNavDisplay(
         modifier = modifier,
@@ -71,6 +83,7 @@ internal fun PixiViewNavHost(
             libraryEntry(
                 navigateTo = navigator::navigate,
                 onHomeVisibilityChange = onLibraryHomeVisibilityChange,
+                openMessageTabRequests = openLibraryMessageRequestFlow,
             )
 
             applyPostDestinations(navigator)
@@ -283,4 +296,7 @@ private fun EntryProviderScope<Destination>.applySettingsDestinations(
 }
 
 @Composable
-expect fun HandleDeepLink(onDeepLink: (Destination) -> Unit)
+expect fun HandleDeepLink(
+    onDeepLink: (Destination) -> Unit,
+    onOpenLibraryMessage: () -> Unit,
+)
