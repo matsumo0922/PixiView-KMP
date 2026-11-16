@@ -18,6 +18,9 @@ import me.matsumo.fanbox.core.model.ThemeConfig
 interface SettingRepository {
 
     val setting: StateFlow<Setting>
+
+    /** 保存済みの [Setting] を、保存されるたびに流す。[setting] と違い、読み込み前の [Setting.default] を流さない。 */
+    val storedSetting: Flow<Setting>
     val updatePlusMode: Flow<Boolean>
 
     suspend fun setPixiViewId(id: String)
@@ -39,6 +42,8 @@ interface SettingRepository {
     suspend fun setHideAdultContents(isHideAdultContents: Boolean)
     suspend fun setOverrideAdultContents(isOverrideAdultContents: Boolean)
     suspend fun setAutoImagePreview(isAutoImagePreview: Boolean)
+    suspend fun setNewPostNotificationEnabled(isEnabled: Boolean)
+    suspend fun setHideAdultContentsInNotification(isHide: Boolean)
     suspend fun setTestUser(isTestUser: Boolean)
     suspend fun setHideRestricted(isHideRestricted: Boolean)
     suspend fun setDeveloperMode(isDeveloperMode: Boolean)
@@ -53,6 +58,8 @@ class SettingRepositoryImpl(private val settingDataStore: SettingDataStore) : Se
     override val updatePlusMode: Flow<Boolean> = _updatePlusMode.receiveAsFlow()
 
     override val setting: StateFlow<Setting> = settingDataStore.setting
+
+    override val storedSetting: Flow<Setting> = settingDataStore.storedSetting
 
     override suspend fun setPixiViewId(id: String) {
         settingDataStore.setPixiViewId(id)
@@ -120,6 +127,14 @@ class SettingRepositoryImpl(private val settingDataStore: SettingDataStore) : Se
 
     override suspend fun setAutoImagePreview(isAutoImagePreview: Boolean) {
         settingDataStore.setAutoImagePreview(isAutoImagePreview)
+    }
+
+    override suspend fun setNewPostNotificationEnabled(isEnabled: Boolean) {
+        settingDataStore.setNewPostNotificationEnabled(isEnabled)
+    }
+
+    override suspend fun setHideAdultContentsInNotification(isHide: Boolean) {
+        settingDataStore.setHideAdultContentsInNotification(isHide)
     }
 
     override suspend fun setTestUser(isTestUser: Boolean) {

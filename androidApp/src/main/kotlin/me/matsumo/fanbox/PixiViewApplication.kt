@@ -14,6 +14,7 @@ import com.google.firebase.FirebaseOptions
 import io.github.aakira.napier.DebugAntilog
 import io.github.aakira.napier.Napier
 import me.matsumo.fanbox.di.applyModules
+import me.matsumo.fanbox.feature.service.di.serviceModule
 import okio.Path.Companion.toOkioPath
 import org.koin.android.ext.koin.androidContext
 import org.koin.android.ext.koin.androidLogger
@@ -45,6 +46,7 @@ class PixiViewApplication :
         androidLogger()
         applyModules()
         modules(androidAppModule)
+        modules(serviceModule)
     }
 
     private fun setupCoil() {

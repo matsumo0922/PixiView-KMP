@@ -8,4 +8,5 @@ object PreferencesName {
     const val FANBOX_BOOKMARK = "fanbox_bookmark"
     const val FANBOX_BLOCK = "fanbox_block"
     const val FLAG = "flag"
+    const val NEW_POST_CHECK = "new_post_check"
 }

@@ -157,10 +157,20 @@ interface FanboxRepository {
      */
     suspend fun checkLoginState(): LoginState
 
+    /** ロードした guest の manifest の metadata を返す。組み込みの guest で動いているときは空の Map を返す。 */
+    suspend fun getGuestMetadata(): Map<String, String>
+
     suspend fun getHomePosts(
         cursor: Cursor?,
         loadSize: Int = cursor?.limit ?: 10,
     ): PageCursorInfo<Post>
+
+    /**
+     * 画面を持たない処理から、ホームの投稿一覧を取得する。
+     *
+     * 認証切れでも [sessionInvalidatedTrigger] に通知しない。通知は画面が次に購読したときに届き、ログイン画面へ遷移させるため。
+     */
+    suspend fun getHomePostsInBackground(cursor: Cursor?): PageCursorInfo<Post>
 
     suspend fun getSupportedPosts(
         cursor: Cursor?,
@@ -450,6 +460,8 @@ class FanboxRepositoryImpl(
         fanbox.updateCsrfToken()
     }
 
+    override suspend fun getGuestMetadata(): Map<String, String> = fanbox.getGuestMetadata()
+
     override suspend fun checkLoginState(): LoginState {
         if (cookieStorage.isStoredSessionUnreadable()) return LoginState.SessionUnreadable
         if (sessionId.first().isNullOrBlank()) return LoginState.LoggedOut
@@ -526,8 +538,14 @@ class FanboxRepositoryImpl(
     }
 
     override suspend fun getHomePosts(cursor: Cursor?, loadSize: Int): PageCursorInfo<Post> = withSessionCheck {
-        fanbox.getHomePosts(cursor?.toFanboxCursor(), ::recordSchemaMismatch).toPageCursorInfo { it.toPost() }
+        fetchHomePosts(cursor)
     }
+
+    override suspend fun getHomePostsInBackground(cursor: Cursor?): PageCursorInfo<Post> = fetchHomePosts(cursor)
+
+    private suspend fun fetchHomePosts(cursor: Cursor?): PageCursorInfo<Post> = fanbox
+        .getHomePosts(cursor?.toFanboxCursor(), ::recordSchemaMismatch)
+        .toPageCursorInfo { it.toPost() }
 
     override suspend fun getSupportedPosts(cursor: Cursor?, loadSize: Int): PageCursorInfo<Post> = withSessionCheck {
         fanbox.getSupportedPosts(cursor?.toFanboxCursor(), ::recordSchemaMismatch).toPageCursorInfo { it.toPost() }
@@ -828,6 +846,17 @@ class FanboxRepositoryImpl(
 
 /** FANBOX のセッション Cookie の名前。 */
 private const val FANBOX_SESSION_ID_NAME = "FANBOXSESSID"
+
+/**
+ * 読める状態のセッションが保存されているかを、Cookie の保存先から直接確かめる。
+ *
+ * [FanboxRepository] を生成しないため、guest のロードを含めて通信しない。FANBOX がそのセッションを受け付けるかは確かめない。
+ */
+suspend fun MigratingFanboxCookieStorage.hasStoredSession(): Boolean {
+    if (isStoredSessionUnreadable()) return false
+
+    return snapshot().any { cookie -> cookie.name == FANBOX_SESSION_ID_NAME && cookie.value.isNotBlank() }
+}
 
 /** [fanbox] と、その生成に使った guest の配信先。 */
 private class ChanneledFanbox(val channel: GuestChannel, val fanbox: Fanbox)

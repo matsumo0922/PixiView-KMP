@@ -38,6 +38,7 @@ androidxCore = "1.19.1"
 androidxCoreSplash = "1.2.0"
 androidxAppCompat = "1.8.0"
 androidxActivity = "1.13.0"
+androidxWork = "2.11.2"
 androidxFragment = "1.9.1"
 androidxDataStore = "1.3.0"
 androidxAnnotation = "1.11.0"
@@ -58,7 +59,7 @@ gms = "4.5.0"
 koin = "4.2.2"
 
 # matsumo
-fankt = "0.2.4"
+fankt = "0.2.5"
 
 # security
 ksafe = "3.3.0"
@@ -130,6 +131,7 @@ androidx-constraintlayout = { module = "androidx.constraintlayout:constraintlayo
 androidx-appcompat = { module = "androidx.appcompat:appcompat", version.ref = "androidxAppCompat" }
 androidx-activity = { module = "androidx.activity:activity-ktx", version.ref = "androidxActivity" }
 androidx-activity-compose = { module = "androidx.activity:activity-compose", version.ref = "androidxActivity" }
+androidx-work-runtime = { module = "androidx.work:work-runtime-ktx", version.ref = "androidxWork" }
 androidx-fragment = { module = "androidx.fragment:fragment-ktx", version.ref = "androidxFragment" }
 androidx-datastore = { module = "androidx.datastore:datastore", version.ref = "androidxDataStore" }
 androidx-datastore-proto = { module = "androidx.datastore:datastore-core", version.ref = "androidxDataStore" }

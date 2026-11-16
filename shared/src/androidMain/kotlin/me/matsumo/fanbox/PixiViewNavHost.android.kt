@@ -54,9 +54,15 @@ import me.matsumo.fanbox.core.resources.domain_validation_request_message
 import me.matsumo.fanbox.core.resources.domain_validation_request_never_ask
 import me.matsumo.fanbox.core.resources.domain_validation_request_title
 import me.matsumo.fanbox.core.resources.error_no_available_this_device
+import me.matsumo.fanbox.core.resources.notification_permission_request_button
+import me.matsumo.fanbox.core.resources.notification_permission_request_message
+import me.matsumo.fanbox.core.resources.notification_permission_request_title
 import me.matsumo.fanbox.core.ui.extensition.padding
 import me.matsumo.fanbox.core.ui.navigation.deepLinkDestinationOf
+import me.matsumo.fanbox.core.ui.permission.NotificationPermissionState
+import me.matsumo.fanbox.core.ui.permission.rememberNotificationPermissionState
 import me.matsumo.fanbox.core.ui.theme.bold
+import org.jetbrains.compose.resources.StringResource
 import org.jetbrains.compose.resources.stringResource
 import org.koin.compose.koinInject
 
@@ -85,9 +91,123 @@ actual fun HandleDeepLink(onDeepLink: (Destination) -> Unit) {
         }
     }
 
-    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
-        RequestDomainVerification(activity)
+    RequestStartupPermission(activity)
+}
+
+/** 起動時に出す権限の案内。1 回の起動で 1 つだけ出す。 */
+private enum class StartupPermissionPrompt {
+    NOTIFICATION,
+    DOMAIN_VERIFICATION,
+}
+
+/**
+ * 起動時の権限の案内を、このプロセスで判定したか。
+ *
+ * ログアウトしてログインし直すと、案内を出す画面が作り直される。画面の状態に持つと判定をやり直すため、プロセスに持つ。
+ */
+private object StartupPermissionPromptHistory {
+    var isChecked = false
+}
+
+/**
+ * 通知の権限と、FANBOX のリンクを開く設定の案内のうち、条件を満たすものを 1 つだけ表示する。
+ *
+ * 両方の条件を満たすときは、新着投稿の通知に必要な通知の権限を優先する。
+ */
+@Composable
+private fun RequestStartupPermission(
+    activity: FragmentActivity,
+    flagRepository: FlagRepository = koinInject(),
+) {
+    val notificationPermission = rememberNotificationPermissionState(referrer = "dialog")
+    var prompt by rememberSaveable { mutableStateOf<StartupPermissionPrompt?>(null) }
+
+    LaunchedEffect(Unit) {
+        if (StartupPermissionPromptHistory.isChecked) return@LaunchedEffect
+
+        // 選んでいる途中で Activity が作り直されると、この処理は取り消される。案内を失わないよう、選んだ結果を反映してから判定済みにする。
+        prompt = selectStartupPermissionPrompt(
+            activity = activity,
+            flagRepository = flagRepository,
+            isNotificationGranted = notificationPermission.isGranted,
+        )
+        StartupPermissionPromptHistory.isChecked = true
+
+        if (prompt == StartupPermissionPrompt.NOTIFICATION) notificationPermission.reportPromptShown()
     }
+
+    when (prompt) {
+        StartupPermissionPrompt.NOTIFICATION -> RequestNotificationPermission(
+            notificationPermission = notificationPermission,
+            flagRepository = flagRepository,
+            onClose = { prompt = null },
+        )
+
+        StartupPermissionPrompt.DOMAIN_VERIFICATION -> if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+            RequestDomainVerification(
+                activity = activity,
+                flagRepository = flagRepository,
+                onClose = { prompt = null },
+            )
+        }
+
+        null -> Unit
+    }
+}
+
+private suspend fun selectStartupPermissionPrompt(
+    activity: FragmentActivity,
+    flagRepository: FlagRepository,
+    isNotificationGranted: Boolean,
+): StartupPermissionPrompt? {
+    val shouldRequestNotification = !isNotificationGranted && flagRepository.getFlag(Flag.SHOULD_REQUEST_NOTIFICATION_PERMISSION, true)
+    if (shouldRequestNotification) return StartupPermissionPrompt.NOTIFICATION
+
+    val shouldRequestDomainVerification = Build.VERSION.SDK_INT >= Build.VERSION_CODES.S && shouldRequestDomainVerification(activity, flagRepository)
+    if (shouldRequestDomainVerification) return StartupPermissionPrompt.DOMAIN_VERIFICATION
+
+    return null
+}
+
+@RequiresApi(Build.VERSION_CODES.S)
+private suspend fun shouldRequestDomainVerification(activity: FragmentActivity, flagRepository: FlagRepository): Boolean {
+    val manager = activity.getSystemService(DomainVerificationManager::class.java)
+    val userState = manager.getDomainVerificationUserState(activity.packageName)
+    val selectedDomains = userState?.hostToStateMap?.filterValues {
+        it == DomainVerificationUserState.DOMAIN_STATE_SELECTED
+    }
+    val enable = userState?.isLinkHandlingAllowed
+
+    val flag = flagRepository.getFlag(Flag.SHOULD_REQUEST_DOMAIN_VERIFICATION, true)
+    val isNotSelected = selectedDomains.isNullOrEmpty()
+
+    return flag && (isNotSelected || enable == false)
+}
+
+@Composable
+private fun RequestNotificationPermission(
+    notificationPermission: NotificationPermissionState,
+    flagRepository: FlagRepository,
+    onClose: () -> Unit,
+) {
+    val scope = rememberCoroutineScope()
+
+    RequestPermissionDialog(
+        title = Res.string.notification_permission_request_title,
+        message = Res.string.notification_permission_request_message,
+        requestButton = Res.string.notification_permission_request_button,
+        onRequestClick = {
+            notificationPermission.request()
+            onClose()
+        },
+        onCancelClick = { isChecked ->
+            if (isChecked) {
+                scope.launch { flagRepository.setFlag(Flag.SHOULD_REQUEST_NOTIFICATION_PERMISSION, false) }
+            }
+            onClose()
+        },
+        onDismissRequest = onClose,
+    )
 }
 
 private fun Intent?.deepLinkDestination(): Destination? = this?.dataString?.let(::deepLinkDestinationOf)
@@ -96,54 +216,42 @@ private fun Intent?.deepLinkDestination(): Destination? = this?.dataString?.let(
 @Composable
 private fun RequestDomainVerification(
     activity: FragmentActivity,
-    flagRepository: FlagRepository = koinInject(),
+    flagRepository: FlagRepository,
+    onClose: () -> Unit,
 ) {
     val scope = rememberCoroutineScope()
-    var shouldRequest by remember { mutableStateOf(false) }
     val errorMessage = stringResource(Res.string.error_no_available_this_device)
 
-    LaunchedEffect(Unit) {
-        val manager = activity.getSystemService(DomainVerificationManager::class.java)
-        val userState = manager.getDomainVerificationUserState(activity.packageName)
-        val selectedDomains = userState?.hostToStateMap?.filterValues {
-            it == DomainVerificationUserState.DOMAIN_STATE_SELECTED
-        }
-        val enable = userState?.isLinkHandlingAllowed
-
-        val flag = flagRepository.getFlag(Flag.SHOULD_REQUEST_DOMAIN_VERIFICATION, true)
-        val isNotSelected = selectedDomains.isNullOrEmpty()
-
-        shouldRequest = flag && (isNotSelected || enable == false)
-    }
-
-    if (shouldRequest) {
-        RequestDomainVerificationDialog(
-            onRequestClick = {
-                runCatching {
-                    activity.startActivity(Intent(Settings.ACTION_APP_OPEN_BY_DEFAULT_SETTINGS, Uri.parse("package:${activity.packageName}")))
-                }.onFailure {
-                    Toast.makeText(activity, errorMessage, Toast.LENGTH_SHORT).show()
-                }.onSuccess {
-                    shouldRequest = false
+    RequestPermissionDialog(
+        title = Res.string.domain_validation_request_title,
+        message = Res.string.domain_validation_request_message,
+        requestButton = Res.string.domain_validation_request_button,
+        onRequestClick = {
+            runCatching {
+                activity.startActivity(Intent(Settings.ACTION_APP_OPEN_BY_DEFAULT_SETTINGS, Uri.parse("package:${activity.packageName}")))
+            }.onFailure {
+                Toast.makeText(activity, errorMessage, Toast.LENGTH_SHORT).show()
+            }.onSuccess {
+                onClose()
+            }
+        },
+        onCancelClick = { isChecked ->
+            if (isChecked) {
+                scope.launch {
+                    flagRepository.setFlag(Flag.SHOULD_REQUEST_DOMAIN_VERIFICATION, false)
                 }
-            },
-            onCancelClick = { isChecked ->
-                if (isChecked) {
-                    scope.launch {
-                        flagRepository.setFlag(Flag.SHOULD_REQUEST_DOMAIN_VERIFICATION, false)
-                    }
-                }
-                shouldRequest = false
-            },
-            onDismissRequest = {
-                shouldRequest = false
-            },
-        )
-    }
+            }
+            onClose()
+        },
+        onDismissRequest = onClose,
+    )
 }
 
 @Composable
-private fun RequestDomainVerificationDialog(
+private fun RequestPermissionDialog(
+    title: StringResource,
+    message: StringResource,
+    requestButton: StringResource,
     onRequestClick: () -> Unit,
     onCancelClick: (Boolean) -> Unit,
     onDismissRequest: () -> Unit,
@@ -163,14 +271,14 @@ private fun RequestDomainVerificationDialog(
         ) {
             Text(
                 modifier = Modifier.fillMaxWidth(),
-                text = stringResource(Res.string.domain_validation_request_title),
+                text = stringResource(title),
                 style = MaterialTheme.typography.titleMedium.bold(),
                 color = MaterialTheme.colorScheme.onSurface,
             )
 
             Text(
                 modifier = Modifier.fillMaxWidth(),
-                text = stringResource(Res.string.domain_validation_request_message),
+                text = stringResource(message),
                 style = MaterialTheme.typography.bodyMedium,
                 color = MaterialTheme.colorScheme.onSurfaceVariant,
             )
@@ -212,7 +320,7 @@ private fun RequestDomainVerificationDialog(
                     modifier = Modifier.fillMaxWidth(),
                     onClick = onRequestClick,
                 ) {
-                    Text(text = stringResource(Res.string.domain_validation_request_button))
+                    Text(text = stringResource(requestButton))
                 }
 
                 OutlinedButton(

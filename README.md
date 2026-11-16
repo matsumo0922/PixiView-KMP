@@ -65,6 +65,7 @@ There was only a web version of FANBOX, which was a bit inconvenient for viewing
   - Search by tags.
   - Search plans.
   - Display notifications.
+  - Notify new posts from supported and followed creators (Android only).
   - Display messages.
 - Download
   - Download in image/file/GIF format.
