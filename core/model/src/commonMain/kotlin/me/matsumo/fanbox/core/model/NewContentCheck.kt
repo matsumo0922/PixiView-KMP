@@ -91,13 +91,17 @@ sealed interface NewContentDetection<out T> {
     /** 記録がない初回の確認。通知せず、[latestCreatedAt] を記録する。 */
     data class FirstCheck(val latestCreatedAt: Instant) : NewContentDetection<Nothing>
 
-    /** 記録より新しい、通知する対象がある。[newContents] は新しい順で、[latestCreatedAt] を記録する。 */
+    /**
+     * 記録より新しいものがある。[newContents] はそのうち通知する対象で、新しい順に並ぶ。[latestCreatedAt] を記録する。
+     *
+     * 既読やブロックで、記録より新しいものがすべて通知の対象外のときは、[newContents] が空になる。
+     */
     data class Found<T>(
         val newContents: List<T>,
         val latestCreatedAt: Instant,
     ) : NewContentDetection<T>
 
-    /** 記録より新しい、通知する対象がない、または 1 件もない。記録は変えない。 */
+    /** 記録より新しいものがない。記録は変えない。 */
     data object NotFound : NewContentDetection<Nothing>
 }
 
@@ -119,18 +123,26 @@ fun detectNewPosts(posts: List<Post>, lastSeenPublishedAt: Instant?): NewContent
  *
  * [blockedCreatorIds] のクリエイターのメッセージは新着にしない。[lastSeenCreatedAt] が null のときは初回の確認として扱い、新着を返さない。
  * 記録する作成日時は、既読やブロックで新着にしないメッセージも含めた最新の作成日時とする。
+ *
+ * 初回の確認でメッセージが 1 件もないときは、確認した日時 [checkedAt] を記録する。メッセージがまだないアカウントでも、最初に届いたメッセージを通知できるようにするため。
  */
 @OptIn(ExperimentalTime::class)
 fun detectNewMessages(
     messages: List<NewsLetter>,
     lastSeenCreatedAt: Instant?,
     blockedCreatorIds: Set<CreatorId>,
-): NewContentDetection<NewsLetter> = detectNewContents(
-    contents = messages,
-    lastSeenCreatedAt = lastSeenCreatedAt,
-    createdAtOf = { it.createdAt },
-    isNotifiable = { message -> !message.isRead && message.creator.creatorId !in blockedCreatorIds },
-)
+    checkedAt: Instant,
+): NewContentDetection<NewsLetter> {
+    val isFirstCheckWithoutMessages = messages.isEmpty() && lastSeenCreatedAt == null
+    if (isFirstCheckWithoutMessages) return NewContentDetection.FirstCheck(checkedAt)
+
+    return detectNewContents(
+        contents = messages,
+        lastSeenCreatedAt = lastSeenCreatedAt,
+        createdAtOf = { it.createdAt },
+        isNotifiable = { message -> !message.isRead && message.creator.creatorId !in blockedCreatorIds },
+    )
+}
 
 @OptIn(ExperimentalTime::class)
 private fun <T> detectNewContents(
@@ -142,12 +154,12 @@ private fun <T> detectNewContents(
     val latestCreatedAt = contents.maxOfOrNull(createdAtOf) ?: return NewContentDetection.NotFound
 
     if (lastSeenCreatedAt == null) return NewContentDetection.FirstCheck(latestCreatedAt)
+    if (latestCreatedAt <= lastSeenCreatedAt) return NewContentDetection.NotFound
 
+    // 通知の対象外のものも記録に含めるため、通知する対象がなくても Found を返して記録を進める。
     val newContents = contents
         .filter { createdAtOf(it) > lastSeenCreatedAt && isNotifiable(it) }
         .sortedByDescending(createdAtOf)
-
-    if (newContents.isEmpty()) return NewContentDetection.NotFound
 
     return NewContentDetection.Found(newContents, latestCreatedAt)
 }

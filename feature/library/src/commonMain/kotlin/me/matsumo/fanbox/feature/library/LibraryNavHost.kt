@@ -5,9 +5,11 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.MutableIntState
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.Stable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberUpdatedState
@@ -40,9 +42,14 @@ import me.matsumo.fanbox.feature.library.notify.LibraryNotifyRoute
 internal class LibraryTabState(
     val startTab: LibraryDestination,
     currentTab: MutableState<LibraryDestination>,
+    messageReloadKey: MutableIntState,
     val entryDecorators: List<NavEntryDecorator<LibraryDestination>>,
 ) {
     var currentTab by currentTab
+        private set
+
+    /** 「メッセージ」タブの一覧を取得し直す要求の回数。通知から開くたびに増やし、「メッセージ」タブはこの値が変わったときに取得し直す。 */
+    var messageReloadKey by messageReloadKey
         private set
 
     /** 表示するタブ。開始タブを常に先頭に置き、戻る操作の行き先にする。 */
@@ -61,6 +68,12 @@ internal class LibraryTabState(
     fun back() {
         currentTab = startTab
     }
+
+    /** 「メッセージ」タブを選び、表示済みの一覧を取得し直させる。新着メッセージの通知から開いたとき、届いたメッセージを表示できるようにするため。 */
+    fun openMessageTab() {
+        messageReloadKey++
+        select(LibraryDestination.Message)
+    }
 }
 
 /**
@@ -71,13 +84,15 @@ internal class LibraryTabState(
 @Composable
 internal fun rememberLibraryTabState(startTab: LibraryDestination): LibraryTabState {
     val currentTab = rememberSaveable(startTab) { mutableStateOf(startTab) }
+    val messageReloadKey = rememberSaveable { mutableIntStateOf(0) }
     val saveableStateDecorator = rememberSaveableStateHolderNavEntryDecorator<LibraryDestination>()
     val viewModelStoreDecorator = rememberViewModelStoreNavEntryDecorator<LibraryDestination>()
 
-    return remember(startTab, currentTab, saveableStateDecorator, viewModelStoreDecorator) {
+    return remember(startTab, currentTab, messageReloadKey, saveableStateDecorator, viewModelStoreDecorator) {
         LibraryTabState(
             startTab = startTab,
             currentTab = currentTab,
+            messageReloadKey = messageReloadKey,
             entryDecorators = listOf(saveableStateDecorator, viewModelStoreDecorator),
         )
     }
@@ -103,6 +118,7 @@ internal fun LibraryNavHost(
                     tab = key,
                     openDrawer = { currentOpenDrawer() },
                     navigateTo = { currentNavigateTo(it) },
+                    messageReloadKey = { tabState.messageReloadKey },
                 )
             },
         )
@@ -127,6 +143,7 @@ private fun libraryTabEntry(
     tab: LibraryDestination,
     openDrawer: () -> Unit,
     navigateTo: (Destination) -> Unit,
+    messageReloadKey: () -> Int,
 ): NavEntry<LibraryDestination> = NavEntry(
     key = tab,
     contentKey = tab.name,
@@ -161,6 +178,7 @@ private fun libraryTabEntry(
         LibraryDestination.Message -> {
             LibraryMessageRoute(
                 modifier = Modifier.fillMaxSize(),
+                reloadKey = messageReloadKey(),
                 openDrawer = openDrawer,
                 navigateTo = navigateTo,
             )

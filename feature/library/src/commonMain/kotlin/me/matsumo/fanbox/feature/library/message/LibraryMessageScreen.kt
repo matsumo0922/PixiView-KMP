@@ -14,7 +14,11 @@ import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.SideEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableIntStateOf
+import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
@@ -39,12 +43,23 @@ import org.koin.compose.viewmodel.koinViewModel
 
 @Composable
 internal fun LibraryMessageRoute(
+    reloadKey: Int,
     openDrawer: () -> Unit,
     navigateTo: (Destination) -> Unit,
     modifier: Modifier = Modifier,
     viewModel: LibraryMessageViewModel = koinViewModel(),
 ) {
     val screenState by viewModel.screenState.collectAsStateWithLifecycle()
+
+    // 初めて表示するときは ViewModel の生成時に取得するため、表示した後に reloadKey が変わったときだけ取得し直す。
+    var handledReloadKey by rememberSaveable { mutableIntStateOf(reloadKey) }
+
+    SideEffect {
+        if (reloadKey == handledReloadKey) return@SideEffect
+
+        handledReloadKey = reloadKey
+        viewModel.fetch()
+    }
 
     AsyncLoadContents(
         modifier = modifier,

@@ -30,6 +30,9 @@ import me.matsumo.fanbox.core.repository.hasStoredSession
 import me.matsumo.fanbox.core.repository.paging.filterHomePosts
 import org.koin.core.component.KoinComponent
 import org.koin.core.component.inject
+import kotlin.time.Clock
+import kotlin.time.ExperimentalTime
+import kotlin.time.Instant
 
 /**
  * 支援中・フォロー中のクリエイターの新着投稿と、クリエイターからの新着メッセージを確かめ、通知する定期実行の処理。
@@ -39,6 +42,7 @@ import org.koin.core.component.inject
  * どちらも通知を表示できないとき、保存済みのセッションがないときは、guest のロードを含めて通信しない。
  * 失敗しても再試行せず、次の定期実行を待つ。画面を一度も開いていないプロセスでも動く。
  */
+@OptIn(ExperimentalTime::class)
 class NewContentCheckWorker(
     context: Context,
     params: WorkerParameters,
@@ -127,6 +131,21 @@ class NewContentCheckWorker(
         ContentCheck.MESSAGE -> newContentCheckDataStore.clearLastSeenMessageCreatedAt()
     }
 
+    /**
+     * [check] の確認の記録を [latestCreatedAt] にする。
+     *
+     * 確認の途中で設定が OFF にされると、Scheduler が消した記録をこの確認が書き戻し、次に ON にしたときの確認が初回にならない。
+     * これを避けるため、保存の直前に保存済みの設定を読み直し、OFF になっていれば保存しない。
+     */
+    private suspend fun saveRecord(check: ContentCheck, latestCreatedAt: Instant) {
+        if (!check.isNotificationEnabled(settingDataStore.loadStoredSetting())) return
+
+        when (check) {
+            ContentCheck.POST -> newContentCheckDataStore.setLastSeenPublishedAt(latestCreatedAt)
+            ContentCheck.MESSAGE -> newContentCheckDataStore.setLastSeenMessageCreatedAt(latestCreatedAt)
+        }
+    }
+
     private suspend fun runCheck(check: ContentCheck, setting: Setting) = when (check) {
         ContentCheck.POST -> checkNewPosts(setting)
         ContentCheck.MESSAGE -> checkNewMessages()
@@ -137,7 +156,7 @@ class NewContentCheckWorker(
         val detection = detectNewPosts(posts, newContentCheckDataStore.getLastSeenPublishedAt())
 
         when (detection) {
-            is NewContentDetection.FirstCheck -> newContentCheckDataStore.setLastSeenPublishedAt(detection.latestCreatedAt)
+            is NewContentDetection.FirstCheck -> saveRecord(ContentCheck.POST, detection.latestCreatedAt)
             is NewContentDetection.Found -> notifyNewPosts(detection, setting)
             NewContentDetection.NotFound -> Unit
         }
@@ -164,7 +183,7 @@ class NewContentCheckWorker(
         }
 
         // 表示し終えてから記録する。途中で中断されたときは次の確認で全件を表示し直すが、同じ投稿の通知は置き換えるため重ならない。
-        newContentCheckDataStore.setLastSeenPublishedAt(detection.latestCreatedAt)
+        saveRecord(ContentCheck.POST, detection.latestCreatedAt)
 
         if (shownPostIds.isEmpty()) return
 
@@ -193,10 +212,11 @@ class NewContentCheckWorker(
             messages = messages,
             lastSeenCreatedAt = newContentCheckDataStore.getLastSeenMessageCreatedAt(),
             blockedCreatorIds = fanboxRepository.blockedCreators.first(),
+            checkedAt = Clock.System.now(),
         )
 
         when (detection) {
-            is NewContentDetection.FirstCheck -> newContentCheckDataStore.setLastSeenMessageCreatedAt(detection.latestCreatedAt)
+            is NewContentDetection.FirstCheck -> saveRecord(ContentCheck.MESSAGE, detection.latestCreatedAt)
             is NewContentDetection.Found -> notifyNewMessages(detection)
             NewContentDetection.NotFound -> Unit
         }
@@ -209,7 +229,7 @@ class NewContentCheckWorker(
         }
 
         // 表示し終えてから記録する。途中で中断されたときは次の確認で全件を表示し直すが、同じメッセージの通知は置き換えるため重ならない。
-        newContentCheckDataStore.setLastSeenMessageCreatedAt(detection.latestCreatedAt)
+        saveRecord(ContentCheck.MESSAGE, detection.latestCreatedAt)
 
         if (shownMessageIds.isEmpty()) return
 

@@ -73,7 +73,7 @@ private fun LibraryContent(
     }
 
     LaunchedEffect(openMessageTabRequests) {
-        openMessageTabRequests.collect { tabState.select(LibraryDestination.Message) }
+        openMessageTabRequests.collect { tabState.openMessageTab() }
     }
 
     when (navigationType) {

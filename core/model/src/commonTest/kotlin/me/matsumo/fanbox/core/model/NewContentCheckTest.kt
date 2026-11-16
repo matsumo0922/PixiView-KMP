@@ -20,6 +20,7 @@ import kotlin.time.Instant
 class NewContentCheckTest {
 
     private val lastSeen = Instant.parse("2026-11-01T12:00:00Z")
+    private val checkedAt = lastSeen + 6.hours
 
     @Test
     fun preconditionProceedsOnlyWhenEveryConditionHolds() {
@@ -235,7 +236,12 @@ class NewContentCheckTest {
         val older = message("1", lastSeen)
         val newer = message("2", lastSeen + 1.hours, isRead = true)
 
-        val result = detectNewMessages(listOf(older, newer), lastSeenCreatedAt = null, blockedCreatorIds = emptySet())
+        val result = detectNewMessages(
+            messages = listOf(older, newer),
+            lastSeenCreatedAt = null,
+            blockedCreatorIds = emptySet(),
+            checkedAt = checkedAt,
+        )
 
         assertEquals(NewContentDetection.FirstCheck(newer.createdAt), result)
     }
@@ -247,7 +253,12 @@ class NewContentCheckTest {
         val justAfter = message("2", lastSeen + 1.seconds)
         val latest = message("3", lastSeen + 2.hours)
 
-        val result = detectNewMessages(listOf(justAfter, recorded, latest, older), lastSeen, blockedCreatorIds = emptySet())
+        val result = detectNewMessages(
+            messages = listOf(justAfter, recorded, latest, older),
+            lastSeenCreatedAt = lastSeen,
+            blockedCreatorIds = emptySet(),
+            checkedAt = checkedAt,
+        )
 
         assertEquals(NewContentDetection.Found(listOf(latest, justAfter), latest.createdAt), result)
     }
@@ -263,18 +274,47 @@ class NewContentCheckTest {
             messages = listOf(read, blocked, unread, latestRead),
             lastSeenCreatedAt = lastSeen,
             blockedCreatorIds = setOf(CreatorId("creator-2")),
+            checkedAt = checkedAt,
         )
 
         assertEquals(NewContentDetection.Found(listOf(unread), latestRead.createdAt), result)
     }
 
     @Test
-    fun noMessagesToNotifyLeaveTheRecordUnchanged() {
-        val read = message("1", lastSeen + 1.hours, isRead = true)
+    fun theRecordAdvancesEvenWhenNoNewMessageIsNotified() {
         val recorded = message("0", lastSeen)
+        val read = message("1", lastSeen + 1.hours, isRead = true)
+        val blocked = message("2", lastSeen + 2.hours)
 
-        assertEquals(NewContentDetection.NotFound, detectNewMessages(listOf(read, recorded), lastSeen, blockedCreatorIds = emptySet()))
-        assertEquals(NewContentDetection.NotFound, detectNewMessages(emptyList(), lastSeenCreatedAt = null, blockedCreatorIds = emptySet()))
+        val result = detectNewMessages(
+            messages = listOf(read, blocked, recorded),
+            lastSeenCreatedAt = lastSeen,
+            blockedCreatorIds = setOf(CreatorId("creator-2")),
+            checkedAt = checkedAt,
+        )
+
+        assertEquals(NewContentDetection.Found(emptyList(), blocked.createdAt), result)
+    }
+
+    @Test
+    fun noMessagesAfterTheRecordLeaveTheRecordUnchanged() {
+        val recorded = message("0", lastSeen)
+        val older = message("1", lastSeen - 1.hours)
+
+        assertEquals(NewContentDetection.NotFound, detectNewMessages(listOf(recorded, older), lastSeen, emptySet(), checkedAt))
+        assertEquals(NewContentDetection.NotFound, detectNewMessages(emptyList(), lastSeen, emptySet(), checkedAt))
+    }
+
+    @Test
+    fun firstMessageCheckWithoutMessagesRecordsTheCheckTime() {
+        val firstCheck = detectNewMessages(emptyList(), lastSeenCreatedAt = null, blockedCreatorIds = emptySet(), checkedAt = checkedAt)
+        val firstMessage = message("1", checkedAt + 1.seconds)
+
+        assertEquals(NewContentDetection.FirstCheck(checkedAt), firstCheck)
+        assertEquals(
+            NewContentDetection.Found(listOf(firstMessage), firstMessage.createdAt),
+            detectNewMessages(listOf(firstMessage), checkedAt, emptySet(), checkedAt + 1.hours),
+        )
     }
 
     private fun post(
