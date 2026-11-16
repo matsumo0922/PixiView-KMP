@@ -50,10 +50,10 @@ import me.matsumo.fanbox.core.model.ThemeConfig
 import me.matsumo.fanbox.core.ui.ads.NativeAdsPreLoader
 import me.matsumo.fanbox.core.ui.theme.shouldUseDarkTheme
 import me.matsumo.fanbox.feature.service.DownloadPostService
-import me.matsumo.fanbox.feature.service.LibraryMessageOpenRequests
+import me.matsumo.fanbox.feature.service.NotificationOpenRequests
 import me.matsumo.fanbox.feature.service.consumeNewMessageNotificationTap
 import me.matsumo.fanbox.feature.service.consumeNewPostNotificationTap
-import me.matsumo.fanbox.feature.service.isOpenLibraryMessageRequest
+import me.matsumo.fanbox.feature.service.consumeNotificationOpenRequest
 import org.json.JSONObject
 import org.koin.androidx.viewmodel.ext.android.viewModel
 import org.koin.core.component.KoinComponent
@@ -111,13 +111,14 @@ class MainActivity :
     }
 
     override fun onNewIntent(intent: Intent) {
-        super.onNewIntent(intent)
+        // super が呼ぶ画面の deep link の処理より先に、通知の intent から開く画面の要求を取り出す。
         handleNotificationTap(intent)
+        super.onNewIntent(intent)
     }
 
     private fun handleNotificationTap(intent: Intent) {
-        // 画面ができる前に届いても失わないよう、「メッセージ」タブを開く要求はプロセスに預ける。
-        if (intent.isOpenLibraryMessageRequest()) LibraryMessageOpenRequests.send()
+        // 画面ができる前に届いても失わないよう、通知から開く画面の要求はプロセスに預ける。
+        intent.consumeNotificationOpenRequest()?.let(NotificationOpenRequests::send)
 
         reportNotificationTap(intent)
     }
