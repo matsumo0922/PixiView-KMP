@@ -264,5 +264,12 @@
     "date": "2026/11/02",
     "logJp": "・ログインできない、ログイン状態が切れる問題の修正\n・ログインし直してもブックマークが消えないように修正\n・画面遷移のアニメーションの改善\n・ライブラリの更新",
     "logEn": "・Fixed issues where you could not log in or were logged out unexpectedly.\n・Bookmarks are now kept when you log in again.\n・Improved screen transition animations.\n・Updated libraries."
+  },
+  {
+    "versionName": "2.4.0",
+    "versionCode": 77,
+    "date": "2026/11/16",
+    "logJp": "・支援中・フォロー中のクリエイターの新着投稿の通知に対応\n・クリエイターからの新着メッセージの通知に対応\n・繁体字中国語に対応\n・動画投稿の本文を表示するように変更\n・課金画面に年額プランの割引率を表示するように変更\n・Plus のプラン変更が正しく行われない問題の修正\n・クリエイター検索でフォローが解除される問題の修正\n・フォロー状態が画面によって異なる問題の修正\n・広告の表示の調整",
+    "logEn": "・Added notifications for new posts from creators you support or follow.\n・Added notifications for new messages from creators.\n・Added Traditional Chinese support.\n・Video posts now show their text.\n・The paywall now shows the discount rate of the annual plan.\n・Fixed an issue where changing the Plus plan did not work correctly.\n・Fixed an issue where following from creator search unfollowed the creator.\n・Fixed an issue where the follow state differed between screens.\n・Adjusted how ads are shown."
   }
 ]
