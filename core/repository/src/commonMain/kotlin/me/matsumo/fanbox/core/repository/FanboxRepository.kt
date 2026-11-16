@@ -242,6 +242,13 @@ interface FanboxRepository {
     suspend fun getUnpaidRecords(): List<PaidRecord>
 
     suspend fun getNewsLetters(): List<NewsLetter>
+
+    /**
+     * 画面を持たない処理から、メッセージ（ニュースレター）の一覧を取得する。
+     *
+     * 認証切れでも [sessionInvalidatedTrigger] に通知しない。通知は画面が次に購読したときに届き、ログイン画面へ遷移させるため。
+     */
+    suspend fun getNewsLettersInBackground(): List<NewsLetter>
     suspend fun getBells(
         page: Int = 0,
     ): PageNumberInfo<Bell>
@@ -726,8 +733,12 @@ class FanboxRepositoryImpl(
     }
 
     override suspend fun getNewsLetters(): List<NewsLetter> = withSessionCheck {
-        fanbox.getNewsLetters().map { it.toNewsLetter() }
+        fetchNewsLetters()
     }
+
+    override suspend fun getNewsLettersInBackground(): List<NewsLetter> = fetchNewsLetters()
+
+    private suspend fun fetchNewsLetters(): List<NewsLetter> = fanbox.getNewsLetters().map { it.toNewsLetter() }
 
     override suspend fun getBells(page: Int): PageNumberInfo<Bell> = withSessionCheck {
         // 一覧を取得した時点で FANBOX 側の通知を既読にする。fankt 0.1.0 の既定は未読のまま残す

@@ -34,6 +34,15 @@ class PixiViewNavigatorTest {
     }
 
     @Test
+    fun backToRootRemovesEveryDestinationAboveTheRoot() {
+        val navigator = navigatorOf(Destination.Library, Destination.About, Destination.SettingTop)
+
+        navigator.backToRoot()
+
+        assertEquals(listOf<Destination>(Destination.Library), navigator.backStack.map { it.destination })
+    }
+
+    @Test
     fun backWithResultDeliversResultToCallerAndGoesBack() {
         val navigator = navigatorOf(Destination.Library)
         var receivedResult: Boolean? = null

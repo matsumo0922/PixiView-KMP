@@ -6,10 +6,12 @@ import androidx.compose.material3.DrawerValue
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.rememberDrawerState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.SideEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import kotlinx.coroutines.flow.Flow
 import me.matsumo.fanbox.core.model.Destination
 import me.matsumo.fanbox.core.ui.AsyncLoadContents
 import me.matsumo.fanbox.core.ui.extensition.LocalNavigationType
@@ -25,6 +27,7 @@ import org.koin.compose.viewmodel.koinViewModel
 fun LibraryScreen(
     navigateTo: (Destination) -> Unit,
     onHomeVisibilityChange: (Boolean) -> Unit,
+    openMessageTabRequests: Flow<Unit>,
     modifier: Modifier = Modifier,
     viewModel: LibraryViewModel = koinViewModel(),
 ) {
@@ -46,6 +49,7 @@ fun LibraryScreen(
             snackbarHostState = snackbarHostState,
             navigateTo = navigateTo,
             onHomeVisibilityChange = onHomeVisibilityChange,
+            openMessageTabRequests = openMessageTabRequests,
         )
     }
 }
@@ -58,6 +62,7 @@ private fun LibraryContent(
     snackbarHostState: SnackbarHostState,
     navigateTo: (Destination) -> Unit,
     onHomeVisibilityChange: (Boolean) -> Unit,
+    openMessageTabRequests: Flow<Unit>,
     modifier: Modifier = Modifier,
 ) {
     val startTab = if (uiState.setting.isTestUser) LibraryDestination.Discovery else LibraryDestination.Home
@@ -65,6 +70,10 @@ private fun LibraryContent(
 
     SideEffect {
         onHomeVisibilityChange(tabState.currentTab == LibraryDestination.Home)
+    }
+
+    LaunchedEffect(openMessageTabRequests) {
+        openMessageTabRequests.collect { tabState.openMessageTab() }
     }
 
     when (navigationType) {

@@ -106,9 +106,15 @@
     <string name="notify_new_post_channel_description">Notify new posts from creators you support or follow</string>
     <string name="notify_new_post_title">New post from %1$s</string>
     <string name="notify_new_post_multiple_title">%1$d new posts</string>
+    <string name="notify_new_message_channel_name">New messages</string>
+    <string name="notify_new_message_channel_description">Notify new messages from creators you support or follow</string>
+    <string name="notify_new_message_title">New message from %1$s</string>
+    <string name="notify_new_message_multiple_title">%1$d new messages</string>
     <string name="setting_top_notification">Notifications</string>
     <string name="setting_top_notification_new_post">New post notifications</string>
     <string name="setting_top_notification_new_post_description">Notify new posts from creators you support or follow</string>
+    <string name="setting_top_notification_new_message">New message notifications</string>
+    <string name="setting_top_notification_new_message_description">Notify new messages from creators you support or follow</string>
     <string name="setting_top_notification_hide_adult_contents">Hide adult content in notifications</string>
     <string name="setting_top_notification_hide_adult_contents_description">Hide the title and thumbnail of adult posts in notifications</string>
     <string name="notification_permission_request_title">Allow notifications</string>

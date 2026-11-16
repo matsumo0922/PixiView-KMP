@@ -43,6 +43,7 @@ interface SettingRepository {
     suspend fun setOverrideAdultContents(isOverrideAdultContents: Boolean)
     suspend fun setAutoImagePreview(isAutoImagePreview: Boolean)
     suspend fun setNewPostNotificationEnabled(isEnabled: Boolean)
+    suspend fun setNewMessageNotificationEnabled(isEnabled: Boolean)
     suspend fun setHideAdultContentsInNotification(isHide: Boolean)
     suspend fun setTestUser(isTestUser: Boolean)
     suspend fun setHideRestricted(isHideRestricted: Boolean)
@@ -131,6 +132,10 @@ class SettingRepositoryImpl(private val settingDataStore: SettingDataStore) : Se
 
     override suspend fun setNewPostNotificationEnabled(isEnabled: Boolean) {
         settingDataStore.setNewPostNotificationEnabled(isEnabled)
+    }
+
+    override suspend fun setNewMessageNotificationEnabled(isEnabled: Boolean) {
+        settingDataStore.setNewMessageNotificationEnabled(isEnabled)
     }
 
     override suspend fun setHideAdultContentsInNotification(isHide: Boolean) {

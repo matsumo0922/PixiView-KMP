@@ -136,6 +136,7 @@ internal fun SettingTopRoute(
             onClickHideAdultContents = viewModel::setHideAdultContents,
             onClickOverrideAdultContents = viewModel::setOverrideAdultContents,
             onClickNewPostNotification = viewModel::setNewPostNotificationEnabled,
+            onClickNewMessageNotification = viewModel::setNewMessageNotificationEnabled,
             onClickHideAdultContentsInNotification = viewModel::setHideAdultContentsInNotification,
             onClickInfinityPostDetail = {
                 requirePlus(it, viewModel::setUseInfinityPostDetail, BillingReferrer.SETTING_INFINITY_POST_DETAIL)
@@ -217,6 +218,7 @@ private fun SettingTopScreen(
     onClickInfinityPostDetail: (Boolean) -> Unit,
     onClickAutoImagePreview: (Boolean) -> Unit,
     onClickNewPostNotification: (Boolean) -> Unit,
+    onClickNewMessageNotification: (Boolean) -> Unit,
     onClickHideAdultContentsInNotification: (Boolean) -> Unit,
     onClickTeamsOfService: () -> Unit,
     onClickPrivacyPolicy: () -> Unit,
@@ -300,13 +302,14 @@ private fun SettingTopScreen(
                 )
             }
 
-            // 新着投稿の通知は Android のみの機能のため、iOS では表示しない。
+            // 新着投稿・新着メッセージの通知は Android のみの機能のため、iOS では表示しない。
             if (currentPlatform == Platform.Android) {
                 item {
                     SettingTopNotificationSection(
                         modifier = Modifier.fillMaxWidth(),
                         setting = setting,
                         onClickNewPostNotification = onClickNewPostNotification,
+                        onClickNewMessageNotification = onClickNewMessageNotification,
                         onClickHideAdultContentsInNotification = onClickHideAdultContentsInNotification,
                     )
                 }

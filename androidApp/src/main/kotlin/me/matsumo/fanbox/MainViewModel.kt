@@ -14,16 +14,17 @@ import kotlinx.coroutines.launch
 import me.matsumo.fanbox.core.common.util.suspendRunCatching
 import me.matsumo.fanbox.core.logs.category.ReviewsLog
 import me.matsumo.fanbox.core.logs.logger.send
+import me.matsumo.fanbox.core.model.Setting
 import me.matsumo.fanbox.core.repository.DownloadPostsRepository
 import me.matsumo.fanbox.core.repository.LaunchLogRepository
 import me.matsumo.fanbox.core.repository.SettingRepository
-import me.matsumo.fanbox.feature.service.NewPostCheckScheduler
+import me.matsumo.fanbox.feature.service.NewContentCheckScheduler
 
 class MainViewModel(
     settingRepository: SettingRepository,
     downloadPostsRepository: DownloadPostsRepository,
     private val launchLogRepository: LaunchLogRepository,
-    private val newPostCheckScheduler: NewPostCheckScheduler,
+    private val newContentCheckScheduler: NewContentCheckScheduler,
 ) : ViewModel() {
 
     val setting = settingRepository.setting
@@ -49,9 +50,9 @@ class MainViewModel(
         // 設定画面での切り替えも、保存された値の変化としてここで受け取る。
         viewModelScope.launch {
             settingRepository.storedSetting
-                .map { setting -> setting.isNewPostNotificationEnabled && !setting.isTestUser }
+                .map { setting -> NewContentChecks.of(setting) }
                 .distinctUntilChanged()
-                .collect { isEnabled -> updateNewPostCheck(isEnabled) }
+                .collect { checks -> updateNewContentCheck(checks) }
         }
     }
 
@@ -59,11 +60,11 @@ class MainViewModel(
         _isAdsSdkInitialized.value = true
     }
 
-    private suspend fun updateNewPostCheck(isEnabled: Boolean) {
+    private suspend fun updateNewContentCheck(checks: NewContentChecks) {
         suspendRunCatching {
-            if (isEnabled) newPostCheckScheduler.start() else newPostCheckScheduler.stop()
+            newContentCheckScheduler.update(checks.isPostCheckEnabled, checks.isMessageCheckEnabled)
         }.onFailure { failure ->
-            Napier.w(failure) { "Failed to update the new post check. isEnabled=$isEnabled" }
+            Napier.w(failure) { "Failed to update the new content check. checks=$checks" }
         }
     }
 
@@ -76,5 +77,19 @@ class MainViewModel(
         if (isEligible) {
             _reviewRequest.send(Unit)
         }
+    }
+}
+
+/** 定期実行で、新着投稿・新着メッセージの確認をそれぞれ行うか。 */
+private data class NewContentChecks(
+    val isPostCheckEnabled: Boolean,
+    val isMessageCheckEnabled: Boolean,
+) {
+    companion object {
+        /** [setting] の通知の設定から決める。テストユーザーは、どちらの確認も行わない。 */
+        fun of(setting: Setting) = NewContentChecks(
+            isPostCheckEnabled = setting.isNewPostNotificationEnabled && !setting.isTestUser,
+            isMessageCheckEnabled = setting.isNewMessageNotificationEnabled && !setting.isTestUser,
+        )
     }
 }
