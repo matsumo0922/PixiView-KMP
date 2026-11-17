@@ -102,6 +102,14 @@ class OfferBannerTest {
     }
 
     @Test
+    fun bannerIsHiddenWhenClockMovesBackBeforeDismissedCycle() {
+        // 周期 2 で閉じた後に、端末の時計が周期 1 に戻った場合
+        val result = resolveAt(plans = trialPlans, elapsed = 1.hours, dismissedCycleNumber = 2)
+
+        assertNull(result)
+    }
+
+    @Test
     fun bannerIsHiddenWhenFirstLaunchIsUnrecorded() {
         val result = resolveOfferBanner(
             hasPrivilege = false,

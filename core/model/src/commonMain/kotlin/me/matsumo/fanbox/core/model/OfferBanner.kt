@@ -41,7 +41,7 @@ sealed interface OfferBanner {
  * 次のすべてを満たすときに表示する。
  * - Plus の特典が有効でない（[hasPrivilege] が false）
  * - [plans] に、利用できるオファーがある。無料トライアルは常に、導入価格のオファーは提示の期間内だけ利用できる
- * - 現在の周期で、バナーを閉じていない（[dismissedCycleNumber] が現在の周期の番号と異なる）
+ * - 現在の周期で、バナーを閉じていない（現在の周期の番号が [dismissedCycleNumber] より大きい）。端末の時計が戻り、閉じた周期より前の周期になった場合も表示しない
  *
  * 周期は [offerCycle] で判定する。初回起動の時刻が未記録で周期が分からない（[offerCycle] が null の）場合は、閉じた記録を扱えないため表示しない。
  */
@@ -52,7 +52,7 @@ fun resolveOfferBanner(
     dismissedCycleNumber: Int?,
 ): OfferBanner? {
     if (hasPrivilege || offerCycle == null) return null
-    if (dismissedCycleNumber == offerCycle.number) return null
+    if (dismissedCycleNumber != null && offerCycle.number <= dismissedCycleNumber) return null
 
     val trialPeriod = plans.firstNotNullOfOrNull { plan -> plan.trialPeriod }
     if (trialPeriod != null) return OfferBanner.FreeTrial(trialPeriod, offerCycle.number)

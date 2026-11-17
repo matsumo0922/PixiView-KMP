@@ -6,7 +6,10 @@ import androidx.compose.foundation.lazy.grid.rememberLazyGridState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberUpdatedState
+import androidx.compose.runtime.setValue
 import androidx.compose.runtime.snapshotFlow
 import androidx.compose.ui.Modifier
 import app.cash.paging.compose.LazyPagingItems
@@ -67,8 +70,13 @@ internal fun LibraryHomeIdleSection(
         adInterval = 3
     }
 
+    ScrollToInsertedHeaderEffect(
+        state = state,
+        hasHeader = offerBanner != null,
+    )
+
     if (offerBanner != null) {
-        OfferBannerEffect(
+        OfferBannerShowEffect(
             state = state,
             banner = offerBanner,
             onShow = onOfferBannerShow,
@@ -104,26 +112,37 @@ internal fun LibraryHomeIdleSection(
 }
 
 /**
- * オファーのバナーの表示に伴う処理をまとめる。
+ * 一覧の先頭を表示している間に header が後から挿入された場合に、先頭（header）までスクロールする。
  *
- * - 一覧の先頭を表示している間にバナーが後から届いた場合は、先頭（バナー）までスクロールする。一覧は表示中の投稿の位置を保つため、
- *   そのままではバナーが画面の上の外に置かれる
- * - バナーが画面に入ったときに、表示を知らせる。残り時間の更新では送り直さないよう、オファーの種類と周期が変わったときだけ知らせる
+ * 一覧は表示中の投稿の位置を保つため、そのままでは header が画面の上の外に置かれる。最初の composition の時点で header があった場合
+ * （画面の復元など）は挿入とみなさず、スクロールしない。
  */
 @Composable
-private fun OfferBannerEffect(
+private fun ScrollToInsertedHeaderEffect(
+    state: LazyGridState,
+    hasHeader: Boolean,
+) {
+    var hadHeader by remember { mutableStateOf(hasHeader) }
+
+    LaunchedEffect(hasHeader) {
+        val isInserted = hasHeader && !hadHeader
+        hadHeader = hasHeader
+        if (isInserted && state.isAtTopBeforeHeaderInsertion()) state.scrollToItem(0)
+    }
+}
+
+/** header の挿入が一覧の位置に反映される前（index 0）と後（index 1）のどちらでも、先頭を表示しているかを返す。 */
+private fun LazyGridState.isAtTopBeforeHeaderInsertion(): Boolean = firstVisibleItemIndex <= 1 && firstVisibleItemScrollOffset == 0
+
+/** オファーのバナーが画面に入ったときに、表示を知らせる。残り時間の更新では送り直さないよう、オファーの種類と周期が変わったときだけ知らせる。 */
+@Composable
+private fun OfferBannerShowEffect(
     state: LazyGridState,
     banner: OfferBanner,
     onShow: (OfferBanner) -> Unit,
 ) {
     val currentBanner by rememberUpdatedState(banner)
     val currentOnShow by rememberUpdatedState(onShow)
-
-    LaunchedEffect(state) {
-        // バナーの挿入が一覧の位置に反映される前（index 0）と後（index 1）のどちらでも、先頭を表示していたかを判定できるようにする
-        val wasAtTop = state.firstVisibleItemIndex <= 1 && state.firstVisibleItemScrollOffset == 0
-        if (wasAtTop) state.scrollToItem(0)
-    }
 
     LaunchedEffect(state, banner.logValue, banner.cycleNumber) {
         snapshotFlow { state.layoutInfo.visibleItemsInfo.any { item -> item.key == LIBRARY_HOME_HEADER_KEY } }.first { isVisible -> isVisible }

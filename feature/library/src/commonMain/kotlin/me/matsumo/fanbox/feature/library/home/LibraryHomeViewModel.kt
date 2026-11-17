@@ -12,6 +12,8 @@ import kotlinx.coroutines.flow.WhileSubscribed
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.emitAll
+import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 import me.matsumo.fanbox.core.billing.BillingClient
@@ -54,25 +56,17 @@ class LibraryHomeViewModel(
     val uiState = _uiState.asStateFlow()
     val updatePlusTrigger = settingRepository.updatePlusMode
 
-    private val offerPlans = MutableStateFlow(emptyList<BillingPlan>())
-    private val currentEpochSeconds = MutableStateFlow(nowEpochSeconds())
-
     /** 表示のログを送ったバナー。オファーの種類と周期の組ごとに、表示のログを 1 回だけ送るため。 */
     private val shownOfferBanners = mutableSetOf<Pair<String, Int>>()
 
-    /** ホームの投稿一覧の最上部に表示するオファーのバナー。表示しない場合は null。 */
-    val offerBanner = combine(
-        settingRepository.setting,
-        offerPlans,
-        offerBannerDataStore.dismissedCycleNumber,
-        currentEpochSeconds,
-    ) { setting, plans, dismissedCycleNumber, currentEpochSeconds ->
-        resolveOfferBanner(
-            hasPrivilege = setting.hasPrivilege,
-            plans = plans,
-            offerCycle = resolveOfferCycle(setting.firstLaunchTime, currentEpochSeconds),
-            dismissedCycleNumber = dismissedCycleNumber,
-        )
+    /**
+     * ホームの投稿一覧の最上部に表示するオファーのバナー。表示しない場合は null。
+     *
+     * 購読が始まるたびにプランを取得し直す。取得に失敗しても、ホームを再び表示したときやアプリに戻ったときに取得し直せるようにするため。
+     * Android だけで表示し、iOS ではプランを取得しない。
+     */
+    val offerBanner = flow {
+        if (currentPlatform == Platform.Android) emitAll(offerBannerFlow(fetchOfferPlans()))
     }.stateIn(
         scope = viewModelScope,
         started = SharingStarted.WhileSubscribed(stopTimeout = 5.seconds),
@@ -98,27 +92,36 @@ class LibraryHomeViewModel(
                 _uiState.value = uiState.value.copy(bookmarkedPostsIds = it)
             }
         }
+    }
 
-        // オファーのバナーは Android だけで表示する
-        if (currentPlatform == Platform.Android) {
-            viewModelScope.launch { loadOfferPlans() }
-        }
+    private suspend fun fetchOfferPlans(): List<BillingPlan> = suspendRunCatching { billingClient.getPlans() }.getOrNull()?.plans.orEmpty()
+
+    private fun offerBannerFlow(plans: List<BillingPlan>): Flow<OfferBanner?> = combine(
+        settingRepository.setting,
+        offerBannerDataStore.dismissedCycleNumber,
+        currentEpochSecondsFlow(plans),
+    ) { setting, dismissedCycleNumber, currentEpochSeconds ->
+        resolveOfferBanner(
+            hasPrivilege = setting.hasPrivilege,
+            plans = plans,
+            offerCycle = resolveOfferCycle(setting.firstLaunchTime, currentEpochSeconds),
+            dismissedCycleNumber = dismissedCycleNumber,
+        )
     }
 
     /**
-     * オファーの判定に使うプランを取得する。
+     * 現在の時刻（epoch 秒）を流す。
      *
-     * オファーがある間は、提示の残り時間と周期の切り替わりをバナーに反映できるよう、現在の時刻を 1 秒ごとに更新する。
+     * オファーがある間は、提示の残り時間と周期の切り替わりをバナーに反映できるよう、1 秒ごとに流す。購読が止まると更新も止まる。
      */
-    private suspend fun loadOfferPlans() {
-        offerPlans.value = suspendRunCatching { billingClient.getPlans() }.getOrNull()?.plans.orEmpty()
+    private fun currentEpochSecondsFlow(plans: List<BillingPlan>): Flow<Long> = flow {
+        val hasOffer = plans.any { plan -> plan.trialPeriod != null || plan.introOffer != null }
 
-        val hasOffer = offerPlans.value.any { plan -> plan.trialPeriod != null || plan.introOffer != null }
-        if (!hasOffer) return
+        emit(nowEpochSeconds())
 
-        while (true) {
-            currentEpochSeconds.value = nowEpochSeconds()
+        while (hasOffer) {
             delay(1.seconds)
+            emit(nowEpochSeconds())
         }
     }
 
