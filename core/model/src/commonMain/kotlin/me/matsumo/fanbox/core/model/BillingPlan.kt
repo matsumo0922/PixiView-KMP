@@ -11,6 +11,7 @@ data class BillingPlan(
     val formattedPrice: String,
     val type: Type,
     val trialPeriod: BillingTrialPeriod?,
+    val introOffer: BillingIntroOffer? = null,
 ) {
     /** Plus の購入プラン種別を表す列挙型。 */
     @Serializable
@@ -20,6 +21,55 @@ data class BillingPlan(
         UNKNOWN,
     }
 }
+
+/**
+ * RevenueCat の Offering から取得したプランの一覧。
+ *
+ * @property offeringId 取得した Offering の識別子。課金のログに送る
+ */
+@Immutable
+data class BillingPlans(
+    val offeringId: String,
+    val plans: List<BillingPlan>,
+)
+
+/**
+ * 有料の導入価格（初月割引など）の内容。
+ *
+ * @property formattedPrice 導入価格の 1 期間あたりの表示用の価格
+ * @property period 導入価格の 1 期間の長さ
+ * @property cycleCount 導入価格を適用する期間の数
+ */
+@Immutable
+data class BillingIntroOffer(
+    val formattedPrice: String,
+    val period: BillingTrialPeriod,
+    val cycleCount: Int,
+) {
+    /** 導入価格を適用する期間が、ちょうど最初の 1 か月かどうか。 */
+    val isFirstMonthOnly get() = cycleCount == 1 && period == BillingTrialPeriod(1, BillingTrialPeriod.Unit.MONTH)
+}
+
+/** 導入価格のオファーが付いたプランがあるかどうか。初月割引の Offering の判定に使う。 */
+fun hasIntroOffer(plans: List<BillingPlan>): Boolean = plans.any { plan -> plan.introOffer != null }
+
+/**
+ * 提示の期間に合わせて、課金画面に表示するプランを返す。
+ *
+ * 提示の期間内（[isOfferPeriod] が true）なら [plans] をそのまま返す。期間外なら導入価格を取り除き、通常価格のプランとして返す。
+ */
+fun applyIntroOfferPeriod(plans: List<BillingPlan>, isOfferPeriod: Boolean): List<BillingPlan> {
+    if (isOfferPeriod) return plans
+
+    return plans.map { plan -> plan.copy(introOffer = null) }
+}
+
+/**
+ * 課金画面に並べる順にプランを並べ替える。
+ *
+ * 月額、年額の順にする。RevenueCat のパッケージの並び順（position）が同じ値の Offering でも、表示の順を揃えるため。
+ */
+fun sortBillingPlans(plans: List<BillingPlan>): List<BillingPlan> = plans.sortedBy { plan -> plan.type.ordinal }
 
 /**
  * 年額プランの価格が、月額プラン 12 か月分と比べて何 % 安いかを返す。
@@ -73,10 +123,10 @@ fun resolveInitialSelectedPlanType(
     return purchasablePlanTypes.firstOrNull() ?: subscribedPlanType
 }
 
-/** Plus の無料トライアル期間を表すモデル。 */
+/** Plus の無料トライアル期間や導入価格の期間など、課金の期間の長さを表すモデル。 */
 @Immutable
 data class BillingTrialPeriod(val value: Int, val unit: Unit) {
-    /** Plus の無料トライアル期間の単位を表す列挙型。 */
+    /** 期間の単位を表す列挙型。 */
     enum class Unit {
         DAY,
         WEEK,

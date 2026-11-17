@@ -19,6 +19,30 @@ import kotlin.test.assertEquals
 /** RevenueCat の Offering から現在の Plus プラン種別を解決する処理を検証するテスト。 */
 class BillingPlanTypeResolverTest {
 
+    /** 現行の Offering と、初月割引の Offering のパッケージを合わせたもの。年額は両方の Offering に入っている。 */
+    private val allOfferingPackages = listOf(
+        FakePackage(
+            identifier = "\$rc_monthly",
+            packageType = PackageType.MONTHLY,
+            productId = "plus_subscription:plus",
+        ),
+        FakePackage(
+            identifier = "\$rc_annual",
+            packageType = PackageType.ANNUAL,
+            productId = "plus_subscription:plus-year",
+        ),
+        FakePackage(
+            identifier = "\$rc_monthly",
+            packageType = PackageType.MONTHLY,
+            productId = "plus_subscription:plus-intro",
+        ),
+        FakePackage(
+            identifier = "\$rc_annual",
+            packageType = PackageType.ANNUAL,
+            productId = "plus_subscription:plus-year",
+        ),
+    )
+
     @Test
     fun resolveBillingPlanTypeReturnsAnnualWhenProductIdentifierMatchesAnnualPackage() {
         val packages = listOf(
@@ -108,6 +132,39 @@ class BillingPlanTypeResolverTest {
         )
 
         assertEquals(BillingPlan.Type.UNKNOWN, result)
+    }
+
+    @Test
+    fun resolveBillingPlanTypeReturnsMonthlyForBasePlanOfAnotherOffering() {
+        val result = resolveBillingPlanType(
+            entitlementProductIdentifier = "plus_subscription",
+            entitlementProductPlanIdentifier = "plus-intro",
+            availablePackages = allOfferingPackages,
+        )
+
+        assertEquals(BillingPlan.Type.MONTHLY, result)
+    }
+
+    @Test
+    fun resolveBillingPlanTypeReturnsMonthlyForCurrentMonthlyBasePlan() {
+        val result = resolveBillingPlanType(
+            entitlementProductIdentifier = "plus_subscription",
+            entitlementProductPlanIdentifier = "plus",
+            availablePackages = allOfferingPackages,
+        )
+
+        assertEquals(BillingPlan.Type.MONTHLY, result)
+    }
+
+    @Test
+    fun resolveBillingPlanTypeReturnsAnnualWhenSameProductIsInMultipleOfferings() {
+        val result = resolveBillingPlanType(
+            entitlementProductIdentifier = "plus_subscription",
+            entitlementProductPlanIdentifier = "plus-year",
+            availablePackages = allOfferingPackages,
+        )
+
+        assertEquals(BillingPlan.Type.ANNUAL, result)
     }
 
     /** テスト用の RevenueCat Package 実装。 */

@@ -15,6 +15,10 @@ sealed interface <%= category.class_name %>Log : LogCategory {
         <%- elsif event.columns.size <= 2 -%>
     class <%= event.class_name %> internal constructor(<%= event.columns.map(&:as_argument).join(', ') %>) : <%= category.class_name %>Log {
         <%- else -%>
+            <%- if event.columns.size > 5 -%>
+    // 引数の数: 集計に使うパラメータを、Firebase Analytics の 1 つのイベントにまとめて送るため
+    @Suppress("LongParameterList")
+            <%- end -%>
     class <%= event.class_name %> internal constructor(
         <%- event.columns.each do |column| -%>
         <%= column.as_argument %>,
@@ -43,6 +47,10 @@ sealed interface <%= category.class_name %>Log : LogCategory {
     <%- if event.columns.size <= 2 -%>
         fun <%= event.variable_name %>(<%= event.columns.map(&:as_argument).join(', ') %>) = <%= event.class_name %>(<%= event.pattern_matches %>)
     <%- else -%>
+        <%- if event.columns.size > 5 -%>
+        // 引数の数: 集計に使うパラメータを、Firebase Analytics の 1 つのイベントにまとめて送るため
+        @Suppress("LongParameterList")
+        <%- end -%>
         fun <%= event.variable_name %>(
         <%- event.columns.each do |column| -%>
             <%= column.as_argument %>,

@@ -318,6 +318,11 @@
     <string name="billing_plus_purchase_button">월 %1$s에 구매</string>
     <string name="billing_plus_purchase_trial_button">%1$s 무료 체험 시작</string>
     <string name="billing_plus_trial_label">무료 체험: %1$s</string>
+    <string name="billing_plus_intro_offer_first_month_label">첫 달 %1$s</string>
+    <string name="billing_plus_intro_offer_label">처음 %1$s: %2$s</string>
+    <string name="billing_plus_intro_offer_regular_price_label">이후 %1$s / %2$s</string>
+    <string name="billing_plus_intro_offer_remaining_label">남은 시간 %1$s</string>
+    <string name="billing_plus_purchase_intro_button">첫 달 %1$s로 후원</string>
     <string name="billing_plus_subscribed_label">이용 중인 플랜</string>
     <string name="billing_plus_annual_discount_label">월 결제 대비 %1$d% 할인</string>
     <string name="billing_plus_trial_period_day">%1$d일</string>
