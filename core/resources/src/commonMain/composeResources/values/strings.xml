@@ -355,6 +355,9 @@
     <string name="billing_plus_intro_offer_regular_price_label">Then %1$s / %2$s</string>
     <string name="billing_plus_intro_offer_remaining_label">Ends in %1$s</string>
     <string name="billing_plus_purchase_intro_button">Start for %1$s the first month</string>
+    <string name="offer_banner_trial_title">Try Plus free for %1$s</string>
+    <string name="offer_banner_intro_first_month_title">First month of Plus for %1$s</string>
+    <string name="offer_banner_intro_title">Plus for %2$s for the first %1$s</string>
     <string name="billing_plus_subscribed_label">Current plan</string>
     <string name="billing_plus_annual_discount_label">Save %1$d% compared to monthly</string>
     <string name="billing_plus_trial_period_day">%1$d days</string>

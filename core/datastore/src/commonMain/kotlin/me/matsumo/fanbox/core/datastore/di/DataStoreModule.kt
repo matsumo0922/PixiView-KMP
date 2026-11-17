@@ -5,6 +5,7 @@ import me.matsumo.fanbox.core.datastore.BookmarkDataStore
 import me.matsumo.fanbox.core.datastore.FlagDataStore
 import me.matsumo.fanbox.core.datastore.LaunchLogDataStore
 import me.matsumo.fanbox.core.datastore.NewContentCheckDataStore
+import me.matsumo.fanbox.core.datastore.OfferBannerDataStore
 import me.matsumo.fanbox.core.datastore.OldCookieDataStore
 import me.matsumo.fanbox.core.datastore.RewardLogDataStore
 import me.matsumo.fanbox.core.datastore.SettingDataStore
@@ -64,6 +65,13 @@ val dataStoreModule = module {
 
     single {
         NewContentCheckDataStore(
+            preferenceHelper = get(),
+            ioDispatcher = get(),
+        )
+    }
+
+    single {
+        OfferBannerDataStore(
             preferenceHelper = get(),
             ioDispatcher = get(),
         )

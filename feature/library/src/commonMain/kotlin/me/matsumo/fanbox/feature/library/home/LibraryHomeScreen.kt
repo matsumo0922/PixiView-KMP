@@ -32,6 +32,7 @@ import app.cash.paging.compose.collectAsLazyPagingItems
 import kotlinx.collections.immutable.toImmutableList
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
+import me.matsumo.fanbox.core.model.BillingReferrer
 import me.matsumo.fanbox.core.model.Destination
 import me.matsumo.fanbox.core.model.SimpleAlertContents
 import me.matsumo.fanbox.core.resources.Res
@@ -59,6 +60,7 @@ internal fun LibraryHomeScreen(
 ) {
     val navigationType = LocalNavigationType.current.type
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
+    val offerBanner by viewModel.offerBanner.collectAsStateWithLifecycle()
 
     val homePager = uiState.homePaging.collectAsLazyPagingItems()
     val supportedPager = uiState.supportedPaging.collectAsLazyPagingItems()
@@ -154,6 +156,13 @@ internal fun LibraryHomeScreen(
                                 onClickPostBookmark = viewModel::postBookmark,
                                 onClickCreator = { navigateTo(Destination.CreatorTop(it, true)) },
                                 onClickPlanList = { navigateTo(Destination.CreatorTop(it, false)) },
+                                offerBanner = offerBanner,
+                                onOfferBannerShow = viewModel::onOfferBannerShown,
+                                onOfferBannerClick = { banner ->
+                                    viewModel.onOfferBannerTapped(banner)
+                                    navigateTo(Destination.BillingPlusBottomSheet(BillingReferrer.OFFER_BANNER))
+                                },
+                                onOfferBannerDismiss = viewModel::onOfferBannerDismissed,
                             )
                         }
                     }

@@ -1,10 +1,21 @@
 package me.matsumo.fanbox.feature.library.home.items
 
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.lazy.grid.LazyGridState
 import androidx.compose.foundation.lazy.grid.rememberLazyGridState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberUpdatedState
+import androidx.compose.runtime.setValue
+import androidx.compose.runtime.snapshotFlow
 import androidx.compose.ui.Modifier
 import app.cash.paging.compose.LazyPagingItems
 import kotlinx.collections.immutable.ImmutableList
+import kotlinx.coroutines.flow.first
+import me.matsumo.fanbox.core.model.OfferBanner
 import me.matsumo.fanbox.core.model.Setting
 import me.matsumo.fanbox.core.model.fanbox.CreatorId
 import me.matsumo.fanbox.core.model.fanbox.Post
@@ -24,6 +35,10 @@ internal fun LibraryHomeIdleSection(
     onClickPostBookmark: (Post, Boolean) -> Unit,
     onClickCreator: (CreatorId) -> Unit,
     onClickPlanList: (CreatorId) -> Unit,
+    offerBanner: OfferBanner?,
+    onOfferBannerShow: (OfferBanner) -> Unit,
+    onOfferBannerClick: (OfferBanner) -> Unit,
+    onOfferBannerDismiss: (OfferBanner) -> Unit,
     modifier: Modifier = Modifier,
 ) {
     val state = rememberLazyGridState()
@@ -55,6 +70,19 @@ internal fun LibraryHomeIdleSection(
         adInterval = 3
     }
 
+    ScrollToInsertedHeaderEffect(
+        state = state,
+        hasHeader = offerBanner != null,
+    )
+
+    if (offerBanner != null) {
+        OfferBannerShowEffect(
+            state = state,
+            banner = offerBanner,
+            onShow = onOfferBannerShow,
+        )
+    }
+
     LibraryHomePagingItems(
         modifier = modifier,
         state = state,
@@ -70,5 +98,58 @@ internal fun LibraryHomeIdleSection(
         onClickPostBookmark = onClickPostBookmark,
         onClickCreator = onClickCreator,
         onClickPlanList = onClickPlanList,
+        header = offerBanner?.let { banner ->
+            {
+                LibraryHomeOfferBanner(
+                    modifier = Modifier.fillMaxWidth(),
+                    banner = banner,
+                    onClick = { onOfferBannerClick(banner) },
+                    onDismiss = { onOfferBannerDismiss(banner) },
+                )
+            }
+        },
     )
+}
+
+/**
+ * 一覧の先頭を表示している間に header が後から挿入された場合に、先頭（header）までスクロールする。
+ *
+ * 一覧は表示中の投稿の位置を保つため、そのままでは header が画面の上の外に置かれる。header がない間に先頭（index 0、offset 0）を
+ * 表示していたかを記録し、その状態からの挿入だけを扱う。最初の composition の時点で header があった場合（画面の復元など）は、挿入とみなさない。
+ */
+@Composable
+private fun ScrollToInsertedHeaderEffect(
+    state: LazyGridState,
+    hasHeader: Boolean,
+) {
+    var hadHeader by remember { mutableStateOf(hasHeader) }
+    var isAtTopWithoutHeader by remember { mutableStateOf(false) }
+
+    LaunchedEffect(hasHeader) {
+        if (hasHeader) return@LaunchedEffect
+
+        snapshotFlow { state.firstVisibleItemIndex == 0 && state.firstVisibleItemScrollOffset == 0 }.collect { isAtTop -> isAtTopWithoutHeader = isAtTop }
+    }
+
+    LaunchedEffect(hasHeader) {
+        val isInsertedAtTop = hasHeader && !hadHeader && isAtTopWithoutHeader
+        hadHeader = hasHeader
+        if (isInsertedAtTop) state.scrollToItem(0)
+    }
+}
+
+/** オファーのバナーが画面に入ったときに、表示を知らせる。残り時間の更新では送り直さないよう、オファーの種類と周期が変わったときだけ知らせる。 */
+@Composable
+private fun OfferBannerShowEffect(
+    state: LazyGridState,
+    banner: OfferBanner,
+    onShow: (OfferBanner) -> Unit,
+) {
+    val currentBanner by rememberUpdatedState(banner)
+    val currentOnShow by rememberUpdatedState(onShow)
+
+    LaunchedEffect(state, banner.logValue, banner.cycleNumber) {
+        snapshotFlow { state.layoutInfo.visibleItemsInfo.any { item -> item.key == LIBRARY_HOME_HEADER_KEY } }.first { isVisible -> isVisible }
+        currentOnShow(currentBanner)
+    }
 }

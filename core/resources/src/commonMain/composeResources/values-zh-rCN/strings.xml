@@ -321,6 +321,9 @@
     <string name="billing_plus_intro_offer_regular_price_label">之后 %1$s / %2$s</string>
     <string name="billing_plus_intro_offer_remaining_label">剩余 %1$s</string>
     <string name="billing_plus_purchase_intro_button">首月 %1$s 开始支持</string>
+    <string name="offer_banner_trial_title">免费试用 Plus %1$s</string>
+    <string name="offer_banner_intro_first_month_title">Plus 首月 %1$s</string>
+    <string name="offer_banner_intro_title">Plus 前%1$s %2$s</string>
     <string name="billing_plus_subscribed_label">当前订阅</string>
     <string name="billing_plus_annual_discount_label">比按月付费优惠 %1$d%</string>
     <string name="billing_plus_trial_period_day">%1$d天</string>

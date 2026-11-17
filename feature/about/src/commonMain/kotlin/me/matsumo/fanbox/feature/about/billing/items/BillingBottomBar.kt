@@ -26,7 +26,6 @@ import androidx.compose.ui.unit.dp
 import kotlinx.collections.immutable.ImmutableList
 import me.matsumo.fanbox.core.model.BillingIntroOffer
 import me.matsumo.fanbox.core.model.BillingPlan
-import me.matsumo.fanbox.core.model.BillingTrialPeriod
 import me.matsumo.fanbox.core.model.calculateAnnualDiscountPercent
 import me.matsumo.fanbox.core.resources.Res
 import me.matsumo.fanbox.core.resources.billing_plus_annual_discount_label
@@ -41,17 +40,15 @@ import me.matsumo.fanbox.core.resources.billing_plus_purchase_intro_button
 import me.matsumo.fanbox.core.resources.billing_plus_purchase_trial_button
 import me.matsumo.fanbox.core.resources.billing_plus_subscribed_label
 import me.matsumo.fanbox.core.resources.billing_plus_trial_label
-import me.matsumo.fanbox.core.resources.billing_plus_trial_period_day
-import me.matsumo.fanbox.core.resources.billing_plus_trial_period_month
-import me.matsumo.fanbox.core.resources.billing_plus_trial_period_week
-import me.matsumo.fanbox.core.resources.billing_plus_trial_period_year
 import me.matsumo.fanbox.core.resources.billing_plus_verify_button
 import me.matsumo.fanbox.core.resources.error_unknown
 import me.matsumo.fanbox.core.resources.unit_month
 import me.matsumo.fanbox.core.resources.unit_year
+import me.matsumo.fanbox.core.ui.extensition.getDisplayText
+import me.matsumo.fanbox.core.ui.extensition.getTotalPeriodText
+import me.matsumo.fanbox.core.ui.extensition.toCountdownText
 import me.matsumo.fanbox.feature.about.billing.BillingUiState
 import me.matsumo.fanbox.feature.about.billing.BillingViewEvent
-import org.jetbrains.compose.resources.StringResource
 import org.jetbrains.compose.resources.stringResource
 import kotlin.time.Duration
 
@@ -323,29 +320,5 @@ private fun BillingPlan.getUnit(): String {
 private fun BillingIntroOffer.getLabelText(): String {
     if (isFirstMonthOnly) return stringResource(Res.string.billing_plus_intro_offer_first_month_label, formattedPrice)
 
-    val totalPeriod = period.copy(value = period.value * cycleCount)
-
-    return stringResource(Res.string.billing_plus_intro_offer_label, totalPeriod.getDisplayText(), formattedPrice)
-}
-
-/** 提示の残り時間を「時間:分:秒」の形式で返す。72 時間の提示の期間を表せるよう、時間は 24 を超えても日に繰り上げない。 */
-private fun Duration.toCountdownText(): String = toComponents { hours, minutes, seconds, _ ->
-    "$hours:${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}"
-}
-
-@Composable
-private fun BillingTrialPeriod.getDisplayText(): String {
-    if (unit == BillingTrialPeriod.Unit.UNKNOWN) {
-        return stringResource(Res.string.error_unknown)
-    }
-
-    return stringResource(unit.toStringResource(), value)
-}
-
-private fun BillingTrialPeriod.Unit.toStringResource(): StringResource = when (this) {
-    BillingTrialPeriod.Unit.DAY -> Res.string.billing_plus_trial_period_day
-    BillingTrialPeriod.Unit.WEEK -> Res.string.billing_plus_trial_period_week
-    BillingTrialPeriod.Unit.MONTH -> Res.string.billing_plus_trial_period_month
-    BillingTrialPeriod.Unit.YEAR -> Res.string.billing_plus_trial_period_year
-    BillingTrialPeriod.Unit.UNKNOWN -> Res.string.error_unknown
+    return stringResource(Res.string.billing_plus_intro_offer_label, getTotalPeriodText(), formattedPrice)
 }
