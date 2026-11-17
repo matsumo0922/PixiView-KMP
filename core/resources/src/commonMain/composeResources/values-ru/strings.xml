@@ -324,6 +324,9 @@
     <string name="billing_plus_intro_offer_regular_price_label">Затем %1$s / %2$s</string>
     <string name="billing_plus_intro_offer_remaining_label">Осталось %1$s</string>
     <string name="billing_plus_purchase_intro_button">Первый месяц за %1$s</string>
+    <string name="offer_banner_trial_title">Попробуйте Plus бесплатно: %1$s</string>
+    <string name="offer_banner_intro_first_month_title">Первый месяц Plus за %1$s</string>
+    <string name="offer_banner_intro_title">Plus за %2$s на первые %1$s</string>
     <string name="billing_plus_subscribed_label">Текущий план</string>
     <string name="billing_plus_annual_discount_label">Скидка %1$d% по сравнению с помесячной оплатой</string>
     <string name="billing_plus_trial_period_day">%1$d д.</string>

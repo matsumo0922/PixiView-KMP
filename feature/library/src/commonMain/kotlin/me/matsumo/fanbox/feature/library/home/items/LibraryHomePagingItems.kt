@@ -8,6 +8,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.GridItemSpan
+import androidx.compose.foundation.lazy.grid.LazyGridScope
 import androidx.compose.foundation.lazy.grid.LazyGridState
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.runtime.Composable
@@ -27,6 +28,9 @@ import me.matsumo.fanbox.core.ui.component.PostItem
 import me.matsumo.fanbox.core.ui.extensition.drawVerticalScrollbar
 import me.matsumo.fanbox.core.ui.view.PagingErrorSection
 
+/** 一覧の先頭に置く [LibraryHomePagingItems] の header の key。画面に表示されているかの判定にも使う。 */
+internal const val LIBRARY_HOME_HEADER_KEY = "header"
+
 @Composable
 internal fun LibraryHomePagingItems(
     state: LazyGridState,
@@ -43,6 +47,7 @@ internal fun LibraryHomePagingItems(
     onClickCreator: (CreatorId) -> Unit,
     onClickPlanList: (CreatorId) -> Unit,
     modifier: Modifier = Modifier,
+    header: (@Composable () -> Unit)? = null,
 ) {
     LazyVerticalGrid(
         modifier = modifier.drawVerticalScrollbar(state, columns),
@@ -52,6 +57,8 @@ internal fun LibraryHomePagingItems(
         horizontalArrangement = Arrangement.spacedBy(if (isGridMode) 4.dp else 16.dp),
         verticalArrangement = Arrangement.spacedBy(if (isGridMode) 4.dp else 16.dp),
     ) {
+        headerItem(header)
+
         items(
             count = pagingAdapter.itemCount + if (setting.hasPrivilege) 0 else (pagingAdapter.itemCount / adInterval),
             key = { index ->
@@ -114,5 +121,17 @@ internal fun LibraryHomePagingItems(
         item(span = { GridItemSpan(maxLineSpan) }) {
             Spacer(modifier = Modifier.navigationBarsPadding())
         }
+    }
+}
+
+/** 投稿と広告の items とは別の項目として [header] を置く。投稿の件数と広告の位置の計算（index）に含めないため。 */
+private fun LazyGridScope.headerItem(header: (@Composable () -> Unit)?) {
+    if (header == null) return
+
+    item(
+        key = LIBRARY_HOME_HEADER_KEY,
+        span = { GridItemSpan(maxLineSpan) },
+    ) {
+        header()
     }
 }

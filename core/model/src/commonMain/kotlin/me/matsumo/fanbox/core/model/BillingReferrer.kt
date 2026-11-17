@@ -55,4 +55,7 @@ enum class BillingReferrer(val logValue: String) {
 
     /** 解約予約ユーザー向けリテンション画面の年額プラン。 */
     BILLING_RETENTION("billing_retention"),
+
+    /** ホームの投稿一覧の最上部のオファーのバナー。 */
+    OFFER_BANNER("offer_banner"),
 }

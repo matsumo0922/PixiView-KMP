@@ -9,4 +9,5 @@ object PreferencesName {
     const val FANBOX_BLOCK = "fanbox_block"
     const val FLAG = "flag"
     const val NEW_CONTENT_CHECK = "new_content_check"
+    const val OFFER_BANNER = "offer_banner"
 }

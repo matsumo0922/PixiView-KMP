@@ -348,6 +348,9 @@
     <string name="billing_plus_intro_offer_regular_price_label">以降は %1$s / %2$s</string>
     <string name="billing_plus_intro_offer_remaining_label">残り %1$s</string>
     <string name="billing_plus_purchase_intro_button">初月%1$sで支援</string>
+    <string name="offer_banner_trial_title">Plus を%1$s無料で試せます</string>
+    <string name="offer_banner_intro_first_month_title">Plus の初月が %1$s</string>
+    <string name="offer_banner_intro_title">Plus の最初の%1$sが %2$s</string>
     <string name="billing_plus_subscribed_label">契約中</string>
     <string name="billing_plus_annual_discount_label">月払いより %1$d% お得</string>
     <string name="billing_plus_trial_period_day">%1$d日間</string>
