@@ -182,10 +182,11 @@ class BillingViewModel(
         val uiState = (screenState.value as? ScreenState.Idle)?.data
         val hasTrial = plans.value.find { plan -> plan.type == planType }?.trialPeriod != null
         // 課金画面に表示している内容で購入する。提示の期間内の表示なら導入価格のオファーを、期間外の表示なら基本プランを購入する
-        val isIntroOfferPeriod = uiState?.plans?.find { plan -> plan.type == planType }?.introOffer != null
+        val shouldApplyIntroOffer = uiState?.plans?.find { plan -> plan.type == planType }?.introOffer != null
+        // ログの提示の期間は、購入するプランに関係なく、課金画面の表示のログと同じく周期から判定する
         val offerLog = PurchaseOfferLog(
             offeringId = offeringId.value.orEmpty(),
-            isIntroOfferPeriod = isIntroOfferPeriod,
+            isIntroOfferPeriod = uiState?.introOfferCycle?.isOfferPeriod == true,
             introOfferCycle = uiState?.introOfferCycle.toLogValue(),
         )
 
@@ -201,7 +202,7 @@ class BillingViewModel(
         ).send()
 
         viewModelScope.launch {
-            val result = billingClient.purchase(planType, isIntroOfferPeriod)
+            val result = billingClient.purchase(planType, shouldApplyIntroOffer)
 
             isPurchasing = false
             handlePurchaseResult(
