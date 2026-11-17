@@ -114,8 +114,8 @@ internal fun LibraryHomeIdleSection(
 /**
  * 一覧の先頭を表示している間に header が後から挿入された場合に、先頭（header）までスクロールする。
  *
- * 一覧は表示中の投稿の位置を保つため、そのままでは header が画面の上の外に置かれる。最初の composition の時点で header があった場合
- * （画面の復元など）は挿入とみなさず、スクロールしない。
+ * 一覧は表示中の投稿の位置を保つため、そのままでは header が画面の上の外に置かれる。header がない間に先頭（index 0、offset 0）を
+ * 表示していたかを記録し、その状態からの挿入だけを扱う。最初の composition の時点で header があった場合（画面の復元など）は、挿入とみなさない。
  */
 @Composable
 private fun ScrollToInsertedHeaderEffect(
@@ -123,16 +123,20 @@ private fun ScrollToInsertedHeaderEffect(
     hasHeader: Boolean,
 ) {
     var hadHeader by remember { mutableStateOf(hasHeader) }
+    var isAtTopWithoutHeader by remember { mutableStateOf(false) }
 
     LaunchedEffect(hasHeader) {
-        val isInserted = hasHeader && !hadHeader
+        if (hasHeader) return@LaunchedEffect
+
+        snapshotFlow { state.firstVisibleItemIndex == 0 && state.firstVisibleItemScrollOffset == 0 }.collect { isAtTop -> isAtTopWithoutHeader = isAtTop }
+    }
+
+    LaunchedEffect(hasHeader) {
+        val isInsertedAtTop = hasHeader && !hadHeader && isAtTopWithoutHeader
         hadHeader = hasHeader
-        if (isInserted && state.isAtTopBeforeHeaderInsertion()) state.scrollToItem(0)
+        if (isInsertedAtTop) state.scrollToItem(0)
     }
 }
-
-/** header の挿入が一覧の位置に反映される前（index 0）と後（index 1）のどちらでも、先頭を表示しているかを返す。 */
-private fun LazyGridState.isAtTopBeforeHeaderInsertion(): Boolean = firstVisibleItemIndex <= 1 && firstVisibleItemScrollOffset == 0
 
 /** オファーのバナーが画面に入ったときに、表示を知らせる。残り時間の更新では送り直さないよう、オファーの種類と周期が変わったときだけ知らせる。 */
 @Composable

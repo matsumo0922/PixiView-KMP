@@ -4,6 +4,7 @@ import androidx.compose.runtime.Stable
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.paging.PagingData
+import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -12,8 +13,9 @@ import kotlinx.coroutines.flow.WhileSubscribed
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.combine
-import kotlinx.coroutines.flow.emitAll
+import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.flow
+import kotlinx.coroutines.flow.onStart
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 import me.matsumo.fanbox.core.billing.BillingClient
@@ -59,19 +61,24 @@ class LibraryHomeViewModel(
     /** 表示のログを送ったバナー。オファーの種類と周期の組ごとに、表示のログを 1 回だけ送るため。 */
     private val shownOfferBanners = mutableSetOf<Pair<String, Int>>()
 
+    /** オファーの判定に使うプラン。取得に失敗した場合は、前回に取得したプランのままにする。 */
+    private val offerPlans = MutableStateFlow(emptyList<BillingPlan>())
+
     /**
      * ホームの投稿一覧の最上部に表示するオファーのバナー。表示しない場合は null。
      *
-     * 購読が始まるたびにプランを取得し直す。取得に失敗しても、ホームを再び表示したときやアプリに戻ったときに取得し直せるようにするため。
-     * Android だけで表示し、iOS ではプランを取得しない。
+     * 購読が始まるたびに、プランを裏で取得し直す。取得に失敗しても、ホームを再び表示したときやアプリに戻ったときに回復できるようにするため。
+     * 取得を待たずに、前回のプランと現在の時刻・設定・閉じた周期から判定し直すため、購読の再開時に古いバナーが残らない。
      */
-    val offerBanner = flow {
-        if (currentPlatform == Platform.Android) emitAll(offerBannerFlow(fetchOfferPlans()))
-    }.stateIn(
-        scope = viewModelScope,
-        started = SharingStarted.WhileSubscribed(stopTimeout = 5.seconds),
-        initialValue = null,
-    )
+    @OptIn(ExperimentalCoroutinesApi::class)
+    val offerBanner = offerPlans
+        .flatMapLatest { plans -> offerBannerFlow(plans) }
+        .onStart { refreshOfferPlans() }
+        .stateIn(
+            scope = viewModelScope,
+            started = SharingStarted.WhileSubscribed(stopTimeout = 5.seconds),
+            initialValue = null,
+        )
 
     init {
         viewModelScope.launch {
@@ -94,7 +101,15 @@ class LibraryHomeViewModel(
         }
     }
 
-    private suspend fun fetchOfferPlans(): List<BillingPlan> = suspendRunCatching { billingClient.getPlans() }.getOrNull()?.plans.orEmpty()
+    /** オファーの判定に使うプランを取得し直す。Android だけで表示し、iOS ではプランを取得しない。 */
+    private fun refreshOfferPlans() {
+        if (currentPlatform != Platform.Android) return
+
+        viewModelScope.launch {
+            val plans = suspendRunCatching { billingClient.getPlans() }.getOrNull() ?: return@launch
+            offerPlans.value = plans.plans
+        }
+    }
 
     private fun offerBannerFlow(plans: List<BillingPlan>): Flow<OfferBanner?> = combine(
         settingRepository.setting,
