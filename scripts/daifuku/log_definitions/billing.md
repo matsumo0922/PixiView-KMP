@@ -14,6 +14,12 @@ Plus 課金画面を開き、プランの取得が終わったときのログ。
   - 取得したプランのどれかに無料トライアルが付いていたか。プランを取得できなかったときは false
 - days_since_first_launch: !integer
   - 初回起動から課金画面を開くまでの経過日数（切り捨て）。初回起動の日時が未記録なら -1
+- offering_id: !string 64
+  - 課金画面に表示した RevenueCat の Offering の識別子。プランを取得できなかったときは空文字
+- is_intro_offer_period: !boolean
+  - 初月割引などの導入価格のオファーを、提示の期間内として表示していたか。導入価格のオファーがない Offering では false
+- intro_offer_cycle: !integer
+  - 初回起動から何回目の提示の周期か（10 日ごとの区切り、最初の周期を 1 とする）。導入価格のオファーがない Offering と、初回起動の日時が未記録のときは -1
 
 ## paywall_plan_selected
 課金画面でプランを選び直したときのログ。選択中と同じプランを選んだときは送らない
@@ -32,6 +38,12 @@ Plus 課金画面を開き、プランの取得が終わったときのログ。
   - 購入しようとしたプラン（monthly、annual）
 - has_trial: !boolean
   - 無料トライアル付きのプランか
+- offering_id: !string 64
+  - 購入したプランを表示した RevenueCat の Offering の識別子。プランを取得できなかったときは空文字
+- is_intro_offer_period: !boolean
+  - 初月割引などの導入価格のオファーを、提示の期間内として表示していたか。導入価格のオファーがない Offering では false
+- intro_offer_cycle: !integer
+  - 初回起動から何回目の提示の周期か（10 日ごとの区切り、最初の周期を 1 とする）。導入価格のオファーがない Offering と、初回起動の日時が未記録のときは -1
 
 ## purchase_succeeded
 購入が成立し、Plus が有効になったときのログ
@@ -42,6 +54,12 @@ Plus 課金画面を開き、プランの取得が終わったときのログ。
   - 購入したプラン（monthly、annual）
 - has_trial: !boolean
   - 無料トライアル付きのプランか
+- offering_id: !string 64
+  - 購入したプランを表示した RevenueCat の Offering の識別子。プランを取得できなかったときは空文字
+- is_intro_offer_period: !boolean
+  - 初月割引などの導入価格のオファーを、提示の期間内として表示していたか。導入価格のオファーがない Offering では false
+- intro_offer_cycle: !integer
+  - 初回起動から何回目の提示の周期か（10 日ごとの区切り、最初の周期を 1 とする）。導入価格のオファーがない Offering と、初回起動の日時が未記録のときは -1
 
 ## purchase_cancelled
 ユーザーがストアの購入画面で購入をキャンセルしたときのログ

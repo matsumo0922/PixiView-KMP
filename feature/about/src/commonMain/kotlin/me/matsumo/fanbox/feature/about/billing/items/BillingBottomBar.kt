@@ -24,14 +24,20 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.unit.dp
 import kotlinx.collections.immutable.ImmutableList
+import me.matsumo.fanbox.core.model.BillingIntroOffer
 import me.matsumo.fanbox.core.model.BillingPlan
 import me.matsumo.fanbox.core.model.BillingTrialPeriod
 import me.matsumo.fanbox.core.model.calculateAnnualDiscountPercent
 import me.matsumo.fanbox.core.resources.Res
 import me.matsumo.fanbox.core.resources.billing_plus_annual_discount_label
+import me.matsumo.fanbox.core.resources.billing_plus_intro_offer_first_month_label
+import me.matsumo.fanbox.core.resources.billing_plus_intro_offer_label
+import me.matsumo.fanbox.core.resources.billing_plus_intro_offer_regular_price_label
+import me.matsumo.fanbox.core.resources.billing_plus_intro_offer_remaining_label
 import me.matsumo.fanbox.core.resources.billing_plus_plan_monthly
 import me.matsumo.fanbox.core.resources.billing_plus_plan_yearly
 import me.matsumo.fanbox.core.resources.billing_plus_purchase_button
+import me.matsumo.fanbox.core.resources.billing_plus_purchase_intro_button
 import me.matsumo.fanbox.core.resources.billing_plus_purchase_trial_button
 import me.matsumo.fanbox.core.resources.billing_plus_subscribed_label
 import me.matsumo.fanbox.core.resources.billing_plus_trial_label
@@ -47,6 +53,7 @@ import me.matsumo.fanbox.feature.about.billing.BillingUiState
 import me.matsumo.fanbox.feature.about.billing.BillingViewEvent
 import org.jetbrains.compose.resources.StringResource
 import org.jetbrains.compose.resources.stringResource
+import kotlin.time.Duration
 
 @Composable
 internal fun BillingBottomBar(
@@ -74,6 +81,7 @@ internal fun BillingBottomBar(
             plans = uiState.plans,
             selectedPlanType = uiState.selectedPlanType,
             subscribedPlanType = uiState.subscribedPlanType,
+            introOfferRemaining = uiState.introOfferCycle?.offerPeriodRemaining,
             onPlanSelect = { planType -> onViewEvent(BillingViewEvent.OnPlanSelected(planType)) },
         )
 
@@ -94,6 +102,7 @@ private fun PlanSelectSection(
     plans: ImmutableList<BillingPlan>,
     selectedPlanType: BillingPlan.Type,
     subscribedPlanType: BillingPlan.Type?,
+    introOfferRemaining: Duration?,
     onPlanSelect: (BillingPlan.Type) -> Unit,
     modifier: Modifier = Modifier,
 ) {
@@ -111,6 +120,7 @@ private fun PlanSelectSection(
                 discountPercent = annualDiscountPercent.takeIf { plan.type == BillingPlan.Type.ANNUAL },
                 isSelected = selectedPlanType == plan.type,
                 isSubscribed = subscribedPlanType == plan.type,
+                introOfferRemaining = introOfferRemaining,
                 onPlanSelect = onPlanSelect,
             )
         }
@@ -123,6 +133,7 @@ private fun PlanSelectItem(
     discountPercent: Int?,
     isSelected: Boolean,
     isSubscribed: Boolean,
+    introOfferRemaining: Duration?,
     onPlanSelect: (BillingPlan.Type) -> Unit,
     modifier: Modifier = Modifier,
 ) {
@@ -173,6 +184,15 @@ private fun PlanSelectItem(
                 )
             }
 
+            plan.introOffer?.let { introOffer ->
+                IntroOfferLabels(
+                    modifier = Modifier.fillMaxWidth(),
+                    plan = plan,
+                    introOffer = introOffer,
+                    remaining = introOfferRemaining,
+                )
+            }
+
             discountPercent?.let { percent ->
                 PlanLabel(
                     modifier = Modifier.fillMaxWidth(),
@@ -202,6 +222,40 @@ private fun PlanLabel(
 }
 
 @Composable
+private fun IntroOfferLabels(
+    plan: BillingPlan,
+    introOffer: BillingIntroOffer,
+    remaining: Duration?,
+    modifier: Modifier = Modifier,
+) {
+    Column(
+        modifier = modifier,
+        verticalArrangement = Arrangement.spacedBy(4.dp),
+    ) {
+        PlanLabel(
+            modifier = Modifier.fillMaxWidth(),
+            text = introOffer.getLabelText(),
+        )
+
+        PlanLabel(
+            modifier = Modifier.fillMaxWidth(),
+            text = stringResource(
+                Res.string.billing_plus_intro_offer_regular_price_label,
+                plan.formattedPrice,
+                plan.getUnit(),
+            ),
+        )
+
+        remaining?.let { remainingTime ->
+            PlanLabel(
+                modifier = Modifier.fillMaxWidth(),
+                text = stringResource(Res.string.billing_plus_intro_offer_remaining_label, remainingTime.toCountdownText()),
+            )
+        }
+    }
+}
+
+@Composable
 private fun ButtonSection(
     selectedPlan: BillingPlan,
     isSubscribedPlan: Boolean,
@@ -210,9 +264,12 @@ private fun ButtonSection(
     modifier: Modifier = Modifier,
 ) {
     val trialPeriod = selectedPlan.trialPeriod
+    val introOffer = selectedPlan.introOffer
     val purchaseButtonText = when {
         isSubscribedPlan -> stringResource(Res.string.billing_plus_subscribed_label)
         trialPeriod != null -> stringResource(Res.string.billing_plus_purchase_trial_button, trialPeriod.getDisplayText())
+        introOffer?.isFirstMonthOnly == true -> stringResource(Res.string.billing_plus_purchase_intro_button, introOffer.formattedPrice)
+        introOffer != null -> stringResource(Res.string.billing_plus_purchase_button, introOffer.formattedPrice, selectedPlan.getUnit())
         else -> stringResource(Res.string.billing_plus_purchase_button, selectedPlan.formattedPrice, selectedPlan.getUnit())
     }
 
@@ -260,6 +317,20 @@ private fun BillingPlan.getUnit(): String {
     }
 
     return stringResource(resource)
+}
+
+@Composable
+private fun BillingIntroOffer.getLabelText(): String {
+    if (isFirstMonthOnly) return stringResource(Res.string.billing_plus_intro_offer_first_month_label, formattedPrice)
+
+    val totalPeriod = period.copy(value = period.value * cycleCount)
+
+    return stringResource(Res.string.billing_plus_intro_offer_label, totalPeriod.getDisplayText(), formattedPrice)
+}
+
+/** 提示の残り時間を「時間:分:秒」の形式で返す。72 時間の提示の期間を表せるよう、時間は 24 を超えても日に繰り上げない。 */
+private fun Duration.toCountdownText(): String = toComponents { hours, minutes, seconds, _ ->
+    "$hours:${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}"
 }
 
 @Composable

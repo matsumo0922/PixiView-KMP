@@ -319,6 +319,11 @@
     <string name="billing_plus_purchase_button">Купить за %1$s</string>
     <string name="billing_plus_purchase_trial_button">Начать бесплатный период: %1$s</string>
     <string name="billing_plus_trial_label">Бесплатный период: %1$s</string>
+    <string name="billing_plus_intro_offer_first_month_label">Первый месяц: %1$s</string>
+    <string name="billing_plus_intro_offer_label">Первые %1$s: %2$s</string>
+    <string name="billing_plus_intro_offer_regular_price_label">Затем %1$s / %2$s</string>
+    <string name="billing_plus_intro_offer_remaining_label">Осталось %1$s</string>
+    <string name="billing_plus_purchase_intro_button">Первый месяц за %1$s</string>
     <string name="billing_plus_subscribed_label">Текущий план</string>
     <string name="billing_plus_annual_discount_label">Скидка %1$d% по сравнению с помесячной оплатой</string>
     <string name="billing_plus_trial_period_day">%1$d д.</string>
