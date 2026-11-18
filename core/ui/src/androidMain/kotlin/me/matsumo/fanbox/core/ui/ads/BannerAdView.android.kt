@@ -143,16 +143,12 @@ fun rememberAdViewWithLifecycle(
     adListener: AdListener = object : AdListener() {},
 ): AdView {
     val context = LocalContext.current
-    val retryController = remember(context, adUnitId, adSize) {
-        AdLoadRetryController(adFormatName = "BannerAds")
-    }
     val adView = remember(context, adUnitId, adSize) {
         createBannerAdView(
             context = context,
             adUnitId = adUnitId,
             adSize = adSize,
             adRequest = adRequest,
-            retryController = retryController,
             adListener = adListener,
         )
     }
@@ -175,7 +171,6 @@ fun rememberAdViewWithLifecycle(
 
         onDispose {
             lifecycleOwner.lifecycle.removeObserver(observer)
-            retryController.reset()
             adView.destroy()
         }
     }
@@ -183,64 +178,22 @@ fun rememberAdViewWithLifecycle(
     return adView
 }
 
+// 読み込みに失敗しても、アプリは loadAd() を呼び直さない。再要求は広告ユニットの自動更新に任せる。
 // 通信権限は host の AndroidManifest.xml で宣言し、この SDK 呼び出しに適用する。
 @SuppressLint("MissingPermission")
-// 広告 View の生成に必要な SDK 引数とリトライ通知を、生成処理の境界で受け取る。
-@Suppress("LongParameterList")
 private fun createBannerAdView(
     context: Context,
     adUnitId: String,
     adSize: AdSize,
     adRequest: AdRequest,
-    retryController: AdLoadRetryController,
     adListener: AdListener,
 ): AdView {
     val adView = AdView(context)
     adView.setAdSize(adSize)
     adView.adUnitId = adUnitId
-    adView.adListener = BannerAdRetryListener(
-        adView = adView,
-        adRequest = adRequest,
-        retryController = retryController,
-        delegate = adListener,
-    )
+    adView.adListener = adListener
     adView.loadAd(adRequest)
     return adView
-}
-
-/** バナー広告のロード失敗時に指数バックオフで再試行し、その他の通知は delegate へ委譲する AdListener。 */
-private class BannerAdRetryListener(
-    private val adView: AdView,
-    private val adRequest: AdRequest,
-    private val retryController: AdLoadRetryController,
-    private val delegate: AdListener,
-) : AdListener() {
-    override fun onAdLoaded() {
-        retryController.reset()
-        delegate.onAdLoaded()
-    }
-
-    override fun onAdFailedToLoad(error: LoadAdError) {
-        delegate.onAdFailedToLoad(error)
-        retryController.scheduleRetry(
-            failureMessage = error.toString(),
-            retryAction = ::reloadAd,
-        )
-    }
-
-    override fun onAdClicked() = delegate.onAdClicked()
-
-    override fun onAdClosed() = delegate.onAdClosed()
-
-    override fun onAdImpression() = delegate.onAdImpression()
-
-    override fun onAdOpened() = delegate.onAdOpened()
-
-    // 通信権限は host の AndroidManifest.xml で宣言し、この SDK 呼び出しに適用する。
-    @SuppressLint("MissingPermission")
-    private fun reloadAd() {
-        adView.loadAd(adRequest)
-    }
 }
 
 private fun LoadAdError.toBannerAdLoadFailedLog(
